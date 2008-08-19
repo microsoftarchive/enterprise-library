@@ -1,0 +1,197 @@
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{D248D0BF-23E9-42EF-AD9B-D924B056EDEF}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Tests</RootNamespace>
+    <AssemblyName>Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Tests</AssemblyName>
+    <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids><SignAssembly>false</SignAssembly>
+    <AssemblyOriginatorKeyFile></AssemblyOriginatorKeyFile>
+    <DelaySign>false</DelaySign>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <PublishUrl>http://localhost/Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Tests/</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Web</InstallFrom>
+    <UpdateEnabled>true</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>true</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE;VSTS</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Design" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\..\GlobalAssemblyInfo.cs">
+      <Link>GlobalAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="AddConfigurationApplicationNodeCommadFixture.cs" />
+    <Compile Include="AddChildNodeCommandFixture.cs" />
+    <Compile Include="AddConfigurationSourceSectionNodeCommandFixture.cs" />
+    <Compile Include="APTCAFixture.cs" />
+    <Compile Include="BaseTypeAttributeFixture.cs" />
+    <Compile Include="CloseConfigurationApplicationNodeCommandFixture.cs" />
+    <Compile Include="CommandExecutionControlFixture.cs" />
+    <Compile Include="CommandRegistrarFixture.cs" />
+    <Compile Include="CommonUtil.cs" />
+    <Compile Include="ConfigurationDesignHost.cs" />
+    <Compile Include="ConfigurationApplicationNodeFixture.cs" />
+    <Compile Include="ConfigurationApplicationDataFixture.cs" />
+    <Compile Include="ConfigurationDesignManagerAttributeFixture.cs" />
+    <Compile Include="ConfigurationSourceConfigurationDesignManagerFixture.cs" />
+    <Compile Include="ConfigurationUIHierachyDesignManagerFixture.cs" />
+    <Compile Include="EditableKeyValueFixture.cs" />
+    <Compile Include="InstrumentationConfigurationDesignManagerFixture.cs" />
+    <Compile Include="ConfigurationErrorFixture.cs" />
+    <Compile Include="ConfigurationNodeCollectionFixture.cs" />
+    <Compile Include="ConfigurationNodeFixture.cs" />
+    <Compile Include="InstrumentationNodeFixture.cs" />
+    <Compile Include="MockUIComandService.cs" />
+    <Compile Include="MockUIService.cs" />
+    <Compile Include="MoveNodeAfterCommandFixture.cs" />
+    <Compile Include="MoveNodeBeforeCommandFixture.cs" />
+    <Compile Include="AbstractDerivedNode.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DerivedSection.cs" />
+    <Compile Include="DerivedNode.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="NodeCreationServiceFixture.cs" />
+    <Compile Include="NodeImageAttributeFixture.cs" />
+    <Compile Include="OpenConfigurationApplicationNodeCommandFixture.cs" />
+    <Compile Include="ParentToChildNameFixture.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="ReferencePathAttributeFixture.cs" />
+    <Compile Include="RemoveNodeCommandFixture.cs" />
+    <Compile Include="ResourceStringLoaderFixture.cs" />
+    <Compile Include="SaveConfigurationApplicationNodeCommandFixture.cs" />
+    <Compile Include="ServiceBuilder.cs" />
+    <Compile Include="ConfigurationUIHierarchyFixture.cs" />
+    <Compile Include="ConfigurationUIHiearchyServiceFixture.cs" />
+    <Compile Include="SRAttributesHelper.cs" />
+    <Compile Include="TypeNodeNameFormatterFixture.cs" />
+    <Compile Include="TypeSelectorFixture.cs" />
+    <Compile Include="ValidateNodeCommandFixture.cs" />
+    <Compile Include="Validation\ApplicationConfigurationFileValidationFixture.cs" />
+    <Compile Include="Validation\AssertRangeAttributeFixture.cs" />
+    <Compile Include="Validation\CustomAttributesValidationAttributeFixture.cs" />
+    <Compile Include="Validation\DenyRangeAttributeFixture.cs" />
+    <Compile Include="Validation\UniqueNameAttributeFixture.cs" />
+    <Compile Include="Validation\ValidationErrorFixture.cs" />
+    <Compile Include="Validation\FileValidationAttributeFixture.cs" />
+    <Compile Include="Validation\MaximumLengthAttributeFixture.cs" />
+    <Compile Include="Validation\MinimumLengthAttributeFixture.cs" />
+    <Compile Include="Validation\RegexAttributeFixture.cs" />
+    <Compile Include="Validation\RequiredAttributeFixture.cs" />
+    <Compile Include="Validation\TypeValidationAttributeFixture.cs" />
+    <Compile Include="Validation\ValidationAttributeExceptionFixture.cs" />
+    <Compile Include="Validation\ValidationAttributeHelper.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\Src\Common.csproj">
+      <Project>{A09297C8-2C40-470B-8856-D856676DDFFA}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Src\Design\Configuration.Design.csproj">
+      <Project>{D6AAB55A-8C43-46B7-9EE4-EB8D1E1BFC17}</Project>
+      <Name>Configuration.Design</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="NodeImageAttributeFixture.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Tests.dll.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

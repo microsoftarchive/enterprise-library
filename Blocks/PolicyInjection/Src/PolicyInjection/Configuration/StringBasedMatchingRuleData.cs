@@ -1,0 +1,72 @@
+//===============================================================================
+// Microsoft patterns & practices Enterprise Library
+// Policy Injection Application Block
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Configuration;
+
+namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
+{
+    /// <summary>
+    /// Base class for matching rule config data for those rules that take
+    /// a single match instance consisting of a string to match and an
+    /// ignore case flag.
+    /// </summary>
+    public abstract class StringBasedMatchingRuleData : MatchingRuleData
+    {
+        private const string MatchPropertyName = "match";
+        private const string IgnoreCasePropertyName = "ignoreCase";
+
+        /// <summary>
+        /// Constructs a new <see cref="StringBasedMatchingRuleData"/> instance.
+        /// </summary>
+        public StringBasedMatchingRuleData()
+            :base()
+        {
+        }
+
+        /// <summary>
+        /// Constructs a new <see cref="StringBasedMatchingRuleData"/> instance.
+        /// </summary>
+        /// <param name="matchingRuleName">Name of the matching rule</param>
+        /// <param name="matches">String to match.</param>
+        /// <param name="matchingRuleType">Type of the underlying matching rule.</param>
+        public StringBasedMatchingRuleData(string matchingRuleName, string matches, Type matchingRuleType)
+            : base(matchingRuleName, matchingRuleType)
+        {
+            Match = matches;
+        }
+
+        /// <summary>
+        /// The string to match.
+        /// </summary>
+        /// <value>The "match" configuration attribute.</value>
+        [ConfigurationProperty(MatchPropertyName, IsRequired = true)]
+        public string Match
+        {
+            get { return (string)base[MatchPropertyName]; }
+            set { base[MatchPropertyName] = value; }
+        }
+
+        /// <summary>
+        /// Should comparisons be case sensitive?
+        /// </summary>
+        /// <value>The "ignoreCase" configuration attribute. If false, comparison is
+        /// case sensitive. If true, comparison is case insensitive.</value>
+        [ConfigurationProperty(IgnoreCasePropertyName, DefaultValue = false, IsRequired = false)]
+        public bool IgnoreCase
+        {
+            get { return (bool)base[IgnoreCasePropertyName]; }
+            set { base[IgnoreCasePropertyName] = value; }
+        }
+    }
+}

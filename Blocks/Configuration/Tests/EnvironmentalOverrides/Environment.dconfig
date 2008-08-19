@@ -1,0 +1,15 @@
+<configuration>
+    <configSections>
+        <section name="EnvironmentMergeData" type="Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides.Configuration.EnvironmentMergeSection, Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides" />
+    </configSections>
+    <EnvironmentMergeData environmentName="Environment" environmentDeltaFile="test.exe.config">
+        <mergeElements>
+            <override nodePath="/Instrumentation" overrideProperties="true">
+                <overridddenProperties>
+                    <add name="PerformanceCountersEnabled" value="True" />
+                    <add name="EventLoggingEnabled" value="False" />
+                </overridddenProperties>
+            </override>
+        </mergeElements>
+    </EnvironmentMergeData>
+</configuration>

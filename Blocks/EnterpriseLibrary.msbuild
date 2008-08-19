@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Project DefaultTargets="BuildAll" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<PropertyGroup>
+		<MSTestExe>&quot;C:\Program Files\Microsoft Visual Studio 8\common7\IDE\mstest.exe&quot;</MSTestExe>
+    <MSBuildTasks>C:\Program Files\Microsoft Visual Studio 8\Common7\IDE\PrivateAssemblies\Microsoft.VisualStudio.QualityTools.MSBuildTasks.dll</MSBuildTasks>
+		<TestRoot>$(MSBuildProjectDirectory)\..\UnitTests</TestRoot>
+		<TestResultsDir>$(TestRoot)\TestResults</TestResultsDir>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="!Exists('$(Configuration)')">
+		<Configuration>Debug</Configuration>
+	</PropertyGroup>
+
+  <UsingTask TaskName="TestToolsTask" AssemblyFile="$(MSBuildTasks)"/>
+
+  <Target Name="BuildAll" DependsOnTargets="Clean;Compile;UnitTest" />
+
+  <Target Name="Clean">
+    <MSBuild Projects="EnterpriseLibrary.sln" Properties="Configuration=$(Configuration)" Targets="Clean" />
+  </Target>
+
+  <Target Name="Compile">
+    <MSBuild Projects="EnterpriseLibrary.sln" Properties="Configuration=$(Configuration)"/>
+  </Target>
+
+  <Target Name="UnitTest" DependsOnTargets="RemoveTestResults;MakeResultsDirectory">
+    <TestToolsTask MetadataFile="EnterpriseLibrary1.vsmdi" SearchPathRoot="$(MSBuildProjectDirectory)\..\UnitTests"
+                   PathToResultsFilesRoot="$(TestResultsDir)"/>
+  </Target>
+
+	<Target Name="MakeResultsDirectory">
+		<Message Text="Creating $(TestResultsDir)" />
+		<MakeDir Directories="$(TestResultsDir)" Condition="!Exists($(TestResultsDir))" />
+	</Target>
+
+	<Target Name="RemoveTestResults">
+		<Message Text="Deleting all result files in $(TestResultsDir)" />
+		<RemoveDir Directories="$(TestResultsDir)" Condition="Exists($(TestResultsDir))"/>
+	</Target>
+
+	<Target Name="Metadata">
+		<Message Text="@(TestAssembly) - %(WorkingDirectory)"></Message>
+	</Target>
+</Project>

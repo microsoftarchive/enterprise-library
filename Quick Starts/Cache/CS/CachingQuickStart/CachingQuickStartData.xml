@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<products>
+  <product name="Chef Anton's Cajun Seasoning" id="1" price="22" />
+  <product name="Grandma's Boysenberry Spread" id="2" price="25" />
+  <product name="Queso Cabrales" id="3" price="21" />
+  <product name="Queso Manchego La Pastora" id="4" price="38" />
+  <product name="Genen Shouyu" id="5" price="15.5" />
+  <product name="Alice Mutton" id="6" price="39" />
+</products>
+</productList>

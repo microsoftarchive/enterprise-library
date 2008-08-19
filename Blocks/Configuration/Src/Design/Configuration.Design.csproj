@@ -1,0 +1,311 @@
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{D6AAB55A-8C43-46B7-9EE4-EB8D1E1BFC17}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ApplicationIcon>
+    </ApplicationIcon>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
+    <AssemblyName>Microsoft.Practices.EnterpriseLibrary.Configuration.Design</AssemblyName>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Microsoft.Practices.EnterpriseLibrary.Configuration.Design</RootNamespace>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <StartupObject>
+    </StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation><SignAssembly>false</SignAssembly>
+    <AssemblyOriginatorKeyFile></AssemblyOriginatorKeyFile>
+    <DelaySign>false</DelaySign>
+    <OldToolsVersion>2.0</OldToolsVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>bin\Release\Microsoft.Practices.EnterpriseLibrary.Configuration.Design.xml</DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\debug\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <DocumentationFile>bin\Debug\Microsoft.Practices.EnterpriseLibrary.Configuration.Design.XML</DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <CodeAnalysisRules>-Microsoft.Design#CA2210</CodeAnalysisRules>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data">
+      <Name>System.Data</Name>
+    </Reference>
+    <Reference Include="System.Design">
+      <Name>System.Design</Name>
+    </Reference>
+    <Reference Include="System.Drawing">
+      <Name>System.Drawing</Name>
+    </Reference>
+    <Reference Include="System.Windows.Forms">
+      <Name>System.Windows.Forms</Name>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Name>System.XML</Name>
+    </Reference>
+    <ProjectReference Include="..\..\..\Common\Src\Common.csproj">
+      <Name>Common</Name>
+      <Project>{A09297C8-2C40-470B-8856-D856676DDFFA}</Project>
+      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\..\GlobalAssemblyInfo.cs">
+      <Link>GlobalAssemblyInfo.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="AddConfigurationApplicationNodeCommand.cs" />
+    <Compile Include="AddChildNodeCommand.cs" />
+    <Compile Include="AddConfigurationSourceSectionNodeCommand.cs" />
+    <Compile Include="AssemblyLoader.cs" />
+    <Compile Include="BaseTypeAttribute.cs" />
+    <Compile Include="ConfigurationSectionNode.cs" />
+    <Compile Include="ConfigurationSourceSectionBuilder.cs" />
+    <Compile Include="ConfigurationSourceSectionNodeBuilder.cs" />
+    <Compile Include="CloseConfigurationApplicationCommand.cs" />
+    <Compile Include="CommandExecutingEventArgs.cs" />
+    <Compile Include="CommandState.cs" />
+    <Compile Include="ConfigurationSourceCommandRegistrar.cs" />
+    <Compile Include="ConfigurationApplicationNode.cs" />
+    <Compile Include="ConfigurationApplicationFile.cs" />
+    <Compile Include="ConfigurationDesignManager.cs" />
+    <Compile Include="ConfigurationNodeMovedEventArgs.cs" />
+    <Compile Include="ConfigurationSectionInfo.cs" />
+    <Compile Include="ConfigurationSourceConfigurationDesignManager.cs" />
+    <Compile Include="CommandRegistrar.cs" />
+    <Compile Include="ConfigurationSourceNodeMapRegistrar.cs" />
+    <Compile Include="EnvironmentOverridableAttribute.cs" />
+    <Compile Include="FlagsEditor.cs" />
+    <Compile Include="FlagsEditorUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="IEnvironmentalOverridesSerializable.cs" />
+    <Compile Include="IPluginDirectoryProvider.cs" />
+    <Compile Include="Manageability\ConfigurationManageabilityProviderAttributeRetriever.cs" />
+    <Compile Include="Manageability\ExportAdmTemplateNodeCommand.cs" />
+    <Compile Include="Manageability\ManageableConfigurationSourceCommandRegistrar.cs" />
+    <Compile Include="Manageability\ManageableConfigurationSourceConfigurationDesignManager.cs" />
+    <Compile Include="Manageability\ManageableConfigurationSourceElementBuilder.cs" />
+    <Compile Include="Manageability\ManageableConfigurationSourceElementNode.cs" />
+    <Compile Include="Manageability\ManageableConfigurationSourceNodeMapRegistrar.cs" />
+    <Compile Include="Manageability\Properties\AssemblyInfo.cs" />
+    <Compile Include="Manageability\Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="OpenFileConfigurationApplicationCommand.cs" />
+    <Compile Include="EditableKeyValue.cs" />
+    <Compile Include="InstrumenationSectionCommandRegistrar.cs" />
+    <Compile Include="NodeBuilder.cs" />
+    <Compile Include="NodeMapRegistrar.cs" />
+    <Compile Include="ProtectionProviderTypeConverter.cs" />
+    <Compile Include="SaveAsConfigurationApplicationNodeCommand.cs" />
+    <Compile Include="TypeNodeNameFormatter.cs" />
+    <Compile Include="Validation\ProtectionProviderValidationAttribute.cs" />
+    <Compile Include="StorageCreationNodeCommand.cs" />
+    <Compile Include="ExternalConfigurationFileStorageCreationCommand.cs" />
+    <Compile Include="FileConfigurationSourceElementNode.cs" />
+    <Compile Include="ExternalConfigurationFileStorageCreationAttribute.cs" />
+    <Compile Include="InstrumentationConfigurationDesignManager.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ConfigurationDesignManagerAttribute.cs" />
+    <Compile Include="ConfigurationDesignManagerDomain.cs" />
+    <Compile Include="ConfigurationDesignManagerProxy.cs" />
+    <Compile Include="ConfigurationError.cs" />
+    <Compile Include="ConfigurationNode.cs" />
+    <Compile Include="ConfigurationNodeCollection.cs" />
+    <Compile Include="HierarchyAddedEventArgs.cs" />
+    <Compile Include="ConfigurationNodeCommand.cs" />
+    <Compile Include="ConfigurationSourceElementNode.cs" />
+    <Compile Include="ConfigurationSourceSectionNode.cs" />
+    <Compile Include="ConfigurationUICommand.cs" />
+    <Compile Include="ErrorLogService.cs" />
+    <Compile Include="FileStorageCreationCommand.cs" />
+    <Compile Include="FilteredFileNameEditor.cs" />
+    <Compile Include="FilteredFileNameEditorAttribute.cs" />
+    <Compile Include="ConfigurationNodeChangedEventArgs.cs" />
+    <Compile Include="HierarchyRemovedEventArgs.cs" />
+    <Compile Include="HierarchySavedEventArgs.cs" />
+    <Compile Include="IConfigurationDesignManager.cs" />
+    <Compile Include="IErrorLogService.cs" />
+    <Compile Include="ImageAttribute.cs" />
+    <Compile Include="IUICommandService.cs" />
+    <Compile Include="INodeCreationService.cs" />
+    <Compile Include="INodeNameCreationService.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="InsertionPoint.cs" />
+    <Compile Include="InstrumentationNode.cs" />
+    <Compile Include="IReadOnlyCollection.cs" />
+    <Compile Include="IConfigurationUIHierarchy.cs" />
+    <Compile Include="IConfigurationUIHierarchyService.cs" />
+    <Compile Include="IStorageService.cs" />
+    <Compile Include="IUIService.cs" />
+    <Compile Include="LinkNodeHelper.cs" />
+    <Compile Include="MoveDownConfigurationUICommand.cs" />
+    <Compile Include="MoveUpConfigurationUICommand.cs" />
+    <Compile Include="NodeMultiplicity.cs" />
+    <Compile Include="StorageCreationAttribute.cs" />
+    <Compile Include="UICommandService.cs" />
+    <Compile Include="ConfigurationFileStorageCreationCommand.cs" />
+    <Compile Include="MoveNodeAfterCommand.cs" />
+    <Compile Include="MoveNodeBeforeCommand.cs" />
+    <Compile Include="NodeCreationEntry.cs" />
+    <Compile Include="NodeCreationService.cs" />
+    <Compile Include="NodeImageAttribute.cs" />
+    <Compile Include="NodeNameCreationService.cs" />
+    <Compile Include="OpenConfigurationApplicationNodeCommand.cs" />
+    <Compile Include="ParentNodeNotification.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="ReferenceEditor.cs" />
+    <Compile Include="ReferenceEditorUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ReferenceTypeAttribute.cs" />
+    <Compile Include="RemoveNodeCommand.cs" />
+    <Compile Include="ResourceStringLoader.cs" />
+    <Compile Include="SaveConfigurationApplicationNodeCommand.cs" />
+    <Compile Include="SaveFileEditor.cs" />
+    <Compile Include="SelectedImageAttribute.cs" />
+    <Compile Include="ServiceHelper.cs" />
+    <Compile Include="ConfigurationUIHierarchy.cs" />
+    <Compile Include="ConfigurationUIHierarchyService.cs" />
+    <Compile Include="SRCategoryAttribute.cs" />
+    <Compile Include="SRDescriptionAttribute.cs" />
+    <Compile Include="StorageCreationCommand.cs" />
+    <Compile Include="StorageService.cs" />
+    <Compile Include="SystemConfigurationSourceElementNode.cs" />
+    <Compile Include="TypeImages.cs" />
+    <Compile Include="TypeSelector.cs" />
+    <Compile Include="TypeSelectorEditor.cs" />
+    <Compile Include="TypeSelectorIncludes.cs" />
+    <Compile Include="TypeSelectorUI.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ValidateNodeCommand.cs" />
+    <Compile Include="Validation\AssertRangeAttribute.cs" />
+    <Compile Include="Validation\ApplicationConfigurationFileValidationAttribute.cs" />
+    <Compile Include="Validation\CustomAttributesValidationAttribute.cs" />
+    <Compile Include="Validation\DenyRangeAttribute.cs" />
+    <Compile Include="Validation\FileValidationAttribute.cs" />
+    <Compile Include="Validation\MaximumLengthAttribute.cs" />
+    <Compile Include="Validation\MinimumLengthAttribute.cs" />
+    <Compile Include="Validation\RangeBoundaryType.cs" />
+    <Compile Include="Validation\RegexAttribute.cs" />
+    <Compile Include="Validation\RequiredAttribute.cs" />
+    <Compile Include="Validation\TypeValidationAttribute.cs" />
+    <Compile Include="Validation\UniqueNameAttribute.cs" />
+    <Compile Include="Validation\ValidationAttribute.cs" />
+    <Compile Include="Validation\ValidationError.cs" />
+    <Compile Include="WaitCursor.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ConfigurationApplicationNode.bmp" />
+    <EmbeddedResource Include="ConfigurationSourceSectionNode.bmp" />
+    <EmbeddedResource Include="ConfigurationSourceElementNode.bmp" />
+    <EmbeddedResource Include="ConfigurationNode.bmp" />
+    <EmbeddedResource Include="ReferenceEditorUI.resx">
+      <DependentUpon>ReferenceEditorUI.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TypeSelectorUI.resx">
+      <DependentUpon>TypeSelectorUI.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="FlagsEditorUI.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>FlagsEditorUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="InstrumentationNode.bmp" />
+    <EmbeddedResource Include="Manageability\Properties\Resources.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>

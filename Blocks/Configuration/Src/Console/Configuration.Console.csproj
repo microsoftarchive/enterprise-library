@@ -1,0 +1,261 @@
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{3C6BB980-EA8F-4C2C-A72B-60C3BCE7515E}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ApplicationIcon>App.ico</ApplicationIcon>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
+    <AssemblyName>EntLibConfig</AssemblyName>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>Microsoft.Practices.EnterpriseLibrary.Configuration.Console</RootNamespace>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <StartupObject>
+    </StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation><SignAssembly>false</SignAssembly>
+    <AssemblyOriginatorKeyFile></AssemblyOriginatorKeyFile>
+    <DelaySign>false</DelaySign>
+    <OldToolsVersion>2.0</OldToolsVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data">
+      <Name>System.Data</Name>
+    </Reference>
+    <Reference Include="System.Design">
+      <Name>System.Design</Name>
+    </Reference>
+    <Reference Include="System.Drawing">
+      <Name>System.Drawing</Name>
+    </Reference>
+    <Reference Include="System.Messaging" />
+    <Reference Include="System.Windows.Forms">
+      <Name>System.Windows.Forms</Name>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Name>System.XML</Name>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\..\GlobalAssemblyInfo.cs">
+      <Link>GlobalAssemblyInfo.cs</Link>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="AboutForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="App.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="AppDomainBasePluginDirectoryProvider.cs" />
+    <Compile Include="FormSerializer.cs" />
+    <Compile Include="MainForm2.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MainForm2.Designer.cs">
+      <DependentUpon>MainForm2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ConfigurationErrorListViewItem.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ConfigurationNodeListViewItem.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MenuItemComparer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="SaveChangesDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UnhandledExceptionForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ValidationErrorListViewItem.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <EmbeddedResource Include="AboutForm.resx">
+      <DependentUpon>AboutForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MainForm.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MainForm2.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>MainForm2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SaveChangesDialog.resx">
+      <DependentUpon>SaveChangesDialog.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UnhandledExceptionForm.resx">
+      <DependentUpon>UnhandledExceptionForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Content Include="App.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Caching\Src\Cryptography.Configuration.Design\Caching.Cryptography.Configuration.Design.csproj">
+      <Project>{8E175354-2764-459E-8B63-772E63F922E7}</Project>
+      <Name>Caching.Cryptography.Configuration.Design</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Caching\Src\Database.Configuration.Design\Caching.Database.Configuration.Design.csproj">
+      <Project>{E32223CC-B10C-4D3A-83F5-9CEA12469364}</Project>
+      <Name>Caching.Database.Configuration.Design</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Data\Src\Configuration.Design\Data.Configuration.Design.csproj">
+      <Project>{CAFC0505-DC56-4E86-A335-D8EB2B23325A}</Project>
+      <Name>Data.Configuration.Design</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\ExceptionHandling\Src\Configuration.Design\ExceptionHandling.Configuration.Design.csproj">
+      <Project>{3D0BE7D5-585F-4549-8490-B8E864298456}</Project>
+      <Name>ExceptionHandling.Configuration.Design</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\ExceptionHandling\Src\Logging.Configuration.Design\ExceptionHandling.Logging.Configuration.Design.csproj">
+      <Project>{629381BA-FF3D-4DE1-8FE1-62FC75F0F1BD}</Project>
+      <Name>ExceptionHandling.Logging.Configuration.Design</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Logging\Src\Configuration.Design\Logging.Configuration.Design.csproj">
+      <Project>{F80ABB9A-56C5-4FC8-82F2-0DFEAAAC97A3}</Project>
+      <Name>Logging.Configuration.Design</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Logging\Src\DatabaseTraceListener.Configuration.Design\Logging.Database.Configuration.Design.csproj">
+      <Project>{FCD01AB3-FFD9-4C57-A9A5-BDEE9AFBB12D}</Project>
+      <Name>Logging.Database.Configuration.Design</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\PolicyInjection\Src\CallHandlers.Configuration.Design\PolicyInjection.CallHandlers.Configuration.Design.csproj">
+      <Project>{2C050B72-B237-4509-9739-9DB54C62168A}</Project>
+      <Name>PolicyInjection.CallHandlers.Configuration.Design</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\PolicyInjection\Src\Configuration.Design\PolicyInjection.Configuration.Design.csproj">
+      <Project>{6C74F26F-41D6-4A94-BED8-D29DFDBD9914}</Project>
+      <Name>PolicyInjection.Configuration.Design</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Security\Src\CachingStore.Configuration.Design\Security.Cache.CachingStore.Configuration.Design.csproj">
+      <Project>{028EE3EB-DF29-40D3-AD49-448B2DADAA1B}</Project>
+      <Name>Security.Cache.CachingStore.Configuration.Design</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Security\Src\Configuration.Design\Security.Configuration.Design.csproj">
+      <Project>{69FE71D7-F198-4B7D-9715-E0FC04EC5660}</Project>
+      <Name>Security.Configuration.Design</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Security.Cryptography\Src\Configuration.Design\Security.Cryptography.Configuration.Design.csproj">
+      <Project>{D28C4099-8B9B-4A75-94C1-0B34D598FD8E}</Project>
+      <Name>Security.Cryptography.Configuration.Design</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Validation\Src\Configuration.Design\Validation.Configuration.Design.csproj">
+      <Project>{7B0BBC65-71C5-4F0D-8114-1794CC70F62E}</Project>
+      <Name>Validation.Configuration.Design</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AppSettings.Configuration.Design\AppSettings.Configuration.Design.csproj">
+      <Project>{6802DE8C-4BBD-4C2C-9166-7A5303F9DD18}</Project>
+      <Name>AppSettings.Configuration.Design</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Design.UI\Configuration.Design.UI.csproj">
+      <Project>{F72E73CB-1A02-4C0E-B15F-DF8661979A6B}</Project>
+      <Name>Configuration.Design.UI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Design\Configuration.Design.csproj">
+      <Project>{D6AAB55A-8C43-46B7-9EE4-EB8D1E1BFC17}</Project>
+      <Name>Configuration.Design</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EnvironmentalOverrides\Configuration.EnvironmentalOverrides.csproj">
+      <Project>{9CC92B51-39D9-4622-BE1D-57257C894FA7}</Project>
+      <Name>Configuration.EnvironmentalOverrides</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>

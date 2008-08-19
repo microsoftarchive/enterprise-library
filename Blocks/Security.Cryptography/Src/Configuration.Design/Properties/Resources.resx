@@ -1,0 +1,440 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Bit" xml:space="preserve">
+    <value>bit</value>
+  </data>
+  <data name="CategoryGeneral" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="ChooseDpapiScopeMessage" xml:space="preserve">
+    <value>The key for this algorithm is stored in a file. To further protect the key, it is encrypted using the Data Protection API (DPAPI).
+
+Please select the data protection mode. “User” mode will encrypt your data using the credentials of the currently logged-in user. “Machine” mode will allow any user on this computer to encrypt or decrypt the key.</value>
+  </data>
+  <data name="ChooseExistingKeyFileMessage" xml:space="preserve">
+    <value>Please choose the location of the existing DPAPI-encrypted algorithm key file:</value>
+  </data>
+  <data name="ChooseKeyFileMessage" xml:space="preserve">
+    <value>The key for this algorithm will be encrypted and stored in a file. Please choose where you would like to store this file:</value>
+  </data>
+  <data name="CreateKeyMessage" xml:space="preserve">
+    <value>Please enter or generate the key you would like to use for this algorithm (in hexadecimal):</value>
+  </data>
+  <data name="CreateNewKeyLabel" xml:space="preserve">
+    <value>Create a new key</value>
+  </data>
+  <data name="CryptographicKeyWizardCancelButton" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="CryptographicKeyWizardFinishButton" xml:space="preserve">
+    <value>Finish</value>
+  </data>
+  <data name="CryptographicKeyWizardNextButton" xml:space="preserve">
+    <value>Next  &gt;</value>
+  </data>
+  <data name="CryptographicKeyWizardPreviousButton" xml:space="preserve">
+    <value>&lt;  Previous</value>
+  </data>
+  <data name="CryptographicKeyWizardTitle" xml:space="preserve">
+    <value>Cryptographic Key Wizard</value>
+  </data>
+  <data name="CryptographyNodeName" xml:space="preserve">
+    <value>Cryptography Application Block</value>
+  </data>
+  <data name="CryptographySectionCommandName" xml:space="preserve">
+    <value>Cryptography Application Block</value>
+  </data>
+  <data name="CryptoKeyWizardErrorTitle" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="CustomHashProviderNodeExtensionsDescription" xml:space="preserve">
+    <value>Custom configuration extensions if applicable for this type.</value>
+  </data>
+  <data name="CustomHashProviderNodeName" xml:space="preserve">
+    <value>Custom Hash Provider</value>
+  </data>
+  <data name="CustomSymmetricCryptoProviderExtensionsDescription" xml:space="preserve">
+    <value>Custom configuration extensions if applicable for this type.</value>
+  </data>
+  <data name="CustomSymmetricCryptoProviderNodeName" xml:space="preserve">
+    <value>Custom Symmetric Cryptography Provider</value>
+  </data>
+  <data name="CustomSymmetricCryptoProviderTypeNameDescription" xml:space="preserve">
+    <value>Any symmetric cryptography provider that implements ISymmetricCryptoProvider.</value>
+  </data>
+  <data name="DataProtectionScopeCurrentUser" xml:space="preserve">
+    <value>User mode</value>
+  </data>
+  <data name="DataProtectionScopeLocalMachine" xml:space="preserve">
+    <value>Machine mode</value>
+  </data>
+  <data name="DecryptPasswordCheckFailure" xml:space="preserve">
+    <value>Password is not correct.</value>
+  </data>
+  <data name="DefaultHashProviderDescription" xml:space="preserve">
+    <value>The default instance for Hash Providers.</value>
+  </data>
+  <data name="DefaultSymmetricCryptoProviderDescription" xml:space="preserve">
+    <value>The default instance for Symmetric Cryptography Providers.</value>
+  </data>
+  <data name="DPAPIModeRequiredErrorMessage" xml:space="preserve">
+    <value>DPAPI mode is required.</value>
+  </data>
+  <data name="DpapiSymmetricCryptoProviderNodeModeDescription" xml:space="preserve">
+    <value>The storage mode for DPAPI.  See the DpapiStorageMode enum for more information.</value>
+  </data>
+  <data name="DpapiSymmetricCryptoProviderNodeName" xml:space="preserve">
+    <value>DPAPI Symmetric Cryptography Provider</value>
+  </data>
+  <data name="ErrorExportingKey" xml:space="preserve">
+    <value>An error ocurred exporting the key.</value>
+  </data>
+  <data name="ErrorImportingKey" xml:space="preserve">
+    <value>An error ocurred importing the key. Please make sure the filepath and ProtectionScope are corrent.</value>
+  </data>
+  <data name="ExistingKeyLabel" xml:space="preserve">
+    <value>Use an existing DPAPI-protected key file</value>
+  </data>
+  <data name="ExportDialogErrorTitle" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="ExportDialogTitle" xml:space="preserve">
+    <value>Export Key As</value>
+  </data>
+  <data name="ExportDirectoryInvalid" xml:space="preserve">
+    <value>Directory is invalid.</value>
+  </data>
+  <data name="ExportKeyCommandText" xml:space="preserve">
+    <value>Export key</value>
+  </data>
+  <data name="ExportKeyDialogTitle" xml:space="preserve">
+    <value>Export Key Wizard</value>
+  </data>
+  <data name="ExportKeyFileMessage" xml:space="preserve">
+    <value>The key for this algorithm will be encrypted with a password and stored in a file. Please choose where you would like to store this file:</value>
+  </data>
+  <data name="ExportKeyLongCommandText" xml:space="preserve">
+    <value>Export cryptography key to archive.</value>
+  </data>
+  <data name="ExportKeyPasswordConfirmLabel" xml:space="preserve">
+    <value>Confirm password:</value>
+  </data>
+  <data name="ExportKeyPasswordLabel" xml:space="preserve">
+    <value>Please enter the password with which to encrypt this key file:</value>
+  </data>
+  <data name="ExportKeyUICancelButton" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="ExportKeyUIOkButton" xml:space="preserve">
+    <value>Ok</value>
+  </data>
+  <data name="ExportPasswordMinLength" xml:space="preserve">
+    <value>Password must be at least {0} characters.</value>
+  </data>
+  <data name="ExportPasswordsDoNotMatch" xml:space="preserve">
+    <value>Passwords do not match.</value>
+  </data>
+  <data name="ExportSuccessful" xml:space="preserve">
+    <value>Key has been exported successfully.</value>
+  </data>
+  <data name="ExportSuccessfulTitle" xml:space="preserve">
+    <value>Export</value>
+  </data>
+  <data name="FileDoesNotExists" xml:space="preserve">
+    <value>Could not find the specified file.</value>
+  </data>
+  <data name="FileShouldNotBeEmpty" xml:space="preserve">
+    <value>The filename should not be empty</value>
+  </data>
+  <data name="GenerateKeyButtonText" xml:space="preserve">
+    <value>&amp;Generate</value>
+  </data>
+  <data name="GenericCreateStatusText" xml:space="preserve">
+    <value>Create a new {0}</value>
+  </data>
+  <data name="HashAlgorithmProviderKeyDescription" xml:space="preserve">
+    <value>The key information that should be used.</value>
+  </data>
+  <data name="HashAlgorithmProviderNodeName" xml:space="preserve">
+    <value>HashAlgorithm Provider</value>
+  </data>
+  <data name="HashAlgorithmTypeDescription" xml:space="preserve">
+    <value>The Type of algorithm that should be used.</value>
+  </data>
+  <data name="HashProviderCollectionCommandName" xml:space="preserve">
+    <value>Hash Providers</value>
+  </data>
+  <data name="HashProviderCollectionNodeName" xml:space="preserve">
+    <value>Hash Providers</value>
+  </data>
+  <data name="HashProviderNodeName" xml:space="preserve">
+    <value>Hash Provider</value>
+  </data>
+  <data name="HashProviderTypeNameDescription" xml:space="preserve">
+    <value>Any hash provider that implements IHashProvider.</value>
+  </data>
+  <data name="HMACSHA1HashProviderNodeName" xml:space="preserve">
+    <value>HMACSHA1 Hash Provider</value>
+  </data>
+  <data name="ImportArchivedKeyMessage" xml:space="preserve">
+    <value>Please choose the location of the existing password-encrypted algorithm key file:</value>
+  </data>
+  <data name="ImportArchivedKeyPasswordLabel" xml:space="preserve">
+    <value>Please enter the password that was used to encrypt this key file:</value>
+  </data>
+  <data name="ImportDecryptError" xml:space="preserve">
+    <value>Unable to decrypt key.  Password may be incorrect.</value>
+  </data>
+  <data name="ImportDecryptFormatError" xml:space="preserve">
+    <value>Unable to read key file. File format may be invalid.</value>
+  </data>
+  <data name="ImportDialogErrorTitle" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="ImportDialogTitle" xml:space="preserve">
+    <value>Open key archive</value>
+  </data>
+  <data name="ImportKeyLabel" xml:space="preserve">
+    <value>Import a password-protected key file</value>
+  </data>
+  <data name="ImportPasswordInvalid" xml:space="preserve">
+    <value>Password is invalid.</value>
+  </data>
+  <data name="ImportPasswordInvalidTitle" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="ImportSourceFileInvalid" xml:space="preserve">
+    <value>File does not exist.</value>
+  </data>
+  <data name="ImportSuccessful" xml:space="preserve">
+    <value>Key has been imported successfully.</value>
+  </data>
+  <data name="ImportSuccessfulTitle" xml:space="preserve">
+    <value>Import</value>
+  </data>
+  <data name="InvalidExportDestination" xml:space="preserve">
+    <value>Invalid export destination.</value>
+  </data>
+  <data name="InvalidImportSource" xml:space="preserve">
+    <value>Invalid source file.</value>
+  </data>
+  <data name="InvalidKeyWhenSavingError" xml:space="preserve">
+    <value>Key is not set and node is invalid. Please delete this node and recreate it with a valid key.</value>
+  </data>
+  <data name="KeyArchiveFileFilter" xml:space="preserve">
+    <value>Key export files (*.txt)|*.txt|All files (*.*)|*.*</value>
+  </data>
+  <data name="KeyCouldNotBeRead" xml:space="preserve">
+    <value>Could not read key from archive. Password might be incorrect.</value>
+  </data>
+  <data name="KeyedHashProviderNodeName" xml:space="preserve">
+    <value>Keyed Hash Provider</value>
+  </data>
+  <data name="KeyFileBadNameError" xml:space="preserve">
+    <value>{0} is not a valid key file name. Please re-enter.</value>
+  </data>
+  <data name="KeyFileFilter" xml:space="preserve">
+    <value>Key files (*.key)|*.key|All files (*.*)|*.*</value>
+  </data>
+  <data name="KeyFileLoadingError" xml:space="preserve">
+    <value>Unable to load cryptographic configuration -- Cannot open key file {0}. Configuration will be removed.</value>
+  </data>
+  <data name="KeyManagerEditorRequiresKeyInfoProperty" xml:space="preserve">
+    <value>Invalid property type.  You may only use the KeyManagerEditor on properties of the type KeyInfo.</value>
+  </data>
+  <data name="KeyManagerUICurrentKeySizeCaption" xml:space="preserve">
+    <value>Key Size:</value>
+  </data>
+  <data name="KeyManagerUIInvalidKey" xml:space="preserve">
+    <value>Invalid key</value>
+  </data>
+  <data name="KeyManagerUIInvalidKeyCharactersErrorMessage" xml:space="preserve">
+    <value>Key must be in hexadecimal form (for example, 49FFC7)</value>
+  </data>
+  <data name="KeyManagerUIInvalidKeyLengthErrorMessage" xml:space="preserve">
+    <value>Invalid key length</value>
+  </data>
+  <data name="KeyManagerUIKeyBoxEncrypted" xml:space="preserve">
+    <value>The key is hidden for security purposes.  If you would like a new key you must create a new cryptography instance.  If you must replace the key for this instance, delete this instance and create a new instance with the same name.</value>
+  </data>
+  <data name="KeyPropertyName" xml:space="preserve">
+    <value>Key</value>
+  </data>
+  <data name="KeyShouldNotBeEmpty" xml:space="preserve">
+    <value>Please enter a key.</value>
+  </data>
+  <data name="MissingPassword" xml:space="preserve">
+    <value>Key file is password protected and no password was provided.</value>
+  </data>
+  <data name="OpenExistingKeyFileFailureErrorMessage" xml:space="preserve">
+    <value>Unable to open Key because the key file, {0}, cannot be found. If your configuration has not been saved, save it now. If it has been saved and the key file still cannot be found, you can either put the correct key file in that location, or you can delete and recreate this node with a new key file. Exception message is: '{1}'.</value>
+  </data>
+  <data name="OpenExistingKeyFileFailureTitle" xml:space="preserve">
+    <value>Unable to open key file</value>
+  </data>
+  <data name="OpenExistingKeyFileTitle" xml:space="preserve">
+    <value>Open existing key file</value>
+  </data>
+  <data name="OverwriteExportFileCaption" xml:space="preserve">
+    <value>Export Key</value>
+  </data>
+  <data name="OverwriteExportFileMessage" xml:space="preserve">
+    <value>The file {0} is read-only.  Would you like to overwrite the file?</value>
+  </data>
+  <data name="ProtectedKeySettingsToString" xml:space="preserve">
+    <value>&lt;Hidden&gt;</value>
+  </data>
+  <data name="ProtectionScopeDescription" xml:space="preserve">
+    <value>The DataProtectionScope that should be used.</value>
+  </data>
+  <data name="SaltEnabledDescription" xml:space="preserve">
+    <value>Gets or sets salt should be used.</value>
+  </data>
+  <data name="SaveExistingKeyFileTitle" xml:space="preserve">
+    <value>Choose keyfile</value>
+  </data>
+  <data name="SupplyKeyMessage" xml:space="preserve">
+    <value>In order to use this algorithm, you must supply a key. You can either create a new key, or use an existing key.</value>
+  </data>
+  <data name="SymmetricAlgorithmKeyDescription" xml:space="preserve">
+    <value>The key information that should be used.</value>
+  </data>
+  <data name="SymmetricAlgorithmProviderNodeName" xml:space="preserve">
+    <value>Symmetric Algorithm Provider</value>
+  </data>
+  <data name="SymmetricAlgorithmTypeDescription" xml:space="preserve">
+    <value>The Type of algorithm that should be used.</value>
+  </data>
+  <data name="SymmetricCryptoProviderNodeName" xml:space="preserve">
+    <value>Symmetric Cryptography Provider</value>
+  </data>
+  <data name="SymmetricProviderCollectionCommandName" xml:space="preserve">
+    <value>Symmetric Providers</value>
+  </data>
+  <data name="SymmetricProviderCollectionNodeName" xml:space="preserve">
+    <value>Symmetric Providers</value>
+  </data>
+  <data name="TypeShouldDeriveFromHashAlgorithm" xml:space="preserve">
+    <value>Type should derive from System.Security.Cryptography.HashAlgorithm.</value>
+  </data>
+  <data name="TypeShouldDeriveFromSymmetricAlgorithm" xml:space="preserve">
+    <value>Type should derive from System.Security.Cryptography.SymmetricAlgorithm.</value>
+  </data>
+</root>

@@ -1,0 +1,67 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Referenced Enterprise Library Projects", "Referenced Enterprise Library Projects", "{431A20DD-7360-473B-A10E-BF124E58AC3C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Validation QuickStart", "Validation QuickStart", "{DFC319DF-5E86-4C0D-AB94-133E5260A967}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Validation Application Block", "Validation Application Block", "{51EA50E6-D78E-492D-B948-90CB0E231EB6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ValidationQuickStart", "ValidationQuickStart.csproj", "{66E54AB5-D610-437E-9F2F-54ACB52D1E9E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ValidationQuickStart.BusinessEntities", "..\BusinessEntities\ValidationQuickStart.BusinessEntities.csproj", "{A721C2DC-2B62-475D-9B6C-9B365A8DD8A2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ValidationQuickStart.CustomValidators", "..\CustomValidators\ValidationQuickStart.CustomValidators.csproj", "{022D24F8-24B4-4403-9B35-D9751E2CF22D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "..\..\..\..\Blocks\Common\Src\Common.csproj", "{A09297C8-2C40-470B-8856-D856676DDFFA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Validation", "..\..\..\..\Blocks\Validation\Src\Validation\Validation.csproj", "{E814A5DC-C15B-4BA4-AB7C-B7C9A34AC2FD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Validation.Integration.WinForms", "..\..\..\..\Blocks\Validation\Src\Validation.WinForms\Validation.Integration.WinForms.csproj", "{30E03786-66F1-4F4E-A5C9-3162851D21BD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{66E54AB5-D610-437E-9F2F-54ACB52D1E9E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{66E54AB5-D610-437E-9F2F-54ACB52D1E9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{66E54AB5-D610-437E-9F2F-54ACB52D1E9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{66E54AB5-D610-437E-9F2F-54ACB52D1E9E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A721C2DC-2B62-475D-9B6C-9B365A8DD8A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A721C2DC-2B62-475D-9B6C-9B365A8DD8A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A721C2DC-2B62-475D-9B6C-9B365A8DD8A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A721C2DC-2B62-475D-9B6C-9B365A8DD8A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{022D24F8-24B4-4403-9B35-D9751E2CF22D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{022D24F8-24B4-4403-9B35-D9751E2CF22D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{022D24F8-24B4-4403-9B35-D9751E2CF22D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{022D24F8-24B4-4403-9B35-D9751E2CF22D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A09297C8-2C40-470B-8856-D856676DDFFA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A09297C8-2C40-470B-8856-D856676DDFFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A09297C8-2C40-470B-8856-D856676DDFFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A09297C8-2C40-470B-8856-D856676DDFFA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E814A5DC-C15B-4BA4-AB7C-B7C9A34AC2FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E814A5DC-C15B-4BA4-AB7C-B7C9A34AC2FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E814A5DC-C15B-4BA4-AB7C-B7C9A34AC2FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E814A5DC-C15B-4BA4-AB7C-B7C9A34AC2FD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{30E03786-66F1-4F4E-A5C9-3162851D21BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{30E03786-66F1-4F4E-A5C9-3162851D21BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{30E03786-66F1-4F4E-A5C9-3162851D21BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{30E03786-66F1-4F4E-A5C9-3162851D21BD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A09297C8-2C40-470B-8856-D856676DDFFA} = {431A20DD-7360-473B-A10E-BF124E58AC3C}
+		{66E54AB5-D610-437E-9F2F-54ACB52D1E9E} = {DFC319DF-5E86-4C0D-AB94-133E5260A967}
+		{A721C2DC-2B62-475D-9B6C-9B365A8DD8A2} = {DFC319DF-5E86-4C0D-AB94-133E5260A967}
+		{022D24F8-24B4-4403-9B35-D9751E2CF22D} = {DFC319DF-5E86-4C0D-AB94-133E5260A967}
+		{E814A5DC-C15B-4BA4-AB7C-B7C9A34AC2FD} = {51EA50E6-D78E-492D-B948-90CB0E231EB6}
+		{30E03786-66F1-4F4E-A5C9-3162851D21BD} = {51EA50E6-D78E-492D-B948-90CB0E231EB6}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SelectedEnterpriseLibraryConfigurationSet = EntLib4Src
+	EndGlobalSection
+EndGlobal
