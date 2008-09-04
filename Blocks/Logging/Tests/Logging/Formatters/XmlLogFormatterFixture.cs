@@ -85,6 +85,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Formatters.Tests
             xmlDocument.LoadXml(xml);
             Assert.IsNotNull(xmlDocument.FirstChild);
         }
+
+        [TestMethod]
+        public void CanFormatLogEntryWithTextThatNeedsEscaping()
+        {
+            LogEntry logEntry = CommonUtil.CreateLogEntry();
+            logEntry.Message = "some <text> that needs escaping &";
+            string xml = xmlLogFormatter.Format(logEntry);
+            Assert.IsFalse(string.IsNullOrEmpty(xml));
+            XmlDocument xmlDocument = new XmlDocument();
+            xmlDocument.LoadXml(xml);
+            Assert.IsNotNull(xmlDocument.FirstChild);
+            Assert.AreEqual("Message", xmlDocument.FirstChild.ChildNodes[0].Name);
+            Assert.AreEqual(logEntry.Message, xmlDocument.FirstChild.ChildNodes[0].InnerText);
+        }
     }
 
     // Both must be public classes because they will be exported to WMI 

@@ -10,213 +10,233 @@
 //===============================================================================
 
 using System;
-using System.ComponentModel;
-using System.Windows.Forms;
 using System.Drawing;
-using System.IO.IsolatedStorage;
 using System.IO;
+using System.IO.IsolatedStorage;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Security;
+using System.Windows.Forms;
+using System.Diagnostics.CodeAnalysis;
 
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Console
 {
-	class FormSerializer
-	{
-		private Form form;
-		private string storageArea;
-		private IsolatedStorageFile store;
+    class FormSerializer
+    {
+        private Form form;
+        private string storageArea;
+        private IsolatedStorageFile store;
 
-		private Rectangle dimensions;
-		private FormWindowState windowState;
+        private Rectangle dimensions;
+        private FormWindowState windowState;
 
-		public FormSerializer(Form form)			
-		{
-			this.form = form;
-			this.form.FormClosed += new FormClosedEventHandler(OnClosed);
-			this.form.Resize += new EventHandler(OnResize);
-			this.form.Move += new EventHandler(OnMove);
-			this.form.Load += new EventHandler(OnLoad);
-			this.dimensions = Rectangle.Empty;			
-			InitializeStore();
-		}
+        public FormSerializer(Form form)
+        {
+            this.form = form;
+            if (InitializeStore())
+            {
+                this.form.FormClosed += new FormClosedEventHandler(OnClosed);
+                this.form.Resize += new EventHandler(OnResize);
+                this.form.Move += new EventHandler(OnMove);
+                this.form.Load += new EventHandler(OnLoad);
+                this.dimensions = Rectangle.Empty;
+            }
+        }
 
-		private void InitializeStore()
-		{
-			store = IsolatedStorageFile.GetUserStoreForDomain();
-			store.CreateDirectory("Enterprise Library");
-			storageArea = Path.Combine("Enterprise Library", this.form.GetType().Name);
-		}
+        [SuppressMessage(
+            "Microsoft.Design", 
+            "CA1031", 
+            Justification = "Form serialization is a side feature that can be safely ignored should an error occur.")]
+        private bool InitializeStore()
+        {
+            try
+            {
+                store = IsolatedStorageFile.GetUserStoreForDomain();
+                store.CreateDirectory("Enterprise Library");
+                storageArea = Path.Combine("Enterprise Library", this.form.GetType().Name);
+                return true;
+            }
+            catch (Exception)
+            {
+                if (store != null)
+                {
+                    store.Dispose();
+                }
+            }
 
-		private void OnLoad(object sender, System.EventArgs e)
-		{
-			string[] files = store.GetFileNames(storageArea);
-			if (files.Length == 0) return;
+            return false;
+        }
 
-			IsolatedStorageFormState item = new IsolatedStorageFormState(store, storageArea);
-			FormState state = item.Load();
-			if (null == state) return;
+        private void OnLoad(object sender, System.EventArgs e)
+        {
+            string[] files = store.GetFileNames(storageArea);
+            if (files.Length == 0) return;
 
-			form.Bounds = state.Dimension;
-			form.WindowState = state.WindowState;
-		}
+            IsolatedStorageFormState item = new IsolatedStorageFormState(store, storageArea);
+            FormState state = item.Load();
+            if (null == state) return;
 
-		private void OnMove(object sender, System.EventArgs e)
-		{			
-			if (form.WindowState == FormWindowState.Normal)
-				dimensions.Location = form.Location;
-			
-			windowState = form.WindowState;
-		}
+            form.Bounds = state.Dimension;
+            form.WindowState = state.WindowState;
+        }
 
-		private void OnResize(object sender, System.EventArgs e)
-		{
-			if (form.WindowState == FormWindowState.Normal)
-				dimensions.Size = form.Size;
-		}
+        private void OnMove(object sender, System.EventArgs e)
+        {
+            if (form.WindowState == FormWindowState.Normal)
+                dimensions.Location = form.Location;
 
-		private void OnClosed(object sender, EventArgs e)
-		{
-			if (windowState == FormWindowState.Minimized)
-				windowState = FormWindowState.Normal;
+            windowState = form.WindowState;
+        }
 
-			IsolatedStorageFormState item = new IsolatedStorageFormState(store, storageArea);
-			item.Store(new FormState(dimensions, windowState));
-			store.Dispose();
-		}		
-	}
+        private void OnResize(object sender, System.EventArgs e)
+        {
+            if (form.WindowState == FormWindowState.Normal)
+                dimensions.Size = form.Size;
+        }
 
-	static class SerializationUtility
-	{
-		public static byte[] ToBytes(object value)
-		{
-			if (value == null)
-			{
-				return null;
-			}
+        private void OnClosed(object sender, EventArgs e)
+        {
+            if (windowState == FormWindowState.Minimized)
+                windowState = FormWindowState.Normal;
 
-			byte[] inMemoryBytes;
-			using (MemoryStream inMemoryData = new MemoryStream())
-			{
-				new BinaryFormatter().Serialize(inMemoryData, value);
-				inMemoryBytes = inMemoryData.ToArray();
-			}
+            IsolatedStorageFormState item = new IsolatedStorageFormState(store, storageArea);
+            item.Store(new FormState(dimensions, windowState));
+            store.Dispose();
+        }
+    }
 
-			return inMemoryBytes;
-		}
+    static class SerializationUtility
+    {
+        public static byte[] ToBytes(object value)
+        {
+            if (value == null)
+            {
+                return null;
+            }
 
-		public static object ToObject(byte[] serializedObject)
-		{
-			if (serializedObject == null)
-			{
-				return null;
-			}
+            byte[] inMemoryBytes;
+            using (MemoryStream inMemoryData = new MemoryStream())
+            {
+                new BinaryFormatter().Serialize(inMemoryData, value);
+                inMemoryBytes = inMemoryData.ToArray();
+            }
 
-			using (MemoryStream dataInMemory = new MemoryStream(serializedObject))
-			{
-				return new BinaryFormatter().Deserialize(dataInMemory);
-			}
-		}
-	}
+            return inMemoryBytes;
+        }
 
-	class IsolatedStorageFormStateField
-	{
-		private string fieldName;
-		private string fileSystemLocation;
-		private IsolatedStorageFile storage;
+        public static object ToObject(byte[] serializedObject)
+        {
+            if (serializedObject == null)
+            {
+                return null;
+            }
 
-		public IsolatedStorageFormStateField(IsolatedStorageFile storage, string fieldName,
-											 string fileSystemLocation)
-		{
-			this.fieldName = fieldName;
-			this.fileSystemLocation = fileSystemLocation;
-			this.storage = storage;
-		}
+            using (MemoryStream dataInMemory = new MemoryStream(serializedObject))
+            {
+                return new BinaryFormatter().Deserialize(dataInMemory);
+            }
+        }
+    }
 
-		public void Write(object itemToWrite)
-		{
-			using (IsolatedStorageFileStream fileStream =
-				new IsolatedStorageFileStream(fileSystemLocation, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None, storage))
-			{
-				WriteField(itemToWrite, fileStream);
-			}
-		}		
+    class IsolatedStorageFormStateField
+    {
+        private string fieldName;
+        private string fileSystemLocation;
+        private IsolatedStorageFile storage;
 
-		public object Read()
-		{
-			using (IsolatedStorageFileStream fileStream =
-				new IsolatedStorageFileStream(fileSystemLocation, FileMode.Open, FileAccess.Read, FileShare.None, storage))
-			{
-				return ReadField(fileStream);
-			}
-		}
+        public IsolatedStorageFormStateField(IsolatedStorageFile storage, string fieldName,
+                                             string fileSystemLocation)
+        {
+            this.fieldName = fieldName;
+            this.fileSystemLocation = fileSystemLocation;
+            this.storage = storage;
+        }
 
-		private void WriteField(object itemToWrite, IsolatedStorageFileStream fileStream)
-		{
-			byte[] serializedKey = SerializationUtility.ToBytes(itemToWrite);
+        public void Write(object itemToWrite)
+        {
+            using (IsolatedStorageFileStream fileStream =
+                new IsolatedStorageFileStream(fileSystemLocation, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None, storage))
+            {
+                WriteField(itemToWrite, fileStream);
+            }
+        }
 
-			if (serializedKey != null)
-			{
-				fileStream.Write(serializedKey, 0, serializedKey.Length);
-			}
-		}
+        public object Read()
+        {
+            using (IsolatedStorageFileStream fileStream =
+                new IsolatedStorageFileStream(fileSystemLocation, FileMode.Open, FileAccess.Read, FileShare.None, storage))
+            {
+                return ReadField(fileStream);
+            }
+        }
 
-		private object ReadField(IsolatedStorageFileStream fileStream)
-		{
-			if (fileStream.Length == 0)
-			{
-				return null;
-			}
+        private void WriteField(object itemToWrite, IsolatedStorageFileStream fileStream)
+        {
+            byte[] serializedKey = SerializationUtility.ToBytes(itemToWrite);
 
-			byte[] fieldBytes = new byte[fileStream.Length];
-			fileStream.Read(fieldBytes, 0, fieldBytes.Length);
-			object fieldValue = SerializationUtility.ToObject(fieldBytes);
-			return fieldValue;
-		}
-	}
+            if (serializedKey != null)
+            {
+                fileStream.Write(serializedKey, 0, serializedKey.Length);
+            }
+        }
 
-	[Serializable]
-	class FormState
-	{
-		private readonly Rectangle dimension;
-		private readonly FormWindowState windowState;
+        private object ReadField(IsolatedStorageFileStream fileStream)
+        {
+            if (fileStream.Length == 0)
+            {
+                return null;
+            }
 
-		public FormState(Rectangle dimension, FormWindowState windowState)
-		{
-			this.dimension = dimension;
-			this.windowState = windowState;
-		}
+            byte[] fieldBytes = new byte[fileStream.Length];
+            fileStream.Read(fieldBytes, 0, fieldBytes.Length);
+            object fieldValue = SerializationUtility.ToObject(fieldBytes);
+            return fieldValue;
+        }
+    }
 
-		public Rectangle Dimension
-		{
-			get { return dimension; }
-		}
+    [Serializable]
+    class FormState
+    {
+        private readonly Rectangle dimension;
+        private readonly FormWindowState windowState;
 
-		public FormWindowState WindowState
-		{
-			get { return windowState; }
-		}
-	}
+        public FormState(Rectangle dimension, FormWindowState windowState)
+        {
+            this.dimension = dimension;
+            this.windowState = windowState;
+        }
 
-	class IsolatedStorageFormState
-	{
-		private IsolatedStorageFormStateField formStateField;		
+        public Rectangle Dimension
+        {
+            get { return dimension; }
+        }
 
-		public IsolatedStorageFormState(IsolatedStorageFile storage, string storageArea)
-		{
-			formStateField = new IsolatedStorageFormStateField(storage, "FormState", storageArea);			
-		}
+        public FormWindowState WindowState
+        {
+            get { return windowState; }
+        }
+    }
 
-		public void Store(FormState state)
-		{
-			formStateField.Write(state);			
-		}
+    class IsolatedStorageFormState
+    {
+        private IsolatedStorageFormStateField formStateField;
 
-		public FormState Load()
-		{
-			FormState formState = formStateField.Read() as FormState;
-			if (null == formState) return null;
+        public IsolatedStorageFormState(IsolatedStorageFile storage, string storageArea)
+        {
+            formStateField = new IsolatedStorageFormStateField(storage, "FormState", storageArea);
+        }
 
-			return formState;
-		}
-	}
+        public void Store(FormState state)
+        {
+            formStateField.Write(state);
+        }
+
+        public FormState Load()
+        {
+            FormState formState = formStateField.Read() as FormState;
+            if (null == formState) return null;
+
+            return formState;
+        }
+    }
 }

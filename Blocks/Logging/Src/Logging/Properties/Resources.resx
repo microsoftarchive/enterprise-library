@@ -499,4 +499,10 @@ Message:
   <data name="TotalTraceOperationsStartedHelpResource" xml:space="preserve">
     <value>Total Trace Operations Started is the total number of tracing operations started.</value>
   </data>
+  <data name="ExceptionCannotCheckImpersonatedIdentity" xml:space="preserve">
+    <value>Cannot check for impersonation; assuming not impersonating.</value>
+  </data>
+  <data name="ExceptionCannotRevertImpersonatedIdentity" xml:space="preserve">
+    <value>Cannot revert impersonation.</value>
+  </data>
 </root>

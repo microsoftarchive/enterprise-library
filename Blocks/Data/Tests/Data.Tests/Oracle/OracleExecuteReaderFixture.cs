@@ -12,6 +12,7 @@
 using System;
 using System.Data;
 using System.Data.Common;
+using System.Data.OracleClient;
 using Microsoft.Practices.EnterpriseLibrary.Data.Tests;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -122,6 +123,28 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Oracle.Tests
         public void EmptyQueryStringTest()
         {
             baseFixture.EmptyQueryStringTest();
+        }
+
+        [TestMethod]
+        public void CanGetTheInnerDataReader()
+        {
+            DbCommand queryCommand = db.GetSqlStringCommand(queryString);
+            IDataReader reader = db.ExecuteReader(queryCommand);
+            string accumulator = "";
+
+            int descriptionIndex = reader.GetOrdinal("RegionDescription");
+            OracleDataReader innerReader = ((OracleDataReaderWrapper)reader).InnerReader;
+            Assert.IsNotNull(innerReader);
+
+            while (reader.Read())
+            {
+                accumulator += innerReader.GetOracleString(descriptionIndex).Value.Trim();
+            }
+
+            reader.Close();
+
+            Assert.AreEqual("EasternWesternNorthernSouthern", accumulator);
+            Assert.AreEqual(ConnectionState.Closed, queryCommand.Connection.State);
         }
     }
 }

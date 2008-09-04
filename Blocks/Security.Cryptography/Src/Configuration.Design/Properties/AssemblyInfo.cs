@@ -25,7 +25,7 @@ using System.Security;
 
 [assembly: AssemblyTitle("Enterprise Library Cryptography Application Block Design")]
 [assembly: AssemblyDescription("Enterprise Library Cryptography Application Block Design")]
-[assembly: AssemblyVersion("4.0.0.815")]
+[assembly: AssemblyVersion("4.0.0.829")]
 
 [assembly: AllowPartiallyTrustedCallers]
 [assembly: SecurityTransparent]

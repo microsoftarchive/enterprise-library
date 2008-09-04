@@ -14,5 +14,5 @@ using System.Security.Permissions;
 
 [assembly: AssemblyTitle("Enterprise Library Exception Handling WCF Provider Design Tests")]
 [assembly: AssemblyDescription("Enterprise Library Exception Handling WCF Provider Design Tests")]
-[assembly: AssemblyVersion("4.0.0.815")]
+[assembly: AssemblyVersion("4.0.0.829")]
 

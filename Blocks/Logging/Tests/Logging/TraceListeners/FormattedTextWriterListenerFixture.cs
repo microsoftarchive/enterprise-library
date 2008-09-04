@@ -94,5 +94,32 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners.Tests
                 Assert.IsTrue(-1 != writtenData.IndexOf(testEntryToString));
             }
         }
+
+        [TestMethod]
+        public void FormattedListenerWithNameAndFileNameWillUseFormatterIfExists()
+        {
+            string fileName = Path.GetTempFileName();
+
+            try
+            {
+                using (FormattedTextWriterTraceListener listener
+                    = new FormattedTextWriterTraceListener(fileName, "name", new TextFormatter("DUMMY{newline}DUMMY")))
+                {
+                    TraceEventCache eventCache = new TraceEventCache();
+                    listener.TraceData(
+                        eventCache,
+                        "cat1",
+                        TraceEventType.Error,
+                        0,
+                        new LogEntry("message", "cat1", 0, 0, TraceEventType.Error, "title", null));
+                }
+
+                Assert.AreEqual("DUMMY" + Environment.NewLine + "DUMMY", File.ReadAllText(fileName));
+            }
+            finally
+            {
+                File.Delete(fileName);
+            }
+        }
     }
 }

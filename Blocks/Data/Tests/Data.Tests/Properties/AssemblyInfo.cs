@@ -15,5 +15,5 @@ using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle("Enterprise Library Data Access Application Block Tests")]
 [assembly: AssemblyDescription("Enterprise Library Data Access Application Block Tests")]
-[assembly: AssemblyVersion("4.0.0.815")]
+[assembly: AssemblyVersion("4.0.0.829")]
 

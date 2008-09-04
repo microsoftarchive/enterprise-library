@@ -19,5 +19,5 @@ using System.Security.Permissions;
 
 [assembly: AssemblyTitle("Enterprise Library Configuration Merge Tool")]
 [assembly: AssemblyDescription("Enterprise Library Configuration Merge Tool")]
-[assembly: AssemblyVersion("4.0.0.815")]
+[assembly: AssemblyVersion("4.0.0.829")]
 

@@ -144,6 +144,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Database.Tests
         public void ItemsInitializeTheirExpirationsProperlyWhenLoaded()
         {
             cache.Add("key", "value", CacheItemPriority.Normal, null, new MockExpiration());
+            initializationCount = 0;    // reset the initializations.
 
             CacheManager differentCacheManager = (CacheManager)new CacheManagerFactory(TestConfigurationSource.GenerateConfiguration()).Create("SecondInDatabasePersistence");
             differentCacheManager.Dispose();

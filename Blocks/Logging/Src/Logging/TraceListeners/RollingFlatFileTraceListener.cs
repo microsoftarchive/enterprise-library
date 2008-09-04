@@ -254,9 +254,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
                 string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(actualFileName);
                 string extension = Path.GetExtension(actualFileName);
 
-                string archiveFileNameWithTimestampWithoutExtension = fileNameWithoutExtension
-                                                                      + "."
-                                                                      + currentDateTime.ToString(owner.timeStampPattern, CultureInfo.InvariantCulture);
+                string archiveFileNameWithTimestampWithoutExtension
+                    = string.IsNullOrEmpty(owner.timeStampPattern)
+                        ? fileNameWithoutExtension
+                        : fileNameWithoutExtension
+                            + "."
+                            + currentDateTime.ToString(owner.timeStampPattern, CultureInfo.InvariantCulture);
 
                 if (owner.rollFileExistsBehavior == RollFileExistsBehavior.Overwrite)
                 {
@@ -325,12 +328,24 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
             {
                 string actualFileName = ((FileStream)((StreamWriter)owner.Writer).BaseStream).Name;
 
-                // calculate archive name
-                string archiveFileName = ComputeArchiveFileName(actualFileName, rollDateTime);
-                // close file
-                owner.Writer.Close();
-                // move file
-                SafeMove(actualFileName, archiveFileName, rollDateTime);
+                if (this.owner.rollFileExistsBehavior == RollFileExistsBehavior.Overwrite
+                    && string.IsNullOrEmpty(this.owner.timeStampPattern))
+                {
+                    // no roll will be actually performed: no timestamp pattern is available, and 
+                    // the roll behavior is overwrite, so the original file will be truncated
+                    owner.Writer.Close();
+                    File.WriteAllText(actualFileName, string.Empty);
+                }
+                else
+                {
+                    // calculate archive name
+                    string archiveFileName = ComputeArchiveFileName(actualFileName, rollDateTime);
+                    // close file
+                    owner.Writer.Close();
+                    // move file
+                    SafeMove(actualFileName, archiveFileName, rollDateTime);
+                }
+
                 // update writer - let TWTL open the file as needed to keep consistency
                 owner.Writer = null;
                 managedWriter = null;
@@ -385,7 +400,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
                     {
                         File.Move(actualFileName, archiveFileName);
                     }
-                    catch (IOException) {}
+                    catch (IOException) { }
                 }
             }
 

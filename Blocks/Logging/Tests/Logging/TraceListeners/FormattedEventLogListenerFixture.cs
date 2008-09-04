@@ -160,5 +160,28 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners.Tests
                 Assert.AreEqual(CommonUtil.MsgBody, customLog.Entries[customLog.Entries.Count - 1].Message);
             }
         }
+
+        [TestMethod]
+        public void WillNotWriteToTheEventLogIfRequestIsFilteredOut()
+        {
+            FormattedEventLogTraceListener listener =
+                new FormattedEventLogTraceListener(CommonUtil.EventLogSourceName,
+                                                   CommonUtil.EventLogNameCustom,
+                                                   FormattedEventLogTraceListener.DefaultMachineName,
+                                                   new TextFormatter("{message}"));
+            listener.Filter = new EventTypeFilter(SourceLevels.Critical);
+            LogSource source = new LogSource("transient", SourceLevels.All);
+            source.Listeners.Add(listener);
+
+            LogEntry entry = CommonUtil.GetDefaultLogEntry();
+            entry.Severity = TraceEventType.Error;
+
+            CommonUtil.ResetEventLogCounterCustom();
+            source.TraceData(entry.Severity, entry.EventId, entry);
+            using (EventLog customLog = CommonUtil.GetCustomEventLog())
+            {
+                Assert.AreEqual(0, CommonUtil.EventLogEntryCountCustom());
+            }
+        }
     }
 }

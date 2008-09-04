@@ -424,6 +424,58 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners
         }
 
         [TestMethod]
+        public void WillRollExistingFileIfOverSizeThresholdAndNoPatternIsSpecifiedForIncrementBehavior()
+        {
+            string existingPayload = new string('c', 5000);
+            DateTime currentDateTime = new DateTime(2007, 1, 1);
+            File.WriteAllText(fileName, existingPayload);
+            File.SetCreationTime(fileName, currentDateTime);
+
+            using (RollingFlatFileTraceListener traceListener
+                = new RollingFlatFileTraceListener(fileName, "header", "footer", null,
+                                                   1, "", RollFileExistsBehavior.Increment, RollInterval.None))
+            {
+                traceListener.RollingHelper.DateTimeProvider = dateTimeProvider;
+                dateTimeProvider.currentDateTime = currentDateTime;
+
+                traceListener.TraceData(new TraceEventCache(),
+                                        "source",
+                                        TraceEventType.Error,
+                                        0,
+                                        "logged message");
+            }
+
+            Assert.AreEqual(existingPayload, File.ReadAllText(fileNameWithoutExtension + ".1" + extension));
+            Assert.IsTrue(File.ReadAllText(fileName).Contains("logged message"));
+        }
+
+        [TestMethod]
+        public void WillTruncateExistingFileIfOverSizeThresholdAndNoPatternIsSpecifiedForOverwriteBehavior()
+        {
+            string existingPayload = new string('c', 5000);
+            DateTime currentDateTime = new DateTime(2007, 1, 1);
+            File.WriteAllText(fileName, existingPayload);
+            File.SetCreationTime(fileName, currentDateTime);
+
+            using (RollingFlatFileTraceListener traceListener
+                = new RollingFlatFileTraceListener(fileName, "header", "footer", null,
+                                                   1, "", RollFileExistsBehavior.Overwrite, RollInterval.None))
+            {
+                traceListener.RollingHelper.DateTimeProvider = dateTimeProvider;
+                dateTimeProvider.currentDateTime = currentDateTime;
+
+                traceListener.TraceData(new TraceEventCache(),
+                                        "source",
+                                        TraceEventType.Error,
+                                        0,
+                                        "logged message");
+            }
+
+            Assert.IsFalse(File.ReadAllText(fileName).Contains(existingPayload));
+            Assert.IsTrue(File.ReadAllText(fileName).Contains("logged message"));
+        }
+
+        [TestMethod]
         public void WillRollExistingFileIfOverDateThreshold()
         {
             string existingPayload = new string('c', 10);

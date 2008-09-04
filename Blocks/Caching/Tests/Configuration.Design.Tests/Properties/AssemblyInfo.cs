@@ -17,7 +17,7 @@ using Microsoft.Practices.EnterpriseLibrary.Caching.Configuration.Design;
 
 [assembly: AssemblyTitle("Enterprise Library Caching Data Provider Design Tests")]
 [assembly: AssemblyDescription("Enterprise Library Caching Data Provider Design Tests")]
-[assembly: AssemblyVersion("4.0.0.815")]
+[assembly: AssemblyVersion("4.0.0.829")]
 
 [assembly: ConfigurationDesignManager(typeof(MockCacheManagerDataConfigurationDesignManager), typeof(CachingConfigurationDesignManager))]
 

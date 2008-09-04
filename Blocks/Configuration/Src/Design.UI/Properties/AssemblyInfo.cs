@@ -21,4 +21,4 @@ using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle("Enterprise Library Configuration Application Block Design UI")]
 [assembly: AssemblyDescription("Enterprise Library Configuration Application Block Design UI")]
-[assembly: AssemblyVersion("4.0.0.815")]
+[assembly: AssemblyVersion("4.0.0.829")]

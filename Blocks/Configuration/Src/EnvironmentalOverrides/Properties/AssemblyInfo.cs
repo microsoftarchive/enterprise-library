@@ -21,7 +21,7 @@ using Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides
 [assembly : ComVisible(false)]
 [assembly : AssemblyTitle("Enterprise Library Configuration Application Block Environmental Overrides Extension")]
 [assembly : AssemblyDescription("Enterprise Library Configuration Application Block Environmental Overrides Extension")]
-[assembly : AssemblyVersion("4.0.0.815")]
+[assembly : AssemblyVersion("4.0.0.829")]
 [assembly : ConfigurationDesignManager(typeof(EnvironmentalOverridesConfigurationDesignManager))]
 [assembly : AllowPartiallyTrustedCallers]
 [assembly : SecurityTransparent]

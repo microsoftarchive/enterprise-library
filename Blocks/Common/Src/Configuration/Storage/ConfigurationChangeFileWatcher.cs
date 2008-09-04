@@ -87,7 +87,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Storage
 		/// <returns>The name for the thread</returns>
 		protected override string BuildThreadName()
 		{
-			return "_ConfigurationFileWatherThread : " + configFilePath;
+			return "_ConfigurationFileWatcherThread : " + configFilePath;
 		}
 
 		/// <summary>

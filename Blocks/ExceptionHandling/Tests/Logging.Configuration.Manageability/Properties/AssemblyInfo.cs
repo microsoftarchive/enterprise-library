@@ -14,4 +14,4 @@ using System.Security.Permissions;
 
 [assembly: AssemblyTitle("Enterprise Library Exception Handling Logging Provider Configuration Manageability Tests")]
 [assembly: AssemblyDescription("Enterprise Library Exception Handling Logging Provider Configuration Manageability Tests")]
-[assembly: AssemblyVersion("4.0.0.815")]
+[assembly: AssemblyVersion("4.0.0.829")]

@@ -27,5 +27,5 @@ using System.Security;
 
 [assembly: AssemblyTitle("Enterprise Library Caching Application Block Design")]
 [assembly: AssemblyDescription("Enterprise Library Caching Application Block Design")]
-[assembly: AssemblyVersion("4.0.0.815")]
+[assembly: AssemblyVersion("4.0.0.829")]
 

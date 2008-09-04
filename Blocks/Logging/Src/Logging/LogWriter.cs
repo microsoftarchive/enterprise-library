@@ -16,6 +16,7 @@ using System.Collections.Specialized;
 using System.Configuration;
 using System.Diagnostics;
 using System.Security;
+using System.Security.Principal;
 using System.Threading;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
 using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation;
@@ -78,7 +79,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
                          IDictionary<string, LogSource> traceSources,
                          LogSource errorsTraceSource,
                          string defaultCategory)
-            : this(filters, traceSources, null, null, errorsTraceSource, defaultCategory, false, false) {}
+            : this(filters, traceSources, null, null, errorsTraceSource, defaultCategory, false, false) { }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LogWriter"/> class.
@@ -100,7 +101,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
             string defaultCategory,
             bool tracingEnabled,
             bool logWarningsWhenNoCategoriesMatch)
-            : this(CreateStructureHolder(filters, traceSources, allEventsTraceSource, notProcessedTraceSource, errorsTraceSource, defaultCategory, tracingEnabled, logWarningsWhenNoCategoriesMatch), null) {}
+            : this(CreateStructureHolder(filters, traceSources, allEventsTraceSource, notProcessedTraceSource, errorsTraceSource, defaultCategory, tracingEnabled, logWarningsWhenNoCategoriesMatch), null) { }
 
         internal LogWriter(LogWriterStructureHolder structureHolder,
                            ILogWriterStructureUpdater structureUpdater)
@@ -123,7 +124,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
                          ICollection<LogSource> traceSources,
                          LogSource errorsTraceSource,
                          string defaultCategory)
-            : this(filters, CreateTraceSourcesDictionary(traceSources), errorsTraceSource, defaultCategory) {}
+            : this(filters, CreateTraceSourcesDictionary(traceSources), errorsTraceSource, defaultCategory) { }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LogWriter"/> class.
@@ -151,7 +152,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
                    errorsTraceSource,
                    defaultCategory,
                    tracingEnabled,
-                   logWarningsWhenNoCategoriesMatch) {}
+                   logWarningsWhenNoCategoriesMatch) { }
 
         /// <summary>
         /// Gets the <see cref="LogSource"/> mappings available for the <see cref="LogWriter"/>.
@@ -404,22 +405,65 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
 
         void ProcessLog(LogEntry log)
         {
-            ContextItems items = new ContextItems();
-            items.ProcessContextItems(log);
-
-            IEnumerable<LogSource> matchingTraceSources = GetMatchingTraceSources(log);
-            TraceListenerFilter traceListenerFilter = new TraceListenerFilter();
-
-            foreach (LogSource traceSource in matchingTraceSources)
+            // revert any outstanding impersonation
+            using (WindowsImpersonationContext revertImpersonationContext = RevertExistingImpersonation())
             {
-                try
+                ContextItems items = new ContextItems();
+                items.ProcessContextItems(log);
+
+                IEnumerable<LogSource> matchingTraceSources = GetMatchingTraceSources(log);
+                TraceListenerFilter traceListenerFilter = new TraceListenerFilter();
+
+                foreach (LogSource traceSource in matchingTraceSources)
                 {
-                    traceSource.TraceData(log.Severity, log.EventId, log, traceListenerFilter);
+                    try
+                    {
+                        traceSource.TraceData(log.Severity, log.EventId, log, traceListenerFilter);
+                    }
+                    catch (Exception ex)
+                    {
+                        ReportExceptionDuringTracing(ex, log, traceSource);
+                    }
                 }
-                catch (Exception ex)
+            }
+        }
+
+        /// <devdoc>
+        /// Checks to determine whether impersonation is in place, and if it is then it reverts it returning
+        /// the impersonation context that must be used to undo the revert.
+        /// </devdoc>
+        private WindowsImpersonationContext RevertExistingImpersonation()
+        {
+            try
+            {
+                using (WindowsIdentity impersonatedIdentity = WindowsIdentity.GetCurrent(true))
                 {
-                    ReportExceptionDuringTracing(ex, log, traceSource);
+                    if (impersonatedIdentity == null)
+                    {
+                        return null;
+                    }
                 }
+            }
+            catch (SecurityException e)
+            {
+                instrumentationProvider.FireFailureLoggingErrorEvent(Resources.ExceptionCannotCheckImpersonatedIdentity, e);
+                return null;
+            }
+
+            try
+            {
+                return WindowsIdentity.Impersonate(IntPtr.Zero);    // to be undone by caller
+            }
+            catch (SecurityException e)
+            {
+                // this shouldn't happen, as GetCurrent() and Impersonate() demand the same CAS permissions.
+                instrumentationProvider.FireFailureLoggingErrorEvent(Resources.ExceptionCannotRevertImpersonatedIdentity, e);
+                return null;
+            }
+            catch (UnauthorizedAccessException e)
+            {
+                instrumentationProvider.FireFailureLoggingErrorEvent(Resources.ExceptionCannotRevertImpersonatedIdentity, e);
+                return null;
             }
         }
 

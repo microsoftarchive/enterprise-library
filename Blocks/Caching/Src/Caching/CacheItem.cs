@@ -11,7 +11,6 @@
 
 using System;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Expirations;
-using System.Collections.Generic;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching
 {
@@ -41,14 +40,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
         /// </summary>
         /// <param name="key">Key identifying this CacheItem</param>
         /// <param name="value">Value to be stored. May be null.</param>
-		/// <param name="scavengingPriority">Scavenging priority of CacheItem. See <see cref="CacheItemPriority" /> for values.</param>
-		/// <param name="refreshAction">Object supplied by caller that will be invoked upon expiration of the CacheItem. May be null.</param>
-		/// <param name="expirations">Param array of ICacheItemExpiration objects. May provide 0 or more of these.</param>
+        /// <param name="scavengingPriority">Scavenging priority of CacheItem. See <see cref="CacheItemPriority" /> for values.</param>
+        /// <param name="refreshAction">Object supplied by caller that will be invoked upon expiration of the CacheItem. May be null.</param>
+        /// <param name="expirations">Param array of ICacheItemExpiration objects. May provide 0 or more of these.</param>
         public CacheItem(string key, object value, CacheItemPriority scavengingPriority, ICacheItemRefreshAction refreshAction, params ICacheItemExpiration[] expirations)
         {
             Initialize(key, value, refreshAction, scavengingPriority, expirations);
 
             TouchedByUserAction(false);
+            InitializeExpirations();
         }
 
         /// <summary>
@@ -59,9 +59,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
         /// <param name="lastAccessedTime">Time this CacheItem last accessed by user.</param>
         /// <param name="key">Key provided  by the user for this cache item. May not be null.</param>
         /// <param name="value">Value to be stored. May be null.</param>
-		/// <param name="scavengingPriority">Scavenging priority of CacheItem. See <see cref="CacheItemPriority" /> for values.</param>
+        /// <param name="scavengingPriority">Scavenging priority of CacheItem. See <see cref="CacheItemPriority" /> for values.</param>
         /// <param name="refreshAction">Object supplied by caller that will be invoked upon expiration of the CacheItem. May be null.</param>
-		/// <param name="expirations">Param array of ICacheItemExpiration objects. May provide 0 or more of these.</param>
+        /// <param name="expirations">Param array of ICacheItemExpiration objects. May provide 0 or more of these.</param>
         public CacheItem(DateTime lastAccessedTime, string key, object value, CacheItemPriority scavengingPriority, ICacheItemRefreshAction refreshAction, params ICacheItemExpiration[] expirations)
         {
             Initialize(key, value, refreshAction, scavengingPriority, expirations);
@@ -75,7 +75,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
         /// class when adding a new item into the cache. By replacing the item's contents, rather than replacing the item
         /// itself, it allows us to keep a single reference in the cache, simplifying locking.
         /// </summary>
-		/// <param name="cacheItemData">Value to be stored. May be null.</param>
+        /// <param name="cacheItemData">Value to be stored. May be null.</param>
         /// <param name="cacheItemPriority">Scavenging priority of CacheItem. See <see cref="CacheItemPriority" /> for values.</param>
         /// <param name="cacheItemRefreshAction">Object supplied by caller that will be invoked upon expiration of the CacheItem. May be null.</param>
         /// <param name="cacheItemExpirations">Param array of ICacheItemExpiration objects. May provide 0 or more of these.</param>
@@ -91,20 +91,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
         public CacheItemPriority ScavengingPriority
         {
             get { return scavengingPriority; }
-        }        
+        }
 
         /// <summary>
         /// Returns the last accessed time.
         /// </summary>
-		/// <value>
-		/// Gets the last accessed time.
-		/// </value>
-		/// <remarks>
-		/// The set is present for testing purposes only. Should not be called by application code 
-		/// </remarks>
+        /// <value>
+        /// Gets the last accessed time.
+        /// </value>
+        /// <remarks>
+        /// The set is present for testing purposes only. Should not be called by application code 
+        /// </remarks>
         public DateTime LastAccessedTime
         {
-            get { return lastAccessedTime; }			
+            get { return lastAccessedTime; }
         }
 
         /// <summary>
@@ -148,16 +148,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
             get { return refreshAction; }
         }
 
-		/// <summary>
-		/// Returns array of <see cref="ICacheItemExpiration"/> objects for this instance.
-		/// </summary>
-		/// <returns>
-		/// An array of <see cref="ICacheItemExpiration"/> objects.
-		/// </returns>
-		public ICacheItemExpiration[] GetExpirations()
-		{
-			return (ICacheItemExpiration[])expirations.Clone();
-		}
+        /// <summary>
+        /// Returns array of <see cref="ICacheItemExpiration"/> objects for this instance.
+        /// </summary>
+        /// <returns>
+        /// An array of <see cref="ICacheItemExpiration"/> objects.
+        /// </returns>
+        public ICacheItemExpiration[] GetExpirations()
+        {
+            return (ICacheItemExpiration[])expirations.Clone();
+        }
 
         /// <summary>
         /// Evaluates all cacheItemExpirations associated with this cache item to determine if it 
@@ -206,17 +206,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
             willBeExpired = objectRemovedFromCache ? false : HasExpired();
         }
 
-		/// <summary>
-		/// Makes the cache item eligible for scavenging.
-		/// </summary>
+        /// <summary>
+        /// Makes the cache item eligible for scavenging.
+        /// </summary>
         public void MakeEligibleForScavenging()
         {
             eligibleForScavenging = true;
         }
 
-		/// <summary>
-		/// Makes the cache item not eligible for scavenging.
-		/// </summary>
+        /// <summary>
+        /// Makes the cache item not eligible for scavenging.
+        /// </summary>
         public void MakeNotEligibleForScavenging()
         {
             eligibleForScavenging = false;
@@ -238,7 +238,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
             scavengingPriority = cacheItemPriority;
             if (cacheItemExpirations == null)
             {
-                expirations = new ICacheItemExpiration[1] {new NeverExpired()};
+                expirations = new ICacheItemExpiration[1] { new NeverExpired() };
             }
             else
             {
@@ -250,7 +250,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
         /// Sets the last accessed time for the cache item.
         /// </summary>
         /// <param name="specificAccessedTime">The last accessed time.</param>
-		public void SetLastAccessedTime(DateTime specificAccessedTime)
+        public void SetLastAccessedTime(DateTime specificAccessedTime)
         {
             lastAccessedTime = specificAccessedTime;
         }

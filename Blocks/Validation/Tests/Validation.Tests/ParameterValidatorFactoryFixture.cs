@@ -86,6 +86,49 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
                     }));
         }
 
+        [TestMethod]
+        public void ShouldObserveTheIgnoreNullsAttribute()
+        {
+            Validator validatorWithIgnoreNulls
+                = ParameterValidatorFactory.CreateValidator(GetParameterInfo("MethodWithIgnoreNullAttribute", "id"));
+            Validator validatorWithoutIgnoreNulls
+                = ParameterValidatorFactory.CreateValidator(GetParameterInfo("MethodWithoutIgnoreNullAttribute", "id"));
+
+            Assert.IsTrue(validatorWithIgnoreNulls.Validate(null).IsValid);
+            Assert.IsFalse(validatorWithoutIgnoreNulls.Validate(null).IsValid);
+
+            Assert.IsTrue(validatorWithIgnoreNulls.Validate(new string('c', 30)).IsValid);
+            Assert.IsTrue(validatorWithoutIgnoreNulls.Validate(new string('c', 30)).IsValid);
+
+            Assert.IsFalse(validatorWithIgnoreNulls.Validate(new string('c', 60)).IsValid);
+            Assert.IsFalse(validatorWithoutIgnoreNulls.Validate(new string('c', 60)).IsValid);
+        }
+
+        [TestMethod]
+        public void ShouldObserveTheCompositionTypeAttribute()
+        {
+            Validator validatorWithAndComposition
+                = ParameterValidatorFactory.CreateValidator(GetParameterInfo("MethodWithAndComposition", "id"));
+            Validator validatorWithOrComposition
+                = ParameterValidatorFactory.CreateValidator(GetParameterInfo("MethodWithOrComposition", "id"));
+
+            Assert.IsFalse(validatorWithAndComposition.Validate(null).IsValid);
+            Assert.IsFalse(validatorWithOrComposition.Validate(null).IsValid);
+
+            Assert.IsTrue(validatorWithAndComposition.Validate(new string('c', 30)).IsValid);
+            Assert.IsTrue(validatorWithOrComposition.Validate(new string('c', 30)).IsValid);
+
+            Assert.IsFalse(validatorWithAndComposition.Validate(new string('&', 30)).IsValid);
+            Assert.IsTrue(validatorWithOrComposition.Validate(new string('&', 30)).IsValid);
+
+            Assert.IsFalse(validatorWithAndComposition.Validate(new string('c', 60)).IsValid);
+            Assert.IsTrue(validatorWithOrComposition.Validate(new string('c', 60)).IsValid);
+
+            Assert.IsFalse(validatorWithAndComposition.Validate(new string('&', 60)).IsValid);
+            Assert.IsFalse(validatorWithOrComposition.Validate(new string('&', 60)).IsValid);
+        }
+
+
         static ParameterInfo GetParameterInfo(string method,
                                               string paramName)
         {
@@ -115,6 +158,29 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
 
             int MethodWithOneValidator(
                 [NotNullValidator] string foo);
+
+            int MethodWithIgnoreNullAttribute(
+                [IgnoreNulls]
+                [StringLengthValidator(1, RangeBoundaryType.Inclusive, 50, RangeBoundaryType.Inclusive)] 
+                [RegexValidator(@"[A-Za-z_][A-Za-z0-9_]*")] 
+                string id);
+
+            int MethodWithoutIgnoreNullAttribute(
+                [StringLengthValidator(1, RangeBoundaryType.Inclusive, 50, RangeBoundaryType.Inclusive)] 
+                [RegexValidator(@"[A-Za-z_][A-Za-z0-9_]*")] 
+                string id);
+
+            int MethodWithAndComposition(
+                [ValidatorComposition(CompositionType.And)] 
+                [StringLengthValidator(1, RangeBoundaryType.Inclusive, 50, RangeBoundaryType.Inclusive)] 
+                [RegexValidator(@"[A-Za-z_][A-Za-z0-9_]*")] 
+                string id);
+
+            int MethodWithOrComposition(
+                [ValidatorComposition(CompositionType.Or)] 
+                [StringLengthValidator(1, RangeBoundaryType.Inclusive, 50, RangeBoundaryType.Inclusive)] 
+                [RegexValidator(@"[A-Za-z_][A-Za-z0-9_]*")] 
+                string id);
         }
     }
 }

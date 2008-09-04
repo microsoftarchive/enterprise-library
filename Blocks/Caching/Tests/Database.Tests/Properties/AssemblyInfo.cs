@@ -14,5 +14,5 @@ using System.Security.Permissions;
 
 [assembly: AssemblyTitle("Enterprise Library Caching Data Provider Tests")]
 [assembly: AssemblyDescription("Enterprise Library Caching Data Provider Tests")]
-[assembly: AssemblyVersion("4.0.0.815")]
+[assembly: AssemblyVersion("4.0.0.829")]
 
