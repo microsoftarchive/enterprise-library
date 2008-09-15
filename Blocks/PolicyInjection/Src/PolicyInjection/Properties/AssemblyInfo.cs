@@ -20,7 +20,7 @@ using System.Security;
 
 [assembly : AssemblyTitle("Enterprise Library Policy Injection Application Block")]
 [assembly: AssemblyDescription("Enterprise Library Policy Injection Application Block")]
-[assembly: AssemblyVersion("4.0.0.829")]
+[assembly: AssemblyVersion("4.0.0.912")]
 
 [assembly: AllowPartiallyTrustedCallers]
 [assembly: SecurityTransparent]

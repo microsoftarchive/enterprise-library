@@ -17,7 +17,6 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability.Adm;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability.Tests.Mocks;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageability.Properties;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageability.Tests
@@ -116,17 +115,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             section.DefaultCategory = "defaultCategory";
             section.TracingEnabled = true;
             section.LogWarningWhenNoCategoriesMatch = false;
+            section.RevertImpersonation = true;
 
             machineKey.AddBooleanValue(LoggingSettingsManageabilityProvider.PolicyValueName, true);
             machineKey.AddStringValue(LoggingSettingsManageabilityProvider.DefaultCategoryPropertyName, "machineOverridenCategory");
             machineKey.AddBooleanValue(LoggingSettingsManageabilityProvider.TracingEnabledPropertyName, false);
             machineKey.AddBooleanValue(LoggingSettingsManageabilityProvider.LogWarningOnNoMatchPropertyName, true);
+            machineKey.AddBooleanValue(LoggingSettingsManageabilityProvider.RevertImpersonationPropertyName, false);
 
             provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
 
             Assert.AreEqual("machineOverridenCategory", section.DefaultCategory);
             Assert.AreEqual(false, section.TracingEnabled);
             Assert.AreEqual(true, section.LogWarningWhenNoCategoriesMatch);
+            Assert.AreEqual(false, section.RevertImpersonation);
         }
 
         [TestMethod]
@@ -135,17 +137,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             section.DefaultCategory = "defaultCategory";
             section.TracingEnabled = false;
             section.LogWarningWhenNoCategoriesMatch = true;
+            section.RevertImpersonation = false;
 
             userKey.AddBooleanValue(LoggingSettingsManageabilityProvider.PolicyValueName, true);
             userKey.AddStringValue(LoggingSettingsManageabilityProvider.DefaultCategoryPropertyName, "userOverridenCategory");
             userKey.AddBooleanValue(LoggingSettingsManageabilityProvider.TracingEnabledPropertyName, true);
             userKey.AddBooleanValue(LoggingSettingsManageabilityProvider.LogWarningOnNoMatchPropertyName, false);
+            userKey.AddBooleanValue(LoggingSettingsManageabilityProvider.RevertImpersonationPropertyName, true);
 
             provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
 
             Assert.AreEqual("userOverridenCategory", section.DefaultCategory);
             Assert.AreEqual(true, section.TracingEnabled);
             Assert.AreEqual(false, section.LogWarningWhenNoCategoriesMatch);
+            Assert.AreEqual(true, section.RevertImpersonation);
         }
 
         [TestMethod]
@@ -969,6 +974,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             section.DefaultCategory = "source1";
             section.LogWarningWhenNoCategoriesMatch = false;
             section.TracingEnabled = true;
+            section.RevertImpersonation = false;
             TraceSourceData sourceData = new TraceSourceData("source1", SourceLevels.Critical);
             section.TraceSources.Add(sourceData);
             sourceData.TraceListeners.Add(new TraceListenerReferenceData("listener1"));
@@ -981,6 +987,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             Assert.AreEqual("source1", ((LoggingBlockSetting)wmiSettings[0]).DefaultCategory);
             Assert.AreEqual(false, ((LoggingBlockSetting)wmiSettings[0]).LogWarningWhenNoCategoriesMatch);
             Assert.AreEqual(true, ((LoggingBlockSetting)wmiSettings[0]).TracingEnabled);
+            Assert.AreEqual(false, ((LoggingBlockSetting)wmiSettings[0]).RevertImpersonation);
             Assert.AreSame(typeof(TraceSourceSetting), wmiSettings[1].GetType());
             Assert.AreEqual(SourceLevels.Critical.ToString(), ((TraceSourceSetting)wmiSettings[1]).DefaultLevel);
             Assert.AreEqual(2, ((TraceSourceSetting)wmiSettings[1]).TraceListeners.Length);
@@ -999,6 +1006,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             section.DefaultCategory = "source1";
             section.LogWarningWhenNoCategoriesMatch = false;
             section.TracingEnabled = true;
+            section.RevertImpersonation = false;
             TraceSourceData sourceData = new TraceSourceData("source1", SourceLevels.Critical);
             section.TraceSources.Add(sourceData);
             sourceData.TraceListeners.Add(new TraceListenerReferenceData("listener1"));
@@ -1008,6 +1016,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             machineKey.AddStringValue(LoggingSettingsManageabilityProvider.DefaultCategoryPropertyName, "overrideSource1");
             machineKey.AddBooleanValue(LoggingSettingsManageabilityProvider.LogWarningOnNoMatchPropertyName, true);
             machineKey.AddBooleanValue(LoggingSettingsManageabilityProvider.TracingEnabledPropertyName, false);
+            machineKey.AddBooleanValue(LoggingSettingsManageabilityProvider.RevertImpersonationPropertyName, true);
             MockRegistryKey machineTraceSourcesKey = new MockRegistryKey(false);
             machineKey.AddSubKey(LoggingSettingsManageabilityProvider.CategorySourcesKeyName, machineTraceSourcesKey);
             MockRegistryKey machineSource1Key = new MockRegistryKey(false);
@@ -1026,6 +1035,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             Assert.AreEqual("overrideSource1", ((LoggingBlockSetting)wmiSettings[0]).DefaultCategory);
             Assert.AreEqual(true, ((LoggingBlockSetting)wmiSettings[0]).LogWarningWhenNoCategoriesMatch);
             Assert.AreEqual(false, ((LoggingBlockSetting)wmiSettings[0]).TracingEnabled);
+            Assert.AreEqual(true, ((LoggingBlockSetting)wmiSettings[0]).RevertImpersonation);
             Assert.AreSame(typeof(TraceSourceSetting), wmiSettings[1].GetType());
             Assert.AreEqual(SourceLevels.Error.ToString(), ((TraceSourceSetting)wmiSettings[1]).DefaultLevel);
             Assert.AreEqual(3, ((TraceSourceSetting)wmiSettings[1]).TraceListeners.Length);
@@ -1070,6 +1080,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             Assert.IsTrue(sectionPartsEnumerator.MoveNext());
             Assert.AreSame(typeof(AdmCheckboxPart), sectionPartsEnumerator.Current.GetType());
             Assert.AreEqual(LoggingSettingsManageabilityProvider.TracingEnabledPropertyName,
+                            ((AdmCheckboxPart)sectionPartsEnumerator.Current).ValueName);
+            Assert.IsTrue(sectionPartsEnumerator.MoveNext());
+            Assert.AreSame(typeof(AdmCheckboxPart), sectionPartsEnumerator.Current.GetType());
+            Assert.AreEqual(LoggingSettingsManageabilityProvider.RevertImpersonationPropertyName,
                             ((AdmCheckboxPart)sectionPartsEnumerator.Current).ValueName);
             Assert.IsFalse(sectionPartsEnumerator.MoveNext());
             Assert.IsFalse(sectionPoliciesEnumerator.MoveNext());

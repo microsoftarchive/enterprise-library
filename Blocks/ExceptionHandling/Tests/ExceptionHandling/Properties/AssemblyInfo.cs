@@ -17,5 +17,5 @@ using System.Security.Permissions;
 
 [assembly: AssemblyTitle("Enterprise Library Exception Handling Application Block Tests")]
 [assembly: AssemblyDescription("Enterprise Library Exception Handling Application Block Tests")]
-[assembly: AssemblyVersion("4.0.0.829")]
+[assembly: AssemblyVersion("4.0.0.912")]
 

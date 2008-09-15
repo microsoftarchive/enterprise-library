@@ -47,10 +47,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Design
         /// </returns>
         public LoggingSettings Build()
         {
-            loggingSettings = new LoggingSettings(loggingSettingsNode.Name,
-                                                  loggingSettingsNode.TracingEnabled,
-                                                  loggingSettingsNode.DefaultCategory == null ? string.Empty : loggingSettingsNode.DefaultCategory.Name);
+            loggingSettings
+                = new LoggingSettings(
+                    loggingSettingsNode.Name,
+                    loggingSettingsNode.TracingEnabled,
+                    loggingSettingsNode.DefaultCategory == null ? string.Empty : loggingSettingsNode.DefaultCategory.Name);
             loggingSettings.LogWarningWhenNoCategoriesMatch = loggingSettingsNode.LogWarningWhenNoCategoriesMatch;
+
+            if (!loggingSettingsNode.RevertImpersonation) // don't set if false
+                loggingSettings.RevertImpersonation = loggingSettingsNode.RevertImpersonation;
             if (!loggingSettingsNode.RequirePermission) // don't set if false
                 loggingSettings.SectionInformation.RequirePermission = loggingSettingsNode.RequirePermission;
             BuilFormatters();
@@ -64,7 +69,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Design
 
         void BuildLogFilters()
         {
-            LogFilterCollectionNode logFilterCollectionNode = (LogFilterCollectionNode)hierarchy.FindNodeByType(loggingSettingsNode, typeof(LogFilterCollectionNode));
+            LogFilterCollectionNode logFilterCollectionNode
+                = (LogFilterCollectionNode)hierarchy.FindNodeByType(loggingSettingsNode, typeof(LogFilterCollectionNode));
             if (logFilterCollectionNode != null)
             {
                 foreach (LogFilterNode filterNode in logFilterCollectionNode.Nodes)
@@ -76,22 +82,26 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Design
 
         void BuildSpecialTraceSources()
         {
-            SpecialTraceSourcesNode specialSourcesNode = (SpecialTraceSourcesNode)hierarchy.FindNodeByType(loggingSettingsNode, typeof(SpecialTraceSourcesNode));
+            SpecialTraceSourcesNode specialSourcesNode
+                = (SpecialTraceSourcesNode)hierarchy.FindNodeByType(loggingSettingsNode, typeof(SpecialTraceSourcesNode));
             if (specialSourcesNode != null)
             {
-                ErrorsTraceSourceNode errorSourceNode = (ErrorsTraceSourceNode)hierarchy.FindNodeByType(specialSourcesNode, typeof(ErrorsTraceSourceNode));
+                ErrorsTraceSourceNode errorSourceNode
+                    = (ErrorsTraceSourceNode)hierarchy.FindNodeByType(specialSourcesNode, typeof(ErrorsTraceSourceNode));
                 if (errorSourceNode != null)
                 {
                     loggingSettings.SpecialTraceSources.ErrorsTraceSource = errorSourceNode.TraceSourceData;
                     BuildTraceListenerReferences(loggingSettings.SpecialTraceSources.ErrorsTraceSource, errorSourceNode);
                 }
-                AllTraceSourceNode allTraceSourceNodes = (AllTraceSourceNode)hierarchy.FindNodeByType(specialSourcesNode, typeof(AllTraceSourceNode));
+                AllTraceSourceNode allTraceSourceNodes
+                    = (AllTraceSourceNode)hierarchy.FindNodeByType(specialSourcesNode, typeof(AllTraceSourceNode));
                 if (allTraceSourceNodes != null)
                 {
                     loggingSettings.SpecialTraceSources.AllEventsTraceSource = allTraceSourceNodes.TraceSourceData;
                     BuildTraceListenerReferences(loggingSettings.SpecialTraceSources.AllEventsTraceSource, allTraceSourceNodes);
                 }
-                NotProcessedTraceSourceNode notProcessedSourceNode = (NotProcessedTraceSourceNode)hierarchy.FindNodeByType(specialSourcesNode, typeof(NotProcessedTraceSourceNode));
+                NotProcessedTraceSourceNode notProcessedSourceNode
+                    = (NotProcessedTraceSourceNode)hierarchy.FindNodeByType(specialSourcesNode, typeof(NotProcessedTraceSourceNode));
                 if (notProcessedSourceNode != null)
                 {
                     loggingSettings.SpecialTraceSources.NotProcessedTraceSource = notProcessedSourceNode.TraceSourceData;
@@ -111,14 +121,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Design
 
         void BuildTraceListeners()
         {
-            TraceListenerCollectionNode traceListenerCollectionNode = (TraceListenerCollectionNode)hierarchy.FindNodeByType(loggingSettingsNode, typeof(TraceListenerCollectionNode));
+            TraceListenerCollectionNode traceListenerCollectionNode
+                = (TraceListenerCollectionNode)hierarchy.FindNodeByType(loggingSettingsNode, typeof(TraceListenerCollectionNode));
             if (traceListenerCollectionNode != null)
             {
                 foreach (TraceListenerNode listenerNode in traceListenerCollectionNode.Nodes)
                 {
-					TraceListenerData data = listenerNode.TraceListenerData;
-					data.Filter = listenerNode.Filter;
-					data.TraceOutputOptions = listenerNode.TraceOutputOptions;
+                    TraceListenerData data = listenerNode.TraceListenerData;
+                    data.Filter = listenerNode.Filter;
+                    data.TraceOutputOptions = listenerNode.TraceOutputOptions;
                     loggingSettings.TraceListeners.Add(data);
                 }
             }
@@ -126,7 +137,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Design
 
         void BuildTraceSources()
         {
-            CategoryTraceSourceCollectionNode categoryTracesourceCollectioNode = (CategoryTraceSourceCollectionNode)hierarchy.FindNodeByType(loggingSettingsNode, typeof(CategoryTraceSourceCollectionNode));
+            CategoryTraceSourceCollectionNode categoryTracesourceCollectioNode
+                = (CategoryTraceSourceCollectionNode)hierarchy.FindNodeByType(loggingSettingsNode, typeof(CategoryTraceSourceCollectionNode));
             if (categoryTracesourceCollectioNode != null)
             {
                 foreach (CategoryTraceSourceNode traceSourceNode in categoryTracesourceCollectioNode.Nodes)
@@ -140,7 +152,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Design
 
         void BuilFormatters()
         {
-            FormatterCollectionNode formatterCollectionNode = (FormatterCollectionNode)hierarchy.FindNodeByType(loggingSettingsNode, typeof(FormatterCollectionNode));
+            FormatterCollectionNode formatterCollectionNode
+                = (FormatterCollectionNode)hierarchy.FindNodeByType(loggingSettingsNode, typeof(FormatterCollectionNode));
             if (formatterCollectionNode != null)
             {
                 foreach (FormatterNode formatterNode in formatterCollectionNode.Nodes)

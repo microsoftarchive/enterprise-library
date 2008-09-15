@@ -21,14 +21,28 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests
     {
         static string scavengedKeys = "";
         static Hashtable inMemoryCache;
+        private int inMemoryCacheRequests;
+        private EventWaitHandle inMemoryCacheRequestSemaphore;
         CachingInstrumentationProvider instrumentationProvider;
+
 
         [TestInitialize]
         public void TestInitialize()
         {
             scavengedKeys = "";
             inMemoryCache = new Hashtable();
+            inMemoryCacheRequests = 0;
+            inMemoryCacheRequestSemaphore = null;
             instrumentationProvider = new CachingInstrumentationProvider();
+        }
+
+        [TestCleanup]
+        public void TestCleanup()
+        {
+            if (inMemoryCacheRequestSemaphore != null)
+            {
+                inMemoryCacheRequestSemaphore.Close();
+            }
         }
 
         [TestMethod]
@@ -171,6 +185,58 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests
             Assert.AreEqual("key1", scavengedKeys);
         }
 
+        /// <summary>
+        /// This test depends on timing
+        /// </summary>
+        [TestMethod]
+        public void WillNotScheduleNewScavengeTaksIfOneIsAlreadyScheduled()
+        {
+            inMemoryCacheRequestSemaphore = new EventWaitHandle(false, EventResetMode.ManualReset);
+
+            CacheItem item1 = new CacheItem("key1", "value1", CacheItemPriority.Low, null);
+            CacheItem item2 = new CacheItem("key2", "value2", CacheItemPriority.Normal, null);
+            CacheItem item3 = new CacheItem("key3", "value3", CacheItemPriority.Normal, null);
+            CacheItem item4 = new CacheItem("key4", "value4", CacheItemPriority.Normal, null);
+            CacheItem item5 = new CacheItem("key5", "value5", CacheItemPriority.High, null);
+            CacheItem item6 = new CacheItem("key6", "value6", CacheItemPriority.High, null);
+            CacheItem item7 = new CacheItem("key7", "value7", CacheItemPriority.High, null);
+
+            AddCacheItem("key1", item1);
+            AddCacheItem("key2", item2);
+            AddCacheItem("key3", item3);
+
+            CacheCapacityScavengingPolicy scavengingPolicy = new CacheCapacityScavengingPolicy(3);
+            ScavengerTask scavenger = new ScavengerTask(2, scavengingPolicy, this, instrumentationProvider);
+            BackgroundScheduler scheduler = new BackgroundScheduler(null, scavenger, instrumentationProvider);
+            scheduler.Start();
+
+            Thread.Sleep(500);
+            AddCacheItem("key4", item4);
+            // this new scavenge request will be scheduled, it's the first one
+            scheduler.StartScavenging();
+            // the scavenge request scheduled above would be processed here and will be blocked by the event
+            Thread.Sleep(500);
+            AddCacheItem("key5", item5);
+            // this new scavenge request will be scheduled, because the previously scheduled one will have started
+            scheduler.StartScavenging();
+            Thread.Sleep(250);
+            AddCacheItem("key6", item6);
+            // this new scavenge request will be ignored
+            scheduler.StartScavenging();
+            Thread.Sleep(250);
+            AddCacheItem("key7", item7);
+            // this new scavenge request will be scheduled, because the previously is "full" (it handles 2 elements only)
+            scheduler.StartScavenging();
+            Thread.Sleep(250);
+            bool value = inMemoryCacheRequestSemaphore.Set();
+            Thread.Sleep(250);
+
+            scheduler.Stop();
+            Thread.Sleep(250);
+
+            Assert.AreEqual(3, inMemoryCacheRequests);
+        }
+
         [TestMethod]
         public void WillScavengeNoItemsIfNumberOfItemsToScavengeIsZero()
         {
@@ -197,7 +263,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests
 
         public Hashtable CurrentCacheState
         {
-            get { return inMemoryCache; }
+            get
+            {
+                if (inMemoryCacheRequestSemaphore != null)
+                {
+                    inMemoryCacheRequestSemaphore.WaitOne();
+                }
+                inMemoryCacheRequests++;
+                return inMemoryCache;
+            }
         }
 
         public void RemoveItemFromCache(string keyToRemove,

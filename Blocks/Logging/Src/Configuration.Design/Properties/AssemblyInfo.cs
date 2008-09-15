@@ -22,6 +22,6 @@ using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Design;
 [assembly : ComVisible(false)]
 [assembly : AssemblyTitle("Enterprise Library Logging Application Block Design")]
 [assembly : AssemblyDescription("Enterprise Library Logging Application Block Design")]
-[assembly : AssemblyVersion("4.0.0.829")]
+[assembly : AssemblyVersion("4.0.0.912")]
 [assembly : AllowPartiallyTrustedCallers]
 [assembly : SecurityTransparent]

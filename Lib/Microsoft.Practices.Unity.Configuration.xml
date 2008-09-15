@@ -252,9 +252,9 @@
             that are children of this node.
             </summary>
         </member>
-        <member name="T:Microsoft.Practices.Unity.Configuration.DependencyValueElement">
+        <member name="T:Microsoft.Practices.Unity.Configuration.ArrayValueElement">
             <summary>
-            
+            A configuration element that represents an array to be resolved.
             </summary>
         </member>
         <member name="T:Microsoft.Practices.Unity.Configuration.InjectionParameterValueElement">
@@ -281,6 +281,33 @@
         <member name="P:Microsoft.Practices.Unity.Configuration.InjectionParameterValueElement.ElementType">
             <summary>
             The concrete type of this element.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.Configuration.ArrayValueElement.CreateParameterValue(System.Type)">
+            <summary>
+            Return an instance of <see cref="T:Microsoft.Practices.Unity.InjectionParameterValue"/> based
+            on the contents of this element.
+            </summary>
+            <param name="targetType">Type of parent parameter. Ignored by this implementation.</param>
+            <returns>The created InjectionParameterValue, ready to pass to the container config API.</returns>
+            <seealso cref="T:Microsoft.Practices.Unity.ResolvedArrayParameter"/>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.Configuration.ArrayValueElement.OnDeserializeUnrecognizedElement(System.String,System.Xml.XmlReader)">
+            <summary>
+            Gets a value indicating whether an unknown element is encountered during deserialization.
+            </summary>
+            
+            <returns>
+            true when an unknown element is encountered while deserializing; otherwise, false.
+            </returns>
+            
+            <param name="reader">The <see cref="T:System.Xml.XmlReader"></see> being used for deserialization.</param>
+            <param name="elementName">The name of the unknown subelement.</param>
+            <exception cref="T:System.Configuration.ConfigurationErrorsException">The element identified by elementName is locked.- or -One or more of the element's attributes is locked.- or -elementName is unrecognized, or the element has an unrecognized attribute.- or -The element has a Boolean attribute with an invalid value.- or -An attempt was made to deserialize a property more than once.- or -An attempt was made to deserialize a property that is not a valid member of the element.- or -The element cannot contain a CDATA or text element.</exception>
+        </member>
+        <member name="T:Microsoft.Practices.Unity.Configuration.DependencyValueElement">
+            <summary>
+            
             </summary>
         </member>
         <member name="M:Microsoft.Practices.Unity.Configuration.DependencyValueElement.CreateParameterValue(System.Type)">
@@ -326,6 +353,14 @@
             <param name="elementName">The name of the unknown subelement.</param>
             <exception cref="T:System.Configuration.ConfigurationErrorsException">The element identified by elementName is locked.- or -One or more of the element's attributes is locked.- or -elementName is unrecognized, or the element has an unrecognized attribute.- or -The element has a Boolean attribute with an invalid value.- or -An attempt was made to deserialize a property more than once.- or -An attempt was made to deserialize a property that is not a valid member of the element.- or -The element cannot contain a CDATA or text element.</exception>
         </member>
+        <member name="M:Microsoft.Practices.Unity.Configuration.InjectionPropertyElement.DeserializeElement(System.Xml.XmlReader,System.Boolean)">
+            <summary>
+            Reads XML from the configuration file.
+            </summary>
+            <param name="reader">The <see cref="T:System.Xml.XmlReader"/> that reads from the configuration file.</param>
+            <param name="serializeCollectionKey"><see langword="true"/> to serialize only the collectionkey properties; 
+            otherwise, <see langword="false"/>.</param>
+        </member>
         <member name="P:Microsoft.Practices.Unity.Configuration.InjectionPropertyElement.ElementName">
             <summary>
             Name of this element - used when calculating the collection key.
@@ -336,10 +371,22 @@
             Type of this property.
             </summary>
         </member>
+        <member name="P:Microsoft.Practices.Unity.Configuration.InjectionPropertyElement.GenericParameterName">
+            <summary>
+            Generic parameter name of this property.
+            </summary>
+        </member>
         <member name="T:Microsoft.Practices.Unity.Configuration.MethodParameterElement">
             <summary>
             Configuration element for storing the values of method / constructor parameters.
             </summary>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.Configuration.MethodParameterElement.CreateInjectionParameterValue">
+            <summary>
+            Get the <see cref="T:Microsoft.Practices.Unity.InjectionParameterValue"/> object for this parameter
+            to feed to the container configuration API.
+            </summary>
+            <returns>The created <see cref="T:Microsoft.Practices.Unity.InjectionParameterValue"/> object.</returns>
         </member>
         <member name="M:Microsoft.Practices.Unity.Configuration.MethodParameterElement.OnDeserializeUnrecognizedElement(System.String,System.Xml.XmlReader)">
             <summary>
@@ -354,12 +401,13 @@
             <param name="elementName">The name of the unknown subelement.</param>
             <exception cref="T:System.Configuration.ConfigurationErrorsException">The element identified by elementName is locked.- or -One or more of the element's attributes is locked.- or -elementName is unrecognized, or the element has an unrecognized attribute.- or -The element has a Boolean attribute with an invalid value.- or -An attempt was made to deserialize a property more than once.- or -An attempt was made to deserialize a property that is not a valid member of the element.- or -The element cannot contain a CDATA or text element.</exception>
         </member>
-        <member name="M:Microsoft.Practices.Unity.Configuration.MethodParameterElement.CreateInjectionParameterValue">
+        <member name="M:Microsoft.Practices.Unity.Configuration.MethodParameterElement.DeserializeElement(System.Xml.XmlReader,System.Boolean)">
             <summary>
-            Get the <see cref="T:Microsoft.Practices.Unity.InjectionParameterValue"/> object for this parameter
-            to feed to the container configuration API.
+            Reads XML from the configuration file.
             </summary>
-            <returns>The created <see cref="T:Microsoft.Practices.Unity.InjectionParameterValue"/> object.</returns>
+            <param name="reader">The <see cref="T:System.Xml.XmlReader"/> that reads from the configuration file.</param>
+            <param name="serializeCollectionKey"><see langword="true"/> to serialize only the collectionkey properties; 
+            otherwise, <see langword="false"/>.</param>
         </member>
         <member name="P:Microsoft.Practices.Unity.Configuration.MethodParameterElement.Name">
             <summary>
@@ -371,6 +419,11 @@
         <member name="P:Microsoft.Practices.Unity.Configuration.MethodParameterElement.ParameterTypeName">
             <summary>
             Type of this parameter.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Unity.Configuration.MethodParameterElement.GenericParameterName">
+            <summary>
+            Generic parameter name of this parameter.
             </summary>
         </member>
         <member name="T:Microsoft.Practices.Unity.Configuration.MethodParameterElementCollection">
@@ -693,6 +746,21 @@
               Looks up a localized string similar to Can only convert to and from strings, not type {0}.
             </summary>
         </member>
+        <member name="P:Microsoft.Practices.Unity.Configuration.Properties.Resources.GenericParameterArrayNotSupported">
+            <summary>
+              Looks up a localized string similar to The value element named &lt;{1}&gt; is not available with generic arrays in the property or method parameter named &quot;{0}&quot;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Unity.Configuration.Properties.Resources.GenericParameterNotSupported">
+            <summary>
+              Looks up a localized string similar to The value element named &lt;{1}&gt; is not available with generic parameters in the property or method parameter named &quot;{0}&quot;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Unity.Configuration.Properties.Resources.InvalidConfiguration">
+            <summary>
+              Looks up a localized string similar to The configuration that leads to the current state is invalid and should have been checked during deserialization..
+            </summary>
+        </member>
         <member name="P:Microsoft.Practices.Unity.Configuration.Properties.Resources.MustGiveValueOrDependency">
             <summary>
               Looks up a localized string similar to The configuration file does not specify a &lt;value&gt; or &lt;dependency&gt; element for the parameter {0}. You must specify one of them but not both..
@@ -703,9 +771,29 @@
               Looks up a localized string similar to The configuration file specifies both a &lt;value&gt; and a &lt;dependency&gt;element for the parameter {0}. You must specify only one of these..
             </summary>
         </member>
+        <member name="P:Microsoft.Practices.Unity.Configuration.Properties.Resources.MustNotProvideATypeForDependencyIfBelongsToGeneric">
+            <summary>
+              Looks up a localized string similar to The configuration file includes a &lt;dependency&gt; element that specifies a type for the generic parameter &quot;{0}&quot;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Unity.Configuration.Properties.Resources.NeitherParameterTypeNorGenericParameterNameSpecified">
+            <summary>
+              Looks up a localized string similar to The configuration file must include a value for one of &quot;parameterType&quot; and &quot;genericParameterName&quot; for the parameter &quot;{0}&quot;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Unity.Configuration.Properties.Resources.OnlyOneOfParameterTypeAndGenericParameterNameAllowed">
+            <summary>
+              Looks up a localized string similar to The configuration file includes values for more than one of &quot;parameterType&quot; and &quot;genericParameterName&quot; for the parameter &quot;{0}&quot;. You must specify only one of these..
+            </summary>
+        </member>
         <member name="P:Microsoft.Practices.Unity.Configuration.Properties.Resources.OnlyOneValueElementAllowed">
             <summary>
-              Looks up a localized string similar to The configuration file includes more than one value element for the parameter {0}..
+              Looks up a localized string similar to The configuration file includes more than one value element for the parameter &quot;{0}&quot;..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Unity.Configuration.Properties.Resources.ParameterTypeIsNotArray">
+            <summary>
+              Looks up a localized string similar to The configuration file includes a parameter or property which is configured with an array value but has type {0} which is not an array type. ({1} line {2}).
             </summary>
         </member>
         <member name="T:Microsoft.Practices.Unity.Configuration.UnityConfigurationSection">

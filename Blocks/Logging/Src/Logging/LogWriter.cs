@@ -79,7 +79,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
                          IDictionary<string, LogSource> traceSources,
                          LogSource errorsTraceSource,
                          string defaultCategory)
-            : this(filters, traceSources, null, null, errorsTraceSource, defaultCategory, false, false) { }
+            : this(filters, traceSources, null, null, errorsTraceSource, defaultCategory, false, false)
+        { }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LogWriter"/> class.
@@ -101,7 +102,53 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
             string defaultCategory,
             bool tracingEnabled,
             bool logWarningsWhenNoCategoriesMatch)
-            : this(CreateStructureHolder(filters, traceSources, allEventsTraceSource, notProcessedTraceSource, errorsTraceSource, defaultCategory, tracingEnabled, logWarningsWhenNoCategoriesMatch), null) { }
+            : this(
+                filters,
+                traceSources,
+                allEventsTraceSource,
+                notProcessedTraceSource,
+                errorsTraceSource,
+                defaultCategory,
+                tracingEnabled,
+                logWarningsWhenNoCategoriesMatch,
+                true)
+        { }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LogWriter"/> class.
+        /// </summary>
+        /// <param name="filters">The collection of filters to use when processing an entry.</param>
+        /// <param name="traceSources">The trace sources to dispatch entries to.</param>
+        /// <param name="allEventsTraceSource">The special <see cref="LogSource"/> to which all log entries should be logged.</param>
+        /// <param name="notProcessedTraceSource">The special <see cref="LogSource"/> to which log entries with at least one non-matching category should be logged.</param>
+        /// <param name="errorsTraceSource">The special <see cref="LogSource"/> to which internal errors must be logged.</param>
+        /// <param name="defaultCategory">The default category to set when entry categories list of a log entry is empty.</param>
+        /// <param name="tracingEnabled">The tracing status.</param>
+        /// <param name="logWarningsWhenNoCategoriesMatch">true if warnings should be logged when a non-matching category is found.</param>
+        /// <param name="revertImpersonation">true if impersonation should be reverted while logging.</param>
+        public LogWriter(
+            ICollection<ILogFilter> filters,
+            IDictionary<string, LogSource> traceSources,
+            LogSource allEventsTraceSource,
+            LogSource notProcessedTraceSource,
+            LogSource errorsTraceSource,
+            string defaultCategory,
+            bool tracingEnabled,
+            bool logWarningsWhenNoCategoriesMatch,
+            bool revertImpersonation)
+            : this(
+                CreateStructureHolder(
+                    filters,
+                    traceSources,
+                    allEventsTraceSource,
+                    notProcessedTraceSource,
+                    errorsTraceSource,
+                    defaultCategory,
+                    tracingEnabled,
+                    logWarningsWhenNoCategoriesMatch,
+                    revertImpersonation),
+                null)
+        { }
 
         internal LogWriter(LogWriterStructureHolder structureHolder,
                            ILogWriterStructureUpdater structureUpdater)
@@ -204,17 +251,27 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
             return;
         }
 
-        static LogWriterStructureHolder CreateStructureHolder(ICollection<ILogFilter> filters,
-                                                              IDictionary<string, LogSource> traceSources,
-                                                              LogSource allEventsTraceSource,
-                                                              LogSource notProcessedTraceSource,
-                                                              LogSource errorsTraceSource,
-                                                              string defaultCategory,
-                                                              bool tracingEnabled,
-                                                              bool logWarningsWhenNoCategoriesMatch)
+        static LogWriterStructureHolder CreateStructureHolder(
+            ICollection<ILogFilter> filters,
+            IDictionary<string, LogSource> traceSources,
+            LogSource allEventsTraceSource,
+            LogSource notProcessedTraceSource,
+            LogSource errorsTraceSource,
+            string defaultCategory,
+            bool tracingEnabled,
+            bool logWarningsWhenNoCategoriesMatch,
+            bool revertImpersonation)
         {
-            return new LogWriterStructureHolder(filters, traceSources, allEventsTraceSource, notProcessedTraceSource,
-                                                errorsTraceSource, defaultCategory, tracingEnabled, logWarningsWhenNoCategoriesMatch);
+            return new LogWriterStructureHolder(
+                filters,
+                traceSources,
+                allEventsTraceSource,
+                notProcessedTraceSource,
+                errorsTraceSource,
+                defaultCategory,
+                tracingEnabled,
+                logWarningsWhenNoCategoriesMatch,
+                revertImpersonation);
         }
 
         static IDictionary<string, LogSource> CreateTraceSourcesDictionary(ICollection<LogSource> traceSources)
@@ -434,6 +491,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// </devdoc>
         private WindowsImpersonationContext RevertExistingImpersonation()
         {
+            // noop if reverting impersonation is disabled
+            if (!structureHolder.RevertImpersonation)
+            {
+                return null;
+            }
+
             try
             {
                 using (WindowsIdentity impersonatedIdentity = WindowsIdentity.GetCurrent(true))

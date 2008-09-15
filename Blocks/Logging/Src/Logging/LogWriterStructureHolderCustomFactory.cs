@@ -77,7 +77,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
 					errorsTraceSource,
 					loggingSettings.DefaultCategory,
 					loggingSettings.TracingEnabled,
-					loggingSettings.LogWarningWhenNoCategoriesMatch);
+					loggingSettings.LogWarningWhenNoCategoriesMatch,
+                    loggingSettings.RevertImpersonation);
 
 			return createdObject;
 		}

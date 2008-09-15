@@ -16,7 +16,7 @@ using System.Security;
 
 [assembly : AssemblyTitle("Enterprise Library Security Application Block")]
 [assembly : AssemblyDescription("Enterprise Library Security Application Block")]
-[assembly : AssemblyVersion("4.0.0.829")]
+[assembly : AssemblyVersion("4.0.0.912")]
 [assembly : Instrumented(@"root\EnterpriseLibrary")]
 [assembly : WmiConfiguration(@"root\EnterpriseLibrary", HostingModel = ManagementHostingModel.Decoupled, IdentifyLevel = false)]
 [assembly : AllowPartiallyTrustedCallers]

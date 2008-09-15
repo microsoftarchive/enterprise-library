@@ -18,4 +18,4 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 [assembly: AssemblyTitle("Enterprise Library Shared Library Configuration Manageability Design Tests")]
 [assembly: AssemblyDescription("Enterprise Library Shared Library Configuration Manageability Design Tests")]
-[assembly: AssemblyVersion("4.0.0.829")]
+[assembly: AssemblyVersion("4.0.0.912")]

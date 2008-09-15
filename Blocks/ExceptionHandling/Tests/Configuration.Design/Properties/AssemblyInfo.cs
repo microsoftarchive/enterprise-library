@@ -18,4 +18,4 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 [assembly: AssemblyTitle("Enterprise Library Exception Handling Application Block Design")]
 [assembly: AssemblyDescription("Enterprise Library Exception Handling Application Block Design")]
-[assembly: AssemblyVersion("4.0.0.829")]
+[assembly: AssemblyVersion("4.0.0.912")]

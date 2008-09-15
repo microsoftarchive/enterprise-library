@@ -12,6 +12,6 @@
 using System.Reflection;
 using System.Security;
 
-[assembly : AssemblyVersion("4.0.0.829")]
+[assembly : AssemblyVersion("4.0.0.912")]
 [assembly : AllowPartiallyTrustedCallers]
 [assembly : SecurityTransparent]

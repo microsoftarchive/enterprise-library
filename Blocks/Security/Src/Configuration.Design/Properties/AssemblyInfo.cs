@@ -22,6 +22,6 @@ using Microsoft.Practices.EnterpriseLibrary.Security.Configuration.Design;
 [assembly : ComVisible(false)]
 [assembly : AssemblyTitle("Enterprise Library Security Application Block Design")]
 [assembly : AssemblyDescription("Enterprise Library Security Application Block Design")]
-[assembly : AssemblyVersion("4.0.0.829")]
+[assembly : AssemblyVersion("4.0.0.912")]
 [assembly : AllowPartiallyTrustedCallers]
 [assembly : SecurityTransparent]

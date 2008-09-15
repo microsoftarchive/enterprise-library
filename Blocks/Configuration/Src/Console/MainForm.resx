@@ -553,7 +553,7 @@
     <value>treeView</value>
   </data>
   <data name="&gt;&gt;treeView.Type" xml:space="preserve">
-    <value>Microsoft.Practices.EnterpriseLibrary.Configuration.Design.UI.CustomTreeView, Microsoft.Practices.EnterpriseLibrary.Configuration.Design.UI, Version=4.0.0.829, Culture=neutral, PublicKeyToken=31bf3856ad364e35</value>
+    <value>Microsoft.Practices.EnterpriseLibrary.Configuration.Design.UI.CustomTreeView, Microsoft.Practices.EnterpriseLibrary.Configuration.Design.UI, Version=4.0.0.912, Culture=neutral, PublicKeyToken=31bf3856ad364e35</value>
   </data>
   <data name="&gt;&gt;treeView.Parent" xml:space="preserve">
     <value>treePanel</value>

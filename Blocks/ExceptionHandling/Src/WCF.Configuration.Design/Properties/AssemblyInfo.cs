@@ -23,6 +23,6 @@ using ConfigurationDesignManager=Microsoft.Practices.EnterpriseLibrary.Exception
 [assembly : ComVisible(false)]
 [assembly : AssemblyTitle("Enterprise Library Exception Handling WCF Provider Design")]
 [assembly : AssemblyDescription("Enterprise Library Exception Handling WCF Provider Design")]
-[assembly : AssemblyVersion("4.0.0.829")]
+[assembly : AssemblyVersion("4.0.0.912")]
 [assembly : AllowPartiallyTrustedCallers]
 [assembly : SecurityTransparent]

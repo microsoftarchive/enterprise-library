@@ -20,7 +20,7 @@ using System.Security.Permissions;
 [assembly : ReliabilityContract(Consistency.WillNotCorruptState, Cer.None)]
 [assembly : AssemblyTitle("Enterprise Library Shared Library")]
 [assembly : AssemblyDescription("Enterprise Library Shared Library")]
-[assembly : AssemblyVersion("4.0.0.829")]
+[assembly : AssemblyVersion("4.0.0.912")]
 [assembly : Instrumented(@"root\EnterpriseLibrary")]
 [assembly : WmiConfiguration(@"root\EnterpriseLibrary", HostingModel = ManagementHostingModel.Decoupled, IdentifyLevel = false)]
 [assembly : ReflectionPermission(SecurityAction.RequestMinimum)]

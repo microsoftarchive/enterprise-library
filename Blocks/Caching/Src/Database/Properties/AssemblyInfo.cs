@@ -14,6 +14,6 @@ using System.Security;
 
 [assembly : AssemblyTitle("Enterprise Library Caching Data Provider")]
 [assembly : AssemblyDescription("Enterprise Library Caching Data Provider")]
-[assembly : AssemblyVersion("4.0.0.829")]
+[assembly : AssemblyVersion("4.0.0.912")]
 [assembly : AllowPartiallyTrustedCallers]
 [assembly : SecurityTransparent]

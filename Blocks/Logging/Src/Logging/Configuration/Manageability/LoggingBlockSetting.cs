@@ -26,6 +26,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         string defaultCategory;
         bool logWarningWhenNoCategoriesMatch;
         bool tracingEnabled;
+        bool revertImpersonation;
 
         /// <summary>
         /// Initialize a new instance of the <see cref="LoggingBlockSetting"/> class with the block configuration,
@@ -35,15 +36,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         /// <param name="defaultCategory">The default category.</param>
         /// <param name="logWarningWhenNoCategoriesMatch">true to log warnings if no categories match; otherwise false.</param>
         /// <param name="tracingEnabled">true if tracing is enabled; otherwise false.</param>
-        public LoggingBlockSetting(LoggingSettings sourceElement,
-                                   string defaultCategory,
-                                   bool logWarningWhenNoCategoriesMatch,
-                                   bool tracingEnabled)
+        /// <param name="revertImpersonation">true if impersonation should be reverted while logging; otherise false.</param>
+        public LoggingBlockSetting(
+            LoggingSettings sourceElement,
+            string defaultCategory,
+            bool logWarningWhenNoCategoriesMatch,
+            bool tracingEnabled,
+            bool revertImpersonation)
             : base(sourceElement)
         {
             this.defaultCategory = defaultCategory;
             this.logWarningWhenNoCategoriesMatch = logWarningWhenNoCategoriesMatch;
             this.tracingEnabled = tracingEnabled;
+            this.revertImpersonation = revertImpersonation;
         }
 
         /// <summary>
@@ -74,6 +79,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         {
             get { return tracingEnabled; }
             set { tracingEnabled = value; }
+        }
+
+        /// <summary>
+        /// Gets the tracing impersonation-reverting status for the represented configuration section.
+        /// </summary>
+        [ManagementConfiguration]
+        public bool RevertImpersonation
+        {
+            get { return revertImpersonation; }
+            set { revertImpersonation = value; }
         }
 
         /// <summary>

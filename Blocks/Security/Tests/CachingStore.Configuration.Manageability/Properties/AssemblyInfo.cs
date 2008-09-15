@@ -14,5 +14,5 @@ using System.Security.Permissions;
 
 [assembly: AssemblyTitle("Enterprise Library Security Application Block Caching Store Provider Configuration Manageability Tests")]
 [assembly: AssemblyDescription("Enterprise Library Security Application Block Caching Store Provider Configuration Manageability Tests")]
-[assembly: AssemblyVersion("4.0.0.829")]
+[assembly: AssemblyVersion("4.0.0.912")]
 

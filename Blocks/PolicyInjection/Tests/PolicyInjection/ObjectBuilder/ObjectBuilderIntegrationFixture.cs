@@ -133,7 +133,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.ObjectBuil
 													   typeof(IConfigurationSource));
 
             policyList.SetDefault<IBuildPlanCreatorPolicy>(new DynamicMethodBuildPlanCreatorPolicy(buildPlanStrategyChain));
-
+		    policyList.SetDefault<IDynamicBuilderMethodCreatorPolicy>(new DefaultDynamicBuilderMethodCreatorPolicy());
             policyList.SetDefault<IConstructorSelectorPolicy>(new ConstructorSelectorPolicy<Attribute>());
             policyList.SetDefault<IPropertySelectorPolicy>(new PropertySelectorPolicy<Attribute>());
 
@@ -168,7 +168,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.ObjectBuil
             }
         }
 
-        class ClassThatDependsOnIInterface
+        internal class ClassThatDependsOnIInterface
         {
             IInterface @interface;
 
@@ -183,17 +183,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.ObjectBuil
             }
         }
 
-        class ClassThatImplementsInterface : IInterface
+        internal class ClassThatImplementsInterface : IInterface
         {
             void IInterface.DoSomething() {}
         }
 
-        interface IInterface
+        internal interface IInterface
         {
             void DoSomething();
         }
 
-        class InterceptableClass : MarshalByRefObject
+        internal class InterceptableClass : MarshalByRefObject
         {
             public InterceptableClass() {}
 

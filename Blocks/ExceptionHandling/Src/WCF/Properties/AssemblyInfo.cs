@@ -16,6 +16,6 @@ using System.Security;
 [assembly : ReliabilityContract(Consistency.WillNotCorruptState, Cer.None)]
 [assembly : AssemblyTitle("Enterprise Library Exception Handling WCF Provider")]
 [assembly : AssemblyDescription("Enterprise Library Exception Handling WCF Provider")]
-[assembly : AssemblyVersion("4.0.0.829")]
+[assembly : AssemblyVersion("4.0.0.912")]
 [assembly : AllowPartiallyTrustedCallers]
 [assembly : SecurityTransparent]

@@ -48,7 +48,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         [TestMethod]
         public void WmiQueryReturnsSingleResultIfSinglePublishedInstance()
         {
-            LoggingBlockSetting setting = new LoggingBlockSetting(null, "defaultCategory", false, true);
+            LoggingBlockSetting setting = new LoggingBlockSetting(null, "defaultCategory", false, true, false);
             setting.ApplicationName = "app";
             setting.SectionName = InstrumentationConfigurationSection.SectionName;
             setting.Publish();
@@ -61,6 +61,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
                 Assert.AreEqual("defaultCategory", resultEnumerator.Current.Properties["DefaultCategory"].Value);
                 Assert.AreEqual(false, resultEnumerator.Current.Properties["LogWarningWhenNoCategoriesMatch"].Value);
                 Assert.AreEqual(true, resultEnumerator.Current.Properties["TracingEnabled"].Value);
+                Assert.AreEqual(false, resultEnumerator.Current.Properties["RevertImpersonation"].Value);
                 Assert.AreEqual("LoggingBlockSetting", resultEnumerator.Current.SystemProperties["__CLASS"].Value);
                 Assert.IsFalse(resultEnumerator.MoveNext());
             }
@@ -69,7 +70,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         [TestMethod]
         public void CanBindObject()
         {
-            LoggingBlockSetting setting = new LoggingBlockSetting(null, "defaultCategory", false, true);
+            LoggingBlockSetting setting = new LoggingBlockSetting(null, "defaultCategory", false, true, false);
             setting.ApplicationName = "app";
             setting.SectionName = InstrumentationConfigurationSection.SectionName;
             //setting.Changed += this.Changed;
@@ -98,6 +99,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             sourceElement.DefaultCategory = "foo";
             sourceElement.LogWarningWhenNoCategoriesMatch = false;
             sourceElement.TracingEnabled = true;
+            sourceElement.RevertImpersonation = false;
 
             List<ConfigurationSetting> settings = new List<ConfigurationSetting>(1);
             LoggingSettingsWmiMapper.GenerateWmiObjects(sourceElement, settings);
@@ -110,12 +112,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             setting.DefaultCategory = "foobar";
             setting.LogWarningWhenNoCategoriesMatch = true;
             setting.TracingEnabled = false;
+            setting.RevertImpersonation = true;
 
             setting.Commit();
 
             Assert.AreEqual("foobar", sourceElement.DefaultCategory);
             Assert.AreEqual(true, sourceElement.LogWarningWhenNoCategoriesMatch);
             Assert.AreEqual(false, sourceElement.TracingEnabled);
+            Assert.AreEqual(true, sourceElement.RevertImpersonation);
         }
     }
 }

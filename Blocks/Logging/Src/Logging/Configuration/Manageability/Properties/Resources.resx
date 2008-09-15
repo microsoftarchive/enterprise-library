@@ -288,4 +288,7 @@
   <data name="TraceListenerFilterPartName" xml:space="preserve">
     <value>Filter</value>
   </data>
+  <data name="LoggingSettingsRevertImpersonationPartName" xml:space="preserve">
+    <value>Revert impersonation</value>
+  </data>
 </root>

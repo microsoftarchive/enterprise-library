@@ -15,7 +15,7 @@ using System.Management.Instrumentation;
 
 [assembly: AssemblyTitle("Enterprise Library Shared Library Tests")]
 [assembly: AssemblyDescription("Enterprise Library Shared Library Tests")]
-[assembly: AssemblyVersion("4.0.0.829")]
+[assembly: AssemblyVersion("4.0.0.912")]
 
 
 [assembly: Instrumented(@"root\EnterpriseLibrary")]

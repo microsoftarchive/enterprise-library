@@ -13,5 +13,5 @@ using System.Reflection;
 
 [assembly: AssemblyTitle("Enterprise Library Caching Application Block Tests")]
 [assembly: AssemblyDescription("Enterprise Library Caching Application Block Tests")]
-[assembly: AssemblyVersion("4.0.0.829")]
+[assembly: AssemblyVersion("4.0.0.912")]
 
