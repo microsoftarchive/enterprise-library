@@ -18,6 +18,7 @@ using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Validation;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Configuration.Design.Properties;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration.Design;
+using Microsoft.Practices.Unity.InterceptionExtension;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Configuration.Design
 {
@@ -34,7 +35,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
         /// Create a new <see cref="CustomCallHandlerNode"/> with default settings.
         /// </summary>
         public CustomCallHandlerNode()
-            : this(new CustomCallHandlerData(Resources.CustomCallHandlerNodeName, string.Empty)) {}
+            : this(new CustomCallHandlerData(Resources.CustomCallHandlerNodeName, string.Empty)) { }
 
         /// <summary>
         /// Create a new <see cref="CustomCallHandlerNode"/> with the supplied settings.

@@ -100,6 +100,16 @@ if Exist ..\Lib\Microsoft.Practices.Unity.Configuration.dll copy /V ..\Lib\Micro
 if Exist ..\Lib\Microsoft.Practices.Unity.Configuration.xml copy /V ..\Lib\Microsoft.Practices.Unity.Configuration.xml %binDir%\.
 @if errorlevel 1 goto :error
 
+if Exist ..\Lib\Microsoft.Practices.Unity.Interception.dll copy /V ..\Lib\Microsoft.Practices.Unity.Interception.dll %binDir%\.
+@if errorlevel 1 goto :error
+if Exist ..\Lib\Microsoft.Practices.Unity.Interception.xml copy /V ..\Lib\Microsoft.Practices.Unity.Interception.xml %binDir%\.
+@if errorlevel 1 goto :error
+
+if Exist ..\Lib\Microsoft.Practices.Unity.Interception.Configuration.dll copy /V ..\Lib\Microsoft.Practices.Unity.Interception.Configuration.dll %binDir%\.
+@if errorlevel 1 goto :error
+if Exist ..\Lib\Microsoft.Practices.Unity.Interception.Configuration.xml copy /V ..\Lib\Microsoft.Practices.Unity.Interception.Configuration.xml %binDir%\.
+@if errorlevel 1 goto :error
+
 if Exist ..\Lib\Microsoft.Practices.EnterpriseLibrary.Configuration.Design.HostAdapter.dll copy /V ..\Lib\Microsoft.Practices.EnterpriseLibrary.Configuration.Design.HostAdapter.dll %binDir%\.
 @if errorlevel 1 goto :error
 

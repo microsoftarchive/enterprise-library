@@ -128,15 +128,12 @@
     <value>The type {0} is not interceptable.</value>
     <comment>{0} = Name of the type that caused the exception</comment>
   </data>
-  <data name="InvalidInjectorNameConfiguration" xml:space="preserve">
-    <value>The requested injector name {0} is not defined in configuration.</value>
-  </data>
-  <data name="NoDefaultInjectorConfigured" xml:space="preserve">
-    <value>Injectors have been specified in the configuration, but no default injector has been specified.</value>
-  </data>
   <data name="NoHandlersInPolicy" xml:space="preserve">
     <value>The policy {0} does not have any handlers.</value>
     <comment>{0} = name of the policy that has no handlers</comment>
+  </data>
+  <data name="PlaceholderRule" xml:space="preserve">
+    <value>This rule is not intended to be used directly. Use the rules from the Microsoft.Practices.Unity.Interception assembly instead.</value>
   </data>
   <data name="PolicyInjectionSectionNotFound" xml:space="preserve">
     <value>The configuration section for Policy Injection cannot be found in the configuration source.</value>

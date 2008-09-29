@@ -11,16 +11,15 @@
 
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
-using Microsoft.Practices.ObjectBuilder2;
+using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.InterceptionExtension;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Configuration
 {
     /// <summary>
     /// A configuration element that stores information for the <see cref="PerformanceCounterCallHandler"/>.
     /// </summary>
-    [Assembler(typeof(PerformanceCounterCallHandlerAssembler))]
     public class PerformanceCounterCallHandlerData : CallHandlerData
     {
         private const string CategoryNamePropertyName = "categoryName";
@@ -68,7 +67,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
         public string CategoryName
         {
             get { return (string)base[CategoryNamePropertyName]; }
-            set { base[CategoryNamePropertyName] =value; }
+            set { base[CategoryNamePropertyName] = value; }
         }
 
         /// <summary>
@@ -83,20 +82,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
             get { return (string)base[InstanceNamePropertyName]; }
             set { base[InstanceNamePropertyName] = value; }
         }
-        
+
         /// <summary>
         /// Increment "Total" counter instance.
         /// </summary>
         /// <value>The "useTotalCounter" config attribute.</value>
-        [ConfigurationProperty(UseTotalCounterPropertyName, 
-            IsRequired = false, 
+        [ConfigurationProperty(UseTotalCounterPropertyName,
+            IsRequired = false,
             DefaultValue = PerformanceCounterCallHandlerDefaults.UseTotalCounter)]
         public bool UseTotalCounter
         {
             get { return (bool)base[UseTotalCounterPropertyName]; }
             set { base[UseTotalCounterPropertyName] = value; }
         }
-        
+
         /// <summary>
         /// Increment the "total # of calls" counter?
         /// </summary>
@@ -109,7 +108,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
             get { return (bool)base[IncrementNumberOfCallsPropertyName]; }
             set { base[IncrementNumberOfCallsPropertyName] = value; }
         }
-        
+
         /// <summary>
         /// Increment the "calls / second" counter?
         /// </summary>
@@ -135,7 +134,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
             get { return (bool)base[IncrementAverageCallDurationPropertyName]; }
             set { base[IncrementAverageCallDurationPropertyName] = value; }
         }
-        
+
         /// <summary>
         /// Increment "total # of exceptions" counter?
         /// </summary>
@@ -148,7 +147,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
             get { return (bool)base[IncrementTotalExceptionsPropertyName]; }
             set { base[IncrementTotalExceptionsPropertyName] = value; }
         }
-            
+
         /// <summary>
         /// Increment the "exceptions / second" counter?
         /// </summary>
@@ -161,34 +160,27 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
             get { return (bool)base[IncrementExceptionsPerSecondPropertyName]; }
             set { base[IncrementExceptionsPerSecondPropertyName] = value; }
         }
-    }
 
-    /// <summary>
-    /// Class used by ObjectBuilder to construct a <see cref="PerformanceCounterCallHandler"/>
-    /// from a <see cref="PerformanceCounterCallHandlerData"/> instance.
-    /// </summary>
-    public class PerformanceCounterCallHandlerAssembler : IAssembler<ICallHandler, CallHandlerData>
-    {
         /// <summary>
-        /// Builds an instance of the subtype of <typeparamref name="TObject"/> type the receiver knows how to build,  based on 
-        /// an a configuration object.
+        /// Adds the call handler represented by this configuration object to <paramref name="policy"/>.
         /// </summary>
-        /// <param name="context">The <see cref="IBuilderContext"/> that represents the current building process.</param>
-        /// <param name="objectConfiguration">The configuration object that describes the object to build.</param>
-        /// <param name="configurationSource">The source for configuration objects.</param>
-        /// <param name="reflectionCache">The cache to use retrieving reflection information.</param>
-        /// <returns>A fully initialized instance of the <typeparamref name="TObject"/> subtype.</returns>
-        public ICallHandler Assemble(IBuilderContext context, CallHandlerData objectConfiguration, IConfigurationSource configurationSource, ConfigurationReflectionCache reflectionCache)
+        /// <param name="policy">The policy to which the rule must be added.</param>
+        /// <param name="configurationSource">The configuration source from which additional information
+        /// can be retrieved, if necessary.</param>
+        public override void ConfigurePolicy(PolicyDefinition policy, IConfigurationSource configurationSource)
         {
-            PerformanceCounterCallHandlerData configuration = (PerformanceCounterCallHandlerData)objectConfiguration;
-
-            PerformanceCounterCallHandler callHandler = new PerformanceCounterCallHandler(
-                configuration.CategoryName, configuration.InstanceName, configuration.UseTotalCounter,
-                configuration.IncrementNumberOfCalls, configuration.IncrementCallsPerSecond,
-                configuration.IncrementAverageCallDuration, configuration.IncrementTotalExceptions,
-                configuration.IncrementExceptionsPerSecond);
-
-            return callHandler;
+            policy.AddCallHandler<PerformanceCounterCallHandler>(
+                new ContainerControlledLifetimeManager(),
+                new InjectionConstructor(
+                    new InjectionParameter<string>(this.CategoryName),
+                    new InjectionParameter<string>(this.InstanceName),
+                    new InjectionParameter<bool>(this.UseTotalCounter),
+                    new InjectionParameter<bool>(this.IncrementNumberOfCalls),
+                    new InjectionParameter<bool>(this.IncrementCallsPerSecond),
+                    new InjectionParameter<bool>(this.IncrementAverageCallDuration),
+                    new InjectionParameter<bool>(this.IncrementTotalExceptions),
+                    new InjectionParameter<bool>(this.IncrementExceptionsPerSecond)),
+                new InjectionProperty("Order", new InjectionParameter<int>(this.Order)));
         }
     }
 }

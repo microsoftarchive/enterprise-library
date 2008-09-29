@@ -11,6 +11,8 @@
 
 using System;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.InterceptionExtension;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
 {
@@ -63,9 +65,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
         /// configuration.
         /// </summary>
         /// <returns>A new call handler object.</returns>
-        public override ICallHandler CreateHandler()
+        public override ICallHandler CreateHandler(IUnityContainer ignored)
         {
-            return new AuthorizationCallHandler(providerName, 
+            return new AuthorizationCallHandler(providerName,
                 operationName,
                 ConfigurationSourceFactory.Create(), Order);
         }

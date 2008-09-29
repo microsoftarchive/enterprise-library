@@ -14,8 +14,9 @@ using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.FakeObjects;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.ObjectsUnderTest;
+using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.InterceptionExtension;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests
@@ -49,14 +50,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests
             policy1.Handlers.Add(handler1);
             policy1.MatchingRules.Add(customMatchingRule);
 
-            InjectorData remotingInjectorData = new RemotingInjectorData("remoting");
-            FakeInjectorData fakeInjectorData = new FakeInjectorData("fake");
-            fakeInjectorData.ExtraValue = 75;
-
-            settings.Injectors.Add(remotingInjectorData);
-            settings.Injectors.Add(fakeInjectorData);
-            settings.Injectors.DefaultInjector = fakeInjectorData.Name;
-
             Dictionary<string, ConfigurationSection> sections = new Dictionary<string, ConfigurationSection>();
             sections.Add(PolicyInjectionSettings.SectionName, settings);
 
@@ -84,18 +77,27 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests
             Assert.AreEqual(matchingRule1Name, deserializedMatchingRule.Name);
             Assert.AreEqual(typeof(TypeMatchingAssignmentRule), deserializedMatchingRule.Type);
             Assert.AreEqual("customMatchingRuleAttributeValue", (string)deserializedMatchingRule.ElementInformation.Properties["customMatchingRuleAttribute"].Value);
+        }
 
-            Assert.AreEqual(2, deserializedSection.Injectors.Count);
-            Assert.AreEqual(settings.Injectors.DefaultInjector,
-                            deserializedSection.Injectors.DefaultInjector);
+        [TestMethod]
+        public void ConfiguresRuleDrivenPoliciesAsSingletons()
+        {
+            PolicyInjectionSettings settings = new PolicyInjectionSettings();
 
-            InjectorData injector1Data = settings.Injectors[0];
-            InjectorData injector2Data = settings.Injectors[1];
+            PolicyData policy1Data = new PolicyData(policy1Name);
+            PolicyData policy2Data = new PolicyData(policy2Name);
+            settings.Policies.Add(policy1Data);
+            settings.Policies.Add(policy2Data);
 
-            Assert.AreEqual(typeof(RemotingInjectorData), injector1Data.GetType());
-            Assert.AreEqual(typeof(FakeInjectorData), injector2Data.GetType());
+            IUnityContainer container = new UnityContainer().AddNewExtension<Interception>();
+            settings.ConfigureContainer(container, new DictionaryConfigurationSource());
 
-            Assert.AreEqual(fakeInjectorData.ExtraValue, ((FakeInjectorData)injector2Data).ExtraValue);
+            InjectionPolicy policy1 = container.Resolve<InjectionPolicy>(policy1Name);
+            InjectionPolicy policy2 = container.Resolve<InjectionPolicy>(policy2Name);
+
+            Assert.AreNotSame(policy1, policy2);
+            Assert.AreSame(policy1, container.Resolve<InjectionPolicy>(policy1Name));
+            Assert.AreSame(policy2, container.Resolve<InjectionPolicy>(policy2Name));
         }
     }
 }

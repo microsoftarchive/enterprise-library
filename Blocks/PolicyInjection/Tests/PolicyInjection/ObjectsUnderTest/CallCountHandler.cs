@@ -9,11 +9,10 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
-using System.Runtime.Remoting.Messaging;
+using System.Collections.Specialized;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
-using System.Collections.Specialized;
+using Microsoft.Practices.Unity.InterceptionExtension;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.ObjectsUnderTest
 {
@@ -51,7 +50,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.ObjectsUnd
             ++callCount;
             return getNext()(input, getNext);
         }
-       
+
         public int CallCount
         {
             get { return callCount; }

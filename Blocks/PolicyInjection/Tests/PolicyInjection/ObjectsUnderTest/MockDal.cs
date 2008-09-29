@@ -10,6 +10,7 @@
 //===============================================================================
 
 using System;
+using Microsoft.Practices.Unity.InterceptionExtension;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.ObjectsUnderTest
 {
@@ -65,7 +66,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.ObjectsUnd
 
         public void Log(string message)
         {
-            
+
         }
 
         #endregion

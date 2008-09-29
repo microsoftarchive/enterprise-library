@@ -22,7 +22,7 @@ using System.Management.Instrumentation;
 
 [assembly: AssemblyTitle("Enterprise Library Logging Application Block MSMQ Distributor")]
 [assembly: AssemblyDescription("Enterprise Library Logging Application Block MSMQ Distributor")]
-[assembly: AssemblyVersion("4.0.0.912")]
+[assembly: AssemblyVersion("4.0.0.926")]
 
 
 [assembly: Instrumented(@"root\EnterpriseLibrary")]

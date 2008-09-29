@@ -9,10 +9,13 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.MatchingRules;
+using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.InterceptionExtension;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configuration
@@ -51,18 +54,23 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
             DictionaryConfigurationSource configSource = new DictionaryConfigurationSource();
             configSource.Add(PolicyInjectionSettings.SectionName, settings);
 
-            PolicySetFactory factory = new PolicySetFactory(configSource);
-            PolicySet policies = factory.Create();
+            IUnityContainer container = new UnityContainer().AddNewExtension<Interception>();
+            settings.ConfigureContainer(container, configSource);
 
-            Policy policy = policies[1];
-            Assert.IsTrue(policy is RuleDrivenPolicy);
-            RuleDrivenPolicy validateRule = (RuleDrivenPolicy)policy;
-            Assert.IsTrue(validateRule.RuleSet[0] is ParameterTypeMatchingRule);
-            ParameterTypeMatchingRule rule = (ParameterTypeMatchingRule)(validateRule.RuleSet[0]);
-            Assert.AreEqual(3, rule.ParameterMatches.Count);
+            RuleDrivenPolicy policy = container.Resolve<RuleDrivenPolicy>("Validate Parameters");
+            List<IMatchingRule> rules = RuleCreationFixture.GetRules(policy);
+
+            Assert.IsNotNull(policy);
+            Assert.IsTrue(rules[0] is ParameterTypeMatchingRule);
+            ParameterTypeMatchingRule rule = (ParameterTypeMatchingRule)(rules[0]);
+            Assert.AreEqual(3, rule.ParameterMatches.Count());
             for (int i = 0; i < matchingRuleData.Matches.Count; ++i)
             {
-                AssertMatchDataEqual(matchingRuleData.Matches[i], rule.ParameterMatches[i], "Mismatch at element {0}", i);
+                AssertMatchDataEqual(
+                    matchingRuleData.Matches[i], 
+                    rule.ParameterMatches.ElementAt(i), 
+                    "Mismatch at element {0}", 
+                    i);
             }
         }
 

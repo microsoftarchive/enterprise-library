@@ -17,6 +17,7 @@ using Microsoft.Practices.EnterpriseLibrary.Logging;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Logging;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Properties;
+using Microsoft.Practices.Unity.InterceptionExtension;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
 {
@@ -54,7 +55,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
         public LogCallHandler()
             : this(Logger.Writer)
         {
-            
+
         }
 
         /// <summary>
@@ -94,9 +95,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
         /// <param name="includeCallTime">Should the time to execute the target be included in the log entry?</param>
         /// <param name="priority">Priority of the log entry.</param>
         public LogCallHandler(LogWriter logWriter, int eventId,
-            bool logBeforeCall, 
-            bool logAfterCall, string beforeMessage, string afterMessage, 
-            bool includeParameters, bool includeCallStack, 
+            bool logBeforeCall,
+            bool logAfterCall, string beforeMessage, string afterMessage,
+            bool includeParameters, bool includeCallStack,
             bool includeCallTime, int priority)
         {
             this.logWriter = logWriter;
@@ -129,12 +130,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
         public LogCallHandler(IConfigurationSource configurationSource,
             int eventId,
             bool logBeforeCall,
-            bool logAfterCall, 
-            string beforeMessage, 
+            bool logAfterCall,
+            string beforeMessage,
             string afterMessage,
-            bool includeParameters, 
+            bool includeParameters,
             bool includeCallStack,
-            bool includeCallTime, 
+            bool includeCallTime,
             int priority)
         {
             this.logWriter = GetWriterFromConfiguration(configurationSource);
@@ -198,7 +199,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
             get { return afterMessage; }
             set { afterMessage = value; }
         }
-        
+
         /// <summary>
         /// Gets the collection of categories to place the log entries into.
         /// </summary>
@@ -208,6 +209,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
         public List<string> Categories
         {
             get { return categories; }
+            set
+            {
+                categories.Clear();
+                categories.AddRange(value);
+            }
         }
 
         /// <summary>
@@ -287,12 +293,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
         {
             LogPreCall(input);
             Stopwatch sw = new Stopwatch();
-            if( includeCallTime )
+            if (includeCallTime)
             {
                 sw.Start();
             }
             IMethodReturn result = getNext()(input, getNext);
-            if( includeCallTime )
+            if (includeCallTime)
             {
                 sw.Stop();
             }
@@ -302,7 +308,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
 
         private void LogPreCall(IMethodInvocation input)
         {
-            if(logBeforeCall)
+            if (logBeforeCall)
             {
                 TraceLogEntry logEntry = GetLogEntry(input);
                 logEntry.Message = beforeMessage;
@@ -322,11 +328,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
                 {
                     logEntry.ReturnValue = result.ReturnValue.ToString();
                 }
-                if(result.Exception != null)
+                if (result.Exception != null)
                 {
                     logEntry.Exception = result.Exception.ToString();
                 }
-                if(includeCallTime)
+                if (includeCallTime)
                 {
                     logEntry.CallTime = sw.Elapsed;
                 }
@@ -338,7 +344,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
         {
             TraceLogEntry logEntry = new TraceLogEntry();
             CategoryFormatter formatter = new CategoryFormatter(input.MethodBase);
-            foreach( string category in categories )
+            foreach (string category in categories)
             {
                 logEntry.Categories.Add(formatter.FormatCategory(category));
             }
@@ -351,7 +357,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
             if (includeParameters)
             {
                 Dictionary<string, object> parameters = new Dictionary<string, object>();
-                for(int i = 0; i < input.Arguments.Count; ++i)
+                for (int i = 0; i < input.Arguments.Count; ++i)
                 {
                     parameters[input.Arguments.GetParameterInfo(i).Name] = input.Arguments[i];
                 }
@@ -359,7 +365,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
                 logEntry.ExtendedProperties = parameters;
             }
 
-            if(includeCallStack)
+            if (includeCallStack)
             {
                 logEntry.CallStack = Environment.StackTrace;
             }

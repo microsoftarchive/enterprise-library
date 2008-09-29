@@ -41,7 +41,7 @@
     <DocumentationFile>bin\Release\Microsoft.Practices.EnterpriseLibrary.Configuration.Design.UI.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Configuration.Design.HostAdapter, Version=4.0.0.912, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Configuration.Design.HostAdapter, Version=4.0.0.926, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Lib\Microsoft.Practices.EnterpriseLibrary.Configuration.Design.HostAdapter.dll</HintPath>
     </Reference>

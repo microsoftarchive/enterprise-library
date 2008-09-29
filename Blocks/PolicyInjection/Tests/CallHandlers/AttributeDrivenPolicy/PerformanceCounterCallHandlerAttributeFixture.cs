@@ -9,6 +9,7 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using Microsoft.Practices.Unity.InterceptionExtension;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tests.AttributeDrivenPolicy
@@ -77,7 +78,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
 
         PerformanceCounterCallHandler GetHandlerFromAttribute(HandlerAttribute attribute)
         {
-            return (PerformanceCounterCallHandler)attribute.CreateHandler();
+            return (PerformanceCounterCallHandler)attribute.CreateHandler(null);
         }
     }
 }

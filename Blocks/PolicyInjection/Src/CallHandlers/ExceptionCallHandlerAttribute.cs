@@ -10,15 +10,15 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
-using System.Text;
+using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.InterceptionExtension;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
 {
     /// <summary>
     /// An attribute used to apply the <see cref="ExceptionCallHandler"/> to the target.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Property | AttributeTargets.Method) ]
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Property | AttributeTargets.Method)]
     public class ExceptionCallHandlerAttribute : HandlerAttribute
     {
         private string policyName;
@@ -52,7 +52,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
         /// configuration.
         /// </summary>
         /// <returns>A new call handler object.</returns>
-        public override ICallHandler CreateHandler()
+        public override ICallHandler CreateHandler(IUnityContainer ignored)
         {
             return new ExceptionCallHandler(policyName, Order);
         }

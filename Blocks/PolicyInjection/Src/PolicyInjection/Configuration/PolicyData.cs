@@ -9,11 +9,10 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using System.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.InterceptionExtension;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
 {
@@ -31,7 +30,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// </summary>
         /// <param name="policyName">Name of the policy.</param>
         public PolicyData(string policyName)
-            :base(policyName)
+            : base(policyName)
         {
         }
 
@@ -42,7 +41,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
             : base()
         {
         }
-        
+
         /// <summary>
         /// Gets or sets the collection of matching rules from configuration.
         /// </summary>
@@ -63,6 +62,37 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         {
             get { return (NameTypeConfigurationElementCollection<CallHandlerData, CustomCallHandlerData>)base[HandlersPropertyName]; }
             set { base[HandlersPropertyName] = value; }
+        }
+
+        /// <summary>
+        /// Adds to the <paramref name="container"/> the policy definition represented by the configuration element.
+        /// </summary>
+        /// <param name="container">The container on which the injection policies must be configured.</param>
+        /// <param name="configurationSource">The configuration source from which additional information
+        /// can be retrieved, if necessary.</param>
+        internal void ConfigureContainer(IUnityContainer container, IConfigurationSource configurationSource)
+        {
+            Interception interception = container.Configure<Interception>();
+            if (interception == null)
+            {
+                interception = new Interception();
+                container.AddExtension(interception);
+            }
+
+            var policy = interception.AddPolicy(this.Name);
+
+            foreach (var ruleData in this.MatchingRules)
+            {
+                ruleData.ConfigurePolicy(policy, configurationSource);
+            }
+
+            foreach (var handlerData in this.Handlers)
+            {
+                handlerData.ConfigurePolicy(policy, configurationSource);
+            }
+
+            // make it a singleton - no API support for this.
+            container.RegisterType<RuleDrivenPolicy>(this.Name, new ContainerControlledLifetimeManager());
         }
     }
 }

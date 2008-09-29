@@ -11,9 +11,9 @@
 
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
-using Microsoft.Practices.ObjectBuilder2;
+using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.InterceptionExtension;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Configuration
 {
@@ -21,7 +21,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
     /// A configuration element class that stores the config data for
     /// the <see cref="ValidationCallHandler"/>.
     /// </summary>
-    [Assembler(typeof(ValidationCallHandlerAssembler))]
     public class ValidationCallHandlerData : CallHandlerData
     {
         private const string RuleSetPropertyName = "ruleSet";
@@ -73,32 +72,24 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
         [ConfigurationProperty(SpecificationSourcePropertyName, IsRequired = true, DefaultValue = SpecificationSource.Both)]
         public SpecificationSource SpecificationSource
         {
-            get { return (SpecificationSource) base[SpecificationSourcePropertyName]; }
+            get { return (SpecificationSource)base[SpecificationSourcePropertyName]; }
             set { base[SpecificationSourcePropertyName] = value; }
         }
-    }
 
-    /// <summary>
-    /// A class use 
-    /// </summary>
-    public class ValidationCallHandlerAssembler : IAssembler<ICallHandler, CallHandlerData>
-    {
         /// <summary>
-        /// Builds an instance of the subtype of <typeparamref name="TObject"/> type the receiver knows how to build,  based on 
-        /// an a configuration object.
+        /// Adds the call handler represented by this configuration object to <paramref name="policy"/>.
         /// </summary>
-        /// <param name="context">The <see cref="IBuilderContext"/> that represents the current building process.</param>
-        /// <param name="objectConfiguration">The configuration object that describes the object to build.</param>
-        /// <param name="configurationSource">The source for configuration objects.</param>
-        /// <param name="reflectionCache">The cache to use retrieving reflection information.</param>
-        /// <returns>A fully initialized instance of the <typeparamref name="TObject"/> subtype.</returns>
-        public ICallHandler Assemble(IBuilderContext context, CallHandlerData objectConfiguration, IConfigurationSource configurationSource, ConfigurationReflectionCache reflectionCache)
+        /// <param name="policy">The policy to which the rule must be added.</param>
+        /// <param name="configurationSource">The configuration source from which additional information
+        /// can be retrieved, if necessary.</param>
+        public override void ConfigurePolicy(PolicyDefinition policy, IConfigurationSource configurationSource)
         {
-            ValidationCallHandlerData castedHandlerData = (ValidationCallHandlerData)objectConfiguration;
-
-            ValidationCallHandler callHandler = new ValidationCallHandler(castedHandlerData.RuleSet, castedHandlerData.SpecificationSource);
-
-            return callHandler;
+            policy.AddCallHandler<ValidationCallHandler>(
+                new ContainerControlledLifetimeManager(),
+                new InjectionConstructor(
+                    new InjectionParameter<string>(this.RuleSet),
+                    new InjectionParameter<SpecificationSource>(this.SpecificationSource)),
+                new InjectionProperty("Order", new InjectionParameter<int>(this.Order)));
         }
     }
 }

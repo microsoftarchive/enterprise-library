@@ -10,8 +10,6 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
@@ -30,7 +28,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// Constructs a new <see cref="StringBasedMatchingRuleData"/> instance.
         /// </summary>
         public StringBasedMatchingRuleData()
-            :base()
+            : base()
         {
         }
 

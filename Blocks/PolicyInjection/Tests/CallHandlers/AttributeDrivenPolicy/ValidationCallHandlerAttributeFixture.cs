@@ -48,7 +48,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
 
         ValidationCallHandler GetHandlerFromAttribute(ValidationCallHandlerAttribute attribute)
         {
-            return (ValidationCallHandler)attribute.CreateHandler();
+            return (ValidationCallHandler)attribute.CreateHandler(null);
         }
     }
 }

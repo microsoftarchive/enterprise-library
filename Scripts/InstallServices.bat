@@ -19,7 +19,10 @@ echo ==========================================================================
 echo.
 
 set installUtilDir=%WINDIR%\Microsoft.NET\Framework\v2.0.50727\
-set binDir=".\bin"
+@REM Default %binDir% to the bin subfolder in the same folder where this script resides.
+@REM see http://windowsitpro.com/article/articleid/77004/jsi-tip-5700-frequently-asked-questions-regarding-the-windows-2000-command-processor.html#j
+@REM (the original content from technet is no longer available from http://www.microsoft.com/technet/prodtechnol/windows2000serv/support/faqw2kcp.mspx)
+set binDir="%~dp0\bin"
 set action=
 set pause=true
 
@@ -29,16 +32,16 @@ set pause=true
 @REM  a parameter to batch file (e.g. InstallServices C:\bin).
 @REM  ---------------------------------------------------------------
 
-if "%1"=="/?" goto HELP
+if [%1]==[/?] goto HELP
 
-if "%1"=="" goto RUN
+if [%1]==[] goto RUN
 
 @REM  ----------------------------------------------------
 @REM  If the first parameter is /q, do not pause
 @REM  at the end of execution.
 @REM  ----------------------------------------------------
 
-if /i "%1"=="/q" (
+if /i [%1]==[/q] (
  set pause=false
  SHIFT
 )
@@ -47,7 +50,7 @@ if /i "%1"=="/q" (
 @REM  If the first parameter is /u, uninstall.
 @REM  ----------------------------------------------------
 
-if /i "%1"=="/u" (
+if /i [%1]==[/u] (
  set action=%1
  SHIFT
 )
@@ -57,12 +60,12 @@ if /i "%1"=="/u" (
 @REM  a parameter to batch file (e.g. CopyAssemblies Debug c:\bin).
 @REM  ---------------------------------------------------------------
 
-if not "%1"=="" (
+if not [%1]==[] (
  set binDir=%1
  SHIFT
 )
 
-if not "%1"=="" goto HELP
+if not [%1]==[] goto HELP
 
 :RUN
 
@@ -93,7 +96,7 @@ if not Exist "%installUtilDir%" goto HELPFW
 if not Exist "%binDir%" goto HELP
 pushd %binDir%
 
-if not "%action%" == "" goto UNINSTALL
+if not [%action%] == [] goto UNINSTALL
 
 @ECHO.
 @ECHO -----------------------------------------------------------------
@@ -101,7 +104,7 @@ if not "%action%" == "" goto UNINSTALL
 @ECHO -----------------------------------------------------------------
 @ECHO.
 if Exist Microsoft.Practices.EnterpriseLibrary.Common.dll installutil Microsoft.Practices.EnterpriseLibrary.Common.dll
-@if errorlevel 1 goto :error
+@if %errorlevel% NEQ 0 goto :error
 
 @ECHO.
 @ECHO -----------------------------------------------------------------
@@ -110,13 +113,13 @@ if Exist Microsoft.Practices.EnterpriseLibrary.Common.dll installutil Microsoft.
 @ECHO.
 
 if Exist Microsoft.Practices.EnterpriseLibrary.Caching.dll installutil Microsoft.Practices.EnterpriseLibrary.Caching.dll
-@if errorlevel 1 goto :error
+@if %errorlevel% NEQ 0 goto :error
 
 if Exist Microsoft.Practices.EnterpriseLibrary.Caching.Cryptography.dll installutil Microsoft.Practices.EnterpriseLibrary.Caching.Cryptography.dll
-@if errorlevel 1 goto :error
+@if %errorlevel% NEQ 0 goto :error
 
 if Exist Microsoft.Practices.EnterpriseLibrary.Caching.Database.dll installutil Microsoft.Practices.EnterpriseLibrary.Caching.Database.dll
-@if errorlevel 1 goto :error
+@if %errorlevel% NEQ 0 goto :error
 
 @ECHO.
 @ECHO -----------------------------------------------------------------
@@ -125,7 +128,7 @@ if Exist Microsoft.Practices.EnterpriseLibrary.Caching.Database.dll installutil 
 @ECHO.
 
 if Exist Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.dll installutil Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.dll
-@if errorlevel 1 goto :error
+@if %errorlevel% NEQ 0 goto :error
 
 @ECHO.
 @ECHO -----------------------------------------------------------------
@@ -134,7 +137,7 @@ if Exist Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.dll install
 @ECHO.
 
 if Exist Microsoft.Practices.EnterpriseLibrary.Data.dll installutil Microsoft.Practices.EnterpriseLibrary.Data.dll
-@if errorlevel 1 goto :error
+@if %errorlevel% NEQ 0 goto :error
 
 @ECHO.
 @ECHO -----------------------------------------------------------------------
@@ -143,13 +146,13 @@ if Exist Microsoft.Practices.EnterpriseLibrary.Data.dll installutil Microsoft.Pr
 @ECHO.
 
 if Exist Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.dll installutil Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.dll
-@if errorlevel 1 goto :error
+@if %errorlevel% NEQ 0 goto :error
 
 if Exist Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.dll installutil Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.dll
-@if errorlevel 1 goto :error
+@if %errorlevel% NEQ 0 goto :error
 
 if Exist Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.dll installutil Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.dll
-@if errorlevel 1 goto :error
+@if %errorlevel% NEQ 0 goto :error
 
 @ECHO.
 @ECHO ---------------------------------------------------------------------------------
@@ -158,10 +161,10 @@ if Exist Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.dll install
 @ECHO.
 
 if Exist Microsoft.Practices.EnterpriseLibrary.Logging.dll installutil Microsoft.Practices.EnterpriseLibrary.Logging.dll
-@if errorlevel 1 goto :error
+@if %errorlevel% NEQ 0 goto :error
 
 if Exist Microsoft.Practices.EnterpriseLibrary.Logging.Database.dll installutil Microsoft.Practices.EnterpriseLibrary.Logging.Database.dll
-@if errorlevel 1 goto :error
+@if %errorlevel% NEQ 0 goto :error
 
 @ECHO.
 @ECHO -----------------------------------------------------------------
@@ -170,10 +173,10 @@ if Exist Microsoft.Practices.EnterpriseLibrary.Logging.Database.dll installutil 
 @ECHO.
 
 if Exist Microsoft.Practices.EnterpriseLibrary.Security.dll installutil Microsoft.Practices.EnterpriseLibrary.Security.dll
-@if errorlevel 1 goto :error
+@if %errorlevel% NEQ 0 goto :error
 
 if Exist Microsoft.Practices.EnterpriseLibrary.Security.Cache.CachingStore.dll installutil Microsoft.Practices.EnterpriseLibrary.Security.Cache.CachingStore.dll
-@if errorlevel 1 goto :error
+@if %errorlevel% NEQ 0 goto :error
 
 @ECHO.
 @ECHO -----------------------------------------------------------------
@@ -182,7 +185,7 @@ if Exist Microsoft.Practices.EnterpriseLibrary.Security.Cache.CachingStore.dll i
 @ECHO.
 
 if Exist Microsoft.Practices.EnterpriseLibrary.Validation.dll installutil Microsoft.Practices.EnterpriseLibrary.Validation.dll
-@if errorlevel 1 goto :error
+@if %errorlevel% NEQ 0 goto :error
 
 goto :COMPLETED
 
@@ -195,13 +198,13 @@ goto :COMPLETED
 @ECHO.
 
 if Exist Microsoft.Practices.EnterpriseLibrary.Caching.Cryptography.dll installutil %action% Microsoft.Practices.EnterpriseLibrary.Caching.Cryptography.dll
-@if errorlevel 1 goto :error
+@if %errorlevel% NEQ 0 goto :error
 
 if Exist Microsoft.Practices.EnterpriseLibrary.Caching.Database.dll installutil %action% Microsoft.Practices.EnterpriseLibrary.Caching.Database.dll
-@if errorlevel 1 goto :error
+@if %errorlevel% NEQ 0 goto :error
 
 if Exist Microsoft.Practices.EnterpriseLibrary.Caching.dll installutil %action% Microsoft.Practices.EnterpriseLibrary.Caching.dll
-@if errorlevel 1 goto :error
+@if %errorlevel% NEQ 0 goto :error
 
 @ECHO.
 @ECHO -----------------------------------------------------------------
@@ -210,7 +213,7 @@ if Exist Microsoft.Practices.EnterpriseLibrary.Caching.dll installutil %action% 
 @ECHO.
 
 if Exist Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.dll installutil %action% Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.dll
-@if errorlevel 1 goto :error
+@if %errorlevel% NEQ 0 goto :error
 
 @ECHO.
 @ECHO -----------------------------------------------------------------
@@ -219,7 +222,7 @@ if Exist Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.dll install
 @ECHO.
 
 if Exist Microsoft.Practices.EnterpriseLibrary.Data.dll installutil %action% Microsoft.Practices.EnterpriseLibrary.Data.dll
-@if errorlevel 1 goto :error
+@if %errorlevel% NEQ 0 goto :error
 
 @ECHO.
 @ECHO -----------------------------------------------------------------------
@@ -228,13 +231,13 @@ if Exist Microsoft.Practices.EnterpriseLibrary.Data.dll installutil %action% Mic
 @ECHO.
 
 if Exist Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.dll installutil %action% Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.dll
-@if errorlevel 1 goto :error
+@if %errorlevel% NEQ 0 goto :error
 
 if Exist Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.dll installutil %action% Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.dll
-@if errorlevel 1 goto :error
+@if %errorlevel% NEQ 0 goto :error
 
 if Exist Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.dll installutil %action% Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.dll
-@if errorlevel 1 goto :error
+@if %errorlevel% NEQ 0 goto :error
 
 @ECHO.
 @ECHO ---------------------------------------------------------------------------------
@@ -243,10 +246,10 @@ if Exist Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.dll installutil
 @ECHO.
 
 if Exist Microsoft.Practices.EnterpriseLibrary.Logging.Database.dll installutil %action% Microsoft.Practices.EnterpriseLibrary.Logging.Database.dll
-@if errorlevel 1 goto :error
+@if %errorlevel% NEQ 0 goto :error
 
 if Exist Microsoft.Practices.EnterpriseLibrary.Logging.dll installutil %action% Microsoft.Practices.EnterpriseLibrary.Logging.dll
-@if errorlevel 1 goto :error
+@if %errorlevel% NEQ 0 goto :error
 
 @ECHO.
 @ECHO -----------------------------------------------------------------
@@ -255,10 +258,10 @@ if Exist Microsoft.Practices.EnterpriseLibrary.Logging.dll installutil %action% 
 @ECHO.
 
 if Exist Microsoft.Practices.EnterpriseLibrary.Security.Cache.CachingStore.dll installutil %action% Microsoft.Practices.EnterpriseLibrary.Security.Cache.CachingStore.dll
-@if errorlevel 1 goto :error
+@if %errorlevel% NEQ 0 goto :error
 
 if Exist Microsoft.Practices.EnterpriseLibrary.Security.dll installutil %action% Microsoft.Practices.EnterpriseLibrary.Security.dll
-@if errorlevel 1 goto :error
+@if %errorlevel% NEQ 0 goto :error
 
 @ECHO.
 @ECHO -----------------------------------------------------------------
@@ -267,7 +270,7 @@ if Exist Microsoft.Practices.EnterpriseLibrary.Security.dll installutil %action%
 @ECHO.
 
 if Exist Microsoft.Practices.EnterpriseLibrary.Validation.dll installutil %action% Microsoft.Practices.EnterpriseLibrary.Validation.dll
-@if errorlevel 1 goto :error
+@if %errorlevel% NEQ 0 goto :error
 
 @ECHO.
 @ECHO -----------------------------------------------------------------
@@ -275,7 +278,7 @@ if Exist Microsoft.Practices.EnterpriseLibrary.Validation.dll installutil %actio
 @ECHO -----------------------------------------------------------------
 @ECHO.
 if Exist Microsoft.Practices.EnterpriseLibrary.Common.dll installutil %action% Microsoft.Practices.EnterpriseLibrary.Common.dll
-@if errorlevel 1 goto :error
+@if %errorlevel% NEQ 0 goto :error
 
 :COMPLETED
 
@@ -300,6 +303,7 @@ if Exist Microsoft.Practices.EnterpriseLibrary.Common.dll installutil %action% M
 @REM  -------------------------------------------
 :error
 @ECHO An error occured in InstallServices.bat - %errorLevel%
+@ECHO You may need to run this script with administrator privileges
 if %pause%==true PAUSE
 @exit errorLevel
 

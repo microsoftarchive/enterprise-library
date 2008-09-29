@@ -34,12 +34,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration.De
             if (!node.RequirePermission)	// don't set if false
                 settings.SectionInformation.RequirePermission = node.RequirePermission;
 
-            foreach (InjectorNode injectorNode in GetNodesInChildCollection<InjectorCollectionNode, InjectorNode>(node))
-            {
-                settings.Injectors.Add(injectorNode.GetConfigurationData());
-            }
-            SetDefaultInjectorName();
-
             foreach (PolicyNode policyNode in GetNodesInChildCollection<PolicyCollectionNode, PolicyNode>(node))
             {
                 settings.Policies.Add(BuildPolicyData(policyNode));
@@ -109,18 +103,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration.De
             foreach (CallHandlerNode childNode in GetNodesInChildCollection<CallHandlersCollectionNode, CallHandlerNode>(parent))
             {
                 yield return childNode;
-            }
-        }
-
-        private void SetDefaultInjectorName()
-        {
-            InjectorCollectionNode injectorsNode = GetChildNode<InjectorCollectionNode>(node);
-            if (injectorsNode != null)
-            {
-                if (injectorsNode.DefaultInjector != null)
-                {
-                    settings.Injectors.DefaultInjector = injectorsNode.DefaultInjector.Name;
-                }
             }
         }
     }

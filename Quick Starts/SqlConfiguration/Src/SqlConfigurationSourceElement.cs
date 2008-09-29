@@ -9,9 +9,6 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Configuration;
 
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
@@ -33,7 +30,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.SqlConfigurationSource
         /// <summary>
         /// 
         /// </summary>
-        public SqlConfigurationSourceElement() :  this(Resources.SqlConfigurationSourceName, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty)
+        public SqlConfigurationSourceElement()
+            : this(Resources.SqlConfigurationSourceName, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty)
         {
         }
 
@@ -48,20 +46,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.SqlConfigurationSource
         /// <param name="removeStoredProcedure"></param>
         public SqlConfigurationSourceElement(string name, string connectionString, string getStoredProcedure, string setStoredProcedure, string refreshStoredProcedure, string removeStoredProcedure)
             : base(name, typeof(SqlConfigurationSource))
-		{
+        {
             this.ConnectionString = connectionString;
             this.GetStoredProcedure = getStoredProcedure;
             this.SetStoredProcedure = setStoredProcedure;
             this.RefreshStoredProcedure = refreshStoredProcedure;
             this.RemoveStoredProcedure = removeStoredProcedure;
-            
+
         }
-        
+
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        protected override IConfigurationSource CreateSource()
+        public override IConfigurationSource CreateSource()
         {
             IConfigurationSource createdObject = new SqlConfigurationSource(ConnectionString, GetStoredProcedure, SetStoredProcedure, RefreshStoredProcedure, RemoveStoredProcedure);
 

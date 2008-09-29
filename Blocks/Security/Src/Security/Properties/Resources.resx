@@ -174,4 +174,13 @@
   <data name="TotalSecurityCacheReadPerformedHelpResource" xml:space="preserve">
     <value>Total Security Cache Reads is the total number of security cache reads requested.</value>
   </data>
+  <data name="MissingSection" xml:space="preserve">
+    <value>The "securityConfiguration" section is not available in the supplied configuration source.</value>
+  </data>
+  <data name="NoDefaultAuthorizationProvider" xml:space="preserve">
+    <value>There is no default authorization provider defined in the "securityConfiguration" section available in the supplied configuration source.</value>
+  </data>
+  <data name="NoDefaultSecurityCacheProvider" xml:space="preserve">
+    <value>There is no default security cache provider defined in the "securityConfiguration" section available in the supplied configuration source.</value>
+  </data>
 </root>

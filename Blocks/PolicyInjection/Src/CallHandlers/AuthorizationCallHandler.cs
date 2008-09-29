@@ -16,6 +16,7 @@ using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Configu
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Logging;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Security;
+using Microsoft.Practices.Unity.InterceptionExtension;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
 {

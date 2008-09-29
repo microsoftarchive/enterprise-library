@@ -299,6 +299,15 @@
             <param name="newExistingObject">New exsting object for buildup.</param>
             <returns>The new context.</returns>
         </member>
+        <member name="M:Microsoft.Practices.ObjectBuilder2.BuilderContext.NewBuildUp``1(Microsoft.Practices.ObjectBuilder2.IBuilderContext)">
+            <summary>
+            A convenience method to do a new buildup operation on an existing context.
+            </summary>
+            <remarks>This helper is specific to NamedTypeBuildKey.</remarks>
+            <typeparam name="T">Type to return from the buildup.</typeparam>
+            <param name="context">Existing context.</param>
+            <returns>The built up object.</returns>
+        </member>
         <member name="P:Microsoft.Practices.ObjectBuilder2.BuilderContext.Strategies">
             <summary>
             Gets the head of the strategy chain.

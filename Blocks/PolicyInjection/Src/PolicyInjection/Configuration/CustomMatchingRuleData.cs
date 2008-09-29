@@ -13,7 +13,8 @@ using System;
 using System.Collections.Specialized;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
+using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.InterceptionExtension;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
 {
@@ -21,10 +22,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
     /// A configuration element that lets you configure matching rules
     /// that don't have any explicit configuration support.
     /// </summary>
-    [Assembler(typeof(CustomProviderAssembler<IMatchingRule, MatchingRuleData, CustomMatchingRuleData>))]
     public class CustomMatchingRuleData : MatchingRuleData, IHelperAssistedCustomConfigurationData<CustomMatchingRuleData>
     {
-        
         CustomProviderDataHelper<CustomMatchingRuleData> helper;
 
         /// <summary>
@@ -143,6 +142,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
             return helper.HandleOnDeserializeUnrecognizedAttribute(name, value);
         }
 
+        /// <summary>
+        /// Adds the rule represented by this configuration object to <paramref name="policy"/>.
+        /// </summary>
+        /// <param name="policy">The policy to which the rule must be added.</param>
+        /// <param name="configurationSource">The configuration source from which additional information
+        /// can be retrieved, if necessary.</param>
+        public override void ConfigurePolicy(PolicyDefinition policy, IConfigurationSource configurationSource)
+        {
+            policy.AddMatchingRule(
+                this.Type,
+                new InjectionConstructor(new InjectionParameter<NameValueCollection>(this.Attributes)));
+        }
 
         /// <summary>
         /// Gets the helper.

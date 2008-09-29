@@ -13,6 +13,7 @@ using System.Diagnostics;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Configuration;
+using Microsoft.Practices.Unity.InterceptionExtension;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
 {
@@ -101,13 +102,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
         /// <param name="incrementTotalExceptions">Should the "# of exceptions" counter be updated?</param>
         /// <param name="incrementExceptionsPerSecond">Should the "# exceptions / second" counter be updated?</param>
         public PerformanceCounterCallHandler(
-            string category, 
+            string category,
             string instanceName,
             bool useTotalCounter,
-            bool incrementNumberOfCalls, 
-            bool incrementCallsPerSecond, 
-            bool incrementAverageCallDuration, 
-            bool incrementTotalExceptions, 
+            bool incrementNumberOfCalls,
+            bool incrementCallsPerSecond,
+            bool incrementAverageCallDuration,
+            bool incrementTotalExceptions,
             bool incrementExceptionsPerSecond)
         {
             this.category = category;
@@ -274,13 +275,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
 
             long end = Stopwatch.GetTimestamp();
 
-            IncrementAverageCounter(incrementAverageCallDuration, 
-                end - start, 
+            IncrementAverageCounter(incrementAverageCallDuration,
+                end - start,
                 AverageCallDurationCounterName,
-                AverageCallDurationBaseCounterName, 
+                AverageCallDurationBaseCounterName,
                 instanceNames);
 
-            if(result.Exception != null)
+            if (result.Exception != null)
             {
                 IncrementItemCounter(incrementTotalExceptions, TotalExceptionsCounterName, instanceNames);
                 IncrementItemCounter(incrementExceptionsPerSecond, ExceptionsPerSecondCounterName,
@@ -290,9 +291,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
             return result;
         }
 
-        private void IncrementItemCounter( bool shouldIncrement, string counterName, string[] instances)
+        private void IncrementItemCounter(bool shouldIncrement, string counterName, string[] instances)
         {
-            if(shouldIncrement)
+            if (shouldIncrement)
             {
                 EnterpriseLibraryPerformanceCounter counter = counterFactory.CreateCounter(
                     category, counterName, instances);
@@ -300,10 +301,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
             }
         }
 
-        private void IncrementAverageCounter( bool shouldIncrement, long amount,
+        private void IncrementAverageCounter(bool shouldIncrement, long amount,
             string averageCounterName, string baseCounterName, string[] instances)
         {
-            if(shouldIncrement)
+            if (shouldIncrement)
             {
                 EnterpriseLibraryPerformanceCounter counter = counterFactory.CreateCounter(
                     category, averageCounterName, instances);

@@ -10,16 +10,17 @@
 //===============================================================================
 
 using System;
+using System.Linq;
 using System.Reflection;
 using System.Security.Principal;
 using System.Threading;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.RemotingInterception;
-using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.ObjectsUnderTest;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Security.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.ObjectsUnderTest;
+using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.InterceptionExtension;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tests
 {
@@ -29,31 +30,44 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         GenericPrincipal FredPrincipal = new GenericPrincipal(new GenericIdentity("Fred"), new string[0]);
         GenericPrincipal JackPrincipal = new GenericPrincipal(new GenericIdentity("Jack"), new string[0]);
 
-        PolicySet AllowFredPolicySet;
-        PolicySet AllowJackPolicySet;
-        PolicySet AllowBasedOnTokensPolicySet;
+        IUnityContainer AllowFredPolicyContainer;
+        IUnityContainer AllowJackPolicyContainer;
+        IUnityContainer AllowBasedOnTokensPolicyContainer;
 
         [TestInitialize]
         public void TestInitialize()
         {
             IConfigurationSource authorizationConfiguration = new FileConfigurationSource("Authorization.config");
 
-            RuleDrivenPolicy allowFredPolicy = new RuleDrivenPolicy("allowFred");
-            allowFredPolicy.Handlers.Add(new AuthorizationCallHandler("RuleProvider", "OnlyFredHasAccess", authorizationConfiguration));
-            allowFredPolicy.RuleSet.Add(new AlwaysMatchingRule());
-            AllowFredPolicySet = new PolicySet(allowFredPolicy);
+            AllowFredPolicyContainer = new UnityContainer();
+            AllowFredPolicyContainer
+                .AddNewExtension<Interception>()
+                .Configure<Interception>()
+                    .SetDefaultInjectorFor<AuthorizationTestTarget>(new TransparentProxyPolicyInjector())
+                    .AddPolicy("allowFred")
+                        .AddCallHandler(
+                            new AuthorizationCallHandler("RuleProvider", "OnlyFredHasAccess", authorizationConfiguration))
+                        .AddMatchingRule(new AlwaysMatchingRule());
 
-            RuleDrivenPolicy allowJackPolicy = new RuleDrivenPolicy("allowJack");
-            allowJackPolicy.Handlers.Add(new AuthorizationCallHandler(string.Empty, "OnlyJackHasAccess", authorizationConfiguration));
-            allowJackPolicy.RuleSet.Add(new AlwaysMatchingRule());
-            AllowJackPolicySet = new PolicySet(allowJackPolicy);
+            AllowJackPolicyContainer = new UnityContainer();
+            AllowJackPolicyContainer
+                .AddNewExtension<Interception>()
+                .Configure<Interception>()
+                    .SetDefaultInjectorFor<AuthorizationTestTarget>(new TransparentProxyPolicyInjector())
+                    .AddPolicy("allowJack")
+                        .AddCallHandler(
+                            new AuthorizationCallHandler("RuleProvider", "OnlyJackHasAccess", authorizationConfiguration))
+                        .AddMatchingRule(new AlwaysMatchingRule());
 
-            RuleDrivenPolicy tokenBasedPolicy = new RuleDrivenPolicy("tokens");
-            tokenBasedPolicy.RuleSet.Add(new AlwaysMatchingRule());
-            tokenBasedPolicy.Handlers.Add(
-                new AuthorizationCallHandler(string.Empty, "{type}-{method}",
-                                             authorizationConfiguration));
-            AllowBasedOnTokensPolicySet = new PolicySet(tokenBasedPolicy);
+            AllowBasedOnTokensPolicyContainer = new UnityContainer();
+            AllowBasedOnTokensPolicyContainer
+                .AddNewExtension<Interception>()
+                .Configure<Interception>()
+                    .SetDefaultInjectorFor<AuthorizationTestTarget>(new TransparentProxyPolicyInjector())
+                    .AddPolicy("tokens")
+                        .AddCallHandler(
+                            new AuthorizationCallHandler(string.Empty, "{type}-{method}", authorizationConfiguration))
+                        .AddMatchingRule(new AlwaysMatchingRule());
         }
 
         [TestMethod, DeploymentItem("Authorization.config"), ExpectedException(typeof(UnauthorizedAccessException))]
@@ -61,7 +75,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         {
             using (new PrincipalSwitcher(JackPrincipal))
             {
-                AuthorizationTestTarget testTarget = GetTarget(AllowFredPolicySet);
+                AuthorizationTestTarget testTarget = GetTarget(AllowFredPolicyContainer);
                 testTarget.GetCurrentPrincipalName();
             }
         }
@@ -71,7 +85,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         {
             using (new PrincipalSwitcher(FredPrincipal))
             {
-                AuthorizationTestTarget testTarget = GetTarget(AllowFredPolicySet);
+                AuthorizationTestTarget testTarget = GetTarget(AllowFredPolicyContainer);
                 string currentPrincipalName = testTarget.GetCurrentPrincipalName();
                 Assert.AreEqual("Fred", currentPrincipalName);
             }
@@ -82,7 +96,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         {
             using (new PrincipalSwitcher(FredPrincipal))
             {
-                AuthorizationTestTarget testTarget = GetTarget(AllowJackPolicySet);
+                AuthorizationTestTarget testTarget = GetTarget(AllowJackPolicyContainer);
                 string currentPrincipalName = testTarget.GetCurrentPrincipalName();
             }
         }
@@ -93,7 +107,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         {
             using (new PrincipalSwitcher(FredPrincipal))
             {
-                AuthorizationTestTarget testTarget = GetTarget(AllowBasedOnTokensPolicySet);
+                AuthorizationTestTarget testTarget = GetTarget(AllowBasedOnTokensPolicyContainer);
                 int threadId = testTarget.GetCurrentThreadId();
             }
         }
@@ -105,7 +119,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         {
             using (new PrincipalSwitcher(FredPrincipal))
             {
-                AuthorizationTestTarget testTarget = GetTarget(AllowBasedOnTokensPolicySet);
+                AuthorizationTestTarget testTarget = GetTarget(AllowBasedOnTokensPolicyContainer);
                 string currentPrincipalName = testTarget.GetCurrentPrincipalName();
             }
         }
@@ -117,7 +131,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         {
             using (new PrincipalSwitcher(JackPrincipal))
             {
-                AuthorizationTestTarget testTarget = GetTarget(AllowBasedOnTokensPolicySet);
+                AuthorizationTestTarget testTarget = GetTarget(AllowBasedOnTokensPolicyContainer);
                 int threadId = testTarget.GetCurrentThreadId();
             }
         }
@@ -127,7 +141,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         {
             using (new PrincipalSwitcher(JackPrincipal))
             {
-                AuthorizationTestTarget testTarget = GetTarget(AllowBasedOnTokensPolicySet);
+                AuthorizationTestTarget testTarget = GetTarget(AllowBasedOnTokensPolicyContainer);
                 string currentPrincipalName = testTarget.GetCurrentPrincipalName();
             }
         }
@@ -139,13 +153,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
 
             PolicyData policyData = new PolicyData("policy");
             AuthorizationCallHandlerData data = new AuthorizationCallHandlerData("foo", 2);
+            policyData.MatchingRules.Add(new CustomMatchingRuleData("matchesEverything", typeof(AlwaysMatchingRule)));
             policyData.Handlers.Add(data);
             settings.Policies.Add(policyData);
-            
+
             DictionaryConfigurationSource dictConfigurationSource = new DictionaryConfigurationSource();
             dictConfigurationSource.Add(PolicyInjectionSettings.SectionName, settings);
 
-            ICallHandler handler = CallHandlerCustomFactory.Instance.Create(null, data, dictConfigurationSource, null);
+            IUnityContainer container = new UnityContainer().AddNewExtension<Interception>();
+            settings.ConfigureContainer(container, dictConfigurationSource);
+
+            RuleDrivenPolicy policy = container.Resolve<RuleDrivenPolicy>("policy");
+
+            ICallHandler handler
+                = (policy.GetHandlersFor(MethodInfo.GetCurrentMethod(), container)).ElementAt(0);
             Assert.IsNotNull(handler);
             Assert.AreEqual(handler.Order, data.Order);
         }
@@ -170,19 +191,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
             Assert.AreEqual(1, attributes.Length);
 
             AuthorizationCallHandlerAttribute att = attributes[0] as AuthorizationCallHandlerAttribute;
-            ICallHandler callHandler = att.CreateHandler();
+            ICallHandler callHandler = att.CreateHandler(null);
 
             Assert.IsNotNull(callHandler);
             Assert.AreEqual(3, callHandler.Order);
         }
 
-        AuthorizationTestTarget GetTarget(PolicySet policySet)
+        AuthorizationTestTarget GetTarget(IUnityContainer container)
         {
-            RemotingPolicyInjector factory = new RemotingPolicyInjector(policySet);
-            return factory.Create<AuthorizationTestTarget>();
+            return container.Resolve<AuthorizationTestTarget>();
         }
 
-        class AuthorizationTestTarget : MarshalByRefObject
+        public class AuthorizationTestTarget : MarshalByRefObject
         {
             public string GetCurrentPrincipalName()
             {
@@ -194,7 +214,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
                 return Thread.CurrentThread.ManagedThreadId;
             }
 
-            [AuthorizationCallHandler("OperationName", Order=3)]
+            [AuthorizationCallHandler("OperationName", Order = 3)]
             public string GetName()
             {
                 return "Name";

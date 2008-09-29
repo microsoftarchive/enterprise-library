@@ -21,7 +21,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         {
             string policy = "Swallow Exceptions";
             ExceptionCallHandlerAttribute attribute = new ExceptionCallHandlerAttribute(policy);
-            ExceptionCallHandler handler = (ExceptionCallHandler)attribute.CreateHandler();
+            ExceptionCallHandler handler = (ExceptionCallHandler)attribute.CreateHandler(null);
             Assert.AreEqual(policy, handler.ExceptionPolicyName);
         }
     }

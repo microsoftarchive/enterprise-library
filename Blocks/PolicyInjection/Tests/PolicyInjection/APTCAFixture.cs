@@ -11,6 +11,7 @@
 
 using System;
 using System.Security.Permissions;
+using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests
@@ -26,7 +27,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests
                 ZoneIdentityPermission zoneIdentityPermission = new ZoneIdentityPermission(PermissionState.None);
                 zoneIdentityPermission.Deny();
 
-                Type type = typeof(HandlerPipeline);
+                Type type = typeof(CustomMatchingRuleData);
                 object createdObject = Activator.CreateInstance(type);
             }
             finally

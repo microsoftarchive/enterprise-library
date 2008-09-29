@@ -10,8 +10,6 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration.Design
@@ -31,15 +29,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration.De
         public PolicyInjectionSettingsNode Build()
         {
             PolicyInjectionSettingsNode node = new PolicyInjectionSettingsNode();
-            InjectorCollectionNode injectorsNode = new InjectorCollectionNode();
             PolicyCollectionNode collectionNode = new PolicyCollectionNode();
-            node.AddNode(injectorsNode);
             node.AddNode(collectionNode);
 
-            foreach (InjectorData injectorData in settings.Injectors)
-            {
-                AddInjector(injectorData, injectorsNode);
-            }
             foreach (PolicyData policyData in settings.Policies)
             {
                 PolicyNode policyNode = new PolicyNode(policyData);
@@ -54,24 +46,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration.De
             node.RequirePermission = settings.SectionInformation.RequirePermission;
 
             return node;
-        }
-
-        private void AddInjector(InjectorData injectorData, InjectorCollectionNode injectorsNode)
-        {
-            InjectorNode injectorNode =
-                NodeCreationService.CreateNodeByDataType(injectorData.GetType(), new object[] { injectorData }) as InjectorNode;
-            if (injectorNode == null)
-            {
-                LogNodeMapError(injectorsNode, injectorData.GetType());
-            }
-            else
-            {
-                injectorsNode.AddNode(injectorNode);
-                if (injectorData.Name == this.settings.Injectors.DefaultInjector)
-                {
-                    injectorsNode.DefaultInjector = injectorNode;
-                }
-            }
         }
 
         private void AddMatchingRules(PolicyData policyData, PolicyNode policyNode)

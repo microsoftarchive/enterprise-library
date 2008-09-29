@@ -11,12 +11,14 @@
 
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Reflection;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.MatchingRules;
-using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.RemotingInterception;
+using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.ObjectsUnderTest;
+using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.InterceptionExtension;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tests
@@ -38,8 +40,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         public void ShouldRecordOneCallTotal()
         {
             ResetCounters();
-            RemotingPolicyInjector factory = new RemotingPolicyInjector(GetPerfMonPolicies());
-            MonitorTarget target = factory.Create<MonitorTarget>();
+            IUnityContainer factory = GetConfiguredContainer();
+            MonitorTarget target = factory.Resolve<MonitorTarget>();
 
             Assert.AreEqual(0L, GetTotalCallCount());
             target.DoSomething();
@@ -50,8 +52,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         public void ShouldRecordOneCallInstance()
         {
             ResetCounters();
-            RemotingPolicyInjector factory = new RemotingPolicyInjector(GetPerfMonPolicies());
-            MonitorTarget target = factory.Create<MonitorTarget>();
+            IUnityContainer factory = GetConfiguredContainer();
+            MonitorTarget target = factory.Resolve<MonitorTarget>();
 
             Assert.AreEqual(0L, GetNumberOfCallsCount(TestInstanceName));
             target.DoSomething();
@@ -62,9 +64,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         public void ShouldBeAbleToDisableTotalCount()
         {
             ResetCounters();
-            RemotingPolicyInjector factory = new RemotingPolicyInjector(GetPerfMonPolicies());
+            IUnityContainer factory = GetConfiguredContainer();
             callHandler.UseTotalCounter = false;
-            MonitorTarget target = factory.Create<MonitorTarget>();
+            MonitorTarget target = factory.Resolve<MonitorTarget>();
 
             Assert.AreEqual(0L, GetTotalCallCount());
             Assert.AreEqual(0L, GetNumberOfCallsCount(TestInstanceName));
@@ -77,9 +79,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         public void ShouldBeAbleToDisableCallCount()
         {
             ResetCounters();
-            RemotingPolicyInjector factory = new RemotingPolicyInjector(GetPerfMonPolicies());
+            IUnityContainer factory = GetConfiguredContainer();
             callHandler.IncrementNumberOfCalls = false;
-            MonitorTarget target = factory.Create<MonitorTarget>();
+            MonitorTarget target = factory.Resolve<MonitorTarget>();
 
             Assert.AreEqual(0L, GetTotalCallCount());
             Assert.AreEqual(0L, GetNumberOfCallsCount(TestInstanceName));
@@ -99,9 +101,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
             ResetCounters(doSomethingInstanceName);
             ResetCounters(doSomethingElseInstanceName);
 
-            RemotingPolicyInjector factory = new RemotingPolicyInjector(GetPerfMonPolicies());
+            IUnityContainer factory = GetConfiguredContainer();
             callHandler.InstanceName = "Method {method}";
-            MonitorTarget target = factory.Create<MonitorTarget>();
+            MonitorTarget target = factory.Resolve<MonitorTarget>();
 
             Assert.AreEqual(0L, GetTotalCallCount());
             Assert.AreEqual(0L, GetNumberOfCallsCount(doSomethingInstanceName));
@@ -123,8 +125,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         public void ShouldUpdateCallsPerSecond()
         {
             ResetCounters();
-            RemotingPolicyInjector factory = new RemotingPolicyInjector(GetPerfMonPolicies());
-            MonitorTarget target = factory.Create<MonitorTarget>();
+            IUnityContainer factory = GetConfiguredContainer();
+            MonitorTarget target = factory.Resolve<MonitorTarget>();
 
             Assert.AreEqual(0L, GetCallsPerSecondCount(TestInstanceName));
             for (int i = 0; i < 100; ++i)
@@ -141,9 +143,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         public void ShouldBeAbleToDisableCallsPerSecond()
         {
             ResetCounters();
-            RemotingPolicyInjector factory = new RemotingPolicyInjector(GetPerfMonPolicies());
+            IUnityContainer factory = GetConfiguredContainer();
             callHandler.IncrementCallsPerSecond = false;
-            MonitorTarget target = factory.Create<MonitorTarget>();
+            MonitorTarget target = factory.Resolve<MonitorTarget>();
 
             Assert.AreEqual(0L, GetCallsPerSecondCount(TestInstanceName));
             for (int i = 0; i < 100; ++i)
@@ -160,9 +162,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         public void ShouldUpdateNumberOfExceptionsCounter()
         {
             ResetCounters();
-            RemotingPolicyInjector factory = new RemotingPolicyInjector(GetPerfMonPolicies());
+            IUnityContainer factory = GetConfiguredContainer();
             callHandler.IncrementTotalExceptions = true;
-            MonitorTarget target = factory.Create<MonitorTarget>();
+            MonitorTarget target = factory.Resolve<MonitorTarget>();
 
             Assert.AreEqual(0L, GetNumberOfExceptionsCount(TestInstanceName));
 
@@ -175,8 +177,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         public void ShouldDefaultToDisableExceptionCounter()
         {
             ResetCounters();
-            RemotingPolicyInjector factory = new RemotingPolicyInjector(GetPerfMonPolicies());
-            MonitorTarget target = factory.Create<MonitorTarget>();
+            IUnityContainer factory = GetConfiguredContainer();
+            MonitorTarget target = factory.Resolve<MonitorTarget>();
 
             Assert.AreEqual(0L, GetNumberOfExceptionsCount(TestInstanceName));
 
@@ -189,8 +191,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         public void ShouldNotUpdateExceptionsPerSecondByDefault()
         {
             ResetCounters();
-            RemotingPolicyInjector factory = new RemotingPolicyInjector(GetPerfMonPolicies());
-            MonitorTarget target = factory.Create<MonitorTarget>();
+            IUnityContainer factory = GetConfiguredContainer();
+            MonitorTarget target = factory.Resolve<MonitorTarget>();
 
             Assert.AreEqual(0L, GetExceptionsPerSecondCount(TestInstanceName));
 
@@ -203,10 +205,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         public void ShouldUpdateExceptionsPerSecond()
         {
             ResetCounters();
-            RemotingPolicyInjector factory = new RemotingPolicyInjector(GetPerfMonPolicies());
+            IUnityContainer factory = GetConfiguredContainer();
             callHandler.IncrementExceptionsPerSecond = true;
 
-            MonitorTarget target = factory.Create<MonitorTarget>();
+            MonitorTarget target = factory.Resolve<MonitorTarget>();
 
             Assert.AreEqual(0L, GetExceptionsPerSecondCount(TestInstanceName));
 
@@ -220,9 +222,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         public void ShouldUpdateAverageCallsPerSecond()
         {
             ResetCounters();
-            RemotingPolicyInjector factory = new RemotingPolicyInjector(GetPerfMonPolicies());
+            IUnityContainer factory = GetConfiguredContainer();
 
-            MonitorTarget target = factory.Create<MonitorTarget>();
+            MonitorTarget target = factory.Resolve<MonitorTarget>();
 
             Assert.AreEqual(0L, GetAverageCallDurationCount(TestInstanceName));
 
@@ -240,10 +242,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         public void ShouldBeAbleToDisableAverageCallsPerSecond()
         {
             ResetCounters();
-            RemotingPolicyInjector factory = new RemotingPolicyInjector(GetPerfMonPolicies());
+            IUnityContainer factory = GetConfiguredContainer();
             callHandler.IncrementAverageCallDuration = false;
 
-            MonitorTarget target = factory.Create<MonitorTarget>();
+            MonitorTarget target = factory.Resolve<MonitorTarget>();
 
             Assert.AreEqual(0L, GetAverageCallDurationCount(TestInstanceName));
 
@@ -262,15 +264,50 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
 
             PolicyData policyData = new PolicyData("policy");
             PerformanceCounterCallHandlerData data = new PerformanceCounterCallHandlerData("FooCallHandler", 2);
+            policyData.MatchingRules.Add(new CustomMatchingRuleData("match everything", typeof(AlwaysMatchingRule)));
             policyData.Handlers.Add(data);
             settings.Policies.Add(policyData);
 
             DictionaryConfigurationSource dictConfigurationSource = new DictionaryConfigurationSource();
             dictConfigurationSource.Add(PolicyInjectionSettings.SectionName, settings);
 
-            ICallHandler handler = CallHandlerCustomFactory.Instance.Create(null, data, dictConfigurationSource, null);
+            IUnityContainer container = new UnityContainer().AddNewExtension<Interception>();
+            settings.ConfigureContainer(container, dictConfigurationSource);
+
+            RuleDrivenPolicy policy = container.Resolve<RuleDrivenPolicy>("policy");
+
+            ICallHandler handler
+                = (policy.GetHandlersFor(MethodInfo.GetCurrentMethod(), container)).ElementAt(0);
+
             Assert.IsNotNull(handler);
             Assert.AreEqual(handler.Order, data.Order);
+        }
+
+        [TestMethod]
+        public void ConfiguresCallHandlerAsSingleton()
+        {
+            PolicyInjectionSettings settings = new PolicyInjectionSettings();
+
+            PolicyData policyData = new PolicyData("policy");
+            PerformanceCounterCallHandlerData data = new PerformanceCounterCallHandlerData("FooCallHandler", 2);
+            policyData.MatchingRules.Add(new CustomMatchingRuleData("match everything", typeof(AlwaysMatchingRule)));
+            policyData.Handlers.Add(data);
+            settings.Policies.Add(policyData);
+
+            DictionaryConfigurationSource dictConfigurationSource = new DictionaryConfigurationSource();
+            dictConfigurationSource.Add(PolicyInjectionSettings.SectionName, settings);
+
+            IUnityContainer container = new UnityContainer().AddNewExtension<Interception>();
+            settings.ConfigureContainer(container, dictConfigurationSource);
+
+            RuleDrivenPolicy policy = container.Resolve<RuleDrivenPolicy>("policy");
+
+            ICallHandler handler1
+                = (policy.GetHandlersFor(MethodInfo.GetCurrentMethod(), container)).ElementAt(0);
+            ICallHandler handler2
+                = (policy.GetHandlersFor(MethodInfo.GetCurrentMethod(), container)).ElementAt(0);
+
+            Assert.AreSame(handler1, handler2);
         }
 
         [TestMethod]
@@ -282,7 +319,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
             Assert.AreEqual(1, attributes.Length);
 
             PerformanceCounterCallHandlerAttribute attr = attributes[0] as PerformanceCounterCallHandlerAttribute;
-            ICallHandler handler = attr.CreateHandler();
+            ICallHandler handler = attr.CreateHandler(null);
 
             Assert.IsNotNull(handler);
             Assert.AreEqual(3, handler.Order);
@@ -297,18 +334,24 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
                 {
                     target.ThrowOnZero(trigger);
                 }
-                catch (ApplicationException) {}
+                catch (ApplicationException) { }
                 trigger = (trigger + 1) % 5;
             }
         }
 
-        PolicySet GetPerfMonPolicies()
+        private IUnityContainer GetConfiguredContainer()
         {
-            RuleDrivenPolicy policy = new RuleDrivenPolicy("Monitor all methods");
-            policy.RuleSet.Add(new TypeMatchingRule(typeof(MonitorTarget)));
             callHandler = new PerformanceCounterCallHandler(TestCategoryName, TestInstanceName);
-            policy.Handlers.Add(callHandler);
-            return new PolicySet(policy);
+
+            IUnityContainer container = new UnityContainer();
+            container.AddNewExtension<Interception>();
+            container.Configure<Interception>()
+                .AddPolicy("Monitor all methods")
+                    .AddMatchingRule(new TypeMatchingRule(typeof(MonitorTarget)))
+                    .AddCallHandler(callHandler).Interception
+                .SetDefaultInjectorFor<MonitorTarget>(new TransparentProxyPolicyInjector());
+
+            return container;
         }
 
         #region Performance Counter Helper methods
@@ -432,8 +475,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
             // Doesn't actually do anything
         }
 
-        [PerformanceCounterCallHandler("category", "fooName", Order=3)]
-        public void DoSomethingElse() {}
+        [PerformanceCounterCallHandler("category", "fooName", Order = 3)]
+        public void DoSomethingElse() { }
 
         public void ThrowOnZero(int i)
         {

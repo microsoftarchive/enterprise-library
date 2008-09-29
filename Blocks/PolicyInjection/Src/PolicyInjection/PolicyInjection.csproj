@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{3E6129C8-18E4-410D-89FC-0DBBE6009FC5}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -46,6 +46,14 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Lib\Microsoft.Practices.ObjectBuilder2.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Practices.Unity, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Lib\Microsoft.Practices.Unity.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity.Interception, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Lib\Microsoft.Practices.Unity.Interception.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core">
@@ -58,80 +66,53 @@
     <Compile Include="..\..\..\GlobalAssemblyInfo.cs">
       <Link>GlobalAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="ApplyNoPoliciesAttribute.cs" />
-    <Compile Include="AttributeDrivenPolicy.cs" />
-    <Compile Include="Configuration\CustomInjectorData.cs" />
-    <Compile Include="Configuration\InjectorData.cs" />
-    <Compile Include="Configuration\InjectorDataCollection.cs" />
-    <Compile Include="Configuration\MatchData.cs" />
-    <Compile Include="Configuration\ParameterTypeMatchingRuleData.cs" />
-    <Compile Include="Configuration\RemotingInjectorData.cs" />
-    <Compile Include="HandlerAttribute.cs" />
-    <Compile Include="MatchingRules\AttributeDrivenPolicyMatchingRule.cs" />
-    <Compile Include="MatchingRules\MatchingInfo.cs" />
-    <Compile Include="MatchingRules\ParameterTypeMatchingRule.cs" />
-    <Compile Include="Policy.cs" />
-    <Compile Include="PolicyInjector.cs" />
-    <Compile Include="PolicyInjectorCustomFactory.cs" />
-    <Compile Include="PolicyInjectorFactory.cs" />
-    <Compile Include="Utilities\CollectionEx.cs" />
     <Compile Include="Configuration\AssemblyMatchingRuleData.cs" />
+    <Compile Include="Configuration\CallHandlerData.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Configuration\CustomAttributeMatchingRuleData.cs" />
+    <Compile Include="Configuration\CustomCallHandlerData.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Configuration\CustomMatchingRuleData.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Configuration\MatchData.cs" />
+    <Compile Include="Configuration\MatchingRuleData.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Configuration\MemberNameMatchingRuleData.cs" />
     <Compile Include="Configuration\MethodSignatureMatchingRuleData.cs" />
     <Compile Include="Configuration\NamespaceMatchingRuleData.cs" />
+    <Compile Include="Configuration\ParameterTypeMatchingRuleData.cs" />
+    <Compile Include="Configuration\PolicyData.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Configuration\PolicyInjectionSettings.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Configuration\PropertyMatchingRuleData.cs" />
     <Compile Include="Configuration\ReturnTypeMatchingRuleData.cs" />
     <Compile Include="Configuration\StringBasedMatchingRuleData.cs" />
     <Compile Include="Configuration\TagAttributeMatchingRuleData.cs" />
     <Compile Include="Configuration\TypeMatchingRuleData.cs" />
-    <Compile Include="MatchingRules\ApplyNoPoliciesMatchingRule.cs" />
     <Compile Include="MatchingRules\AssemblyMatchingRule.cs" />
     <Compile Include="MatchingRules\CustomAttributeMatchingRule.cs" />
-    <Compile Include="Utilities\Glob.cs" />
+    <Compile Include="MatchingRules\MemberNameMatchingRule.cs" />
     <Compile Include="MatchingRules\MethodSignatureMatchingRule.cs" />
     <Compile Include="MatchingRules\NamespaceMatchingRule.cs" />
+    <Compile Include="MatchingRules\ParameterTypeMatchingRule.cs" />
     <Compile Include="MatchingRules\PropertyMatchingRule.cs" />
     <Compile Include="MatchingRules\ReturnTypeMatchingRule.cs" />
-    <Compile Include="IMethodInvocation.cs" />
-    <Compile Include="IMethodReturn.cs" />
-    <Compile Include="PolicyInjection.cs" />
-    <Compile Include="RemotingInterception\RemotingPolicyInjector.cs" />
-    <Compile Include="IParameterCollection.cs" />
-    <Compile Include="TagAttribute.cs" />
     <Compile Include="MatchingRules\TagAttributeMatchingRule.cs" />
-    <Compile Include="MatchingRules\MemberNameMatchingRule.cs" />
-    <Compile Include="ObjectBuilder\IPolicyInjectionPolicy.cs" />
-    <Compile Include="ObjectBuilder\PolicyInjectionPolicy.cs" />
-    <Compile Include="ObjectBuilder\PolicyInjectionStrategy.cs" />
-    <Compile Include="RuleDrivenPolicy.cs" />
-    <Compile Include="PolicySetCustomFactory.cs" />
-    <Compile Include="PolicySetFactory.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Configuration\CustomCallHandlerData.cs" />
-    <Compile Include="Configuration\CustomMatchingRuleData.cs" />
-    <Compile Include="Configuration\CallHandlerData.cs" />
-    <Compile Include="Configuration\MatchingRuleData.cs" />
-    <Compile Include="Configuration\PolicyData.cs" />
-    <Compile Include="Configuration\PolicyInjectionSettings.cs" />
-    <Compile Include="HandlerPipeline.cs" />
-    <Compile Include="ICallHandler.cs" />
-    <Compile Include="IMatchingRule.cs" />
-    <Compile Include="RemotingInterception\InterceptingRealProxy.cs" />
-    <Compile Include="MatchingRuleSet.cs" />
-    <Compile Include="PolicySet.cs" />
-    <Compile Include="RemotingInterception\RemotingInputParameterCollection.cs" />
-    <Compile Include="RemotingInterception\RemotingMethodInvocation.cs" />
-    <Compile Include="RemotingInterception\RemotingMethodReturn.cs" />
-    <Compile Include="RemotingInterception\RemotingOutputParameterCollection.cs" />
     <Compile Include="MatchingRules\TypeMatchingRule.cs" />
+    <Compile Include="PolicyInjection.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="ParameterCollection.cs" />
-    <Compile Include="Utilities\ReflectionHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\Src\Common.csproj">

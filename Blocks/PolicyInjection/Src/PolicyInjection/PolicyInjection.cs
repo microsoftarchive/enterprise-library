@@ -9,7 +9,11 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using System;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
+using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.InterceptionExtension;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection
 {
@@ -21,7 +25,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection
     /// </summary>
     public static class PolicyInjection
     {
-        private static volatile PolicyInjector defaultPolicyInjector;
+        private static volatile PolicyInjectionHelper defaultHelper;
         private static readonly object singletonLock = new object();
 
         /// <summary>
@@ -34,7 +38,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection
         /// <returns>The intercepted object (or possibly a raw instance if no policies apply).</returns>
         public static TObject Create<TObject>(params object[] args)
         {
-            return DefaultPolicyInjector.Create<TObject>(args);
+            return DefaultHelper.Create<TObject>(args);
         }
 
         /// <summary>
@@ -48,7 +52,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection
         /// <returns>The intercepted object (or possibly a raw instance if no policies apply).</returns>
         public static TObject Create<TObject>(IConfigurationSource configurationSource, params object[] args)
         {
-            PolicyInjector policyInjector = GetInjectorFromConfig(configurationSource);
+            PolicyInjectionHelper policyInjector = GetHelperFromConfig(configurationSource);
             return policyInjector.Create<TObject>(args);
         }
 
@@ -63,7 +67,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection
         /// <returns>The intercepted object (or possibly a raw instance if no policies apply).</returns>
         public static TInterface Create<TObject, TInterface>(params object[] args)
         {
-            return DefaultPolicyInjector.Create<TObject, TInterface>(args);
+            return DefaultHelper.Create<TObject, TInterface>(args);
         }
 
         /// <summary>
@@ -78,7 +82,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection
         /// <returns>The intercepted object (or possibly a raw instance if no policies apply).</returns>
         public static TInterface Create<TObject, TInterface>(IConfigurationSource configurationSource, params object[] args)
         {
-            PolicyInjector policyInjector = GetInjectorFromConfig(configurationSource);
+            PolicyInjectionHelper policyInjector = GetHelperFromConfig(configurationSource);
             return policyInjector.Create<TObject, TInterface>(args);
         }
 
@@ -96,7 +100,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection
         /// <returns>The proxy for the instance, or the raw object if no policies apply.</returns>
         public static TInterface Wrap<TInterface>(object instance)
         {
-            return DefaultPolicyInjector.Wrap<TInterface>(instance);
+            return DefaultHelper.Wrap<TInterface>(instance);
         }
 
         /// <summary>
@@ -114,35 +118,108 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection
         /// <returns>The proxy for the instance, or the raw object if no policies apply.</returns>
         public static TInterface Wrap<TInterface>(IConfigurationSource configurationSource, object instance)
         {
-            PolicyInjector policyInjector = GetInjectorFromConfig(configurationSource);
+            PolicyInjectionHelper policyInjector = GetHelperFromConfig(configurationSource);
             return policyInjector.Wrap<TInterface>(instance);
         }
 
-        private static PolicyInjector DefaultPolicyInjector
+        private static PolicyInjectionHelper DefaultHelper
         {
             get
             {
-                if( defaultPolicyInjector == null)
+                if (defaultHelper == null)
                 {
-                    lock(singletonLock)
+                    lock (singletonLock)
                     {
-                        if(defaultPolicyInjector == null)
+                        if (defaultHelper == null)
                         {
                             IConfigurationSource configurationSource =
                                 ConfigurationSourceFactory.Create();
-                            defaultPolicyInjector = GetInjectorFromConfig(configurationSource);
+                            defaultHelper = GetHelperFromConfig(configurationSource);
                         }
                     }
                 }
-                return defaultPolicyInjector;
+                return defaultHelper;
             }
         }
 
-        private static PolicyInjector GetInjectorFromConfig(IConfigurationSource configurationSource)
+        private static PolicyInjectionHelper GetHelperFromConfig(IConfigurationSource configurationSource)
         {
-            PolicyInjectorFactory injectorFactory = new PolicyInjectorFactory(configurationSource);
-            return injectorFactory.Create();
+            return new PolicyInjectionHelper(configurationSource);
         }
 
+        private class PolicyInjectionHelper : IDisposable
+        {
+            private readonly IUnityContainer container;
+            private static readonly TransparentProxyPolicyInjector injector = new TransparentProxyPolicyInjector();
+
+            public PolicyInjectionHelper(IConfigurationSource configurationSource)
+            {
+                container = new UnityContainer();
+                container.AddNewExtension<Interception>();
+
+                PolicyInjectionSettings settings
+                    = (PolicyInjectionSettings)configurationSource.GetSection(PolicyInjectionSettings.SectionName);
+                if (settings != null)
+                {
+                    settings.ConfigureContainer(container, configurationSource);
+                }
+            }
+
+            public bool TypeSupportsInterception(Type t)
+            {
+                return injector.TypeSupportsInterception(t);
+            }
+
+            private object DoWrap(object instance, Type typeToReturn)
+            {
+                container.Configure<Interception>().SetDefaultInjectorFor(typeToReturn, injector);
+
+                return container.BuildUp(typeToReturn, instance);
+            }
+
+            private object DoCreate(Type typeToCreate, Type typeToReturn, object[] arguments)
+            {
+                object target = Activator.CreateInstance(typeToCreate, arguments);
+                return DoWrap(target, typeToReturn);
+            }
+
+            public object Wrap(object instance, Type typeToReturn)
+            {
+                return DoWrap(instance, typeToReturn);
+            }
+
+            public object Create(Type typeToCreate, Type typeToReturn, params object[] args)
+            {
+                return DoCreate(typeToCreate, typeToReturn, args);
+            }
+
+            public object Create(Type typeToCreate, params object[] args)
+            {
+                return Create(typeToCreate, typeToCreate, args);
+            }
+
+            public TInterface Wrap<TInterface>(object instance)
+            {
+                return (TInterface)Wrap(instance, typeof(TInterface));
+            }
+
+            public TInterface Create<TObject, TInterface>(params object[] args)
+            {
+                return (TInterface)Create(typeof(TObject), typeof(TInterface), args);
+            }
+
+            public TObject Create<TObject>(params object[] args)
+            {
+                return (TObject)Create(typeof(TObject), typeof(TObject), args);
+            }
+
+            void IDisposable.Dispose()
+            {
+                if (this.container != null)
+                {
+                    this.container.Dispose();
+                }
+            }
+        }
     }
 }

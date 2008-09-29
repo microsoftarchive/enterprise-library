@@ -9,49 +9,46 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.MatchingRules;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration.Design.Properties;
+using PropertyMatchingOption = Microsoft.Practices.Unity.InterceptionExtension.PropertyMatchingOption;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration.Design.MatchingRules
 {
-	/// <summary>
-	/// Represents a match on a property.
-	/// </summary>
-	public class PropertyMatch : Match
-	{
-		PropertyMatchingOption matchOption;
+    /// <summary>
+    /// Represents a match on a property.
+    /// </summary>
+    public class PropertyMatch : Match
+    {
+        PropertyMatchingOption matchOption;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="PropertyMatch"/> class with default values.
-		/// </summary>
-		public PropertyMatch()
-		{
-		}
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PropertyMatch"/> class with default values.
+        /// </summary>
+        public PropertyMatch()
+        {
+        }
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="PropertyMatch"/> class with the supplied values.
-		/// </summary>
-		/// <param name="match">The string to match the property name.</param>
-		/// <param name="ignoreCase">The indication of whether matching should be case-insensitive.</param>
-		/// <param name="matchOption">The <see cref="PropertyMatchingOption"/> indicating how matching should be performed.</param>
-		public PropertyMatch(string match, bool ignoreCase, PropertyMatchingOption matchOption)
-			: base(match, ignoreCase)
-		{
-			this.matchOption = matchOption;
-		}
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PropertyMatch"/> class with the supplied values.
+        /// </summary>
+        /// <param name="match">The string to match the property name.</param>
+        /// <param name="ignoreCase">The indication of whether matching should be case-insensitive.</param>
+        /// <param name="matchOption">The <see cref="PropertyMatchingOption"/> indicating how matching should be performed.</param>
+        public PropertyMatch(string match, bool ignoreCase, PropertyMatchingOption matchOption)
+            : base(match, ignoreCase)
+        {
+            this.matchOption = matchOption;
+        }
 
-		/// <summary>
-		/// Gets or sets the <see cref="PropertyMatchingOption"/> indicating how matching should be performed.
-		/// </summary>
-		[SRCategory("CategoryGeneral", typeof(Resources))]
-		public PropertyMatchingOption MatchOption
-		{
-			get { return matchOption; }
-			set { matchOption = value; }
-		}
-	}
+        /// <summary>
+        /// Gets or sets the <see cref="PropertyMatchingOption"/> indicating how matching should be performed.
+        /// </summary>
+        [SRCategory("CategoryGeneral", typeof(Resources))]
+        public PropertyMatchingOption MatchOption
+        {
+            get { return matchOption; }
+            set { matchOption = value; }
+        }
+    }
 }

@@ -26,44 +26,38 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration.De
         public override void Register()
         {
             AddMultipleNodeMap(Resources.AssemblyMatchingRule,
-                               typeof (AssemblyMatchingRuleNode),
-                               typeof (AssemblyMatchingRuleData));
+                               typeof(AssemblyMatchingRuleNode),
+                               typeof(AssemblyMatchingRuleData));
             AddMultipleNodeMap(Resources.CustomAttributeMatchingRuleNodeName,
-                               typeof (CustomAttributeMatchingRuleNode),
-                               typeof (CustomAttributeMatchingRuleData));
+                               typeof(CustomAttributeMatchingRuleNode),
+                               typeof(CustomAttributeMatchingRuleData));
             AddMultipleNodeMap(Resources.CustomMatchingRuleNodeName,
-                               typeof (CustomMatchingRuleNode),
-                               typeof (CustomMatchingRuleData));
+                               typeof(CustomMatchingRuleNode),
+                               typeof(CustomMatchingRuleData));
             AddMultipleNodeMap(Resources.MemberNameMatchingRuleNodeName,
-                               typeof (MemberNameMatchingRuleNode),
-                               typeof (MemberNameMatchingRuleData));
+                               typeof(MemberNameMatchingRuleNode),
+                               typeof(MemberNameMatchingRuleData));
             AddMultipleNodeMap(Resources.MethodSignatureMatchingRuleNodeName,
-                               typeof (MethodSignatureMatchingRuleNode),
-                               typeof (MethodSignatureMatchingRuleData));
+                               typeof(MethodSignatureMatchingRuleNode),
+                               typeof(MethodSignatureMatchingRuleData));
             AddMultipleNodeMap(Resources.NamespaceMatchingRuleNodeName,
-                               typeof (NamespaceMatchingRuleNode),
-                               typeof (NamespaceMatchingRuleData));
+                               typeof(NamespaceMatchingRuleNode),
+                               typeof(NamespaceMatchingRuleData));
             AddMultipleNodeMap(Resources.ParameterTypeMatchingRuleNodeName,
-                               typeof (ParameterTypeMatchingRuleNode),
-                               typeof (ParameterTypeMatchingRuleData));
+                               typeof(ParameterTypeMatchingRuleNode),
+                               typeof(ParameterTypeMatchingRuleData));
             AddMultipleNodeMap(Resources.PropertyMatchingRuleNodeName,
-                               typeof (PropertyMatchingRuleNode),
-                               typeof (PropertyMatchingRuleData));
+                               typeof(PropertyMatchingRuleNode),
+                               typeof(PropertyMatchingRuleData));
             AddMultipleNodeMap(Resources.ReturnTypeMatchingRuleNodeName,
-                               typeof (ReturnTypeMatchingRuleNode),
-                               typeof (ReturnTypeMatchingRuleData));
+                               typeof(ReturnTypeMatchingRuleNode),
+                               typeof(ReturnTypeMatchingRuleData));
             AddMultipleNodeMap(Resources.TagAttributeMatchingRuleNodeName,
-                               typeof (TagAttributeMatchingRuleNode),
-                               typeof (TagAttributeMatchingRuleData));
+                               typeof(TagAttributeMatchingRuleNode),
+                               typeof(TagAttributeMatchingRuleData));
             AddMultipleNodeMap(Resources.TypeMatchingRuleNodeName,
-                               typeof (TypeMatchingRuleNode),
-                               typeof (TypeMatchingRuleData));
-            AddSingleNodeMap(Resources.RemotingInjectorNodeName,
-                             typeof (RemotingInjectorNode),
-                             typeof (RemotingInjectorData));
-            AddMultipleNodeMap(Resources.CustomInjectorNodeName,
-                               typeof (CustomInjectorNode), 
-                               typeof (CustomInjectorData));
+                               typeof(TypeMatchingRuleNode),
+                               typeof(TypeMatchingRuleData));
         }
     }
 }

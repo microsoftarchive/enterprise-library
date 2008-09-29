@@ -10,13 +10,15 @@
 //===============================================================================
 
 using System;
+using System.Linq;
+using System.Reflection;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.MatchingRules;
-using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.RemotingInterception;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.ObjectsUnderTest;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
+using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.InterceptionExtension;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tests
@@ -29,9 +31,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         public void CanCreateValidationCallHandlerThroughFactory()
         {
             ValidationCallHandlerData validationCallHandler = new ValidationCallHandlerData("validationHandler");
-            PolicySet policies = CreatePolicySetContainingCallHandler(validationCallHandler);
+            IUnityContainer container = new UnityContainer().AddNewExtension<Interception>();
 
-            ICallHandler runtimeHandler = ((RuleDrivenPolicy)policies[1]).Handlers[0];
+            RuleDrivenPolicy policy = CreatePolicySetContainingCallHandler(validationCallHandler, container);
+
+            ICallHandler runtimeHandler
+                = (policy.GetHandlersFor(MethodInfo.GetCurrentMethod(), container)).ElementAt(0);
 
             Assert.IsNotNull(runtimeHandler);
         }
@@ -40,9 +45,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         [DeploymentItem("Validation.config")]
         public void ValidationCallHandlerDoesNothingIfValidationPasses()
         {
-            RemotingPolicyInjector factory = new RemotingPolicyInjector();
+            IUnityContainer factory = new UnityContainer().AddNewExtension<Interception>();
+            factory.Configure<Interception>().SetDefaultInjectorFor<ValidationFixtureTarget>(new TransparentProxyPolicyInjector());
             AddValidationPolicy(factory, string.Empty, SpecificationSource.Attributes, new TypeMatchingRule("ValidationFixtureTarget"));
-            ValidationFixtureTarget target = factory.Create<ValidationFixtureTarget>();
+            ValidationFixtureTarget target = factory.Resolve<ValidationFixtureTarget>();
 
             target.AcceptTest(new TestObject(false, false));
         }
@@ -52,9 +58,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         [ExpectedException(typeof(ArgumentValidationException))]
         public void ValidationCallHandlerThrowsArgumentValidationExceptionIfValidationFailsFromMetaData()
         {
-            RemotingPolicyInjector factory = new RemotingPolicyInjector();
+            IUnityContainer factory = new UnityContainer().AddNewExtension<Interception>();
+            factory.Configure<Interception>().SetDefaultInjectorFor<ValidationFixtureTarget>(new TransparentProxyPolicyInjector());
             AddValidationPolicy(factory, string.Empty, SpecificationSource.Attributes, new TypeMatchingRule("ValidationFixtureTarget"));
-            ValidationFixtureTarget target = factory.Create<ValidationFixtureTarget>();
+            ValidationFixtureTarget target = factory.Resolve<ValidationFixtureTarget>();
 
             target.AcceptTest(new TestObject(true, false));
         }
@@ -64,9 +71,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         [ExpectedException(typeof(ArgumentValidationException))]
         public void ValidationCallHandlerThrowsArgumentValidationExceptionIfValidationFailsFromConfiguration()
         {
-            RemotingPolicyInjector factory = new RemotingPolicyInjector();
+            IUnityContainer factory = new UnityContainer().AddNewExtension<Interception>();
+            factory.Configure<Interception>().SetDefaultInjectorFor<ValidationFixtureTarget>(new TransparentProxyPolicyInjector());
             AddValidationPolicy(factory, string.Empty, SpecificationSource.Configuration, new TypeMatchingRule("ValidationFixtureTarget"));
-            ValidationFixtureTarget target = factory.Create<ValidationFixtureTarget>();
+            ValidationFixtureTarget target = factory.Resolve<ValidationFixtureTarget>();
 
             target.AcceptTest(new TestObject(false, true));
         }
@@ -75,9 +83,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         [DeploymentItem("Validation.config")]
         public void ValidationCallHandlerIgnoresAttributeValidationIfSpecificationSourceIsConfig()
         {
-            RemotingPolicyInjector factory = new RemotingPolicyInjector();
+            IUnityContainer factory = new UnityContainer().AddNewExtension<Interception>();
+            factory.Configure<Interception>().SetDefaultInjectorFor<ValidationFixtureTarget>(new TransparentProxyPolicyInjector());
             AddValidationPolicy(factory, string.Empty, SpecificationSource.Configuration, new TypeMatchingRule("ValidationFixtureTarget"));
-            ValidationFixtureTarget target = factory.Create<ValidationFixtureTarget>();
+            ValidationFixtureTarget target = factory.Resolve<ValidationFixtureTarget>();
 
             target.AcceptTest(new TestObject(true, false));
         }
@@ -86,9 +95,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         [DeploymentItem("Validation.config")]
         public void ValidationCallHandlerIgnoresConfigurationValidationIfSpecificationSourceIsAttributes()
         {
-            RemotingPolicyInjector factory = new RemotingPolicyInjector();
+            IUnityContainer factory = new UnityContainer().AddNewExtension<Interception>();
+            factory.Configure<Interception>().SetDefaultInjectorFor<ValidationFixtureTarget>(new TransparentProxyPolicyInjector());
             AddValidationPolicy(factory, string.Empty, SpecificationSource.Attributes, new TypeMatchingRule("ValidationFixtureTarget"));
-            ValidationFixtureTarget target = factory.Create<ValidationFixtureTarget>();
+            ValidationFixtureTarget target = factory.Resolve<ValidationFixtureTarget>();
 
             target.AcceptTest(new TestObject(false, true));
         }
@@ -98,11 +108,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         [ExpectedException(typeof(ArgumentValidationException))]
         public void ShouldThrowIfValidationOnParameterAttributesFails()
         {
-            RemotingPolicyInjector factory = new RemotingPolicyInjector();
+            IUnityContainer factory = new UnityContainer().AddNewExtension<Interception>();
+            factory.Configure<Interception>().SetDefaultInjectorFor<TestObject>(new TransparentProxyPolicyInjector());
             AddValidationPolicy(factory, string.Empty, SpecificationSource.Both,
                                 new TypeMatchingRule("TestObject"));
 
-            TestObject target = factory.Create<TestObject>(false, false);
+            TestObject target = factory.BuildUp<TestObject>(new TestObject(false, false));
             target.GetValueByKey(null);
         }
 
@@ -110,15 +121,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         [DeploymentItem("Validation.config")]
         public void ShouldNotThrowIfValidationOnParameterAttributePasses()
         {
-            RemotingPolicyInjector factory = new RemotingPolicyInjector();
+            IUnityContainer factory = new UnityContainer().AddNewExtension<Interception>();
+            factory.Configure<Interception>().SetDefaultInjectorFor<TestObject>(new TransparentProxyPolicyInjector());
             AddValidationPolicy(factory, string.Empty, SpecificationSource.Both,
                                 new TypeMatchingRule("TestObject"));
 
-            TestObject target = factory.Create<TestObject>(false, false);
+            TestObject target = factory.BuildUp<TestObject>(new TestObject(false, false));
             target.GetValueByKey("key");
         }
 
-        static PolicySet CreatePolicySetContainingCallHandler(ValidationCallHandlerData validationCallHandler)
+        static RuleDrivenPolicy CreatePolicySetContainingCallHandler(
+            ValidationCallHandlerData validationCallHandler,
+            IUnityContainer container)
         {
             PolicyInjectionSettings settings = new PolicyInjectionSettings();
             PolicyData policyData = new PolicyData("policy");
@@ -129,27 +143,26 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
             DictionaryConfigurationSource dictionaryConfigurationSource = new DictionaryConfigurationSource();
             dictionaryConfigurationSource.Add(PolicyInjectionSettings.SectionName, settings);
 
-            PolicySetFactory factory = new PolicySetFactory(dictionaryConfigurationSource);
-            PolicySet policies = factory.Create();
-            return policies;
+            settings.ConfigureContainer(container, dictionaryConfigurationSource);
+
+            return container.Resolve<RuleDrivenPolicy>("policy");
         }
 
-        void AddValidationPolicy(PolicyInjector factory,
+        void AddValidationPolicy(IUnityContainer factory,
                                  string ruleSet,
                                  SpecificationSource specificationSource,
                                  IMatchingRule matchingRule)
         {
-            RuleDrivenPolicy policy = new RuleDrivenPolicy();
-            policy.RuleSet.Add(matchingRule);
-            policy.Handlers.Add(new ValidationCallHandler(ruleSet, specificationSource));
 
-            factory.Policies.Add(policy);
+            factory.Configure<Interception>().AddPolicy("Noop")
+                .AddMatchingRule(matchingRule)
+                .AddCallHandler(new ValidationCallHandler(ruleSet, specificationSource));
         }
     }
 
     public class ValidationFixtureTarget : MarshalByRefObject
     {
-        public void AcceptTest(TestObject testObject) {}
+        public void AcceptTest(TestObject testObject) { }
     }
 
     public class TestObject : MarshalByRefObject

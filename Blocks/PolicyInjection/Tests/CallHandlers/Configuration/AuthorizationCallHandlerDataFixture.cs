@@ -9,7 +9,12 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using System.Collections.Generic;
+using System.Reflection;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.ObjectsUnderTest;
+using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.InterceptionExtension;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tests.Configuration
@@ -42,12 +47,47 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
             data.OperationName = "op";
             data.Order = 7;
 
-            AuthorizationCallHandlerAssembler assembler = new AuthorizationCallHandlerAssembler();
-            AuthorizationCallHandler handler = (AuthorizationCallHandler)assembler.Assemble(null, data, null, null);
+            IUnityContainer container = new UnityContainer().AddNewExtension<Interception>();
+            var policy = container.Configure<Interception>().AddPolicy("test");
+            policy.AddMatchingRule(new AlwaysMatchingRule());
+            data.ConfigurePolicy(policy, null);
 
+            var handlers
+                = new List<ICallHandler>(
+                    container.Resolve<InjectionPolicy>("test")
+                        .GetHandlersFor(MethodInfo.GetCurrentMethod(), container));
+
+            Assert.AreEqual(1, handlers.Count);
+
+            AuthorizationCallHandler handler = (AuthorizationCallHandler)handlers[0];
             Assert.AreEqual(data.AuthorizationProvider, handler.ProviderName);
             Assert.AreEqual(data.OperationName, handler.OperationName);
             Assert.AreEqual(data.Order, handler.Order);
+        }
+
+        [TestMethod]
+        public void ConfiguresHandlerAsSingleton()
+        {
+            AuthorizationCallHandlerData data = new AuthorizationCallHandlerData("Auth handler");
+            data.AuthorizationProvider = "authorizationProvider";
+            data.OperationName = "op";
+            data.Order = 7;
+
+            IUnityContainer container = new UnityContainer().AddNewExtension<Interception>();
+            var policy = container.Configure<Interception>().AddPolicy("test");
+            policy.AddMatchingRule(new AlwaysMatchingRule());
+            data.ConfigurePolicy(policy, null);
+
+            var handlers1
+                = new List<ICallHandler>(
+                    container.Resolve<InjectionPolicy>("test")
+                        .GetHandlersFor(MethodInfo.GetCurrentMethod(), container));
+            var handlers2
+                = new List<ICallHandler>(
+                    container.Resolve<InjectionPolicy>("test")
+                        .GetHandlersFor(MethodInfo.GetCurrentMethod(), container));
+
+            CollectionAssert.AreEquivalent(handlers1, handlers2);
         }
     }
 }

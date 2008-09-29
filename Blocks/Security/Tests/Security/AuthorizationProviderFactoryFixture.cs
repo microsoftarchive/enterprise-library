@@ -60,5 +60,24 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Tests
             AuthorizationProviderFactory factory = new AuthorizationProviderFactory(GetConfigurationSource());
             factory.Create("provider3");
         }
+
+        [TestMethod]
+        [ExpectedException(typeof(ConfigurationErrorsException))]
+        public void MissingSecuritySectionTest()
+        {
+            AuthorizationProviderFactory factory = new AuthorizationProviderFactory(new DictionaryConfigurationSource());
+            factory.Create("provider3");
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ConfigurationErrorsException))]
+        public void MissingDefaultProviderTest()
+        {
+            DictionaryConfigurationSource source = new DictionaryConfigurationSource();
+            source.Add(SecuritySettings.SectionName, new SecuritySettings());
+
+            AuthorizationProviderFactory factory = new AuthorizationProviderFactory(source);
+            factory.CreateDefault();
+        }
     }
 }

@@ -11,6 +11,8 @@
 
 using System;
 using System.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Caching.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.ObjectBuilder2;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -39,6 +41,30 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests
         public void WillThrowExceptionIfCannotFindCacheInstance()
         {
             factory.Create("ThisIsABadName");
+
+            Assert.Fail("Should have thrown ConfigurationErrorsException");
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ConfigurationErrorsException))]
+        public void WillThrowExceptionIfCannotFindSection()
+        {
+            CacheManagerFactory factory2 = new CacheManagerFactory(new DictionaryConfigurationSource());
+
+            factory2.Create("some name");
+
+            Assert.Fail("Should have thrown ConfigurationErrorsException");
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ConfigurationErrorsException))]
+        public void WillThrowExceptionIfCannotDefault()
+        {
+            DictionaryConfigurationSource source = new DictionaryConfigurationSource();
+            source.Add(CacheManagerSettings.SectionName, new CacheManagerSettings());
+            CacheManagerFactory factory2 = new CacheManagerFactory(source);
+
+            factory2.CreateDefault();
 
             Assert.Fail("Should have thrown ConfigurationErrorsException");
         }

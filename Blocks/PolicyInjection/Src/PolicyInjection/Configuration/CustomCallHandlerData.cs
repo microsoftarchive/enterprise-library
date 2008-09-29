@@ -10,12 +10,11 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using System.Collections.Specialized;
 using System.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.InterceptionExtension;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
 {
@@ -23,7 +22,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
     /// A configuration element that allows you to configure arbitrary
     /// call handlers that don't otherwise have configuration support.
     /// </summary>
-    [Assembler(typeof(CustomProviderAssembler<ICallHandler, CallHandlerData, CustomCallHandlerData>))]
     public class CustomCallHandlerData : CallHandlerData, IHelperAssistedCustomConfigurationData<CustomCallHandlerData>
     {
         CustomProviderDataHelper<CustomCallHandlerData> helper;
@@ -148,6 +146,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
             return helper.HandleOnDeserializeUnrecognizedAttribute(name, value);
         }
 
+        /// <summary>
+        /// Adds the call handler represented by this configuration object to <paramref name="policy"/>.
+        /// </summary>
+        /// <param name="policy">The policy to which the rule must be added.</param>
+        /// <param name="configurationSource">The configuration source from which additional information
+        /// can be retrieved, if necessary.</param>
+        public override void ConfigurePolicy(PolicyDefinition policy, IConfigurationSource configurationSource)
+        {
+            policy.AddCallHandler(
+                this.Type,
+                new ContainerControlledLifetimeManager(),
+                new InjectionConstructor(new InjectionParameter<NameValueCollection>(this.Attributes)),
+                new InjectionProperty("Order", new InjectionParameter<int>(this.Order)));
+        }
 
         /// <summary>
         /// Gets the helper.

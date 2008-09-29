@@ -15,6 +15,7 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Properties;
+using Microsoft.Practices.Unity.InterceptionExtension;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
 {
@@ -39,7 +40,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
         /// </summary>
         /// <param name="exceptionPolicyName">Exception policy name.</param>
         public ExceptionCallHandler(string exceptionPolicyName)
-            :this(exceptionPolicyName, ConfigurationSourceFactory.Create())
+            : this(exceptionPolicyName, ConfigurationSourceFactory.Create())
         {
         }
 
@@ -104,7 +105,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
         public IMethodReturn Invoke(IMethodInvocation input, GetNextHandlerDelegate getNext)
         {
             IMethodReturn result = getNext()(input, getNext);
-            if( result.Exception != null )
+            if (result.Exception != null)
             {
                 try
                 {
@@ -128,7 +129,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
                     }
                     // Otherwise the original exception will be returned to the previous handler
                 }
-                catch( Exception ex)
+                catch (Exception ex)
                 {
                     // New exception was returned
                     result.Exception = ex;

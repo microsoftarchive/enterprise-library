@@ -9,19 +9,19 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
-using Microsoft.Practices.ObjectBuilder2;
+using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.InterceptionExtension;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Configuration
 {
     /// <summary>
     /// A configuration element for the data for the LogCallHandler.
     /// </summary>
-    [Assembler(typeof(LogCallHandlerAssembler))]
     public class LogCallHandlerData : CallHandlerData
     {
         private const string LogBehaviorPropertyName = "logBehavior";
@@ -47,7 +47,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
         /// </summary>
         /// <param name="handlerName">Handler name</param>
         public LogCallHandlerData(string handlerName)
-            :base(handlerName, typeof(LogCallHandler))
+            : base(handlerName, typeof(LogCallHandler))
         {
         }
 
@@ -115,7 +115,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
         public int EventId
         {
             get { return (int)base[EventIdPropertyName]; }
-            set { base[EventIdPropertyName] = value;  }
+            set { base[EventIdPropertyName] = value; }
         }
 
         /// <summary>
@@ -173,7 +173,57 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
             get { return (TraceEventType)base[SeverityPropertyName]; }
             set { base[SeverityPropertyName] = value; }
         }
- 
+
+        /// <summary>
+        /// Adds the call handler represented by this configuration object to <paramref name="policy"/>.
+        /// </summary>
+        /// <param name="policy">The policy to which the rule must be added.</param>
+        /// <param name="configurationSource">The configuration source from which additional information
+        /// can be retrieved, if necessary.</param>
+        public override void ConfigurePolicy(PolicyDefinition policy, IConfigurationSource configurationSource)
+        {
+            bool logBeforeCall = false;
+            bool logAfterCall = false;
+            switch (this.LogBehavior)
+            {
+                case HandlerLogBehavior.Before:
+                    logBeforeCall = true;
+                    break;
+
+                case HandlerLogBehavior.After:
+                    logAfterCall = true;
+                    break;
+
+                case HandlerLogBehavior.BeforeAndAfter:
+                    logBeforeCall = true;
+                    logAfterCall = true;
+                    break;
+            }
+
+            List<string> categories = new List<string>();
+            this.Categories.ForEach(
+                delegate(LogCallHandlerCategoryEntry entry)
+                {
+                    categories.Add(entry.Name);
+                }
+            );
+
+            policy.AddCallHandler<LogCallHandler>(
+                new ContainerControlledLifetimeManager(),
+                new InjectionConstructor(new InjectionParameter<IConfigurationSource>(configurationSource)),
+                new InjectionProperty("LogBeforeCall", logBeforeCall),
+                new InjectionProperty("LogAfterCall", logAfterCall),
+                new InjectionProperty("Order", this.Order),
+                new InjectionProperty("BeforeMessage", new InjectionParameter<string>(this.BeforeMessage)),
+                new InjectionProperty("AfterMessage", new InjectionParameter<string>(this.AfterMessage)),
+                new InjectionProperty("EventId", this.EventId),
+                new InjectionProperty("IncludeCallStack", this.IncludeCallStack),
+                new InjectionProperty("IncludeCallTime", this.IncludeCallTime),
+                new InjectionProperty("IncludeParameters", this.IncludeParameterValues),
+                new InjectionProperty("Priority", this.Priority),
+                new InjectionProperty("Severity", this.Severity),
+                new InjectionProperty("Categories", categories));
+        }
     }
 
     /// <summary>
@@ -184,75 +234,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
         /// <summary>
         /// Log both before and after the call.
         /// </summary>
-        BeforeAndAfter =0,
+        BeforeAndAfter = 0,
         /// <summary>
         /// Log only before the call.
         /// </summary>
-        Before =1,
+        Before = 1,
         /// <summary>
         /// Log only after the call.
         /// </summary>
-        After =2
-    }
-
-    /// <summary>
-    /// A class used by ObjectBuilder to construct a <see cref="LogCallHandler"/> from
-    /// a <see cref="LogCallHandlerData"/> instance.
-    /// </summary>
-    public class LogCallHandlerAssembler : IAssembler<ICallHandler, CallHandlerData>
-    {
-        /// <summary>
-        /// Builds an instance of the subtype of <typeparamref name="TObject"/> type the receiver knows how to build,  based on 
-        /// an a configuration object.
-        /// </summary>
-        /// <param name="context">The <see cref="IBuilderContext"/> that represents the current building process.</param>
-        /// <param name="objectConfiguration">The configuration object that describes the object to build.</param>
-        /// <param name="configurationSource">The source for configuration objects.</param>
-        /// <param name="reflectionCache">The cache to use retrieving reflection information.</param>
-        /// <returns>A fully initialized instance of the <typeparamref name="TObject"/> subtype.</returns>
-        public ICallHandler Assemble(IBuilderContext context, CallHandlerData objectConfiguration,
-                                     IConfigurationSource configurationSource,
-                                     ConfigurationReflectionCache reflectionCache)
-        {
-            LogCallHandlerData handlerData = (LogCallHandlerData) objectConfiguration;
-            LogCallHandler callHandler = new LogCallHandler(configurationSource);
-            switch (handlerData.LogBehavior)
-            {
-                case HandlerLogBehavior.Before:
-                    callHandler.LogBeforeCall = true;
-                    callHandler.LogAfterCall = false;
-                    break;
-
-                case HandlerLogBehavior.After:
-                    callHandler.LogBeforeCall = false;
-                    callHandler.LogAfterCall = true;
-                    break;
-
-                case HandlerLogBehavior.BeforeAndAfter:
-                    callHandler.LogBeforeCall = true;
-                    callHandler.LogAfterCall = true;
-                    break;
-            }
-
-            callHandler.Order = handlerData.Order;
-            callHandler.BeforeMessage = handlerData.BeforeMessage;
-            callHandler.AfterMessage = handlerData.AfterMessage;
-            callHandler.EventId = handlerData.EventId;
-            callHandler.IncludeCallStack = handlerData.IncludeCallStack;
-            callHandler.IncludeCallTime = handlerData.IncludeCallTime;
-            callHandler.IncludeParameters = handlerData.IncludeParameterValues;
-            callHandler.Priority = handlerData.Priority;
-            callHandler.Severity = handlerData.Severity;
-            callHandler.Categories.Clear();
-
-            handlerData.Categories.ForEach(
-                delegate(LogCallHandlerCategoryEntry entry)
-                {
-                    callHandler.Categories.Add(entry.Name);
-                }
-            );
-
-            return callHandler;
-        }
+        After = 2
     }
 }

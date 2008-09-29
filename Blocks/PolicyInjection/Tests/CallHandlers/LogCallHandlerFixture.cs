@@ -12,6 +12,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
@@ -20,8 +21,10 @@ using Microsoft.Practices.EnterpriseLibrary.Logging.Filters;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.MatchingRules;
-using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.RemotingInterception;
+using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.ObjectsUnderTest;
+using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.InterceptionExtension;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tests
@@ -286,7 +289,7 @@ Call Stack: @@BEGIN CALL STACK@@{{property(CallStack)}}@@END CALL STACK@@{{newli
                 target.DoSomethingBad();
                 Assert.Fail("Should not get here, should have exception");
             }
-            catch (ApplicationException) {}
+            catch (ApplicationException) { }
 
             AssertIsMatch("Exception: @@BEGIN EXCEPTION@@[^@]+@@END EXCEPTION@@");
         }
@@ -371,13 +374,70 @@ Call Stack: @@BEGIN CALL STACK@@{{property(CallStack)}}@@END CALL STACK@@{{newli
             FileConfigurationSource configSource =
                 new FileConfigurationSource("LogCallHandler.config");
 
-            LogCallHandlerAssembler assembler = new LogCallHandlerAssembler();
+            PolicyInjectionSettings settings = new PolicyInjectionSettings();
 
+            PolicyData policyData = new PolicyData("policy");
             LogCallHandlerData data = new LogCallHandlerData("fooHandler", 66);
+            data.BeforeMessage = "before";
+            data.AfterMessage = "after";
+            data.IncludeCallTime = true;
+            data.EventId = 100;
+            data.Categories.Add(new LogCallHandlerCategoryEntry("category1"));
+            data.Categories.Add(new LogCallHandlerCategoryEntry("category2"));
+            policyData.MatchingRules.Add(new CustomMatchingRuleData("matchesEverything", typeof(AlwaysMatchingRule)));
+            policyData.Handlers.Add(data);
+            settings.Policies.Add(policyData);
 
-            ICallHandler handler = assembler.Assemble(null, data, configSource, null);
+            IUnityContainer container = new UnityContainer().AddNewExtension<Interception>();
+            settings.ConfigureContainer(container, configSource);
 
+            RuleDrivenPolicy policy = container.Resolve<RuleDrivenPolicy>("policy");
+
+            LogCallHandler handler
+                = (LogCallHandler)(policy.GetHandlersFor(MethodInfo.GetCurrentMethod(), container)).ElementAt(0);
+            Assert.IsNotNull(handler);
             Assert.AreEqual(66, handler.Order);
+            Assert.AreEqual("before", handler.BeforeMessage);
+            Assert.AreEqual("after", handler.AfterMessage);
+            Assert.AreEqual(true, handler.IncludeCallTime);
+            Assert.AreEqual(100, handler.EventId);
+            Assert.AreEqual(2, handler.Categories.Count);
+            CollectionAssert.Contains(handler.Categories, "category1");
+            CollectionAssert.Contains(handler.Categories, "category2");
+        }
+
+        [TestMethod]
+        [DeploymentItem("LogCallHandler.config")]
+        public void ConfiguresCallHandlerAsSingleton()
+        {
+            FileConfigurationSource configSource =
+                new FileConfigurationSource("LogCallHandler.config");
+
+            PolicyInjectionSettings settings = new PolicyInjectionSettings();
+
+            PolicyData policyData = new PolicyData("policy");
+            LogCallHandlerData data = new LogCallHandlerData("fooHandler", 66);
+            data.BeforeMessage = "before";
+            data.AfterMessage = "after";
+            data.IncludeCallTime = true;
+            data.EventId = 100;
+            data.Categories.Add(new LogCallHandlerCategoryEntry("category1"));
+            data.Categories.Add(new LogCallHandlerCategoryEntry("category2"));
+            policyData.MatchingRules.Add(new CustomMatchingRuleData("matchesEverything", typeof(AlwaysMatchingRule)));
+            policyData.Handlers.Add(data);
+            settings.Policies.Add(policyData);
+
+            IUnityContainer container = new UnityContainer().AddNewExtension<Interception>();
+            settings.ConfigureContainer(container, configSource);
+
+            RuleDrivenPolicy policy = container.Resolve<RuleDrivenPolicy>("policy");
+
+            LogCallHandler handler1
+                = (LogCallHandler)(policy.GetHandlersFor(MethodInfo.GetCurrentMethod(), container)).ElementAt(0);
+            LogCallHandler handler2
+                = (LogCallHandler)(policy.GetHandlersFor(MethodInfo.GetCurrentMethod(), container)).ElementAt(0);
+
+            Assert.AreSame(handler1, handler2);
         }
 
         [TestMethod]
@@ -392,7 +452,7 @@ Call Stack: @@BEGIN CALL STACK@@{{property(CallStack)}}@@END CALL STACK@@{{newli
             Assert.AreEqual(1, attributes.Length);
 
             LogCallHandlerAttribute att = attributes[0] as LogCallHandlerAttribute;
-            ICallHandler callHandler = att.CreateHandler();
+            ICallHandler callHandler = att.CreateHandler(null);
 
             Assert.IsNotNull(callHandler);
             Assert.AreEqual(9, callHandler.Order);
@@ -410,26 +470,23 @@ Call Stack: @@BEGIN CALL STACK@@{{property(CallStack)}}@@END CALL STACK@@{{newli
             writer = null;
         }
 
-        PolicySet GetLoggingPolicies()
+        LoggingTarget CreateTarget()
         {
-            RuleDrivenPolicy p = new RuleDrivenPolicy("Logging");
-            p.RuleSet.Add(new TypeMatchingRule("LoggingTarget"));
-
             callHandler = new LogCallHandler(log);
             callHandler.LogBeforeCall = callHandler.LogAfterCall = true;
             callHandler.BeforeMessage = beforeMessage;
             callHandler.AfterMessage = afterMessage;
             callHandler.Categories.Add("General");
             callHandler.Categories.Add("PIAB");
-            p.Handlers.Add(callHandler);
 
-            return new PolicySet(p);
-        }
+            IUnityContainer container = new UnityContainer().AddNewExtension<Interception>();
+            container.Configure<Interception>()
+                .SetDefaultInjectorFor<LoggingTarget>(new TransparentProxyPolicyInjector())
+                .AddPolicy("Logging")
+                    .AddMatchingRule(new TypeMatchingRule("LoggingTarget"))
+                    .AddCallHandler(callHandler);
 
-        LoggingTarget CreateTarget()
-        {
-            RemotingPolicyInjector factory = new RemotingPolicyInjector(GetLoggingPolicies());
-            return factory.Create<LoggingTarget>();
+            return container.Resolve<LoggingTarget>();
         }
     }
 
@@ -448,6 +505,6 @@ Call Stack: @@BEGIN CALL STACK@@{{property(CallStack)}}@@END CALL STACK@@{{newli
         }
 
         [LogCallHandler(Order = 9)]
-        public void DoSomethingElse(string message) {}
+        public void DoSomethingElse(string message) { }
     }
 }

@@ -12,9 +12,9 @@
 using System.Collections.Generic;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
-using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.MatchingRules;
-using Microsoft.Practices.ObjectBuilder2;
+using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.InterceptionExtension;
+using FakeRules = Microsoft.Practices.EnterpriseLibrary.PolicyInjection.MatchingRules;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
 {
@@ -22,7 +22,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
     /// Configuration element that stores configuration information for
     /// an instance of <see cref="TypeMatchingRule"/>.
     /// </summary>
-    [Assembler(typeof(TypeMatchingRuleAssembler))]
     public class TypeMatchingRuleData : MatchingRuleData
     {
         private const string MatchesPropertyName = "matches";
@@ -49,7 +48,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// <param name="matchingRuleName">Matching rule instance name in configuration.</param>
         /// <param name="typeName">Type name to match.</param>
         public TypeMatchingRuleData(string matchingRuleName, string typeName)
-            : this(matchingRuleName, new MatchData[] { new MatchData(typeName)})
+            : this(matchingRuleName, new MatchData[] { new MatchData(typeName) })
         {
         }
 
@@ -60,9 +59,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// <param name="matches">Collection of <see cref="MatchData"/> containing
         /// types to match. If any one matches, the rule matches.</param>
         public TypeMatchingRuleData(string matchingRuleName, IEnumerable<MatchData> matches)
-            : base( matchingRuleName, typeof(TypeMatchingRule))
+            : base(matchingRuleName, typeof(FakeRules.TypeMatchingRule))
         {
-            foreach(MatchData match in matches)
+            foreach (MatchData match in matches)
             {
                 Matches.Add(match);
             }
@@ -79,34 +78,23 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
             get { return (MatchDataCollection<MatchData>)base[MatchesPropertyName]; }
             set { base[MatchesPropertyName] = value; }
         }
-    }
 
-    /// <summary>
-    /// A class used by ObjectBuilder to construct instance of <see cref="TypeMatchingRule"/>
-    /// from instances of <see cref="TypeMatchingRuleData"/>.
-    /// </summary>
-    public class TypeMatchingRuleAssembler : IAssembler<IMatchingRule, MatchingRuleData>
-    {
         /// <summary>
-        /// Builds an instance of the subtype of IMatchingRule type the receiver knows how to build, based on 
-        /// a configuration object.
+        /// Adds the rule represented by this configuration object to <paramref name="policy"/>.
         /// </summary>
-        /// <param name="context">The <see cref="IBuilderContext"/> that represents the current building process.</param>
-        /// <param name="objectConfiguration">The configuration object that describes the object to build.</param>
-        /// <param name="configurationSource">The source for configuration objects.</param>
-        /// <param name="reflectionCache">The cache to use retrieving reflection information.</param>
-        /// <returns>A fully initialized instance of the IMatchingRule subtype.</returns>
-        public IMatchingRule Assemble(IBuilderContext context, MatchingRuleData objectConfiguration, IConfigurationSource configurationSource, ConfigurationReflectionCache reflectionCache)
+        /// <param name="policy">The policy to which the rule must be added.</param>
+        /// <param name="configurationSource">The configuration source from which additional information
+        /// can be retrieved, if necessary.</param>
+        public override void ConfigurePolicy(PolicyDefinition policy, IConfigurationSource configurationSource)
         {
-            TypeMatchingRuleData castedRuleData = (TypeMatchingRuleData)objectConfiguration;
             List<MatchingInfo> matches = new List<MatchingInfo>();
-            foreach(MatchData match in castedRuleData.Matches)
+            foreach (MatchData match in this.Matches)
             {
                 matches.Add(new MatchingInfo(match.Match, match.IgnoreCase));
             }
-            TypeMatchingRule matchingRule = new TypeMatchingRule(matches);
 
-            return matchingRule;
+            policy.AddMatchingRule<TypeMatchingRule>(
+                new InjectionConstructor(new InjectionParameter<IEnumerable<MatchingInfo>>(matches)));
         }
     }
 }

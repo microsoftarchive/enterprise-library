@@ -16,185 +16,163 @@ using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration.Design
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration.Design
 {
-	internal class PolicyInjectionCommandRegistrar : CommandRegistrar
-	{
-		public PolicyInjectionCommandRegistrar(IServiceProvider serviceProvider)
-			: base(serviceProvider)
-		{ }
+    internal class PolicyInjectionCommandRegistrar : CommandRegistrar
+    {
+        public PolicyInjectionCommandRegistrar(IServiceProvider serviceProvider)
+            : base(serviceProvider)
+        { }
 
-		public override void Register()
-		{
-		    AddPolicyInjectionSettingsCommands();
+        public override void Register()
+        {
+            AddPolicyInjectionSettingsCommands();
 
-		    AddPolicyCommands();
+            AddPolicyCommands();
 
-			AddAssemblyMatchingRuleCommands();
+            AddAssemblyMatchingRuleCommands();
 
-			AddCustomAttributeMatchingRuleCommands();
+            AddCustomAttributeMatchingRuleCommands();
 
-			AddCustomMatchingRuleCommands();
+            AddCustomMatchingRuleCommands();
 
-			AddMemberNameMatchingRuleCommands();
+            AddMemberNameMatchingRuleCommands();
 
-			AddMethodSignatureMatchingRuleCommands();
+            AddMethodSignatureMatchingRuleCommands();
 
-			AddNamespaceMatchingRuleCommands();
+            AddNamespaceMatchingRuleCommands();
 
-			AddParameterTypeMatchingRuleCommands();
+            AddParameterTypeMatchingRuleCommands();
 
-			AddPropertyMatchingRuleCommands();
+            AddPropertyMatchingRuleCommands();
 
-			AddReturnTypeMatchingRuleCommands();
+            AddReturnTypeMatchingRuleCommands();
 
-			AddTagAttributeMatchingRuleCommands();
+            AddTagAttributeMatchingRuleCommands();
 
-			AddTypeMatchingRuleCommands();
+            AddTypeMatchingRuleCommands();
+        }
 
-		    AddRemotingInjectorCommands();
-
-		    AddCustomInjectorCommands();
-		}
-
-	    private void AddPolicyInjectionSettingsCommands()
-	    {
-	        AddDefaultCommands(typeof(PolicyInjectionSettingsNode));
-	        ConfigurationUICommand cmd = ConfigurationUICommand.CreateSingleUICommand(
-	            ServiceProvider,
-	            Resources.AddPolicyInjectionSettingsCommandText,
-	            Resources.AddPolicyInjectionSettingsCommandTextLong,
-	            new AddPolicyInjectionSettingsCommand(ServiceProvider),
-	            typeof (PolicyInjectionSettingsNode));
+        private void AddPolicyInjectionSettingsCommands()
+        {
+            AddDefaultCommands(typeof(PolicyInjectionSettingsNode));
+            ConfigurationUICommand cmd = ConfigurationUICommand.CreateSingleUICommand(
+                ServiceProvider,
+                Resources.AddPolicyInjectionSettingsCommandText,
+                Resources.AddPolicyInjectionSettingsCommandTextLong,
+                new AddPolicyInjectionSettingsCommand(ServiceProvider),
+                typeof(PolicyInjectionSettingsNode));
             AddUICommand(cmd, typeof(ConfigurationApplicationNode));
-	    }
-
-	    private void AddPolicyCommands()
-		{
-			AddMoveUpDownCommands(typeof(PolicyNode));
-			AddDefaultCommands(typeof(PolicyNode));
-			ConfigurationUICommand cmd = ConfigurationUICommand.CreateMultipleUICommand(ServiceProvider,
-				Resources.AddPolicyCommandText,
-				Resources.AddPolicyCommandTextLong,
-				new AddPolicyCommand(ServiceProvider),
-				typeof(PolicyCollectionNode));
-
-			AddUICommand(cmd, typeof(PolicyCollectionNode));
-		}
-
-		private void AddTagAttributeMatchingRuleCommands()
-		{
-			AddDefaultCommands(typeof(TagAttributeMatchingRuleNode));
-			AddMultipleChildNodeCommand(Resources.TagAttributeMatchingRuleCommandText,
-				Resources.TagAttributeMatchingRuleCommandTextLong,
-				typeof(TagAttributeMatchingRuleNode),
-				typeof(MatchingRuleCollectionNode));
-		}
-
-		private void AddTypeMatchingRuleCommands()
-		{
-			AddDefaultCommands(typeof(TypeMatchingRuleNode));
-			AddMultipleChildNodeCommand(Resources.AddTypeMatchingRuleCommandText,
-				Resources.AddTypeMatchingRuleTextLong,
-				typeof(TypeMatchingRuleNode),
-				typeof(MatchingRuleCollectionNode));
-		}
-
-		private void AddReturnTypeMatchingRuleCommands()
-		{
-			AddDefaultCommands(typeof(ReturnTypeMatchingRuleNode));
-			AddMultipleChildNodeCommand(Resources.AddReturnTypeMatchingRuleCommandText,
-				Resources.AddReturnTypeMatchingRuleCommandTextLong,
-				typeof(ReturnTypeMatchingRuleNode),
-				typeof(MatchingRuleCollectionNode));
-		}
-
-		private void AddPropertyMatchingRuleCommands()
-		{
-			AddDefaultCommands(typeof(PropertyMatchingRuleNode));
-			AddMultipleChildNodeCommand(Resources.AddPropertyMatchingRuleCommandText,
-				Resources.AddPropertyMatchingRuleCommandTextLong,
-				typeof(PropertyMatchingRuleNode),
-				typeof(MatchingRuleCollectionNode));
-		}
-
-		private void AddMethodSignatureMatchingRuleCommands()
-		{
-			AddDefaultCommands(typeof(MethodSignatureMatchingRuleNode));
-			AddMultipleChildNodeCommand(Resources.AddMethodSignatureMatchingRuleCommandText,
-				Resources.AddMethodSignatureMatchingRuleCommandTextLong,
-				typeof(MethodSignatureMatchingRuleNode),
-				typeof(MatchingRuleCollectionNode));
-		}
-
-		private void AddNamespaceMatchingRuleCommands()
-		{
-			AddDefaultCommands(typeof(NamespaceMatchingRuleNode));
-			AddMultipleChildNodeCommand(Resources.AddNamespaceMatchingRuleCommandText,
-				Resources.AddNamespaceMatchingRuleCommandTextLong,
-				typeof(NamespaceMatchingRuleNode),
-				typeof(MatchingRuleCollectionNode));
-		}
-
-		private void AddMemberNameMatchingRuleCommands()
-		{
-			AddDefaultCommands(typeof(MemberNameMatchingRuleNode));
-			AddMultipleChildNodeCommand(Resources.AddMemberNameMatchingRuleCommandText,
-				Resources.AddMemberNameMatchingRuleCommandTextLong,
-				typeof(MemberNameMatchingRuleNode),
-				typeof(MatchingRuleCollectionNode));
-		}
-
-		private void AddCustomMatchingRuleCommands()
-		{
-			AddDefaultCommands(typeof(CustomMatchingRuleNode));
-			AddMultipleChildNodeCommand(Resources.AddCustomMatchingRuleCommandText,
-				Resources.AddCustomMatchingRuleCommandTextLong,
-				typeof(CustomMatchingRuleNode),
-				typeof(MatchingRuleCollectionNode));
-		}
-
-		private void AddCustomAttributeMatchingRuleCommands()
-		{
-			AddDefaultCommands(typeof(CustomAttributeMatchingRuleNode));
-			AddMultipleChildNodeCommand(Resources.AddCustomAttributeMatchingRuleCommandText,
-				Resources.AddCustomAttributeMatchingRuleCommandTextLong,
-				typeof(CustomAttributeMatchingRuleNode),
-				typeof(MatchingRuleCollectionNode));
-		}
-
-		private void AddAssemblyMatchingRuleCommands()
-		{
-			AddDefaultCommands(typeof(AssemblyMatchingRuleNode));
-			AddMultipleChildNodeCommand(Resources.AddAssemblyMatchingRuleCommandText,
-				Resources.AddAssemblyMatchingRuleCommandTextLong,
-				typeof(AssemblyMatchingRuleNode),
-				typeof(MatchingRuleCollectionNode));
-		}
-
-		private void AddParameterTypeMatchingRuleCommands()
-		{
-			AddDefaultCommands(typeof(ParameterTypeMatchingRuleNode));
-			AddMultipleChildNodeCommand(Resources.AddParameterTypeMatchingRuleCommandText,
-				Resources.AddParameterTypeMatchingRuleCommandTextLong,
-				typeof(ParameterTypeMatchingRuleNode),
-				typeof(MatchingRuleCollectionNode));
-		}
-
-        private void AddRemotingInjectorCommands()
-        {
-            AddDefaultCommands(typeof(RemotingInjectorNode));
-            AddSingleChildNodeCommand(Resources.AddRemotingInjectorCommandText,
-                Resources.AddRemotingInjectorCommandTextLong,
-                typeof(RemotingInjectorNode),
-                typeof(InjectorCollectionNode));
         }
 
-        private void AddCustomInjectorCommands()
+        private void AddPolicyCommands()
         {
-            AddDefaultCommands(typeof(CustomInjectorNode));
-            AddMultipleChildNodeCommand(Resources.AddCustomInjectorCommandText,
-                Resources.AddCustomInjectorCommandTextLong,
-                typeof(CustomInjectorNode),
-                typeof(InjectorCollectionNode));
+            AddMoveUpDownCommands(typeof(PolicyNode));
+            AddDefaultCommands(typeof(PolicyNode));
+            ConfigurationUICommand cmd = ConfigurationUICommand.CreateMultipleUICommand(ServiceProvider,
+                Resources.AddPolicyCommandText,
+                Resources.AddPolicyCommandTextLong,
+                new AddPolicyCommand(ServiceProvider),
+                typeof(PolicyCollectionNode));
+
+            AddUICommand(cmd, typeof(PolicyCollectionNode));
         }
-	}
+
+        private void AddTagAttributeMatchingRuleCommands()
+        {
+            AddDefaultCommands(typeof(TagAttributeMatchingRuleNode));
+            AddMultipleChildNodeCommand(Resources.TagAttributeMatchingRuleCommandText,
+                Resources.TagAttributeMatchingRuleCommandTextLong,
+                typeof(TagAttributeMatchingRuleNode),
+                typeof(MatchingRuleCollectionNode));
+        }
+
+        private void AddTypeMatchingRuleCommands()
+        {
+            AddDefaultCommands(typeof(TypeMatchingRuleNode));
+            AddMultipleChildNodeCommand(Resources.AddTypeMatchingRuleCommandText,
+                Resources.AddTypeMatchingRuleTextLong,
+                typeof(TypeMatchingRuleNode),
+                typeof(MatchingRuleCollectionNode));
+        }
+
+        private void AddReturnTypeMatchingRuleCommands()
+        {
+            AddDefaultCommands(typeof(ReturnTypeMatchingRuleNode));
+            AddMultipleChildNodeCommand(Resources.AddReturnTypeMatchingRuleCommandText,
+                Resources.AddReturnTypeMatchingRuleCommandTextLong,
+                typeof(ReturnTypeMatchingRuleNode),
+                typeof(MatchingRuleCollectionNode));
+        }
+
+        private void AddPropertyMatchingRuleCommands()
+        {
+            AddDefaultCommands(typeof(PropertyMatchingRuleNode));
+            AddMultipleChildNodeCommand(Resources.AddPropertyMatchingRuleCommandText,
+                Resources.AddPropertyMatchingRuleCommandTextLong,
+                typeof(PropertyMatchingRuleNode),
+                typeof(MatchingRuleCollectionNode));
+        }
+
+        private void AddMethodSignatureMatchingRuleCommands()
+        {
+            AddDefaultCommands(typeof(MethodSignatureMatchingRuleNode));
+            AddMultipleChildNodeCommand(Resources.AddMethodSignatureMatchingRuleCommandText,
+                Resources.AddMethodSignatureMatchingRuleCommandTextLong,
+                typeof(MethodSignatureMatchingRuleNode),
+                typeof(MatchingRuleCollectionNode));
+        }
+
+        private void AddNamespaceMatchingRuleCommands()
+        {
+            AddDefaultCommands(typeof(NamespaceMatchingRuleNode));
+            AddMultipleChildNodeCommand(Resources.AddNamespaceMatchingRuleCommandText,
+                Resources.AddNamespaceMatchingRuleCommandTextLong,
+                typeof(NamespaceMatchingRuleNode),
+                typeof(MatchingRuleCollectionNode));
+        }
+
+        private void AddMemberNameMatchingRuleCommands()
+        {
+            AddDefaultCommands(typeof(MemberNameMatchingRuleNode));
+            AddMultipleChildNodeCommand(Resources.AddMemberNameMatchingRuleCommandText,
+                Resources.AddMemberNameMatchingRuleCommandTextLong,
+                typeof(MemberNameMatchingRuleNode),
+                typeof(MatchingRuleCollectionNode));
+        }
+
+        private void AddCustomMatchingRuleCommands()
+        {
+            AddDefaultCommands(typeof(CustomMatchingRuleNode));
+            AddMultipleChildNodeCommand(Resources.AddCustomMatchingRuleCommandText,
+                Resources.AddCustomMatchingRuleCommandTextLong,
+                typeof(CustomMatchingRuleNode),
+                typeof(MatchingRuleCollectionNode));
+        }
+
+        private void AddCustomAttributeMatchingRuleCommands()
+        {
+            AddDefaultCommands(typeof(CustomAttributeMatchingRuleNode));
+            AddMultipleChildNodeCommand(Resources.AddCustomAttributeMatchingRuleCommandText,
+                Resources.AddCustomAttributeMatchingRuleCommandTextLong,
+                typeof(CustomAttributeMatchingRuleNode),
+                typeof(MatchingRuleCollectionNode));
+        }
+
+        private void AddAssemblyMatchingRuleCommands()
+        {
+            AddDefaultCommands(typeof(AssemblyMatchingRuleNode));
+            AddMultipleChildNodeCommand(Resources.AddAssemblyMatchingRuleCommandText,
+                Resources.AddAssemblyMatchingRuleCommandTextLong,
+                typeof(AssemblyMatchingRuleNode),
+                typeof(MatchingRuleCollectionNode));
+        }
+
+        private void AddParameterTypeMatchingRuleCommands()
+        {
+            AddDefaultCommands(typeof(ParameterTypeMatchingRuleNode));
+            AddMultipleChildNodeCommand(Resources.AddParameterTypeMatchingRuleCommandText,
+                Resources.AddParameterTypeMatchingRuleCommandTextLong,
+                typeof(ParameterTypeMatchingRuleNode),
+                typeof(MatchingRuleCollectionNode));
+        }
+    }
 }

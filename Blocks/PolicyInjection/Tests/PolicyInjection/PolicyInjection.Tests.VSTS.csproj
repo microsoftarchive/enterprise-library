@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{37B1BE56-EF65-4012-A4A8-B14E27083E16}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -35,6 +35,14 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Lib\Microsoft.Practices.ObjectBuilder2.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Practices.Unity, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Lib\Microsoft.Practices.Unity.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity.Interception, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Lib\Microsoft.Practices.Unity.Interception.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>True</SpecificVersion>
       <Private>False</Private>
@@ -50,42 +58,19 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="APTCAFixture.cs" />
-    <Compile Include="AttributeDrivenPolicyFixture.cs" />
+    <Compile Include="Configuration\AssemblyMatchingRuleDataFixture.cs" />
     <Compile Include="Configuration\ConfigurationStructureFixture.cs" />
     <Compile Include="Configuration\CustomAttributeMatchingRuleDataFixture.cs" />
-    <Compile Include="Configuration\InjectorConfigurationFixture.cs" />
+    <Compile Include="Configuration\MatchingRuleDataFixtureBase.cs" />
+    <Compile Include="Configuration\MemberNameMatchingRuleDataFixture.cs" />
+    <Compile Include="Configuration\MethodSignatureMatchingRuleDataFixture.cs" />
     <Compile Include="Configuration\NamespaceMatchingRuleDataFixture..cs" />
-    <Compile Include="Configuration\AssemblyMatchingRuleDataFixture.cs" />
     <Compile Include="Configuration\ParameterTypeMatchingRuleDataFixture.cs" />
+    <Compile Include="Configuration\PolicyInjectionSettingsFixture.cs" />
     <Compile Include="Configuration\PropertyMatchingRuleDataFixture.cs" />
     <Compile Include="Configuration\ReturnTypeMatchingRuleDataFixture.cs" />
-    <Compile Include="Configuration\MethodSignatureMatchingRuleDataFixture.cs" />
-    <Compile Include="Configuration\MemberNameMatchingRuleDataFixture.cs" />
-    <Compile Include="Configuration\MatchingRuleDataFixtureBase.cs" />
     <Compile Include="Configuration\TagAttributeMatchingRuleFixture.cs" />
     <Compile Include="Configuration\TypeMatchingRuleDataFixture.cs" />
-    <Compile Include="FactoryFixture.cs" />
-    <Compile Include="FakeObjects\FakeCustomInjector.cs" />
-    <Compile Include="FakeObjects\FakeInjector.cs" />
-    <Compile Include="FakeObjects\FakeInjectorData.cs" />
-    <Compile Include="FakeObjects\FakeMethodCallMessage.cs" />
-    <Compile Include="FormsInterceptionFixture.cs">
-    </Compile>
-    <Compile Include="HandlerInvocationFixture.cs" />
-    <Compile Include="MatchingRules\CustomAttributeMatchingRuleFixture.cs" />
-    <Compile Include="MatchingRules\GlobFixture.cs" />
-    <Compile Include="MatchingRules\MemberNameMatchingRuleFixture.cs" />
-    <Compile Include="MatchingRules\MethodSignatureMatchingRuleFixture.cs" />
-    <Compile Include="MatchingRules\NamespaceMatchingRuleFixture.cs" />
-    <Compile Include="MatchingRules\ParameterTypeMatchingRuleFixture.cs" />
-    <Compile Include="MatchingRules\PropertyMatchingRuleFixture.cs" />
-    <Compile Include="MatchingRules\ReturnTypeMatchingRuleFixture.cs" />
-    <Compile Include="MatchingRules\TagAttributeMatchingRuleFixture.cs" />
-    <Compile Include="MatchingRules\TypeMatchingRuleFixture.cs" />
-    <Compile Include="MethodSignatureFixture.cs" />
-    <Compile Include="MatchingRuleSetFixture.cs" />
-    <Compile Include="MatchingRules\AssemblyMatchingRuleFixture.cs" />
-    <Compile Include="ObjectBuilder\ObjectBuilderIntegrationFixture.cs" />
     <Compile Include="ObjectsUnderTest\AlwaysMatchingRule.cs" />
     <Compile Include="ObjectsUnderTest\CallCountHandler.cs" />
     <Compile Include="ObjectsUnderTest\CriticalFakeDal.cs" />
@@ -97,13 +82,9 @@
     <Compile Include="ObjectsUnderTest\MockDalWithOverloads.cs" />
     <Compile Include="ObjectsUnderTest\ShortcuttingHandler.cs" />
     <Compile Include="ObjectsUnderTest\TypeMatchingAssignmentRule.cs" />
-    <Compile Include="PipelineFixture.cs" />
-    <Compile Include="PolicyFactoryFixture.cs" />
-    <Compile Include="PolicyFixture.cs" />
+    <Compile Include="RuleCreationFixture.cs" />
     <Compile Include="PolicyInjectionFixture.cs" />
-    <Compile Include="PolicySetFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RemotingMethodInvocationFixture.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\Src\Common.csproj">
@@ -132,6 +113,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="OldStyle.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="test.exe.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

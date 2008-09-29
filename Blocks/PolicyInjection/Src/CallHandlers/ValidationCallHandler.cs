@@ -12,10 +12,10 @@
 using System;
 using System.Reflection;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.PolicyInjection;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
+using Microsoft.Practices.Unity.InterceptionExtension;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
 {
@@ -89,7 +89,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
                 object parameterValue = input.Inputs[index];
                 ValidationResults results = validator.Validate(parameterValue);
 
-                if(!results.IsValid)
+                if (!results.IsValid)
                 {
                     ArgumentValidationException exception =
                         new ArgumentValidationException(results, inputParameter.Name);
@@ -123,7 +123,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
                     return ValidationFactory.CreateValidatorFromConfiguration(type, ruleSet);
                 case SpecificationSource.ParameterAttributesOnly:
                 default:
-                    return null; 
+                    return null;
             }
         }
 

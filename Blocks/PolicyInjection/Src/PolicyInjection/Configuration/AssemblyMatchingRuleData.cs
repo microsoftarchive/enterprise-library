@@ -9,21 +9,17 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.MatchingRules;
 using System.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
-using Microsoft.Practices.ObjectBuilder2;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.InterceptionExtension;
+using FakeRules = Microsoft.Practices.EnterpriseLibrary.PolicyInjection.MatchingRules;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
 {
     /// <summary>
     /// Configuration element for the <see cref="AssemblyMatchingRule"/>.
     /// </summary>
-    [Assembler(typeof(AssemblyMatchingRuleAssembler))]
     public class AssemblyMatchingRuleData : MatchingRuleData
     {
         private const string MatchPropertyName = "match";
@@ -32,7 +28,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// Constructs an <see cref="AssemblyMatchingRuleData"/> with default settings.
         /// </summary>
         public AssemblyMatchingRuleData()
-            :base()
+            : base()
         {
         }
 
@@ -43,7 +39,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// <param name="matchingRuleName">Name of rule from the config file.</param>
         /// <param name="assemblyName">Assembly name to match.</param>
         public AssemblyMatchingRuleData(string matchingRuleName, string assemblyName)
-            : base(matchingRuleName, typeof(AssemblyMatchingRule))
+            : base(matchingRuleName, typeof(FakeRules.AssemblyMatchingRule))
         {
             Match = assemblyName;
         }
@@ -58,28 +54,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
             get { return (string)base[MatchPropertyName]; }
             set { base[MatchPropertyName] = value; }
         }
-    }
 
-    /// <summary>
-    /// Assembler class used to create the <see cref="AssemblyMatchingRule"/> from configuration data.
-    /// </summary>
-    public class AssemblyMatchingRuleAssembler : IAssembler<IMatchingRule, MatchingRuleData>
-    {
         /// <summary>
-        /// Create the matching rule from the configuration data.
+        /// Adds the rule represented by this configuration object to <paramref name="policy"/>.
         /// </summary>
-        /// <param name="context">Build context.</param>
-        /// <param name="objectConfiguration">Configuration element object from config file.</param>
-        /// <param name="configurationSource">Source of the configuration information.</param>
-        /// <param name="reflectionCache">Unused.</param>
-        /// <returns>Constructed <see cref="AssemblyMatchingRule"/>.</returns>
-        public IMatchingRule Assemble(IBuilderContext context, MatchingRuleData objectConfiguration, IConfigurationSource configurationSource, ConfigurationReflectionCache reflectionCache)
+        /// <param name="policy">The policy to which the rule must be added.</param>
+        /// <param name="configurationSource">The configuration source from which additional information
+        /// can be retrieved, if necessary.</param>
+        public override void ConfigurePolicy(PolicyDefinition policy, IConfigurationSource configurationSource)
         {
-            AssemblyMatchingRuleData castedRuleData = (AssemblyMatchingRuleData)objectConfiguration;
-
-            AssemblyMatchingRule matchingRule = new AssemblyMatchingRule(castedRuleData.Match);
-
-            return matchingRule;
+            policy.AddMatchingRule<AssemblyMatchingRule>(
+                new InjectionConstructor(new InjectionParameter<string>(this.Match)));
         }
     }
 }

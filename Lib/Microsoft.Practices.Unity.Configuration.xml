@@ -618,6 +618,15 @@
             The underlying type of lifetime manager.
             </summary>
         </member>
+        <member name="P:Microsoft.Practices.Unity.Configuration.UnityLifetimeElement.HasData">
+            <summary>
+            Indicates whether the configuration element has information.
+            </summary>
+            <value>
+            <see langword="true"/> if the configuration element has information, 
+            otherwise <see langword="false"/>.
+            </value>
+        </member>
         <member name="T:Microsoft.Practices.Unity.Configuration.UnityContainerTypeConfigurationElementCollection">
             <summary>
             Collection of <see cref="T:Microsoft.Practices.Unity.Configuration.UnityContainerExtensionConfigurationElement"/> elements

@@ -10,8 +10,7 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
-using System.Text;
+using Microsoft.Practices.Unity.InterceptionExtension;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.ObjectsUnderTest
 {

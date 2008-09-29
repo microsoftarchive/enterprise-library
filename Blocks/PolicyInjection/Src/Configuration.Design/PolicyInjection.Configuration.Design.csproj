@@ -1,7 +1,7 @@
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{6C74F26F-41D6-4A94-BED8-D29DFDBD9914}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -78,6 +78,18 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Practices.ObjectBuilder2, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Lib\Microsoft.Practices.ObjectBuilder2.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Lib\Microsoft.Practices.Unity.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity.Interception, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Lib\Microsoft.Practices.Unity.Interception.dll</HintPath>
+    </Reference>
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
@@ -122,9 +134,6 @@
     <Compile Include="AddPolicyInjectionSettingsCommand.cs" />
     <Compile Include="CallHandlerNode.cs" />
     <Compile Include="CallHandlersCollectionNode.cs" />
-    <Compile Include="CustomInjectorNode.cs" />
-    <Compile Include="InjectorCollectionNode.cs" />
-    <Compile Include="InjectorNode.cs" />
     <Compile Include="MatchingRuleCollectionNode.cs" />
     <Compile Include="MatchingRules\AssemblyMatchingRuleNode.cs" />
     <Compile Include="MatchingRules\CustomAttributeMatchingRuleNode.cs" />
@@ -161,7 +170,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="RemotingInterceptionNode.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
@@ -183,7 +191,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="PolicyCollectionNode.bmp" />
-    <EmbeddedResource Include="InjectorCollectionNode.bmp" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

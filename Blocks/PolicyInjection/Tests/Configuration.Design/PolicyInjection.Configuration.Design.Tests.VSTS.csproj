@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{154B43D1-816A-4EC5-BBFD-66897DE4BB18}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -95,28 +95,14 @@
       <Link>GlobalAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="AddPolicyCommandFixture.cs" />
-    <Compile Include="APTCAFixture.cs" />
-    <Compile Include="AssemblyMatchingRuleNodeFixture.cs" />
-    <Compile Include="CustomAttributeMatchingRuleFixture.cs" />
     <Compile Include="CustomMatchingRuleNodeFixture.cs" />
-    <Compile Include="MemberNameMatchingRuleFixture.cs" />
-    <Compile Include="MethodSignatureMatchingRuleNodeFixture.cs" />
-    <Compile Include="NamespaceMatchingRuleNodeFixture.cs" />
-    <Compile Include="ParameterTypeMatchingRuleNodeFixture.cs" />
-    <Compile Include="PolicyInjectionConfigurationDesignManagerFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PropertyMatchingRuleNodeFixture.cs" />
-    <Compile Include="ReturnTypeMatchingRuleNodeFixture.cs" />
-    <Compile Include="TagAttributeMatchingRuleNodeFixture.cs" />
-    <Compile Include="TypeMatchingRuleNodeFixture.cs" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration.Design.Tests.dll.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    <None Include="Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration.Design.Tests.dll.config" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

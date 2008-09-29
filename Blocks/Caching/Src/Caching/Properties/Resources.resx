@@ -243,4 +243,10 @@
   <data name="TotalCacheUpdatedEntriesHelpResource" xml:space="preserve">
     <value>Total Updated Entries is the total number of items updated in the cache. An update can be either an "add" or a "remove".</value>
   </data>
+  <data name="MissingSection" xml:space="preserve">
+    <value>The "cachingConfiguration" section is not available in the supplied configuration source.</value>
+  </data>
+  <data name="NoDefaultCacheManager" xml:space="preserve">
+    <value>There is no default cache manager defined in the &amp;quot;cachingConfiguration&amp;quot; section available in the supplied configuration source.</value>
+  </data>
 </root>

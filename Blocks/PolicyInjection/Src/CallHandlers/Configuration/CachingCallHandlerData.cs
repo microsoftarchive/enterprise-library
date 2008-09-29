@@ -12,16 +12,15 @@
 using System;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
-using Microsoft.Practices.ObjectBuilder2;
+using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.InterceptionExtension;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Configuration
 {
     /// <summary>
     /// Configuration element class that manages the config data for the <see cref="CachingCallHandler"/>.
     /// </summary>
-    [Assembler(typeof(CachingCallHandlerAssembler))]
     public class CachingCallHandlerData : CallHandlerData
     {
         private const string ExpirationTimePropertyName = "expirationTime";
@@ -65,37 +64,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
             get { return (TimeSpan)base[ExpirationTimePropertyName]; }
             set { base[ExpirationTimePropertyName] = value; }
         }
-    }
-
-    /// <summary>
-    /// Class used by ObjectBuilder to construct a <see cref="CachingCallHandler"/>
-    /// from a <see cref="CachingCallHandlerData"/>.
-    /// </summary>
-    public class CachingCallHandlerAssembler : IAssembler<ICallHandler, CallHandlerData>
-    {
-
-        #region IAssembler<ICallHandler,CallHandlerData> Members
 
         /// <summary>
-        /// Builds an instance of the subtype of <typeparamref name="TObject"/> type the receiver knows how to build,  based on 
-        /// an a configuration object.
+        /// Adds the call handler represented by this configuration object to <paramref name="policy"/>.
         /// </summary>
-        /// <param name="context">The <see cref="IBuilderContext"/> that represents the current building process.</param>
-        /// <param name="objectConfiguration">The configuration object that describes the object to build.</param>
-        /// <param name="configurationSource">The source for configuration objects.</param>
-        /// <param name="reflectionCache">The cache to use retrieving reflection information.</param>
-        /// <returns>A fully initialized instance of the <typeparamref name="TObject"/> subtype.</returns>
-        public ICallHandler Assemble(
-            IBuilderContext context,
-            CallHandlerData objectConfiguration,
-            IConfigurationSource configurationSource,
-            ConfigurationReflectionCache reflectionCache)
+        /// <param name="policy">The policy to which the rule must be added.</param>
+        /// <param name="configurationSource">The configuration source from which additional information
+        /// can be retrieved, if necessary.</param>
+        public override void ConfigurePolicy(PolicyDefinition policy, IConfigurationSource configurationSource)
         {
-            CachingCallHandlerData handlerConfiguration = (CachingCallHandlerData)objectConfiguration;
-
-            return new CachingCallHandler(handlerConfiguration.ExpirationTime, handlerConfiguration.Order);
+            policy.AddCallHandler<CachingCallHandler>(
+                new ContainerControlledLifetimeManager(),
+                new InjectionConstructor(
+                    new InjectionParameter<TimeSpan>(this.ExpirationTime),
+                    new InjectionParameter<int>(this.Order)));
         }
-
-        #endregion
     }
 }

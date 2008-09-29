@@ -154,7 +154,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.SqlConfigurationSource.Tests
 
             SqlConfigurationManager.SaveSection(rwSection.Name, rwSection, data1);
 
-            Thread.Sleep(200);
+            Thread.Sleep(1500);
 
             Assert.AreEqual(false, sysSourceChanged);
             Assert.AreEqual(true, otherSourceChanged);

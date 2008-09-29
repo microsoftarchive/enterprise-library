@@ -10,9 +10,8 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.Unity.InterceptionExtension;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
 {
@@ -34,8 +33,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// <param name="matchingRuleName">Name of the rule in config.</param>
         /// <param name="matchingRuleType">The underlying type of matching rule this object configures.</param>
         public MatchingRuleData(string matchingRuleName, Type matchingRuleType)
-            :base(matchingRuleName, matchingRuleType)
+            : base(matchingRuleName, matchingRuleType)
         {
+        }
+
+        /// <summary>
+        /// Adds the rule represented by this configuration object to <paramref name="policy"/>.
+        /// </summary>
+        /// <param name="policy">The policy to which the rule must be added.</param>
+        /// <param name="configurationSource">The configuration source from which additional information
+        /// can be retrieved, if necessary.</param>
+        public virtual void ConfigurePolicy(PolicyDefinition policy, IConfigurationSource configurationSource)
+        {
+            throw new NotImplementedException();
         }
     }
 }

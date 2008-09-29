@@ -10,10 +10,9 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using System.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.Unity.InterceptionExtension;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
 {
@@ -28,7 +27,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// Creates a new instance of <see cref="CallHandlerData"/>.
         /// </summary>
         public CallHandlerData()
-            :base()
+            : base()
         {
         }
 
@@ -57,11 +56,22 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// <summary>
         /// Gets or sets the Order in which the call handler will be executed
         /// </summary>
-        [ConfigurationProperty(orderProperty, DefaultValue=0, IsRequired=false)]
+        [ConfigurationProperty(orderProperty, DefaultValue = 0, IsRequired = false)]
         public int Order
         {
             get { return (int)this[orderProperty]; }
             set { this[orderProperty] = value; }
+        }
+
+        /// <summary>
+        /// Adds the call handler represented by this configuration object to <paramref name="policy"/>.
+        /// </summary>
+        /// <param name="policy">The policy to which the rule must be added.</param>
+        /// <param name="configurationSource">The configuration source from which additional information
+        /// can be retrieved, if necessary.</param>
+        public virtual void ConfigurePolicy(PolicyDefinition policy, IConfigurationSource configurationSource)
+        {
+            throw new NotImplementedException();
         }
     }
 }

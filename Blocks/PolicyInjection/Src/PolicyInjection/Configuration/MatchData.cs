@@ -11,7 +11,6 @@
 
 using System.Collections.Generic;
 using System.Configuration;
-using Configuration_ConfigurationProperty=System.Configuration.ConfigurationProperty;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
 {
@@ -148,7 +147,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
             get { return (T)BaseGet(index); }
             set
             {
-                if( BaseGet(index) != null )
+                if (BaseGet(index) != null)
                 {
                     BaseRemoveAt(index);
                 }
@@ -163,7 +162,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// <returns>The enumerator object.</returns>
         IEnumerator<T> IEnumerable<T>.GetEnumerator()
         {
-            for(int i = 0; i < Count; ++i)
+            for (int i = 0; i < Count; ++i)
             {
                 yield return this[i];
             }

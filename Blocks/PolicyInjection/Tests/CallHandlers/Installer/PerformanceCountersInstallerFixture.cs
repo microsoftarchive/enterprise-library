@@ -146,7 +146,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         {
             PolicyInjectionSettings settings = new PolicyInjectionSettings();
             PolicyData policyData = new PolicyData("Perfmon policy");
-            policyData.MatchingRules.Add(new TagAttributeMatchingRuleData("Match By Tag", "Perfmon"));
+            //policyData.MatchingRules.Add(new TagAttributeMatchingRuleData("Match By Tag", "Perfmon"));
             PerformanceCounterCallHandlerData counterData = new PerformanceCounterCallHandlerData("{type}.{method}");
             counterData.CategoryName = firstCategory;
             policyData.Handlers.Add(counterData);

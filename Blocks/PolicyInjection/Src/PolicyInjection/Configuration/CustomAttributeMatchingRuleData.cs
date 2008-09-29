@@ -12,16 +12,15 @@
 using System;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
-using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.MatchingRules;
-using Microsoft.Practices.ObjectBuilder2;
+using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.InterceptionExtension;
+using FakeRules = Microsoft.Practices.EnterpriseLibrary.PolicyInjection.MatchingRules;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
 {
     /// <summary>
     /// Configuration element for the <see cref="CustomAttributeMatchingRule"/> configuration.
     /// </summary>
-    [Assembler(typeof(CustomAttributeMatchingRuleAssembler))]
     public class CustomAttributeMatchingRuleData : MatchingRuleData
     {
         private static AssemblyQualifiedTypeNameConverter typeConverter = new AssemblyQualifiedTypeNameConverter();
@@ -41,7 +40,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// </summary>
         /// <param name="name">Name of the matching rule.</param>
         public CustomAttributeMatchingRuleData(string name)
-            : base(name, typeof(CustomAttributeMatchingRule))
+            : base(name, typeof(FakeRules.CustomAttributeMatchingRule))
         {
         }
 
@@ -52,7 +51,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// <param name="attributeType">Attribute to find on the target.</param>
         /// <param name="searchInheritanceChain">Should we search the inheritance chain to find the attribute?</param>
         public CustomAttributeMatchingRuleData(string name, Type attributeType, bool searchInheritanceChain)
-            :this(name, typeConverter.ConvertToString(attributeType), searchInheritanceChain)
+            : this(name, typeConverter.ConvertToString(attributeType), searchInheritanceChain)
         {
         }
 
@@ -63,7 +62,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// <param name="attributeTypeName">Name of the attribute type to match on the target.</param>
         /// <param name="searchInheritanceChain">Should we search the inheritance chain to find the attribute?</param>
         public CustomAttributeMatchingRuleData(string name, string attributeTypeName, bool searchInheritanceChain)
-            : base(name, typeof(CustomAttributeMatchingRule))
+            : base(name, typeof(FakeRules.CustomAttributeMatchingRule))
         {
             SearchInheritanceChain = searchInheritanceChain;
             AttributeTypeName = attributeTypeName;
@@ -100,30 +99,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
             get { return (Type)typeConverter.ConvertFrom(AttributeTypeName); }
             set { AttributeTypeName = typeConverter.ConvertToString(value); }
         }
-    }
 
-    /// <summary>
-    /// A class used by ObjectBuilder to construct a <see cref="CustomAttributeMatchingRule"/>
-    /// instance from a <see cref="CustomAttributeMatchingRuleData"/> instance.
-    /// </summary>
-    public class CustomAttributeMatchingRuleAssembler : IAssembler<IMatchingRule, MatchingRuleData>
-    {
         /// <summary>
-        /// Builds an instance of the subtype of <typeparamref name="TObject"/> type the receiver knows how to build, based on 
-        /// a configuration object.
+        /// Adds the rule represented by this configuration object to <paramref name="policy"/>.
         /// </summary>
-        /// <param name="context">The <see cref="IBuilderContext"/> that represents the current building process.</param>
-        /// <param name="objectConfiguration">The configuration object that describes the object to build.</param>
-        /// <param name="configurationSource">The source for configuration objects.</param>
-        /// <param name="reflectionCache">The cache to use retrieving reflection information.</param>
-        /// <returns>A fully initialized instance of the <typeparamref name="TObject"/> subtype.</returns>
-        public IMatchingRule Assemble(IBuilderContext context, MatchingRuleData objectConfiguration, IConfigurationSource configurationSource, ConfigurationReflectionCache reflectionCache)
+        /// <param name="policy">The policy to which the rule must be added.</param>
+        /// <param name="configurationSource">The configuration source from which additional information
+        /// can be retrieved, if necessary.</param>
+        public override void ConfigurePolicy(PolicyDefinition policy, IConfigurationSource configurationSource)
         {
-            CustomAttributeMatchingRuleData castedRuleData = (CustomAttributeMatchingRuleData)objectConfiguration;
-
-            CustomAttributeMatchingRule matchingRule = new CustomAttributeMatchingRule(castedRuleData.AttributeType, castedRuleData.SearchInheritanceChain);
-
-            return matchingRule;
+            policy.AddMatchingRule<CustomAttributeMatchingRule>(
+                new InjectionConstructor(
+                    new InjectionParameter<Type>(this.AttributeType),
+                    new InjectionParameter<bool>(this.SearchInheritanceChain)));
         }
     }
 }

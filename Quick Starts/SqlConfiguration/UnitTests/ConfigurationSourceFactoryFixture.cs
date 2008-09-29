@@ -93,7 +93,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.SqlConfigurationSource.Tests
             dummySection2.Value = 15;
             sqlSource.Add(CreateParameter(), localSection, dummySection2);
 
-            Thread.Sleep(500);
+            Thread.Sleep(1500);
 
             Assert.IsTrue(sourceChanged);
             sourceChanged = false;
@@ -101,7 +101,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.SqlConfigurationSource.Tests
             //remove the section
             sqlSource.Remove(CreateParameter(), localSection);
 
-            Thread.Sleep(500);
+            Thread.Sleep(1500);
 
             Assert.IsTrue(sourceChanged);
             sourceChanged = false;

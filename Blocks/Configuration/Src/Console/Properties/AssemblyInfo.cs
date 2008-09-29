@@ -19,5 +19,5 @@ using System.Security.Permissions;
 
 [assembly : AssemblyTitle("Enterprise Library Configuration Tool")]
 [assembly : AssemblyDescription("Enterprise Library Configuration Tool")]
-[assembly: AssemblyVersion("4.0.0.912")]
+[assembly: AssemblyVersion("4.0.0.926")]
 

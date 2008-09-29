@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections;
+using System.Linq;
 using System.Reflection;
 using System.Web;
 using System.Web.Caching;
@@ -18,8 +19,9 @@ using System.Xml;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.MatchingRules;
-using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.RemotingInterception;
+using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.ObjectsUnderTest;
+using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.InterceptionExtension;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tests
@@ -31,6 +33,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         MethodInfo calculateMethod;
         MethodInfo serializeXmlMethod;
         MethodInfo sometimesReturnsNullMethod;
+        IUnityContainer container;
 
         [TestInitialize]
         public void Setup()
@@ -39,13 +42,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
             serializeXmlMethod = typeof(CachingTarget).GetMethod("SerializeXml");
             sometimesReturnsNullMethod = typeof(CachingTarget).GetMethod("SometimesReturnsNull");
             keyGenerator = new DefaultCacheKeyGenerator();
+
+            container = new UnityContainer();
+            container.AddNewExtension<Interception>();
+            container.Configure<Interception>()
+                .SetDefaultInjectorFor<CachingTarget>(new TransparentProxyPolicyInjector());
         }
 
         [TestMethod]
         public void ShouldAddItemToCache()
         {
-            RemotingPolicyInjector factory = new RemotingPolicyInjector(GetCachingPolicies());
-            CachingTarget target = factory.Create<CachingTarget>();
+            AddCachingPolicies(container);
+
+            CachingTarget target = container.Resolve<CachingTarget>();
 
             double input = 7;
 
@@ -64,8 +73,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         [TestMethod]
         public void ShouldReturnValueFromCache()
         {
-            RemotingPolicyInjector factory = new RemotingPolicyInjector(GetCachingPolicies());
-            CachingTarget target = factory.Create<CachingTarget>();
+            AddCachingPolicies(container);
+
+            CachingTarget target = container.Resolve<CachingTarget>();
 
             double input = 12;
             ClearCache(input);
@@ -94,28 +104,26 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         }
 
         [TestMethod]
-        public void CreateCachingCallHandlerFromDefaultConfiguration()
-        {
-            CachingCallHandlerAssembler assembler = new CachingCallHandlerAssembler();
-            ICallHandler callHandler = assembler.Assemble(null, new CachingCallHandlerData(), null, null);
-
-            Assert.AreEqual(0, callHandler.Order);
-        }
-
-        [TestMethod]
         public void CreateCachingCallHandlerFromConfiguration()
         {
             PolicyInjectionSettings settings = new PolicyInjectionSettings();
 
             PolicyData policyData = new PolicyData("policy");
             CachingCallHandlerData data = new CachingCallHandlerData("FooCallHandler", 2);
+            policyData.MatchingRules.Add(new CustomMatchingRuleData("matchesEverything", typeof(AlwaysMatchingRule)));
             policyData.Handlers.Add(data);
             settings.Policies.Add(policyData);
 
             DictionaryConfigurationSource dictConfigurationSource = new DictionaryConfigurationSource();
             dictConfigurationSource.Add(PolicyInjectionSettings.SectionName, settings);
 
-            ICallHandler handler = CallHandlerCustomFactory.Instance.Create(null, data, dictConfigurationSource, null);
+            IUnityContainer container = new UnityContainer().AddNewExtension<Interception>();
+            settings.ConfigureContainer(container, dictConfigurationSource);
+
+            RuleDrivenPolicy policy = container.Resolve<RuleDrivenPolicy>("policy");
+
+            ICallHandler handler
+                = (policy.GetHandlersFor(MethodInfo.GetCurrentMethod(), container)).ElementAt(0);
             Assert.IsNotNull(handler);
             Assert.AreEqual(handler.Order, data.Order);
         }
@@ -198,8 +206,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         [TestMethod]
         public void ShouldBeAbleToCacheNullReturnValues()
         {
-            RemotingPolicyInjector factory = new RemotingPolicyInjector(GetCachingPolicies());
-            CachingTarget target = factory.Create<CachingTarget>();
+            AddCachingPolicies(container);
+
+            CachingTarget target = container.Resolve<CachingTarget>();
 
             string result = target.SometimesReturnsNull(false);
             string result2 = target.SometimesReturnsNull(true);
@@ -208,8 +217,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         [TestMethod]
         public void ShouldNotCacheVoidMethods()
         {
-            RemotingPolicyInjector factory = new RemotingPolicyInjector(GetCachingPolicies());
-            CachingTarget target = factory.Create<CachingTarget>();
+            AddCachingPolicies(container);
+
+            CachingTarget target = container.Resolve<CachingTarget>();
 
             Assert.AreEqual(0, target.Count);
             target.IncrementCount();
@@ -222,8 +232,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         public void ShouldCacheViaAttributeOnInterface()
         {
             MethodInfo getNewsMethod = typeof(INewsService).GetMethod("GetNews");
-            RemotingPolicyInjector factory = new RemotingPolicyInjector(new PolicySet());
-            INewsService target = factory.Create<NewsService, INewsService>();
+
+            container.RegisterType<INewsService, NewsService>();
+            container.Configure<Interception>().SetDefaultInjectorFor<INewsService>(new TransparentProxyPolicyInjector());
+
+            INewsService target = container.Resolve<INewsService>();
 
             ClearCache(getNewsMethod);
             IList news = target.GetNews();
@@ -247,19 +260,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
             Assert.AreEqual(1, attributes.Length);
 
             CachingCallHandlerAttribute att = attributes[0] as CachingCallHandlerAttribute;
-            ICallHandler callHandler = att.CreateHandler();
+            ICallHandler callHandler = att.CreateHandler(null);
 
             Assert.IsNotNull(callHandler);
             Assert.AreEqual(6, callHandler.Order);
         }
 
-        PolicySet GetCachingPolicies()
+        static void AddCachingPolicies(IUnityContainer container)
         {
-            RuleDrivenPolicy cachePolicy = new RuleDrivenPolicy("Caching");
-            cachePolicy.RuleSet.Add(new TypeMatchingRule(typeof(CachingTarget)));
-            cachePolicy.Handlers.Add(new CachingCallHandler());
-
-            return new PolicySet(cachePolicy);
+            container.Configure<Interception>()
+                .AddPolicy("Caching")
+                    .AddMatchingRule(new TypeMatchingRule(typeof(CachingTarget)))
+                    .AddCallHandler(new CachingCallHandler());
         }
 
         void ClearCache(double input)
@@ -306,7 +318,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
 
     public interface INewsService
     {
-        [CachingCallHandler(0, 0, 30, Order=6)]
+        [CachingCallHandler(0, 0, 30, Order = 6)]
         IList GetNews();
     }
 

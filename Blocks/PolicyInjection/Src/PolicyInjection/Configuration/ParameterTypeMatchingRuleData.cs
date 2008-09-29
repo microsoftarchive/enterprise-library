@@ -9,14 +9,13 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
-using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.MatchingRules;
-using Microsoft.Practices.ObjectBuilder2;
+using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.InterceptionExtension;
+using FakeRules = Microsoft.Practices.EnterpriseLibrary.PolicyInjection.MatchingRules;
+using ParameterKind = Microsoft.Practices.Unity.InterceptionExtension.ParameterKind;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
 {
@@ -24,7 +23,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
     /// A configuration element storing config information for an instance of
     /// <see cref="ParameterTypeMatchingRule"/>.
     /// </summary>
-    [Assembler(typeof(ParameterTypeMatchingRuleAssembler))]
     public class ParameterTypeMatchingRuleData : MatchingRuleData
     {
         private const string matchesPropertyName = "matches";
@@ -40,8 +38,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// Constructs a new <see cref="ParameterTypeMatchingRuleData"/> instance.
         /// </summary>
         /// <param name="matchingRuleName">Matching rule instance name in configuration.</param>
-        public ParameterTypeMatchingRuleData(string matchingRuleName) 
-            : base(matchingRuleName, typeof(ParameterTypeMatchingRule))
+        public ParameterTypeMatchingRuleData(string matchingRuleName)
+            : base(matchingRuleName, typeof(FakeRules.ParameterTypeMatchingRule))
         {
         }
 
@@ -52,9 +50,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// <param name="matches">Collection of <see cref="ParameterTypeMatchData"/> to match against.
         /// If any of them match, the rule matches.</param>
         public ParameterTypeMatchingRuleData(string matchingRuleName, IEnumerable<ParameterTypeMatchData> matches)
-            : base(matchingRuleName, typeof(ParameterTypeMatchingRule))
+            : base(matchingRuleName, typeof(FakeRules.ParameterTypeMatchingRule))
         {
-            foreach(ParameterTypeMatchData matchData in matches )
+            foreach (ParameterTypeMatchData matchData in matches)
             {
                 Matches.Add(matchData);
             }
@@ -68,8 +66,31 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         [ConfigurationCollection(typeof(ParameterTypeMatchData))]
         public MatchDataCollection<ParameterTypeMatchData> Matches
         {
-            get { return (MatchDataCollection < ParameterTypeMatchData > )base[matchesPropertyName]; }
+            get { return (MatchDataCollection<ParameterTypeMatchData>)base[matchesPropertyName]; }
             set { base[matchesPropertyName] = value; }
+        }
+
+        /// <summary>
+        /// Adds the rule represented by this configuration object to <paramref name="policy"/>.
+        /// </summary>
+        /// <param name="policy">The policy to which the rule must be added.</param>
+        /// <param name="configurationSource">The configuration source from which additional information
+        /// can be retrieved, if necessary.</param>
+        public override void ConfigurePolicy(PolicyDefinition policy, IConfigurationSource configurationSource)
+        {
+            policy.AddMatchingRule<ParameterTypeMatchingRule>(
+                new InjectionConstructor(
+                    new InjectionParameter<IEnumerable<ParameterTypeMatchingInfo>>(ConvertFromConfigToRuntimeInfo(this))));
+        }
+
+        private static IEnumerable<ParameterTypeMatchingInfo> ConvertFromConfigToRuntimeInfo(
+            ParameterTypeMatchingRuleData ruleData)
+        {
+            foreach (ParameterTypeMatchData matchData in ruleData.Matches)
+            {
+                yield return
+                    new ParameterTypeMatchingInfo(matchData.Match, matchData.IgnoreCase, matchData.ParameterKind);
+            }
         }
     }
 
@@ -92,7 +113,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// Constructs a new <see cref="ParameterTypeMatchData"/> instance.
         /// </summary>
         /// <param name="match">Parameter type to match. Kind is InputOrOutput.</param>
-        public ParameterTypeMatchData(string match) : base(match)
+        public ParameterTypeMatchData(string match)
+            : base(match)
         {
         }
 
@@ -101,7 +123,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// </summary>
         /// <param name="match">Parameter type to match.</param>
         /// <param name="kind"><see cref="ParameterKind"/> to match.</param>
-        public ParameterTypeMatchData( string match, ParameterKind kind ) : base( match )
+        public ParameterTypeMatchData(string match, ParameterKind kind)
+            : base(match)
         {
             ParameterKind = kind;
         }
@@ -113,7 +136,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// <param name="kind"><see cref="ParameterKind"/> to match.</param>
         /// <param name="ignoreCase">If false, type name comparisons are case sensitive. If true, 
         /// comparisons are case insensitive.</param>
-        public ParameterTypeMatchData(string match, ParameterKind kind, bool ignoreCase) : base(match, ignoreCase)
+        public ParameterTypeMatchData(string match, ParameterKind kind, bool ignoreCase)
+            : base(match, ignoreCase)
         {
             ParameterKind = kind;
         }
@@ -125,43 +149,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         [ConfigurationProperty(kindPropertyName, IsRequired = false, DefaultValue = ParameterKind.InputOrOutput)]
         public ParameterKind ParameterKind
         {
-            get { return (ParameterKind) base[kindPropertyName]; }
+            get { return (ParameterKind)base[kindPropertyName]; }
             set { base[kindPropertyName] = value; }
-        }
-    }
-
-    /// <summary>
-    /// Helper class used by ObjectBuilder to construct a <see cref="ParameterTypeMatchingRule"/>
-    /// instance from a <see cref="ParameterTypeMatchData"/> instance.
-    /// </summary>
-    public class ParameterTypeMatchingRuleAssembler : IAssembler< IMatchingRule, MatchingRuleData>
-    {
-        /// <summary>
-        /// Builds an instance of the subtype of IMatchingRule type the receiver knows how to build, based on 
-        /// a configuration object.
-        /// </summary>
-        /// <param name="context">The <see cref="IBuilderContext"/> that represents the current building process.</param>
-        /// <param name="objectConfiguration">The configuration object that describes the object to build.</param>
-        /// <param name="configurationSource">The source for configuration objects.</param>
-        /// <param name="reflectionCache">The cache to use retrieving reflection information.</param>
-        /// <returns>A fully initialized instance of the IMatchingRule subtype.</returns>
-        public IMatchingRule Assemble(IBuilderContext context, MatchingRuleData objectConfiguration,
-            IConfigurationSource configurationSource,
-            ConfigurationReflectionCache reflectionCache)
-        {
-            ParameterTypeMatchingRuleData ruleData = (ParameterTypeMatchingRuleData) objectConfiguration;
-            ParameterTypeMatchingRule matchingRule =
-                new ParameterTypeMatchingRule(ConvertFromConfigToRuntimeInfo(ruleData));
-            return matchingRule;
-        }
-
-        private IEnumerable<ParameterTypeMatchingInfo> ConvertFromConfigToRuntimeInfo(ParameterTypeMatchingRuleData ruleData)
-        {
-            foreach(ParameterTypeMatchData matchData in ruleData.Matches)
-            {
-                yield return
-                    new ParameterTypeMatchingInfo(matchData.Match, matchData.IgnoreCase, matchData.ParameterKind);
-            }
         }
     }
 }

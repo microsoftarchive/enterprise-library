@@ -12,9 +12,9 @@
 using System.Collections.Generic;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
-using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.MatchingRules;
-using Microsoft.Practices.ObjectBuilder2;
+using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.InterceptionExtension;
+using FakeRules = Microsoft.Practices.EnterpriseLibrary.PolicyInjection.MatchingRules;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
 {
@@ -22,7 +22,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
     /// Configuration element that stores the config information for an instance
     /// of <see cref="NamespaceMatchingRule"/>.
     /// </summary>
-    [Assembler(typeof(NamespaceMatchingRuleAssembler))]
     public class NamespaceMatchingRuleData : MatchingRuleData
     {
         private const string MatchesPropertyName = "matches";
@@ -39,7 +38,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// </summary>
         /// <param name="matchingRuleName">Matching rule name in config file.</param>
         public NamespaceMatchingRuleData(string matchingRuleName)
-            :this(matchingRuleName, new List<MatchData>())
+            : this(matchingRuleName, new List<MatchData>())
         {
         }
 
@@ -49,7 +48,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// <param name="matchingRuleName">Matching rule name in config file.</param>
         /// <param name="namespaceName">Namespace pattern to match.</param>
         public NamespaceMatchingRuleData(string matchingRuleName, string namespaceName)
-            : this(matchingRuleName, new MatchData[] { new MatchData( namespaceName )})
+            : this(matchingRuleName, new MatchData[] { new MatchData(namespaceName) })
         {
         }
 
@@ -60,9 +59,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// <param name="matches">Collection of namespace patterns to match. If any
         /// of the patterns match then the rule matches.</param>
         public NamespaceMatchingRuleData(string matchingRuleName, IEnumerable<MatchData> matches)
-            : base( matchingRuleName, typeof(NamespaceMatchingRule))
+            : base(matchingRuleName, typeof(FakeRules.NamespaceMatchingRule))
         {
-            foreach(MatchData match in matches )
+            foreach (MatchData match in matches)
             {
                 Matches.Add(match);
             }
@@ -80,36 +79,22 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
             set { base[MatchesPropertyName] = value; }
         }
 
-    }
-
-    /// <summary>
-    /// Class used by ObjectBuilder to create instances of <see cref="NamespaceMatchingRule"/>
-    /// from a <see cref="NamespaceMatchingRuleData"/> element.
-    /// </summary>
-    public class NamespaceMatchingRuleAssembler : IAssembler<IMatchingRule, MatchingRuleData>
-    {
         /// <summary>
-        /// Builds an instance of the subtype of IMatchingRule type the receiver knows how to build, based on 
-        /// a configuration object.
+        /// Adds the rule represented by this configuration object to <paramref name="policy"/>.
         /// </summary>
-        /// <param name="context">The <see cref="IBuilderContext"/> that represents the current building process.</param>
-        /// <param name="objectConfiguration">The configuration object that describes the object to build.</param>
-        /// <param name="configurationSource">The source for configuration objects.</param>
-        /// <param name="reflectionCache">The cache to use retrieving reflection information.</param>
-        /// <returns>A fully initialized instance of the IMatchingRule subtype.</returns>
-        public IMatchingRule Assemble(IBuilderContext context, MatchingRuleData objectConfiguration, IConfigurationSource configurationSource, ConfigurationReflectionCache reflectionCache)
+        /// <param name="policy">The policy to which the rule must be added.</param>
+        /// <param name="configurationSource">The configuration source from which additional information
+        /// can be retrieved, if necessary.</param>
+        public override void ConfigurePolicy(PolicyDefinition policy, IConfigurationSource configurationSource)
         {
-            NamespaceMatchingRuleData castedRuleData = (NamespaceMatchingRuleData)objectConfiguration;
-
             List<MatchingInfo> matches = new List<MatchingInfo>();
-            foreach(MatchData matchData in castedRuleData.Matches)
+            foreach (MatchData matchData in this.Matches)
             {
                 matches.Add(new MatchingInfo(matchData.Match, matchData.IgnoreCase));
             }
 
-            NamespaceMatchingRule matchingRule = new NamespaceMatchingRule(matches);
-
-            return matchingRule;
+            policy.AddMatchingRule<NamespaceMatchingRule>(
+                new InjectionConstructor(new InjectionParameter<IEnumerable<MatchingInfo>>(matches)));
         }
     }
 }

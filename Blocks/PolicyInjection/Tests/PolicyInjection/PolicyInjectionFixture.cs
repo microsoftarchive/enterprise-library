@@ -22,6 +22,83 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests
     public class PolicyInjectionFixture
     {
         [TestMethod]
+        public void CanWrapObjectWithInterceptionAttributes()
+        {
+            GlobalCountCallHandler.Calls.Clear();
+
+            WrappableWithAttributes wrappable
+                = PolicyInjection.Wrap<WrappableWithAttributes>(new WrappableWithAttributes());
+
+            wrappable.Method();
+            wrappable.Method();
+            wrappable.Method3();
+
+            Assert.AreEqual(2, GlobalCountCallHandler.Calls.Count);
+            Assert.AreEqual(2, GlobalCountCallHandler.Calls["Method"]);
+            Assert.AreEqual(1, GlobalCountCallHandler.Calls["Method3"]);
+        }
+
+        [TestMethod]
+        public void CanCreateWrappedObjectWithInterceptionAttributes()
+        {
+            GlobalCountCallHandler.Calls.Clear();
+
+            WrappableWithAttributes wrappable
+                = PolicyInjection.Create<WrappableWithAttributes>();
+
+            wrappable.Method();
+            wrappable.Method();
+            wrappable.Method3();
+
+            Assert.IsTrue(wrappable.DefaultCtorCalled);
+            Assert.AreEqual(2, GlobalCountCallHandler.Calls.Count);
+            Assert.AreEqual(2, GlobalCountCallHandler.Calls["Method"]);
+            Assert.AreEqual(1, GlobalCountCallHandler.Calls["Method3"]);
+        }
+
+        [TestMethod]
+        public void CanCreateWrappedObjectWithInterceptionAttributesWithConstructorParameters()
+        {
+            GlobalCountCallHandler.Calls.Clear();
+
+            WrappableWithAttributes wrappable
+                = PolicyInjection.Create<WrappableWithAttributes>(10, "foo");
+
+            wrappable.Method();
+            wrappable.Method();
+            wrappable.Method3();
+
+            Assert.IsFalse(wrappable.DefaultCtorCalled);
+            Assert.AreEqual(2, GlobalCountCallHandler.Calls.Count);
+            Assert.AreEqual(2, GlobalCountCallHandler.Calls["Method"]);
+            Assert.AreEqual(1, GlobalCountCallHandler.Calls["Method3"]);
+        }
+
+        public class WrappableWithAttributes : MarshalByRefObject
+        {
+            public bool DefaultCtorCalled { get; private set; }
+
+            public WrappableWithAttributes()
+            {
+                this.DefaultCtorCalled = true;
+            }
+
+            public WrappableWithAttributes(int parameter1, string parameter2)
+            {
+            }
+
+            [GlobalCountCallHandler(Name = "Method")]
+            public void Method() { }
+
+            [GlobalCountCallHandler(Name = "Method2")]
+            public void Method2() { }
+
+            [GlobalCountCallHandler(Name = "Method3")]
+            public void Method3() { }
+        }
+
+
+        [TestMethod]
         public void CanCreateWrappedObject()
         {
             IConfigurationSource configurationSource = CreateConfigurationSource("CanCreateWrappedObject");
@@ -127,9 +204,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests
 
     public class WrappableThroughInterface : Interface
     {
-        public void Method() {}
+        public void Method() { }
 
-        public void Method3() {}
+        public void Method3() { }
     }
 
     public interface Interface : InterfaceBase
@@ -144,15 +221,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests
 
     public class DerivedWrappable : Wrappable
     {
-        public void Method4() {}
+        public void Method4() { }
     }
 
     public class Wrappable : MarshalByRefObject, Interface
     {
-        public void Method() {}
+        public void Method() { }
 
-        public void Method2() {}
+        public void Method2() { }
 
-        public void Method3() {}
+        public void Method3() { }
     }
 }

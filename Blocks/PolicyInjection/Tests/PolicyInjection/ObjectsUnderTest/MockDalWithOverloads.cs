@@ -10,9 +10,7 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.MatchingRules;
+using Microsoft.Practices.Unity.InterceptionExtension;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.ObjectsUnderTest
 {
@@ -20,13 +18,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.ObjectsUnd
     {
         public int DoSomething(string s)
         {
-            return 42; 
+            return 42;
         }
 
         [Tag("NullString")]
         public string DoSomething(int i)
         {
-            return ( i * 2 ).ToString();
+            return (i * 2).ToString();
         }
     }
 }

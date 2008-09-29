@@ -10,6 +10,8 @@
 //===============================================================================
 
 using System;
+using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.InterceptionExtension;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
 {
@@ -26,7 +28,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
         /// Constructs a new <see cref="ValidationCallHandlerAttribute"/> that uses the
         /// default ruleset.
         /// </summary>
-        public ValidationCallHandlerAttribute() : this(string.Empty)
+        public ValidationCallHandlerAttribute()
+            : this(string.Empty)
         {
         }
 
@@ -57,7 +60,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
         /// configuration.
         /// </summary>
         /// <returns>A new call handler object.</returns>
-        public override ICallHandler CreateHandler()
+        public override ICallHandler CreateHandler(IUnityContainer ignored)
         {
             return new ValidationCallHandler(ruleSet, specificationSource, Order);
         }

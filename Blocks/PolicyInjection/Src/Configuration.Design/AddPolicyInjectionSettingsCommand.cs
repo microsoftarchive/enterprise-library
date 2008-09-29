@@ -29,7 +29,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration.De
             base.ExecuteCore(node);
             if(ChildNode != null)
             {
-                ChildNode.AddNode(new InjectorCollectionNode());
                 ChildNode.AddNode(new PolicyCollectionNode());
             }
         }

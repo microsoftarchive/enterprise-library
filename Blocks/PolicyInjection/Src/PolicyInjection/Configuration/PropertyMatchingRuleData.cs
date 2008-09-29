@@ -9,14 +9,13 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
-using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.MatchingRules;
-using Microsoft.Practices.ObjectBuilder2;
+using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.InterceptionExtension;
+using FakeRules = Microsoft.Practices.EnterpriseLibrary.PolicyInjection.MatchingRules;
+using PropertyMatchingOption = Microsoft.Practices.Unity.InterceptionExtension.PropertyMatchingOption;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
 {
@@ -24,7 +23,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
     /// A configuration element class that stores config information for instances
     /// of <see cref="PropertyMatchingRule"/>.
     /// </summary>
-    [Assembler(typeof(PropertyMatchingRuleAssembler))]
     public class PropertyMatchingRuleData : MatchingRuleData
     {
         private const string MatchesPropertyName = "matches";
@@ -41,7 +39,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// </summary>
         /// <param name="matchingRuleName">Matching rule instance name in configuration.</param>
         public PropertyMatchingRuleData(string matchingRuleName)
-            :this(matchingRuleName, new List<PropertyMatchData>())
+            : this(matchingRuleName, new List<PropertyMatchData>())
         {
         }
 
@@ -51,10 +49,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// <param name="matchingRuleName">Matching rule instance name in configuration.</param>
         /// <param name="matches">Collection of <see cref="PropertyMatchData"/> containing
         /// property patterns to match.</param>
-        public PropertyMatchingRuleData(string matchingRuleName, IEnumerable<PropertyMatchData> matches) 
-            : base(matchingRuleName, typeof(PropertyMatchingRule))
+        public PropertyMatchingRuleData(string matchingRuleName, IEnumerable<PropertyMatchData> matches)
+            : base(matchingRuleName, typeof(FakeRules.PropertyMatchingRule))
         {
-            foreach(PropertyMatchData match in matches)
+            foreach (PropertyMatchData match in matches)
             {
                 Matches.Add(match);
             }
@@ -70,6 +68,24 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         {
             get { return (MatchDataCollection<PropertyMatchData>)base[MatchesPropertyName]; }
             set { base[MatchesPropertyName] = value; }
+        }
+
+        /// <summary>
+        /// Adds the rule represented by this configuration object to <paramref name="policy"/>.
+        /// </summary>
+        /// <param name="policy">The policy to which the rule must be added.</param>
+        /// <param name="configurationSource">The configuration source from which additional information
+        /// can be retrieved, if necessary.</param>
+        public override void ConfigurePolicy(PolicyDefinition policy, IConfigurationSource configurationSource)
+        {
+            List<PropertyMatchingInfo> info = new List<PropertyMatchingInfo>();
+            foreach (PropertyMatchData data in this.Matches)
+            {
+                info.Add(new PropertyMatchingInfo(data.Match, data.MatchOption, data.IgnoreCase));
+            }
+
+            policy.AddMatchingRule<PropertyMatchingRule>(
+                new InjectionConstructor(new InjectionParameter<IEnumerable<PropertyMatchingInfo>>(info)));
         }
     }
 
@@ -92,7 +108,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// Constructs a new <see cref="PropertyMatchData"/> instance.
         /// </summary>
         /// <param name="match">Property name pattern to match. The rule will match both getter and setter methods of a property.</param>
-        public PropertyMatchData(string match) : base(match)
+        public PropertyMatchData(string match)
+            : base(match)
         {
         }
 
@@ -102,7 +119,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// <param name="match">Property name pattern to match.</param>
         /// <param name="option">Which of the property methods to match. See <see cref="PropertyMatchingOption"/>
         /// for the valid options.</param>
-        public PropertyMatchData( string match, PropertyMatchingOption option ) : base(match)
+        public PropertyMatchData(string match, PropertyMatchingOption option)
+            : base(match)
         {
             MatchOption = option;
 
@@ -131,39 +149,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         {
             get { return (PropertyMatchingOption)base[OptionPropertyName]; }
             set { base[OptionPropertyName] = value; }
-        }
-    }
-
-    /// <summary>
-    /// A class used by ObjectBuilder to construct instances of <see cref="PropertyMatchingRule"/>
-    /// from instances of <see cref="PropertyMatchingRuleData"/>.
-    /// </summary>
-    public class PropertyMatchingRuleAssembler : IAssembler<IMatchingRule, MatchingRuleData>
-    {
-        /// <summary>
-        /// Builds an instance of the subtype of IMatchingRule type the receiver knows how to build, based on 
-        /// a configuration object.
-        /// </summary>
-        /// <param name="context">The <see cref="IBuilderContext"/> that represents the current building process.</param>
-        /// <param name="objectConfiguration">The configuration object that describes the object to build.</param>
-        /// <param name="configurationSource">The source for configuration objects.</param>
-        /// <param name="reflectionCache">The cache to use retrieving reflection information.</param>
-        /// <returns>A fully initialized instance of the IMatchingRule subtype.</returns>
-        public IMatchingRule Assemble(
-            IBuilderContext context,
-            MatchingRuleData objectConfiguration,
-            IConfigurationSource configurationSource,
-            ConfigurationReflectionCache reflectionCache)
-        {
-            PropertyMatchingRuleData propertyData = (PropertyMatchingRuleData)objectConfiguration;
-            List<PropertyMatchingInfo> info = new List<PropertyMatchingInfo>();
-            foreach(PropertyMatchData data in propertyData.Matches)
-            {
-                info.Add(new PropertyMatchingInfo(data.Match, data.MatchOption, data.IgnoreCase));
-            }
-
-            PropertyMatchingRule rule = new PropertyMatchingRule(info);
-            return rule;
         }
     }
 }

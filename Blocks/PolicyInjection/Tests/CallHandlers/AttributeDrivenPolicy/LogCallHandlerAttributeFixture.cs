@@ -119,7 +119,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
 
         LogCallHandler GetHandlerFromAttribute(LogCallHandlerAttribute attribute)
         {
-            return (LogCallHandler)attribute.CreateHandler();
+            return (LogCallHandler)attribute.CreateHandler(null);
         }
     }
 
@@ -136,6 +136,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
             set { myVar = value; }
         }
 
-        public void TestMethod() {}
+        public void TestMethod() { }
     }
 }

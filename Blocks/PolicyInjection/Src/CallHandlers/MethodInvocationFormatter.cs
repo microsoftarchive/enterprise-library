@@ -10,9 +10,8 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Logging;
+using Microsoft.Practices.Unity.InterceptionExtension;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
 {
@@ -35,7 +34,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
         /// </summary>
         /// <param name="input"><see cref="IMethodInvocation"/> object containing information
         /// about the current method call.</param>
-        public MethodInvocationFormatter( IMethodInvocation input )
+        public MethodInvocationFormatter(IMethodInvocation input)
         {
             AddRange(new ReplacementToken[]
                 {

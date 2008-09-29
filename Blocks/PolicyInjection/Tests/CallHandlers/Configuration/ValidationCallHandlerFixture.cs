@@ -9,10 +9,14 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using System.Collections.Generic;
 using System.Reflection;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.ObjectsUnderTest;
+using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.InterceptionExtension;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tests.Configuration
@@ -50,9 +54,52 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
             DictionaryConfigurationSource dictConfigurationSource = new DictionaryConfigurationSource();
             dictConfigurationSource.Add(PolicyInjectionSettings.SectionName, settings);
 
-            ICallHandler handler = CallHandlerCustomFactory.Instance.Create(null, data, dictConfigurationSource, null);
+            IUnityContainer container = new UnityContainer().AddNewExtension<Interception>();
+            var policy = container.Configure<Interception>().AddPolicy("test");
+            policy.AddMatchingRule(new AlwaysMatchingRule());
+            data.ConfigurePolicy(policy, null);
+
+            var handlers
+                = new List<ICallHandler>(
+                    container.Resolve<InjectionPolicy>("test")
+                        .GetHandlersFor(MethodInfo.GetCurrentMethod(), container));
+
+            Assert.AreEqual(1, handlers.Count);
+
+            ICallHandler handler = handlers[0];
+
             Assert.IsNotNull(handler);
             Assert.AreEqual(handler.Order, data.Order);
+        }
+
+        [TestMethod]
+        public void ConfiguresCallHandlerAsSingleton()
+        {
+            PolicyInjectionSettings settings = new PolicyInjectionSettings();
+
+            PolicyData policyData = new PolicyData("policy");
+            ValidationCallHandlerData data = new ValidationCallHandlerData("FooCallHandler", 2);
+            policyData.Handlers.Add(data);
+            settings.Policies.Add(policyData);
+
+            DictionaryConfigurationSource dictConfigurationSource = new DictionaryConfigurationSource();
+            dictConfigurationSource.Add(PolicyInjectionSettings.SectionName, settings);
+
+            IUnityContainer container = new UnityContainer().AddNewExtension<Interception>();
+            var policy = container.Configure<Interception>().AddPolicy("test");
+            policy.AddMatchingRule(new AlwaysMatchingRule());
+            data.ConfigurePolicy(policy, null);
+
+            var handlers1
+                = new List<ICallHandler>(
+                    container.Resolve<InjectionPolicy>("test")
+                        .GetHandlersFor(MethodInfo.GetCurrentMethod(), container));
+            var handlers2
+                = new List<ICallHandler>(
+                    container.Resolve<InjectionPolicy>("test")
+                        .GetHandlersFor(MethodInfo.GetCurrentMethod(), container));
+
+            CollectionAssert.AreEquivalent(handlers1, handlers2);
         }
 
         [TestMethod]
@@ -67,7 +114,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
 
             Assert.IsNotNull(attribute);
 
-            ICallHandler handler = attribute.CreateHandler();
+            ICallHandler handler = attribute.CreateHandler(null);
 
             Assert.IsNotNull(handler);
             Assert.AreEqual(handler.Order, 16);
@@ -76,7 +123,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
 
     class ValidationMock
     {
-        [ValidationCallHandler(Order=16)]
+        [ValidationCallHandler(Order = 16)]
         public string ReturnSomething()
         {
             return string.Empty;

@@ -10,9 +10,9 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Text;
+using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.InterceptionExtension;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
 {
@@ -153,10 +153,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
         /// Creates the log handler for the target using the configured values.
         /// </summary>
         /// <returns>the created <see cref="LogCallHandler"/>.</returns>
-        public override ICallHandler CreateHandler()
+        public override ICallHandler CreateHandler(IUnityContainer ignored)
         {
             LogCallHandler handler = new LogCallHandler();
-            
+
             SetCategories(handler);
             handler.EventId = eventId;
             handler.LogAfterCall = logAfterCall;

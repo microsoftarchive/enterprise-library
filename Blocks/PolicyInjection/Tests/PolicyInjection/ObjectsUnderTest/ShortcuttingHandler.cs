@@ -9,8 +9,7 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
-using System.Runtime.Remoting.Messaging;
+using Microsoft.Practices.Unity.InterceptionExtension;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.ObjectsUnderTest
 {
@@ -42,7 +41,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.ObjectsUnd
         public IMethodReturn Invoke(IMethodInvocation input, GetNextHandlerDelegate getNext)
         {
             string key = (string)input.Inputs[0];
-            if( key == shortcutKey )
+            if (key == shortcutKey)
             {
                 IMethodReturn result = input.CreateMethodReturn(-1);
                 return result;

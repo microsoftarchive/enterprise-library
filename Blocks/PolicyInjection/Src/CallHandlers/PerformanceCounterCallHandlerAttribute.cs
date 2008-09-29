@@ -10,8 +10,8 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
-using System.Text;
+using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.InterceptionExtension;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
 {
@@ -53,7 +53,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
                 PerformanceCounterCallHandlerDefaults.IncrementNumberOfCalls;
             this.incrementTotalExceptions =
                 PerformanceCounterCallHandlerDefaults.IncrementTotalExceptions;
-            this.useTotalCounter = 
+            this.useTotalCounter =
                 PerformanceCounterCallHandlerDefaults.UseTotalCounter;
         }
 
@@ -144,16 +144,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
         /// configuration.
         /// </summary>
         /// <returns>A new call handler object.</returns>
-        public override ICallHandler CreateHandler()
+        public override ICallHandler CreateHandler(IUnityContainer ignored)
         {
             return new PerformanceCounterCallHandler(
-                categoryName, 
+                categoryName,
                 instanceName,
-                useTotalCounter, 
-                incrementNumberOfCalls, 
+                useTotalCounter,
+                incrementNumberOfCalls,
                 incrementCallsPerSecond,
-                incrementAverageCallDuration, 
-                incrementTotalExceptions, 
+                incrementAverageCallDuration,
+                incrementTotalExceptions,
                 incrementExceptionsPerSecond,
                 Order);
         }

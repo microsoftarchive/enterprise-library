@@ -9,12 +9,11 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
-using System.Runtime.Remoting.Messaging;
+using Microsoft.Practices.Unity.InterceptionExtension;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.ObjectsUnderTest
 {
-    public class MakeReturnNullHandler: ICallHandler
+    public class MakeReturnNullHandler : ICallHandler
     {
         private int order = 0;
 

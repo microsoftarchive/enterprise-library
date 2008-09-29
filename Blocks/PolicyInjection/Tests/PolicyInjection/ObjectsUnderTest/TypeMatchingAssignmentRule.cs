@@ -13,6 +13,7 @@ using System;
 using System.Reflection;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
+using Microsoft.Practices.Unity.InterceptionExtension;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.ObjectsUnderTest
 {
@@ -33,7 +34,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.ObjectsUnd
             //    return member == matchType;
             //}
 
-            return ( member.DeclaringType == matchType );
+            return (member.DeclaringType == matchType);
         }
     }
 }

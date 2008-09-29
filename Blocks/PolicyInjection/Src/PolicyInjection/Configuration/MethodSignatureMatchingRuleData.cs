@@ -11,12 +11,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.MatchingRules;
 using System.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
-using Microsoft.Practices.ObjectBuilder2;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.InterceptionExtension;
+using FakeRules = Microsoft.Practices.EnterpriseLibrary.PolicyInjection.MatchingRules;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
 {
@@ -24,7 +23,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
     /// Configuration element that stores the configuration information for an instance
     /// of <see cref="MethodSignatureMatchingRule"/>.
     /// </summary>
-    [Assembler(typeof(MethodSignatureMatchingRuleAssembler))]
     public class MethodSignatureMatchingRuleData : StringBasedMatchingRuleData
     {
         private const string ParametersPropertyName = "parameters";
@@ -43,7 +41,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// <param name="matchingRuleName">Name of matching rule in config.</param>
         /// <param name="memberName">Method name pattern to match.</param>
         public MethodSignatureMatchingRuleData(string matchingRuleName, string memberName)
-            : base(matchingRuleName, memberName, typeof(MethodSignatureMatchingRule))
+            : base(matchingRuleName, memberName, typeof(FakeRules.MethodSignatureMatchingRule))
         {
         }
 
@@ -57,43 +55,33 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
             get { return (ParameterTypeElementDataCollection)base[ParametersPropertyName]; }
             set { base[ParametersPropertyName] = value; }
         }
-    }
 
-    /// <summary>
-    /// Class used by ObjectBuilder to construct a <see cref="MethodSignatureMatchingRule"/> instance
-    /// from a <see cref="MethodSignatureMatchingRuleData"/> instance.
-    /// </summary>
-    public class MethodSignatureMatchingRuleAssembler : IAssembler<IMatchingRule, MatchingRuleData>
-    {
         /// <summary>
-        /// Builds an instance of the subtype of IMatchingRule type that the receiver knows how to build, based on 
-        /// an a configuration object.
+        /// Adds the rule represented by this configuration object to <paramref name="policy"/>.
         /// </summary>
-        /// <param name="context">The <see cref="IBuilderContext"/> that represents the current building process.</param>
-        /// <param name="objectConfiguration">The configuration object that describes the object to build.</param>
-        /// <param name="configurationSource">The source for configuration objects.</param>
-        /// <param name="reflectionCache">The cache to use retrieving reflection information.</param>
-        /// <returns>A fully initialized instance of the IMatchingRule subtype.</returns>
-        public IMatchingRule Assemble(IBuilderContext context, MatchingRuleData objectConfiguration, IConfigurationSource configurationSource, ConfigurationReflectionCache reflectionCache)
+        /// <param name="policy">The policy to which the rule must be added.</param>
+        /// <param name="configurationSource">The configuration source from which additional information
+        /// can be retrieved, if necessary.</param>
+        public override void ConfigurePolicy(PolicyDefinition policy, IConfigurationSource configurationSource)
         {
-            MethodSignatureMatchingRuleData castedRuleData = (MethodSignatureMatchingRuleData)objectConfiguration;
-
             List<string> parameterTypes = new List<string>();
-            foreach (ParameterTypeElement parameterType in castedRuleData.Parameters)
+            foreach (ParameterTypeElement parameterType in this.Parameters)
             {
                 parameterTypes.Add(parameterType.ParameterTypeName);
             }
 
-            MethodSignatureMatchingRule matchingRule = new MethodSignatureMatchingRule(castedRuleData.Match, parameterTypes, castedRuleData.IgnoreCase);
-
-            return matchingRule;
+            policy.AddMatchingRule<MethodSignatureMatchingRule>(
+                new InjectionConstructor(
+                    new InjectionParameter<string>(this.Match),
+                    new InjectionParameter<IEnumerable<string>>(parameterTypes),
+                    new InjectionParameter<bool>(this.IgnoreCase)));
         }
     }
 
     /// <summary>
     /// A configuration element that stores a collection of <see cref="ParameterTypeElement"/> objects.
     /// </summary>
-    [ConfigurationCollection(typeof(ParameterTypeElement), AddItemName="parameter")]
+    [ConfigurationCollection(typeof(ParameterTypeElement), AddItemName = "parameter")]
     public class ParameterTypeElementDataCollection : ConfigurationElementCollection
     {
         /// <summary>
@@ -191,7 +179,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// used.
         /// </summary>
         /// <value>A name for this property that is unique in this rule's configuration.</value>
-        [ConfigurationProperty(NamePropertyName, IsKey=true, IsRequired=true)]
+        [ConfigurationProperty(NamePropertyName, IsKey = true, IsRequired = true)]
         public string Name
         {
             get { return (string)base[NamePropertyName]; }
@@ -202,11 +190,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// The parameter type required.
         /// </summary>
         /// <value>The "typeName" config attribute.</value>
-        [ConfigurationProperty(ParameterTypeNamePropertyName, IsKey=true, IsRequired=true, DefaultValue="")]
+        [ConfigurationProperty(ParameterTypeNamePropertyName, IsKey = true, IsRequired = true, DefaultValue = "")]
         public string ParameterTypeName
         {
-            get{return (string) base[ParameterTypeNamePropertyName];}
-            set{base[ParameterTypeNamePropertyName] =value;}
+            get { return (string)base[ParameterTypeNamePropertyName]; }
+            set { base[ParameterTypeNamePropertyName] = value; }
         }
     }
 }

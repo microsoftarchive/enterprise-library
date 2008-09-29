@@ -11,9 +11,9 @@
 
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
-using Microsoft.Practices.ObjectBuilder2;
+using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.InterceptionExtension;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Configuration
 {
@@ -21,7 +21,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
     /// Call handler data describing the information for the authorization call handler
     /// in configuration.
     /// </summary>
-    [Assembler(typeof(AuthorizationCallHandlerAssembler))]
     public class AuthorizationCallHandlerData : CallHandlerData
     {
         private const string AuthorizationProviderPropertyName = "authorizationProvider";
@@ -40,7 +39,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
         /// </summary>
         /// <param name="handlerName">Name of the call handler.</param>
         public AuthorizationCallHandlerData(string handlerName)
-            :base(handlerName, typeof(AuthorizationCallHandler))
+            : base(handlerName, typeof(AuthorizationCallHandler))
         {
         }
 
@@ -62,7 +61,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
         [ConfigurationProperty(AuthorizationProviderPropertyName)]
         public string AuthorizationProvider
         {
-            get { return(string) base[AuthorizationProviderPropertyName]; }
+            get { return (string)base[AuthorizationProviderPropertyName]; }
             set { base[AuthorizationProviderPropertyName] = value; }
         }
 
@@ -70,38 +69,28 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
         /// Operation name to use for this call handler.
         /// </summary>
         /// <value>The "operationName" attribute.</value>
-        [ConfigurationProperty(OperationNamePropertyName, IsRequired=true)]
+        [ConfigurationProperty(OperationNamePropertyName, IsRequired = true)]
         public string OperationName
         {
             get { return (string)base[OperationNamePropertyName]; }
             set { base[OperationNamePropertyName] = value; }
         }
-    }
 
-    /// <summary>
-    /// A class used by ObjectBuilder to take a <see cref="AuthorizationCallHandlerData"/> object
-    /// and build the corresponding <see cref="AuthorizationCallHandler"/>.
-    /// </summary>
-    public class AuthorizationCallHandlerAssembler : IAssembler<ICallHandler, CallHandlerData>
-    {
         /// <summary>
-        /// Create the call handler.
+        /// Adds the call handler represented by this configuration object to <paramref name="policy"/>.
         /// </summary>
-        /// <param name="context">ObjectBuilder context.</param>
-        /// <param name="objectConfiguration">The call handler data.</param>
-        /// <param name="configurationSource">Configuration source.</param>
-        /// <param name="reflectionCache">ObjectBuild reflection cache.</param>
-        /// <returns>The constructed call handler.</returns>
-        public ICallHandler Assemble(IBuilderContext context, CallHandlerData objectConfiguration, IConfigurationSource configurationSource, ConfigurationReflectionCache reflectionCache)
+        /// <param name="policy">The policy to which the rule must be added.</param>
+        /// <param name="configurationSource">The configuration source from which additional information
+        /// can be retrieved, if necessary.</param>
+        public override void ConfigurePolicy(PolicyDefinition policy, IConfigurationSource configurationSource)
         {
-            AuthorizationCallHandlerData castedConfiguration = (AuthorizationCallHandlerData)objectConfiguration;
-
-            AuthorizationCallHandler callHandler = new AuthorizationCallHandler(castedConfiguration.AuthorizationProvider, 
-                castedConfiguration.OperationName, 
-                configurationSource, 
-                objectConfiguration.Order);
-
-            return callHandler;
+            policy.AddCallHandler<AuthorizationCallHandler>(
+                new ContainerControlledLifetimeManager(),
+                new InjectionConstructor(
+                    new InjectionParameter<string>(this.AuthorizationProvider),
+                    new InjectionParameter<string>(this.OperationName),
+                    new InjectionParameter<IConfigurationSource>(configurationSource),
+                    new InjectionParameter<int>(this.Order)));
         }
     }
 }

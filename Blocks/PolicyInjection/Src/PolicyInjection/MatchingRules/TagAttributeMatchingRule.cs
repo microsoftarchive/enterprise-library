@@ -9,66 +9,29 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
-using System.Reflection;
-using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Utilities;
+using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Properties;
+using Microsoft.Practices.Unity.InterceptionExtension;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.MatchingRules
 {
     /// <summary>
-    /// A <see cref="IMatchingRule"/> that checks a member for the presence
-    /// of the <see cref="TagAttribute"/> on the method, property, or class, and
-    /// that the given string matches.
+    /// Placeholder for <see cref="Microsoft.Practices.Unity.InterceptionExtension.TagAttributeMatchingRule"/>.
     /// </summary>
     [ConfigurationElementType(typeof(TagAttributeMatchingRuleData))]
     public class TagAttributeMatchingRule : IMatchingRule
     {
-        private readonly string tagToMatch;
-        private readonly bool ignoreCase;
-
         /// <summary>
-        /// Constructs a new <see cref="TagAttributeMatchingRule"/>, looking for
-        /// the given string. The comparison is case sensitive.
+        /// Tests to see if this rule applies to the given member.
         /// </summary>
-        /// <param name="tagToMatch">tag string to match.</param>
-        public TagAttributeMatchingRule(string tagToMatch)
-            : this(tagToMatch, false)
+        /// <remarks>
+        /// This type is available to support the configuration subsystem. Use 
+        /// <see cref="Microsoft.Practices.Unity.InterceptionExtension.TagAttributeMatchingRule"/> instead.
+        /// </remarks>
+        public bool Matches(System.Reflection.MethodBase member)
         {
-        }
-
-        /// <summary>
-        /// Constructs a new <see cref="TagAttributeMatchingRule"/>, looking for
-        /// the given string. The comparison is case sensitive if <paramref name="ignoreCase"/> is
-        /// false, case insensitive if <paramref name="ignoreCase"/> is true.
-        /// </summary>
-        /// <param name="tagToMatch">tag string to match.</param>
-        /// <param name="ignoreCase">if false, case-senstive comparison. If true, case-insensitive comparison.</param>
-        public TagAttributeMatchingRule(string tagToMatch, bool ignoreCase)
-        {
-            this.tagToMatch = tagToMatch;
-            this.ignoreCase = ignoreCase;
-        }
-
-        /// <summary>
-        /// Check the given member for the presence of the <see cref="TagAttribute"/> and
-        /// match the strings.
-        /// </summary>
-        /// <param name="member">Member to check.</param>
-        /// <returns>True if tag strings match, false if they don't.</returns>
-        public bool Matches(MethodBase member)
-        {
-            foreach (TagAttribute tagAttribute in ReflectionHelper.GetAllAttributes<TagAttribute>(member, true))
-            {
-                if (string.Compare(tagAttribute.Tag, tagToMatch, ignoreCase) == 0)
-                {
-                    return true;
-                }
-            }
-            return false;
+            throw new System.InvalidOperationException(Resources.PlaceholderRule);
         }
     }
 }

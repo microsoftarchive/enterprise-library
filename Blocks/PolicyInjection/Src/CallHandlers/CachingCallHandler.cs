@@ -16,6 +16,7 @@ using System.Web;
 using System.Web.Caching;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Configuration;
+using Microsoft.Practices.Unity.InterceptionExtension;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
 {
@@ -38,7 +39,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
         /// <summary>
         /// Creates a <see cref="CachingCallHandler"/> that uses the default expiration time of 5 minutes.
         /// </summary>
-        public CachingCallHandler() : this(DefaultExpirationTime)
+        public CachingCallHandler()
+            : this(DefaultExpirationTime)
         {
         }
 
@@ -106,7 +108,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
             }
 
             object[] inputs = new object[input.Inputs.Count];
-            for(int i = 0; i < inputs.Length; ++i)
+            for (int i = 0; i < inputs.Length; ++i)
             {
                 inputs[i] = input.Inputs[i];
             }
@@ -115,7 +117,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
 
             object[] cachedResult = (object[])HttpRuntime.Cache.Get(cacheKey);
 
-            if(cachedResult == null )
+            if (cachedResult == null)
             {
                 IMethodReturn realReturn = getNext()(input, getNext);
                 if (realReturn.Exception == null)
@@ -184,7 +186,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendFormat("{0}:", KeyGuid);
-            if( method.DeclaringType != null )
+            if (method.DeclaringType != null)
             {
                 sb.Append(method.DeclaringType.FullName);
             }
@@ -202,7 +204,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
                     }
                 }
             }
-            
+
             return sb.ToString();
         }
 

@@ -9,7 +9,12 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using System.Collections.Generic;
+using System.Reflection;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.ObjectsUnderTest;
+using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.InterceptionExtension;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tests.Configuration
@@ -38,12 +43,46 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
                 new ExceptionCallHandlerData("handler", "Swallow Exceptions");
             data.Order = 5;
 
-            ExceptionCallHandlerAssembler assembler = new ExceptionCallHandlerAssembler();
+            IUnityContainer container = new UnityContainer().AddNewExtension<Interception>();
+            var policy = container.Configure<Interception>().AddPolicy("test");
+            policy.AddMatchingRule(new AlwaysMatchingRule());
+            data.ConfigurePolicy(policy, null);
 
-            ExceptionCallHandler handler = (ExceptionCallHandler)assembler.Assemble(null, data, null, null);
+            var handlers
+                = new List<ICallHandler>(
+                    container.Resolve<InjectionPolicy>("test")
+                        .GetHandlersFor(MethodInfo.GetCurrentMethod(), container));
+
+            Assert.AreEqual(1, handlers.Count);
+
+            ExceptionCallHandler handler = (ExceptionCallHandler)handlers[0];
 
             Assert.AreEqual(data.ExceptionPolicyName, handler.ExceptionPolicyName);
             Assert.AreEqual(data.Order, handler.Order);
+        }
+
+        [TestMethod]
+        public void ConfiguresHandlerAsSingleton()
+        {
+            ExceptionCallHandlerData data =
+                new ExceptionCallHandlerData("handler", "Swallow Exceptions");
+            data.Order = 5;
+
+            IUnityContainer container = new UnityContainer().AddNewExtension<Interception>();
+            var policy = container.Configure<Interception>().AddPolicy("test");
+            policy.AddMatchingRule(new AlwaysMatchingRule());
+            data.ConfigurePolicy(policy, null);
+
+            var handlers1
+                = new List<ICallHandler>(
+                    container.Resolve<InjectionPolicy>("test")
+                        .GetHandlersFor(MethodInfo.GetCurrentMethod(), container));
+            var handlers2
+                = new List<ICallHandler>(
+                    container.Resolve<InjectionPolicy>("test")
+                        .GetHandlersFor(MethodInfo.GetCurrentMethod(), container));
+
+            CollectionAssert.AreEquivalent(handlers1, handlers2);
         }
     }
 }

@@ -11,7 +11,7 @@
 
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration.Design.Properties;
-using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.MatchingRules;
+using ParameterKind = Microsoft.Practices.Unity.InterceptionExtension.ParameterKind;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration.Design.MatchingRules
 {
@@ -46,7 +46,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration.De
         /// <param name="match">String the defines the type to match.</param>
         /// <param name="ignoreCase">If true, use case insensitive comparison for the type. If false, case sensitive.</param>
         /// <param name="kind">Wether this parameter is an input, output, input or output, or return type.</param>
-        public ParameterTypeMatch(string match, bool ignoreCase, ParameterKind kind) : base(match, ignoreCase)
+        public ParameterTypeMatch(string match, bool ignoreCase, ParameterKind kind)
+            : base(match, ignoreCase)
         {
             this.kind = kind;
         }
