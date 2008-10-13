@@ -18,6 +18,8 @@ using Microsoft.Practices.EnterpriseLibrary.Data.Oracle;
 using Microsoft.Practices.EnterpriseLibrary.Data.Sql;
 using Microsoft.Practices.Unity;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using System.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration.Unity
 {
@@ -66,6 +68,43 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration.Unity
 			Assert.AreEqual(@"server=(local)\sqlexpress;database=northwind;integrated security=true;",
 			                createdObject.ConnectionStringWithoutCredentials);
 		}
+
+        [TestMethod]
+        public void SkipsConnectionStringsWithoutProviderNamesOrWithProviderNamesWhichDoNotMapToAProviderFactory()
+        {
+            DictionaryConfigurationSource configurationSource = new DictionaryConfigurationSource();
+            ConnectionStringsSection section = new ConnectionStringsSection();
+            section.ConnectionStrings.Add(new ConnectionStringSettings("cs1", "cs1", "System.Data.SqlClient"));
+            section.ConnectionStrings.Add(new ConnectionStringSettings("cs2", "cs2"));
+            section.ConnectionStrings.Add(new ConnectionStringSettings("cs3", "cs3", "a bogus provider name"));
+            section.ConnectionStrings.Add(new ConnectionStringSettings("cs4", "cs4", "System.Data.SqlClient"));
+            configurationSource.Add("connectionStrings", section);
+
+            IUnityContainer container = new UnityContainer();
+            container.AddExtension(new EnterpriseLibraryCoreExtension(configurationSource));
+            container.AddNewExtension<DataAccessBlockExtension>();
+
+            Assert.AreEqual("cs1", container.Resolve<Database>("cs1").ConnectionString);
+            Assert.AreEqual("cs4", container.Resolve<Database>("cs4").ConnectionString);
+            try
+            {
+                container.Resolve<Database>("cs2");
+                Assert.Fail("should have thrown");
+            }
+            catch (ResolutionFailedException)
+            {
+                // expected, connection string is ignored
+            }
+            try
+            {
+                container.Resolve<Database>("cs3");
+                Assert.Fail("should have thrown");
+            }
+            catch (ResolutionFailedException)
+            {
+                // expected, connection string is ignored
+            }
+        }
 
 		[TestMethod]
 		public void CanCreateOracleDatabaseFromContainer()

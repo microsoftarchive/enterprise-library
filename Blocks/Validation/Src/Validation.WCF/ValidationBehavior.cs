@@ -24,7 +24,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WCF
     /// The behavior class that set up the validation contract behavior
     /// for implementing the validation process.
     /// </summary>
-    public class ValidationBehavior : IEndpointBehavior, IContractBehavior
+    public class ValidationBehavior : IEndpointBehavior, IContractBehavior, IOperationBehavior
     {
         #region ValidationBehavior Members
 
@@ -37,7 +37,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WCF
         /// </summary>
         /// <param name="enabled">if set to <c>true</c> [enabled].</param>
         /// <param name="enableClientValidation">if set to <c>true</c> [enable client validation].</param>
-		/// <param name="ruleSet"></param>
+        /// <param name="ruleSet"></param>
         internal ValidationBehavior(bool enabled, bool enableClientValidation, string ruleSet)
         {
             this.enableClientValidation = enableClientValidation;
@@ -49,7 +49,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WCF
         /// Initializes a new instance of the <see cref="T:ValidationBehavior"/> class.
         /// The <see cref="Enabled"/> property will be set as 'true'.
         /// </summary>
-        public ValidationBehavior() : this(true, false, string.Empty )
+        public ValidationBehavior()
+            : this(true, false, string.Empty)
         {
         }
 
@@ -58,9 +59,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WCF
         /// The <see cref="Enabled"/> property will be set to 'true'.
         /// </summary>
         /// <param name="ruleSet">The name of the validation ruleset to apply.</param>
-        public ValidationBehavior(string ruleSet ) : this(true, false, ruleSet)
+        public ValidationBehavior(string ruleSet)
+            : this(true, false, ruleSet)
         {
-            
+
         }
 
         /// <summary>
@@ -68,7 +70,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WCF
         /// </summary>
         /// <param name="enabled">if set to <c>true</c> [enabled].</param>
         public ValidationBehavior(bool enabled)
-            : this(enabled, enabled, string.Empty )
+            : this(enabled, enabled, string.Empty)
         {
         }
 
@@ -159,19 +161,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WCF
             ServiceEndpoint endpoint,
             ClientRuntime clientRuntime)
         {
-            if(false == enabled ||
+            if (false == enabled ||
                 false == enableClientValidation)
             {
                 return;
             }
 
             // perform validation on client side
-            foreach(ClientOperation clientOperation in clientRuntime.Operations)
+            foreach (ClientOperation clientOperation in clientRuntime.Operations)
             {
                 OperationDescription operationDescription =
                     contractDescription.Operations.Find(clientOperation.Name);
-                clientOperation.ParameterInspectors.Add(
-                    new ValidationParameterInspector(operationDescription, ruleSet));
+                ApplyClientBehavior(operationDescription, clientOperation);
             }
         }
 
@@ -186,19 +187,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WCF
             ServiceEndpoint endpoint,
             DispatchRuntime dispatchRuntime)
         {
-            if(false == enabled)
+            if (false == enabled)
             {
                 return;
             }
 
             // perform validation on server side.
             // add the faultdescription and validation parameters
-            foreach(DispatchOperation dispatchOperation in dispatchRuntime.Operations)
+            foreach (DispatchOperation dispatchOperation in dispatchRuntime.Operations)
             {
                 OperationDescription operationDescription =
                     contractDescription.Operations.Find(dispatchOperation.Name);
-                dispatchOperation.ParameterInspectors.Add(
-                    new ValidationParameterInspector(operationDescription, ruleSet));
+                ApplyDispatchBehavior(operationDescription, dispatchOperation);
             }
         }
 
@@ -210,29 +210,82 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WCF
         public void Validate(ContractDescription contractDescription, ServiceEndpoint endpoint)
         {
             // by pass validation if this behavior is disabled
-            if(false == enabled)
+            if (false == enabled)
             {
                 return;
             }
 
             // check of all operations with validators has the FaultContract attribute with 
             // a ValidationFault type
-            foreach(OperationDescription operation in contractDescription.Operations)
+            foreach (OperationDescription operation in contractDescription.Operations)
             {
-                if(HasValidationAssertions(operation) &&
-                    !HasFaultDescription(operation))
-                {
-                    throw new InvalidOperationException(
-                        string.Format(CultureInfo.CurrentCulture, Resources.MissingFaultDescription,
-                            operation.Name));
-                }
+                Validate(operation);
             }
         }
+
+        #endregion
+
+        #region IOperationBehavior Members
+
+        /// <summary>
+        /// Configures any binding elements to support the operation behavior.
+        /// </summary>
+        /// <param name="operationDescription">The operation being examined. Use for examination only. If the operation 
+        /// description is modified, the results are undefined.</param>
+        /// <param name="bindingParameters">The objects that binding elements require to support the behavior.</param>
+        public void AddBindingParameters(OperationDescription operationDescription, BindingParameterCollection bindingParameters)
+        {
+            // nothing to do
+        }
+
+        /// <summary>
+        /// Implements a modification or extension of the client accross an operation.
+        /// </summary>
+        /// <param name="operationDescription">The operation being examined. Use for examination only. If the operation 
+        /// description is modified, the results are undefined.</param>
+        /// <param name="clientOperation">The run-time object that exposes customization properties for the operation 
+        /// described by <paramref name="operationDescription"/>.</param>
+        public void ApplyClientBehavior(OperationDescription operationDescription, ClientOperation clientOperation)
+        {
+            clientOperation.ParameterInspectors.Add(new ValidationParameterInspector(operationDescription, ruleSet));
+        }
+
+        /// <summary>
+        /// Implements a modification or extension of the service accross an operation.
+        /// </summary>
+        /// <param name="operationDescription">The operation being examined. Use for examination only. If the operation 
+        /// description is modified, the results are undefined.</param>
+        /// <param name="dispatchOperation">The run-time object that exposes customization properties for the operation 
+        /// described by <paramref name="operationDescription"/>.</param>
+        public void ApplyDispatchBehavior(OperationDescription operationDescription, DispatchOperation dispatchOperation)
+        {
+            dispatchOperation.ParameterInspectors.Add(new ValidationParameterInspector(operationDescription, ruleSet));
+        }
+
+        /// <summary>
+        /// Implement to confirm that the operation meets some intended criteria.
+        /// </summary>
+        /// <param name="operationDescription">The operation being examined. Use for examination only. If the operation 
+        /// description is modified, the results are undefined.</param>
+        public void Validate(OperationDescription operationDescription)
+        {
+            if (HasValidationAssertions(operationDescription) &&
+               !HasFaultDescription(operationDescription))
+            {
+                throw new InvalidOperationException(
+                    string.Format(
+                        CultureInfo.CurrentCulture,
+                        Resources.MissingFaultDescription,
+                        operationDescription.Name));
+            }
+        }
+
+        #endregion
 
         private bool HasValidationAssertions(OperationDescription operation)
         {
             MethodInfo methodInfo = operation.SyncMethod;
-            if(methodInfo == null)
+            if (methodInfo == null)
             {
                 throw new ArgumentNullException("operation.SyncMethod");
             }
@@ -242,9 +295,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WCF
 
         private bool HasFaultDescription(OperationDescription operation)
         {
-            foreach(FaultDescription fault in operation.Faults)
+            foreach (FaultDescription fault in operation.Faults)
             {
-                if(fault.DetailType == typeof(ValidationFault))
+                if (fault.DetailType == typeof(ValidationFault))
                 {
                     return true;
                 }
@@ -254,16 +307,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WCF
 
         private bool HasParametersWithValidationAssertions(ParameterInfo[] parameters)
         {
-            foreach(ParameterInfo parameter in parameters)
+            foreach (ParameterInfo parameter in parameters)
             {
-                if(parameter.GetCustomAttributes(typeof(ValidatorAttribute), false).Length > 0)
+                if (parameter.GetCustomAttributes(typeof(ValidatorAttribute), false).Length > 0)
                 {
                     return true;
                 }
             }
             return false;
         }
-
-        #endregion
     }
 }

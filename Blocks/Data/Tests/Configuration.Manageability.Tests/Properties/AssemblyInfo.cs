@@ -14,4 +14,4 @@ using System.Security.Permissions;
 
 [assembly: AssemblyTitle("Enterprise Library Data Access Application Block Configuration Manageability Tests")]
 [assembly: AssemblyDescription("Enterprise Library Data Access Application Block Configuration Manageability Tests")]
-[assembly: AssemblyVersion("4.0.0.926")]
+[assembly: AssemblyVersion("4.0.0.1010")]

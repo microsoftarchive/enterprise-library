@@ -19,7 +19,7 @@ using System.Security.Permissions;
 [assembly : SecurityPermission(SecurityAction.RequestMinimum)]
 [assembly : AssemblyTitle("Enterprise Library Logging Application Block")]
 [assembly : AssemblyDescription("Enterprise Library Logging Application Block")]
-[assembly : AssemblyVersion("4.0.0.926")]
+[assembly : AssemblyVersion("4.0.0.1010")]
 [assembly : Instrumented(@"root\EnterpriseLibrary")]
 [assembly : WmiConfiguration(@"root\EnterpriseLibrary", HostingModel = ManagementHostingModel.Decoupled, IdentifyLevel = false)]
 [assembly : AllowPartiallyTrustedCallers]

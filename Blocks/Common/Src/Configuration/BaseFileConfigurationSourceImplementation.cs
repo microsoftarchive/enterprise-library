@@ -51,9 +51,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         /// <param name="refresh"><b>true</b>if runtime changes should be refreshed, <b>false</b> otherwise.</param>
         public BaseFileConfigurationSourceImplementation(string configurationFilepath,
                                                          bool refresh)
-            : this(configurationFilepath)
         {
-            this.refresh = refresh;
+            this.configurationFilepath = configurationFilepath;
+            this.refresh = refresh && !string.IsNullOrEmpty(configurationFilepath);
+            watchedConfigSourceMapping = new Dictionary<string, ConfigurationSourceWatcher>();
+            watchedSectionMapping = new Dictionary<string, ConfigurationSourceWatcher>();
         }
 
         /// <summary>
@@ -62,10 +64,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         /// </summary>
         /// <param name="configurationFilepath">The path for the main configuration file.</param>
         public BaseFileConfigurationSourceImplementation(string configurationFilepath)
+            : this(configurationFilepath, true)
         {
-            this.configurationFilepath = configurationFilepath;
-            watchedConfigSourceMapping = new Dictionary<string, ConfigurationSourceWatcher>();
-            watchedSectionMapping = new Dictionary<string, ConfigurationSourceWatcher>();
         }
 
         /// <summary>

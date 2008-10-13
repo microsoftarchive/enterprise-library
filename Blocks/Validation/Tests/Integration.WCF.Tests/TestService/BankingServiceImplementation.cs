@@ -15,9 +15,14 @@ using System.Text;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WCF.Tests.VSTS.TestService
 {
-    class BankingServiceImplementation : IBankingService, IBanking2Service, IBanking3Service
+    class BankingServiceImplementation : IBankingService, IBanking2Service, IBanking3Service, IBanking4Service
     {
         public AccountSummary GetAccountSummary(CustomerInfo customer)
+        {
+            return new AccountSummary();
+        }
+
+        public AccountSummary GetAccountSummary2(CustomerInfo customer)
         {
             return new AccountSummary();
         }

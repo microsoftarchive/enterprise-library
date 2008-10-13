@@ -66,6 +66,35 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WCF.Tests
             }
         }
 
+        [TestMethod]
+        public void CanUseDifferentRulesetsForDifferentOperationsWhenUsingOperationBehavior()
+        {
+            using (Banking4ServiceHost host = new Banking4ServiceHost())
+            {
+                CustomerInfo customer1 = GetValidRule1Customer();
+                CustomerInfo customer2 = GetValidRule2Customer();
+
+                host.Proxy.GetAccountSummary(customer1);
+                try
+                {
+                    host.Proxy.GetAccountSummary(customer2);
+                    Assert.Fail("should have thrown");
+                }
+                catch (FaultException<ValidationFault>)
+                {
+                }
+                try
+                {
+                    host.Proxy.GetAccountSummary2(customer1);
+                    Assert.Fail("should have thrown");
+                }
+                catch (FaultException<ValidationFault>)
+                {
+                }
+                host.Proxy.GetAccountSummary2(customer2);
+            }
+        }
+
         #region Various Customer Factories
 
         CustomerInfo GetInvalidBank1Customer()
@@ -81,6 +110,25 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WCF.Tests
         {
             CustomerInfo customer =
                 new CustomerInfo("First", "LastName", "Illegal SSN, but Bank1 doesn't care");
+            return customer;
+        }
+
+
+        CustomerInfo GetValidRule1Customer()
+        {
+            CustomerInfo customer = new CustomerInfo();
+            customer.FirstName = "FirstName";
+            customer.LastName = "LastName";
+            customer.Ssn = "Not valid, but that's ok, this ruleset doesn't care";
+            return customer;
+        }
+
+        CustomerInfo GetValidRule2Customer()
+        {
+            CustomerInfo customer = new CustomerInfo();
+            customer.FirstName = "FirstName";
+            customer.LastName = null; // ignored by this ruleset
+            customer.Ssn = "333-22-4444";
             return customer;
         }
 

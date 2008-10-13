@@ -22,6 +22,6 @@ using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.Desi
 [assembly : ComVisible(false)]
 [assembly : AssemblyTitle("Enterprise Library Exception Handling Application Block Design")]
 [assembly : AssemblyDescription("Enterprise Library Exception Handling Application Block Design")]
-[assembly : AssemblyVersion("4.0.0.926")]
+[assembly : AssemblyVersion("4.0.0.1010")]
 [assembly : AllowPartiallyTrustedCallers]
 [assembly : SecurityTransparent]

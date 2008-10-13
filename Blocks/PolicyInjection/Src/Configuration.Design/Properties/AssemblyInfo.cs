@@ -22,6 +22,6 @@ using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration.Design
 [assembly : ComVisible(false)]
 [assembly : AssemblyTitle("Enterprise Library Policy Injection Application Block Design")]
 [assembly : AssemblyDescription("Enterprise Library Policy Injection Application Block Design")]
-[assembly : AssemblyVersion("4.0.0.926")]
+[assembly : AssemblyVersion("4.0.0.1010")]
 [assembly : AllowPartiallyTrustedCallers]
 [assembly : SecurityTransparent]

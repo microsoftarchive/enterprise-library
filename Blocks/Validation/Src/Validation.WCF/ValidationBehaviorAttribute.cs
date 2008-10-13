@@ -19,44 +19,47 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WCF
     /// <summary>
     /// Indicates that an implementation service class will use message validation constraints. 
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface,
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface | AttributeTargets.Method,
         Inherited = false, AllowMultiple = false)]
     public class ValidationBehaviorAttribute :
-        Attribute, IEndpointBehavior, IContractBehavior
+        Attribute, IEndpointBehavior, IContractBehavior, IOperationBehavior
     {
         #region ValidationAttribute Members
 
         private string ruleSet = string.Empty;
         private IEndpointBehavior endpointBehavior;
         private IContractBehavior contractBehavior;
+        private IOperationBehavior operationBehavior;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="T:ValidationAttribute"/> class.
         /// </summary>
-        public ValidationBehaviorAttribute() : this( string.Empty )
+        public ValidationBehaviorAttribute()
+            : this(string.Empty)
         {
         }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="ruleSet"></param>
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="ruleSet"></param>
         public ValidationBehaviorAttribute(string ruleSet)
         {
             this.ruleSet = ruleSet;
             SetBehaviors();
         }
 
-        private void SetBehaviors( )
+        private void SetBehaviors()
         {
             ValidationBehavior validation = new ValidationBehavior(true, false, ruleSet);
             endpointBehavior = (IEndpointBehavior)validation;
             contractBehavior = (IContractBehavior)validation;
+            operationBehavior = (IOperationBehavior)validation;
         }
 
-		/// <summary>
-		/// 
-		/// </summary>
+        /// <summary>
+        /// 
+        /// </summary>
         public string RuleSet
         {
             get { return ruleSet; }
@@ -166,6 +169,55 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WCF
         public void Validate(ContractDescription contractDescription, ServiceEndpoint endpoint)
         {
             contractBehavior.Validate(contractDescription, endpoint);
+        }
+
+        #endregion
+
+        #region IOperationBehavior Members
+
+        /// <summary>
+        /// Configures any binding elements to support the operation behavior.
+        /// </summary>
+        /// <param name="operationDescription">The operation being examined. Use for examination only. If the operation 
+        /// description is modified, the results are undefined.</param>
+        /// <param name="bindingParameters">The objects that binding elements require to support the behavior.</param>
+        public void AddBindingParameters(OperationDescription operationDescription, BindingParameterCollection bindingParameters)
+        {
+            operationBehavior.AddBindingParameters(operationDescription, bindingParameters);
+        }
+
+        /// <summary>
+        /// Implements a modification or extension of the client accross an operation.
+        /// </summary>
+        /// <param name="operationDescription">The operation being examined. Use for examination only. If the operation 
+        /// description is modified, the results are undefined.</param>
+        /// <param name="clientOperation">The run-time object that exposes customization properties for the operation 
+        /// described by <paramref name="operationDescription"/>.</param>
+        public void ApplyClientBehavior(OperationDescription operationDescription, ClientOperation clientOperation)
+        {
+            operationBehavior.ApplyClientBehavior(operationDescription, clientOperation);
+        }
+
+        /// <summary>
+        /// Implements a modification or extension of the service accross an operation.
+        /// </summary>
+        /// <param name="operationDescription">The operation being examined. Use for examination only. If the operation 
+        /// description is modified, the results are undefined.</param>
+        /// <param name="dispatchOperation">The run-time object that exposes customization properties for the operation 
+        /// described by <paramref name="operationDescription"/>.</param>
+        public void ApplyDispatchBehavior(OperationDescription operationDescription, DispatchOperation dispatchOperation)
+        {
+            operationBehavior.ApplyDispatchBehavior(operationDescription, dispatchOperation);
+        }
+
+        /// <summary>
+        /// Implement to confirm that the operation meets some intended criteria.
+        /// </summary>
+        /// <param name="operationDescription">The operation being examined. Use for examination only. If the operation 
+        /// description is modified, the results are undefined.</param>
+        public void Validate(OperationDescription operationDescription)
+        {
+            operationBehavior.Validate(operationDescription);
         }
 
         #endregion

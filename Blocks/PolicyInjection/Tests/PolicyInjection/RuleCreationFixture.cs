@@ -246,7 +246,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests
 
             RuleDrivenPolicy policy = container.Resolve<RuleDrivenPolicy>("Policy");
             List<ICallHandler> handlers
-                = new List<ICallHandler>(policy.GetHandlersFor(MethodInfo.GetCurrentMethod(), container));
+                = new List<ICallHandler>(policy.GetHandlersFor(MakeMethodImplementationInfo(MethodBase.GetCurrentMethod()), container));
 
             Assert.IsNotNull(policy);
             Assert.AreEqual("Policy", policy.Name);
@@ -268,11 +268,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests
 
             RuleDrivenPolicy policy = container.Resolve<RuleDrivenPolicy>("Policy");
             List<ICallHandler> handlers1
-                = new List<ICallHandler>(policy.GetHandlersFor(MethodInfo.GetCurrentMethod(), container));
+                = new List<ICallHandler>(policy.GetHandlersFor(MakeMethodImplementationInfo(MethodBase.GetCurrentMethod()), container));
             List<ICallHandler> handlers2
-                = new List<ICallHandler>(policy.GetHandlersFor(MethodInfo.GetCurrentMethod(), container));
+                = new List<ICallHandler>(policy.GetHandlersFor(MakeMethodImplementationInfo(MethodBase.GetCurrentMethod()), container));
 
             CollectionAssert.AreEquivalent(handlers1, handlers2);
+        }
+
+        public MethodImplementationInfo MakeMethodImplementationInfo(MethodBase method)
+        {
+            return new MethodImplementationInfo(null, (MethodInfo)method);
         }
 
         public static List<IMatchingRule> GetRules(RuleDrivenPolicy policy)

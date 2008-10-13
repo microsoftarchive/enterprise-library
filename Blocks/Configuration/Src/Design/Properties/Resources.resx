@@ -398,4 +398,26 @@ Do you want to remove the write-protection and overwrite the file in its current
   <data name="WMIEnabledDescription" xml:space="preserve">
     <value>Gets or sets if WMI is enabled.</value>
   </data>
+  <data name="ExceptionCannotSetClosedGenerics" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ExceptionTypeBuildTypeExceptionMakingGeneric" xml:space="preserve">
+    <value>The type cannot be built: generic type cannot be made.
+{0}.</value>
+  </data>
+  <data name="ExceptionTypeBuildTypeNotSet" xml:space="preserve">
+    <value>The type cannot be built: type not set.</value>
+  </data>
+  <data name="ExceptionTypeNotCompatibleWithConstraints" xml:space="preserve">
+    <value>The type is not compatible with the node constraints.</value>
+  </data>
+  <data name="TypeParameterUndefined" xml:space="preserve">
+    <value>&lt;undefined&gt;</value>
+  </data>
+  <data name="ErrorBuildingType" xml:space="preserve">
+    <value>Error building the specified type: {0}</value>
+  </data>
+  <data name="TypeNotGenericTypeParameter" xml:space="preserve">
+    <value>The type {0} does not represent a generic type parameter as expected.</value>
+  </data>
 </root>

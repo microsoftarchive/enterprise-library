@@ -22,7 +22,7 @@ set installUtilDir=%WINDIR%\Microsoft.NET\Framework\v2.0.50727\
 @REM Default %binDir% to the bin subfolder in the same folder where this script resides.
 @REM see http://windowsitpro.com/article/articleid/77004/jsi-tip-5700-frequently-asked-questions-regarding-the-windows-2000-command-processor.html#j
 @REM (the original content from technet is no longer available from http://www.microsoft.com/technet/prodtechnol/windows2000serv/support/faqw2kcp.mspx)
-set binDir="%~dp0\bin"
+set binDir=%~dp0\bin
 set action=
 set pause=true
 
@@ -305,7 +305,15 @@ if Exist Microsoft.Practices.EnterpriseLibrary.Common.dll installutil %action% M
 @ECHO An error occured in InstallServices.bat - %errorLevel%
 @ECHO You may need to run this script with administrator privileges
 if %pause%==true PAUSE
-@exit errorLevel
+popd
+set pause=
+set binDir=
+set prompt=%savedPrompt%
+set savedPrompt=
+set action=
+
+@echo on
+@exit /b errorLevel
 
 :HELPFW
 echo Error: Unable to locate the .NET Framework v2.0

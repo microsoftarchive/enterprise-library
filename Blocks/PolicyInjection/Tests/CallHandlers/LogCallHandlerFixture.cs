@@ -394,7 +394,7 @@ Call Stack: @@BEGIN CALL STACK@@{{property(CallStack)}}@@END CALL STACK@@{{newli
             RuleDrivenPolicy policy = container.Resolve<RuleDrivenPolicy>("policy");
 
             LogCallHandler handler
-                = (LogCallHandler)(policy.GetHandlersFor(MethodInfo.GetCurrentMethod(), container)).ElementAt(0);
+                = (LogCallHandler)(policy.GetHandlersFor(GetMethodImpl(MethodBase.GetCurrentMethod()), container)).ElementAt(0);
             Assert.IsNotNull(handler);
             Assert.AreEqual(66, handler.Order);
             Assert.AreEqual("before", handler.BeforeMessage);
@@ -433,9 +433,9 @@ Call Stack: @@BEGIN CALL STACK@@{{property(CallStack)}}@@END CALL STACK@@{{newli
             RuleDrivenPolicy policy = container.Resolve<RuleDrivenPolicy>("policy");
 
             LogCallHandler handler1
-                = (LogCallHandler)(policy.GetHandlersFor(MethodInfo.GetCurrentMethod(), container)).ElementAt(0);
+                = (LogCallHandler)(policy.GetHandlersFor(GetMethodImpl(MethodBase.GetCurrentMethod()), container)).ElementAt(0);
             LogCallHandler handler2
-                = (LogCallHandler)(policy.GetHandlersFor(MethodInfo.GetCurrentMethod(), container)).ElementAt(0);
+                = (LogCallHandler)(policy.GetHandlersFor(GetMethodImpl(MethodBase.GetCurrentMethod()), container)).ElementAt(0);
 
             Assert.AreSame(handler1, handler2);
         }
@@ -481,12 +481,17 @@ Call Stack: @@BEGIN CALL STACK@@{{property(CallStack)}}@@END CALL STACK@@{{newli
 
             IUnityContainer container = new UnityContainer().AddNewExtension<Interception>();
             container.Configure<Interception>()
-                .SetDefaultInjectorFor<LoggingTarget>(new TransparentProxyPolicyInjector())
+                .SetDefaultInterceptorFor<LoggingTarget>(new TransparentProxyInterceptor())
                 .AddPolicy("Logging")
                     .AddMatchingRule(new TypeMatchingRule("LoggingTarget"))
                     .AddCallHandler(callHandler);
 
             return container.Resolve<LoggingTarget>();
+        }
+
+        private static MethodImplementationInfo GetMethodImpl(MethodBase method)
+        {
+            return new MethodImplementationInfo(null, ((MethodInfo) method));
         }
     }
 

@@ -18,4 +18,4 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 [assembly: AssemblyTitle("Enterprise Library Logging Application Block Tests")]
 [assembly: AssemblyDescription("Enterprise Library Logging Application Block Tests")]
-[assembly: AssemblyVersion("4.0.0.926")]
+[assembly: AssemblyVersion("4.0.0.1010")]

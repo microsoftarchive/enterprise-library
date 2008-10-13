@@ -4,26 +4,26 @@
         <name>Microsoft.Practices.Unity.Interception.Configuration</name>
     </assembly>
     <members>
-        <member name="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.TransparentProxyInjectorConfigurationElementBase">
+        <member name="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.TransparentProxyInterceptorConfigurationElementBase">
             <summary>
             Base class for elements in the &lt;transparentProxyInjection&gt; list for the
             interception extension configuration.
             </summary>
-            <seealso cref="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.TransparentProxyInjectorConfigurationElement"/>
-            <seealso cref="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.DefaultTransparentProxyInjectorConfigurationElement"/>
+            <seealso cref="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.TransparentProxyInterceptorConfigurationElement"/>
+            <seealso cref="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.DefaultTransparentProxyInterceptorConfigurationElement"/>
         </member>
-        <member name="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.DefaultTransparentProxyInjectorConfigurationElement">
+        <member name="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.DefaultTransparentProxyInterceptorConfigurationElement">
             <summary>
             A <see cref="T:System.Configuration.ConfigurationElement"/> class used to manage the contents
             of a &lt;defaultInjector&gt; node in the configuration file for the interception extension's section.
             </summary>
         </member>
-        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.DefaultTransparentProxyInjectorConfigurationElement.TypeName">
+        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.DefaultTransparentProxyInterceptorConfigurationElement.TypeName">
             <summary>
             Type to which the injector applies.
             </summary>
         </member>
-        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.DefaultTransparentProxyInjectorConfigurationElement.Type">
+        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.DefaultTransparentProxyInterceptorConfigurationElement.Type">
             <summary>
             The actual <see cref="T:System.Type"/> object for the 
             type this element is registering.
@@ -222,7 +222,7 @@
             injection configuration, only more convenient.
             </remarks>
         </member>
-        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptionConfigurationElement.TransparentProxyPolicyInjectors">
+        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptionConfigurationElement.TransparentProxyPolicyInterceptors">
             <summary>
             Collection of configuration elements indicating types and keys for which transparent-proxy-based
             interception should be performed.
@@ -314,38 +314,38 @@
               Looks up a localized string similar to The &lt;lifetime/&gt; element is not allowed on element named &apos;{0}&apos; because it doesn&apos;t have a type attribute..
             </summary>
         </member>
-        <member name="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.TransparentProxyInjectorConfigurationElement">
+        <member name="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.TransparentProxyInterceptorConfigurationElement">
             <summary>
             A <see cref="T:System.Configuration.ConfigurationElement"/> class used to manage the contents
             of a &lt;injector&gt; node in the configuration file for the interception extension's section.
             </summary>
         </member>
-        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.TransparentProxyInjectorConfigurationElement.Name">
+        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.TransparentProxyInterceptorConfigurationElement.Name">
             <summary>
             Name part of the key to which the injector must be registered.
             </summary>
         </member>
-        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.TransparentProxyInjectorConfigurationElement.TypeName">
+        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.TransparentProxyInterceptorConfigurationElement.TypeName">
             <summary>
             Type part of the key to which the injector must be registered.
             </summary>
         </member>
-        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.TransparentProxyInjectorConfigurationElement.Type">
+        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.TransparentProxyInterceptorConfigurationElement.Type">
             <summary>
             The actual <see cref="T:System.Type"/> object for the 
             type this element is registering.
             </summary>
         </member>
-        <member name="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.TransparentProxyInjectorConfigurationElementCollection">
+        <member name="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.TransparentProxyInterceptorConfigurationElementCollection">
             <summary>
-            Collection of <see cref="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.TransparentProxyInjectorConfigurationElementBase"/> elements
+            Collection of <see cref="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.TransparentProxyInterceptorConfigurationElementBase"/> elements
             from the configuration file.
             </summary>
-            <seealso cref="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.TransparentProxyInjectorConfigurationElementBase"/>
-            <seealso cref="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.DefaultTransparentProxyInjectorConfigurationElement"/>
-            <seealso cref="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.TransparentProxyInjectorConfigurationElement"/>
+            <seealso cref="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.TransparentProxyInterceptorConfigurationElementBase"/>
+            <seealso cref="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.DefaultTransparentProxyInterceptorConfigurationElement"/>
+            <seealso cref="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.TransparentProxyInterceptorConfigurationElement"/>
         </member>
-        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.TransparentProxyInjectorConfigurationElementCollection.CreateNewElement">
+        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.TransparentProxyInterceptorConfigurationElementCollection.CreateNewElement">
             <summary>
             When overridden in a derived class, creates a new <see cref="T:System.Configuration.ConfigurationElement"></see>.
             </summary>
@@ -353,7 +353,7 @@
             A new <see cref="T:System.Configuration.ConfigurationElement"></see>.
             </returns>
         </member>
-        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.TransparentProxyInjectorConfigurationElementCollection.GetElementKey(System.Configuration.ConfigurationElement)">
+        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.TransparentProxyInterceptorConfigurationElementCollection.GetElementKey(System.Configuration.ConfigurationElement)">
             <summary>
             Gets the element key for a specified configuration element when overridden in a derived class.
             </summary>
@@ -364,7 +364,7 @@
             
             <param name="element">The <see cref="T:System.Configuration.ConfigurationElement"></see> to return the key for. </param>
         </member>
-        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.TransparentProxyInjectorConfigurationElementCollection.OnDeserializeUnrecognizedElement(System.String,System.Xml.XmlReader)">
+        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.TransparentProxyInterceptorConfigurationElementCollection.OnDeserializeUnrecognizedElement(System.String,System.Xml.XmlReader)">
             <summary>
              Figure out the concrete type to create given the type attribute on the given
              xml reader. If not present, throws an exception.

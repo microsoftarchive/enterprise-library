@@ -46,7 +46,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
             container = new UnityContainer();
             container.AddNewExtension<Interception>();
             container.Configure<Interception>()
-                .SetDefaultInjectorFor<CachingTarget>(new TransparentProxyPolicyInjector());
+                .SetDefaultInterceptorFor<CachingTarget>(new TransparentProxyInterceptor());
         }
 
         [TestMethod]
@@ -123,7 +123,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
             RuleDrivenPolicy policy = container.Resolve<RuleDrivenPolicy>("policy");
 
             ICallHandler handler
-                = (policy.GetHandlersFor(MethodInfo.GetCurrentMethod(), container)).ElementAt(0);
+                = (policy.GetHandlersFor(new MethodImplementationInfo(null, ((MethodInfo) MethodBase.GetCurrentMethod())), container)).ElementAt(0);
             Assert.IsNotNull(handler);
             Assert.AreEqual(handler.Order, data.Order);
         }
@@ -234,7 +234,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
             MethodInfo getNewsMethod = typeof(INewsService).GetMethod("GetNews");
 
             container.RegisterType<INewsService, NewsService>();
-            container.Configure<Interception>().SetDefaultInjectorFor<INewsService>(new TransparentProxyPolicyInjector());
+            container.Configure<Interception>().SetDefaultInterceptorFor<INewsService>(new TransparentProxyInterceptor());
 
             INewsService target = container.Resolve<INewsService>();
 

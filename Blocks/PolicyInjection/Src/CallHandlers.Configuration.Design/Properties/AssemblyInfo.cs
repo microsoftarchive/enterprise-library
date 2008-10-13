@@ -31,7 +31,7 @@ using Microsoft.Practices.EnterpriseLibrary.Security.Configuration.Design;
 
 [assembly: AssemblyTitle("Enterprise Library Handlers for Policy Injection Application Block Design")]
 [assembly: AssemblyDescription("Enterprise Library Handlers for Policy Injection Application Block Design")]
-[assembly: AssemblyVersion("4.0.0.926")]
+[assembly: AssemblyVersion("4.0.0.1010")]
 
 [assembly: AllowPartiallyTrustedCallers]
 [assembly: SecurityTransparent]

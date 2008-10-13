@@ -16,6 +16,6 @@ using System.Security.Permissions;
 [assembly : SecurityPermission(SecurityAction.RequestMinimum)]
 [assembly : AssemblyTitle("Enterprise Library Validation Application Block ASP.NET Integration")]
 [assembly : AssemblyDescription("Enterprise Library Validation Application Block ASP.NET Integration")]
-[assembly : AssemblyVersion("4.0.0.926")]
+[assembly : AssemblyVersion("4.0.0.1010")]
 [assembly : AllowPartiallyTrustedCallers]
 [assembly : SecurityTransparent]

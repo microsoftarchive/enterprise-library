@@ -11,6 +11,8 @@
 
 using System.Collections.Generic;
 using System.Configuration;
+using System.Security;
+using System.Security.Permissions;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Storage;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -78,6 +80,21 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
             object section = implementation.GetSection(localSection);
 
             Assert.IsNotNull(section);
+        }
+
+        [TestMethod]
+        public void CanGetExistingSectionInAppConfigEvenIfTheAppDomainDoesNotHaveFileIOPermission()
+        {
+            try
+            {
+                new FileIOPermission(PermissionState.Unrestricted).Deny();
+
+                CanGetExistingSectionInAppConfig();
+            }
+            finally
+            {
+                CodeAccessPermission.RevertDeny();
+            }
         }
 
         [TestMethod]

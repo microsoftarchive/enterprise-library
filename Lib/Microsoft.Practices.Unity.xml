@@ -3114,6 +3114,14 @@
             <param name="sequence">The sequence of items.</param>
             <param name="action">Action to perform on each item.</param>
         </member>
+        <member name="M:Microsoft.Practices.Unity.Utility.Sequence.Concat``1(System.Collections.Generic.IEnumerable{``0}[])">
+            <summary>
+            Concatenate multiple sequences into a single one.
+            </summary>
+            <typeparam name="TItem">Type of sequences in the sequence.</typeparam>
+            <param name="sequences">The sequences to combine.</param>
+            <returns>The combined sequence.</returns>
+        </member>
         <member name="T:Microsoft.Practices.Unity.Utility.Sequence.Reducer`2">
             <summary>
             A delegate that defines the function passed to the <see cref="M:Microsoft.Practices.Unity.Utility.Sequence.Reduce``2(System.Collections.Generic.IEnumerable{``0},``1,Microsoft.Practices.Unity.Utility.Sequence.Reducer{``0,``1})"/> methods.
@@ -3123,6 +3131,147 @@
             <param name="currentItem">Current item to process.</param>
             <param name="accumulator">Current value of the accumulator.</param>
             <returns></returns>
+        </member>
+        <member name="T:Microsoft.Practices.Unity.Utility.Seq">
+            <summary>
+            Static class containing constructor methods for
+            instances of <see cref="T:Microsoft.Practices.Unity.Utility.Seq`1"/>, so that we
+            get type inference.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.Utility.Seq.Make``1(System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Make a new instance of <see cref="T:Microsoft.Practices.Unity.Utility.Seq`1"/> that wraps
+            the given items.
+            </summary>
+            <typeparam name="T">Type of items in the sequence.</typeparam>
+            <param name="items">Items in the sequence.</param>
+            <returns>The sequence.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.Utility.Seq.Collect``1(``0[])">
+            <summary>
+            Make a new instance of <see cref="T:Microsoft.Practices.Unity.Utility.Seq`1"/> that wraps
+            the given items.
+            </summary>
+            <typeparam name="T">Type of items in the sequence.</typeparam>
+            <param name="items">Items in the sequence.</param>
+            <returns>The sequence.</returns>
+        </member>
+        <member name="T:Microsoft.Practices.Unity.Utility.Seq`1">
+            <summary>
+            And another helper class that makes it possible to chain sequence operations together.
+            </summary>
+            <typeparam name="T">Type of item contained in the sequence.</typeparam>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.Utility.Seq`1.#ctor(System.Collections.Generic.IEnumerable{`0})">
+            <summary>
+            Create a new <see cref="T:Microsoft.Practices.Unity.Utility.Seq`1"/> instance wrapping the given IEnumerable.
+            </summary>
+            <param name="items">The sequence to wrap.</param>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.Utility.Seq`1.System#Collections#IEnumerable#GetEnumerator">
+            <summary>
+                                Returns an enumerator that iterates through a collection.
+            </summary>
+            <returns>
+                                An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.
+            </returns>
+            <filterpriority>2</filterpriority>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.Utility.Seq`1.GetEnumerator">
+            <summary>
+                                Returns an enumerator that iterates through the collection.
+            </summary>
+            <returns>
+                                A <see cref="T:System.Collections.Generic.IEnumerator`1" /> that can be used to iterate through the collection.
+            </returns>
+            <filterpriority>1</filterpriority>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.Utility.Seq`1.ToList">
+            <summary>
+            Given a sequence object, return a list containing those items.
+            </summary>
+            <returns>The materialized list.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.Utility.Seq`1.ToArray">
+            <summary>
+            Return an array with the same contents as this sequence.
+            </summary>
+            <returns>The materialized array.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.Utility.Seq`1.Where(System.Predicate{`0})">
+            <summary>
+            Returns new sequence containing only the items for which the predicate is true.
+            </summary>
+            <param name="predicate">Test to indicate sequence inclusion</param>
+            <returns>New sequence.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.Utility.Seq`1.Exists(System.Predicate{`0})">
+            <summary>
+            Tests the sequence, returning true if any
+            element satisfies the given predicate.
+            </summary>
+            <param name="predicate">Predicate to use to test for existence.</param>
+            <returns>true if any elements satify pred, false if not.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.Utility.Seq`1.Map``1(System.Converter{`0,``0})">
+            <summary>
+            Return a new sequence consisting of the result of running each element through
+            the given <paramref name="converter"/>.
+            </summary>
+            <typeparam name="TOut">Desired output type.</typeparam>
+            <param name="converter">Converter delegate.</param>
+            <returns>New Sequence</returns>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.Utility.Seq`1.Reduce``1(``0,Microsoft.Practices.Unity.Utility.Sequence.Reducer{`0,``0})">
+            <summary>
+            Run a functional Reduce operation. See other methods for examples.
+            </summary>
+            <typeparam name="TDest">Type of final output.</typeparam>
+            <param name="initialValue">Initial value for accumulator.</param>
+            <param name="reducer">Reduce function.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.Utility.Seq`1.ToString(System.String,System.Converter{`0,System.String})">
+            <summary>
+            Convert the given sequence to a single string. The items in the string are
+            separated by the given separator, and each object is converted to a string
+            using the <paramref name="converter"/> method given.
+            </summary>
+            <param name="separator">Separator string.</param>
+            <param name="converter">Function to convert <typeparamref name="T"/> instances to
+            strings.</param>
+            <returns>The collected string.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.Utility.Seq`1.ToString(System.String)">
+            <summary>
+            Convert the given sequence to a single string. The items in the string are separated
+            by the given separator, and each object is converted to a string by calling its
+            <see cref="M:System.Object.ToString"/>  method.
+            </summary>
+            <param name="separator">Separator string.</param>
+            <returns>The collected string.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.Utility.Seq`1.First">
+            <summary>
+            Return the first item in the given sequence.
+            </summary>
+            <exception cref="T:System.InvalidOperationException">Thrown if the sequence is empty.</exception>
+            <returns>First item in the sequence.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.Utility.Seq`1.ForEach(System.Action{`0})">
+            <summary>
+            Execute the given action delegate for each item in the sequence.
+            </summary>
+            <param name="action">Action to perform on each item.</param>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.Utility.Seq`1.Concat(System.Collections.Generic.IEnumerable{`0}[])">
+            <summary>
+            Concatenate multiple sequences with this one to return a single
+            sequence containing all items.
+            </summary>
+            <param name="sequences">Sequences to combine.</param>
+            <returns>The combined sequence.</returns>
         </member>
     </members>
 </doc>

@@ -37,6 +37,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design
         readonly Hashtable loadedAssemblies;
         TreeNode rootNode;
         readonly TreeView treeView;
+        private string nameFilter;
 
         /// <summary>
         /// Initialize a new instance of the <see cref="TypeSelector"/> class with the current type, the base type
@@ -48,7 +49,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design
         public TypeSelector(Type currentType,
                             Type baseType,
                             TreeView treeView)
-            : this(currentType, baseType, TypeSelectorIncludes.None, null, treeView) {}
+            : this(currentType, baseType, TypeSelectorIncludes.None, null, treeView) { }
 
         /// <summary>
         /// Initialize a new instance of the <see cref="TypeSelector"/> class with the current type, the base type
@@ -62,7 +63,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design
                             Type baseType,
                             TypeSelectorIncludes flags,
                             TreeView treeView)
-            : this(currentType, baseType, flags, null, treeView) {}
+            : this(currentType, baseType, flags, null, treeView) { }
 
         /// <summary>
         /// Initialize a new instance of the <see cref="TypeSelector"/> class with the current type, the base type
@@ -97,6 +98,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design
             includeAllInterfaces = IsSet(TypeSelectorIncludes.Interfaces);
             includeNonPublicTypes = IsSet(TypeSelectorIncludes.NonpublicTypes);
             includeBaseType = IsSet(TypeSelectorIncludes.BaseType);
+            this.nameFilter = string.Empty;
 
             LoadTypes(baseType);
         }
@@ -219,6 +221,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design
             return AddTypesToTreeView(nodeTable, assembly);
         }
 
+        /// <summary>
+        /// Loads the tree based on an assembly, filtering the types based on the last known filter.
+        /// </summary>
+        /// <param name="assembly">The assembly to use to load the tree.</param>
+        /// <returns>true if the tree contains the assembly; otherwise false.</returns>
+        public bool LoadFilteredTreeView(Assembly assembly)
+        {
+            bool hasValidTypes = LoadTreeView(assembly);
+
+            FilterCurrentNodes(this.rootNode, this.nameFilter);
+
+            return hasValidTypes;
+        }
+
         void LoadTypes(Type baseType)
         {
             TreeNode treeNode = new TreeNode(String.Empty, -1, -1);
@@ -253,7 +269,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design
                 {
                     LoadTreeView(assembly);
                 }
-                catch (ReflectionTypeLoadException) {}
+                catch (ReflectionTypeLoadException) { }
             }
             treeNode.ExpandAll();
             treeView.SelectedNode = currentTypeTreeNode;
@@ -267,8 +283,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design
             return types;
         }
 
-        void LoadValidTypes(IEnumerable<Type> types,
-                            TreeNodeTable nodeTable)
+        void LoadValidTypes(IEnumerable<Type> types, TreeNodeTable nodeTable)
         {
             if (types == null)
             {
@@ -335,6 +350,54 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design
                 }
                 return namespaceNode;
             }
+        }
+
+        internal void UpdateFilter(string nameFilter)
+        {
+            if (!nameFilter.Contains(this.nameFilter))
+            {
+                // full blown refresh is required
+                treeView.Nodes.Clear();
+                this.loadedAssemblies.Clear();
+                LoadTypes(this.baseType_);
+            }
+            else
+            {
+                // just remove non-matching types from the tree
+                // the new filter is more specific than the previous one
+            }
+
+            this.nameFilter = nameFilter;
+            FilterCurrentNodes(this.rootNode, nameFilter);
+        }
+
+        private static void FilterCurrentNodes(TreeNode rootNode, string nameFilter)
+        {
+            RemoveNonMatchingNodes(                         // assembly nodes
+                RemoveNonMatchingNodes(                     // namespace nodes
+                    RemoveNonMatchingNodes(                 // type nodes
+                        (TreeNode typeNode)
+                            => typeNode.Text.IndexOf(nameFilter, StringComparison.InvariantCultureIgnoreCase) < 0)))
+                (rootNode);
+        }
+
+        private static Func<TreeNode, bool> RemoveNonMatchingNodes(Func<TreeNode, bool> childTestFunc)
+        {
+            return (TreeNode node) =>
+                {
+                    TreeNode[] childNodes = new TreeNode[node.Nodes.Count];
+                    node.Nodes.CopyTo(childNodes, 0);
+
+                    foreach (TreeNode childNode in childNodes)
+                    {
+                        if (childTestFunc(childNode))
+                        {
+                            node.Nodes.Remove(childNode);
+                        }
+                    }
+
+                    return node.Nodes.Count == 0;
+                };
         }
     }
 }

@@ -9,14 +9,15 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System.Reflection;
-using System.Security.Permissions;
 using System.Management.Instrumentation;
+using System.Reflection;
+using System.Security;
 
 [assembly: AssemblyTitle("Enterprise Library Shared Library Tests")]
 [assembly: AssemblyDescription("Enterprise Library Shared Library Tests")]
-[assembly: AssemblyVersion("4.0.0.926")]
+[assembly: AssemblyVersion("4.0.0.1010")]
 
 
 [assembly: Instrumented(@"root\EnterpriseLibrary")]
 [assembly: WmiConfiguration(@"root\EnterpriseLibrary", HostingModel = ManagementHostingModel.Decoupled, IdentifyLevel = false)]
+[assembly: AllowPartiallyTrustedCallers]

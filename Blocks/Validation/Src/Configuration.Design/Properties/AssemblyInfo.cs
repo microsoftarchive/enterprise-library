@@ -21,7 +21,7 @@ using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.Design;
 [assembly : ComVisible(false)]
 [assembly : AssemblyTitle("Enterprise Library Validation Application Block Design")]
 [assembly : AssemblyDescription("Enterprise Library Validation Application Block Design")]
-[assembly : AssemblyVersion("4.0.0.926")]
+[assembly : AssemblyVersion("4.0.0.1010")]
 [assembly : ConfigurationDesignManager(typeof(ValidationConfigurationDesignManager))]
 [assembly : AllowPartiallyTrustedCallers]
 [assembly : SecurityTransparent]

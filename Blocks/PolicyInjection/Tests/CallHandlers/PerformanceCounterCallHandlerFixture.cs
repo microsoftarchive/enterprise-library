@@ -277,7 +277,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
             RuleDrivenPolicy policy = container.Resolve<RuleDrivenPolicy>("policy");
 
             ICallHandler handler
-                = (policy.GetHandlersFor(MethodInfo.GetCurrentMethod(), container)).ElementAt(0);
+                = (policy.GetHandlersFor(GetMethodImpl(MethodBase.GetCurrentMethod()), container)).ElementAt(0);
 
             Assert.IsNotNull(handler);
             Assert.AreEqual(handler.Order, data.Order);
@@ -303,9 +303,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
             RuleDrivenPolicy policy = container.Resolve<RuleDrivenPolicy>("policy");
 
             ICallHandler handler1
-                = (policy.GetHandlersFor(MethodInfo.GetCurrentMethod(), container)).ElementAt(0);
+                = (policy.GetHandlersFor(GetMethodImpl(MethodBase.GetCurrentMethod()), container)).ElementAt(0);
             ICallHandler handler2
-                = (policy.GetHandlersFor(MethodInfo.GetCurrentMethod(), container)).ElementAt(0);
+                = (policy.GetHandlersFor(GetMethodImpl(MethodBase.GetCurrentMethod()), container)).ElementAt(0);
 
             Assert.AreSame(handler1, handler2);
         }
@@ -349,9 +349,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
                 .AddPolicy("Monitor all methods")
                     .AddMatchingRule(new TypeMatchingRule(typeof(MonitorTarget)))
                     .AddCallHandler(callHandler).Interception
-                .SetDefaultInjectorFor<MonitorTarget>(new TransparentProxyPolicyInjector());
+                .SetDefaultInterceptorFor<MonitorTarget>(new TransparentProxyInterceptor());
 
             return container;
+        }
+
+        private static MethodImplementationInfo GetMethodImpl(MethodBase method)
+        {
+            return new MethodImplementationInfo(null, (MethodInfo) method);
         }
 
         #region Performance Counter Helper methods

@@ -36,7 +36,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
             RuleDrivenPolicy policy = CreatePolicySetContainingCallHandler(validationCallHandler, container);
 
             ICallHandler runtimeHandler
-                = (policy.GetHandlersFor(MethodInfo.GetCurrentMethod(), container)).ElementAt(0);
+                = (policy.GetHandlersFor(new MethodImplementationInfo(null, (MethodInfo)MethodBase.GetCurrentMethod()), container)).ElementAt(0);
 
             Assert.IsNotNull(runtimeHandler);
         }
@@ -46,7 +46,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         public void ValidationCallHandlerDoesNothingIfValidationPasses()
         {
             IUnityContainer factory = new UnityContainer().AddNewExtension<Interception>();
-            factory.Configure<Interception>().SetDefaultInjectorFor<ValidationFixtureTarget>(new TransparentProxyPolicyInjector());
+            factory.Configure<Interception>().SetDefaultInterceptorFor<ValidationFixtureTarget>(new TransparentProxyInterceptor());
             AddValidationPolicy(factory, string.Empty, SpecificationSource.Attributes, new TypeMatchingRule("ValidationFixtureTarget"));
             ValidationFixtureTarget target = factory.Resolve<ValidationFixtureTarget>();
 
@@ -59,7 +59,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         public void ValidationCallHandlerThrowsArgumentValidationExceptionIfValidationFailsFromMetaData()
         {
             IUnityContainer factory = new UnityContainer().AddNewExtension<Interception>();
-            factory.Configure<Interception>().SetDefaultInjectorFor<ValidationFixtureTarget>(new TransparentProxyPolicyInjector());
+            factory.Configure<Interception>().SetDefaultInterceptorFor<ValidationFixtureTarget>(new TransparentProxyInterceptor());
             AddValidationPolicy(factory, string.Empty, SpecificationSource.Attributes, new TypeMatchingRule("ValidationFixtureTarget"));
             ValidationFixtureTarget target = factory.Resolve<ValidationFixtureTarget>();
 
@@ -72,7 +72,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         public void ValidationCallHandlerThrowsArgumentValidationExceptionIfValidationFailsFromConfiguration()
         {
             IUnityContainer factory = new UnityContainer().AddNewExtension<Interception>();
-            factory.Configure<Interception>().SetDefaultInjectorFor<ValidationFixtureTarget>(new TransparentProxyPolicyInjector());
+            factory.Configure<Interception>().SetDefaultInterceptorFor<ValidationFixtureTarget>(new TransparentProxyInterceptor());
             AddValidationPolicy(factory, string.Empty, SpecificationSource.Configuration, new TypeMatchingRule("ValidationFixtureTarget"));
             ValidationFixtureTarget target = factory.Resolve<ValidationFixtureTarget>();
 
@@ -84,7 +84,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         public void ValidationCallHandlerIgnoresAttributeValidationIfSpecificationSourceIsConfig()
         {
             IUnityContainer factory = new UnityContainer().AddNewExtension<Interception>();
-            factory.Configure<Interception>().SetDefaultInjectorFor<ValidationFixtureTarget>(new TransparentProxyPolicyInjector());
+            factory.Configure<Interception>().SetDefaultInterceptorFor<ValidationFixtureTarget>(new TransparentProxyInterceptor());
             AddValidationPolicy(factory, string.Empty, SpecificationSource.Configuration, new TypeMatchingRule("ValidationFixtureTarget"));
             ValidationFixtureTarget target = factory.Resolve<ValidationFixtureTarget>();
 
@@ -96,7 +96,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         public void ValidationCallHandlerIgnoresConfigurationValidationIfSpecificationSourceIsAttributes()
         {
             IUnityContainer factory = new UnityContainer().AddNewExtension<Interception>();
-            factory.Configure<Interception>().SetDefaultInjectorFor<ValidationFixtureTarget>(new TransparentProxyPolicyInjector());
+            factory.Configure<Interception>().SetDefaultInterceptorFor<ValidationFixtureTarget>(new TransparentProxyInterceptor());
             AddValidationPolicy(factory, string.Empty, SpecificationSource.Attributes, new TypeMatchingRule("ValidationFixtureTarget"));
             ValidationFixtureTarget target = factory.Resolve<ValidationFixtureTarget>();
 
@@ -109,7 +109,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         public void ShouldThrowIfValidationOnParameterAttributesFails()
         {
             IUnityContainer factory = new UnityContainer().AddNewExtension<Interception>();
-            factory.Configure<Interception>().SetDefaultInjectorFor<TestObject>(new TransparentProxyPolicyInjector());
+            factory.Configure<Interception>().SetDefaultInterceptorFor<TestObject>(new TransparentProxyInterceptor());
             AddValidationPolicy(factory, string.Empty, SpecificationSource.Both,
                                 new TypeMatchingRule("TestObject"));
 
@@ -122,7 +122,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         public void ShouldNotThrowIfValidationOnParameterAttributePasses()
         {
             IUnityContainer factory = new UnityContainer().AddNewExtension<Interception>();
-            factory.Configure<Interception>().SetDefaultInjectorFor<TestObject>(new TransparentProxyPolicyInjector());
+            factory.Configure<Interception>().SetDefaultInterceptorFor<TestObject>(new TransparentProxyInterceptor());
             AddValidationPolicy(factory, string.Empty, SpecificationSource.Both,
                                 new TypeMatchingRule("TestObject"));
 

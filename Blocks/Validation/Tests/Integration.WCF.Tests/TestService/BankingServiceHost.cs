@@ -37,4 +37,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WCF.Tests
         {
         }
     }
+
+    class Banking4ServiceHost : TestServiceHost<BankingServiceImplementation, IBanking4Service>
+    {
+        public Banking4ServiceHost()
+            : base(Settings.Default.Bank4ServiceAddress)
+        {
+        }
+    }
 }

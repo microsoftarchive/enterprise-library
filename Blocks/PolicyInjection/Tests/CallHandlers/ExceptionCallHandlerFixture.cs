@@ -32,7 +32,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         public void ShouldThrowCorrectException()
         {
             IUnityContainer factory = new UnityContainer().AddNewExtension<Interception>();
-            factory.Configure<Interception>().SetDefaultInjectorFor<TargetType>(new TransparentProxyPolicyInjector());
+            factory.Configure<Interception>().SetDefaultInterceptorFor<TargetType>(new TransparentProxyInterceptor());
             AddNoopPolicy(factory, new TypeMatchingRule("TargetType"));
 
             TargetType target = factory.Resolve<TargetType>();
@@ -44,7 +44,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         public void ShouldBeCreatable()
         {
             IUnityContainer factory = new UnityContainer().AddNewExtension<Interception>();
-            factory.Configure<Interception>().SetDefaultInjectorFor<TargetType>(new TransparentProxyPolicyInjector());
+            factory.Configure<Interception>().SetDefaultInterceptorFor<TargetType>(new TransparentProxyInterceptor());
             AddExceptionPolicy(factory, "Swallow Exceptions", new TypeMatchingRule("TargetType"));
 
             TargetType target = factory.Resolve<TargetType>();
@@ -56,7 +56,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         public void ShouldTranslateException()
         {
             IUnityContainer factory = new UnityContainer().AddNewExtension<Interception>();
-            factory.Configure<Interception>().SetDefaultInjectorFor<TargetType>(new TransparentProxyPolicyInjector());
+            factory.Configure<Interception>().SetDefaultInterceptorFor<TargetType>(new TransparentProxyInterceptor());
             AddExceptionPolicy(factory, "Translate Exceptions", new TypeMatchingRule("TargetType"));
 
             TargetType target = factory.Resolve<TargetType>();
@@ -68,7 +68,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         public void ShouldRethrowFromNoOpPolicy()
         {
             IUnityContainer factory = new UnityContainer().AddNewExtension<Interception>();
-            factory.Configure<Interception>().SetDefaultInjectorFor<TargetType>(new TransparentProxyPolicyInjector());
+            factory.Configure<Interception>().SetDefaultInterceptorFor<TargetType>(new TransparentProxyInterceptor());
             AddExceptionPolicy(factory, "No-Op Policy", new TypeMatchingRule("TargetType"));
 
             TargetType target = factory.Resolve<TargetType>();
@@ -80,7 +80,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         public void ShouldThrowWhenSwallowingExceptionFromNonVoidMethod()
         {
             IUnityContainer factory = new UnityContainer().AddNewExtension<Interception>();
-            factory.Configure<Interception>().SetDefaultInjectorFor<TargetType>(new TransparentProxyPolicyInjector());
+            factory.Configure<Interception>().SetDefaultInterceptorFor<TargetType>(new TransparentProxyInterceptor());
             AddExceptionPolicy(factory, "Swallow Exceptions", new TypeMatchingRule("TargetType"));
 
             TargetType target = factory.Resolve<TargetType>();
@@ -92,7 +92,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         public void ShouldBeAbleToSwallowExceptionFromPropertySet()
         {
             IUnityContainer factory = new UnityContainer().AddNewExtension<Interception>();
-            factory.Configure<Interception>().SetDefaultInjectorFor<TargetType>(new TransparentProxyPolicyInjector());
+            factory.Configure<Interception>().SetDefaultInterceptorFor<TargetType>(new TransparentProxyInterceptor());
             AddExceptionPolicy(factory, "Swallow Exceptions", new TypeMatchingRule("TargetType"));
 
             TargetType target = factory.Resolve<TargetType>();
@@ -104,7 +104,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         public void ShouldThrowWhenSwallowingExceptionFromPropertyGet()
         {
             IUnityContainer factory = new UnityContainer().AddNewExtension<Interception>();
-            factory.Configure<Interception>().SetDefaultInjectorFor<TargetType>(new TransparentProxyPolicyInjector());
+            factory.Configure<Interception>().SetDefaultInterceptorFor<TargetType>(new TransparentProxyInterceptor());
             AddExceptionPolicy(factory, "Swallow Exceptions", new TypeMatchingRule("TargetType"));
 
             TargetType target = factory.Resolve<TargetType>();
@@ -157,7 +157,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
             RuleDrivenPolicy policy = container.Resolve<RuleDrivenPolicy>("policy");
 
             ICallHandler handler
-                = (policy.GetHandlersFor(MethodInfo.GetCurrentMethod(), container)).ElementAt(0);
+                = (policy.GetHandlersFor(new MethodImplementationInfo(null, (MethodInfo)MethodBase.GetCurrentMethod()), container)).ElementAt(0);
 
             Assert.IsNotNull(handler);
             Assert.AreEqual(handler.Order, data.Order);

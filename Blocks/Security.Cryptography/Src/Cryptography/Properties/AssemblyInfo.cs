@@ -17,7 +17,7 @@ using System.Security;
 [assembly : ReliabilityContract(Consistency.WillNotCorruptState, Cer.None)]
 [assembly : AssemblyTitle("Enterprise Library Cryptography Application Block")]
 [assembly : AssemblyDescription("Enterprise Library Cryptography Application Block")]
-[assembly : AssemblyVersion("4.0.0.926")]
+[assembly : AssemblyVersion("4.0.0.1010")]
 [assembly : Instrumented(@"root\EnterpriseLibrary")]
 [assembly : WmiConfiguration(@"root\EnterpriseLibrary", HostingModel = ManagementHostingModel.Decoupled, IdentifyLevel = false)]
 [assembly : AllowPartiallyTrustedCallers]

@@ -33,7 +33,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
             var handlers
                 = new List<ICallHandler>(
                     container.Resolve<InjectionPolicy>("test")
-                        .GetHandlersFor(MethodInfo.GetCurrentMethod(), container));
+                        .GetHandlersFor(MethodImpl(MethodBase.GetCurrentMethod()), container));
 
             Assert.AreEqual(1, handlers.Count);
 
@@ -61,13 +61,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
             var handlers1
                 = new List<ICallHandler>(
                     container.Resolve<InjectionPolicy>("test")
-                        .GetHandlersFor(MethodInfo.GetCurrentMethod(), container));
+                        .GetHandlersFor(MethodImpl(MethodBase.GetCurrentMethod()), container));
             var handlers2
                 = new List<ICallHandler>(
                     container.Resolve<InjectionPolicy>("test")
-                        .GetHandlersFor(MethodInfo.GetCurrentMethod(), container));
+                        .GetHandlersFor(MethodImpl(MethodBase.GetCurrentMethod()), container));
 
             CollectionAssert.AreEquivalent(handlers1, handlers2);
+        }
+
+        private static MethodImplementationInfo MethodImpl(MethodBase method)
+        {
+            return new MethodImplementationInfo(null, (MethodInfo) method);
         }
     }
 }

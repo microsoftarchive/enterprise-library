@@ -109,6 +109,12 @@
             </summary>
             <returns>The injection member object.</returns>
         </member>
+        <member name="M:Microsoft.Practices.Unity.Configuration.InjectionMemberElement.GetElementKey">
+            <summary>
+            Return the key that represents this configuration element in a collection.
+            </summary>
+            <returns>The key.</returns>
+        </member>
         <member name="P:Microsoft.Practices.Unity.Configuration.InjectionMemberElement.Name">
             <summary>
             Name of the element.
@@ -241,10 +247,24 @@
             </summary>
             <returns>The injection member object.</returns>
         </member>
+        <member name="M:Microsoft.Practices.Unity.Configuration.InjectionMethodElement.GetElementKey">
+            <summary>
+            Return the key that represents this configuration element in a collection.
+            </summary>
+            <returns>The key.</returns>
+        </member>
         <member name="P:Microsoft.Practices.Unity.Configuration.InjectionMethodElement.ElementName">
             <summary>
             Name of this element - used when calculating the collection key.
             </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Unity.Configuration.InjectionMethodElement.Key">
+            <summary>
+            Key of the element.
+            </summary>
+            <remarks>
+            This property is used to allow configuration for multiple calls on the same method.
+            </remarks>
         </member>
         <member name="P:Microsoft.Practices.Unity.Configuration.InjectionMethodElement.Parameters">
             <summary>
@@ -757,12 +777,12 @@
         </member>
         <member name="P:Microsoft.Practices.Unity.Configuration.Properties.Resources.GenericParameterArrayNotSupported">
             <summary>
-              Looks up a localized string similar to The value element named &lt;{1}&gt; is not available with generic arrays in the property or method parameter named &quot;{0}&quot;..
+              Looks up a localized string similar to The value element named &lt;{1}&gt; is not available with generic arrays in the property or parameter named &quot;{0}&quot;..
             </summary>
         </member>
         <member name="P:Microsoft.Practices.Unity.Configuration.Properties.Resources.GenericParameterNotSupported">
             <summary>
-              Looks up a localized string similar to The value element named &lt;{1}&gt; is not available with generic parameters in the property or method parameter named &quot;{0}&quot;..
+              Looks up a localized string similar to The value element named &lt;{1}&gt; is not available with generic parameters in the property or parameter named &quot;{0}&quot;..
             </summary>
         </member>
         <member name="P:Microsoft.Practices.Unity.Configuration.Properties.Resources.InvalidConfiguration">
@@ -772,12 +792,12 @@
         </member>
         <member name="P:Microsoft.Practices.Unity.Configuration.Properties.Resources.MustGiveValueOrDependency">
             <summary>
-              Looks up a localized string similar to The configuration file does not specify a &lt;value&gt; or &lt;dependency&gt; element for the parameter {0}. You must specify one of them but not both..
+              Looks up a localized string similar to The configuration file does not specify a &lt;value&gt; or &lt;dependency&gt; element for the property or parameter named &quot;{0}&quot;. You must specify one of them but not both..
             </summary>
         </member>
         <member name="P:Microsoft.Practices.Unity.Configuration.Properties.Resources.MustHaveOnlyOneOfValueOrDependency">
             <summary>
-              Looks up a localized string similar to The configuration file specifies both a &lt;value&gt; and a &lt;dependency&gt;element for the parameter {0}. You must specify only one of these..
+              Looks up a localized string similar to The configuration file specifies both a &lt;value&gt; and a &lt;dependency&gt;element for the property or parameter named &quot;{0}&quot;. You must specify only one of these..
             </summary>
         </member>
         <member name="P:Microsoft.Practices.Unity.Configuration.Properties.Resources.MustNotProvideATypeForDependencyIfBelongsToGeneric">
@@ -787,22 +807,22 @@
         </member>
         <member name="P:Microsoft.Practices.Unity.Configuration.Properties.Resources.NeitherParameterTypeNorGenericParameterNameSpecified">
             <summary>
-              Looks up a localized string similar to The configuration file must include a value for one of &quot;parameterType&quot; and &quot;genericParameterName&quot; for the parameter &quot;{0}&quot;..
+              Looks up a localized string similar to The configuration file must include a value for one of &quot;parameterType&quot; and &quot;genericParameterName&quot; for the property or parameter named &quot;{0}&quot;..
             </summary>
         </member>
         <member name="P:Microsoft.Practices.Unity.Configuration.Properties.Resources.OnlyOneOfParameterTypeAndGenericParameterNameAllowed">
             <summary>
-              Looks up a localized string similar to The configuration file includes values for more than one of &quot;parameterType&quot; and &quot;genericParameterName&quot; for the parameter &quot;{0}&quot;. You must specify only one of these..
+              Looks up a localized string similar to The configuration file includes values for more than one of &quot;parameterType&quot; and &quot;genericParameterName&quot; for the property or parameter named &quot;{0}&quot;. You must specify only one of these..
             </summary>
         </member>
         <member name="P:Microsoft.Practices.Unity.Configuration.Properties.Resources.OnlyOneValueElementAllowed">
             <summary>
-              Looks up a localized string similar to The configuration file includes more than one value element for the parameter &quot;{0}&quot;..
+              Looks up a localized string similar to The configuration file includes more than one value element for the property or parameter named &quot;{0}&quot;..
             </summary>
         </member>
         <member name="P:Microsoft.Practices.Unity.Configuration.Properties.Resources.ParameterTypeIsNotArray">
             <summary>
-              Looks up a localized string similar to The configuration file includes a parameter or property which is configured with an array value but has type {0} which is not an array type. ({1} line {2}).
+              Looks up a localized string similar to The configuration file includes a property or parameter which is configured with an array value but has type {0} which is not an array type. ({1} line {2}).
             </summary>
         </member>
         <member name="T:Microsoft.Practices.Unity.Configuration.UnityConfigurationSection">

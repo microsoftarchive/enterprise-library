@@ -43,7 +43,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
             AllowFredPolicyContainer
                 .AddNewExtension<Interception>()
                 .Configure<Interception>()
-                    .SetDefaultInjectorFor<AuthorizationTestTarget>(new TransparentProxyPolicyInjector())
+                    .SetDefaultInterceptorFor<AuthorizationTestTarget>(new TransparentProxyInterceptor())
                     .AddPolicy("allowFred")
                         .AddCallHandler(
                             new AuthorizationCallHandler("RuleProvider", "OnlyFredHasAccess", authorizationConfiguration))
@@ -53,7 +53,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
             AllowJackPolicyContainer
                 .AddNewExtension<Interception>()
                 .Configure<Interception>()
-                    .SetDefaultInjectorFor<AuthorizationTestTarget>(new TransparentProxyPolicyInjector())
+                    .SetDefaultInterceptorFor<AuthorizationTestTarget>(new TransparentProxyInterceptor())
                     .AddPolicy("allowJack")
                         .AddCallHandler(
                             new AuthorizationCallHandler("RuleProvider", "OnlyJackHasAccess", authorizationConfiguration))
@@ -63,7 +63,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
             AllowBasedOnTokensPolicyContainer
                 .AddNewExtension<Interception>()
                 .Configure<Interception>()
-                    .SetDefaultInjectorFor<AuthorizationTestTarget>(new TransparentProxyPolicyInjector())
+                    .SetDefaultInterceptorFor<AuthorizationTestTarget>(new TransparentProxyInterceptor())
                     .AddPolicy("tokens")
                         .AddCallHandler(
                             new AuthorizationCallHandler(string.Empty, "{type}-{method}", authorizationConfiguration))
@@ -166,7 +166,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
             RuleDrivenPolicy policy = container.Resolve<RuleDrivenPolicy>("policy");
 
             ICallHandler handler
-                = (policy.GetHandlersFor(MethodInfo.GetCurrentMethod(), container)).ElementAt(0);
+                = (policy.GetHandlersFor(new MethodImplementationInfo(null, (MethodInfo)MethodBase.GetCurrentMethod()), container)).ElementAt(0);
             Assert.IsNotNull(handler);
             Assert.AreEqual(handler.Order, data.Order);
         }

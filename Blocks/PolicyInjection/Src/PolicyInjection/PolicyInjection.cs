@@ -150,7 +150,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection
         private class PolicyInjectionHelper : IDisposable
         {
             private readonly IUnityContainer container;
-            private static readonly TransparentProxyPolicyInjector injector = new TransparentProxyPolicyInjector();
+            private static readonly TransparentProxyInterceptor injector = new TransparentProxyInterceptor();
 
             public PolicyInjectionHelper(IConfigurationSource configurationSource)
             {
@@ -165,14 +165,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection
                 }
             }
 
-            public bool TypeSupportsInterception(Type t)
-            {
-                return injector.TypeSupportsInterception(t);
-            }
-
             private object DoWrap(object instance, Type typeToReturn)
             {
-                container.Configure<Interception>().SetDefaultInjectorFor(typeToReturn, injector);
+                container.Configure<Interception>().SetDefaultInterceptorFor(typeToReturn, injector);
 
                 return container.BuildUp(typeToReturn, instance);
             }

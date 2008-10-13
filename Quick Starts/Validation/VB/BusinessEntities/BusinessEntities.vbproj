@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{A721C2DC-2B62-475D-9B6C-9B365A8DD8A2}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -90,7 +90,7 @@
       <Name>Validation</Name>
     </ProjectReference>
     <ProjectReference Include="..\CustomValidators\CustomValidators.vbproj">
-      <Project>{EF4D8003-DB8B-4598-83E6-58F45AF14ED6}</Project>
+      <Project>{022D24F8-24B4-4403-9B35-D9751E2CF22D}</Project>
       <Name>CustomValidators</Name>
     </ProjectReference>
   </ItemGroup>

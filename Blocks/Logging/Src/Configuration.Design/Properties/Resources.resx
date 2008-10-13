@@ -458,40 +458,40 @@ Extended Properties: {dictionary({key} - {value}
   <data name="WmiTraceListenerUICommandText" xml:space="preserve">
     <value>WMI Trace Listener</value>
   </data>
-	<data name="XmlTraceListenerNodeUICommandText" xml:space="preserve">
+  <data name="XmlTraceListenerNodeUICommandText" xml:space="preserve">
     <value>XML Trace Listener</value>
   </data>
-	<data name="XmlTraceListenerNodeUICommandLongText" xml:space="preserve">
+  <data name="XmlTraceListenerNodeUICommandLongText" xml:space="preserve">
     <value>XML Trace Listener</value>
   </data>
-	<data name="FileNameDescription" xml:space="preserve">
-    <value>Filename where the XML will be written.</value>
-  </data>
-	<data name="XmlTraceListenerFileDialogFilter" xml:space="preserve">
-    <value>All files (*.*)|*.*</value>
-  </data>
-	<data name="RollingTraceListenerNodeUICommandText" xml:space="preserve">
-    <value>Rolling Flat File Trace Listener</value>
-  </data>
-	<data name="RollingTraceListenerNodeUICommandLongText" xml:space="preserve">
-    <value>Rolling Flat File Trace Listener</value>
-  </data>
-	<data name="FileNameDescription" xml:space="preserve">
+  <data name="FileNameDescription" xml:space="preserve">
     <value>FileName</value>
   </data>
-	<data name="RollSizeKBDescription" xml:space="preserve">
+  <data name="XmlTraceListenerFileDialogFilter" xml:space="preserve">
+    <value>All files (*.*)|*.*</value>
+  </data>
+  <data name="RollingTraceListenerNodeUICommandText" xml:space="preserve">
+    <value>Rolling Flat File Trace Listener</value>
+  </data>
+  <data name="RollingTraceListenerNodeUICommandLongText" xml:space="preserve">
+    <value>Rolling Flat File Trace Listener</value>
+  </data>
+  <data name="RollSizeKBDescription" xml:space="preserve">
     <value>Roll Size KB</value>
   </data>
-	<data name="TimeStampPatternDescription" xml:space="preserve">
+  <data name="TimeStampPatternDescription" xml:space="preserve">
     <value>TimeStampt</value>
   </data>
-	<data name="RollFileExistsBehaviorDescription" xml:space="preserve">
+  <data name="RollFileExistsBehaviorDescription" xml:space="preserve">
     <value>Exists Behavior</value>
   </data>
-	<data name="LockBehaviorDescription" xml:space="preserve">
+  <data name="LockBehaviorDescription" xml:space="preserve">
     <value>Lock Behavior</value>
   </data>
-	<data name="RollIntervalDescription" xml:space="preserve">
+  <data name="RollIntervalDescription" xml:space="preserve">
     <value>Roll Interval</value>
+  </data>
+  <data name="RevertImpersonationDescription" xml:space="preserve">
+    <value>Revert impersonation temporarily while logging.</value>
   </data>
 </root>

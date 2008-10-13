@@ -13,11 +13,13 @@
 
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Properties;
-using System.Globalization;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design
 {
@@ -28,13 +30,26 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design
     {
         private const string AssemblyFileFilter = "Assemblies (*.exe;*.dll) | *.exe;*.dll";
         private ImageList typeImageList;
-        private TreeView treeView;
         private Button browseButton;
         private IContainer components = null;
         private OpenFileDialog openFileDialog = new OpenFileDialog();
         private Button cancelButton;
         private Button okButton;
-        private TypeSelector selector;
+        private TextBox filter;
+        private Label filterLabel;
+        private Button loadFromGACButton;
+
+        private TreeView typeBuilderTreeView;
+        private TypeBuildNode rootTypeNode;
+        private TreeNode currentTypeTreeNode;
+
+        // true when the types tree is being updated after the selected node in the type building tree changed
+        private bool updatingTreeView = false;
+
+        private TreeView treeView;
+        private TypeSelector currentTypeSelector;
+
+        private readonly Font undefinedNodeFont;
 
         /// <summary>
         /// <para>Initialize a new instance of the <see cref="TypeSelectorUI"/> class.</para>
@@ -54,19 +69,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design
         /// <param name="baseType">
         /// <para>The <see cref="Type"/> to filter and verify when loading.</para>
         /// </param>
-        public TypeSelectorUI(Type currentType, Type baseType) : this(currentType, baseType, TypeSelectorIncludes.None, null)
+        public TypeSelectorUI(Type currentType, Type baseType)
+            : this(currentType, baseType, TypeSelectorIncludes.None, null)
         {
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="currentType"></param>
-        /// <param name="baseType"></param>
-        /// <param name="flags"></param>
-        public TypeSelectorUI(Type currentType, Type baseType, TypeSelectorIncludes flags) : this(currentType, baseType, flags, null)
-        {
-        }
         /// <summary>
         /// <para>Initialize a new instance of the <see cref="TypeSelectorUI"/> class.</para>
         /// </summary>
@@ -79,13 +86,43 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design
         /// <param name="flags">
         /// <para>The flags for the editor.</para>
         /// </param>
-		/// <param name="configurationType"></param>
-        public TypeSelectorUI(Type currentType, Type baseType, TypeSelectorIncludes flags, Type configurationType) : this()
+        public TypeSelectorUI(Type currentType, Type baseType, TypeSelectorIncludes flags)
+            : this(currentType, baseType, flags, null)
         {
+        }
+
+        /// <summary>
+        /// <para>Initialize a new instance of the <see cref="TypeSelectorUI"/> class.</para>
+        /// </summary>
+        /// <param name="currentType">
+        /// <para>The current <see cref="Type"/> selected.</para>
+        /// </param>
+        /// <param name="baseType">
+        /// <para>The <see cref="Type"/> to filter and verify when loading.</para>
+        /// </param>
+        /// <param name="flags">
+        /// <para>The flags for the editor.</para>
+        /// </param>
+        /// <param name="configurationType">The base configuration type the selected type must reference.</param>
+        public TypeSelectorUI(Type currentType, Type baseType, TypeSelectorIncludes flags, Type configurationType)
+            : this()
+        {
+            this.undefinedNodeFont = new Font(this.typeBuilderTreeView.Font, FontStyle.Italic);
+
             this.openFileDialog.DereferenceLinks = false;
-            this.selector = new TypeSelector(currentType, baseType, flags, configurationType, this.treeView);
-            this.treeView.Select();
             this.Text += baseType.FullName;
+
+            this.rootTypeNode
+                = TypeBuildNode.CreateTreeForType(
+                    currentType,
+                    new TypeBuildNodeConstraint(baseType, configurationType, flags));
+            this.currentTypeTreeNode = this.typeBuilderTreeView.Nodes.Add(rootTypeNode.Description);
+            this.currentTypeTreeNode.Tag = this.rootTypeNode;
+            this.UpdateTypeTreeNodeChildren(this.currentTypeTreeNode);
+            this.typeBuilderTreeView.SelectedNode = this.currentTypeTreeNode;
+            this.currentTypeTreeNode.EnsureVisible();
+
+            this.treeView.Select();
         }
 
         /// <summary>
@@ -96,7 +133,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design
         /// </value>
         public Type SelectedType
         {
-            get { return this.treeView.SelectedNode.Tag as Type; }
+            get;
+            private set;
         }
 
         /// <summary>
@@ -124,6 +162,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design
                 {
                     this.components.Dispose();
                 }
+                if (this.undefinedNodeFont != null)
+                {
+                    this.undefinedNodeFont.Dispose();
+                }
             }
             base.Dispose(disposing);
         }
@@ -136,210 +178,244 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(TypeSelectorUI));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TypeSelectorUI));
             this.treeView = new System.Windows.Forms.TreeView();
             this.typeImageList = new System.Windows.Forms.ImageList(this.components);
             this.browseButton = new System.Windows.Forms.Button();
             this.okButton = new System.Windows.Forms.Button();
             this.cancelButton = new System.Windows.Forms.Button();
+            this.filter = new System.Windows.Forms.TextBox();
+            this.filterLabel = new System.Windows.Forms.Label();
+            this.loadFromGACButton = new System.Windows.Forms.Button();
+            this.typeBuilderTreeView = new System.Windows.Forms.TreeView();
             this.SuspendLayout();
             // 
             // treeView
             // 
-            this.treeView.AccessibleDescription = resources.GetString("treeView.AccessibleDescription");
-            this.treeView.AccessibleName = resources.GetString("treeView.AccessibleName");
-            this.treeView.Anchor = ((System.Windows.Forms.AnchorStyles)(resources.GetObject("treeView.Anchor")));
-            this.treeView.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("treeView.BackgroundImage")));
-            this.treeView.Dock = ((System.Windows.Forms.DockStyle)(resources.GetObject("treeView.Dock")));
-            this.treeView.Enabled = ((bool)(resources.GetObject("treeView.Enabled")));
-            this.treeView.Font = ((System.Drawing.Font)(resources.GetObject("treeView.Font")));
-            this.treeView.ImageIndex = ((int)(resources.GetObject("treeView.ImageIndex")));
+            resources.ApplyResources(this.treeView, "treeView");
+            this.treeView.HideSelection = false;
             this.treeView.ImageList = this.typeImageList;
-            this.treeView.ImeMode = ((System.Windows.Forms.ImeMode)(resources.GetObject("treeView.ImeMode")));
-            this.treeView.Indent = ((int)(resources.GetObject("treeView.Indent")));
-            this.treeView.ItemHeight = ((int)(resources.GetObject("treeView.ItemHeight")));
-            this.treeView.Location = ((System.Drawing.Point)(resources.GetObject("treeView.Location")));
+            this.treeView.ItemHeight = 16;
             this.treeView.Name = "treeView";
-            this.treeView.RightToLeft = ((System.Windows.Forms.RightToLeft)(resources.GetObject("treeView.RightToLeft")));
-            this.treeView.SelectedImageIndex = ((int)(resources.GetObject("treeView.SelectedImageIndex")));
-            this.treeView.Size = ((System.Drawing.Size)(resources.GetObject("treeView.Size")));
             this.treeView.Sorted = true;
-            this.treeView.TabIndex = ((int)(resources.GetObject("treeView.TabIndex")));
-            this.treeView.Text = resources.GetString("treeView.Text");
-            this.treeView.Visible = ((bool)(resources.GetObject("treeView.Visible")));
-            this.treeView.DoubleClick += new System.EventHandler(this.OnTreeViewDoubleClick);
+            this.treeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView_AfterSelect);
             // 
             // typeImageList
             // 
-            this.typeImageList.ImageSize = ((System.Drawing.Size)(resources.GetObject("typeImageList.ImageSize")));
             this.typeImageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("typeImageList.ImageStream")));
             this.typeImageList.TransparentColor = System.Drawing.Color.Transparent;
+            this.typeImageList.Images.SetKeyName(0, "");
+            this.typeImageList.Images.SetKeyName(1, "");
+            this.typeImageList.Images.SetKeyName(2, "");
+            this.typeImageList.Images.SetKeyName(3, "");
+            this.typeImageList.Images.SetKeyName(4, "");
             // 
             // browseButton
             // 
-            this.browseButton.AccessibleDescription = resources.GetString("browseButton.AccessibleDescription");
-            this.browseButton.AccessibleName = resources.GetString("browseButton.AccessibleName");
-            this.browseButton.Anchor = ((System.Windows.Forms.AnchorStyles)(resources.GetObject("browseButton.Anchor")));
-            this.browseButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("browseButton.BackgroundImage")));
-            this.browseButton.Dock = ((System.Windows.Forms.DockStyle)(resources.GetObject("browseButton.Dock")));
-            this.browseButton.Enabled = ((bool)(resources.GetObject("browseButton.Enabled")));
-            this.browseButton.FlatStyle = ((System.Windows.Forms.FlatStyle)(resources.GetObject("browseButton.FlatStyle")));
-            this.browseButton.Font = ((System.Drawing.Font)(resources.GetObject("browseButton.Font")));
-            this.browseButton.Image = ((System.Drawing.Image)(resources.GetObject("browseButton.Image")));
-            this.browseButton.ImageAlign = ((System.Drawing.ContentAlignment)(resources.GetObject("browseButton.ImageAlign")));
-            this.browseButton.ImageIndex = ((int)(resources.GetObject("browseButton.ImageIndex")));
-            this.browseButton.ImeMode = ((System.Windows.Forms.ImeMode)(resources.GetObject("browseButton.ImeMode")));
-            this.browseButton.Location = ((System.Drawing.Point)(resources.GetObject("browseButton.Location")));
+            resources.ApplyResources(this.browseButton, "browseButton");
             this.browseButton.Name = "browseButton";
-            this.browseButton.RightToLeft = ((System.Windows.Forms.RightToLeft)(resources.GetObject("browseButton.RightToLeft")));
-            this.browseButton.Size = ((System.Drawing.Size)(resources.GetObject("browseButton.Size")));
-            this.browseButton.TabIndex = ((int)(resources.GetObject("browseButton.TabIndex")));
-            this.browseButton.Text = resources.GetString("browseButton.Text");
-            this.browseButton.TextAlign = ((System.Drawing.ContentAlignment)(resources.GetObject("browseButton.TextAlign")));
-            this.browseButton.Visible = ((bool)(resources.GetObject("browseButton.Visible")));
             this.browseButton.Click += new System.EventHandler(this.OnBrowseButtonClick);
             // 
             // okButton
             // 
-            this.okButton.AccessibleDescription = resources.GetString("okButton.AccessibleDescription");
-            this.okButton.AccessibleName = resources.GetString("okButton.AccessibleName");
-            this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)(resources.GetObject("okButton.Anchor")));
-            this.okButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("okButton.BackgroundImage")));
-            this.okButton.Dock = ((System.Windows.Forms.DockStyle)(resources.GetObject("okButton.Dock")));
-            this.okButton.Enabled = ((bool)(resources.GetObject("okButton.Enabled")));
-            this.okButton.FlatStyle = ((System.Windows.Forms.FlatStyle)(resources.GetObject("okButton.FlatStyle")));
-            this.okButton.Font = ((System.Drawing.Font)(resources.GetObject("okButton.Font")));
-            this.okButton.Image = ((System.Drawing.Image)(resources.GetObject("okButton.Image")));
-            this.okButton.ImageAlign = ((System.Drawing.ContentAlignment)(resources.GetObject("okButton.ImageAlign")));
-            this.okButton.ImageIndex = ((int)(resources.GetObject("okButton.ImageIndex")));
-            this.okButton.ImeMode = ((System.Windows.Forms.ImeMode)(resources.GetObject("okButton.ImeMode")));
-            this.okButton.Location = ((System.Drawing.Point)(resources.GetObject("okButton.Location")));
+            resources.ApplyResources(this.okButton, "okButton");
             this.okButton.Name = "okButton";
-            this.okButton.RightToLeft = ((System.Windows.Forms.RightToLeft)(resources.GetObject("okButton.RightToLeft")));
-            this.okButton.Size = ((System.Drawing.Size)(resources.GetObject("okButton.Size")));
-            this.okButton.TabIndex = ((int)(resources.GetObject("okButton.TabIndex")));
-            this.okButton.Text = resources.GetString("okButton.Text");
-            this.okButton.TextAlign = ((System.Drawing.ContentAlignment)(resources.GetObject("okButton.TextAlign")));
-            this.okButton.Visible = ((bool)(resources.GetObject("okButton.Visible")));
             this.okButton.Click += new System.EventHandler(this.OnOkButtonClick);
             // 
             // cancelButton
             // 
-            this.cancelButton.AccessibleDescription = resources.GetString("cancelButton.AccessibleDescription");
-            this.cancelButton.AccessibleName = resources.GetString("cancelButton.AccessibleName");
-            this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)(resources.GetObject("cancelButton.Anchor")));
-            this.cancelButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("cancelButton.BackgroundImage")));
+            resources.ApplyResources(this.cancelButton, "cancelButton");
             this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancelButton.Dock = ((System.Windows.Forms.DockStyle)(resources.GetObject("cancelButton.Dock")));
-            this.cancelButton.Enabled = ((bool)(resources.GetObject("cancelButton.Enabled")));
-            this.cancelButton.FlatStyle = ((System.Windows.Forms.FlatStyle)(resources.GetObject("cancelButton.FlatStyle")));
-            this.cancelButton.Font = ((System.Drawing.Font)(resources.GetObject("cancelButton.Font")));
-            this.cancelButton.Image = ((System.Drawing.Image)(resources.GetObject("cancelButton.Image")));
-            this.cancelButton.ImageAlign = ((System.Drawing.ContentAlignment)(resources.GetObject("cancelButton.ImageAlign")));
-            this.cancelButton.ImageIndex = ((int)(resources.GetObject("cancelButton.ImageIndex")));
-            this.cancelButton.ImeMode = ((System.Windows.Forms.ImeMode)(resources.GetObject("cancelButton.ImeMode")));
-            this.cancelButton.Location = ((System.Drawing.Point)(resources.GetObject("cancelButton.Location")));
             this.cancelButton.Name = "cancelButton";
-            this.cancelButton.RightToLeft = ((System.Windows.Forms.RightToLeft)(resources.GetObject("cancelButton.RightToLeft")));
-            this.cancelButton.Size = ((System.Drawing.Size)(resources.GetObject("cancelButton.Size")));
-            this.cancelButton.TabIndex = ((int)(resources.GetObject("cancelButton.TabIndex")));
-            this.cancelButton.Text = resources.GetString("cancelButton.Text");
-            this.cancelButton.TextAlign = ((System.Drawing.ContentAlignment)(resources.GetObject("cancelButton.TextAlign")));
-            this.cancelButton.Visible = ((bool)(resources.GetObject("cancelButton.Visible")));
             this.cancelButton.Click += new System.EventHandler(this.OnCancelButtonClick);
+            // 
+            // filter
+            // 
+            resources.ApplyResources(this.filter, "filter");
+            this.filter.Name = "filter";
+            this.filter.TextChanged += new System.EventHandler(this.filter_TextChanged);
+            // 
+            // filterLabel
+            // 
+            resources.ApplyResources(this.filterLabel, "filterLabel");
+            this.filterLabel.Name = "filterLabel";
+            // 
+            // loadFromGACButton
+            // 
+            resources.ApplyResources(this.loadFromGACButton, "loadFromGACButton");
+            this.loadFromGACButton.Name = "loadFromGACButton";
+            this.loadFromGACButton.Click += new System.EventHandler(this.loadFromGACButton_Click);
+            // 
+            // typeBuilderTreeView
+            // 
+            resources.ApplyResources(this.typeBuilderTreeView, "typeBuilderTreeView");
+            this.typeBuilderTreeView.HideSelection = false;
+            this.typeBuilderTreeView.Name = "typeBuilderTreeView";
+            this.typeBuilderTreeView.ShowNodeToolTips = true;
+            this.typeBuilderTreeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.typeBuilderTreeView_AfterSelect);
             // 
             // TypeSelectorUI
             // 
             this.AcceptButton = this.okButton;
-            this.AccessibleDescription = resources.GetString("$this.AccessibleDescription");
-            this.AccessibleName = resources.GetString("$this.AccessibleName");
-            this.AutoScaleBaseSize = ((System.Drawing.Size)(resources.GetObject("$this.AutoScaleBaseSize")));
-            this.AutoScroll = ((bool)(resources.GetObject("$this.AutoScroll")));
-            this.AutoScrollMargin = ((System.Drawing.Size)(resources.GetObject("$this.AutoScrollMargin")));
-            this.AutoScrollMinSize = ((System.Drawing.Size)(resources.GetObject("$this.AutoScrollMinSize")));
-            this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
+            resources.ApplyResources(this, "$this");
             this.CancelButton = this.cancelButton;
-            this.ClientSize = ((System.Drawing.Size)(resources.GetObject("$this.ClientSize")));
+            this.Controls.Add(this.typeBuilderTreeView);
+            this.Controls.Add(this.loadFromGACButton);
+            this.Controls.Add(this.filterLabel);
+            this.Controls.Add(this.filter);
             this.Controls.Add(this.cancelButton);
             this.Controls.Add(this.okButton);
             this.Controls.Add(this.browseButton);
             this.Controls.Add(this.treeView);
-            this.Enabled = ((bool)(resources.GetObject("$this.Enabled")));
-            this.Font = ((System.Drawing.Font)(resources.GetObject("$this.Font")));
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.ImeMode = ((System.Windows.Forms.ImeMode)(resources.GetObject("$this.ImeMode")));
-            this.Location = ((System.Drawing.Point)(resources.GetObject("$this.Location")));
-            this.MaximumSize = ((System.Drawing.Size)(resources.GetObject("$this.MaximumSize")));
             this.MinimizeBox = false;
-            this.MinimumSize = ((System.Drawing.Size)(resources.GetObject("$this.MinimumSize")));
             this.Name = "TypeSelectorUI";
-            this.RightToLeft = ((System.Windows.Forms.RightToLeft)(resources.GetObject("$this.RightToLeft")));
-            this.StartPosition = ((System.Windows.Forms.FormStartPosition)(resources.GetObject("$this.StartPosition")));
-            this.Text = resources.GetString("$this.Text");
             this.ShowInTaskbar = false;
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
-        #endregion        
+        #endregion
 
         private void OnBrowseButtonClick(object sender, EventArgs e)
         {
-            DialogResult result = this.openFileDialog.ShowDialog();
-            if (result == DialogResult.OK)
-            {
-                try
+            LoadAssembly(() =>
                 {
-                    string originalAssemblyFileName = this.openFileDialog.FileName;
-                    string referenceDirectory = Path.GetDirectoryName(originalAssemblyFileName);
-
-                    Assembly assembly = null;
-                    using (AssemblyLoader loaderHook = new AssemblyLoader(originalAssemblyFileName, referenceDirectory))
+                    DialogResult result = this.openFileDialog.ShowDialog(this);
+                    if (result == DialogResult.OK)
                     {
-                        assembly = Assembly.LoadFrom(loaderHook.CopiedAssemblyPath);
-                    
-                        if (!this.selector.LoadTreeView(assembly))
+                        string originalAssemblyFileName = this.openFileDialog.FileName;
+                        string referenceDirectory = Path.GetDirectoryName(originalAssemblyFileName);
+
+                        using (AssemblyLoader loaderHook = new AssemblyLoader(originalAssemblyFileName, referenceDirectory))
                         {
-                            DisplayMessageBox(string.Format(CultureInfo.CurrentUICulture, Resources.NoTypesFoundInAssemblyErrorMessage, assembly.GetName().Name, this.selector.TypeToVerify.FullName), Resources.NoTypesFoundInAssemblyCaption);
+                            return Assembly.LoadFrom(loaderHook.CopiedAssemblyPath);
                         }
                     }
-                }
-                catch (FileNotFoundException ex)
-                {
-                    DisplayMessageBox(string.Format(CultureInfo.CurrentUICulture, Resources.AssemblyLoadFailedErrorMessage, ex.Message), string.Empty);
-                    return;
-                }
-                catch (BadImageFormatException ex)
-                {
-                    DisplayMessageBox(string.Format(CultureInfo.CurrentUICulture, Resources.AssemblyLoadFailedErrorMessage, ex.Message), string.Empty);
-                    return;
-                }
-                catch(ReflectionTypeLoadException ex)
-                {
-                    DisplayMessageBox(string.Format(CultureInfo.CurrentUICulture, Resources.EnumTypesFailedErrorMessage, ex.Message), string.Empty);
-                }
-            }
+                    else
+                    {
+                        return null;
+                    }
+                });
         }
 
-        private void OnTreeViewDoubleClick(object sender, EventArgs e)
+        private void loadFromGACButton_Click(object sender, EventArgs e)
         {
-            if (SelectedType != null)
+            LoadAssembly(() =>
             {
-                this.OnOkButtonClick(this, EventArgs.Empty);
+                LoadAssemblyFromCacheDialog dialog = new LoadAssemblyFromCacheDialog();
+                if (dialog.ShowDialog(this) == DialogResult.OK)
+                {
+                    return Assembly.Load(dialog.AssemblyName);
+                }
+                else
+                {
+                    return null;
+                }
+            });
+        }
+
+        private void LoadAssembly(Func<Assembly> getAssembly)
+        {
+            Assembly assembly = null;
+
+            try
+            {
+                if ((assembly = getAssembly()) != null)
+                {
+                    try
+                    {
+                        this.treeView.BeginUpdate();
+
+                        if (!this.currentTypeSelector.LoadFilteredTreeView(assembly))
+                        {
+                            DisplayMessageBox(
+                                string.Format(
+                                    CultureInfo.CurrentCulture,
+                                    Resources.NoTypesFoundInAssemblyErrorMessage,
+                                    assembly.GetName().Name,
+                                    this.currentTypeSelector.TypeToVerify.FullName),
+                                Resources.NoTypesFoundInAssemblyCaption);
+                        }
+                    }
+                    finally
+                    {
+                        this.treeView.EndUpdate();
+                    }
+                }
+            }
+            catch (FileNotFoundException ex)
+            {
+                DisplayMessageBox(
+                    string.Format(CultureInfo.CurrentCulture, Resources.AssemblyLoadFailedErrorMessage, ex.Message),
+                    string.Empty);
+                return;
+            }
+            catch (BadImageFormatException ex)
+            {
+                DisplayMessageBox(
+                    string.Format(CultureInfo.CurrentCulture, Resources.AssemblyLoadFailedErrorMessage, ex.Message),
+                    string.Empty);
+                return;
+            }
+            catch (ReflectionTypeLoadException ex)
+            {
+                DisplayMessageBox(
+                    string.Format(CultureInfo.CurrentCulture, Resources.EnumTypesFailedErrorMessage, ex.Message),
+                    string.Empty);
             }
         }
 
         private void OnOkButtonClick(object sender, EventArgs e)
         {
-            if (this.selector.TypeToVerify != null)
+            Type theType = null;
+
+            try
             {
-                if (!this.selector.IsTypeValid(SelectedType))
-                {
-                    DisplayMessageBox(string.Format(CultureInfo.CurrentUICulture, Resources.TypeSubclassErrorMsg, this.selector.TypeToVerify.FullName), string.Empty);
-                    return;
-                }
+                theType = this.rootTypeNode.BuildType();
             }
+            catch (TypeBuildException ex)
+            {
+                DisplayMessageBox(
+                    string.Format(
+                        CultureInfo.CurrentCulture,
+                        Resources.ErrorBuildingType,
+                        ex.Message),
+                    string.Empty,
+                    MessageBoxIcon.Error);
+
+                TreeNode treeNodeForFailingNode
+                    = GetTreeNodeForTypeNode(ex.FailingNode, this.typeBuilderTreeView.Nodes[0]);
+                treeNodeForFailingNode.ForeColor = Color.Red;
+                treeNodeForFailingNode.ToolTipText = ex.Message;
+
+                return;
+            }
+
+            this.SelectedType = theType;
+
             DialogResult = DialogResult.OK;
             Close();
+        }
+
+        private void OnCancelButtonClick(object sender, EventArgs e)
+        {
+            DialogResult = DialogResult.Cancel;
+            Close();
+        }
+
+        private static TreeNode GetTreeNodeForTypeNode(TypeBuildNode typeNode, TreeNode treeNode)
+        {
+            if (treeNode.Tag == typeNode)
+            {
+                return treeNode;
+            }
+
+            foreach (TreeNode childTreeNode in treeNode.Nodes)
+            {
+                return GetTreeNodeForTypeNode(typeNode, childTreeNode);
+            }
+
+            throw new InvalidOperationException();
         }
 
         private void DisplayMessageBox(string message, string caption)
@@ -349,13 +425,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design
 
         private void DisplayMessageBox(string message, string caption, MessageBoxIcon icon)
         {
-			MessageBoxOptions options = (MessageBoxOptions)0;
+            MessageBoxOptions options = (MessageBoxOptions)0;
 
-			if (RightToLeft == RightToLeft.Yes)
-			{
-				options = MessageBoxOptions.RtlReading |
-				   MessageBoxOptions.RightAlign;
-			}
+            if (RightToLeft == RightToLeft.Yes)
+            {
+                options = MessageBoxOptions.RtlReading |
+                   MessageBoxOptions.RightAlign;
+            }
 
 
             MessageBox.Show(message,
@@ -363,14 +439,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design
                                 MessageBoxButtons.OK,
                                 icon,
                                 MessageBoxDefaultButton.Button1,
-								options);
+                                options);
 
-        }
-
-        private void OnCancelButtonClick(object sender, EventArgs e)
-        {
-            DialogResult = DialogResult.Cancel;
-            Close();
         }
 
         /// <summary>
@@ -378,10 +448,146 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design
         /// </summary>
         public void CollapseAssemlbyNodes()
         {
-            foreach (TreeNode assemblyNode in selector.AssembliesRootNode.Nodes)
+            foreach (TreeNode assemblyNode in currentTypeSelector.AssembliesRootNode.Nodes)
             {
                 assemblyNode.Collapse();
             }
+        }
+
+        private void filter_TextChanged(object sender, EventArgs e)
+        {
+            if (!updatingTreeView)
+            {
+                try
+                {
+                    this.treeView.BeginUpdate();
+
+                    this.currentTypeSelector.UpdateFilter(filter.Text);
+                }
+                finally
+                {
+                    this.treeView.EndUpdate();
+                }
+            }
+        }
+
+        private void typeBuilderTreeView_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            try
+            {
+                this.updatingTreeView = true;
+                this.currentTypeTreeNode = e.Node;
+                this.filter.Clear();
+                this.UpdateAvailableTypesTree();
+            }
+            finally
+            {
+                this.updatingTreeView = false;
+            }
+        }
+
+        private void UpdateAvailableTypesTree()
+        {
+            TypeBuildNode currentTypeNode = (TypeBuildNode)this.currentTypeTreeNode.Tag;
+
+            Cursor previousCursor = this.Cursor;
+            try
+            {
+                this.treeView.BeginUpdate();
+                this.Cursor = Cursors.WaitCursor;
+
+                this.treeView.Nodes.Clear();
+                this.currentTypeSelector
+                    = new TypeSelector(
+                        currentTypeNode.NodeType,
+                        currentTypeNode.Constraint.BaseType,
+                        currentTypeNode.Constraint.TypeSelectorIncludes,
+                        currentTypeNode.Constraint.ConfigurationType,
+                        this.treeView);
+                TreeNode selectedNode = this.treeView.SelectedNode;
+                this.treeView.Sort();
+                if (selectedNode != null)
+                {
+                    this.treeView.SelectedNode = selectedNode;
+                    selectedNode.EnsureVisible();
+                }
+            }
+            finally
+            {
+                this.treeView.EndUpdate();
+                this.Cursor = previousCursor;
+            }
+        }
+
+        private void treeView_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            Type selectedType;
+            if ((selectedType = e.Node.Tag as Type) != null)
+            {
+                this.AvailableTypeSelected(selectedType);
+            }
+        }
+
+        private void AvailableTypeSelected(Type selectedType)
+        {
+            if (selectedType != null)
+            {
+                TypeBuildNode typeNode = (TypeBuildNode)this.currentTypeTreeNode.Tag;
+
+                if (typeNode.NodeType != selectedType)
+                {
+                    this.typeBuilderTreeView.BeginUpdate();
+
+                    try
+                    {
+                        bool childrenChanged = typeNode.SetNodeType(selectedType);
+
+                        // update the node
+                        this.currentTypeTreeNode.Text = typeNode.Description;
+                        this.currentTypeTreeNode.ToolTipText = selectedType.AssemblyQualifiedName;
+                        this.currentTypeTreeNode.NodeFont = this.typeBuilderTreeView.Font;
+                        this.currentTypeTreeNode.ForeColor = SystemColors.ControlText;
+
+                        if (childrenChanged)
+                        {
+                            this.UpdateTypeTreeNodeChildren(this.currentTypeTreeNode);
+                        }
+                    }
+                    finally
+                    {
+                        this.typeBuilderTreeView.EndUpdate();
+                    }
+                }
+            }
+            else
+            {
+                Debug.Fail("This shouldn't have happened.");
+            }
+        }
+
+        private void UpdateTypeTreeNodeChildren(TreeNode treeNode)
+        {
+            TypeBuildNode typeNode = (TypeBuildNode)treeNode.Tag;
+
+            treeNode.Nodes.Clear();
+            foreach (TypeBuildNode childTypeNode in typeNode.GenericParameterNodes)
+            {
+                TreeNode childTreeNode = treeNode.Nodes.Add(childTypeNode.Description);
+                childTreeNode.Tag = childTypeNode;
+
+                // set the formatting
+                childTreeNode.ForeColor = SystemColors.ControlText;
+                if (childTypeNode.NodeType != null)
+                {
+                    childTreeNode.ToolTipText = childTypeNode.NodeType.AssemblyQualifiedName;
+                    UpdateTypeTreeNodeChildren(childTreeNode);
+                }
+                else
+                {
+                    childTreeNode.NodeFont = undefinedNodeFont;
+                }
+            }
+            treeNode.Expand();
         }
     }
 }

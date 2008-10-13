@@ -62,7 +62,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
         public void PassingTypeStringReturnsFirstSegmentAndTrimsSpaces()
         {
             ExceptionTypeNodeNameFormatter nameFormatter = new ExceptionTypeNodeNameFormatter();
-            ExceptionTypeData exceptionTypeData = new ExceptionTypeData("someName", "  a  , b, c, d", PostHandlingAction.NotifyRethrow);
+            ExceptionTypeData exceptionTypeData = new ExceptionTypeData("someName", "  a, b, c, d", PostHandlingAction.NotifyRethrow);
 
             string name = nameFormatter.CreateName(exceptionTypeData);
             Assert.IsNotNull(name);

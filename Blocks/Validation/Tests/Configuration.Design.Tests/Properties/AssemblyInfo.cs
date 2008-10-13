@@ -22,4 +22,4 @@ using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle("Enterprise Library Validation Application Block Design Tests")]
 [assembly: AssemblyDescription("Enterprise Library Validation Application Block Design Tests")]
-[assembly: AssemblyVersion("4.0.0.926")]
+[assembly: AssemblyVersion("4.0.0.1010")]

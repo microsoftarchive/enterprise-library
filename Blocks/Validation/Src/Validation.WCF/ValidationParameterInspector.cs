@@ -9,7 +9,6 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.ServiceModel;
@@ -19,34 +18,34 @@ using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WCF
 {
-	/// <summary>
-	/// 
-	/// </summary>
+    /// <summary>
+    /// 
+    /// </summary>
     public class ValidationParameterInspector : IParameterInspector
     {
         private List<Validator> inputValidators = new List<Validator>();
         private List<string> inputValidatorParameterNames = new List<string>();
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="operation"></param>
-		/// <param name="ruleSet"></param>
-        public ValidationParameterInspector(OperationDescription operation, string ruleSet )
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="operation"></param>
+        /// <param name="ruleSet"></param>
+        public ValidationParameterInspector(OperationDescription operation, string ruleSet)
         {
             MethodInfo method = operation.SyncMethod;
 
-            foreach(ParameterInfo param in method.GetParameters())
+            foreach (ParameterInfo param in method.GetParameters())
             {
-                switch(param.Attributes)
+                switch (param.Attributes)
                 {
-                case ParameterAttributes.Out:
-                case ParameterAttributes.Retval:
-                    break;
+                    case ParameterAttributes.Out:
+                    case ParameterAttributes.Retval:
+                        break;
 
-                default:
-                    inputValidators.Add(CreateInputParameterValidator(param, ruleSet));
-                    inputValidatorParameterNames.Add(param.Name);
-                    break;
+                    default:
+                        inputValidators.Add(CreateInputParameterValidator(param, ruleSet));
+                        inputValidatorParameterNames.Add(param.Name);
+                        break;
                 }
             }
         }
@@ -58,30 +57,30 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WCF
             return new AndCompositeValidator(paramAttributeValidator, typeValidator);
         }
 
-		/// <summary>
-		/// 
-		/// </summary>
+        /// <summary>
+        /// 
+        /// </summary>
         public IList<Validator> InputValidators
         {
             get { return inputValidators; }
         }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="operationName"></param>
-		/// <param name="inputs"></param>
-		/// <returns></returns>
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="operationName"></param>
+        /// <param name="inputs"></param>
+        /// <returns></returns>
         public object BeforeCall(string operationName, object[] inputs)
         {
             ValidationFault fault = new ValidationFault();
-            for(int i = 0; i < inputValidators.Count; ++i)
+            for (int i = 0; i < inputValidators.Count; ++i)
             {
                 ValidationResults results = inputValidators[i].Validate(inputs[i]);
                 AddFaultDetails(fault, inputValidatorParameterNames[i], results);
             }
 
-            if(!fault.IsValid)
+            if (!fault.IsValid)
             {
                 throw new FaultException<ValidationFault>(fault);
             }
@@ -89,13 +88,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WCF
             return null;
         }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="operationName"></param>
-		/// <param name="outputs"></param>
-		/// <param name="returnValue"></param>
-		/// <param name="correlationState"></param>
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="operationName"></param>
+        /// <param name="outputs"></param>
+        /// <param name="returnValue"></param>
+        /// <param name="correlationState"></param>
         public void AfterCall(
             string operationName, object[] outputs, object returnValue, object correlationState)
         {
@@ -104,9 +103,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WCF
 
         private void AddFaultDetails(ValidationFault fault, string parameterName, ValidationResults results)
         {
-            if(!results.IsValid)
+            if (!results.IsValid)
             {
-                foreach(ValidationResult result in results)
+                foreach (ValidationResult result in results)
                 {
                     fault.Add(CreateValidationDetail(result, parameterName));
                 }

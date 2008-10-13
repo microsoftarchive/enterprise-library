@@ -1,7 +1,7 @@
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{D6AAB55A-8C43-46B7-9EE4-EB8D1E1BFC17}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -136,8 +136,15 @@
     <Compile Include="FlagsEditorUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="GACWrap.cs" />
     <Compile Include="IEnvironmentalOverridesSerializable.cs" />
     <Compile Include="IPluginDirectoryProvider.cs" />
+    <Compile Include="LoadAssemblyFromCacheDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LoadAssemblyFromCacheDialog.designer.cs">
+      <DependentUpon>LoadAssemblyFromCacheDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Manageability\ConfigurationManageabilityProviderAttributeRetriever.cs" />
     <Compile Include="Manageability\ExportAdmTemplateNodeCommand.cs" />
     <Compile Include="Manageability\ManageableConfigurationSourceCommandRegistrar.cs" />
@@ -158,6 +165,9 @@
     <Compile Include="NodeMapRegistrar.cs" />
     <Compile Include="ProtectionProviderTypeConverter.cs" />
     <Compile Include="SaveAsConfigurationApplicationNodeCommand.cs" />
+    <Compile Include="TypeBuildException.cs" />
+    <Compile Include="TypeBuildNodeConstraint.cs" />
+    <Compile Include="TypeBuildNode.cs" />
     <Compile Include="TypeNodeNameFormatter.cs" />
     <Compile Include="Validation\ProtectionProviderValidationAttribute.cs" />
     <Compile Include="StorageCreationNodeCommand.cs" />
@@ -292,6 +302,9 @@
       <DependentUpon>FlagsEditorUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="InstrumentationNode.bmp" />
+    <EmbeddedResource Include="LoadAssemblyFromCacheDialog.resx">
+      <DependentUpon>LoadAssemblyFromCacheDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Manageability\Properties\Resources.resx">
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>

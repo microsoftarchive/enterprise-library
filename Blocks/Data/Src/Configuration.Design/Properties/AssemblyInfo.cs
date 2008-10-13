@@ -23,7 +23,7 @@ using Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Design;
 [assembly : SecurityPermission(SecurityAction.RequestMinimum)]
 [assembly : AssemblyTitle("Enterprise Library Data Access Application Block Design")]
 [assembly : AssemblyDescription("Enterprise Library Data Access Application Block Design")]
-[assembly : AssemblyVersion("4.0.0.926")]
+[assembly : AssemblyVersion("4.0.0.1010")]
 [assembly : ComVisible(false)]
 [assembly : AllowPartiallyTrustedCallers]
 [assembly : SecurityTransparent]

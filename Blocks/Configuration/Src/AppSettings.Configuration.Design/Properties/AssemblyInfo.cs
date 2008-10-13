@@ -22,6 +22,6 @@ using Microsoft.Practices.EnterpriseLibrary.Configuration.Design;
 [assembly : SecurityPermission(SecurityAction.RequestMinimum)]
 [assembly : AssemblyTitle("Enterprise Library AppSettings Design")]
 [assembly : AssemblyDescription("Enterprise Library AppSettings Design")]
-[assembly : AssemblyVersion("4.0.0.926")]
+[assembly : AssemblyVersion("4.0.0.1010")]
 [assembly : AllowPartiallyTrustedCallers]
 [assembly : SecurityTransparent]
