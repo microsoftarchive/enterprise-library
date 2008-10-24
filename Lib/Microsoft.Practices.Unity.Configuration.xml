@@ -529,6 +529,54 @@
             </summary>
             <remarks>If <see cref="P:Microsoft.Practices.Unity.Configuration.InstanceValueElement.TypeName"/> property is empty, this returns typeof(string).</remarks>
         </member>
+        <member name="T:Microsoft.Practices.Unity.Configuration.InstanceDescriptionConfigurationElement">
+            <summary>
+            Base class for configuration elements which describe objects.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.Configuration.InstanceDescriptionConfigurationElement.CreateInstance``1">
+            <summary>
+            Create the object represented in this section.
+            </summary>
+            <returns>The represented object.</returns>
+        </member>
+        <member name="P:Microsoft.Practices.Unity.Configuration.InstanceDescriptionConfigurationElement.TypeName">
+            <summary>
+            Returns the string name of the type of the represented object.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Unity.Configuration.InstanceDescriptionConfigurationElement.Value">
+            <summary>
+            Optional value used when creating the represented object.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Unity.Configuration.InstanceDescriptionConfigurationElement.TypeConverterName">
+            <summary>
+            Type name of the type converter used to create the represented object..
+            If not specified, the default type converter (if any) is used.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Unity.Configuration.InstanceDescriptionConfigurationElement.TypeConverter">
+            <summary>
+            The type converter to use to convert the value into
+            the represented object, or null if no typeconverter is
+            required.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Unity.Configuration.InstanceDescriptionConfigurationElement.Type">
+            <summary>
+            The underlying type of the represented object.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Unity.Configuration.InstanceDescriptionConfigurationElement.HasData">
+            <summary>
+            Indicates whether the configuration element has information.
+            </summary>
+            <value>
+            <see langword="true"/> if the configuration element has information, 
+            otherwise <see langword="false"/>.
+            </value>
+        </member>
         <member name="T:Microsoft.Practices.Unity.Configuration.TypeInjectionElement">
             <summary>
             Parent element used to configure member injection for a type.
@@ -609,43 +657,6 @@
             Create the lifetime manager instance configured in this section.
             </summary>
             <returns>The lifetime manager configured.</returns>
-        </member>
-        <member name="P:Microsoft.Practices.Unity.Configuration.UnityLifetimeElement.TypeName">
-            <summary>
-            Returns the string name of the type of lifetime manager.
-            </summary>
-        </member>
-        <member name="P:Microsoft.Practices.Unity.Configuration.UnityLifetimeElement.Value">
-            <summary>
-            Optional value used when creating the lifetime manager
-            </summary>
-        </member>
-        <member name="P:Microsoft.Practices.Unity.Configuration.UnityLifetimeElement.TypeConverterName">
-            <summary>
-            Type name of the type converter used to create the lifetime manager.
-            If not specified, the default type converter (if any) is used.
-            </summary>
-        </member>
-        <member name="P:Microsoft.Practices.Unity.Configuration.UnityLifetimeElement.TypeConverter">
-            <summary>
-            The type converter to use to convert the value into
-            a lifetime manager, or null if no typeconverter is
-            required.
-            </summary>
-        </member>
-        <member name="P:Microsoft.Practices.Unity.Configuration.UnityLifetimeElement.Type">
-            <summary>
-            The underlying type of lifetime manager.
-            </summary>
-        </member>
-        <member name="P:Microsoft.Practices.Unity.Configuration.UnityLifetimeElement.HasData">
-            <summary>
-            Indicates whether the configuration element has information.
-            </summary>
-            <value>
-            <see langword="true"/> if the configuration element has information, 
-            otherwise <see langword="false"/>.
-            </value>
         </member>
         <member name="T:Microsoft.Practices.Unity.Configuration.UnityContainerTypeConfigurationElementCollection">
             <summary>

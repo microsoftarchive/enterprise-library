@@ -1,8 +1,8 @@
-'===============================================================================
+﻿'===============================================================================
 ' Microsoft patterns & practices Enterprise Library
 ' Policy Injection Application Block QuickStart
 '===============================================================================
-' Copyright ? Microsoft Corporation.  All rights reserved.
+' Copyright © Microsoft Corporation.  All rights reserved.
 ' THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
 ' OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
 ' LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
@@ -20,7 +20,7 @@ Imports Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Insta
 
 Public Class MainForm
     Private viewerProcess As Process
-    Private Const HelpViewerArguments As String = "/helpcol ms-help://MS.VSCC.v90/MS.VSIPCC.v90/ms.practices.entlib.2008may /LaunchFKeywordTopic PolicyInjectionQS1"
+    Private Const HelpViewerArguments As String = "/helpcol ms-help://MS.VSCC.v90/MS.VSIPCC.v90/ms.practices.entlib.2008oct /LaunchFKeywordTopic PolicyInjectionQS1"
 
     Private bankAccount As BusinessLogic.BankAccount
 
@@ -130,12 +130,22 @@ Public Class MainForm
             installer.Uninstall(Nothing)
             MessageBox.Show("Performance counters have been successfully uninstalled.", Me.Text, MessageBoxButtons.OK, MessageBoxIcon.Information)
         Catch ex As Exception
+            Dim installException As InstallException = TryCast(ex, InstallException)
+            If ((Not installException Is Nothing) AndAlso (Not installException.InnerException Is Nothing)) Then
+                ex = installException.InnerException
+            End If
             MessageBox.Show(ex.Message, Me.Text, MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
-
     End Sub
 
     Private Function GetHelpViewerExecutable() As String
+        Dim commonX86 As String = Environment.GetEnvironmentVariable("CommonProgramFiles(x86)")
+        If Not String.IsNullOrEmpty(commonX86) Then
+            Dim pathX86 As String = Path.Combine(commonX86, "Microsoft Shared\Help 9\dexplore.exe")
+            If File.Exists(pathX86) Then
+                Return pathX86
+            End If
+        End If
         Dim common As String = Environment.GetEnvironmentVariable("CommonProgramFiles")
         Return Path.Combine(common, "Microsoft Shared\Help 9\dexplore.exe")
     End Function

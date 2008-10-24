@@ -59,7 +59,7 @@ Global
 		{933575C4-BCAC-47E0-B651-C57FBC5CE58E} = {FC5CD332-1EE9-4118-AE31-793A71EA1F9B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SelectedEnterpriseLibraryConfigurationSet = EntLib4Src
+		SelectedEnterpriseLibraryConfigurationSet = EntLib41Src
 	EndGlobalSection
 	GlobalSection(DPCodeReviewSolutionGUID) = preSolution
 		DPCodeReviewSolutionGUID = {00000000-0000-0000-0000-000000000000}

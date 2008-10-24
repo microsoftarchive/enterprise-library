@@ -1,75 +1,71 @@
-//===============================================================================
+﻿//===============================================================================
 // Microsoft patterns & practices Enterprise Library
 // Security Application Block QuickStart
 //===============================================================================
-// Copyright � Microsoft Corporation.  All rights reserved.
+// Copyright © Microsoft Corporation.  All rights reserved.
 // THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
 // OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
 // LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
-using System.Drawing;
-using System.Collections;
-using System.ComponentModel;
-using System.Windows.Forms;
 using System.Web.Security;
+using System.Windows.Forms;
 
 namespace SecurityQuickStart
 {
-	/// <summary>
-	/// Summary description for UserRoleForm.
-	/// </summary>
-	public class AddUserRoleForm : System.Windows.Forms.Form
-	{
-		private System.Windows.Forms.GroupBox groupBox1;
-		private System.Windows.Forms.Button okButton;
-		private System.Windows.Forms.Button cancelButton;
-		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.ComboBox usersComboBox;
-		private System.Windows.Forms.Label label2;
-		private System.Windows.Forms.ComboBox rolesComboBox;
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components = null;
+    /// <summary>
+    /// Summary description for UserRoleForm.
+    /// </summary>
+    public class AddUserRoleForm : System.Windows.Forms.Form
+    {
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.Button okButton;
+        private System.Windows.Forms.Button cancelButton;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.ComboBox usersComboBox;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.ComboBox rolesComboBox;
+        /// <summary>
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.Container components = null;
 
-		private string userName;
-		private string role;
+        private string userName;
+        private string role;
 
-		public AddUserRoleForm()
-		{
-			//
-			// Required for Windows Form Designer support
-			//
-			InitializeComponent();
+        public AddUserRoleForm()
+        {
+            //
+            // Required for Windows Form Designer support
+            //
+            InitializeComponent();
 
-			ResetDataControls();
-		}
+            ResetDataControls();
+        }
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (components != null)
+                {
+                    components.Dispose();
+                }
+            }
+            base.Dispose(disposing);
+        }
 
-		#region Windows Form Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+        #region Windows Form Designer generated code
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
             System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(AddUserRoleForm));
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.cancelButton = new System.Windows.Forms.Button();
@@ -277,61 +273,68 @@ namespace SecurityQuickStart
             this.ResumeLayout(false);
 
         }
-		#endregion
+        #endregion
 
-		public string UserName
-		{
-			get { return this.userName; }
-		}
+        public string UserName
+        {
+            get { return this.userName; }
+        }
 
-		public string Role
-		{
-			get { return this.role; }
-		}
+        public string Role
+        {
+            get { return this.role; }
+        }
 
-		public void ResetDataControls()
-		{
-			this.usersComboBox.Items.Clear();
-			this.rolesComboBox.Items.Clear();
+        public void ResetDataControls()
+        {
+            this.usersComboBox.Items.Clear();
+            this.rolesComboBox.Items.Clear();
 
             foreach (MembershipUser user in Membership.GetAllUsers())
             {
                 this.usersComboBox.Items.Add(user.UserName);
             }
-			
+
             this.rolesComboBox.Items.AddRange(Roles.GetAllRoles());
 
-			this.rolesComboBox.Text = "";
-		}
+            this.rolesComboBox.Text = "";
+        }
 
-		private void okButton_Click(object sender, System.EventArgs e)
-		{
-			this.userName = (string)this.usersComboBox.Items[this.usersComboBox.SelectedIndex];
-			if (this.rolesComboBox.SelectedIndex >= 0)
-			{
-				this.role = (string)this.rolesComboBox.Items[this.rolesComboBox.SelectedIndex];
-			}
-			else
-			{
-				this.role = this.rolesComboBox.Text;
-			}
+        private void okButton_Click(object sender, System.EventArgs e)
+        {
+            if (this.usersComboBox.SelectedIndex >= 0)
+            {
+                this.userName = (string)this.usersComboBox.Items[this.usersComboBox.SelectedIndex];
+            }
+            else
+            {
+                this.userName = string.Empty;
+            }
+            if (this.rolesComboBox.SelectedIndex >= 0)
+            {
+                this.role = (string)this.rolesComboBox.Items[this.rolesComboBox.SelectedIndex];
+            }
+            else
+            {
+                this.role = this.rolesComboBox.Text;
+            }
 
-			if (this.userName.CompareTo("")==0 || this.role.CompareTo("")==0)
-			{
-				MessageBox.Show(Properties.Resources.AddUserRoleErrorMessage, Properties.Resources.ErrorMessage,
-					MessageBoxButtons.OK, MessageBoxIcon.Error);
-			}
-			else
-			{
-				this.DialogResult = DialogResult.OK;
-				this.Close();
-			}
-		}
+            if (this.userName.CompareTo("") == 0 || this.role.CompareTo("") == 0)
+            {
+                MessageBox.Show(Properties.Resources.AddUserRoleErrorMessage, Properties.Resources.ErrorMessage,
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            else
+            {
+                this.DialogResult = DialogResult.OK;
+                this.Close();
+            }
+        }
 
-		private void cancelButton_Click(object sender, System.EventArgs e)
-		{
-			this.DialogResult = DialogResult.Cancel;
-			this.Close();
-		}
-	}
+        private void cancelButton_Click(object sender, System.EventArgs e)
+        {
+            this.DialogResult = DialogResult.Cancel;
+            this.Close();
+        }
+    }
 }

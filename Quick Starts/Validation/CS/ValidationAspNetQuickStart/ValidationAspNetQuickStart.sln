@@ -9,18 +9,18 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Validation QuickStart", "Va
 EndProject
 Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "ValidationAspNetQuickStart", "..\ValidationAspNetQuickStart", "{8509F0B9-9616-4E40-8098-B3EFC795F760}"
 	ProjectSection(WebsiteProperties) = preProject
-	TargetFramework = "3.0"
+	TargetFramework = "3.5"
 		ProjectReferences = "{5E66DD34-3ABB-48F7-AF8E-1F6D1C41FB9B}|Microsoft.Practices.EnterpriseLibrary.Validation.Integration.AspNet.dll;{E814A5DC-C15B-4BA4-AB7C-B7C9A34AC2FD}|Microsoft.Practices.EnterpriseLibrary.Validation.dll;{A721C2DC-2B62-475D-9B6C-9B365A8DD8A2}|ValidationQuickStart.BusinessEntities.dll;{A09297C8-2C40-470B-8856-D856676DDFFA}|Microsoft.Practices.EnterpriseLibrary.Common.dll;{022D24F8-24B4-4403-9B35-D9751E2CF22D}|ValidationQuickStart.CustomValidators.dll;"
 		Debug.AspNetCompiler.VirtualPath = "/ValidationAspNetQuickStart"
-		Debug.AspNetCompiler.PhysicalPath = "..\..\Source Control\Enterprise Library\Trunk\Source\QuickStarts\Validation\ValidationAspNetQuickStart\"
-		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\ValidationAspNetQuickStart\"
+		Debug.AspNetCompiler.PhysicalPath = "..\ValidationAspNetQuickStart\"
+		Debug.AspNetCompiler.TargetPath = "..\PrecompiledWeb\ValidationAspNetQuickStart\"
 		Debug.AspNetCompiler.Updateable = "true"
 		Debug.AspNetCompiler.ForceOverwrite = "true"
 		Debug.AspNetCompiler.FixedNames = "false"
 		Debug.AspNetCompiler.Debug = "True"
 		Release.AspNetCompiler.VirtualPath = "/ValidationAspNetQuickStart"
-		Release.AspNetCompiler.PhysicalPath = "..\..\Source Control\Enterprise Library\Trunk\Source\QuickStarts\Validation\ValidationAspNetQuickStart\"
-		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\ValidationAspNetQuickStart\"
+		Release.AspNetCompiler.PhysicalPath = "..\ValidationAspNetQuickStart\"
+		Release.AspNetCompiler.TargetPath = "..\PrecompiledWeb\ValidationAspNetQuickStart\"
 		Release.AspNetCompiler.Updateable = "true"
 		Release.AspNetCompiler.ForceOverwrite = "true"
 		Release.AspNetCompiler.FixedNames = "false"
@@ -121,6 +121,6 @@ Global
 		{022D24F8-24B4-4403-9B35-D9751E2CF22D} = {C605A799-3CF7-413E-ACBD-89E0C47BDABB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SelectedEnterpriseLibraryConfigurationSet = EntLib4Src
+		SelectedEnterpriseLibraryConfigurationSet = EntLib41Src
 	EndGlobalSection
 EndGlobal

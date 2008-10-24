@@ -2,7 +2,7 @@
 // Microsoft patterns & practices Enterprise Library
 // Data Access Application Block
 //===============================================================================
-// Copyright ? Microsoft Corporation.  All rights reserved.
+// Copyright © Microsoft Corporation.  All rights reserved.
 // THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
 // OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
 // LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
@@ -42,5 +42,5 @@ using System.Runtime.InteropServices;
 //
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
-[assembly: AssemblyVersion("4.0.0.1010")]
+[assembly: AssemblyVersion("4.0.0.1024")]
 [assembly: AssemblyFileVersion("1.0.0.0")]

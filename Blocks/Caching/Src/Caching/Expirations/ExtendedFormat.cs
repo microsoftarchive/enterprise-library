@@ -1,8 +1,8 @@
-//===============================================================================
+ï»¿//===============================================================================
 // Microsoft patterns & practices Enterprise Library
 // Caching Application Block
 //===============================================================================
-// Copyright © Microsoft Corporation.  All rights reserved.
+// Copyright Â© Microsoft Corporation.  All rights reserved.
 // THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
 // OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
 // LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
@@ -37,11 +37,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Expirations
     /// 7 4 * * 6    - expire Saturday 4:07 AM <br/>
     /// 15 21 4 7 *  - expire 9:15 PM on 4 July <br/>
     ///	Therefore 6 6 6 6 1 means:
-    ///	•	have we crossed/entered the 6th minute AND
-    ///	•	have we crossed/entered the 6th hour AND 
-    ///	•	have we crossed/entered the 6th day AND
-    ///	•	have we crossed/entered the 6th month AND
-    ///	•	have we crossed/entered A MONDAY?
+    ///	â€¢	have we crossed/entered the 6th minute AND
+    ///	â€¢	have we crossed/entered the 6th hour AND 
+    ///	â€¢	have we crossed/entered the 6th day AND
+    ///	â€¢	have we crossed/entered the 6th month AND
+    ///	â€¢	have we crossed/entered A MONDAY?
     ///
     ///	Therefore these cases should exhibit these behaviors:
     ///
@@ -85,7 +85,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Expirations
     ///	getTime = DateTime.Parse( "06/05/2003 04:06:55 AM" );
     ///	nowTime = DateTime.Parse( "06/06/2003 06:06:00 AM" );
     ///	isExpired = ExtendedFormatHelper.IsExtendedExpired( "6 6 6 6 1", getTime, nowTime );
-    ///	FALSE:  we don’t cross Monday but all other conditions satisfied
+    ///	FALSE:  we donâ€™t cross Monday but all other conditions satisfied
     /// </remarks>
     public class ExtendedFormat
     {

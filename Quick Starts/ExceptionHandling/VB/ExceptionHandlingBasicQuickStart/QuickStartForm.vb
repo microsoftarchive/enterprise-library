@@ -1,8 +1,8 @@
-'===============================================================================
+﻿'===============================================================================
 ' Microsoft patterns & practices Enterprise Library
 ' Exception Handling Application Block QuickStart
 '===============================================================================
-' Copyright ? Microsoft Corporation.  All rights reserved.
+' Copyright © Microsoft Corporation.  All rights reserved.
 ' THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
 ' OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
 ' LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
@@ -52,7 +52,7 @@ Public Class QuickStartForm
     Friend WithEvents viewWalkthroughButton As System.Windows.Forms.Button
     Friend WithEvents quitButton As System.Windows.Forms.Button
 
-    Private Const HelpViewerArguments As String = "/helpcol ms-help://MS.VSCC.v90/MS.VSIPCC.v90/ms.practices.entlib.2008may /LaunchFKeywordTopic ExceptionhandlingQS1"
+    Private Const HelpViewerArguments As String = "/helpcol ms-help://MS.VSCC.v90/MS.VSIPCC.v90/ms.practices.entlib.2008oct /LaunchFKeywordTopic ExceptionhandlingQS1"
     Private viewerProcess As Process = Nothing
     Public Shared AppForm As System.Windows.Forms.Form
     Friend WithEvents propagateOriginalExceptionButton As System.Windows.Forms.Button
@@ -386,6 +386,13 @@ Public Class QuickStartForm
 
     End Sub
     Private Function GetHelpViewerExecutable() As String
+        Dim commonX86 As String = Environment.GetEnvironmentVariable("CommonProgramFiles(x86)")
+        If Not String.IsNullOrEmpty(commonX86) Then
+            Dim pathX86 As String = Path.Combine(commonX86, "Microsoft Shared\Help 9\dexplore.exe")
+            If File.Exists(pathX86) Then
+                Return pathX86
+            End If
+        End If
         Dim common As String = Environment.GetEnvironmentVariable("CommonProgramFiles")
         Return Path.Combine(common, "Microsoft Shared\Help 9\dexplore.exe")
     End Function

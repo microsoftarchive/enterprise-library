@@ -1,8 +1,8 @@
-'===============================================================================
+﻿'===============================================================================
 ' Microsoft patterns & practices Enterprise Library
 ' Configuration QuickStart
 '===============================================================================
-' Copyright � Microsoft Corporation.  All rights reserved.
+' Copyright © Microsoft Corporation.  All rights reserved.
 ' THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
 ' OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
 ' LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
@@ -23,7 +23,7 @@ Imports System.Runtime.InteropServices
 <Assembly: AssemblyDescription("")> 
 <Assembly: AssemblyCompany("Microsoft")> 
 <Assembly: AssemblyProduct("Configuration-Migration")> 
-<Assembly: AssemblyCopyright("Copyright © Microsoft 2005")> 
+<Assembly: AssemblyCopyright("Copyright Â© Microsoft 2005")> 
 <Assembly: AssemblyTrademark("")> 
 
 <Assembly: ComVisible(False)>

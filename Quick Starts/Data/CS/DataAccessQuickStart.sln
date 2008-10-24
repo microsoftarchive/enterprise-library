@@ -39,6 +39,6 @@ Global
 		{D349B6D8-992F-443F-BB57-57E50DD98794} = {97DB6190-819B-4B87-9EF9-70605BA7B807}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SelectedEnterpriseLibraryConfigurationSet = EntLib4Src
+		SelectedEnterpriseLibraryConfigurationSet = EntLib41Src
 	EndGlobalSection
 EndGlobal

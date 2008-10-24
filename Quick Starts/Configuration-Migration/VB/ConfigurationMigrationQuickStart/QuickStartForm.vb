@@ -1,8 +1,8 @@
-'===============================================================================
+﻿'===============================================================================
 ' Microsoft patterns & practices Enterprise Library
 ' Configuration QuickStart
 '===============================================================================
-' Copyright � Microsoft Corporation.  All rights reserved.
+' Copyright © Microsoft Corporation.  All rights reserved.
 ' THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
 ' OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
 ' LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
@@ -11,7 +11,7 @@
 
 Public Class QuickStartForm
     Private Const HelpViewerExecutable As String = "dexplore.exe"
-    Private Const HelpTopicNamespace As String = "ms-help://MS.VSCC.v90/MS.VSIPCC.v90/ms.practices.entlib.2008may"
+    Private Const HelpTopicNamespace As String = "ms-help://MS.VSCC.v90/MS.VSIPCC.v90/ms.practices.entlib.2008oct"
 
     Private viewerProcess As Process = Nothing
     Private WithEvents watcher As FileSystemWatcher

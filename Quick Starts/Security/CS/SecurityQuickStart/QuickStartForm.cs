@@ -1,8 +1,8 @@
-//===============================================================================
+﻿//===============================================================================
 // Microsoft patterns & practices Enterprise Library
 // Security Application Block QuickStart
 //===============================================================================
-// Copyright ? Microsoft Corporation.  All rights reserved.
+// Copyright © Microsoft Corporation.  All rights reserved.
 // THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
 // OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
 // LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
@@ -59,7 +59,7 @@ namespace SecurityQuickStart
 		private System.ComponentModel.Container components = null;
 
 		private Process viewerProcess = null;
-		private const string HelpViewerArguments = @"/helpcol ms-help://MS.VSCC.v90/MS.VSIPCC.v90/ms.practices.entlib.2008may /LaunchFKeywordTopic SecurityQS1";
+		private const string HelpViewerArguments = @"/helpcol ms-help://MS.VSCC.v90/MS.VSIPCC.v90/ms.practices.entlib.2008oct /LaunchFKeywordTopic SecurityQS1";
 
 		// Windows forms for database management
 		private AddUserRoleForm addUserRoleForm;
@@ -979,9 +979,18 @@ namespace SecurityQuickStart
 		/// </summary>
 		private string GetHelpViewerExecutable()
 		{
-			string common = Environment.GetEnvironmentVariable("CommonProgramFiles");
-			return Path.Combine(common, @"Microsoft Shared\Help 9\dexplore.exe");
-		}
+            string commonX86 = Environment.GetEnvironmentVariable("CommonProgramFiles(x86)");
+            if (!string.IsNullOrEmpty(commonX86))
+            {
+                string pathX86 = Path.Combine(commonX86, @"Microsoft Shared\Help 9\dexplore.exe");
+                if (File.Exists(pathX86))
+                {
+                    return pathX86;
+                }
+            }
+            string common = Environment.GetEnvironmentVariable("CommonProgramFiles");
+            return Path.Combine(common, @"Microsoft Shared\Help 9\dexplore.exe");
+        }
 
 		private void viewWalkthroughButton_Click(object sender, System.EventArgs e)
 		{

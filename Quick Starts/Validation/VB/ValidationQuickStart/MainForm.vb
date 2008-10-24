@@ -1,8 +1,8 @@
-'===============================================================================
+﻿'===============================================================================
 ' Microsoft patterns & practices Enterprise Library
 ' Validation Application Block QuickStart
 '===============================================================================
-' Copyright ? Microsoft Corporation.  All rights reserved.
+' Copyright © Microsoft Corporation.  All rights reserved.
 ' THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
 ' OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
 ' LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
@@ -27,7 +27,7 @@ Imports ValidationQuickStart.BusinessEntities
 Partial Public Class MainForm : Inherits Form
 
     Private viewerProcess As Process
-    Private Const HelpViewerArguments As String = "/helpcol ms-help://MS.VSCC.v90/MS.VSIPCC.v90/ms.practices.entlib.2008may /LaunchFKeywordTopic ValidationQS1"
+    Private Const HelpViewerArguments As String = "/helpcol ms-help://MS.VSCC.v90/MS.VSIPCC.v90/ms.practices.entlib.2008oct /LaunchFKeywordTopic ValidationQS1"
 
     Public Sub New()
 
@@ -139,8 +139,15 @@ Partial Public Class MainForm : Inherits Form
     End Sub
 
     Private Function GetHelpViewerExecutable() As String
+        Dim commonX86 As String = Environment.GetEnvironmentVariable("CommonProgramFiles(x86)")
+        If Not String.IsNullOrEmpty(commonX86) Then
+            Dim pathX86 As String = Path.Combine(commonX86, "Microsoft Shared\Help 9\dexplore.exe")
+            If File.Exists(pathX86) Then
+                Return pathX86
+            End If
+        End If
         Dim common As String = Environment.GetEnvironmentVariable("CommonProgramFiles")
-        Return Path.Combine(common, "Microsoft Shared\Help 8\dexplore.exe")
+        Return Path.Combine(common, "Microsoft Shared\Help 9\dexplore.exe")
     End Function
 
     Private Sub viewWalkthroughButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles viewWalkthroughButton.Click

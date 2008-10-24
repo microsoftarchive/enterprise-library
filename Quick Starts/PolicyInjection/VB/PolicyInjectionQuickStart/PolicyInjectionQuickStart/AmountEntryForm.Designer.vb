@@ -1,8 +1,8 @@
-'===============================================================================
+﻿'===============================================================================
 ' Microsoft patterns & practices Enterprise Library
 ' Policy Injection Application Block QuickStart
 '===============================================================================
-' Copyright � Microsoft Corporation.  All rights reserved.
+' Copyright © Microsoft Corporation.  All rights reserved.
 ' THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
 ' OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
 ' LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
@@ -34,7 +34,7 @@ Partial Class AmountEntryForm
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container
-        Me.cancelButton = New System.Windows.Forms.Button
+        Me._cancelButton = New System.Windows.Forms.Button
         Me.okButton = New System.Windows.Forms.Button
         Me.errorProvider = New System.Windows.Forms.ErrorProvider(Me.components)
         Me.amountTextBox = New System.Windows.Forms.TextBox
@@ -42,15 +42,15 @@ Partial Class AmountEntryForm
         CType(Me.errorProvider, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
-        'cancelButton
+        '_cancelButton
         '
-        Me.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel
-        Me.cancelButton.Location = New System.Drawing.Point(186, 92)
-        Me.cancelButton.Name = "cancelButton"
-        Me.cancelButton.Size = New System.Drawing.Size(75, 23)
-        Me.cancelButton.TabIndex = 7
-        Me.cancelButton.Text = "Cancel"
-        Me.cancelButton.UseVisualStyleBackColor = True
+        Me._cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel
+        Me._cancelButton.Location = New System.Drawing.Point(186, 92)
+        Me._cancelButton.Name = "cancelButton"
+        Me._cancelButton.Size = New System.Drawing.Size(75, 23)
+        Me._cancelButton.TabIndex = 7
+        Me._cancelButton.Text = "Cancel"
+        Me._cancelButton.UseVisualStyleBackColor = True
         '
         'okButton
         '
@@ -86,9 +86,9 @@ Partial Class AmountEntryForm
         Me.AcceptButton = Me.okButton
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.cancelButton = Me.cancelButton
+        Me.CancelButton = Me._cancelButton
         Me.ClientSize = New System.Drawing.Size(278, 132)
-        Me.Controls.Add(Me.cancelButton)
+        Me.Controls.Add(Me._cancelButton)
         Me.Controls.Add(Me.okButton)
         Me.Controls.Add(Me.amountTextBox)
         Me.Controls.Add(Me.promptLabel)
@@ -102,7 +102,7 @@ Partial Class AmountEntryForm
         Me.PerformLayout()
 
     End Sub
-    Private WithEvents cancelButton As System.Windows.Forms.Button
+    Private WithEvents _cancelButton As System.Windows.Forms.Button
     Private WithEvents okButton As System.Windows.Forms.Button
     Private WithEvents errorProvider As System.Windows.Forms.ErrorProvider
     Private WithEvents amountTextBox As System.Windows.Forms.TextBox

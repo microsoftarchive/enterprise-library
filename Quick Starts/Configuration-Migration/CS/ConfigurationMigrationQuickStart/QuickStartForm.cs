@@ -1,8 +1,8 @@
-//===============================================================================
+﻿//===============================================================================
 // Microsoft patterns & practices Enterprise Library
 // Configuration QuickStart
 //===============================================================================
-// Copyright � Microsoft Corporation.  All rights reserved.
+// Copyright © Microsoft Corporation.  All rights reserved.
 // THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
 // OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
 // LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
@@ -50,7 +50,7 @@ namespace ConfigurationMigrationQuickStart
 
         private Process viewerProcess = null;
         private const string HelpViewerExecutable = "dexplore.exe";
-        private const string HelpTopicNamespace = @"ms-help://MS.VSCC.v90/MS.VSIPCC.v90/ms.practices.entlib.2008may";
+        private const string HelpTopicNamespace = @"ms-help://MS.VSCC.v90/MS.VSIPCC.v90/ms.practices.entlib.2008oct";
         private TabControl tabControl1;
         private TabPage tabPage1;
         private TabPage tabPage2;

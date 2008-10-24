@@ -1,8 +1,8 @@
-'===============================================================================
+﻿'===============================================================================
 ' Microsoft patterns & practices Enterprise Library
 ' Security Application Block QuickStart
 '===============================================================================
-' Copyright � Microsoft Corporation.  All rights reserved.
+' Copyright © Microsoft Corporation.  All rights reserved.
 ' THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
 ' OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
 ' LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
@@ -294,7 +294,11 @@ Public Class AddUserRoleForm
     End Sub
 
     Private Sub okButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles okButton.Click
-        Me.newUserName = CType(Me.usersComboBox.Items(Me.usersComboBox.SelectedIndex), String)
+        If (Me.usersComboBox.SelectedIndex >= 0) Then
+            Me.newUserName = CType(Me.usersComboBox.Items(Me.usersComboBox.SelectedIndex), String)
+        Else
+            Me.newUserName = String.Empty
+        End If
         If (Me.rolesComboBox.SelectedIndex >= 0) Then
             Me.userRole = CType(Me.rolesComboBox.Items(Me.rolesComboBox.SelectedIndex), String)
         Else

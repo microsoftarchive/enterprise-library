@@ -2,7 +2,7 @@
 // Microsoft patterns & practices Enterprise Library
 // Core
 //===============================================================================
-// Copyright ? Microsoft Corporation.  All rights reserved.
+// Copyright © Microsoft Corporation.  All rights reserved.
 // THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
 // OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
 // LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
@@ -17,7 +17,7 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability.T
 
 [assembly: AssemblyTitle("Enterprise Library Shared Library Manageability Tests")]
 [assembly: AssemblyDescription("Enterprise Library Shared Library Manageability Tests")]
-[assembly: AssemblyVersion("4.0.0.1010")]
+[assembly: AssemblyVersion("4.0.0.1024")]
 
 [assembly: ConfigurationSectionManageabilityProvider("section1", typeof(MockConfigurationSectionManageabilityProvider))]
 [assembly: ConfigurationElementManageabilityProvider(typeof(MockConfigurationSectionManageabilityProviderAlt), typeof(string), typeof(MockConfigurationSectionManageabilityProvider))]

@@ -69,6 +69,84 @@
             The name specified in the constructor.
             </summary>
         </member>
+        <member name="T:Microsoft.Practices.Unity.UnityDefaultStrategiesExtension">
+            <summary>
+            This extension installs the default strategies and policies into the container
+            to implement the standard behavior of the Unity container.
+            </summary>
+            <summary>
+            This extension installs the default strategies and policies into the container
+            to implement the standard behavior of the Unity container.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Practices.Unity.UnityContainerExtension">
+            <summary>
+            Base class for all <see cref="T:Microsoft.Practices.Unity.UnityContainer"/> extension objects.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Practices.Unity.IUnityContainerExtensionConfigurator">
+            <summary>
+            Base interface for all extension configuration interfaces.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Unity.IUnityContainerExtensionConfigurator.Container">
+            <summary>
+            Retrieve the container instance that we are currently configuring.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.UnityContainerExtension.InitializeExtension(Microsoft.Practices.Unity.ExtensionContext)">
+            <summary>
+            The container calls this method when the extension is added.
+            </summary>
+            <param name="context">A <see cref="T:Microsoft.Practices.Unity.ExtensionContext"/> instance that gives the
+            extension access to the internals of the container.</param>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.UnityContainerExtension.Initialize">
+            <summary>
+            Initial the container with this extension's functionality.
+            </summary>
+            <remarks>
+            When overridden in a derived class, this method will modify the given
+            <see cref="T:Microsoft.Practices.Unity.ExtensionContext"/> by adding strategies, policies, etc. to
+            install it's functions into the container.</remarks>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.UnityContainerExtension.Remove">
+            <summary>
+            Removes the extension's functions from the container.
+            </summary>
+            <remarks>
+            <para>
+            This method is called when extensions are being removed from the container. It can be
+            used to do things like disconnect event handlers or clean up member state. You do not
+            need to remove strategies or policies here; the container will do that automatically.
+            </para>
+            <para>
+            The default implementation of this method does nothing.</para>
+            </remarks>
+        </member>
+        <member name="P:Microsoft.Practices.Unity.UnityContainerExtension.Container">
+            <summary>
+            The container this extension has been added to.
+            </summary>
+            <value>The <see cref="T:Microsoft.Practices.Unity.UnityContainer"/> that this extension has been added to.</value>
+        </member>
+        <member name="P:Microsoft.Practices.Unity.UnityContainerExtension.Context">
+            <summary>
+            The <see cref="T:Microsoft.Practices.Unity.ExtensionContext"/> object used to manipulate
+            the inner state of the container.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.UnityDefaultStrategiesExtension.SetDynamicBuilderMethodCreatorPolicy">
+            <summary>
+            Add the correct <see cref="T:Microsoft.Practices.ObjectBuilder2.IDynamicBuilderMethodCreatorPolicy"/> to the policy
+            set. This version adds the appropriate policy for running on the desktop CLR.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.UnityDefaultStrategiesExtension.Initialize">
+            <summary>
+            Add the default ObjectBuilder strategies &amp; policies to the container.
+            </summary>
+        </member>
         <member name="T:Microsoft.Practices.Unity.ExtensionContext">
             <summary>
             The <see cref="T:Microsoft.Practices.Unity.ExtensionContext"/> class provides the means for extension objects
@@ -135,16 +213,6 @@
             <summary>
             This event is raised when the <see cref="M:Microsoft.Practices.Unity.IUnityContainer.RegisterInstance(System.Type,System.String,System.Object,Microsoft.Practices.Unity.LifetimeManager)"/> method,
             or one of its overloads, is called.
-            </summary>
-        </member>
-        <member name="T:Microsoft.Practices.Unity.IUnityContainerExtensionConfigurator">
-            <summary>
-            Base interface for all extension configuration interfaces.
-            </summary>
-        </member>
-        <member name="P:Microsoft.Practices.Unity.IUnityContainerExtensionConfigurator.Container">
-            <summary>
-            Retrieve the container instance that we are currently configuring.
             </summary>
         </member>
         <member name="T:Microsoft.Practices.Unity.NamedEventArgs">
@@ -236,53 +304,6 @@
             <summary>
             <see cref="T:Microsoft.Practices.Unity.LifetimeManager"/> that controls ownership of
             this instance.
-            </summary>
-        </member>
-        <member name="T:Microsoft.Practices.Unity.UnityContainerExtension">
-            <summary>
-            Base class for all <see cref="T:Microsoft.Practices.Unity.UnityContainer"/> extension objects.
-            </summary>
-        </member>
-        <member name="M:Microsoft.Practices.Unity.UnityContainerExtension.InitializeExtension(Microsoft.Practices.Unity.ExtensionContext)">
-            <summary>
-            The container calls this method when the extension is added.
-            </summary>
-            <param name="context">A <see cref="T:Microsoft.Practices.Unity.ExtensionContext"/> instance that gives the
-            extension access to the internals of the container.</param>
-        </member>
-        <member name="M:Microsoft.Practices.Unity.UnityContainerExtension.Initialize">
-            <summary>
-            Initial the container with this extension's functionality.
-            </summary>
-            <remarks>
-            When overridden in a derived class, this method will modify the given
-            <see cref="T:Microsoft.Practices.Unity.ExtensionContext"/> by adding strategies, policies, etc. to
-            install it's functions into the container.</remarks>
-        </member>
-        <member name="M:Microsoft.Practices.Unity.UnityContainerExtension.Remove">
-            <summary>
-            Removes the extension's functions from the container.
-            </summary>
-            <remarks>
-            <para>
-            This method is called when extensions are being removed from the container. It can be
-            used to do things like disconnect event handlers or clean up member state. You do not
-            need to remove strategies or policies here; the container will do that automatically.
-            </para>
-            <para>
-            The default implementation of this method does nothing.</para>
-            </remarks>
-        </member>
-        <member name="P:Microsoft.Practices.Unity.UnityContainerExtension.Container">
-            <summary>
-            The container this extension has been added to.
-            </summary>
-            <value>The <see cref="T:Microsoft.Practices.Unity.UnityContainer"/> that this extension has been added to.</value>
-        </member>
-        <member name="P:Microsoft.Practices.Unity.UnityContainerExtension.Context">
-            <summary>
-            The <see cref="T:Microsoft.Practices.Unity.ExtensionContext"/> object used to manipulate
-            the inner state of the container.
             </summary>
         </member>
         <member name="T:Microsoft.Practices.Unity.GenericParameter">
@@ -676,21 +697,6 @@
             type registered in a container.
             </summary>
         </member>
-        <member name="M:Microsoft.Practices.Unity.ResolvedArrayParameter.#ctor(System.Type)">
-            <summary>
-            Construct a new <see cref="T:Microsoft.Practices.Unity.ResolvedArrayParameter"/> that
-            resolves to the given element type.
-            </summary>
-            <param name="elementType">The type of elements to resolve.</param>
-        </member>
-        <member name="M:Microsoft.Practices.Unity.ResolvedArrayParameter.#ctor(System.Type,System.Type)">
-            <summary>
-            Construct a new <see cref="T:Microsoft.Practices.Unity.ResolvedArrayParameter"/> that
-            resolves to the given array and element types.
-            </summary>
-            <param name="arrayParameterType">The type for the array of elements to resolve.</param>
-            <param name="elementType">The type of elements to resolve.</param>
-        </member>
         <member name="M:Microsoft.Practices.Unity.ResolvedArrayParameter.#ctor(System.Type,System.Object[])">
             <summary>
             Construct a new <see cref="T:Microsoft.Practices.Unity.ResolvedArrayParameter"/> that
@@ -725,12 +731,6 @@
             when creating them by hand.
             </summary>
             <typeparam name="TElement">Type of the elements for the array of the parameter.</typeparam>
-        </member>
-        <member name="M:Microsoft.Practices.Unity.ResolvedArrayParameter`1.#ctor">
-            <summary>
-            Construct a new <see cref="T:Microsoft.Practices.Unity.ResolvedArrayParameter`1"/> that
-            resolves to the given element generic type.
-            </summary>
         </member>
         <member name="M:Microsoft.Practices.Unity.ResolvedArrayParameter`1.#ctor(System.Object[])">
             <summary>
@@ -2799,17 +2799,6 @@
             Remove the default behavior from the container.
             </summary>
         </member>
-        <member name="T:Microsoft.Practices.Unity.UnityDefaultStrategiesExtension">
-            <summary>
-            This extension installs the default strategies and policies into the container
-            to implement the standard behavior of the Unity container.
-            </summary>
-        </member>
-        <member name="M:Microsoft.Practices.Unity.UnityDefaultStrategiesExtension.Initialize">
-            <summary>
-            Add the default ObjectBuilder strategies &amp; policies to the container.
-            </summary>
-        </member>
         <member name="T:Microsoft.Practices.Unity.Utility.MethodReflectionHelper">
             <summary>
             Helper class to wrap common reflection stuff dealing with
@@ -2983,295 +2972,6 @@
             lets you query information about the given ParameterInfo object.
             </summary>
             <param name="parameter">Parameter to query.</param>
-        </member>
-        <member name="T:Microsoft.Practices.Unity.Utility.Sequence">
-            <summary>
-            A series of helper methods to deal with sequences -
-            objects that implement <see cref="T:System.Collections.Generic.IEnumerable`1"/>.
-            </summary>
-            <remarks>LINQ in C# 3.0 does pretty much the same stuff,
-            but we're keeping C# 2.0 compatibility here.</remarks>
-        </member>
-        <member name="M:Microsoft.Practices.Unity.Utility.Sequence.ToList``1(System.Collections.Generic.IEnumerable{``0})">
-            <summary>
-            Given an <see cref="T:System.Collections.Generic.IEnumerable`1"/>, return a
-            new <see cref="T:System.Collections.Generic.List`1"/> containing the same contents.
-            </summary>
-            <typeparam name="T">Type of item store in the sequence.</typeparam>
-            <param name="seq">Sequence to create list from.</param>
-            <returns>The new <see cref="T:System.Collections.Generic.List`1"/></returns>
-        </member>
-        <member name="M:Microsoft.Practices.Unity.Utility.Sequence.OfType``1(System.Collections.IEnumerable)">
-            <summary>
-            Given an <see cref="T:System.Collections.IEnumerable"/> return a new
-            <see cref="T:System.Collections.Generic.IEnumerable`1"/> that contains
-            all the objects in <paramref name="source"/> that
-            are castable to <typeparamref name="TResult"/>.
-            </summary>
-            <typeparam name="TResult">Desired type for objects.</typeparam>
-            <param name="source">Input sequence.</param>
-            <returns>New output sequence.</returns>
-        </member>
-        <member name="M:Microsoft.Practices.Unity.Utility.Sequence.Collect``1(``0[])">
-            <summary>
-            A function that turns an arbitrary parameter list into an
-            <see cref="T:System.Collections.Generic.IEnumerable`1"/>.
-            </summary>
-            <typeparam name="T">Type of arguments.</typeparam>
-            <param name="arguments">The items to put into the collection.</param>
-            <returns>An array that contains the values of the <paramref name="arguments"/>.</returns>
-        </member>
-        <member name="M:Microsoft.Practices.Unity.Utility.Sequence.ToArray``1(System.Collections.Generic.IEnumerable{``0})">
-            <summary>
-            Create an array containing the elements of the given sequence.
-            </summary>
-            <typeparam name="T">Type of sequence and array.</typeparam>
-            <param name="sequence">Input sequence.</param>
-            <returns>The resulting array.</returns>
-        </member>
-        <member name="M:Microsoft.Practices.Unity.Utility.Sequence.Where``1(System.Collections.Generic.IEnumerable{``0},System.Predicate{``0})">
-            <summary>
-            Given a sequence of <typeparamref name="T"/>, returns a sequence
-            containing those elements that satisfy the given predicate <paramref name="pred"/>.
-            </summary>
-            <typeparam name="T">Type of items in the sequence.</typeparam>
-            <param name="sequence">Source sequence.</param>
-            <param name="pred">Predicate used to test which items match.</param>
-            <returns>The sequence of items that satify <paramref name="pred"/>. This
-            sequence may be empty.</returns>
-        </member>
-        <member name="M:Microsoft.Practices.Unity.Utility.Sequence.Exists``1(System.Collections.Generic.IEnumerable{``0},System.Predicate{``0})">
-            <summary>
-            Tests the given <paramref name="sequence"/>, returning true if any
-            element in <paramref name="sequence"/> satisfies the given predicate.
-            </summary>
-            <typeparam name="T">Type of elements in sequence.</typeparam>
-            <param name="sequence">Sequence to test.</param>
-            <param name="pred">Predicate to use to test for existence.</param>
-            <returns>true if any elements satify pred, false if not.</returns>
-        </member>
-        <member name="M:Microsoft.Practices.Unity.Utility.Sequence.Map``2(System.Collections.Generic.IEnumerable{``0},System.Converter{``0,``1})">
-            <summary>
-            Given a sequence of <typeparamref name="TIn"/>, returns a sequence of
-            <typeparamref name="TOut"/> created by running the items in <paramref name="input"/>
-            through <paramref name="converter"/>.
-            </summary>
-            <typeparam name="TIn">Type of items in input.</typeparam>
-            <typeparam name="TOut">Type of items in output.</typeparam>
-            <param name="input">Input sequence.</param>
-            <param name="converter">Mapping function.</param>
-            <returns>The converted output sequence.</returns>
-        </member>
-        <member name="M:Microsoft.Practices.Unity.Utility.Sequence.Reduce``2(System.Collections.Generic.IEnumerable{``0},``1,Microsoft.Practices.Unity.Utility.Sequence.Reducer{``0,``1})">
-            <summary>
-            Run a functional Reduce operation. See other methods for examples.
-            </summary>
-            <typeparam name="TSource">Type of inputs.</typeparam>
-            <typeparam name="TDest">Type of final output.</typeparam>
-            <param name="sequence">Sequence of input items.</param>
-            <param name="initialValue">Initial value for accumulator.</param>
-            <param name="reducer">Reduce function.</param>
-            <returns></returns>
-        </member>
-        <member name="M:Microsoft.Practices.Unity.Utility.Sequence.ToString``1(System.Collections.Generic.IEnumerable{``0},System.String,System.Converter{``0,System.String})">
-            <summary>
-            Convert the given sequence to a single string. The items in the string are
-            separated by the given separator, and each object is converted to a string
-            using the <paramref name="converter"/> method given.
-            </summary>
-            <typeparam name="T">Type of input sequence.</typeparam>
-            <param name="sequence">Input sequence.</param>
-            <param name="separator">Separator string.</param>
-            <param name="converter">Function to convert <typeparamref name="T"/> instances to
-            strings.</param>
-            <returns>The collected string.</returns>
-        </member>
-        <member name="M:Microsoft.Practices.Unity.Utility.Sequence.ToString``1(System.Collections.Generic.IEnumerable{``0},System.String)">
-            <summary>
-            Convert the given sequence to a single string. The items in the string are separated
-            by the given separator, and each object is converted to a string by calling its
-            <see cref="M:System.Object.ToString"/>  method.
-            </summary>
-            <typeparam name="T">Type of input sequence.</typeparam>
-            <param name="sequence">Input sequence.</param>
-            <param name="separator">Separator string.</param>
-            <returns>The collected string.</returns>
-        </member>
-        <member name="M:Microsoft.Practices.Unity.Utility.Sequence.First``1(System.Collections.Generic.IEnumerable{``0})">
-            <summary>
-            Return the first item in the given sequence.
-            </summary>
-            <exception cref="T:System.InvalidOperationException">Thrown if the sequence is empty.</exception>
-            <typeparam name="T">Type of items in the sequence.</typeparam>
-            <param name="sequence">The sequence.</param>
-            <returns>First item in the sequence.</returns>
-        </member>
-        <member name="M:Microsoft.Practices.Unity.Utility.Sequence.ForEach``1(System.Collections.Generic.IEnumerable{``0},System.Action{``0})">
-            <summary>
-            Execute the given action delegate for each item in the sequence.
-            </summary>
-            <typeparam name="TItem">Type of item in the sequence.</typeparam>
-            <param name="sequence">The sequence of items.</param>
-            <param name="action">Action to perform on each item.</param>
-        </member>
-        <member name="M:Microsoft.Practices.Unity.Utility.Sequence.Concat``1(System.Collections.Generic.IEnumerable{``0}[])">
-            <summary>
-            Concatenate multiple sequences into a single one.
-            </summary>
-            <typeparam name="TItem">Type of sequences in the sequence.</typeparam>
-            <param name="sequences">The sequences to combine.</param>
-            <returns>The combined sequence.</returns>
-        </member>
-        <member name="T:Microsoft.Practices.Unity.Utility.Sequence.Reducer`2">
-            <summary>
-            A delegate that defines the function passed to the <see cref="M:Microsoft.Practices.Unity.Utility.Sequence.Reduce``2(System.Collections.Generic.IEnumerable{``0},``1,Microsoft.Practices.Unity.Utility.Sequence.Reducer{``0,``1})"/> methods.
-            </summary>
-            <typeparam name="TSource">Type of item being reduced.</typeparam>
-            <typeparam name="TDest">Type of the accumulator object.</typeparam>
-            <param name="currentItem">Current item to process.</param>
-            <param name="accumulator">Current value of the accumulator.</param>
-            <returns></returns>
-        </member>
-        <member name="T:Microsoft.Practices.Unity.Utility.Seq">
-            <summary>
-            Static class containing constructor methods for
-            instances of <see cref="T:Microsoft.Practices.Unity.Utility.Seq`1"/>, so that we
-            get type inference.
-            </summary>
-        </member>
-        <member name="M:Microsoft.Practices.Unity.Utility.Seq.Make``1(System.Collections.Generic.IEnumerable{``0})">
-            <summary>
-            Make a new instance of <see cref="T:Microsoft.Practices.Unity.Utility.Seq`1"/> that wraps
-            the given items.
-            </summary>
-            <typeparam name="T">Type of items in the sequence.</typeparam>
-            <param name="items">Items in the sequence.</param>
-            <returns>The sequence.</returns>
-        </member>
-        <member name="M:Microsoft.Practices.Unity.Utility.Seq.Collect``1(``0[])">
-            <summary>
-            Make a new instance of <see cref="T:Microsoft.Practices.Unity.Utility.Seq`1"/> that wraps
-            the given items.
-            </summary>
-            <typeparam name="T">Type of items in the sequence.</typeparam>
-            <param name="items">Items in the sequence.</param>
-            <returns>The sequence.</returns>
-        </member>
-        <member name="T:Microsoft.Practices.Unity.Utility.Seq`1">
-            <summary>
-            And another helper class that makes it possible to chain sequence operations together.
-            </summary>
-            <typeparam name="T">Type of item contained in the sequence.</typeparam>
-        </member>
-        <member name="M:Microsoft.Practices.Unity.Utility.Seq`1.#ctor(System.Collections.Generic.IEnumerable{`0})">
-            <summary>
-            Create a new <see cref="T:Microsoft.Practices.Unity.Utility.Seq`1"/> instance wrapping the given IEnumerable.
-            </summary>
-            <param name="items">The sequence to wrap.</param>
-        </member>
-        <member name="M:Microsoft.Practices.Unity.Utility.Seq`1.System#Collections#IEnumerable#GetEnumerator">
-            <summary>
-                                Returns an enumerator that iterates through a collection.
-            </summary>
-            <returns>
-                                An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.
-            </returns>
-            <filterpriority>2</filterpriority>
-        </member>
-        <member name="M:Microsoft.Practices.Unity.Utility.Seq`1.GetEnumerator">
-            <summary>
-                                Returns an enumerator that iterates through the collection.
-            </summary>
-            <returns>
-                                A <see cref="T:System.Collections.Generic.IEnumerator`1" /> that can be used to iterate through the collection.
-            </returns>
-            <filterpriority>1</filterpriority>
-        </member>
-        <member name="M:Microsoft.Practices.Unity.Utility.Seq`1.ToList">
-            <summary>
-            Given a sequence object, return a list containing those items.
-            </summary>
-            <returns>The materialized list.</returns>
-        </member>
-        <member name="M:Microsoft.Practices.Unity.Utility.Seq`1.ToArray">
-            <summary>
-            Return an array with the same contents as this sequence.
-            </summary>
-            <returns>The materialized array.</returns>
-        </member>
-        <member name="M:Microsoft.Practices.Unity.Utility.Seq`1.Where(System.Predicate{`0})">
-            <summary>
-            Returns new sequence containing only the items for which the predicate is true.
-            </summary>
-            <param name="predicate">Test to indicate sequence inclusion</param>
-            <returns>New sequence.</returns>
-        </member>
-        <member name="M:Microsoft.Practices.Unity.Utility.Seq`1.Exists(System.Predicate{`0})">
-            <summary>
-            Tests the sequence, returning true if any
-            element satisfies the given predicate.
-            </summary>
-            <param name="predicate">Predicate to use to test for existence.</param>
-            <returns>true if any elements satify pred, false if not.</returns>
-        </member>
-        <member name="M:Microsoft.Practices.Unity.Utility.Seq`1.Map``1(System.Converter{`0,``0})">
-            <summary>
-            Return a new sequence consisting of the result of running each element through
-            the given <paramref name="converter"/>.
-            </summary>
-            <typeparam name="TOut">Desired output type.</typeparam>
-            <param name="converter">Converter delegate.</param>
-            <returns>New Sequence</returns>
-        </member>
-        <member name="M:Microsoft.Practices.Unity.Utility.Seq`1.Reduce``1(``0,Microsoft.Practices.Unity.Utility.Sequence.Reducer{`0,``0})">
-            <summary>
-            Run a functional Reduce operation. See other methods for examples.
-            </summary>
-            <typeparam name="TDest">Type of final output.</typeparam>
-            <param name="initialValue">Initial value for accumulator.</param>
-            <param name="reducer">Reduce function.</param>
-            <returns></returns>
-        </member>
-        <member name="M:Microsoft.Practices.Unity.Utility.Seq`1.ToString(System.String,System.Converter{`0,System.String})">
-            <summary>
-            Convert the given sequence to a single string. The items in the string are
-            separated by the given separator, and each object is converted to a string
-            using the <paramref name="converter"/> method given.
-            </summary>
-            <param name="separator">Separator string.</param>
-            <param name="converter">Function to convert <typeparamref name="T"/> instances to
-            strings.</param>
-            <returns>The collected string.</returns>
-        </member>
-        <member name="M:Microsoft.Practices.Unity.Utility.Seq`1.ToString(System.String)">
-            <summary>
-            Convert the given sequence to a single string. The items in the string are separated
-            by the given separator, and each object is converted to a string by calling its
-            <see cref="M:System.Object.ToString"/>  method.
-            </summary>
-            <param name="separator">Separator string.</param>
-            <returns>The collected string.</returns>
-        </member>
-        <member name="M:Microsoft.Practices.Unity.Utility.Seq`1.First">
-            <summary>
-            Return the first item in the given sequence.
-            </summary>
-            <exception cref="T:System.InvalidOperationException">Thrown if the sequence is empty.</exception>
-            <returns>First item in the sequence.</returns>
-        </member>
-        <member name="M:Microsoft.Practices.Unity.Utility.Seq`1.ForEach(System.Action{`0})">
-            <summary>
-            Execute the given action delegate for each item in the sequence.
-            </summary>
-            <param name="action">Action to perform on each item.</param>
-        </member>
-        <member name="M:Microsoft.Practices.Unity.Utility.Seq`1.Concat(System.Collections.Generic.IEnumerable{`0}[])">
-            <summary>
-            Concatenate multiple sequences with this one to return a single
-            sequence containing all items.
-            </summary>
-            <param name="sequences">Sequences to combine.</param>
-            <returns>The combined sequence.</returns>
         </member>
     </members>
 </doc>

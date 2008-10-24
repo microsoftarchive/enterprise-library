@@ -1,20 +1,16 @@
-//===============================================================================
+﻿//===============================================================================
 // Microsoft patterns & practices Enterprise Library
 // Security Application Block QuickStart
 //===============================================================================
-// Copyright � Microsoft Corporation.  All rights reserved.
+// Copyright © Microsoft Corporation.  All rights reserved.
 // THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
 // OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
 // LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
-using System.Drawing;
-using System.Collections;
-using System.ComponentModel;
-using System.Windows.Forms;
 using System.Web.Security;
+using System.Windows.Forms;
 
 namespace SecurityQuickStart
 {
@@ -316,7 +312,14 @@ namespace SecurityQuickStart
 
         private void okButton_Click(object sender, System.EventArgs e)
         {
-            this.userName = (string)this.usersComboBox.Items[this.usersComboBox.SelectedIndex];
+            if (this.usersComboBox.SelectedIndex >= 0)
+            {
+                this.userName = (string)this.usersComboBox.Items[this.usersComboBox.SelectedIndex];
+            }
+            else
+            {
+                this.userName = string.Empty;
+            }
             if (this.rolesComboBox.SelectedIndex >= 0)
             {
                 this.role = (string)this.rolesComboBox.Items[this.rolesComboBox.SelectedIndex];

@@ -1,8 +1,8 @@
-//===============================================================================
+﻿//===============================================================================
 // Microsoft patterns & practices Enterprise Library
 // Caching Application Block QuickStart
 //===============================================================================
-// Copyright ? Microsoft Corporation.  All rights reserved.
+// Copyright © Microsoft Corporation.  All rights reserved.
 // THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
 // OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
 // LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
@@ -29,7 +29,7 @@ namespace CachingQuickStart
     /// </summary>
     public class QuickStartForm : Form
     {
-        const string HelpViewerArguments = @"/helpcol ms-help://MS.VSCC.v90/MS.VSIPCC.v90/ms.practices.entlib.2008may /LaunchFKeywordTopic CachingQS1";
+        const string HelpViewerArguments = @"/helpcol ms-help://MS.VSCC.v90/MS.VSIPCC.v90/ms.practices.entlib.2008oct /LaunchFKeywordTopic CachingQS1";
         const string MasterDataViewerExecutable = "notepad.exe";
         public static Form AppForm;
 
@@ -183,6 +183,15 @@ namespace CachingQuickStart
         /// </summary>
         static string GetHelpViewerExecutable()
         {
+            string commonX86 = Environment.GetEnvironmentVariable("CommonProgramFiles(x86)");
+            if (!string.IsNullOrEmpty(commonX86))
+            {
+                string pathX86 = Path.Combine(commonX86, @"Microsoft Shared\Help 9\dexplore.exe");
+                if (File.Exists(pathX86))
+                {
+                    return pathX86;
+                }
+            }
             string common = Environment.GetEnvironmentVariable("CommonProgramFiles");
             return Path.Combine(common, @"Microsoft Shared\Help 9\dexplore.exe");
         }

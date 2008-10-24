@@ -1,8 +1,8 @@
-'===============================================================================
+﻿'===============================================================================
 ' Microsoft patterns & practices Enterprise Library
 ' Validation Application Block QuickStart
 '===============================================================================
-' Copyright � Microsoft Corporation.  All rights reserved.
+' Copyright © Microsoft Corporation.  All rights reserved.
 ' THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
 ' OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
 ' LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
@@ -23,7 +23,7 @@ Imports System.Runtime.InteropServices
 <Assembly: AssemblyDescription("")> 
 <Assembly: AssemblyCompany("MSIT")> 
 <Assembly: AssemblyProduct("ValidationQuickStart")> 
-<Assembly: AssemblyCopyright("Copyright © MSIT 2007")> 
+<Assembly: AssemblyCopyright("Copyright Â© MSIT 2007")> 
 <Assembly: AssemblyTrademark("")> 
 
 <Assembly: ComVisible(False)>

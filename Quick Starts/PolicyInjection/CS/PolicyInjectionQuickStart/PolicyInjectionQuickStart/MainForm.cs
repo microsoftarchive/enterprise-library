@@ -1,8 +1,8 @@
-//===============================================================================
+﻿//===============================================================================
 // Microsoft patterns & practices Enterprise Library
 // Policy Injection Application Block QuickStart
 //===============================================================================
-// Copyright ? Microsoft Corporation.  All rights reserved.
+// Copyright © Microsoft Corporation.  All rights reserved.
 // THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
 // OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
 // LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
@@ -31,9 +31,9 @@ namespace PolicyInjectionQuickStart
     public partial class MainForm : Form
     {
         private Process viewerProcess = null;
-        private const string HelpViewerArguments = @"/helpcol ms-help://MS.VSCC.v90/MS.VSIPCC.v90/ms.practices.entlib.2008may /LaunchFKeywordTopic PolicyInjectionQS1";
+        private const string HelpViewerArguments = @"/helpcol ms-help://MS.VSCC.v90/MS.VSIPCC.v90/ms.practices.entlib.2008oct /LaunchFKeywordTopic PolicyInjectionQS1";
         private BusinessLogic.BankAccount bankAccount;
-     
+
 
         public MainForm()
         {
@@ -103,7 +103,7 @@ namespace PolicyInjectionQuickStart
 
         private void PopulateUserList()
         {
-            
+
             const string userPrefix = "User:";
             foreach (string setting in ConfigurationManager.AppSettings)
             {
@@ -112,7 +112,7 @@ namespace PolicyInjectionQuickStart
                     string userName = setting.Substring(userPrefix.Length);
                     string role = ConfigurationManager.AppSettings[setting];
                     IPrincipal principal = new GenericPrincipal(
-                        new GenericIdentity(userName), new string[] { role } );
+                        new GenericIdentity(userName), new string[] { role });
                     userComboBox.Items.Add(new KeyValuePair<string, IPrincipal>(userName, principal));
                 }
             }
@@ -125,7 +125,7 @@ namespace PolicyInjectionQuickStart
             // It's a Quickstart, people! :-)
 
             // Find the principal of the selected user. 
-            KeyValuePair<string, IPrincipal> pair = (KeyValuePair<string, IPrincipal>)userComboBox.SelectedItem ;
+            KeyValuePair<string, IPrincipal> pair = (KeyValuePair<string, IPrincipal>)userComboBox.SelectedItem;
             IPrincipal selectedUser = pair.Value;
 
             // Set the current thread principal to the selected user
@@ -150,7 +150,7 @@ namespace PolicyInjectionQuickStart
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error );
+                MessageBox.Show(ex.Message, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -165,6 +165,11 @@ namespace PolicyInjectionQuickStart
             }
             catch (Exception ex)
             {
+                InstallException installException = ex as InstallException;
+                if (installException != null && installException.InnerException != null)
+                {
+                    ex = installException.InnerException;
+                }
                 MessageBox.Show(ex.Message, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -174,6 +179,15 @@ namespace PolicyInjectionQuickStart
         /// </summary>
         private string GetHelpViewerExecutable()
         {
+            string commonX86 = Environment.GetEnvironmentVariable("CommonProgramFiles(x86)");
+            if (!string.IsNullOrEmpty(commonX86))
+            {
+                string pathX86 = Path.Combine(commonX86, @"Microsoft Shared\Help 9\dexplore.exe");
+                if (File.Exists(pathX86))
+                {
+                    return pathX86;
+                }
+            }
             string common = Environment.GetEnvironmentVariable("CommonProgramFiles");
             return Path.Combine(common, @"Microsoft Shared\Help 9\dexplore.exe");
         }
@@ -206,6 +220,6 @@ namespace PolicyInjectionQuickStart
                 NativeMethods.SetForegroundWindow(hWnd);
             }
         }
-     
+
     }
 }

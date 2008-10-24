@@ -2,7 +2,7 @@
 // Microsoft patterns & practices Enterprise Library
 // SQL Configuration Source QuickStart
 //===============================================================================
-// Copyright � Microsoft Corporation.  All rights reserved.
+// Copyright © Microsoft Corporation.  All rights reserved.
 // THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
 // OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
 // LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
@@ -21,7 +21,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("PAG")]
 [assembly: AssemblyProduct("SqlConfiguration.Design.Tests.NUnit")]
-[assembly: AssemblyCopyright("Copyright © PAG 2005")]
+[assembly: AssemblyCopyright("Copyright Â© PAG 2005")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

@@ -2,7 +2,7 @@
 // Microsoft patterns & practices Enterprise Library
 // Policy Injection Application Block QuickStart
 //===============================================================================
-// Copyright � Microsoft Corporation.  All rights reserved.
+// Copyright © Microsoft Corporation.  All rights reserved.
 // THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
 // OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
 // LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
@@ -21,7 +21,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("MSIT")]
 [assembly: AssemblyProduct("PolicyInjectionQuickStart")]
-[assembly: AssemblyCopyright("Copyright © MSIT 2007")]
+[assembly: AssemblyCopyright("Copyright Â© MSIT 2007")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

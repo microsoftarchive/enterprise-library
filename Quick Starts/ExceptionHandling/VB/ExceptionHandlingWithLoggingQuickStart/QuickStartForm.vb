@@ -1,8 +1,8 @@
-'===============================================================================
+﻿'===============================================================================
 ' Microsoft patterns & practices Enterprise Library
 ' Exception Handling Application Block QuickStart
 '===============================================================================
-' Copyright ? Microsoft Corporation.  All rights reserved.
+' Copyright © Microsoft Corporation.  All rights reserved.
 ' THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
 ' OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
 ' LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
@@ -53,7 +53,7 @@ Public Class QuickStartForm
     Public Shared AppForm As System.Windows.Forms.Form
     Private viewerProcess As Process = Nothing
 
-    Private Const HelpViewerArguments As String = "/helpcol ms-help://MS.VSCC.v90/MS.VSIPCC.v90/ms.practices.entlib.2008may /LaunchFKeywordTopic ExceptionhandlingQS2"
+    Private Const HelpViewerArguments As String = "/helpcol ms-help://MS.VSCC.v90/MS.VSIPCC.v90/ms.practices.entlib.2008oct /LaunchFKeywordTopic ExceptionhandlingQS2"
 
     <System.Diagnostics.DebuggerStepThrough()> Private Sub InitializeComponent()
         Me.groupBox1 = New System.Windows.Forms.GroupBox
@@ -224,6 +224,13 @@ Public Class QuickStartForm
         Throw New Exception("Quick Start Generated Exception")
     End Sub
     Private Function GetHelpViewerExecutable() As String
+        Dim commonX86 As String = Environment.GetEnvironmentVariable("CommonProgramFiles(x86)")
+        If Not String.IsNullOrEmpty(commonX86) Then
+            Dim pathX86 As String = Path.Combine(commonX86, "Microsoft Shared\Help 9\dexplore.exe")
+            If File.Exists(pathX86) Then
+                Return pathX86
+            End If
+        End If
         Dim common As String = Environment.GetEnvironmentVariable("CommonProgramFiles")
         Return Path.Combine(common, "Microsoft Shared\Help 9\dexplore.exe")
     End Function

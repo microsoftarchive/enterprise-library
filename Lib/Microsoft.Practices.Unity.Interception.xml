@@ -4,23 +4,6 @@
         <name>Microsoft.Practices.Unity.Interception</name>
     </assembly>
     <members>
-        <member name="T:Microsoft.Practices.Unity.InterceptionExtension.Interceptor">
-            <summary>
-            An abstract class that is used to configure interception
-            of various kinds for each method. Can be passed either
-            in the RegisterType call or in the methods of the <see cref="T:Microsoft.Practices.Unity.InterceptionExtension.Interception"/>
-            extension.
-            </summary>
-        </member>
-        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Interceptor.FindInterceptorPolicy``1(Microsoft.Practices.ObjectBuilder2.IBuilderContext)">
-            <summary>
-            A method that encapsulates the logic used to find the particular
-            interception policy used by the various strategies. It handles
-            looking for the various defaults.
-            </summary>
-            <typeparam name="TPolicy">Policy type you're looking for</typeparam>
-            <returns>The policy object or null if not found.</returns>
-        </member>
         <member name="T:Microsoft.Practices.Unity.InterceptionExtension.IInterceptingProxy">
             <summary>
             This interface is implemented by all proxy objects, type or instance based.
@@ -64,6 +47,16 @@
             was created (typically an interface).</param>
             <param name="implementationType">The concrete type of the implementing object.</param>
             <returns>Sequence of <see cref="T:System.Reflection.MethodInfo"/> objects.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.IInterceptor.MethodInfoForPipeline(Microsoft.Practices.Unity.InterceptionExtension.MethodImplementationInfo)">
+            <summary>
+            Given a <see cref="T:Microsoft.Practices.Unity.InterceptionExtension.MethodImplementationInfo"/>, return the appropriate
+            <see cref="T:System.Reflection.MethodInfo"/> object to use to attach a <see cref="T:Microsoft.Practices.Unity.InterceptionExtension.HandlerPipeline"/>
+            to so that the handlers will get called when the method gets called.
+            </summary>
+            <param name="methodInfo">Original <see cref="T:Microsoft.Practices.Unity.InterceptionExtension.MethodImplementationInfo"/> object that
+            combines the <see cref="T:System.Reflection.MethodInfo"/>s for an interface method and the corresponding implementation.</param>
+            <returns>The <see cref="T:System.Reflection.MethodInfo"/> object to pass to the <see cref="M:Microsoft.Practices.Unity.InterceptionExtension.IInterceptingProxy.SetPipeline(System.Reflection.MethodBase,Microsoft.Practices.Unity.InterceptionExtension.HandlerPipeline)"/> method.</returns>
         </member>
         <member name="T:Microsoft.Practices.Unity.InterceptionExtension.IInstanceInterceptionPolicy">
             <summary>
@@ -120,6 +113,66 @@
             </summary>
             <param name="context">Context of the build operation.</param>
         </member>
+        <member name="T:Microsoft.Practices.Unity.InterceptionExtension.InterfaceInterceptor">
+            <summary>
+            An instance interceptor that works by generating a
+            proxy class on the fly for a single interface.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.InterfaceInterceptor.CanIntercept(System.Type)">
+            <summary>
+            Can this interceptor generate a proxy for the given type?
+            </summary>
+            <param name="t">Type to check.</param>
+            <returns>True if interception is possible, false if not.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.InterfaceInterceptor.GetInterceptableMethods(System.Type,System.Type)">
+            <summary>
+            Returns a sequence of methods on the given type that can be
+            intercepted.
+            </summary>
+            <param name="interceptedType">Type that was specified when this interceptor
+            was created (typically an interface).</param>
+            <param name="implementationType">The concrete type of the implementing object.</param>
+            <returns>Sequence of <see cref="T:System.Reflection.MethodInfo"/> objects.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.InterfaceInterceptor.CreateProxy(System.Type,System.Object)">
+            <summary>
+            Create a proxy object that provides interception for <paramref name="target"/>.
+            </summary>
+            <param name="t">Type to generate the proxy of.</param>
+            <param name="target">Object to create the proxy for.</param>
+            <returns>The proxy object.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.InterfaceInterceptor.MethodInfoForPipeline(Microsoft.Practices.Unity.InterceptionExtension.MethodImplementationInfo)">
+            <summary>
+            Given a <see cref="T:Microsoft.Practices.Unity.InterceptionExtension.MethodImplementationInfo"/>, return the appropriate
+            <see cref="T:System.Reflection.MethodInfo"/> object to use to attach a <see cref="T:Microsoft.Practices.Unity.InterceptionExtension.HandlerPipeline"/>
+            to so that the handlers will get called when the method gets called.
+            </summary>
+            <param name="methodInfo">Original <see cref="T:Microsoft.Practices.Unity.InterceptionExtension.MethodImplementationInfo"/> object that
+            combines the <see cref="T:System.Reflection.MethodInfo"/>s for an interface method and the corresponding implementation.</param>
+            <returns>The <see cref="T:System.Reflection.MethodInfo"/> object to pass to the <see cref="M:Microsoft.Practices.Unity.InterceptionExtension.IInterceptingProxy.SetPipeline(System.Reflection.MethodBase,Microsoft.Practices.Unity.InterceptionExtension.HandlerPipeline)"/> method.</returns>
+        </member>
+        <member name="T:Microsoft.Practices.Unity.InterceptionExtension.InterfaceInterceptorClassGenerator">
+            <summary>
+            A class used to generate proxy classes for doing interception on
+            interfaces.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.InterfaceInterceptorClassGenerator.#ctor(System.Type)">
+            <summary>
+            Create an instance of <see cref="T:Microsoft.Practices.Unity.InterceptionExtension.InterfaceInterceptorClassGenerator"/> that
+            can construct an intercepting proxy for the given interface.
+            </summary>
+            <param name="typeToIntercept">Type of the interface to intercept.</param>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.InterfaceInterceptorClassGenerator.CreateProxyType">
+            <summary>
+            Create the type to proxy the requested interface
+            </summary>
+            <returns></returns>
+        </member>
         <member name="T:Microsoft.Practices.Unity.InterceptionExtension.InterceptingRealProxy">
             <summary>
             This class provides the remoting-based interception mechanism. It is
@@ -150,19 +203,6 @@
             <param name="method">Method to apply the pipeline to.</param>
             <param name="pipeline">The new pipeline.</param>
         </member>
-        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.InterceptingRealProxy.Invoke(System.Runtime.Remoting.Messaging.IMessage)">
-            <summary>
-            Executes a method call represented by the <paramref name="msg"/>
-            parameter. The CLR will call this method when a method is called
-            on the TransparentProxy. This method runs the invocation through
-            the call handler pipeline and finally sends it down to the
-            target object, and then back through the pipeline. 
-            </summary>
-            <param name="msg">An <see cref="T:System.Runtime.Remoting.Messaging.IMessage"/> object that contains the information
-            about the method call.</param>
-            <returns>An <see cref="T:Microsoft.Practices.Unity.InterceptionExtension.TransparentProxyMethodReturn"/> object contains the
-            information about the target method's return value.</returns>
-        </member>
         <member name="M:Microsoft.Practices.Unity.InterceptionExtension.InterceptingRealProxy.CanCastTo(System.Type,System.Object)">
             <summary>
             Checks whether the proxy that represents the specified object type can be cast to the type represented by the <see cref="T:System.Runtime.Remoting.IRemotingTypeInfo"></see> interface.
@@ -175,6 +215,19 @@
             <param name="fromType">The type to cast to. </param>
             <param name="o">The object for which to check casting. </param>
             <exception cref="T:System.Security.SecurityException">The immediate caller makes the call through a reference to the interface and does not have infrastructure permission. </exception>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.InterceptingRealProxy.Invoke(System.Runtime.Remoting.Messaging.IMessage)">
+            <summary>
+            Executes a method call represented by the <paramref name="msg"/>
+            parameter. The CLR will call this method when a method is called
+            on the TransparentProxy. This method runs the invocation through
+            the call handler pipeline and finally sends it down to the
+            target object, and then back through the pipeline. 
+            </summary>
+            <param name="msg">An <see cref="T:System.Runtime.Remoting.Messaging.IMessage"/> object that contains the information
+            about the method call.</param>
+            <returns>An <see cref="T:Microsoft.Practices.Unity.InterceptionExtension.TransparentProxyMethodReturn"/> object contains the
+            information about the target method's return value.</returns>
         </member>
         <member name="M:Microsoft.Practices.Unity.InterceptionExtension.InterceptingRealProxy.TranslateInterfaceMethod(System.Reflection.MethodBase)">
             <summary>
@@ -232,6 +285,16 @@
             <param name="t">Type to generate the proxy of.</param>
             <param name="target">Object to create the proxy for.</param>
             <returns>The proxy object.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.TransparentProxyInterceptor.MethodInfoForPipeline(Microsoft.Practices.Unity.InterceptionExtension.MethodImplementationInfo)">
+            <summary>
+            Given a <see cref="T:Microsoft.Practices.Unity.InterceptionExtension.MethodImplementationInfo"/>, return the appropriate
+            <see cref="T:System.Reflection.MethodInfo"/> object to use to attach a <see cref="T:Microsoft.Practices.Unity.InterceptionExtension.HandlerPipeline"/>
+            to so that the handlers will get called when the method gets called.
+            </summary>
+            <param name="methodInfo">Original <see cref="T:Microsoft.Practices.Unity.InterceptionExtension.MethodImplementationInfo"/> object that
+            combines the <see cref="T:System.Reflection.MethodInfo"/>s for an interface method and the corresponding implementation.</param>
+            <returns>The <see cref="T:System.Reflection.MethodInfo"/> object to pass to the <see cref="M:Microsoft.Practices.Unity.InterceptionExtension.IInterceptingProxy.SetPipeline(System.Reflection.MethodBase,Microsoft.Practices.Unity.InterceptionExtension.HandlerPipeline)"/> method.</returns>
         </member>
         <member name="T:Microsoft.Practices.Unity.InterceptionExtension.MethodImplementationInfo">
             <summary>
@@ -385,6 +448,84 @@
             and if it was, wires up the handlers.</remarks>
             <param name="context">Context of the build operation.</param>
         </member>
+        <member name="T:Microsoft.Practices.Unity.InterceptionExtension.InterceptingProxyImplementor">
+            <summary>
+            This class provides the code needed to implement the <see cref="T:Microsoft.Practices.Unity.InterceptionExtension.IInterceptingProxy"/>
+            interface on a class.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Practices.Unity.InterceptionExtension.MethodSorter">
+            <summary>
+            A utility class that takes a set of <see cref="T:System.Reflection.MethodInfo"/>s
+            and pulls out shadowed methods, only returning the ones that
+            are actually accessible to be overriden.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.MethodSorter.GroupMethodsByName(System.Collections.Generic.IEnumerable{System.Reflection.MethodInfo})">
+            <summary>
+            Take the list of methods and put them together into lists index by method name.
+            </summary>
+            <param name="methodsToSort">Methods to sort through.</param>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.MethodSorter.RemoveHiddenOverloads(System.Collections.Generic.IEnumerable{System.Reflection.MethodInfo})">
+            <summary>
+            Given a list of overloads for a method, return only those methods
+            that are actually visible. In other words, if there's a "new foo" method
+            somewhere, return only the new one, not the one from the base class
+            that's now hidden.
+            </summary>
+            <param name="methods">Sequence of methods to process.</param>
+            <returns>Sequence of returned methods.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.MethodSorter.GroupOverloadedMethods(System.Collections.Generic.IList{System.Reflection.MethodInfo})">
+            <summary>
+            Take a semi-randomly ordered set of methods on a type and
+            sort them into groups by name and by parameter list.
+            </summary>
+            <param name="sortedMethods">The list of methods.</param>
+            <returns>Sequence of lists of methods, grouped by method name.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.MethodSorter.SelectMostDerivedOverload(System.Collections.Generic.IList{System.Reflection.MethodInfo})">
+            <summary>
+            Given a set of hiding overloads, return only the currently visible one.
+            </summary>
+            <param name="overloads">The set of overloads.</param>
+            <returns>The most visible one.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.MethodSorter.DeclarationDepth(System.Reflection.MethodInfo)">
+            <summary>
+            Given a method, return a value indicating how deeply in the
+            inheritance hierarchy the method is declared. Current type = 0,
+            parent = 1, grandparent = 2, etc.
+            </summary>
+            <param name="method">Method to check.</param>
+            <returns>Declaration depth</returns>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.MethodSorter.CompareMethodInfosByParameterLists(System.Reflection.MethodInfo,System.Reflection.MethodInfo)">
+            <summary>
+            A <see cref="T:System.Comparison`1"/> implementation that can compare two <see cref="T:System.Reflection.MethodInfo"/>
+            based on their parameter lists.
+            </summary>
+            <param name="left">First <see cref="T:System.Reflection.MethodInfo"/> to compare.</param>
+            <param name="right">Second <see cref="T:System.Reflection.MethodInfo"/> to compare.</param>
+            <returns>&lt; 0, 0, or &gt; 0 based on which one is "greater" than the other.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.MethodSorter.CompareParameterLists(System.Reflection.ParameterInfo[],System.Reflection.ParameterInfo[])">
+            <summary>
+            Compare two parameter lists.
+            </summary>
+            <param name="left">First parameter list.</param>
+            <param name="right">Second parameter list.</param>
+            <returns>&lt; 0, 0, or &gt; 0.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.MethodSorter.CompareParameterInfo(System.Reflection.ParameterInfo,System.Reflection.ParameterInfo)">
+            <summary>
+            Compare two <see cref="T:System.Reflection.ParameterInfo"/> objects by type.
+            </summary>
+            <param name="left">First <see cref="T:System.Reflection.ParameterInfo"/></param>
+            <param name="right">First <see cref="T:System.Reflection.ParameterInfo"/></param>
+            <returns>&lt; 0, 0, or &gt; 0</returns>
+        </member>
         <member name="T:Microsoft.Practices.Unity.InterceptionExtension.VirtualMethodInterceptor">
             <summary>
             A type based interceptor that works by generated a new class
@@ -416,10 +557,15 @@
             <returns>New type that can be instantiated instead of the
             original type t, and supports interception.</returns>
         </member>
-        <member name="T:Microsoft.Practices.Unity.InterceptionExtension.IInterceptingProxyMethods">
+        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.VirtualMethodInterceptor.MethodInfoForPipeline(Microsoft.Practices.Unity.InterceptionExtension.MethodImplementationInfo)">
             <summary>
-            Call with static MethodInfos for the methods of <see cef="IInterceptingProxy"/>.
+            Given a <see cref="T:Microsoft.Practices.Unity.InterceptionExtension.MethodImplementationInfo"/>, return the appropriate
+            <see cref="T:System.Reflection.MethodInfo"/> object to use to attach a <see cref="T:Microsoft.Practices.Unity.InterceptionExtension.HandlerPipeline"/>
+            to so that the handlers will get called when the method gets called.
             </summary>
+            <param name="methodInfo">Original <see cref="T:Microsoft.Practices.Unity.InterceptionExtension.MethodImplementationInfo"/> object that
+            combines the <see cref="T:System.Reflection.MethodInfo"/>s for an interface method and the corresponding implementation.</param>
+            <returns>The <see cref="T:System.Reflection.MethodInfo"/> object to pass to the <see cref="M:Microsoft.Practices.Unity.InterceptionExtension.IInterceptingProxy.SetPipeline(System.Reflection.MethodBase,Microsoft.Practices.Unity.InterceptionExtension.HandlerPipeline)"/> method.</returns>
         </member>
         <member name="T:Microsoft.Practices.Unity.InterceptionExtension.PipelineManager">
             <summary>
@@ -595,6 +741,11 @@
             <param name="target">The ultimate target of the call.</param>
             <returns>Return value from the pipeline.</returns>
         </member>
+        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.HandlerPipeline.Count">
+            <summary>
+            Get the number of handlers in this pipeline.
+            </summary>
+        </member>
         <member name="T:Microsoft.Practices.Unity.InterceptionExtension.ICallHandler">
             <summary>
             Handlers implement this interface and are called for each
@@ -741,8 +892,10 @@
             be used to do it, and also provides a convenient set of methods for
             configuring injection for <see cref="T:Microsoft.Practices.Unity.InterceptionExtension.RuleDrivenPolicy"/> instances.
             </summary>
-            <seealso cref="O:Interception.SetDefaultInjectorFor"/>
-            <seealso cref="O:Interception.SetInjectorFor"/>
+            <seealso cref="M:Microsoft.Practices.Unity.InterceptionExtension.Interception.SetDefaultInterceptorFor(System.Type,Microsoft.Practices.Unity.InterceptionExtension.IInstanceInterceptor)"/>
+            <seealso cref="M:Microsoft.Practices.Unity.InterceptionExtension.Interception.SetDefaultInterceptorFor(System.Type,Microsoft.Practices.Unity.InterceptionExtension.ITypeInterceptor)"/>
+            <seealso cref="M:Microsoft.Practices.Unity.InterceptionExtension.Interception.SetInterceptorFor(System.Type,System.String,Microsoft.Practices.Unity.InterceptionExtension.IInstanceInterceptor)"/>
+            <seealso cref="M:Microsoft.Practices.Unity.InterceptionExtension.Interception.SetInterceptorFor(System.Type,System.String,Microsoft.Practices.Unity.InterceptionExtension.ITypeInterceptor)"/>
             <seealso cref="M:Microsoft.Practices.Unity.InterceptionExtension.Interception.AddPolicy(System.String)"/>
         </member>
         <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Interception.Initialize">
@@ -791,6 +944,22 @@
             <param name="typeToIntercept">Type to intercept.</param>
             <param name="name">Name type is registered under.</param>
             <param name="interceptor">Instance interceptor to use.</param>
+            <returns>This extension object.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Interception.SetDefaultInterceptorFor(System.Type,Microsoft.Practices.Unity.InterceptionExtension.ITypeInterceptor)">
+            <summary>
+            Set the interceptor for a type, regardless of what name is used to resolve the instances.
+            </summary>
+            <param name="typeToIntercept">Type to intercept</param>
+            <param name="interceptor">Interceptor instance.</param>
+            <returns>This extension object.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Interception.SetDefaultInterceptorFor``1(Microsoft.Practices.Unity.InterceptionExtension.ITypeInterceptor)">
+            <summary>
+            Set the interceptor for a type, regardless of what name is used to resolve the instances.
+            </summary>
+            <typeparam name="TTypeToIntercept">Type to intercept</typeparam>
+            <param name="interceptor">Interceptor instance.</param>
             <returns>This extension object.</returns>
         </member>
         <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Interception.SetInterceptorFor(System.Type,Microsoft.Practices.Unity.InterceptionExtension.IInstanceInterceptor)">
@@ -844,7 +1013,9 @@
             instances and <see cref="T:Microsoft.Practices.Unity.InterceptionExtension.ICallHandler"/> instances that are required by a policy.
             <para/>
             This mechanism is just a shortcut for what can be natively expressed by wiring up together objects
-            with repeated calls to the <see cref="O:InjectedMembers.ConfigureInjectionFor"/> method.</remarks>
+            with repeated calls to the 
+            <see cref="M:Microsoft.Practices.Unity.InjectedMembers.ConfigureInjectionFor(System.Type,System.String,Microsoft.Practices.Unity.InjectionMember[])"/> method.
+            </remarks>
         </member>
         <member name="T:Microsoft.Practices.Unity.InterceptionExtension.IParameterCollection">
             <summary>
@@ -2303,21 +2474,12 @@
             Class that handles generating the dynamic types used for interception.
             </summary>
         </member>
-        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.InterceptingClassGenerator.#ctor(System.Type,System.Collections.Generic.IEnumerable{System.Reflection.MethodInfo})">
+        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.InterceptingClassGenerator.#ctor(System.Type)">
             <summary>
             Create a new <see cref="T:Microsoft.Practices.Unity.InterceptionExtension.InterceptingClassGenerator"/> that will generate a
             wrapper class for the requested <paramref name="typeToIntercept"/>.
             </summary>
             <param name="typeToIntercept">Type to generate the wrapper for.</param>
-            <param name="methodsToIntercept">Sequence of methods on the target type to override.</param>
-        </member>
-        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.InterceptingClassGenerator.#ctor(System.Type,System.Collections.Generic.IEnumerable{Microsoft.Practices.Unity.InterceptionExtension.MethodImplementationInfo})">
-            <summary>
-            Create a new <see cref="T:Microsoft.Practices.Unity.InterceptionExtension.InterceptingClassGenerator"/> that will generate a
-            wrapper class for the requested <paramref name="typeToIntercept"/>.
-            </summary>
-            <param name="typeToIntercept">Type to generate the wrapper for.</param>
-            <param name="methodsToIntercept">Sequence of methods on the target type to override.</param>
         </member>
         <member name="M:Microsoft.Practices.Unity.InterceptionExtension.InterceptingClassGenerator.GenerateType">
             <summary>

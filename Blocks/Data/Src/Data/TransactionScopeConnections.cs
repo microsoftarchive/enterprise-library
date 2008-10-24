@@ -1,14 +1,15 @@
-//===============================================================================
+﻿//===============================================================================
 // Microsoft patterns & practices Enterprise Library
 // Data Access Application Block
 //===============================================================================
-// Copyright � Microsoft Corporation.  All rights reserved.
+// Copyright © Microsoft Corporation.  All rights reserved.
 // THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
 // OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
 // LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Transactions;
@@ -23,7 +24,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
     /// </summary>
     public static class TransactionScopeConnections
     {
-        static readonly Dictionary<Transaction, Dictionary<string, DbConnection>> transactionConnections = new Dictionary<Transaction, Dictionary<string, DbConnection>>();
+        // There's a reason why this field is not thread-static: notifications for completed oracle transactions
+        // may happen in a different thread
+        static readonly Dictionary<Transaction, Dictionary<string, DbConnection>> transactionConnections =
+            new Dictionary<Transaction, Dictionary<string, DbConnection>>();
 
         /// <summary>
         ///		Returns a connection for the current transaction. This will be an existing <see cref="DbConnection"/>
@@ -40,34 +44,35 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
                 return null;
 
             Dictionary<string, DbConnection> connectionList;
-            transactionConnections.TryGetValue(currentTransaction, out connectionList);
-
             DbConnection connection;
-            if (connectionList != null)
+
+            lock (transactionConnections)
             {
-                connectionList.TryGetValue(db.ConnectionString, out connection);
-                if (connection != null)
-                    return connection;
-            }
-            else
-            {
-                // We don't have a list for this transaction, so create a new one
-                connectionList = new Dictionary<string, DbConnection>();
-                lock (transactionConnections)
+                if (!transactionConnections.TryGetValue(currentTransaction, out connectionList))
+                {
+                    // We don't have a list for this transaction, so create a new one
+                    connectionList = new Dictionary<string, DbConnection>();
                     transactionConnections.Add(currentTransaction, connectionList);
+
+                    // We need to know when this previously unknown transaction is completed too
+                    currentTransaction.TransactionCompleted += OnTransactionCompleted;
+                }
             }
 
-            //
-            // Next we'll see if there is already a connection. If not, we'll create a new connection and add it
-            // to the transaction's list of connections.
-            //
-            if (connectionList.ContainsKey(db.ConnectionString))
-                connection = connectionList[db.ConnectionString];
-            else
+            lock (connectionList)
             {
-                connection = db.GetNewOpenConnection();
-                currentTransaction.TransactionCompleted += OnTransactionCompleted;
-                connectionList.Add(db.ConnectionString, connection);
+                // Next we'll see if there is already a connection. If not, we'll create a new connection and add it
+                // to the transaction's list of connections.
+                // This collection should only be modified by the thread where the transaction scope was created
+                // while the transaction scope is active.
+                // However there's no documentation to confirm this, so we err on the safe side and lock.
+                if (!connectionList.TryGetValue(db.ConnectionString, out connection))
+                {
+                    // we're betting the cost of acquiring a new finer-grained lock is less than 
+                    // that of opening a new connection, and besides this allows threads to work in parallel
+                    connection = db.GetNewOpenConnection();
+                    connectionList.Add(db.ConnectionString, connection);
+                }
             }
 
             return connection;
@@ -79,21 +84,31 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        static void OnTransactionCompleted(object sender,
-                                           TransactionEventArgs e)
+        static void OnTransactionCompleted(object sender, TransactionEventArgs e)
         {
-            Dictionary<string, DbConnection> connectionList; // = connections[e.Transaction];
-
-            transactionConnections.TryGetValue(e.Transaction, out connectionList);
-            if (connectionList == null)
-                return;
+            Dictionary<string, DbConnection> connectionList;
 
             lock (transactionConnections)
-                transactionConnections.Remove(e.Transaction);
-
-            foreach (DbConnection conneciton in connectionList.Values)
             {
-                conneciton.Dispose();
+                if (!transactionConnections.TryGetValue(e.Transaction, out connectionList))
+                {
+                    // we don't know about this transaction. odd.
+                    return;
+                }
+
+                // we know about this transaction - remove it from the mappings
+                transactionConnections.Remove(e.Transaction);
+            }
+
+            lock (connectionList)
+            {
+                // acquiring this lock should not be necessary unless there's a possibility for this event to be fired
+                // while the transaction involved in the event is still set as the current transaction for a 
+                // different thread.
+                foreach (DbConnection connection in connectionList.Values)
+                {
+                    connection.Dispose();
+                }
             }
         }
     }

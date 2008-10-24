@@ -1,8 +1,8 @@
-//===============================================================================
+﻿//===============================================================================
 // Microsoft patterns & practices Enterprise Library
 // Data Access Application Block QuickStart
 //===============================================================================
-// Copyright ? Microsoft Corporation.  All rights reserved.
+// Copyright © Microsoft Corporation.  All rights reserved.
 // THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
 // OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
 // LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
@@ -59,7 +59,7 @@ namespace DataAccessQuickStart
         public static Form AppForm;
         private SalesData salesData = null;
 
-        private const string HelpViewerArguments = @"/helpcol ms-help://MS.VSCC.v90/MS.VSIPCC.v90/ms.practices.entlib.2008may /LaunchFKeywordTopic DataAccessQS1";
+        private const string HelpViewerArguments = @"/helpcol ms-help://MS.VSCC.v90/MS.VSIPCC.v90/ms.practices.entlib.2008oct /LaunchFKeywordTopic DataAccessQS1";
 
         public QuickStartForm(SalesData salesData) :
             this()
@@ -846,9 +846,18 @@ namespace DataAccessQuickStart
 		/// </summary>
 		private string GetHelpViewerExecutable()
 		{
-			string common = Environment.GetEnvironmentVariable("CommonProgramFiles");
-			return Path.Combine(common, @"Microsoft Shared\Help 9\dexplore.exe");
-		}
+            string commonX86 = Environment.GetEnvironmentVariable("CommonProgramFiles(x86)");
+            if (!string.IsNullOrEmpty(commonX86))
+            {
+                string pathX86 = Path.Combine(commonX86, @"Microsoft Shared\Help 9\dexplore.exe");
+                if (File.Exists(pathX86))
+                {
+                    return pathX86;
+                }
+            }
+            string common = Environment.GetEnvironmentVariable("CommonProgramFiles");
+            return Path.Combine(common, @"Microsoft Shared\Help 9\dexplore.exe");
+        }
 
         /// <summary>
         /// Displays Quick Start help topics using the Help 2 Viewer.
