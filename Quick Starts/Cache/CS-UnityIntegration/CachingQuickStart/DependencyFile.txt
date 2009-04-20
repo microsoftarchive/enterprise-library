@@ -1,3 +1,0 @@
-This file was created for testing purposes only.
-It would be used by the Caching Block Quick Start.
-  
