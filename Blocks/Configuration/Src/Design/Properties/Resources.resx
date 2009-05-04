@@ -1,0 +1,423 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ApplicationNodeName" xml:space="preserve">
+    <value>Application Configuration</value>
+  </data>
+  <data name="AssembliesLabelText" xml:space="preserve">
+    <value>Assemblies</value>
+  </data>
+  <data name="AssemblyLoadFailedErrorMessage" xml:space="preserve">
+    <value>Unable to load the assembly. The error message is '{0}'.</value>
+  </data>
+  <data name="CategoryGeneral" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="CategoryName" xml:space="preserve">
+    <value>(Name)</value>
+  </data>
+  <data name="CategoryProtection" xml:space="preserve">
+    <value>Protection</value>
+  </data>
+  <data name="CategorySection" xml:space="preserve">
+    <value>Configuration section</value>
+  </data>
+  <data name="CloseApplicationUICommandLongText" xml:space="preserve">
+    <value>Close the current application configuration.</value>
+  </data>
+  <data name="CloseApplicationUICommandText" xml:space="preserve">
+    <value>Close Application</value>
+  </data>
+  <data name="ConfigurationErrorToString" xml:space="preserve">
+    <value>{0} at path {1}.
+{2}
+
+</value>
+  </data>
+  <data name="ConfigurationFileDialogFilter" xml:space="preserve">
+    <value>Configuration Files(web.config, *.exe.config, app.config)|web.config;*.exe.config;app.config|All Files(*.*)|*.*</value>
+  </data>
+  <data name="ConfigurationFilePathDescription" xml:space="preserve">
+    <value>The path to the application configuration file.</value>
+  </data>
+  <data name="ConfigurationSourceNodeName" xml:space="preserve">
+    <value>Configuration Sources</value>
+  </data>
+  <data name="ConfigurationSourceUICommandLongText" xml:space="preserve">
+    <value>Add configuration sources to the application</value>
+  </data>
+  <data name="ConfigurationSourceUICommandText" xml:space="preserve">
+    <value>Configuration Sources</value>
+  </data>
+  <data name="CustomAttributesDuplicateKeyError" xml:space="preserve">
+    <value>The custom attributes collection contains multiple entries of the key '{0}'.</value>
+  </data>
+  <data name="CustomAttributesKeyNullError" xml:space="preserve">
+    <value>The custom attribute at position {0} is empty.</value>
+  </data>
+  <data name="DefaultApplicationName" xml:space="preserve">
+    <value>Application</value>
+  </data>
+  <data name="EnumTypesFailedErrorMessage" xml:space="preserve">
+    <value>Unable to load references for the specified assembly, please ensure all references are in the same directory as the assembly which is loaded.</value>
+  </data>
+  <data name="ErrorFileCouldNotBeOpened" xml:space="preserve">
+    <value>The file '{0}' could not be opened.</value>
+  </data>
+  <data name="EventLoggingEnabledDescription" xml:space="preserve">
+    <value>Gets or sets if Event Logging is enabled.</value>
+  </data>
+  <data name="ExceptionComponentNotHierarchyNode" xml:space="preserve">
+    <value>Can only add IHierarchyNode objects to this container.</value>
+  </data>
+  <data name="ExceptionConfigNodeExpected" xml:space="preserve">
+    <value>The type must be a ConfigurationNode.</value>
+  </data>
+  <data name="ExceptionFilesNotSaved" xml:space="preserve">
+    <value>Could not save one or more of the application files.</value>
+  </data>
+  <data name="ExceptionInvalidComponentName" xml:space="preserve">
+    <value>The name {0} is invalid for the component.</value>
+  </data>
+  <data name="ExceptionLowerBoundOutOfRange" xml:space="preserve">
+    <value>The lowerBound value '{0}' is not less than or equal to the upperBound value '{1}'.</value>
+  </data>
+  <data name="ExceptionManagerDependencyNotFound" xml:space="preserve">
+    <value>The configuration design manger {0} has a dependency on {1} that could not be loaded.</value>
+  </data>
+  <data name="ExceptionNoBaseTypeAttribute" xml:space="preserve">
+    <value>There is not a valid base type attribute for the selector.</value>
+  </data>
+  <data name="ExceptionNodeAlreadyInCollection" xml:space="preserve">
+    <value>The node already exists in the collection.</value>
+  </data>
+  <data name="ExceptionNodeMapNotRegistered" xml:space="preserve">
+    <value>A node type map is not registered for the configuration type {0}.</value>
+  </data>
+  <data name="ExceptionNodeNameAlreadyExists" xml:space="preserve">
+    <value>A sibling node with the name '{0}' already exists.</value>
+  </data>
+  <data name="ExceptionNoRefTypeAttribute" xml:space="preserve">
+    <value>The reference type for the node was not set.  Please add the ReferenceTypeAttribute to your property.</value>
+  </data>
+  <data name="ExceptionNotAssignableType" xml:space="preserve">
+    <value>The type '{0}' must be assignable from the type '{1}'.</value>
+  </data>
+  <data name="ExceptionOnlyReorderSiblings" xml:space="preserve">
+    <value>Can only re-order sibling nodes.</value>
+  </data>
+  <data name="ExceptionStringNullOrEmpty" xml:space="preserve">
+    <value>The value can not be null or string or empty.</value>
+  </data>
+  <data name="ExceptionTypeNotConfigurationNode" xml:space="preserve">
+    <value>The type '{0}' must be a type of ConfigurationNode.</value>
+  </data>
+  <data name="ExceptionTypeNotValid" xml:space="preserve">
+    <value>The type {0} is not valid.</value>
+  </data>
+  <data name="ExceptionValueNullMessage" xml:space="preserve">
+    <value>The value for {0} can not be null.</value>
+  </data>
+  <data name="FileConfigurationSourceUICommandLongText" xml:space="preserve">
+    <value>Add the file configuration source element.</value>
+  </data>
+  <data name="FileConfigurationSourceUICommandText" xml:space="preserve">
+    <value>File Configuration Source</value>
+  </data>
+  <data name="FileSourceFileDescription" xml:space="preserve">
+    <value>Gets or sets the file to use for the source.</value>
+  </data>
+  <data name="GenericFileFilter" xml:space="preserve">
+    <value>All Files(*.*)|*.*</value>
+  </data>
+  <data name="GenericSaveFile" xml:space="preserve">
+    <value>Save File</value>
+  </data>
+  <data name="InstrumentationNodeName" xml:space="preserve">
+    <value>Instrumentation</value>
+  </data>
+  <data name="InstrumentationUICommandLongText" xml:space="preserve">
+    <value>Add instrumentation to the application</value>
+  </data>
+  <data name="InstrumentationUICommandText" xml:space="preserve">
+    <value>Instrumentation</value>
+  </data>
+  <data name="KeyValueEditorFormat" xml:space="preserve">
+    <value>Key: {0}, Value: {1}</value>
+  </data>
+  <data name="MaxLengthExceededErrorMessage" xml:space="preserve">
+    <value>The length of the string {0} must not exceed {1}.</value>
+  </data>
+  <data name="MinLengthExceededErrorMessage" xml:space="preserve">
+    <value>The string {0} must have a length of at least {1}.</value>
+  </data>
+  <data name="MismatchedPasswordCaption" xml:space="preserve">
+    <value>Passwords do not match</value>
+  </data>
+  <data name="MismatchedPasswordMessage" xml:space="preserve">
+    <value>The passwords do not match. Passwords are case sensitive (e.g. "password" does not equal "PassWord"). Please try again.</value>
+  </data>
+  <data name="MoveDownMenuItemText" xml:space="preserve">
+    <value>Move Down</value>
+  </data>
+  <data name="MoveDownStatusText" xml:space="preserve">
+    <value>Move currently selected node down</value>
+  </data>
+  <data name="MoveUpMenuItemText" xml:space="preserve">
+    <value>Move Up</value>
+  </data>
+  <data name="MoveUpStatusText" xml:space="preserve">
+    <value>Move currently selected node up</value>
+  </data>
+  <data name="NodeNameDescription" xml:space="preserve">
+    <value>Gets or sets the name of the node.</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>(none)</value>
+  </data>
+  <data name="NoProtectionProvider" xml:space="preserve">
+    <value>(no protection)</value>
+  </data>
+  <data name="NoTypesFoundInAssemblyCaption" xml:space="preserve">
+    <value>No Types Found In Assembly.</value>
+  </data>
+  <data name="NoTypesFoundInAssemblyErrorMessage" xml:space="preserve">
+    <value>There were no types found in the assembly '{0}' that implement or inherit from the base type '{1}'.</value>
+  </data>
+  <data name="OpenApplicationCaption" xml:space="preserve">
+    <value>Open Application</value>
+  </data>
+  <data name="OpenApplicationErrorMessage" xml:space="preserve">
+    <value>One or more errors occurred while trying to open the configuration.</value>
+  </data>
+  <data name="OverwriteFileCaption" xml:space="preserve">
+    <value>Save of Read-Only File</value>
+  </data>
+  <data name="OverwriteFileMessage" xml:space="preserve">
+    <value>The file {0} cannot be saved because it is write-protected.
+
+Do you want to remove the write-protection and overwrite the file in its current location.</value>
+  </data>
+  <data name="PerformanceCountersEnabledDescription" xml:space="preserve">
+    <value>Gets or sets if Performance Counters are enabled.</value>
+  </data>
+  <data name="ProtectionNotSupportedOnConfigurationSource" xml:space="preserve">
+    <value>Protecting the configuration is not supported on the current ConfigurationSource.</value>
+  </data>
+  <data name="RegExErrorMessage" xml:space="preserve">
+    <value>The value {0} does not match the regular expression.</value>
+  </data>
+  <data name="RemoveUICommandLongText" xml:space="preserve">
+    <value>Remove current node</value>
+  </data>
+  <data name="RemoveUICommandText" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="SaveApplicationCaption" xml:space="preserve">
+    <value>Save Application</value>
+  </data>
+  <data name="SaveApplicationErrorMessage" xml:space="preserve">
+    <value>One or more errors occurred while trying to save the configuration.</value>
+  </data>
+  <data name="SaveApplicationErrorRequestMessage" xml:space="preserve">
+    <value>One or more errors occurred while trying to save the configuration. Would you still like to close the application without saving?</value>
+  </data>
+  <data name="SaveApplicationRequest" xml:space="preserve">
+    <value>The application has not been saved, would you like to save before closing?</value>
+  </data>
+  <data name="SelectedSourceDescription" xml:space="preserve">
+    <value>Gets or sets the default configuration source.</value>
+  </data>
+  <data name="SystemConfigurationSourceElementNodeCreationText" xml:space="preserve">
+    <value>System Configuration Source</value>
+  </data>
+  <data name="SystemConfigurationSourceUICommandLongText" xml:space="preserve">
+    <value>Adds the system configuration source element.</value>
+  </data>
+  <data name="SystemConfigurationSourceUICommandText" xml:space="preserve">
+    <value>System ConfigurationSource</value>
+  </data>
+  <data name="TypeNameDescription" xml:space="preserve">
+    <value>Gets or sets the type for the element.</value>
+  </data>
+  <data name="TypeSelectorClassRootNodeText" xml:space="preserve">
+    <value>Classes that inherit from {0}</value>
+  </data>
+  <data name="TypeSelectorClassRootNodeTextWithConfigurationType" xml:space="preserve">
+    <value>Classes that inherit from {0} and have a ConfigurationElementType of '{1}'</value>
+  </data>
+  <data name="TypeSelectorInterfaceRootNodeText" xml:space="preserve">
+    <value>Types that implement {0}</value>
+  </data>
+  <data name="TypeSelectorInterfaceRootNodeTextWithConfigurationType" xml:space="preserve">
+    <value>Types that implement {0} and have a ConfigurationElementType of '{1}'</value>
+  </data>
+  <data name="TypeSubclassErrorMsg" xml:space="preserve">
+    <value>The selected type must be a subclass of {0}</value>
+  </data>
+  <data name="UniqueNameErrorMessage" xml:space="preserve">
+    <value>The name {0} should be unique within the application block.</value>
+  </data>
+  <data name="ValidateUICommandLongText" xml:space="preserve">
+    <value>Validate current node.</value>
+  </data>
+  <data name="ValidateUICommandText" xml:space="preserve">
+    <value>Validate</value>
+  </data>
+  <data name="ValidationCaption" xml:space="preserve">
+    <value>Validation</value>
+  </data>
+  <data name="ValidationErrorsMessage" xml:space="preserve">
+    <value>One or more validation errors occurred.</value>
+  </data>
+  <data name="ValidationErrorToString" xml:space="preserve">
+    <value>The property {0} is invalid for {1}. Message: {2}</value>
+  </data>
+  <data name="ValueNotInRangeErrorMessage" xml:space="preserve">
+    <value>The value for {0} is not in the specified range.</value>
+  </data>
+  <data name="ValueOutsideRangeErrorMessage" xml:space="preserve">
+    <value>The value for {0} is not outside of the specified range.</value>
+  </data>
+  <data name="WMIEnabledDescription" xml:space="preserve">
+    <value>Gets or sets if WMI is enabled.</value>
+  </data>
+  <data name="ExceptionCannotSetClosedGenerics" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ExceptionTypeBuildTypeExceptionMakingGeneric" xml:space="preserve">
+    <value>The type cannot be built: generic type cannot be made.
+{0}.</value>
+  </data>
+  <data name="ExceptionTypeBuildTypeNotSet" xml:space="preserve">
+    <value>The type cannot be built: type not set.</value>
+  </data>
+  <data name="ExceptionTypeNotCompatibleWithConstraints" xml:space="preserve">
+    <value>The type is not compatible with the node constraints.</value>
+  </data>
+  <data name="TypeParameterUndefined" xml:space="preserve">
+    <value>&lt;undefined&gt;</value>
+  </data>
+  <data name="ErrorBuildingType" xml:space="preserve">
+    <value>Error building the specified type: {0}</value>
+  </data>
+  <data name="TypeNotGenericTypeParameter" xml:space="preserve">
+    <value>The type {0} does not represent a generic type parameter as expected.</value>
+  </data>
+</root>

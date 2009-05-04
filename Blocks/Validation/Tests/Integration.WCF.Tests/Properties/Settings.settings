@@ -1,0 +1,21 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WCF.Tests.VSTS.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="TestServiceAddress" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">http://localhost:34275/TestService</Value>
+    </Setting>
+    <Setting Name="Bank1ServiceAddress" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">http://localhost:34275/BankingService/Bank1</Value>
+    </Setting>
+    <Setting Name="Bank2ServiceAddress" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">http://localhost:34275/BankingService/Bank2</Value>
+    </Setting>
+    <Setting Name="Bank3ServiceAddress" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">http://localhost:34275/BankingService/Bank3</Value>
+    </Setting>
+    <Setting Name="Bank4ServiceAddress" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">http://localhost:34275/BankingService/Bank4</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

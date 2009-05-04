@@ -1,0 +1,457 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AddAndCompositeValidatorCommand" xml:space="preserve">
+    <value>Add And Composite Validator.</value>
+  </data>
+  <data name="AddAndCompositeValidatorCommandName" xml:space="preserve">
+    <value>And Composite Validator</value>
+  </data>
+  <data name="AddCustomValidatorCommand" xml:space="preserve">
+    <value>Add Custom Validator.</value>
+  </data>
+  <data name="AddCustomValidatorCommandName" xml:space="preserve">
+    <value>Custom Validator</value>
+  </data>
+  <data name="AddDateRangeValidatorCommand" xml:space="preserve">
+    <value>Add Date Range Validator.</value>
+  </data>
+  <data name="AddDateRangeValidatorCommandName" xml:space="preserve">
+    <value>Date Range Validator</value>
+  </data>
+  <data name="AddFieldReferenceCommand" xml:space="preserve">
+    <value>Add Field.</value>
+  </data>
+  <data name="AddFieldReferenceCommandName" xml:space="preserve">
+    <value>Field</value>
+  </data>
+  <data name="AddMemberCommand" xml:space="preserve">
+    <value>Choose Members.</value>
+  </data>
+  <data name="AddMemberCommandName" xml:space="preserve">
+    <value>Choose Members</value>
+  </data>
+  <data name="AddMethodReferenceCommand" xml:space="preserve">
+    <value>Add Method.</value>
+  </data>
+  <data name="AddMethodReferenceCommandName" xml:space="preserve">
+    <value>Method</value>
+  </data>
+  <data name="AddNotNullValidatorCommand" xml:space="preserve">
+    <value>Add Not Null Validator.</value>
+  </data>
+  <data name="AddNotNullValidatorCommandName" xml:space="preserve">
+    <value>Not Null Validator</value>
+  </data>
+  <data name="AddObjectCollectionValidatorCommand" xml:space="preserve">
+    <value>Add Object Collection Validator.</value>
+  </data>
+  <data name="AddObjectCollectionValidatorCommandName" xml:space="preserve">
+    <value>Object Collection Validator</value>
+  </data>
+  <data name="AddObjectValidatorCommand" xml:space="preserve">
+    <value>Add Object Validator.</value>
+  </data>
+  <data name="AddObjectValidatorCommandName" xml:space="preserve">
+    <value>Object Validator</value>
+  </data>
+  <data name="AddOrCompositeValidatorCommand" xml:space="preserve">
+    <value>Add Or Composite Validator.</value>
+  </data>
+  <data name="AddOrCompositeValidatorCommandName" xml:space="preserve">
+    <value>Or Composite Validator</value>
+  </data>
+  <data name="AddPropertyReferenceCommand" xml:space="preserve">
+    <value>Add Property.</value>
+  </data>
+  <data name="AddPropertyReferenceCommandName" xml:space="preserve">
+    <value>Property</value>
+  </data>
+  <data name="AddRegexValidatorCommand" xml:space="preserve">
+    <value>Add Regular Expression Validator.</value>
+  </data>
+  <data name="AddRegexValidatorCommandName" xml:space="preserve">
+    <value>Regular Expression Validator</value>
+  </data>
+  <data name="AddRuleSetCommand" xml:space="preserve">
+    <value>Add Rule Set.</value>
+  </data>
+  <data name="AddRuleSetCommandName" xml:space="preserve">
+    <value>Rule Set</value>
+  </data>
+  <data name="AddStringLengthValidatorCommand" xml:space="preserve">
+    <value>Add String Length Validator.</value>
+  </data>
+  <data name="AddStringLengthValidatorCommandName" xml:space="preserve">
+    <value>String Length Validator</value>
+  </data>
+  <data name="AddValidationSettingsCommand" xml:space="preserve">
+    <value>Add the Validation Application Block.</value>
+  </data>
+  <data name="AddValidationSettingsCommandName" xml:space="preserve">
+    <value>Validation Application Block</value>
+  </data>
+  <data name="AddValidationTypeCommand" xml:space="preserve">
+    <value>Add Type.</value>
+  </data>
+  <data name="AddValidationTypeCommandName" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="AndCompositeValidatorNodeName" xml:space="preserve">
+    <value>And Composite Validator</value>
+  </data>
+  <data name="BothTemplateAndResourceNameAreSpecified" xml:space="preserve">
+    <value>Both MessageTemplate and MessageTemplateResourceName are specified. Please either specify a MessageTemplate or a MessageTemplateResourceName and MessageTemplateResourceType pair.</value>
+  </data>
+  <data name="CategoryGeneral" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="CategoryValidatorMessage" xml:space="preserve">
+    <value>Message</value>
+  </data>
+  <data name="ContainsCharactersValidatorNodeName" xml:space="preserve">
+    <value>Contains Characters Validator</value>
+  </data>
+  <data name="CustomValidatorNodeName" xml:space="preserve">
+    <value>Custom Validator</value>
+  </data>
+  <data name="CustomValidatorProviderExtensionsDescription" xml:space="preserve">
+    <value>Gets or sets the custom configuration attributes for this type.</value>
+  </data>
+  <data name="DateRangeValidatorNodeName" xml:space="preserve">
+    <value>Date Range Validator</value>
+  </data>
+  <data name="DefaultRuleDescription" xml:space="preserve">
+    <value>Default Validation Rule for this Type.</value>
+  </data>
+  <data name="DuplicateValidationTypeErrorMessage" xml:space="preserve">
+    <value>Type {0} is already added to the Validation Application Block</value>
+  </data>
+  <data name="EnumConversionValidatorNodeName" xml:space="preserve">
+    <value>Enum Conversion Validator</value>
+  </data>
+  <data name="EnumTypeDescription" xml:space="preserve">
+    <value>Gets or sets the type of enum that will be used to validate.</value>
+  </data>
+  <data name="FieldNameDescription" xml:space="preserve">
+    <value>The name of the referenced field.</value>
+  </data>
+  <data name="FieldNodeName" xml:space="preserve">
+    <value>Field</value>
+  </data>
+  <data name="FieldsNode" xml:space="preserve">
+    <value>Fields</value>
+  </data>
+  <data name="InvalidRegularExpressionErrorMessage" xml:space="preserve">
+    <value>The value for {0} is not a valid regular expression.
+{1}</value>
+  </data>
+  <data name="LowerBoundDescription" xml:space="preserve">
+    <value>The lowerbound value for this validator.</value>
+  </data>
+  <data name="MessageTemplateDescription" xml:space="preserve">
+    <value>The template for an error message, raised by this validator.</value>
+  </data>
+  <data name="MessageTemplateResourceNameDescription" xml:space="preserve">
+    <value>When using localized message templates, this specifies the name of the resource that should be used to retrieve a localized template.</value>
+  </data>
+  <data name="MessageTemplateResourceTypeNameDescription" xml:space="preserve">
+    <value>When using localized message templates, this specifies the type that contains the localized resources.</value>
+  </data>
+  <data name="MethodNameDescription" xml:space="preserve">
+    <value>The name of the referenced method.</value>
+  </data>
+  <data name="MethodNodeName" xml:space="preserve">
+    <value>Method</value>
+  </data>
+  <data name="MethodsNode" xml:space="preserve">
+    <value>Methods</value>
+  </data>
+  <data name="NegatedDescription" xml:space="preserve">
+    <value>Gets or sets the negated validator value.</value>
+  </data>
+  <data name="NotNullValidatorNodeName" xml:space="preserve">
+    <value>Not Null Validator</value>
+  </data>
+  <data name="ObjectCollectionValidatorNodeName" xml:space="preserve">
+    <value>Object Collection Validator</value>
+  </data>
+  <data name="ObjectValidatorNodeName" xml:space="preserve">
+    <value>Object Validator</value>
+  </data>
+  <data name="OrCompositeValidatorNodeName" xml:space="preserve">
+    <value>Or Composite Validator</value>
+  </data>
+  <data name="PropertiesNode" xml:space="preserve">
+    <value>Properties</value>
+  </data>
+  <data name="PropertyNameDescription" xml:space="preserve">
+    <value>The name of the referenced property.</value>
+  </data>
+  <data name="PropertyNodeName" xml:space="preserve">
+    <value>Property</value>
+  </data>
+  <data name="ProviderTypeNameDescription" xml:space="preserve">
+    <value>Gets or sets the type of Validator which implements Validator</value>
+  </data>
+  <data name="RangeBoundaryTypeDescription" xml:space="preserve">
+    <value>Gets or sets how the LowerBound property should be interpreted.</value>
+  </data>
+  <data name="RegexOptionsDescription" xml:space="preserve">
+    <value>Gets or sets the options that should be used to interpreted the regular expression.</value>
+  </data>
+  <data name="RegexPatternDescription" xml:space="preserve">
+    <value>Gets or sets the regular expression that should be used for validation.</value>
+  </data>
+  <data name="RegexValidatorNodeName" xml:space="preserve">
+    <value>Regex Validator</value>
+  </data>
+  <data name="ResolveTypeManuallyCaption" xml:space="preserve">
+    <value>Unable to resolve type</value>
+  </data>
+  <data name="ResolveTypeManuallyMessage" xml:space="preserve">
+    <value>The configuration editor is unable to resolve the type {0}. Would you like to resolve the type manually?</value>
+  </data>
+  <data name="RuleSetNodeName" xml:space="preserve">
+    <value>Rule Set</value>
+  </data>
+  <data name="SelfNodeName" xml:space="preserve">
+    <value>Self</value>
+  </data>
+  <data name="StringLengthValidatorNodeName" xml:space="preserve">
+    <value>String Length Validator</value>
+  </data>
+  <data name="TagDescription" xml:space="preserve">
+    <value>The tag for this validator.</value>
+  </data>
+  <data name="TargetRulesetDescription" xml:space="preserve">
+    <value>The target ruleset to use when creating the object validator.</value>
+  </data>
+  <data name="TargetTypeDescription" xml:space="preserve">
+    <value>The Type for the elements to validate.</value>
+  </data>
+  <data name="TypeNameDescription" xml:space="preserve">
+    <value>Gets or sets the name of the Type that should be validated.</value>
+  </data>
+  <data name="UpperBoundDescription" xml:space="preserve">
+    <value>The upperbound value for this validator.</value>
+  </data>
+  <data name="UpperBoundShouldBeGeaterThanLowerBound" xml:space="preserve">
+    <value>The value for UpperBound should be greater than the value for LowerBound.</value>
+  </data>
+  <data name="UpperBoundTypeDescription" xml:space="preserve">
+    <value>Gets or sets how the UpperBound property should be interpreted.</value>
+  </data>
+  <data name="ValidationSettingsNodeName" xml:space="preserve">
+    <value>Validation Application Block</value>
+  </data>
+  <data name="ValidatorCollectionNodeName" xml:space="preserve">
+    <value>Validators</value>
+  </data>
+  <data name="DomainValidatorNodeName" xml:space="preserve">
+    <value>Domain Validator</value>
+  </data>
+  <data name="AddContainsCharactersValidatorCommand" xml:space="preserve">
+    <value>Add Contains Characters Validator</value>
+  </data>
+  <data name="AddContainsCharactersValidatorCommandName" xml:space="preserve">
+    <value>Contains Characters Validator</value>
+  </data>
+  <data name="AddDomainValidatorCommand" xml:space="preserve">
+    <value>Add Domain Validator</value>
+  </data>
+  <data name="AddDomainValidatorCommandName" xml:space="preserve">
+    <value>Domain Validator</value>
+  </data>
+  <data name="AddEnumConversionValidatorCommand" xml:space="preserve">
+    <value>Add Enum Conversion Validator</value>
+  </data>
+  <data name="AddEnumConversionValidatorCommandName" xml:space="preserve">
+    <value>Enum Conversion Validator</value>
+  </data>
+  <data name="RelativeDateTimeValidatorNodeName" xml:space="preserve">
+    <value>Relative Date Time Validator</value>
+  </data>
+  <data name="AddRelativeDateTimeValidatorCommand" xml:space="preserve">
+    <value>Add Relative Date Time Validator</value>
+  </data>
+  <data name="AddRelativeDateTimeValidatorCommandName" xml:space="preserve">
+    <value>Relative Date Time Validator</value>
+  </data>
+  <data name="DataTimeLowerBoundDescription" xml:space="preserve">
+    <value>Gets or sets the LowerBound value. This is the quantity of units behind the relative datetime.</value>
+  </data>
+  <data name="DataTimeLowerBoundTypeDescription" xml:space="preserve">
+    <value>Gets or sets the BoundType for the LowerBound value.</value>
+  </data>
+  <data name="DataTimeLowerUnitDescription" xml:space="preserve">
+    <value>Gets or sets the datetime unit for the LowerBound value.</value>
+  </data>
+  <data name="DataTimeUpperBoundDescription" xml:space="preserve">
+    <value>Gets or sets the UpperBound value. This is the quantity of units over the relative datetime.</value>
+  </data>
+  <data name="DataTimeUpperBoundTypeDescription" xml:space="preserve">
+    <value>Gets or sets the BoundType for the UpperBound value.</value>
+  </data>
+  <data name="DataTimeUpperUnitDescription" xml:space="preserve">
+    <value>Gets or sets the datetime unit for the UpperBound value.</value>
+  </data>
+  <data name="TypeConversionValidatorNodeName" xml:space="preserve">
+    <value>Type Conversion Validator</value>
+  </data>
+  <data name="TargetTypeConversion" xml:space="preserve">
+    <value>Gets or sets the Target Type to be used in the validation.</value>
+  </data>
+  <data name="AddTypeConversionValidatorCommand" xml:space="preserve">
+    <value>Add Type Conversion Validator</value>
+  </data>
+  <data name="AddTypeConversionValidatorCommandName" xml:space="preserve">
+    <value>Type Conversion Validator</value>
+  </data>
+  <data name="RangeValidatorNodeName" xml:space="preserve">
+    <value>Range Validator</value>
+  </data>
+  <data name="AddRangeValidatorCommand" xml:space="preserve">
+    <value>Add Range Validator</value>
+  </data>
+  <data name="AddRangeValidatorCommandName" xml:space="preserve">
+    <value>Range Validator</value>
+  </data>
+  <data name="RegexPatternResourceNameDescription" xml:space="preserve">
+    <value>Gets or sets the regular expression resource name that should be used for validation.</value>
+  </data>
+  <data name="RegexPatternResourceTypeDescription" xml:space="preserve">
+    <value>Gets or sets the regular expression resource type that should be used for validation.</value>
+  </data>
+  <data name="AddPropertyComparisonValidatorCommand" xml:space="preserve">
+    <value>Add Property Comparison Validator.</value>
+  </data>
+  <data name="AddPropertyComparisonValidatorCommandName" xml:space="preserve">
+    <value>Property Comparison Validator.</value>
+  </data>
+  <data name="PropertyComparisonComparisonOperatorDescription" xml:space="preserve">
+    <value>The operator to use when comparing.</value>
+  </data>
+  <data name="PropertyComparisonPropertyToCompareDescription" xml:space="preserve">
+    <value>The name of the property to compare with.</value>
+  </data>
+  <data name="PropertyComparisonValidatorNodeName" xml:space="preserve">
+    <value>Property Comparison Validator</value>
+  </data>
+</root>

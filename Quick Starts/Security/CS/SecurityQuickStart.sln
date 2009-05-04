@@ -1,0 +1,64 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Security QuickStart", "Security QuickStart", "{680032B7-5A91-4760-94A7-DBBB18A6D887}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Referenced Enterprise Library Projects", "Referenced Enterprise Library Projects", "{8E70C844-5DB7-4AC7-9F24-2AFE9ECA9767}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecurityQuickStart", "SecurityQuickStart\SecurityQuickStart.csproj", "{A02D98E0-F35F-4616-92E5-74156EC9896A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{CF2CBDAD-4D43-45EA-9D40-4CD9CC7EE744} = {CF2CBDAD-4D43-45EA-9D40-4CD9CC7EE744}
+		{E725A5B4-A379-492F-89E3-3D8021376C3F} = {E725A5B4-A379-492F-89E3-3D8021376C3F}
+		{933575C4-BCAC-47E0-B651-C57FBC5CE58E} = {933575C4-BCAC-47E0-B651-C57FBC5CE58E}
+		{A09297C8-2C40-470B-8856-D856676DDFFA} = {A09297C8-2C40-470B-8856-D856676DDFFA}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Caching", "..\..\..\Blocks\Caching\Src\Caching\Caching.csproj", "{E725A5B4-A379-492F-89E3-3D8021376C3F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "..\..\..\Blocks\Common\Src\Common.csproj", "{A09297C8-2C40-470B-8856-D856676DDFFA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Security", "..\..\..\Blocks\Security\Src\Security\Security.csproj", "{CF2CBDAD-4D43-45EA-9D40-4CD9CC7EE744}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Security.Cache.CachingStore", "..\..\..\Blocks\Security\Src\CachingStore\Security.Cache.CachingStore.csproj", "{933575C4-BCAC-47E0-B651-C57FBC5CE58E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A02D98E0-F35F-4616-92E5-74156EC9896A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A02D98E0-F35F-4616-92E5-74156EC9896A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A02D98E0-F35F-4616-92E5-74156EC9896A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A02D98E0-F35F-4616-92E5-74156EC9896A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E725A5B4-A379-492F-89E3-3D8021376C3F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E725A5B4-A379-492F-89E3-3D8021376C3F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E725A5B4-A379-492F-89E3-3D8021376C3F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E725A5B4-A379-492F-89E3-3D8021376C3F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A09297C8-2C40-470B-8856-D856676DDFFA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A09297C8-2C40-470B-8856-D856676DDFFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A09297C8-2C40-470B-8856-D856676DDFFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A09297C8-2C40-470B-8856-D856676DDFFA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF2CBDAD-4D43-45EA-9D40-4CD9CC7EE744}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF2CBDAD-4D43-45EA-9D40-4CD9CC7EE744}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF2CBDAD-4D43-45EA-9D40-4CD9CC7EE744}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF2CBDAD-4D43-45EA-9D40-4CD9CC7EE744}.Release|Any CPU.Build.0 = Release|Any CPU
+		{933575C4-BCAC-47E0-B651-C57FBC5CE58E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{933575C4-BCAC-47E0-B651-C57FBC5CE58E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{933575C4-BCAC-47E0-B651-C57FBC5CE58E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{933575C4-BCAC-47E0-B651-C57FBC5CE58E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A02D98E0-F35F-4616-92E5-74156EC9896A} = {680032B7-5A91-4760-94A7-DBBB18A6D887}
+		{E725A5B4-A379-492F-89E3-3D8021376C3F} = {8E70C844-5DB7-4AC7-9F24-2AFE9ECA9767}
+		{A09297C8-2C40-470B-8856-D856676DDFFA} = {8E70C844-5DB7-4AC7-9F24-2AFE9ECA9767}
+		{CF2CBDAD-4D43-45EA-9D40-4CD9CC7EE744} = {8E70C844-5DB7-4AC7-9F24-2AFE9ECA9767}
+		{933575C4-BCAC-47E0-B651-C57FBC5CE58E} = {8E70C844-5DB7-4AC7-9F24-2AFE9ECA9767}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SelectedEnterpriseLibraryConfigurationSet = EntLib41Src
+	EndGlobalSection
+EndGlobal

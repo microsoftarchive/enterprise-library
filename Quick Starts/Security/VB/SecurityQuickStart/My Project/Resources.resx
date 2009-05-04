@@ -1,0 +1,274 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="CreateUserTitleMessage" xml:space="preserve">
+    <value>Create a new user</value>
+    <comment> For localizers and UE (These comments will be seen in LocStudio)</comment>
+  </data>
+  <data name="UserCreatedMessage" xml:space="preserve">
+    <value>User {0} created.</value>
+    <comment>.
+ Parameters: 0 - username (string) </comment>
+  </data>
+  <data name="DeleteUserMessage" xml:space="preserve">
+    <value>User {0} deleted.</value>
+    <comment>.
+ Parameters: 0 - username (string) </comment>
+  </data>
+  <data name="AddUserRoleMessage" xml:space="preserve">
+    <value>Role {1} added for user {0}.</value>
+    <comment>.
+ Parameters: 0 - username (string), 1 - role (string) </comment>
+  </data>
+  <data name="DeleteUserRoleMessage" xml:space="preserve">
+    <value>Role {1} deleted for user {0}.</value>
+    <comment>.
+ Parameters: 0 - username (string), 1 - role (string) </comment>
+  </data>
+  <data name="AddUserRoleErrorMessage" xml:space="preserve">
+    <value>Please select a user name and select or enter a role.</value>
+  </data>
+  <data name="DeleteUserRoleErrorMessage" xml:space="preserve">
+    <value>Please select a user name and a role.</value>
+  </data>
+  <data name="DeleteUserErrorMessage" xml:space="preserve">
+    <value>Please select a user name.</value>
+  </data>
+  <data name="ErrorMessage" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="AuthenticateTitleMessage" xml:space="preserve">
+    <value>Authenticate user</value>
+  </data>
+  <data name="ValidCredentialsMessage" xml:space="preserve">
+    <value>Successfully authenticated user {0}</value>
+    <comment>.
+ Parameters: 0 - username (string) </comment>
+  </data>
+  <data name="InvalidCredentialsMessage" xml:space="preserve">
+    <value>Failed to authenticate user {0}. Either the username does not exist in database or the provided password is not correct</value>
+    <comment>.
+ Parameters: 0 - username (string) </comment>
+  </data>
+  <data name="CreateTokenMessage" xml:space="preserve">
+    <value>The identity was added to the cache and can be retrieved using the token {0}</value>
+    <comment>.
+ Parameters: 0 - value (string) </comment>
+  </data>
+  <data name="RetrieveIdentityMessage" xml:space="preserve">
+    <value>The identity with the following information was retrieved using the token
+	Name: {0}
+	Authorization Type: {1}</value>
+    <comment>.
+ Parameters: 0 - name (string), 1 - authType (string) </comment>
+  </data>
+  <data name="ExpireTokenMessage" xml:space="preserve">
+    <value>Token was expired.</value>
+  </data>
+  <data name="CreateTokenRequiresIdentityMessage" xml:space="preserve">
+    <value>Cannot create a token for non-authenticated user. This scenario requires running the "Authenticate user using credentials" scenario first</value>
+  </data>
+  <data name="RetrieveIdentityErrorMessage" xml:space="preserve">
+    <value>Cannot retrieve identity because the token doesn't exist.</value>
+  </data>
+  <data name="ExpiredTokenErrorMessage" xml:space="preserve">
+    <value>Failed to retrieve the identity. The supplied token is expired.</value>
+  </data>
+  <data name="ExpireTokenErrorMessage" xml:space="preserve">
+    <value>Cannot expire token because it couldn't be created.</value>
+  </data>
+  <data name="IdentityRoleMessage" xml:space="preserve">
+    <value>Username: {0}
+Role: {1}</value>
+    <comment>.
+ Parameters: 0 - identity (string), 1 - role (string) </comment>
+  </data>
+  <data name="IdentityRoleErrorMessage" xml:space="preserve">
+    <value>Please enter a user name and select a role and a rule.</value>
+  </data>
+  <data name="RuleResultTrueMessage" xml:space="preserve">
+    <value>Rule: {0}
+Result: user is authorized</value>
+    <comment>.
+ Parameters: 0 - rule (string) </comment>
+  </data>
+  <data name="RuleResultFalseMessage" xml:space="preserve">
+    <value>Rule: {0}
+Result: user is not authorized</value>
+    <comment>.
+ Parameters: 0 - rule (string) </comment>
+  </data>
+  <data name="AzManResultMessage" xml:space="preserve">
+    <value>Task: {0}
+Result: {1}</value>
+    <comment>.
+ Parameters: 0 - task (string), 1 - result (string) </comment>
+  </data>
+  <data name="IdentityMessage" xml:space="preserve">
+    <value>Identity: {0}</value>
+    <comment>.
+ Parameters: 0 - user (string) </comment>
+  </data>
+  <data name="UserProfileMessage" xml:space="preserve">
+    <value>The following profile has been read for "{0}"
+  {1}
+</value>
+    <comment>.
+ Parameters: 0 - user (string), 1 - profile (string) </comment>
+  </data>
+  <data name="ProfileUpdatedMessage" xml:space="preserve">
+    <value>The profile has been saved for "{0}"
+</value>
+    <comment>.
+ Parameters: 0 - user (string) </comment>
+  </data>
+  <data name="ProfileStringMessage" xml:space="preserve">
+    <value>First Name: {0}
+  Last Name: {1}
+  Preferred Theme: {2}</value>
+    <comment>.
+ Parameters: 0 - firstName (string), 1 - lastName (string), 2 - theme (ProfileTheme) </comment>
+  </data>
+  <data name="NullIdentityMessage" xml:space="preserve">
+    <value>You should authenticate a user first.</value>
+  </data>
+  <data name="ProfileNotFoundMessage" xml:space="preserve">
+    <value>Unable to find a profile for current user. You can create a profile by using the "Write profile information about a user" button.</value>
+  </data>
+  <data name="CheckingRolesMessage" xml:space="preserve">
+    <value>Checking roles for "{0}"</value>
+    <comment>.
+ Parameters: 0 - user (string) </comment>
+  </data>
+  <data name="UserRoleMessage" xml:space="preserve">
+    <value>  Member of role {0}: {1}</value>
+    <comment>.
+ Parameters: 0 - role (string), 1 - result (string) </comment>
+  </data>
+  <data name="QuickStartErrorMessage" xml:space="preserve">
+    <value>There are some problems while trying to use the Security Quick Start, please check the following error messages: 
+
+{0}
+
+This QuickStart requires a database configured with the ASP.NET services schema. Please make sure the database has been initialized using the aspnet_regsql.exe script, and that the QuickStart's app.config file contains the correct database connection string.</value>
+  </data>
+  <data name="QuickStartErrorTitle" xml:space="preserve">
+    <value>Application Error</value>
+  </data>
+</root>

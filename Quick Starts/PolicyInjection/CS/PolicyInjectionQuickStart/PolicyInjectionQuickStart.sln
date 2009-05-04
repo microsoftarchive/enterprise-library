@@ -1,0 +1,81 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Policy Injection QuickStart", "Policy Injection QuickStart", "{BFC89D05-F87E-48B1-AD87-566C57451565}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Policy Injection Application Block", "Policy Injection Application Block", "{FEF58D92-70D6-4FCA-9852-67EBF66CB272}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Referenced Projects", "Referenced Projects", "{C3FCE6CC-7F3C-4F2C-B661-73609B05EB15}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PolicyInjectionQuickStart", "PolicyInjectionQuickStart\PolicyInjectionQuickStart.csproj", "{B9B7D4CC-1472-486C-8032-97EBD69A577A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "..\..\..\..\Blocks\Common\Src\Common.csproj", "{A09297C8-2C40-470B-8856-D856676DDFFA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExceptionHandling", "..\..\..\..\Blocks\ExceptionHandling\Src\ExceptionHandling\ExceptionHandling.csproj", "{2DB0AD6D-BF59-4EBB-9F99-49ABD8539FD2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logging", "..\..\..\..\Blocks\Logging\Src\Logging\Logging.csproj", "{6AC97717-899D-4F72-BC5B-2C37959CD4FF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Security", "..\..\..\..\Blocks\Security\Src\Security\Security.csproj", "{CF2CBDAD-4D43-45EA-9D40-4CD9CC7EE744}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Validation", "..\..\..\..\Blocks\Validation\Src\Validation\Validation.csproj", "{E814A5DC-C15B-4BA4-AB7C-B7C9A34AC2FD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PolicyInjection", "..\..\..\..\Blocks\PolicyInjection\Src\PolicyInjection\PolicyInjection.csproj", "{3E6129C8-18E4-410D-89FC-0DBBE6009FC5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PolicyInjection.CallHandlers", "..\..\..\..\Blocks\PolicyInjection\Src\CallHandlers\PolicyInjection.CallHandlers.csproj", "{88316009-DEDF-434C-A6A8-BE79D8A1B502}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B9B7D4CC-1472-486C-8032-97EBD69A577A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B9B7D4CC-1472-486C-8032-97EBD69A577A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B9B7D4CC-1472-486C-8032-97EBD69A577A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B9B7D4CC-1472-486C-8032-97EBD69A577A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A09297C8-2C40-470B-8856-D856676DDFFA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A09297C8-2C40-470B-8856-D856676DDFFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A09297C8-2C40-470B-8856-D856676DDFFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A09297C8-2C40-470B-8856-D856676DDFFA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2DB0AD6D-BF59-4EBB-9F99-49ABD8539FD2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2DB0AD6D-BF59-4EBB-9F99-49ABD8539FD2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2DB0AD6D-BF59-4EBB-9F99-49ABD8539FD2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2DB0AD6D-BF59-4EBB-9F99-49ABD8539FD2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6AC97717-899D-4F72-BC5B-2C37959CD4FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6AC97717-899D-4F72-BC5B-2C37959CD4FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6AC97717-899D-4F72-BC5B-2C37959CD4FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6AC97717-899D-4F72-BC5B-2C37959CD4FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF2CBDAD-4D43-45EA-9D40-4CD9CC7EE744}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF2CBDAD-4D43-45EA-9D40-4CD9CC7EE744}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF2CBDAD-4D43-45EA-9D40-4CD9CC7EE744}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF2CBDAD-4D43-45EA-9D40-4CD9CC7EE744}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E814A5DC-C15B-4BA4-AB7C-B7C9A34AC2FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E814A5DC-C15B-4BA4-AB7C-B7C9A34AC2FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E814A5DC-C15B-4BA4-AB7C-B7C9A34AC2FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E814A5DC-C15B-4BA4-AB7C-B7C9A34AC2FD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3E6129C8-18E4-410D-89FC-0DBBE6009FC5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3E6129C8-18E4-410D-89FC-0DBBE6009FC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3E6129C8-18E4-410D-89FC-0DBBE6009FC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3E6129C8-18E4-410D-89FC-0DBBE6009FC5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{88316009-DEDF-434C-A6A8-BE79D8A1B502}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{88316009-DEDF-434C-A6A8-BE79D8A1B502}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{88316009-DEDF-434C-A6A8-BE79D8A1B502}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{88316009-DEDF-434C-A6A8-BE79D8A1B502}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{B9B7D4CC-1472-486C-8032-97EBD69A577A} = {BFC89D05-F87E-48B1-AD87-566C57451565}
+		{3E6129C8-18E4-410D-89FC-0DBBE6009FC5} = {FEF58D92-70D6-4FCA-9852-67EBF66CB272}
+		{88316009-DEDF-434C-A6A8-BE79D8A1B502} = {FEF58D92-70D6-4FCA-9852-67EBF66CB272}
+		{A09297C8-2C40-470B-8856-D856676DDFFA} = {C3FCE6CC-7F3C-4F2C-B661-73609B05EB15}
+		{2DB0AD6D-BF59-4EBB-9F99-49ABD8539FD2} = {C3FCE6CC-7F3C-4F2C-B661-73609B05EB15}
+		{6AC97717-899D-4F72-BC5B-2C37959CD4FF} = {C3FCE6CC-7F3C-4F2C-B661-73609B05EB15}
+		{CF2CBDAD-4D43-45EA-9D40-4CD9CC7EE744} = {C3FCE6CC-7F3C-4F2C-B661-73609B05EB15}
+		{E814A5DC-C15B-4BA4-AB7C-B7C9A34AC2FD} = {C3FCE6CC-7F3C-4F2C-B661-73609B05EB15}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SelectedEnterpriseLibraryConfigurationSet = EntLib41Src
+	EndGlobalSection
+EndGlobal

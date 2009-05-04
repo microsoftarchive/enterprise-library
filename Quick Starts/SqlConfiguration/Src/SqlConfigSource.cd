@@ -1,0 +1,134 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Font Name="Tahoma" Size="8.25" />
+  <Class Name="Microsoft.Practices.EnterpriseLibrary.SqlConfigurationSource.ConfigurationSqlChangedEventArgs" Collapsed="true">
+    <Position X="0.5" Y="1.75" Width="3" />
+    <TypeIdentifier>
+      <FileName>ConfigurationSqlChangedEventArgs.cs</FileName>
+      <HashCode>AEAAAAAAAAAAAAAAAACAAAAAgAAAAAAAACAAAAAIIAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Microsoft.Practices.EnterpriseLibrary.SqlConfigurationSource.ConfigurationSqlChangingEventArgs" Collapsed="true">
+    <Position X="3.5" Y="2.75" Width="4" />
+    <TypeIdentifier>
+      <FileName>ConfigurationSqlChangingEventArgs.cs</FileName>
+      <HashCode>AEAAAAAAAAAAAAAAAACAAAAAgAAAAAAAACAAAAAIIAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Microsoft.Practices.EnterpriseLibrary.SqlConfigurationSource.SqlConfigurationSource" HideInheritanceLine="true" BaseTypeListCollapsed="true">
+    <Position X="5.25" Y="4.25" Width="2.5" />
+    <TypeIdentifier>
+      <FileName>SqlConfigurationSource.cs</FileName>
+      <HashCode>AAIAAIAAAACAAAAQQAAABQAQAAEAAAAAAMgQAAAAAAE=</HashCode>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Implementation" />
+    </ShowAsAssociation>
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Microsoft.Practices.EnterpriseLibrary.SqlConfigurationSource.SqlConfigurationSourceImplementation" HideInheritanceLine="true" BaseTypeListCollapsed="true">
+    <Position X="0.5" Y="4.25" Width="3.5" />
+    <TypeIdentifier>
+      <FileName>SqlConfigurationSourceImplementation.cs</FileName>
+      <HashCode>CAAAEUBBCCCAABAAAAAUSQggAIAAAjgAAAgRBAkgEAk=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Microsoft.Practices.EnterpriseLibrary.SqlConfigurationSource.Storage.ConfigurationChangeSqlWatcher" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="8.75" Y="1.75" Width="2.75" />
+    <TypeIdentifier>
+      <FileName>Storage\ConfigurationChangeSqlWatcher.cs</FileName>
+      <HashCode>AkAAAAAAAAAECAAAAACAAAAAAAAAAAAIAgAEAAAABAA=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ConfigurationChangedEventArgs" Collapsed="true">
+    <Position X="0.75" Y="0.5" Width="2.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Storage.ConfigurationChangeWatcher" Collapsed="true">
+    <Position X="9" Y="0.5" Width="2.25" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ConfigurationChangingEventArgs" Collapsed="true">
+    <Position X="4.25" Y="1.75" Width="2.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="Microsoft.Practices.EnterpriseLibrary.SqlConfigurationSource.SqlConfigurationManager" HideInheritanceLine="true">
+    <Position X="5.25" Y="7.25" Width="2.5" />
+    <TypeIdentifier>
+      <FileName>SqlConfigurationManager.cs</FileName>
+      <HashCode>AAABABQAACiAAgAAAAAACAAAAAAAAAgAgAAAAAEIAAA=</HashCode>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="configSystem" />
+    </ShowAsAssociation>
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Enum Name="Microsoft.Practices.EnterpriseLibrary.SqlConfigurationSource.SqlConfigurationManager.InitState">
+        <TypeIdentifier>
+          <NewMemberFileName>SqlConfigurationManager.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+  </Class>
+  <Class Name="Microsoft.Practices.EnterpriseLibrary.SqlConfigurationSource.ConfigurationSqlSourceWatcher">
+    <Position X="8.75" Y="2.75" Width="2.75" />
+    <TypeIdentifier>
+      <FileName>ConfigurationSqlSourceWatcher.cs</FileName>
+      <HashCode>AEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAgA=</HashCode>
+    </TypeIdentifier>
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+  </Class>
+  <Class Name="Microsoft.Practices.EnterpriseLibrary.SqlConfigurationSource.Configuration.SqlConfigurationSystem">
+    <Position X="8.75" Y="7.5" Width="3" />
+    <TypeIdentifier>
+      <FileName>Configuration\SqlConfigurationSystem.cs</FileName>
+      <HashCode>AAAAAAAAAACAAAAAAAAAABAAAAAAAAgAAIAQAAEAAAA=</HashCode>
+    </TypeIdentifier>
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Microsoft.Practices.EnterpriseLibrary.SqlConfigurationSource.Configuration.SqlConfigurationData">
+    <Position X="10.5" Y="10" Width="2.25" />
+    <TypeIdentifier>
+      <FileName>Configuration\SqlConfigurationData.cs</FileName>
+      <HashCode>AAAAAIAAgAIAAAAgAAAAAABAgAAAAAAAACAIAgAAIAA=</HashCode>
+    </TypeIdentifier>
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+  </Class>
+  <Class Name="Microsoft.Practices.EnterpriseLibrary.SqlConfigurationSource.Configuration.SqlConfigurationParameter">
+    <Position X="8" Y="10" Width="2.25" />
+    <TypeIdentifier>
+      <FileName>Configuration\SqlConfigurationParameter.cs</FileName>
+      <HashCode>AAAAAAAAgAAAAAAAAAAAAABAgAAAAAAAACAQAAAAIAA=</HashCode>
+    </TypeIdentifier>
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Microsoft.Practices.EnterpriseLibrary.SqlConfigurationSource.SqlConfigurationSourceElement">
+    <Position X="8.75" Y="4.75" Width="2.75" />
+    <TypeIdentifier>
+      <FileName>SqlConfigurationSourceElement.cs</FileName>
+      <HashCode>AAAAAAAAkAABAAAAAAAAAgBAgAAAAAAQACAAQAAAIAA=</HashCode>
+    </TypeIdentifier>
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+  </Class>
+</ClassDiagram>
