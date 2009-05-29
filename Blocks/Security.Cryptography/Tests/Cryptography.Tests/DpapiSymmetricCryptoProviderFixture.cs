@@ -12,12 +12,22 @@
 using System;
 using System.Security.Cryptography;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation;
+using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests
 {
     [TestClass]
     public class DpapiSymmetricCryptoProviderFixture
     {
+        MockSymmetricAlgorithmInstrumentationProvider instrumentationProvider;
+
+        [TestInitialize]
+        public void Setup()
+        {
+            instrumentationProvider = new MockSymmetricAlgorithmInstrumentationProvider();
+        }
+
         byte[] CreateEntropy()
         {
             byte[] entropy = new byte[16];
@@ -28,8 +38,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests
         SymmetricProviderHelper CreateHelper(DataProtectionScope mode,
                                              byte[] entropy)
         {
-            DpapiSymmetricCryptoProvider provider = new DpapiSymmetricCryptoProvider(mode, entropy);
+            DpapiSymmetricCryptoProvider provider = new DpapiSymmetricCryptoProvider(mode, entropy, instrumentationProvider);
             return new SymmetricProviderHelper(provider);
+        }
+
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void ConstructWithNullInstrumentationProviderThrows()
+        {
+            new DpapiSymmetricCryptoProvider(DataProtectionScope.CurrentUser, CreateEntropy(), null);
         }
 
         [TestMethod]
@@ -37,7 +55,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests
         {
             SymmetricProviderHelper helper = CreateHelper(DataProtectionScope.CurrentUser, CreateEntropy());
             helper.EncryptAndDecrypt();
-            ;
         }
 
         [TestMethod]
@@ -45,7 +62,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests
         {
             SymmetricProviderHelper helper = CreateHelper(DataProtectionScope.CurrentUser, null);
             helper.EncryptAndDecrypt();
-            ;
         }
 
         [TestMethod]
@@ -53,7 +69,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests
         {
             SymmetricProviderHelper helper = CreateHelper(DataProtectionScope.LocalMachine, CreateEntropy());
             helper.EncryptAndDecrypt();
-            ;
         }
 
         [TestMethod]
@@ -75,6 +90,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests
         {
             SymmetricProviderHelper helper = CreateHelper(DataProtectionScope.LocalMachine, CreateEntropy());
             helper.EncryptAndDecryptOneByte();
+        }
+
+
+        [TestMethod]
+        public void EncryptAndDecryptFireInstrumentationProvider()
+        {
+            SymmetricProviderHelper helper = CreateHelper(DataProtectionScope.LocalMachine, CreateEntropy());
+            helper.EncryptAndDecryptOneByte();
+
+            Assert.AreEqual(1, instrumentationProvider.FireDecryptionPerformedCallCount);
+            Assert.AreEqual(1, instrumentationProvider.FireEncryptionPerformedCallCount);
         }
 
         [TestMethod]
@@ -114,6 +140,22 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests
         }
 
         [TestMethod]
+        public void ExceptionDuringEncryptCallsInstrumentationProvider()
+        {
+            try
+            {
+                SymmetricProviderHelper helper = CreateHelper(DataProtectionScope.CurrentUser, null);
+                helper.EncryptNull();
+            }
+            catch (ArgumentNullException)
+            {
+                Assert.AreEqual(0, instrumentationProvider.FireEncryptionPerformedCallCount);
+                Assert.AreEqual(1, instrumentationProvider.FireCryptoFailedCallCount);
+                Assert.AreEqual("The encryption operation failed.", instrumentationProvider.lastCryptoFailedMessage);
+            }
+        }
+
+        [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
         public void EncryptZeroLengthThrows()
         {
@@ -129,12 +171,53 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests
             helper.DecryptNull();
         }
 
+
+        [TestMethod]
+        public void ExceptionDuringDecryptCallsInstrumentationProvider()
+        {
+            try
+            {
+                SymmetricProviderHelper helper = CreateHelper(DataProtectionScope.CurrentUser, null);
+                helper.DecryptNull();
+            }
+            catch (ArgumentNullException)
+            {
+                Assert.AreEqual(0, instrumentationProvider.FireDecryptionPerformedCallCount);
+                Assert.AreEqual(1, instrumentationProvider.FireCryptoFailedCallCount);
+                Assert.AreEqual("The decryption operation failed.", instrumentationProvider.lastCryptoFailedMessage);
+            }
+        }
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
         public void DecryptZeroLengthThrows()
         {
             SymmetricProviderHelper helper = CreateHelper(DataProtectionScope.CurrentUser, null);
             helper.DecryptZeroLength();
+        }
+
+
+        private class MockSymmetricAlgorithmInstrumentationProvider : ISymmetricAlgorithmInstrumentationProvider
+        {
+            internal string lastCryptoFailedMessage;
+            internal int FireCryptoFailedCallCount = 0;
+            internal int FireDecryptionPerformedCallCount = 0;
+            internal int FireEncryptionPerformedCallCount = 0;
+
+            public void FireCyptographicOperationFailed(string message, Exception exception)
+            {
+                lastCryptoFailedMessage = message;
+                FireCryptoFailedCallCount++;
+            }
+
+            public void FireSymmetricDecryptionPerformed()
+            {
+                FireDecryptionPerformedCallCount++;
+            }
+
+            public void FireSymmetricEncryptionPerformed()
+            {
+                FireEncryptionPerformedCallCount++;
+            }
         }
     }
 }

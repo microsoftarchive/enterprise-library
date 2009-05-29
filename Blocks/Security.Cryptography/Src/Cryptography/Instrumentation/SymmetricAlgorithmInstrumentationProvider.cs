@@ -11,64 +11,141 @@
 
 using System;
 using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation;
+using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Properties;
+using System.Diagnostics;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Instrumentation
 {
 	/// <summary>
 	/// Defines the logical events that can be instrumented for symmetric crypto providers.
 	/// </summary>
-	/// <remarks>
-	/// The concrete instrumentation is provided by an object bound to the events of the provider. 
-	/// The default listener, automatically bound during construction, is <see cref="SymmetricAlgorithmInstrumentationListener"/>.
-	/// </remarks>
-	[InstrumentationListener(typeof(SymmetricAlgorithmInstrumentationListener), typeof(SymmetricAlgorithmInstrumentationBinder))]
-	public class SymmetricAlgorithmInstrumentationProvider
+    [HasInstallableResourcesAttribute]
+    [PerformanceCountersDefinition(counterCategoryName, "CryptographyHelpResourceName")]
+    [EventLogDefinition("Application", "Enterprise Library Cryptography")]
+    public class SymmetricAlgorithmInstrumentationProvider : InstrumentationListener, ISymmetricAlgorithmInstrumentationProvider
 	{
-		/// <summary>
-		/// Occurs when a cryptographic operation fails for an <see cref="ISymmetricCryptoProvider"/>.
-		/// </summary>
-		[InstrumentationProvider("CyptographicOperationFailed")]
-		public event EventHandler<CrytographicOperationErrorEventArgs> cyptographicOperationFailed;
+        static EnterpriseLibraryPerformanceCounterFactory factory = new EnterpriseLibraryPerformanceCounterFactory();
+
+        /// <summary>
+        /// Made public for testing
+        /// </summary>
+        public const string TotalSymmetricEncryptionPerformedCounterName = "Total Symmetric Encryptions";
+
+        /// <summary>
+        /// Made public for testing
+        /// </summary>
+        public const string TotalSymmetricDecryptionPerformedCounterName = "Total Symmetric Decryptions";
+
+        [PerformanceCounter("Symmetric Encryptions/sec", "SymmetricEncryptionPerformedHelpResource", PerformanceCounterType.RateOfCountsPerSecond32)]
+        EnterpriseLibraryPerformanceCounter symmetricEncryptionPerformedCounter;
+
+        [PerformanceCounter(TotalSymmetricEncryptionPerformedCounterName, "TotalSymmetricEncryptionPerformedHelpResource", PerformanceCounterType.NumberOfItems32)]
+        EnterpriseLibraryPerformanceCounter totalSymmetricEncryptionPerformedCounter;
+
+        [PerformanceCounter("Symmetric Decryptions/sec", "SymmetricDecryptionPerformedHelpResource", PerformanceCounterType.RateOfCountsPerSecond32)]
+        EnterpriseLibraryPerformanceCounter symmetricDecryptionPerformedCounter;
+
+        [PerformanceCounter(TotalSymmetricDecryptionPerformedCounterName, "TotalSymmetricDecryptionPerformedHelpResource", PerformanceCounterType.NumberOfItems32)]
+        EnterpriseLibraryPerformanceCounter totalSymmetricDecryptionPerformedCounter;
+
+        /// <summary>
+        /// Made public for testing
+        /// </summary>
+        public const string counterCategoryName = "Enterprise Library Cryptography Counters";
+
+		private string instanceName;
 
 		/// <summary>
-		/// Occurs when an encryption operation is performed by an <see cref="ISymmetricCryptoProvider"/>.
+        /// Initializes a new instance of the <see cref="SymmetricAlgorithmInstrumentationProvider"/> class.
 		/// </summary>
-		[InstrumentationProvider("SymmetricEncryptionPerformed")]
-		public event EventHandler<EventArgs> symmetricEncryptionPerformed;
+		/// <param name="instanceName">The name of the <see cref="ISymmetricCryptoProvider"/> instance this instrumentation listener is created for.</param>
+		/// <param name="performanceCountersEnabled"><b>true</b> if performance counters should be updated.</param>
+		/// <param name="eventLoggingEnabled"><b>true</b> if event log entries should be written.</param>
+		/// <param name="wmiEnabled"><b>true</b> if WMI events should be fired.</param>
+        /// <param name="applicationInstanceName">The application instance name.</param>
+		public SymmetricAlgorithmInstrumentationProvider(string instanceName,
+										   bool performanceCountersEnabled,
+										   bool eventLoggingEnabled,
+										   bool wmiEnabled,
+                                           string applicationInstanceName)
+            : this(instanceName, performanceCountersEnabled, eventLoggingEnabled, wmiEnabled, new AppDomainNameFormatter(applicationInstanceName))
+		{
+		}
 
 		/// <summary>
-		/// Occurs when an decryption operation is performed by an <see cref="ISymmetricCryptoProvider"/>.
 		/// </summary>
-		[InstrumentationProvider("SymmetricDecryptionPerformed")]
-		public event EventHandler<EventArgs> symmetricDecryptionPerformed;
+		/// <param name="instanceName">The name of the <see cref="ISymmetricCryptoProvider"/> instance this instrumentation listener is created for.</param>
+		/// <param name="performanceCountersEnabled"><b>true</b> if performance counters should be updated.</param>
+		/// <param name="eventLoggingEnabled"><b>true</b> if event log entries should be written.</param>
+		/// <param name="wmiEnabled"><b>true</b> if WMI events should be fired.</param>
+		/// <param name="nameFormatter">The <see cref="IPerformanceCounterNameFormatter"/> that is used to creates unique name for each <see cref="PerformanceCounter"/> instance.</param>
+        public SymmetricAlgorithmInstrumentationProvider(string instanceName,
+										   bool performanceCountersEnabled,
+										   bool eventLoggingEnabled,
+										   bool wmiEnabled,
+										   IPerformanceCounterNameFormatter nameFormatter)
+			: base(instanceName, performanceCountersEnabled, eventLoggingEnabled, wmiEnabled, nameFormatter)
+		{
+			this.instanceName = instanceName;
+		}
 
 		/// <summary>
-		/// Fires the <see cref="SymmetricAlgorithmInstrumentationProvider.cyptographicOperationFailed"/> event.
 		/// </summary>
 		/// <param name="message">The message that describes the failure.</param>
 		/// <param name="exception">The exception thrown during the failure.</param>
 		public void FireCyptographicOperationFailed(string message, Exception exception)
-		{
-			if (cyptographicOperationFailed != null)
-				cyptographicOperationFailed(this, new CrytographicOperationErrorEventArgs(message, exception));
+        {
+            if (EventLoggingEnabled)
+            {
+                string errorMessage
+                    = string.Format(
+                        Resources.Culture,
+                        Resources.ErrorCryptographicOperationFailed,
+                        instanceName);
+                string entryText = new EventLogEntryFormatter(Resources.BlockName).GetEntryText(errorMessage, exception, message);
+
+                EventLog.WriteEntry(GetEventSourceName(), entryText, EventLogEntryType.Error);
+            }
+            if (WmiEnabled) FireManagementInstrumentation(new SymmetricOperationFailedEvent(instanceName, message, exception.ToString()));
 		}
 
 		/// <summary>
-		/// Fires the <see cref="SymmetricAlgorithmInstrumentationProvider.symmetricEncryptionPerformed"/> event.
 		/// </summary>
 		public void FireSymmetricEncryptionPerformed()
-		{
-			if (symmetricEncryptionPerformed != null)
-				symmetricEncryptionPerformed(this, new EventArgs());
+        {
+            if (PerformanceCountersEnabled)
+            {
+                symmetricEncryptionPerformedCounter.Increment();
+                totalSymmetricEncryptionPerformedCounter.Increment();
+            }
 		}
 
 		/// <summary>
-		/// Fires the <see cref="SymmetricAlgorithmInstrumentationProvider.symmetricDecryptionPerformed"/> event.
 		/// </summary>
 		public void FireSymmetricDecryptionPerformed()
-		{
-			if (symmetricDecryptionPerformed != null)
-				symmetricDecryptionPerformed(this, new EventArgs());
+        {
+            if (PerformanceCountersEnabled)
+            {
+                symmetricDecryptionPerformedCounter.Increment();
+                totalSymmetricDecryptionPerformedCounter.Increment();
+            }
 		}
+
+
+        /// <summary>
+        /// Creates the performance counters to instrument the symmetric crypto events for the specified instance names.
+        /// </summary>
+        /// <param name="instanceNames">The instance names for the performance counters.</param>
+        protected override void CreatePerformanceCounters(string[] instanceNames)
+        {
+            symmetricEncryptionPerformedCounter
+                = factory.CreateCounter(counterCategoryName, "Symmetric Encryptions/sec", instanceNames);
+            symmetricDecryptionPerformedCounter
+                = factory.CreateCounter(counterCategoryName, "Symmetric Decryptions/sec", instanceNames);
+            totalSymmetricEncryptionPerformedCounter
+                = factory.CreateCounter(counterCategoryName, TotalSymmetricEncryptionPerformedCounterName, instanceNames);
+            totalSymmetricDecryptionPerformedCounter
+                = factory.CreateCounter(counterCategoryName, TotalSymmetricDecryptionPerformedCounterName, instanceNames);
+        }
 	}
 }

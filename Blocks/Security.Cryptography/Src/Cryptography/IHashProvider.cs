@@ -9,16 +9,11 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
-using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration;
-
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography
 {
     /// <summary>
     /// A contract for any provider for configurable hash implementations.
     /// </summary>
-	[ConfigurationNameMapper(typeof(HashProviderDataRetriever))]
-	[CustomFactory(typeof(HashProviderCustomFactory))]
 	public interface IHashProvider
     {
         /// <summary>

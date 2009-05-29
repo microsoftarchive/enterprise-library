@@ -181,7 +181,7 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "Web", "Validation\Tests\Int
 		Release.AspNetCompiler.ForceOverwrite = "true"
 		Release.AspNetCompiler.FixedNames = "false"
 		Release.AspNetCompiler.Debug = "False"
-		VWDPort = "4808"
+		VWDPort = "32190"
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Security.Cryptography", "Security.Cryptography\Src\Cryptography\Security.Cryptography.csproj", "{6A4E6A8A-A39F-4643-BA9B-87AED00BB03E}"
@@ -374,6 +374,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Data.TestSupport", "Data\Te
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.ContainerInfrastructure.Tests.VSTS", "Common\Tests\Common.ContainerInfrastructure.Tests.VSTS\Common.ContainerInfrastructure.Tests.VSTS.csproj", "{AA1AC37C-76DC-4FA8-852C-5A67562FF94E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oracle.Tests.VSTS", "Data\Tests\Oracle.Tests.VSTS\Oracle.Tests.VSTS.csproj", "{8258FB05-E92F-428E-AB48-86D7E3F5FE43}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
 		SccProjectUniqueName100 = Caching\\Tests\\Caching.TestSupport\\Caching.TestSupport.csproj
@@ -400,6 +402,10 @@ Global
 		SccProjectTopLevelParentUniqueName105 = EnterpriseLibrary.Tests.sln
 		SccProjectName105 = Common/Tests/Common.ContainerInfrastructure.Tests.VSTS
 		SccLocalPath105 = Common\\Tests\\Common.ContainerInfrastructure.Tests.VSTS
+		SccProjectUniqueName106 = Data\\Tests\\Oracle.Tests.VSTS\\Oracle.Tests.VSTS.csproj
+		SccProjectTopLevelParentUniqueName106 = EnterpriseLibrary.Tests.sln
+		SccProjectName106 = Data/Tests/Oracle.Tests.VSTS
+		SccLocalPath106 = Data\\Tests\\Oracle.Tests.VSTS
 	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = EnterpriseLibrary.Tests.vsmdi
@@ -1463,6 +1469,16 @@ Global
 		{AA1AC37C-76DC-4FA8-852C-5A67562FF94E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{AA1AC37C-76DC-4FA8-852C-5A67562FF94E}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{AA1AC37C-76DC-4FA8-852C-5A67562FF94E}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{8258FB05-E92F-428E-AB48-86D7E3F5FE43}.Debug|.NET.ActiveCfg = Debug|Any CPU
+		{8258FB05-E92F-428E-AB48-86D7E3F5FE43}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8258FB05-E92F-428E-AB48-86D7E3F5FE43}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8258FB05-E92F-428E-AB48-86D7E3F5FE43}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{8258FB05-E92F-428E-AB48-86D7E3F5FE43}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{8258FB05-E92F-428E-AB48-86D7E3F5FE43}.Release|.NET.ActiveCfg = Release|Any CPU
+		{8258FB05-E92F-428E-AB48-86D7E3F5FE43}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8258FB05-E92F-428E-AB48-86D7E3F5FE43}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8258FB05-E92F-428E-AB48-86D7E3F5FE43}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{8258FB05-E92F-428E-AB48-86D7E3F5FE43}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1517,6 +1533,7 @@ Global
 		{F1D6AF10-A136-4050-A955-861D99C8ABAF} = {AC321EDA-C130-47A4-B0E7-DBB6B7E560EC}
 		{16D47884-153E-4A57-84F4-54115558CEEC} = {AC321EDA-C130-47A4-B0E7-DBB6B7E560EC}
 		{5D9A30BB-5CC0-46F3-BD4B-828FC6270323} = {AC321EDA-C130-47A4-B0E7-DBB6B7E560EC}
+		{8258FB05-E92F-428E-AB48-86D7E3F5FE43} = {AC321EDA-C130-47A4-B0E7-DBB6B7E560EC}
 		{486A735F-7725-4685-8AEC-4D285128CD4F} = {8DF11989-F296-4F67-AF6D-6BB2BB894E37}
 		{5EEA72B6-9A18-488F-9D92-9F9C3D308B07} = {8DF11989-F296-4F67-AF6D-6BB2BB894E37}
 		{E725A5B4-A379-492F-89E3-3D8021376C3F} = {8DF11989-F296-4F67-AF6D-6BB2BB894E37}

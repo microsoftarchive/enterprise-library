@@ -25,10 +25,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
 	public class Cache : ICacheOperations, IDisposable
     {
         private Hashtable inMemoryCache;
-        private ICacheScavenger cacheScavenger;
         private IBackingStore backingStore;
-        private CacheCapacityScavengingPolicy scavengingPolicy;
-		private CachingInstrumentationProvider instrumentationProvider;
+		private ICachingInstrumentationProvider instrumentationProvider;
 
         private const string addInProgressFlag = "Dummy variable used to flag temp cache item added during Add";
 
@@ -36,18 +34,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
 		/// Initialzie a new instance of a <see cref="Cache"/> class with a backing store, and scavenging policy.
 		/// </summary>
 		/// <param name="backingStore">The cache backing store.</param>
-		/// <param name="scavengingPolicy">The scavenging policy.</param>
 		/// <param name="instrumentationProvider">The instrumentation provider.</param>
-		public Cache(IBackingStore backingStore, CacheCapacityScavengingPolicy scavengingPolicy, CachingInstrumentationProvider instrumentationProvider)
+		public Cache(IBackingStore backingStore, ICachingInstrumentationProvider instrumentationProvider)
         {
             this.backingStore = backingStore;
-            this.scavengingPolicy = scavengingPolicy;
-			this.instrumentationProvider = instrumentationProvider;
+            this.instrumentationProvider = instrumentationProvider;
 
             Hashtable initialItems = backingStore.Load();
             inMemoryCache = Hashtable.Synchronized(initialItems);
 
 			this.instrumentationProvider.FireCacheUpdated(initialItems.Count, initialItems.Count);
+
+            
         }
 		
         /// <summary>
@@ -87,17 +85,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
         }
 
 		/// <summary>
-		/// Initialize the cache with a scavenger.
-		/// </summary>
-		/// <param name="cacheScavengerToUse">
-		/// An <see cref="ICacheScavenger"/> object.
-		/// </param>
-        public void Initialize(ICacheScavenger cacheScavengerToUse)
-        {
-            this.cacheScavenger = cacheScavengerToUse;
-        }
-
-		/// <summary>
 		/// Add a new keyed object to the cache.
 		/// </summary>
 		/// <param name="key">The key of the object.</param>
@@ -118,7 +105,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
         public void Add(string key, object value, CacheItemPriority scavengingPriority, ICacheItemRefreshAction refreshAction, params ICacheItemExpiration[] expirations)
         {
             ValidateKey(key);
-            EnsureCacheInitialized();
 
             CacheItem cacheItemBeforeLock = null;
             bool lockWasSuccessful = false;
@@ -163,18 +149,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
                     inMemoryCache.Remove(key);
                     throw;
                 }
-
-                if (scavengingPolicy.IsScavengingNeeded(inMemoryCache.Count))
-                {
-                    cacheScavenger.StartScavenging();
-                }
-
 				instrumentationProvider.FireCacheUpdated(1, inMemoryCache.Count);
             }
             finally
             {
                 Monitor.Exit(cacheItemBeforeLock);
-            }
+            }  
+        
         }
 
 		/// <summary>
@@ -232,7 +213,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
             {
                 Monitor.Exit(cacheItemBeforeLock);
             }
-
         }
 
 		
@@ -367,14 +347,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
             {
 				throw new ArgumentException(Resources.EmptyParameterName, "key");
             }            
-        }
-
-        private void EnsureCacheInitialized()
-        {
-            if (cacheScavenger == null)
-            {
-                throw new InvalidOperationException(Resources.CacheNotInitializedException);
-            }
         }
 
         private static bool IsObjectInCache(CacheItem cacheItemBeforeLock)

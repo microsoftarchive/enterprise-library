@@ -9,8 +9,9 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using System;
+using System.Collections.Generic;
 using System.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 {
@@ -49,6 +50,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 		/// to save the updated configuration.</param>
 		/// <param name="sectionName">The name of the section to remove.</param>
 		void Remove(IConfigurationParameter removeParameter, string sectionName);
+
+        /// <summary>
+        /// Event raised when any section in this configuration source changes.
+        /// </summary>
+	    event EventHandler<ConfigurationSourceChangedEventArgs> SourceChanged;
 
 		/// <summary>
 		/// Adds a handler to be called when changes to the section named <paramref name="sectionName"/> are detected.

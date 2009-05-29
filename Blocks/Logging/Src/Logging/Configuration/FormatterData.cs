@@ -12,9 +12,8 @@
 using System;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Properties;
+using System.Collections.Generic;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 {
@@ -44,7 +43,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 	    /// Returns the <see cref="TypeRegistration"/> entry for this data section.
 	    /// </summary>
 	    /// <returns>The type registration for this data section</returns>
-	    public virtual TypeRegistration GetContainerConfigurationModel()
+	    public virtual IEnumerable<TypeRegistration> GetRegistrations()
 	    {
             throw new NotImplementedException(Resources.ExceptionMethodMustBeImplementedBySubclasses);
 	    }

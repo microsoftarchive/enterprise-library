@@ -14,7 +14,9 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Configuration;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq.Expressions;
+using System.Reflection;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 
@@ -229,7 +231,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// supplying the attribute data to the underlying <see cref="TraceListener"/>.
         /// </remarks>
         ///<returns>A set of registry entries.</returns>        
-        public override IEnumerable<TypeRegistration> GetContainerConfigurationModel()
+        public override IEnumerable<TypeRegistration> GetRegistrations()
         {
             var mainListenerRegistration = GetTraceListenerTypeRegistration();
             if (this.Attributes.Count == 0)
@@ -255,10 +257,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
             };
         }
 
+
         /// <summary>
-        /// 
+        /// Gets the creation expression used to produce a <see cref="TypeRegistration"/> during
+        /// <see cref="TraceListenerData.GetRegistrations"/>.
         /// </summary>
-        /// <returns></returns>
+        /// <remarks>
+        /// This must be overridden by a subclass, but is not marked as abstract due to configuration serialization needs.
+        /// </remarks>
+        /// <returns>A <see cref="Expression"/> that creates a <see cref="TraceListener"/></returns>
+        /// <exception cref="ArgumentException">Throws an argument exception if it cannot locate an appropriate constructor for the <see cref="NameTypeConfigurationElement.Type"/>.</exception>
         protected override Expression<Func<TraceListener>> GetCreationExpression()
         {
             Expression<Func<TraceListener>> expression;
@@ -271,14 +279,30 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
                 expressionArguments = new Expression[] { Expression.Constant(InitData) };
             }
 
+            ConstructorInfo constructor = GetConstructor(constructorParameters);
+
             expression =
                 Expression.Lambda<Func<TraceListener>>(
                     Expression.New(
-                        Type.GetConstructor(constructorParameters),
+                        constructor,
                         expressionArguments)
                 );
 
             return expression;
+        }
+
+        private ConstructorInfo GetConstructor(Type[] constructorParameters)
+        {
+            ConstructorInfo constructor = Type.GetConstructor(constructorParameters);
+
+            if (constructor == null)
+            {
+                throw new ArgumentException(string.Format(CultureInfo.CurrentCulture,
+                                                          Logging.Properties.Resources.ExceptionCannotFindAppropriateConstructor, 
+                                                          Type.Name, 
+                                                          constructorParameters.Length));
+            }
+            return constructor;
         }
     }
 }

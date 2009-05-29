@@ -28,7 +28,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
         /// <param name="removedCacheItem">Cache item being removed. Must never be null.</param>
 		/// <param name="removalReason">The reason the item was removed.</param>	
 		/// <param name="instrumentationProvider">The instrumentation provider.</param>
-		public static void InvokeRefreshAction(CacheItem removedCacheItem, CacheItemRemovedReason removalReason, CachingInstrumentationProvider instrumentationProvider)
+		public static void InvokeRefreshAction(CacheItem removedCacheItem, CacheItemRemovedReason removalReason, ICachingInstrumentationProvider instrumentationProvider)
         {
             if (removedCacheItem.RefreshAction == null)
             {
@@ -53,9 +53,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
             private string keyToRefresh;
             private object removedData;
             private CacheItemRemovedReason removalReason;
-			private CachingInstrumentationProvider instrumentationProvider;
+			private ICachingInstrumentationProvider instrumentationProvider;
 
-			public RefreshActionData(ICacheItemRefreshAction refreshAction, string keyToRefresh, object removedData, CacheItemRemovedReason removalReason, CachingInstrumentationProvider instrumentationProvider)
+			public RefreshActionData(ICacheItemRefreshAction refreshAction, string keyToRefresh, object removedData, CacheItemRemovedReason removalReason, ICachingInstrumentationProvider instrumentationProvider)
             {
                 this.refreshAction = refreshAction;
                 this.keyToRefresh = keyToRefresh;
@@ -84,7 +84,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
                 get { return removedData; }
             }
 
-			public CachingInstrumentationProvider InstrumentationProvider
+			public ICachingInstrumentationProvider InstrumentationProvider
 			{
 				get { return instrumentationProvider; }
 			}

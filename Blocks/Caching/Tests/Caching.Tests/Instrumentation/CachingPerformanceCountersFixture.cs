@@ -37,7 +37,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation.Tests
         PerformanceCounter totalCacheScavengedItemsCounter;
         PerformanceCounter totalUpdatedEntriesItemsCounter;
 
-        CachingInstrumentationListener enabledListener;
+        ICachingInstrumentationProvider enabledProvider;
 
         [TestInitialize]
         public void SetUp()
@@ -45,7 +45,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation.Tests
             formatter = new NoPrefixNameFormatter();
             formattedInstanceName = formatter.CreateName(instanceName);
 
-            enabledListener = new CachingInstrumentationListener(instanceName, true, true, true, formatter);
+            enabledProvider = new CachingInstrumentationProvider(instanceName, true, true, true, formatter);
 
             cacheHitsCounter = CreatePerformanceCounter("Cache Hits/sec", formattedInstanceName);
             cacheHitsCounter.RawValue = 0;
@@ -67,15 +67,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation.Tests
             cacheUpdatedEntriesCounter = CreatePerformanceCounter("Updated Entries/sec", formattedInstanceName);
             cacheUpdatedEntriesCounter.RawValue = 0;
 
-            totalCacheExpiriesCounter = CreatePerformanceCounter(CachingInstrumentationListener.TotalCacheExpiriesCounterName, formattedInstanceName);
+            totalCacheExpiriesCounter = CreatePerformanceCounter(CachingInstrumentationProvider.TotalCacheExpiriesCounterName, formattedInstanceName);
             totalCacheExpiriesCounter.RawValue = 0;
-            totalCacheHitsCounter = CreatePerformanceCounter(CachingInstrumentationListener.TotalCacheHitsCounterName, formattedInstanceName);
+            totalCacheHitsCounter = CreatePerformanceCounter(CachingInstrumentationProvider.TotalCacheHitsCounterName, formattedInstanceName);
             totalCacheHitsCounter.RawValue = 0;
-            totalCacheMissesCounter = CreatePerformanceCounter(CachingInstrumentationListener.TotalCacheMissesCounterName, formattedInstanceName);
+            totalCacheMissesCounter = CreatePerformanceCounter(CachingInstrumentationProvider.TotalCacheMissesCounterName, formattedInstanceName);
             totalCacheMissesCounter.RawValue = 0;
-            totalCacheScavengedItemsCounter = CreatePerformanceCounter(CachingInstrumentationListener.TotalCacheScavengedItemsCounterName, formattedInstanceName);
+            totalCacheScavengedItemsCounter = CreatePerformanceCounter(CachingInstrumentationProvider.TotalCacheScavengedItemsCounterName, formattedInstanceName);
             totalCacheScavengedItemsCounter.RawValue = 0;
-            totalUpdatedEntriesItemsCounter = CreatePerformanceCounter(CachingInstrumentationListener.TotalUpdatedEntriesItemsCounterName, formattedInstanceName);
+            totalUpdatedEntriesItemsCounter = CreatePerformanceCounter(CachingInstrumentationProvider.TotalUpdatedEntriesItemsCounterName, formattedInstanceName);
             totalUpdatedEntriesItemsCounter.RawValue = 0;
         }
 
@@ -104,13 +104,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation.Tests
         static PerformanceCounter CreatePerformanceCounter(string name,
                                                            string formattedInstanceName)
         {
-            return new PerformanceCounter(CachingInstrumentationListener.CounterCategoryName, name, formattedInstanceName, false);
+            return new PerformanceCounter(CachingInstrumentationProvider.CounterCategoryName, name, formattedInstanceName, false);
         }
 
         [TestMethod]
         public void TotalCacheExpiriesCounterIncremented()
         {
-            enabledListener.CacheExpired(this, new CacheExpiredEventArgs(30L));
+            enabledProvider.FireCacheExpired(30L);
 
             Assert.AreEqual(30L, totalCacheExpiriesCounter.RawValue);
         }
@@ -118,7 +118,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation.Tests
         [TestMethod]
         public void TotalCacheHitsCounterIncremented()
         {
-            enabledListener.CacheAccessed(this, new CacheAccessedEventArgs("key", true));
+            enabledProvider.FireCacheAccessed("key", true);
 
             Assert.AreEqual(1L, totalCacheHitsCounter.RawValue);
         }
@@ -126,7 +126,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation.Tests
         [TestMethod]
         public void TotalCacheMissesCounterIncremented()
         {
-            enabledListener.CacheAccessed(this, new CacheAccessedEventArgs("key", false));
+            enabledProvider.FireCacheAccessed("key", false);
 
             Assert.AreEqual(1L, totalCacheMissesCounter.RawValue);
         }
@@ -134,7 +134,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation.Tests
         [TestMethod]
         public void TotalCacheScavengedItemsCounterIncremented()
         {
-            enabledListener.CacheScavenged(this, new CacheScavengedEventArgs(30L));
+            enabledProvider.FireCacheScavenged(30L);
 
             Assert.AreEqual(30L, totalCacheScavengedItemsCounter.RawValue);
         }
@@ -142,7 +142,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation.Tests
         [TestMethod]
         public void TotalUpdatedEntriesItemsCounterIncremented()
         {
-            enabledListener.CacheUpdated(this, new CacheUpdatedEventArgs(5L, 10L));
+            enabledProvider.FireCacheUpdated(5L, 10L);
 
             Assert.AreEqual(5L, totalUpdatedEntriesItemsCounter.RawValue);
         }
@@ -150,12 +150,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation.Tests
         [TestMethod]
         public void CacheAccessWithPerformanceCountersDisabledDoesnNotUpdateCounters()
         {
-            CachingInstrumentationListener listener
-                = new CachingInstrumentationListener(instanceName, false, false, false, formatter);
+            ICachingInstrumentationProvider provider
+                = new CachingInstrumentationProvider(instanceName, false, false, false, formatter);
 
-            CacheAccessedEventArgs args = new CacheAccessedEventArgs("key", true);
-
-            listener.CacheAccessed(null, args);
+            provider.FireCacheAccessed("key", true);
 
             Assert.AreEqual(0L, cacheHitsCounter.RawValue);
             Assert.AreEqual(0L, cacheMissesCounter.RawValue);
@@ -166,12 +164,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation.Tests
         [TestMethod]
         public void CacheHitWithPerformanceCountersEnabledDoesUpdateCounters()
         {
-            CachingInstrumentationListener listener
-                = new CachingInstrumentationListener(instanceName, true, false, false, formatter);
+            ICachingInstrumentationProvider provider
+                = new CachingInstrumentationProvider(instanceName, true, false, false, formatter);
 
-            CacheAccessedEventArgs args = new CacheAccessedEventArgs("key", true);
-
-            listener.CacheAccessed(null, args);
+            provider.FireCacheAccessed("key", true);
 
             Assert.AreEqual(1L, cacheHitsCounter.RawValue);
             Assert.AreEqual(0L, cacheMissesCounter.RawValue);
@@ -182,12 +178,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation.Tests
         [TestMethod]
         public void CacheMissWithPerformanceCountersEnabledDoesUpdateCounters()
         {
-            CachingInstrumentationListener listener
-                = new CachingInstrumentationListener(instanceName, true, false, false, formatter);
+            ICachingInstrumentationProvider provider
+                = new CachingInstrumentationProvider(instanceName, true, false, false, formatter);
 
-            CacheAccessedEventArgs args = new CacheAccessedEventArgs("key", false);
-
-            listener.CacheAccessed(null, args);
+            provider.FireCacheAccessed("key", false);
 
             Assert.AreEqual(0L, cacheHitsCounter.RawValue);
             Assert.AreEqual(1L, cacheMissesCounter.RawValue);
@@ -198,17 +192,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation.Tests
         [TestMethod]
         public void MultipleCacheAccessWithPerformanceCountersEnabledDoesUpdateCounters()
         {
-            CachingInstrumentationListener listener
-                = new CachingInstrumentationListener(instanceName, true, false, false, formatter);
-
-            CacheAccessedEventArgs hitArgs = new CacheAccessedEventArgs("key", true);
-            CacheAccessedEventArgs missArgs = new CacheAccessedEventArgs("key", false);
+            ICachingInstrumentationProvider provider
+                = new CachingInstrumentationProvider(instanceName, true, false, false, formatter);
 
             for (int i = 0; i < 10; i++)
             {
-                listener.CacheAccessed(null, hitArgs);
-                listener.CacheAccessed(null, missArgs);
-                listener.CacheAccessed(null, hitArgs);
+                provider.FireCacheAccessed("key", true);
+                provider.FireCacheAccessed("key", false);
+                provider.FireCacheAccessed("key", true);
             }
 
             Assert.AreEqual(20L, cacheHitsCounter.RawValue);
@@ -220,12 +211,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation.Tests
         [TestMethod]
         public void CacheExpirationWithPerformanceCountersDisabledDoesnNotUpdateCounters()
         {
-            CachingInstrumentationListener listener
-                = new CachingInstrumentationListener(instanceName, false, false, false, formatter);
+            ICachingInstrumentationProvider provider
+                = new CachingInstrumentationProvider(instanceName, false, false, false, formatter);
 
-            CacheExpiredEventArgs args = new CacheExpiredEventArgs(10);
-
-            listener.CacheExpired(null, args);
+            provider.FireCacheExpired(10);
 
             Assert.AreEqual(0L, cacheExpiriesCounter.RawValue);
         }
@@ -233,12 +222,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation.Tests
         [TestMethod]
         public void CacheExpirationWithPerformanceCountersEnabledDoesUpdateCounters()
         {
-            CachingInstrumentationListener listener
-                = new CachingInstrumentationListener(instanceName, true, false, false, formatter);
+            ICachingInstrumentationProvider provider
+                = new CachingInstrumentationProvider(instanceName, true, false, false, formatter);
 
-            CacheExpiredEventArgs args = new CacheExpiredEventArgs(10);
-
-            listener.CacheExpired(null, args);
+            provider.FireCacheExpired(10);
 
             Assert.AreEqual(10L, cacheExpiriesCounter.RawValue);
         }
@@ -246,14 +233,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation.Tests
         [TestMethod]
         public void MultipleCacheExpirationsWithPerformanceCountersEnabledDoesUpdateCounters()
         {
-            CachingInstrumentationListener listener
-                = new CachingInstrumentationListener(instanceName, true, false, false, formatter);
+            ICachingInstrumentationProvider provider
+                = new CachingInstrumentationProvider(instanceName, true, false, false, formatter);
 
             for (int i = 1; i <= 10; i++)
             {
-                CacheExpiredEventArgs args = new CacheExpiredEventArgs(10);
-
-                listener.CacheExpired(null, args);
+                provider.FireCacheExpired(10);
             }
 
             Assert.AreEqual(100L, cacheExpiriesCounter.RawValue);
@@ -262,12 +247,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation.Tests
         [TestMethod]
         public void CacheScavengingWithPerformanceCountersDisabledDoesnNotUpdateCounters()
         {
-            CachingInstrumentationListener listener
-                = new CachingInstrumentationListener(instanceName, false, false, false, formatter);
+            ICachingInstrumentationProvider provider
+                = new CachingInstrumentationProvider(instanceName, false, false, false, formatter);
 
-            CacheScavengedEventArgs args = new CacheScavengedEventArgs(10);
-
-            listener.CacheScavenged(null, args);
+            provider.FireCacheScavenged(10);
 
             Assert.AreEqual(0L, cacheScavengedItemsCounter.RawValue);
         }
@@ -275,12 +258,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation.Tests
         [TestMethod]
         public void CacheScavengingWithPerformanceCountersEnabledDoesUpdateCounters()
         {
-            CachingInstrumentationListener listener
-                = new CachingInstrumentationListener(instanceName, true, false, false, formatter);
+            ICachingInstrumentationProvider provider
+                = new CachingInstrumentationProvider(instanceName, true, false, false, formatter);
 
-            CacheScavengedEventArgs args = new CacheScavengedEventArgs(10);
-
-            listener.CacheScavenged(null, args);
+            provider.FireCacheScavenged(10);
 
             Assert.AreEqual(10L, cacheScavengedItemsCounter.RawValue);
         }
@@ -288,14 +269,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation.Tests
         [TestMethod]
         public void MultipleCacheScavengingsWithPerformanceCountersEnabledDoesUpdateCounters()
         {
-            CachingInstrumentationListener listener
-                = new CachingInstrumentationListener(instanceName, true, false, false, formatter);
+            ICachingInstrumentationProvider provider
+                = new CachingInstrumentationProvider(instanceName, true, false, false, formatter);
 
             for (int i = 1; i <= 10; i++)
             {
-                CacheScavengedEventArgs args = new CacheScavengedEventArgs(10);
-
-                listener.CacheScavenged(null, args);
+                provider.FireCacheScavenged(10);
             }
 
             Assert.AreEqual(100L, cacheScavengedItemsCounter.RawValue);
@@ -304,12 +283,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation.Tests
         [TestMethod]
         public void CacheUpdateWithPerformanceCountersDisabledDoesNotUpdateCounters()
         {
-            CachingInstrumentationListener listener
-                = new CachingInstrumentationListener(instanceName, false, false, false, formatter);
+            ICachingInstrumentationProvider provider
+                = new CachingInstrumentationProvider(instanceName, false, false, false, formatter);
 
-            CacheUpdatedEventArgs args = new CacheUpdatedEventArgs(10, 20);
-
-            listener.CacheUpdated(null, args);
+            provider.FireCacheUpdated(10, 20);
 
             Assert.AreEqual(0L, cacheTotalEntriesCounter.RawValue);
             Assert.AreEqual(0L, cacheUpdatedEntriesCounter.RawValue);
@@ -318,12 +295,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation.Tests
         [TestMethod]
         public void CacheUpdateWithPerformanceCountersEnabledDoesUpdateCounters()
         {
-            CachingInstrumentationListener listener
-                = new CachingInstrumentationListener(instanceName, true, false, false, formatter);
+            ICachingInstrumentationProvider provider
+                = new CachingInstrumentationProvider(instanceName, true, false, false, formatter);
 
-            CacheUpdatedEventArgs args = new CacheUpdatedEventArgs(10, 20);
-
-            listener.CacheUpdated(null, args);
+            provider.FireCacheUpdated(10, 20);
 
             Assert.AreEqual(20L, cacheTotalEntriesCounter.RawValue);
             Assert.AreEqual(10L, cacheUpdatedEntriesCounter.RawValue);
@@ -332,14 +307,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation.Tests
         [TestMethod]
         public void MultipleCacheUpdatesWithPerformanceCountersEnabledDoesUpdateCounters()
         {
-            CachingInstrumentationListener listener
-                = new CachingInstrumentationListener(instanceName, true, false, false, formatter);
+            ICachingInstrumentationProvider provider
+                = new CachingInstrumentationProvider(instanceName, true, false, false, formatter);
 
             for (int i = 1; i <= 10; i++)
             {
-                CacheUpdatedEventArgs args = new CacheUpdatedEventArgs(i, 10 + i);
-
-                listener.CacheUpdated(null, args);
+                provider.FireCacheUpdated(i, 10 + i);
             }
 
             Assert.AreEqual(20L, cacheTotalEntriesCounter.RawValue);

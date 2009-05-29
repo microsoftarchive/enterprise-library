@@ -12,10 +12,12 @@
 using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
-using Microsoft.Practices.EnterpriseLibrary.Data.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Data;
+using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration;
 
 namespace Common.ContainerInfrastructure.Tests.VSTS
 {
@@ -23,32 +25,32 @@ namespace Common.ContainerInfrastructure.Tests.VSTS
     public class GivenAConfigSourceWithCryptoBlockInformation
     {
         private IConfigurationSource configSource;
-        private ConfigSectionLocationStrategy strategy;
-        private TypeRegistrationsProviderLocator locator;
+        private ConfigSectionLocator configSectionLocator;
 
         [TestInitialize]
         public void Given()
         {
             configSource = new ConfigSourceBuilder().AddCryptoSettings().ConfigSource;
-            strategy = new ConfigSectionLocationStrategy(CryptographyConfigurationView.SectionName);
-            locator = new TypeRegistrationsProviderLocator(strategy);
+            configSectionLocator = new ConfigSectionLocator(CryptographySettings.SectionName);
         }
 
         [TestMethod]
         public void WhenUsingConfigurationSectionLocatorProvider_ThenAProviderIsReturned()
         {
-            var providers = locator.GetProviders(configSource).ToList();
+            var registrations = configSectionLocator.GetRegistrations(configSource).ToList();
 
-            Assert.AreEqual(1, providers.Count);
+            Assert.IsTrue(registrations.Count > 0);
         }
 
         [TestMethod]
         public void WhenUsingDefaultStrategyList_ThenCryptoBlockProviderIsReturned()
         {
-            locator = new TypeRegistrationsProviderLocator();
-            var providers = locator.GetProviders(configSource).ToList();
+            var locator = TypeRegistrationsProvider.CreateDefaultProvider();
+            var registrations = locator.GetRegistrations(configSource)
+                .Where(r => r.ServiceType == typeof(IHashProvider));
 
-            Assert.AreEqual(2, providers.Count); // 2 because Data will always be returned
+
+            Assert.AreEqual(2, registrations.Count()); // 2 are in the config source
         }
     }
 
@@ -56,30 +58,32 @@ namespace Common.ContainerInfrastructure.Tests.VSTS
     public class GivenAConfigSourceWithoutCryptoInformation
     {
         private IConfigurationSource configSource;
-        private TypeRegistrationsProviderLocator locator;
+        private TypeRegistrationsProvider configSectionLocator;
 
         [TestInitialize]
         public void Given()
         {
             configSource = new ConfigSourceBuilder().AddExceptionHandlingSettings().ConfigSource;
-            var strategy = new ConfigSectionLocationStrategy(CryptographyConfigurationView.SectionName);
-            locator = new TypeRegistrationsProviderLocator(strategy);
+            configSectionLocator = new ConfigSectionLocator(CryptographySettings.SectionName);
         }
 
         [TestMethod]
         public void WhenFindingTypeRegistrationProviders_ThenNoProvidersAreReturned()
         {
-            var providers = locator.GetProviders(configSource).ToList();
-            Assert.AreEqual(0, providers.Count);
+            var registrations = configSectionLocator.GetRegistrations(configSource)
+                .Where(r => r.ServiceType == typeof(IHashProvider));
+
+            Assert.AreEqual(0, registrations.Count());
         }
 
         [TestMethod]
         public void WhenUsingDefaultStrategyList_ThenCryptoBlockProviderIsNotReturned()
         {
-            locator = new TypeRegistrationsProviderLocator();
-            var providers = locator.GetProviders(configSource).ToList();
+            var locator = TypeRegistrationsProvider.CreateDefaultProvider();
+            var registrations = locator.GetRegistrations(configSource)
+                .Where(r => r.ServiceType == typeof(IHashProvider));
 
-            Assert.AreEqual(2, providers.Count); // EHAB and Data
+            Assert.AreEqual(0, registrations.Count());
         }
     }
 
@@ -95,25 +99,27 @@ namespace Common.ContainerInfrastructure.Tests.VSTS
         }
 
         [TestMethod]
-        public void WhenFindingTypeRegistrationProviders_ThenTwoProvidersAreReturned()
+        public void WhenFindingTypeRegistrationProviders_ThenCryptoAndEHABRegistrationsAreReturned()
         {
-            var locator = new TypeRegistrationsProviderLocator(
-                new ConfigSectionLocationStrategy(CryptographyConfigurationView.SectionName),
-                new ConfigSectionLocationStrategy(ExceptionHandlingSettings.SectionName));
+            var locator = new CompositeTypeRegistrationsProviderLocator(
+                new ConfigSectionLocator(CryptographySettings.SectionName),
+                new ConfigSectionLocator(ExceptionHandlingSettings.SectionName));
 
-            var providers = locator.GetProviders(configSource).ToList();
+            var registrations = locator.GetRegistrations(configSource)
+                .Where(r => r.ServiceType == typeof(IHashProvider) || r.ServiceType == typeof(ExceptionPolicyImpl));
 
-            Assert.AreEqual(2, providers.Count);
+            Assert.AreEqual(3, registrations.Count());
         }
 
         [TestMethod]
         public void WhenUsingDefaultStrategyList_ThenEHABAndCryptoProvidersAreReturned()
         {
-            var locator = new TypeRegistrationsProviderLocator();
+            var locator = TypeRegistrationsProvider.CreateDefaultProvider();
 
-            var providers = locator.GetProviders(configSource).ToList();
+            var registrations = locator.GetRegistrations(configSource)
+                .Where(r => r.ServiceType == typeof(IHashProvider) || r.ServiceType == typeof(ExceptionPolicyImpl));
 
-            Assert.AreEqual(3, providers.Count);
+            Assert.AreEqual(3, registrations.Count());
         }
     }
 
@@ -121,43 +127,33 @@ namespace Common.ContainerInfrastructure.Tests.VSTS
     public class GivenAConfigSourceWithDataInformation
     {
         private IConfigurationSource configSource;
-        private TypeRegistrationsProviderLocator locator;
+        private ITypeRegistrationsProvider locator;
 
         [TestInitialize]
         public void Given()
         {
             configSource = new ConfigSourceBuilder().AddConnectionStringSettings().ConfigSource;
-            locator = new TypeRegistrationsProviderLocator(new TypeLoadingLocationStrategy(
-                "Microsoft.Practices.EnterpriseLibrary.Data.Configuration.DatabaseSyntheticConfigSettings, Microsoft.Practices.EnterpriseLibrary.Data"));
+            locator = new TypeLoadingLocator(BlockSectionNames.DataRegistrationProviderLocatorType);
         }
 
         [TestMethod]
-        public void WhenGettingProviders_ThenDataProviderIsReturned()
+        public void WhenGettingRegistrations_ThenDatabaseRegistrationsAreReturned()
         {
-            var providers = locator.GetProviders(configSource).ToList();
+            var registrations = locator.GetRegistrations(configSource)
+                .Where(r => r.ServiceType == typeof(Database));
 
-            Assert.AreEqual(1, providers.Count);
-            Assert.IsTrue(providers[0].GetType() == typeof(DatabaseSyntheticConfigSettings));
+            Assert.AreEqual(1, registrations.Count());
         }
 
         [TestMethod]
-        public void WhenGettingModelFromProvider_ThenTheModelIsNotEmpty()
+        public void WhenUsingDefaultLocators_ThenDataProviderIsReturned()
         {
-            var providers = locator.GetProviders(configSource).ToList();
-            var model = providers[0].CreateRegistrations().ToList();
+            locator = TypeRegistrationsProvider.CreateDefaultProvider();
 
-            Assert.AreEqual(1, model.Count);
+            var registrations = locator.GetRegistrations(configSource)
+                .Where(r => r.ServiceType == typeof (Database));
+
+            Assert.AreEqual(1, registrations.Count());
         }
-
-        [TestMethod]
-        public void WhenUsingDefaultStrategyList_ThenDataProviderIsReturned()
-        {
-            locator = new TypeRegistrationsProviderLocator();
-            var providers = locator.GetProviders(configSource).ToList();
-            var model = providers[0].CreateRegistrations().ToList();
-            Assert.AreEqual(1, providers.Count);
-            Assert.AreEqual(1, model.Count);
-        }
-
     }
 }

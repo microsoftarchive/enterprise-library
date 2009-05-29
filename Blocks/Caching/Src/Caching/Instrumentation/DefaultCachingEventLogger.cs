@@ -12,7 +12,6 @@
 using System;
 using System.Diagnostics;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Properties;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
 using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation;
 using ManagementInstrumentation = System.Management.Instrumentation.Instrumentation;
 
@@ -22,13 +21,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation
     /// The instrumentation gateway when no instances of the objects from the block are involved.
     /// </summary>
     [EventLogDefinition("Application", EventLogSourceName)]
-    [CustomFactory(typeof(DefaultCachingEventLoggerCustomFactory))]
     public class DefaultCachingEventLogger : InstrumentationListener
     {
         /// <summary>
         /// The event log source name.
         /// </summary>
-        public const string EventLogSourceName = CachingInstrumentationListener.EventLogSourceName;
+        public const string EventLogSourceName = CachingInstrumentationProvider.EventLogSourceName;
 
         readonly IEventLogEntryFormatter eventLogEntryFormatter;
 

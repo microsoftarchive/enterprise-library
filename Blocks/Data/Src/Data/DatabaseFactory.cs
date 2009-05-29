@@ -9,11 +9,11 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using System;
 using System.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
 using Microsoft.Practices.EnterpriseLibrary.Data.Instrumentation;
-using Microsoft.Practices.EnterpriseLibrary.Data.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.ServiceLocation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Data
 {
@@ -39,10 +39,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
 		{
             try
             {
-				DatabaseProviderFactory factory = new DatabaseProviderFactory(ConfigurationSourceFactory.Create());
+				DatabaseProviderFactory factory = new DatabaseProviderFactory();
                 return factory.CreateDefault();
             }
-            catch (ConfigurationErrorsException configurationException)
+            catch (Exception configurationException)
             {
                 TryLogConfigurationError(configurationException, "default");
 
@@ -62,7 +62,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
 		/// <param name="name">configuration key for database service</param>
 		/// <returns>Database</returns>
 		/// <exception cref="System.Configuration.ConfigurationException">
-		/// <para><paramref name="instanceName"/> is not defined in configuration.</para>
+		/// <para><paramref name="name"/> is not defined in configuration.</para>
 		/// <para>- or -</para>
 		/// <para>An error exists in the configuration.</para>
 		/// <para>- or -</para>
@@ -75,10 +75,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
 		{
             try
             {
-				DatabaseProviderFactory factory = new DatabaseProviderFactory(ConfigurationSourceFactory.Create());
+				DatabaseProviderFactory factory = new DatabaseProviderFactory();
 				return factory.Create(name);
 			}
-            catch (ConfigurationErrorsException configurationException)
+            catch (ActivationException configurationException)
             {
                 TryLogConfigurationError(configurationException, name);
 
@@ -86,11 +86,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
             }
 		}
 
-        private static void TryLogConfigurationError(ConfigurationErrorsException configurationException, string instanceName)
+        private static void TryLogConfigurationError(Exception configurationException, string instanceName)
         {
             try
             {
-                DefaultDataEventLogger eventLogger = EnterpriseLibraryFactory.BuildUp<DefaultDataEventLogger>();
+                DefaultDataEventLogger eventLogger = EnterpriseLibraryContainer.Current.GetInstance<DefaultDataEventLogger>();
                 if (eventLogger != null)
                 {
                     eventLogger.LogConfigurationError(configurationException, instanceName);

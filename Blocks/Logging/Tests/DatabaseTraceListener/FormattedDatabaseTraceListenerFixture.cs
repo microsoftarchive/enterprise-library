@@ -19,6 +19,7 @@ using Microsoft.Practices.EnterpriseLibrary.Data;
 using Microsoft.Practices.EnterpriseLibrary.Data.Sql;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Tests
 {
@@ -31,7 +32,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Tests
         void ClearLogs()
         {
             //clear the log entries from the database
-            DatabaseProviderFactory factory = new DatabaseProviderFactory(ConfigurationSourceFactory.Create());
+            DatabaseProviderFactory factory = new DatabaseProviderFactory();
             Data.Database db = factory.CreateDefault();
             DbCommand command = db.GetStoredProcCommand("ClearLogs");
             db.ExecuteNonQuery(command);
@@ -39,7 +40,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Tests
 
         string GetLastLogMessage(string databaseName)
         {
-            DatabaseProviderFactory factory = new DatabaseProviderFactory(ConfigurationSourceFactory.Create());
+            DatabaseProviderFactory factory = new DatabaseProviderFactory();
             Data.Database db = ((databaseName == null) || (databaseName.Length == 0)) ? factory.CreateDefault() : factory.Create(databaseName);
             DbCommand command = db.GetSqlStringCommand("SELECT TOP 1 FormattedMessage FROM Log ORDER BY TimeStamp DESC");
             string messageContents = Convert.ToString(db.ExecuteScalar(command));
@@ -48,7 +49,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Tests
 
         int GetNumberOfLogMessage(string databaseName)
         {
-            DatabaseProviderFactory factory = new DatabaseProviderFactory(ConfigurationSourceFactory.Create());
+            DatabaseProviderFactory factory = new DatabaseProviderFactory();
             Data.Database db = ((databaseName == null) || (databaseName.Length == 0)) ? factory.CreateDefault() : factory.Create(databaseName);
             DbCommand command = db.GetSqlStringCommand("SELECT COUNT(*) FROM Log");
             int numMessages = Convert.ToInt32(db.ExecuteScalar(command));
@@ -65,6 +66,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Tests
         public void Teardown()
         {
             ClearLogs();
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void ConstructWithNullInstrumentationProviderThrows()
+        {
+            FormattedDatabaseTraceListener listener = new FormattedDatabaseTraceListener(new SqlDatabase(connectionString), "WriteLog", "AddCategory", new TextFormatter("TEST{newline}TEST"), null);
         }
 
         [TestMethod]
@@ -161,29 +169,25 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Tests
         [TestMethod]
         public void FormatterListenerFiresInstrumentation()
         {
-            FormattedDatabaseTraceListener listener = new FormattedDatabaseTraceListener(new SqlDatabase(connectionString), "WriteLog", "AddCategory", new TextFormatter("TEST{newline}TEST"));
-            MockLoggingInstrumentationListener instrumentationListener = new MockLoggingInstrumentationListener();
-            ReflectionInstrumentationBinder binder = new ReflectionInstrumentationBinder();
-            binder.Bind(listener.GetInstrumentationEventProvider(), instrumentationListener);
+            MockLoggingInstrumentationProvider instrumentationProvider = new MockLoggingInstrumentationProvider();
+            FormattedDatabaseTraceListener listener = new FormattedDatabaseTraceListener(new SqlDatabase(connectionString), "WriteLog", "AddCategory", new TextFormatter("TEST{newline}TEST"), instrumentationProvider);
 
             TraceEventCache eventCache = new TraceEventCache();
             listener.TraceData(eventCache, "", TraceEventType.Error, 0, new LogEntry("message", "category", 0, 0, TraceEventType.Error, "title", null));
 
-            Assert.AreEqual(1, instrumentationListener.calls);
+            Assert.AreEqual(1, instrumentationProvider.TraceListenerEntryWrittenEventCalls);
         }
 
         [TestMethod]
         public void FormatterListenerDoesNotFireInstrumentationWhenTracingString()
         {
-            FormattedDatabaseTraceListener listener = new FormattedDatabaseTraceListener(new SqlDatabase(connectionString), "WriteLog", "AddCategory", new TextFormatter("TEST{newline}TEST"));
-            MockLoggingInstrumentationListener instrumentationListener = new MockLoggingInstrumentationListener();
-            ReflectionInstrumentationBinder binder = new ReflectionInstrumentationBinder();
-            binder.Bind(listener.GetInstrumentationEventProvider(), instrumentationListener);
+            MockLoggingInstrumentationProvider instrumentationProvider = new MockLoggingInstrumentationProvider();
+            FormattedDatabaseTraceListener listener = new FormattedDatabaseTraceListener(new SqlDatabase(connectionString), "WriteLog", "AddCategory", new TextFormatter("TEST{newline}TEST"), instrumentationProvider);
 
             TraceEventCache eventCache = new TraceEventCache();
             listener.TraceData(eventCache, "", TraceEventType.Error, 0, "message");
 
-            Assert.AreEqual(0, instrumentationListener.calls);
+            Assert.AreEqual(0, instrumentationProvider.TraceListenerEntryWrittenEventCalls);
         }
 
         [TestMethod]
@@ -212,15 +216,29 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Tests
             Assert.AreEqual(numMessages, newNumMessages - 1);
         }
 
-        public class MockLoggingInstrumentationListener
+        public class MockLoggingInstrumentationProvider : ILoggingInstrumentationProvider
         {
-            public int calls = 0;
+            public int TraceListenerEntryWrittenEventCalls = 0;
 
-            [InstrumentationConsumer("TraceListenerEntryWritten")]
-            public void TraceListenerEntryWritten(object sender,
-                                                  EventArgs e)
+            public void FireLockAcquisitionError(string message)
             {
-                calls++;
+            }
+
+            public void FireConfigurationFailureEvent(Exception configurationException)
+            {
+            }
+
+            public void FireFailureLoggingErrorEvent(string message, Exception exception)
+            {
+            }
+
+            public void FireLogEventRaised()
+            {
+            }
+
+            public void FireTraceListenerEntryWrittenEvent()
+            {
+                TraceListenerEntryWrittenEventCalls++;
             }
         }
 

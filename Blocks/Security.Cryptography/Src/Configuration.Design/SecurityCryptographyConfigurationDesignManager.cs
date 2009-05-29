@@ -115,7 +115,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
             }
             string protectionProviderName = GetProtectionProviderName(node);
 
-            return new ConfigurationSectionInfo(node, cryptoSection, CryptographyConfigurationView.SectionName, protectionProviderName);
+            return new ConfigurationSectionInfo(node, cryptoSection, CryptographySettings.SectionName, protectionProviderName);
         }
     }
 }

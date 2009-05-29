@@ -43,8 +43,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests.Conf
 		[TestMethod]
 		public void CanCreatePoliciesTo_EncryptAndDecryptStringWithASymmetricAlgorithm()
 		{
-			container.AddExtension(new CryptographyBlockExtension());
-
 			Assert.IsInstanceOfType(container.Resolve<ISymmetricCryptoProvider>(symmetricAlgorithm1),
 				typeof(SymmetricAlgorithmProvider));
 

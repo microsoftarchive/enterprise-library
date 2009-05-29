@@ -14,7 +14,9 @@ using System.Configuration;
 using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Filters;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 {
@@ -41,7 +43,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// <summary>
         /// Configuration section name for logging client settings.
         /// </summary>
-        public const string SectionName = "loggingConfiguration";
+        public const string SectionName = BlockSectionNames.Logging;
 
         /// <summary>
         /// Initialize a new instance of the <see cref="LoggingSettings"/> with default values.
@@ -68,9 +70,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// <param name="defaultCategory">The default category to use.</param>
         public LoggingSettings(string name, bool tracingEnabled, string defaultCategory)
         {
-            this.Name = name;
-            this.TracingEnabled = tracingEnabled;
-            this.DefaultCategory = defaultCategory;
+            Name = name;
+            TracingEnabled = tracingEnabled;
+            DefaultCategory = defaultCategory;
         }
 
         /// <summary>
@@ -80,7 +82,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// <returns>The logging section.</returns>
         public static LoggingSettings GetLoggingSettings(IConfigurationSource configurationSource)
         {
-            return (LoggingSettings)configurationSource.GetSection(LoggingSettings.SectionName);
+            return (LoggingSettings)configurationSource.GetSection(SectionName);
         }
 
         /// <summary>
@@ -235,57 +237,123 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         }
 
         /// <summary>
-        /// 
+        /// Return the <see cref="TypeRegistration"/> objects needed to configure
+        /// the container.
         /// </summary>
-        /// <returns></returns>
-        public IEnumerable<TypeRegistration> CreateRegistrations()
+        /// <returns>The sequence of <see cref="TypeRegistration"/> objects.</returns>
+        public IEnumerable<TypeRegistration> GetRegistrations(IConfigurationSource configurationSource)
         {
             var registrations = new List<TypeRegistration>();
-
-            registrations.AddRange(this.TraceListeners.SelectMany(tld => tld.GetContainerConfigurationModel()));
-            registrations.AddRange(this.LogFilters.Select(lfd => lfd.GetContainerConfigurationModel()));
-            registrations.AddRange(this.Formatters.Select(fd => fd.GetContainerConfigurationModel()));
-            registrations.AddRange(this.TraceSources.Select(tsd => tsd.GetContainerConfigurationModel()));
+            registrations.Add(CreateDefaultLoggingEventLoggerRegistration(configurationSource));
+            registrations.AddRange(TraceListeners.SelectMany(tld => tld.GetRegistrations()));
+            registrations.AddRange(LogFilters.SelectMany(lfd => lfd.GetRegistrations()));
+            registrations.AddRange(Formatters.SelectMany(fd => fd.GetRegistrations()));
+            registrations.AddRange(TraceSources.Select(tsd => tsd.GetRegistrations()));
             registrations.Add(
-                CreateLogSourceRegistration(this.SpecialTraceSources.AllEventsTraceSource, AllTraceSourceKey));
+                CreateLogSourceRegistration(SpecialTraceSources.AllEventsTraceSource, AllTraceSourceKey));
             registrations.Add(
-                CreateLogSourceRegistration(this.SpecialTraceSources.NotProcessedTraceSource, NoMatchesTraceSourceKey));
+                CreateLogSourceRegistration(SpecialTraceSources.NotProcessedTraceSource, NoMatchesTraceSourceKey));
             registrations.Add(
-                CreateLogSourceRegistration(this.SpecialTraceSources.ErrorsTraceSource, ErrorsTraceSourceKey));
+                CreateLogSourceRegistration(SpecialTraceSources.ErrorsTraceSource, ErrorsTraceSourceKey));
             registrations.Add(CreateLogWriterRegistration());
-            
-            // todo: Add back in when resolving Instrumentation for this block
-            //registrations.Add(CreateTraceManagerRegistration());
-
+            registrations.Add(CreateTraceManagerRegistration());
+            registrations.Add(CreateLogWriterStructureHolderRegistration());
+            registrations.Add(CreateTracerInstrumentationProviderRegistration(configurationSource));
+            registrations.Add(CreateLoggingInstrumentationProviderRegistration(configurationSource));
             return registrations;
         }
 
-        private TypeRegistration CreateLogSourceRegistration(TraceSourceData traceSourceData, string name)
+        /// <summary>
+        /// Return the <see cref="TypeRegistration"/> objects needed to reconfigure
+        /// the container after a configuration source has changed.
+        /// </summary>
+        /// <remarks>If there are no reregistrations, return an empty sequence.</remarks>
+        /// <param name="configurationSource">The <see cref="IConfigurationSource"/> containing
+        /// the configuration information.</param>
+        /// <returns>The sequence of <see cref="TypeRegistration"/> objects.</returns>
+        public IEnumerable<TypeRegistration> GetUpdatedRegistrations(IConfigurationSource configurationSource)
         {
-            var registration = traceSourceData.GetContainerConfigurationModel();
+            return Enumerable.Empty<TypeRegistration>();
+        }
+
+        private static TypeRegistration CreateLogSourceRegistration(TraceSourceData traceSourceData, string name)
+        {
+            var registration = traceSourceData.GetRegistrations();
             registration.Name = name;
             return registration;
         }
 
         private TypeRegistration CreateLogWriterRegistration()
         {
-            return new TypeRegistration<LogWriter>(() =>
-                new LogWriter(
-                    Container.ResolvedEnumerable<ILogFilter>(this.LogFilters.Select(lfd => lfd.Name)),
-                    Container.ResolvedEnumerable<LogSource>(this.TraceSources.Select(tsd => tsd.Name)),
+            return
+                new TypeRegistration<LogWriter>(() =>
+                   new LogWriter(
+                       Container.Resolved<LogWriterStructureHolder>(),
+                       Container.Resolved<ILoggingInstrumentationProvider>(),
+                       Container.Resolved<ConfigurationChangeEventSource>()));
+        }
+
+        private static TypeRegistration CreateLoggingInstrumentationProviderRegistration(IConfigurationSource configurationSource)
+        {
+            var instrumentationSection = InstrumentationConfigurationSection.GetSection(configurationSource);
+
+            return new TypeRegistration<ILoggingInstrumentationProvider>(() => new LoggingInstrumentationProvider(
+                    instrumentationSection.PerformanceCountersEnabled,
+                    instrumentationSection.EventLoggingEnabled,
+                    instrumentationSection.WmiEnabled,
+                    instrumentationSection.ApplicationInstanceName));
+
+        }
+
+        private TypeRegistration CreateLogWriterStructureHolderRegistration()
+        {
+            return new TypeRegistration<LogWriterStructureHolder>(
+                () => new LogWriterStructureHolder(
+                    Container.ResolvedEnumerable<ILogFilter>(LogFilters.Select(lfd => lfd.Name)),
+                    TraceSources.Select(tsd => tsd.Name).ToArray(),
+                    Container.ResolvedEnumerable<LogSource>(TraceSources.Select(tsd => tsd.Name)),
                     Container.Resolved<LogSource>(AllTraceSourceKey),
                     Container.Resolved<LogSource>(NoMatchesTraceSourceKey),
                     Container.Resolved<LogSource>(ErrorsTraceSourceKey),
-                    this.DefaultCategory,
-                    this.TracingEnabled,
-                    this.LogWarningWhenNoCategoriesMatch));
+                    DefaultCategory,
+                    TracingEnabled,
+                    LogWarningWhenNoCategoriesMatch,
+                    RevertImpersonation)
+                )
+            {
+                Lifetime = TypeRegistrationLifetime.Transient
+            };
         }
 
-        private TypeRegistration CreateTraceManagerRegistration()
+        private static TypeRegistration CreateTraceManagerRegistration()
         {
-            // TODO deal with instrumentation
             return new TypeRegistration<TraceManager>(() =>
-                new TraceManager(Container.Resolved<LogWriter>()));
+                new TraceManager(Container.Resolved<LogWriter>(),
+                                 Container.Resolved<ITracerInstrumentationProvider>()));
+        }
+
+        private static TypeRegistration CreateTracerInstrumentationProviderRegistration(IConfigurationSource configurationSource)
+        {
+            var instrumentationSection = InstrumentationConfigurationSection.GetSection(configurationSource);
+
+            return new TypeRegistration<ITracerInstrumentationProvider>(() =>
+                new TracerInstrumentationProvider(instrumentationSection.PerformanceCountersEnabled,
+                                                  instrumentationSection.EventLoggingEnabled,
+                                                  instrumentationSection.WmiEnabled,
+                                                  instrumentationSection.ApplicationInstanceName));
+        }
+
+        private static TypeRegistration CreateDefaultLoggingEventLoggerRegistration(IConfigurationSource configurationSource)
+        {
+            var instrumentationSettings = InstrumentationConfigurationSection.GetSection(configurationSource);
+            return
+                new TypeRegistration<DefaultLoggingEventLogger>(
+                    () => new DefaultLoggingEventLogger(
+                        instrumentationSettings.EventLoggingEnabled,
+                        instrumentationSettings.WmiEnabled))
+                {
+                    Lifetime = TypeRegistrationLifetime.Transient
+                };
         }
     }
 }

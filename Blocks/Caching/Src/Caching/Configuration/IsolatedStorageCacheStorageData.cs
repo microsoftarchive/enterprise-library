@@ -11,11 +11,8 @@
 
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Caching.BackingStoreImplementations;
-using Microsoft.Practices.EnterpriseLibrary.Caching.Configuration.Unity;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Unity;
-using Microsoft.Practices.ObjectBuilder2;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using System.Collections.Generic;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
 {
@@ -23,8 +20,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
     /// Configuration data defining IsolatedStorageCacheStorageData. This configuration section adds the name
     /// of the Isolated Storage area to use to store data.
     /// </summary>    
-	[Assembler(typeof(IsolatedStorageBackingStoreAssembler))]
-	[ContainerPolicyCreator(typeof(IsolatedStorageBackingStorePolicyCreator))]
 	public class IsolatedStorageCacheStorageData : CacheStorageData
     {
 		private const string partitionNameProperty = "partitionName";
@@ -50,7 +45,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
         /// </param>
         public IsolatedStorageCacheStorageData(string name, string storageEncryption, string partitionName) : base(name, typeof(IsolatedStorageBackingStore), storageEncryption)
         {
-            this.PartitionName = partitionName;
+            PartitionName = partitionName;
         }
 
         /// <summary>
@@ -62,51 +57,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
             get { return (string)base[partitionNameProperty]; }
             set { base[partitionNameProperty] = value; }
         }
-    }
 
-    /// <summary>
-    /// This type supports the Enterprise Library infrastructure and is not intended to be used directly from your code.
-    /// Represents the process to build an <see cref="IsolatedStorageBackingStore"/> described by a <see cref="IsolatedStorageCacheStorageData"/> configuration object.
-    /// </summary>
-    /// <remarks>This type is linked to the <see cref="CacheStorageData"/> type and it is used by the <see cref="BackingStoreCustomFactory"/> 
-    /// to build the specific <see cref="IBackingStore"/> object represented by the configuration object.
-    /// </remarks>	
-    public class IsolatedStorageBackingStoreAssembler : IAssembler<IBackingStore, CacheStorageData>
-	{
         /// <summary>
-        /// This method supports the Enterprise Library infrastructure and is not intended to be used directly from your code.
-        /// Builds a <see cref="IsolatedStorageBackingStore"/> based on an instance of <see cref="IsolatedStorageCacheStorageData"/>.
+        /// 
         /// </summary>
-        /// <seealso cref="BackingStoreCustomFactory"/>
-        /// <param name="context">The <see cref="IBuilderContext"/> that represents the current building process.</param>
-        /// <param name="objectConfiguration">The configuration object that describes the object to build. Must be an instance of <see cref="IsolatedStorageCacheStorageData"/>.</param>
-        /// <param name="configurationSource">The source for configuration objects.</param>
-        /// <param name="reflectionCache">The cache to use retrieving reflection information.</param>
-        /// <returns>A fully initialized instance of <see cref="IsolatedStorageBackingStore"/>.</returns>
-        public IBackingStore Assemble(IBuilderContext context, CacheStorageData objectConfiguration, IConfigurationSource configurationSource, ConfigurationReflectionCache reflectionCache)
-		{
-			IsolatedStorageCacheStorageData castedObjectConfiguration
-				= (IsolatedStorageCacheStorageData)objectConfiguration;
-
-			IStorageEncryptionProvider encryptionProvider
-				= GetStorageEncryptionProvider(context, castedObjectConfiguration.StorageEncryption, configurationSource, reflectionCache);
-
-			IBackingStore createdObject
-				= new IsolatedStorageBackingStore(
-					castedObjectConfiguration.PartitionName,
-					encryptionProvider);
-
-			return createdObject;
-		}
-
-		private IStorageEncryptionProvider GetStorageEncryptionProvider(IBuilderContext context, string name, IConfigurationSource configurationSource, ConfigurationReflectionCache reflectionCache)
-		{
-			if (!string.IsNullOrEmpty(name))
-			{
-				return StorageEncryptionProviderCustomFactory.Instance.Create(context, name, configurationSource, reflectionCache);
-			}
-
-			return null;
-		}
-	}
+        /// <returns></returns>
+        public override IEnumerable<TypeRegistration> GetRegistrations()
+        {
+            yield return new TypeRegistration<IBackingStore>(
+                () => new IsolatedStorageBackingStore(PartitionName,
+                    Container.ResolvedIfNotNull<IStorageEncryptionProvider>(StorageEncryption)))
+                    {
+                        Name = Name
+                    };
+        }
+    }
 }

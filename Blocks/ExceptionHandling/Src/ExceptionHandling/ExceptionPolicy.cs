@@ -10,10 +10,10 @@
 //===============================================================================
 
 using System;
-using System.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Properties;
+using Microsoft.Practices.ServiceLocation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
 {
@@ -28,7 +28,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
         /// <summary>
         /// The main entry point into the Exception Handling Application Block.
         /// Handles the specified <see cref="Exception"/>
-        /// object according to the given <paramref name="configurationContext"></paramref>.
+        /// object according to the given <paramref name="policyName"></paramref>.
         /// </summary>
         /// <param name="exceptionToHandle">An <see cref="Exception"/> object.</param>
         /// <param name="policyName">The name of the policy to handle.</param>        
@@ -132,11 +132,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
             {
                 return factory.Create(policyName);
             }
-            catch (ConfigurationErrorsException configurationException)
+            catch (ActivationException configurationException)
             {
                 try
                 {
-                    DefaultExceptionHandlingEventLogger logger = EnterpriseLibraryFactory.BuildUp<DefaultExceptionHandlingEventLogger>();
+                    DefaultExceptionHandlingEventLogger logger = EnterpriseLibraryContainer.Current.GetInstance<DefaultExceptionHandlingEventLogger>();
                     logger.LogConfigurationError(configurationException, policyName);
                 }
                 catch { }
@@ -149,7 +149,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
                 {
                     string exceptionMessage = ExceptionUtility.FormatExceptionHandlingExceptionMessage(policyName, ex, null, exception);
 
-                    DefaultExceptionHandlingEventLogger logger = EnterpriseLibraryFactory.BuildUp<DefaultExceptionHandlingEventLogger>();
+                    DefaultExceptionHandlingEventLogger logger = EnterpriseLibraryContainer.Current.GetInstance<DefaultExceptionHandlingEventLogger>();
                     logger.LogInternalError(policyName, exceptionMessage);
                 }
                 catch { }

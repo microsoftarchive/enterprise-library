@@ -10,173 +10,217 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
 using System.Configuration;
-using System.Text;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation;
+using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Validation.Properties;
+using System.Diagnostics;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Instrumentation
 {
-	/// <summary>
-	/// Defines the logical events that can be instrumented for the validation block.
-	/// </summary>
-	/// <remarks>
-	/// The concrete instrumentation is provided by an object bound to the events of the provider. 
-	/// The default listener, automatically bound during construction, is <see cref="ValidationInstrumentationListener"/>.
-	/// </remarks>
-	[InstrumentationListener(typeof(ValidationInstrumentationListener))]
-	public class ValidationInstrumentationProvider
-	{
-		/// <summary>
-		/// Occurs when a validation operation is performed.
-		/// </summary>
-		[InstrumentationProvider("ValidateCalled")]
-		public event EventHandler<ValidationEventArgs> validationCalled;
+    /// <summary>
+    /// Provides the concrete instrumentation for the logical events raised through <see cref="IValidationInstrumentationProvider"/>
+    /// </summary>
+    [HasInstallableResources]
+    [PerformanceCountersDefinition(counterCategoryName, "validationCountersHelpResource")]
+    [EventLogDefinition("Application", "Enterprise Library Validation")]
+    public class ValidationInstrumentationProvider : InstrumentationListener, IValidationInstrumentationProvider
+    {
+        static EnterpriseLibraryPerformanceCounterFactory factory = new EnterpriseLibraryPerformanceCounterFactory();
 
-		/// <summary>
-		/// Occurs when a validation operation is successful.
-		/// </summary>
-		[InstrumentationProvider("ValidateSuccess")]
-		public event EventHandler<ValidationEventArgs> validationSucceeded;
+        ///<summary>
+        ///</summary>
+        ///<param name="configurationSource"></param>
+        ///<returns></returns>
+        public static IValidationInstrumentationProvider FromConfigurationSource(IConfigurationSource configurationSource)
+        {
+            var instrumentationSection = InstrumentationConfigurationSection.GetSection(configurationSource);
 
-		/// <summary>
-		/// Occurs when a validation operation fails.
-		/// </summary>
-		[InstrumentationProvider("ValidateFailure")]
-		public event EventHandler<ValidationFailedEventArgs> validationFailed;
+            return new ValidationInstrumentationProvider(
+                        instrumentationSection.PerformanceCountersEnabled,
+                        instrumentationSection.EventLoggingEnabled,
+                        instrumentationSection.WmiEnabled,
+                        instrumentationSection.ApplicationInstanceName
+                        );
+        }
 
-		/// <summary>
-		/// Occurs when an exception is thrown while performing a validation operation.
-		/// </summary>
-		[InstrumentationProvider("ValidateException")]
-		public event EventHandler<ValidationExceptionEventArgs> validationException;
+        private const string counterCategoryName = "Enterprise Library Validation Counters";
 
-		/// <summary>
-		/// Occurs when a failure is detected when accessing the configuration settings for the validation block.
-		/// </summary>
-		[InstrumentationProvider("ConfigurationFailure")]
-		public event EventHandler<ValidationConfigurationFailureEventArgs> configurationFailure;
+        [PerformanceCounter("Number of Validation Calls", "validationCallHelpResource", PerformanceCounterType.NumberOfItems32)]
+        private EnterpriseLibraryPerformanceCounter validationCall;
 
-		internal void FireValidationSucceededEvent(Type typeBeingValidated)
-		{
-			if (validationSucceeded != null) validationSucceeded(this, new ValidationEventArgs(typeBeingValidated));
-		}
+        [PerformanceCounter("Number of Validation Successes", "validationSuccessesHelpResource", PerformanceCounterType.NumberOfItems32)]
+        private EnterpriseLibraryPerformanceCounter validationSucceeded;
 
-		internal void FireValidationFailedEvent(Type typeBeingValidated, ValidationResults validationResult)
-		{
-			if (validationFailed != null) validationFailed(this, new ValidationFailedEventArgs(typeBeingValidated, validationResult));
-		}
+        [PerformanceCounter("Number of Validation Failures", "validationFailuresHelpResource", PerformanceCounterType.NumberOfItems32)]
+        private EnterpriseLibraryPerformanceCounter validationFailures;
 
-		internal void FireConfigurationFailureEvent(ConfigurationErrorsException configurationException)
-		{
-			if (configurationFailure != null) configurationFailure(this, new ValidationConfigurationFailureEventArgs(configurationException));
-		}
+        [PerformanceCounter("Validation Calls/sec", "validationCallPerSecondHelpResource", PerformanceCounterType.RateOfCountsPerSecond32)]
+        private EnterpriseLibraryPerformanceCounter validationCallPerSecond;
 
-		internal void FireConfigurationCalledEvent(Type typeBeingValidated)
-		{
-			if (validationCalled != null) validationCalled(this, new ValidationEventArgs(typeBeingValidated));
-		}
+        [PerformanceCounter("Validation Successes/sec", "validationSucceededPerSecondHelpResource", PerformanceCounterType.RateOfCountsPerSecond32)]
+        private EnterpriseLibraryPerformanceCounter validationSucceededPerSecond;
 
-		internal void FireValidationException(Type typeBeingValidated, string errorMessage, Exception exception)
-		{
-			if (validationException != null) validationException(this, new ValidationExceptionEventArgs(typeBeingValidated, errorMessage, exception));
-			if (validationCalled != null) validationCalled(this, new ValidationEventArgs(typeBeingValidated));
-		}
-	}
+        [PerformanceCounter("Validation Failures/sec", "validationFailuresPerSecondHelpResource", PerformanceCounterType.RateOfCountsPerSecond32)]
+        private EnterpriseLibraryPerformanceCounter validationFailuresPerSecond;
 
-	/// <summary>
-	/// Base class for validation events.
-	/// </summary>
-	public class ValidationEventArgs : EventArgs
-	{
-		Type typeBeingValidated;
+        [PerformanceCounter("% Validation Successes", "percentageValidationSuccessesHelpResource", PerformanceCounterType.RawFraction,
+          BaseCounterName = "% Validation Successes Base",
+          BaseCounterType = PerformanceCounterType.RawBase,
+          BaseCounterHelp = "percentageValidationSuccessesBaseHelpResource")]
+        private EnterpriseLibraryPerformanceCounter percentageValidationSuccesses;
+        private EnterpriseLibraryPerformanceCounter percentageValidationSuccessesBase;
 
-		internal ValidationEventArgs(Type typeBeingValidated)
-		{
-			this.typeBeingValidated = typeBeingValidated;
-		}
+        private IEventLogEntryFormatter eventLogEntryFormatter;
 
-		/// <summary>
-		/// Gets the type being validated.
-		/// </summary>
-		public Type TypeBeingValidated
-		{
-			get { return typeBeingValidated; }
-		}
-	}
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ValidationInstrumentationProvider"/> class.
+        /// </summary>
+        /// <param name="performanceCountersEnabled"><code>true</code> if performance counters should be updated.</param>
+        /// <param name="eventLoggingEnabled"><code>true</code> if event log entries should be written.</param>
+        /// <param name="wmiEnabled"><code>true</code> if WMI events should be fired.</param>
+        /// <param name="applicationInstanceName">The application instance name.</param>
+        public ValidationInstrumentationProvider(bool performanceCountersEnabled,
+                                              bool eventLoggingEnabled,
+                                              bool wmiEnabled,
+                                              string applicationInstanceName)
+            : this(performanceCountersEnabled, eventLoggingEnabled, wmiEnabled, new AppDomainNameFormatter(applicationInstanceName))
+        { }
 
-	/// <summary>
-	/// Provides data for the <see cref="ValidationInstrumentationProvider.validationFailed"/> event.
-	/// </summary>
-	public class ValidationFailedEventArgs : ValidationEventArgs
-	{
-		private ValidationResults validationResult;
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ValidationInstrumentationProvider"/> class.
+        /// </summary>
+        /// <param name="performanceCountersEnabled"><code>true</code> if performance counters should be updated.</param>
+        /// <param name="eventLoggingEnabled"><code>true</code> if event log entries should be written.</param>
+        /// <param name="wmiEnabled"><code>true</code> if WMI events should be fired.</param>
+        /// <param name="nameFormatter">Creates unique name for each <see cref="PerformanceCounter"/> instance.</param>
+        public ValidationInstrumentationProvider(bool performanceCountersEnabled,
+                                              bool eventLoggingEnabled,
+                                              bool wmiEnabled,
+                                              IPerformanceCounterNameFormatter nameFormatter)
+            : base(performanceCountersEnabled, eventLoggingEnabled, wmiEnabled, nameFormatter)
+        {
+            this.eventLogEntryFormatter = new EventLogEntryFormatter(Resources.BlockName);
+        }
 
-		internal ValidationFailedEventArgs(Type typeBeingValidated, ValidationResults validationResult)
-			: base(typeBeingValidated)
-		{
-			this.validationResult = validationResult;
-		}
+        /// <summary>
+        /// Creates the performance counters to instrument the validation events to the instance names.
+        /// </summary>
+        /// <param name="instanceNames">The instance names for the performance counters.</param>
+        protected override void CreatePerformanceCounters(string[] instanceNames)
+        {
+            validationCall = new EnterpriseLibraryPerformanceCounter(counterCategoryName, "Number of Validation Calls");
+            validationSucceeded = new EnterpriseLibraryPerformanceCounter(counterCategoryName, "Number of Validation Successes");
+            validationFailures = new EnterpriseLibraryPerformanceCounter(counterCategoryName, "Number of Validation Failures");
+            validationCallPerSecond = new EnterpriseLibraryPerformanceCounter(counterCategoryName, "Validation Calls/sec");
+            validationSucceededPerSecond = new EnterpriseLibraryPerformanceCounter(counterCategoryName, "Validation Successes/sec");
+            validationFailuresPerSecond = new EnterpriseLibraryPerformanceCounter(counterCategoryName, "Validation Failures/sec");
+            percentageValidationSuccesses = new EnterpriseLibraryPerformanceCounter(counterCategoryName, "% Validation Successes");
+            percentageValidationSuccessesBase = new EnterpriseLibraryPerformanceCounter(counterCategoryName, "% Validation Successes Base");
+        }
 
-		/// <summary>
-		/// Gets the result of the failed validation.
-		/// </summary>
-		public ValidationResults ValidationResult
-		{
-			get { return validationResult; }
-		}
-	}
+        ///<summary>
+        ///</summary>
+        ///<param name="typeBeingValidated"></param>
+        public void FireValidationSucceeded(Type typeBeingValidated)
+        {
+            if (PerformanceCountersEnabled)
+            {
+                //increment counter specific to this type/ruleSet
+                string instanceName = CreateInstanceName(typeBeingValidated.Name);
+                validationSucceeded.Increment(instanceName);
+                validationSucceededPerSecond.Increment(instanceName);
+                percentageValidationSuccesses.Increment(instanceName);
 
-	/// <summary>
-	/// Provides data for the <see cref="ValidationInstrumentationProvider.configurationFailure"/> event.
-	/// </summary>
-	public class ValidationConfigurationFailureEventArgs : EventArgs
-	{
-		private Exception exception;
+                //increment totals
+                validationSucceeded.Increment();
+                validationSucceededPerSecond.Increment();
+                percentageValidationSuccesses.Increment();
+            }
+            if (WmiEnabled)
+            {
+                FireManagementInstrumentation(new ValidationSucceededEvent(typeBeingValidated.FullName));
+            }
+        }
 
-		internal ValidationConfigurationFailureEventArgs(Exception exception)
-		{
-			this.exception = exception;
-		}
+        ///<summary>
+        ///</summary>
+        ///<param name="typeBeingValidated"></param>
+        ///<param name="validationResult"></param>
+        public void FireValidationFailed(Type typeBeingValidated, ValidationResults validationResult)
+        {
+            if (PerformanceCountersEnabled)
+            {
+                //increment counter specific to this type/ruleSet
+                string instanceName = CreateInstanceName(typeBeingValidated.Name);
+                validationFailures.Increment(instanceName);
+                validationFailuresPerSecond.Increment(instanceName);
 
-		/// <summary>
-		/// Gets the exception that describes the configuration error.
-		/// </summary>
-		public Exception Exception
-		{
-			get { return exception; }
-		}
-	}
+                //increment totals
+                validationFailures.Increment();
+                validationFailuresPerSecond.Increment();
+            }
 
-	/// <summary>
-	/// Provides data for the <see cref="ValidationInstrumentationProvider.validationException"/> event.
-	/// </summary>
-	public class ValidationExceptionEventArgs : ValidationEventArgs
-	{
-		private string errorMessage;
-		private Exception exception;
+            if (WmiEnabled)
+            {
+                FireManagementInstrumentation(new ValidationFailedEvent(typeBeingValidated.FullName));
+            }
+        }
 
-		internal ValidationExceptionEventArgs(Type typeBeingValidated, string errorMessage, Exception exception)
-			: base(typeBeingValidated)
-		{
-			this.errorMessage = errorMessage;
-			this.exception = exception;
-		}
+        ///<summary>
+        ///</summary>
+        ///<param name="configurationException"></param>
+        public void FireConfigurationFailure(ConfigurationErrorsException configurationException)
+        {
+            if (WmiEnabled)
+            {
+                FireManagementInstrumentation(new ValidationConfigurationFailureEvent(configurationException.Message));
+            }
 
-		/// <summary>
-		/// Gets the message that describes the failure.
-		/// </summary>
-		public string ErrorMessage
-		{
-			get { return errorMessage; }
-		}
+            if (EventLoggingEnabled)
+            {
+                string entryText = eventLogEntryFormatter.GetEntryText(Resources.ConfigurationErrorMessage, configurationException);
+                EventLog.WriteEntry(GetEventSourceName(), entryText, EventLogEntryType.Error);
+            }
+        }
 
-		/// <summary>
-		/// Gets the exception that caused the failure.
-		/// </summary>
-		public Exception Exception
-		{
-			get { return exception; }
-		}
-	}
+        ///<summary>
+        ///</summary>
+        ///<param name="typeBeingValidated"></param>
+        public void FireConfigurationCalled(Type typeBeingValidated)
+        {
+            if (PerformanceCountersEnabled)
+            {
+                //increment counter specific to this type/ruleSet
+                string instanceName = CreateInstanceName(typeBeingValidated.Name);
+                validationCall.Increment(instanceName);
+                validationCallPerSecond.Increment(instanceName);
+                percentageValidationSuccessesBase.Increment(instanceName);
+
+                //increment totals
+                validationCall.Increment();
+                validationCallPerSecond.Increment();
+                percentageValidationSuccessesBase.Increment();
+
+            }
+        }
+
+        ///<summary>
+        ///</summary>
+        ///<param name="typeBeingValidated"></param>
+        ///<param name="errorMessage"></param>
+        ///<param name="exception"></param>
+        public void FireValidationException(Type typeBeingValidated, string errorMessage, Exception exception)
+        {
+            if (WmiEnabled)
+            {
+                FireManagementInstrumentation(new ValidationExceptionEvent(typeBeingValidated.FullName,
+                                                                           exception.ToString()));
+            }
+
+            FireConfigurationCalled(typeBeingValidated);
+        }
+    }
+
 }

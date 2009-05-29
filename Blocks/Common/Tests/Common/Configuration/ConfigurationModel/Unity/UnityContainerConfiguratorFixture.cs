@@ -15,7 +15,9 @@ using System.Linq;
 using System.Linq.Expressions;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel.Unity;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Unity;
 using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.InterceptionExtension;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.ConfigurationModel.Unity
@@ -672,7 +674,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
         private IUnityContainer container;
         private IFoo foo = new Foo();
 
-        [TestInitialize]    
+        [TestInitialize]
         public void Given()
         {
             container = new UnityContainer();
@@ -705,8 +707,170 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
         }
     }
 
+    [TestClass]
+    public class GivenANonDefaultTypeRegistrationWithNoTypeMapping
+    {
+        private TypeRegistration typeRegistration;
 
-    internal class TypeWithProperties 
+        [TestInitialize]
+        public void Setup()
+        {
+            typeRegistration = new TypeRegistration<Foo>(() => new Foo()) { Name = "foo" };
+        }
+
+        [TestMethod]
+        public void WhenConfiguratorConfiguresContainer_ThenResolvingDefaultReturnsDifferentInstance()
+        {
+            var container = new UnityContainer();
+            var configurator = new UnityContainerConfigurator(container);
+
+            configurator.Register(typeRegistration);
+
+            var foo = container.Resolve<Foo>("foo");
+            var defaultFoo = container.Resolve<Foo>();
+
+            Assert.AreNotSame(foo, defaultFoo);
+        }
+    }
+
+    [TestClass]
+    public class GivenADefaultTypeRegistrationWithNoTypeMapping
+    {
+        private TypeRegistration typeRegistration;
+
+        [TestInitialize]
+        public void Setup()
+        {
+            typeRegistration = new TypeRegistration<Foo>(() => new Foo()) { Name = "foo", IsDefault = true };
+        }
+
+        [TestMethod]
+        public void WhenConfiguratorConfiguresContainer_ThenResolvingDefaultImplementationReturnsSameInstance()
+        {
+            var container = new UnityContainer();
+            var configurator = new UnityContainerConfigurator(container);
+
+            configurator.Register(typeRegistration);
+
+            var foo = container.Resolve<Foo>("foo");
+            var defaultFoo = container.Resolve<Foo>();
+
+            Assert.AreSame(foo, defaultFoo);
+        }
+    }
+
+    [TestClass]
+    public class GivenANonDefaultTypeRegistrationWithTypeMapping
+    {
+        private TypeRegistration typeRegistration;
+
+        [TestInitialize]
+        public void Setup()
+        {
+            typeRegistration = new TypeRegistration<IFoo>(() => new Foo()) { Name = "foo" };
+        }
+
+        [TestMethod]
+        public void WhenConfiguratorConfiguresContainer_ThenResolvingDefaultForServiceInterfaceTypeThrows()
+        {
+            var container = new UnityContainer();
+            var configurator = new UnityContainerConfigurator(container);
+
+            configurator.Register(typeRegistration);
+
+            try
+            {
+                container.Resolve<IFoo>();
+                Assert.Fail("Should have failed");
+            }
+            catch (ResolutionFailedException)
+            {
+                // expected exception
+            }
+        }
+    }
+
+    [TestClass]
+    public class GivenADefaultTypeRegistrationWithTypeMapping
+    {
+        private TypeRegistration typeRegistration;
+
+        [TestInitialize]
+        public void Setup()
+        {
+            typeRegistration = new TypeRegistration<IFoo>(() => new Foo()) { Name = "foo", IsDefault = true };
+        }
+
+        [TestMethod]
+        public void WhenConfiguratorConfiguresContainer_ThenResolvingDefaultServiceInterfaceTypeReturnsSameInstance()
+        {
+            var container = new UnityContainer();
+            var configurator = new UnityContainerConfigurator(container);
+
+            configurator.Register(typeRegistration);
+
+            var foo = container.Resolve<Foo>("foo");
+            var defaultIFoo = container.Resolve<IFoo>();
+
+            Assert.AreSame(foo, defaultIFoo);
+        }
+    }
+
+    [TestClass]
+    public class GivenADefaultTypeRegistrationWithTypeMappingAndTransientLifetime
+    {
+        private TypeRegistration typeRegistration;
+
+        [TestInitialize]
+        public void Setup()
+        {
+            typeRegistration =
+                new TypeRegistration<IFoo>(() => new Foo()) { Name = "foo", IsDefault = true, Lifetime = TypeRegistrationLifetime.Transient };
+        }
+
+        [TestMethod]
+        public void WhenConfiguratorConfiguresContainer_ThenResolvingServiceInterfaceTypeReturnsDifferentInstances()
+        {
+            var container = new UnityContainer();
+            var configurator = new UnityContainerConfigurator(container);
+
+            configurator.Register(typeRegistration);
+
+            var foo1 = container.Resolve<IFoo>("foo");
+            var foo2 = container.Resolve<IFoo>("foo");
+
+            Assert.AreNotSame(foo1, foo2);
+        }
+    }
+
+    [TestClass]
+    public class GivenAUnityContainer
+    {
+        private IUnityContainer container;
+
+        [TestInitialize]
+        public void Setup()
+        {
+            this.container = new UnityContainer();
+        }
+
+        [TestMethod]
+        public void WhenCreatingAUnityContainerConfiguratorForTheContainer_ThenTheContainerGetsTheInterceptionExtension()
+        {
+            var configurator = new UnityContainerConfigurator(this.container);
+
+            Assert.IsNotNull(this.container.Configure<Interception>());
+        }
+
+        [TestMethod]
+        public void WhenCreatingAUnityContainerConfiguatorForTheContainer_ThenTheContainerGetsTheTransientPolicyBuildUpExtension()
+        {
+            var configurator = new UnityContainerConfigurator(this.container);
+            Assert.IsNotNull(this.container.Configure<TransientPolicyBuildUpExtension>());
+        }
+    }
+
+    internal class TypeWithProperties
     {
         public TypeWithProperties()
         {
@@ -775,7 +939,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
 
         public override IUnityContainer RegisterInstance(Type t, string name, object instance, LifetimeManager lifetime)
         {
-            throw new System.NotImplementedException();
+            // Configurator may now register an instance, so just noop it for
+            // current purposes.
+            return this;
         }
 
         public override object Resolve(Type t, string name)
@@ -800,12 +966,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
 
         public override IUnityContainer AddExtension(UnityContainerExtension extension)
         {
-            throw new System.NotImplementedException();
+            return this;
         }
 
         public override object Configure(Type configurationInterface)
         {
-            throw new System.NotImplementedException();
+            return null;
         }
 
         public override IUnityContainer RemoveAllExtensions()

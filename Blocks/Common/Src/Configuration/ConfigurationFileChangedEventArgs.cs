@@ -22,7 +22,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 
 
         /// <summary>
-        /// <para>Initialize a new instance of the <see cref="ConfigurationChangingEventArgs"/> class with the configuration file, the section name, the old value, and the new value of the changes.</para>
+        /// <para>Initialize a new instance of the <see cref="ConfigurationChangedEventArgs"/> class with the 
+        /// configuration file and the section name.</para>
         /// </summary>
         /// <param name="configurationFile"><para>The configuration file where the change occured.</para></param>
         /// <param name="sectionName"><para>The section name of the changes.</para></param>
@@ -32,10 +33,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         }
 
         /// <summary>
-        /// <para>Gets the configuration file of the data that is changing.</para>
+        /// <para>Gets the configuration file of the data that changed.</para>
         /// </summary>
         /// <value>
-        /// <para>The configuration file of the data that is changing.</para>
+        /// <para>The configuration file of the data that changed.</para>
         /// </value>
         public string ConfigurationFile
         {

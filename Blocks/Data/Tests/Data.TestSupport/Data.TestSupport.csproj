@@ -32,9 +32,11 @@
   <ItemGroup>
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Transactions" />
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -52,8 +54,13 @@
     <Compile Include="ExecuteNonQueryFixture.cs" />
     <Compile Include="ExecuteReaderFixture.cs" />
     <Compile Include="ExecuteScalarFixture.cs" />
+    <Compile Include="ParameterDiscoveryFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RollbackTransactionWrapper.cs" />
+    <Compile Include="StoredProcedureCreatingFixture.cs" />
+    <Compile Include="StoredProcedureCreationBase.cs" />
+    <Compile Include="TestConfigurationSource.cs" />
+    <Compile Include="TransactionScopeFixture.cs" />
     <Compile Include="UpdateDataSetBehaviorsFixture.cs" />
     <Compile Include="UpdateDataSetFixture.cs" />
     <Compile Include="UpdateDataSetStoredProcedureBase.cs" />

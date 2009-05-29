@@ -15,7 +15,6 @@ using System.Collections.Generic;
 using ManagementInstrumentation = System.Management.Instrumentation.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
 using Microsoft.Practices.EnterpriseLibrary.Security.Properties;
 using System.Diagnostics;
 
@@ -25,7 +24,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Instrumentation
     /// The instrumentation gateway for the security block when no instances of the objects are involved.
     /// </summary>
 	[EventLogDefinition("Application", EventLogSourceName)]
-    [CustomFactory(typeof(DefaultSecurityEventLoggerCustomFactory))]
     public class DefaultSecurityEventLogger : InstrumentationListener
     {
 		private IEventLogEntryFormatter eventLogEntryFormatter;

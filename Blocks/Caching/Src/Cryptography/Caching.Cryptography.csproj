@@ -1,7 +1,7 @@
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{A03EA97B-97CB-41EF-A55D-15C6496D8943}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -77,9 +77,9 @@
     <CodeAnalysisRules>-Microsoft.Security#CA2116;-Microsoft.Security#CA2117;-Microsoft.Naming#CA1704;-Microsoft.Performance#CA1824</CodeAnalysisRules>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Practices.ObjectBuilder2, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31BF3856AD364E35, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Lib\Microsoft.Practices.ObjectBuilder2.dll</HintPath>
+      <HintPath>..\..\..\..\Lib\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>
@@ -129,7 +129,6 @@
     <Compile Include="Configuration\SymmetricStorageEncryptionProviderData.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Configuration\Unity\SymmetricStorageEncryptionProviderPolicyCreator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SymmetricStorageEncryptionProvider.cs">
       <SubType>Code</SubType>

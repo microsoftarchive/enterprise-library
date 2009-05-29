@@ -15,6 +15,7 @@ using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration.Con
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
 {
@@ -37,13 +38,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         [TestMethod]
         public void ThenCreatesSingleTypeRegistration()
         {
-            Assert.AreEqual(1, listenerData.GetContainerConfigurationModel().Count());
+            Assert.AreEqual(1, listenerData.GetRegistrations().Count());
         }
 
         [TestMethod]
         public void WhenCreatesRegistration_ThenCreatedRegistrationMapsTraceListenerToXmlTraceListenerForTheSuppliedName()
         {
-            listenerData.GetContainerConfigurationModel().ElementAt(0)
+            listenerData.GetRegistrations().ElementAt(0)
                 .AssertForServiceType(typeof(TraceListener))
                 .ForName("listener")
                 .ForImplementationType(typeof(XmlTraceListener));
@@ -52,9 +53,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         [TestMethod]
         public void WhenCreatesRegistration_ThenCreatedRegistrationHasTheExpectedConstructorParameters()
         {
-            listenerData.GetContainerConfigurationModel().ElementAt(0)
+            listenerData.GetRegistrations().ElementAt(0)
                 .AssertConstructor()
                 .WithValueConstructorParameter("file name")
+                .WithContainerResolvedParameter<ILoggingInstrumentationProvider>(null)
                 .VerifyConstructorParameters();
         }
 
@@ -63,7 +65,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         {
             TraceFilter filter;
 
-            listenerData.GetContainerConfigurationModel().ElementAt(0)
+            listenerData.GetRegistrations().ElementAt(0)
                 .AssertProperties()
                 .WithValueProperty("Name", "listener")
                 .WithValueProperty("TraceOutputOptions", TraceOptions.DateTime | TraceOptions.Callstack)

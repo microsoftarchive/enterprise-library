@@ -12,8 +12,9 @@
 using System;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
 using Microsoft.Practices.EnterpriseLibrary.Security.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using Microsoft.Practices.ServiceLocation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security
 {
@@ -21,17 +22,26 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security
 	/// Provides methods for the creation of
 	/// <see cref="ISecurityCacheProvider"/> instances.
 	/// </summary>
-	public class SecurityCacheProviderFactory : LocatorNameTypeFactoryBase<ISecurityCacheProvider>
+    public class SecurityCacheProviderFactory : ContainerBasedInstanceFactory<ISecurityCacheProvider>
 	{
 		/// <summary>
 		/// <para>Initializes a new instance of the <see cref="SecurityCacheProviderFactory"/> class 
 		/// with the default configuration source.</para>
 		/// </summary>
-		protected SecurityCacheProviderFactory()
+		public SecurityCacheProviderFactory()
 			: base()
 		{
 		}
- 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="serviceLocator"></param>
+        public SecurityCacheProviderFactory(IServiceLocator serviceLocator)
+            :base(serviceLocator)
+        {
+        }
+
 		/// <summary>
 		/// <para>Initializes a new instance of the <see cref="SecurityCacheProviderFactory"/> class 
 		/// with the given configuration source.</para>

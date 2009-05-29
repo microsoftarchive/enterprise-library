@@ -44,6 +44,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners.Tests
         }
 
         [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void ConstuctingListenerWithNullInstrumentationProviderThrows()
+        {
+            FormattedEventLogTraceListener listener = new FormattedEventLogTraceListener(CommonUtil.EventLogSourceName,CommonUtil.EventLogNameCustom, "127.0.0.1", new TextFormatter("DUMMY{newline}DUMMY"), null);
+        }
+
+
+        [TestMethod]
         public void ListenerWillUseFormatterIfExists()
         {
             StringWriter writer = new StringWriter();

@@ -15,7 +15,6 @@ using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Caching.TestSupport.BackingStoreImplementations;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -43,7 +42,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.BackingStoreImplementati
             configurationSource.Add(CacheManagerSettings.SectionName, settings);
 
             IBackingStore custom
-                = EnterpriseLibraryFactory.BuildUp<IBackingStore>("custom", configurationSource);
+                = EnterpriseLibraryContainer.CreateDefaultContainer(configurationSource).GetInstance<IBackingStore>("custom");
 
             Assert.IsNotNull(custom);
             Assert.AreSame(typeof(MockCustomStorageBackingStore), custom.GetType());
@@ -66,7 +65,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.BackingStoreImplementati
                 = ConfigurationTestHelper.SaveSectionsInFileAndReturnConfigurationSource(sections);
 
             IBackingStore custom
-                = EnterpriseLibraryFactory.BuildUp<IBackingStore>("custom", configurationSource);
+                = EnterpriseLibraryContainer.CreateDefaultContainer(configurationSource).GetInstance<IBackingStore>("custom");
 
             Assert.IsNotNull(custom);
             Assert.AreSame(typeof(MockCustomStorageBackingStore), custom.GetType());

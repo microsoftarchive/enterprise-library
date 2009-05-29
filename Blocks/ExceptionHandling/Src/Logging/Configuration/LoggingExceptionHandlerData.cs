@@ -14,20 +14,15 @@ using System.Configuration;
 using System.Diagnostics;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Unity;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Configuration.Unity;
 using Microsoft.Practices.EnterpriseLibrary.Logging;
-using Microsoft.Practices.ObjectBuilder2;
+using System.Collections.Generic;
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Configuration
 {
     /// <summary>
     /// Represents configuration for a <see cref="LoggingExceptionHandler"/>.
     /// </summary>
-    [Assembler(typeof(LoggingExceptionHandlerAssembler))]
-    [ContainerPolicyCreator(typeof(LoggingExceptionHandlerPolicyCreator))]
     public class LoggingExceptionHandlerData : ExceptionHandlerData
     {
         private static readonly AssemblyQualifiedTypeNameConverter typeConverter
@@ -125,52 +120,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Config
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="LoggingExceptionHandlerData"/> class.
-        /// </summary>
-        /// <param name="name">
-        /// The name of the handler.
-        /// </param>
-        /// <param name="logCategory">
-        /// The default log category.
-        /// </param>
-        /// <param name="eventId">
-        /// The default eventID.
-        /// </param>
-        /// <param name="severity">
-        /// The default severity.
-        /// </param>
-        /// <param name="title">
-        /// The default title.
-        /// </param>
-        /// <param name="formatterTypeName">
-        /// The formatter fully qualified assembly type name.
-        /// </param>
-        /// <param name="priority">
-        /// The minimum value for messages to be processed.  Messages with a priority below the minimum are dropped immediately on the client.
-        /// </param>
-        /// <param name="useDefaultLogger">
-        /// Use the default logger.
-        /// </param>
-        public LoggingExceptionHandlerData(string name,
-                                           string logCategory,
-                                           int eventId,
-                                           TraceEventType severity,
-                                           string title,
-                                           string formatterTypeName,
-                                           int priority,
-                                           bool useDefaultLogger)
-            : base(name, typeof(LoggingExceptionHandler))
-        {
-            LogCategory = logCategory;
-            EventId = eventId;
-            Severity = severity;
-            Title = title;
-            FormatterTypeName = formatterTypeName;
-            Priority = priority;
-            UseDefaultLogger = useDefaultLogger;
-        }
-
-        /// <summary>
         /// Gets or sets the default log category.
         /// </summary>
         [ConfigurationProperty(logCategory, IsRequired = true)]
@@ -247,6 +196,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Config
         /// Gets or sets the default logger to be used.
         /// </summary>
         [ConfigurationProperty(useDefaultLogger, IsRequired = false, DefaultValue = false)]
+        [Obsolete("Behavior is now limited to UseDefaultLogger = true")]
         public bool UseDefaultLogger
         {
             get { return (bool)this[useDefaultLogger]; }
@@ -258,67 +208,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Config
         /// </summary>
         /// <param name="namePrefix"></param>
         /// <returns></returns>
-        public override TypeRegistration GetContainerConfigurationModel(string namePrefix)
+        public override IEnumerable<TypeRegistration> GetRegistrations(string namePrefix)
         {
-            return new TypeRegistration<IExceptionHandler>(
+            yield return new TypeRegistration<IExceptionHandler>(
                 () =>
                 new LoggingExceptionHandler(LogCategory, EventId, Severity, Title, Priority, FormatterType,
                                             Container.Resolved<LogWriter>()))
                        {
                            Name = BuildName(namePrefix)
                        };
-        }
-    }
-
-    /// <summary>
-    /// This type supports the Enterprise Library infrastructure and is not intended to be used directly from your code.
-    /// Represents the process to build a <see cref="LoggingExceptionHandler"/> described by a <see cref="LoggingExceptionHandlerData"/> configuration object.
-    /// </summary>
-    /// <remarks>This type is linked to the <see cref="LoggingExceptionHandlerData"/> type and it is used by the <see cref="ExceptionHandlerCustomFactory"/> 
-    /// to build the specific <see cref="IExceptionHandler"/> object represented by the configuration object.
-    /// </remarks>
-    public class LoggingExceptionHandlerAssembler : IAssembler<IExceptionHandler, ExceptionHandlerData>
-    {
-        /// <summary>
-        /// This method supports the Enterprise Library infrastructure and is not intended to be used directly from your code.
-        /// Builds an <see cref="LoggingExceptionHandler"/> based on an instance of <see cref="LoggingExceptionHandlerData"/>.
-        /// </summary>
-        /// <seealso cref="ExceptionHandlerCustomFactory"/>
-        /// <param name="context">The <see cref="IBuilderContext"/> that represents the current building process.</param>
-        /// <param name="objectConfiguration">The configuration object that describes the object to build. Must be an instance of <see cref="LoggingExceptionHandlerData"/>.</param>
-        /// <param name="configurationSource">The source for configuration objects.</param>
-        /// <param name="reflectionCache">The cache to use retrieving reflection information.</param>
-        /// <returns>A fully initialized instance of <see cref="LoggingExceptionHandler"/>.</returns>
-        public IExceptionHandler Assemble(IBuilderContext context,
-                                          ExceptionHandlerData objectConfiguration,
-                                          IConfigurationSource configurationSource,
-                                          ConfigurationReflectionCache reflectionCache)
-        {
-            LoggingExceptionHandlerData castedObjectConfiguration
-                = (LoggingExceptionHandlerData)objectConfiguration;
-
-            LogWriter writer;
-            if (castedObjectConfiguration.UseDefaultLogger)
-            {
-                writer = Logger.Writer;
-            }
-            else
-            {
-                IBuilderContext logWriterContext = context.CloneForNewBuild(NamedTypeBuildKey.Make<LogWriter>(), null);
-                writer = (LogWriter)logWriterContext.Strategies.ExecuteBuildUp(logWriterContext);
-            }
-
-            LoggingExceptionHandler createdObject
-                = new LoggingExceptionHandler(
-                    castedObjectConfiguration.LogCategory,
-                    castedObjectConfiguration.EventId,
-                    castedObjectConfiguration.Severity,
-                    castedObjectConfiguration.Title,
-                    castedObjectConfiguration.Priority,
-                    castedObjectConfiguration.FormatterType,
-                    writer);
-
-            return createdObject;
         }
     }
 }

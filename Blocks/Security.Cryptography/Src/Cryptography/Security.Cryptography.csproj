@@ -75,9 +75,9 @@
     <CodeAnalysisRules>-Microsoft.Security#CA2116;-Microsoft.Security#CA2117;-Microsoft.Naming#CA1702;-Microsoft.Design#CA1065;-Microsoft.Naming#CA1704;-Microsoft.Performance#CA1824;-Microsoft.Security#CA2109</CodeAnalysisRules>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Practices.ObjectBuilder2, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31BF3856AD364E35, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Lib\Microsoft.Practices.ObjectBuilder2.dll</HintPath>
+      <HintPath>..\..\..\..\Lib\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.Unity, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -160,35 +160,29 @@
     <Compile Include="Configuration\SymmetricCryptoProviderData.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Configuration\SymmetricCryptoProviderNameMapper.cs" />
     <Compile Include="Configuration\Unity\CryptographyBlockExtension.cs" />
     <Compile Include="CryptographyManager.cs" />
     <Compile Include="CryptographyManagerImpl.cs" />
     <Compile Include="CryptographyUtility.cs" />
-    <Compile Include="DefaultCryptographyErrorEventArgs.cs" />
     <Compile Include="DpapiCryptographer.cs" />
     <Compile Include="HashCryptographer.cs" />
-    <Compile Include="HashProviderCustomFactory.cs" />
     <Compile Include="IKeyGenerator.cs" />
     <Compile Include="Instrumentation\CryptographyConfigurationFailureEvent.cs" />
     <Compile Include="Instrumentation\CryptographyEvent.cs" />
     <Compile Include="Instrumentation\DefaultCryptographyEventLogger.cs" />
-    <Compile Include="Instrumentation\DefaultCryptographyEventLoggerCustomFactory.cs" />
-    <Compile Include="Instrumentation\DefaultCryptographyInstrumentationProvider.cs" />
-    <Compile Include="Instrumentation\HashAlgorithmInstrumentationBinder.cs" />
     <Compile Include="Instrumentation\HashOperationFailedEvent.cs" />
-    <Compile Include="Instrumentation\SymmetricAlgorithmInstrumentationBinder.cs" />
+    <Compile Include="Instrumentation\IDefaultCryptographyInstrumentationProvider.cs" />
+    <Compile Include="Instrumentation\IHashAlgorithmInstrumentationProvider.cs" />
+    <Compile Include="Instrumentation\ISymmetricAlgorithmInstrumentationProvider.cs" />
+    <Compile Include="Instrumentation\NullDefaultCryptographyInstrumentationProvider.cs" />
+    <Compile Include="Instrumentation\NullHashAlgorithmInstrumentationProvider.cs" />
+    <Compile Include="Instrumentation\NullSymmetricAlgorithmInstrumentationProvider.cs" />
     <Compile Include="Instrumentation\SymmetricOperationFailedEvent.cs" />
     <Compile Include="Instrumentation\HashMismatchDetectedEvent.cs" />
-    <Compile Include="Instrumentation\SymmetricAlgorithmInstrumentationListener.cs" />
     <Compile Include="Instrumentation\SymmetricAlgorithmInstrumentationProvider.cs" />
     <Compile Include="Cryptographer.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CryptographyConfigurationView.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Instrumentation\CrytographicOperationErrorEventArgs.cs" />
     <Compile Include="DpapiSymmetricCryptoProvider.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -198,7 +192,6 @@
     <Compile Include="HashProviderFactory.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Configuration\HashProviderDataRetriever.cs" />
     <Compile Include="IHashProvider.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -218,7 +211,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Instrumentation\HashAlgorithmInstrumentationListener.cs" />
     <Compile Include="Instrumentation\HashAlgorithmInstrumentationProvider.cs" />
     <Compile Include="KeyReaderWriter.cs" />
     <Compile Include="ProtectedKey.cs" />
@@ -227,7 +219,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="SymmetricCryptographer.cs" />
-    <Compile Include="SymmetricCryptoProviderCustomFactory.cs" />
     <Compile Include="SymmetricCryptoProviderFactory.cs">
       <SubType>Code</SubType>
     </Compile>

@@ -9,9 +9,10 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using System;
 using System.Reflection;
 
 [assembly: AssemblyTitle("Enterprise Library Caching Application Block Test Support")]
 [assembly: AssemblyDescription("Enterprise Library Caching Application Block Test Support")]
 [assembly: AssemblyVersion("4.1.0.0")]
-
+[assembly: CLSCompliant(false)]

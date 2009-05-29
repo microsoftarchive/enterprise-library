@@ -10,13 +10,11 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Configuration;
 using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
+using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Instrumentation;
 using Container = Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel.Container;
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
@@ -27,7 +25,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
     /// </summary>		
     public class ExceptionTypeData : NamedConfigurationElement
     {
-        private static AssemblyQualifiedTypeNameConverter typeConverter = new AssemblyQualifiedTypeNameConverter();
+        private static readonly AssemblyQualifiedTypeNameConverter typeConverter = new AssemblyQualifiedTypeNameConverter();
         private const string typeProperty = "type";
         private const string postHandlingActionProperty = "postHandlingAction";
         private const string exceptionHandlersProperty = "exceptionHandlers";
@@ -59,8 +57,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
         public ExceptionTypeData(string name, string typeName, PostHandlingAction postHandlingAction)
             : base(name)
         {
-            this.TypeName = typeName;
-            this.PostHandlingAction = postHandlingAction;
+            TypeName = typeName;
+            PostHandlingAction = postHandlingAction;
         }
 
         /// <summary>
@@ -121,7 +119,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
         /// </summary>
         /// <param name="namePrefix"></param>
         /// <returns>A <see cref="TypeRegistration"/></returns>
-        public TypeRegistration GetContainerConfigurationModel(string namePrefix)
+        public TypeRegistration GetRegistration(string namePrefix)
         {
             string registrationName = BuildChildName(namePrefix, Name);
 
@@ -130,13 +128,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
                     new ExceptionPolicyEntry(
                         Type,
                         PostHandlingAction,
-                        Container.ResolvedEnumerable<IExceptionHandler>(from hd in ExceptionHandlers select BuildChildName(registrationName, hd.Name))))
+                        Container.ResolvedEnumerable<IExceptionHandler>(from hd in ExceptionHandlers select BuildChildName(registrationName, hd.Name)),
+                        Container.Resolved<IExceptionHandlingInstrumentationProvider>(namePrefix)))
                {
                    Name = registrationName
                };
         }
 
-        private string BuildChildName(string name, string childName)
+        private static string BuildChildName(string name, string childName)
         {
             return string.Format("{0}.{1}", name, childName);
         }

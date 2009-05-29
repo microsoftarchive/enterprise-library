@@ -12,385 +12,221 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation
 {
-	/// <summary>
-	/// Factory for creating <see cref="Validator"/> objects for types.
-	/// </summary>
-	/// <seealso cref="Validation"/>
-	/// <seealso cref="Validator"/>
-	public static class ValidationFactory
-	{
-		private static IDictionary<ValidatorCacheKey, Validator> attributeOnlyValidatorsCache
-			= new Dictionary<ValidatorCacheKey, Validator>();
-		private static object attributeOnlyValidatorsCacheLock = new object();
-		private static IDictionary<ValidatorCacheKey, Validator> attributeAndDefaultConfigurationValidatorsCache
-			= new Dictionary<ValidatorCacheKey, Validator>();
-		private static object attributeAndDefaultConfigurationValidatorsCacheLock = new object();
-		private static IDictionary<ValidatorCacheKey, Validator> defaultConfigurationOnlyValidatorsCache
-			= new Dictionary<ValidatorCacheKey, Validator>();
-		private static object defaultConfigurationOnlyValidatorsCacheLock = new object();
+    /// <summary>
+    /// Factory for creating <see cref="Validator"/> objects for types.
+    /// </summary>
+    /// <seealso cref="Validation"/>
+    /// <seealso cref="Validator"/>
+    public static class ValidationFactory
+    {
+        /// <summary>
+        /// Resets the cached validators.
+        /// </summary>
+        public static void ResetCaches()
+        {
+            DefaultCompositeValidatorFactory.ResetCache();
+        }
 
-		/// <summary>
-		/// Resets the cached validators.
-		/// </summary>
-		public static void ResetCaches()
-		{
-			lock (attributeOnlyValidatorsCacheLock)
-			{
-				attributeOnlyValidatorsCache.Clear();
-			}
-			lock (attributeAndDefaultConfigurationValidatorsCacheLock)
-			{
-				attributeAndDefaultConfigurationValidatorsCache.Clear();
-			}
-			lock (defaultConfigurationOnlyValidatorsCacheLock)
-			{
-				defaultConfigurationOnlyValidatorsCache.Clear();
-			}
-		}
+        /// <summary>
+        /// Returns a validator representing the validation criteria specified for type <typeparamref name="T"/>
+        /// through configuration and attributes on type <typeparamref name="T"/> and its ancestors for the default ruleset.
+        /// </summary>
+        /// <typeparam name="T">The type to get the validator for.</typeparam>
+        /// <returns>The validator.</returns>
+        public static Validator<T> CreateValidator<T>()
+        {
+            return DefaultCompositeValidatorFactory.CreateValidator<T>();
+        }
 
-		/// <summary>
-		/// Returns a validator representing the validation criteria specified for type <typeparamref name="T"/>
-		/// through configuration and attributes on type <typeparamref name="T"/> and its ancestors for the default ruleset.
-		/// </summary>
-		/// <typeparam name="T">The type to get the validator for.</typeparam>
-		/// <returns>The validator.</returns>
-		public static Validator<T> CreateValidator<T>()
-		{
-			return CreateValidator<T>(string.Empty, ConfigurationSourceFactory.Create(), true);
-		}
+        /// <summary>
+        /// Returns a validator representing the validation criteria specified for type <typeparamref name="T"/>
+        /// through configuration and attributes on type <typeparamref name="T"/> and its ancestors for the supplied ruleset.
+        /// </summary>
+        /// <typeparam name="T">The type to get the validator for.</typeparam>
+        /// <param name="ruleset">The name of the required ruleset.</param>
+        /// <returns>The validator.</returns>
+        /// <exception cref="ArgumentNullException">when the <paramref name="ruleset"/> is <see langword="null"/>.</exception>
+        public static Validator<T> CreateValidator<T>(string ruleset)
+        {
+            return DefaultCompositeValidatorFactory.CreateValidator<T>(ruleset);
+        }
 
-		/// <summary>
-		/// Returns a validator representing the validation criteria specified for type <typeparamref name="T"/>
-		/// through configuration and attributes on type <typeparamref name="T"/> and its ancestors for the supplied ruleset.
-		/// </summary>
-		/// <typeparam name="T">The type to get the validator for.</typeparam>
-		/// <param name="ruleset">The name of the required ruleset.</param>
-		/// <returns>The validator.</returns>
-		/// <exception cref="ArgumentNullException">when the <paramref name="ruleset"/> is <see langword="null"/>.</exception>
-		public static Validator<T> CreateValidator<T>(string ruleset)
-		{
-			return CreateValidator<T>(ruleset, ConfigurationSourceFactory.Create(), true);
-		}
+        /// <summary>
+        /// Returns a validator representing the validation criteria specified for type <typeparamref name="T"/>
+        /// through configuration and attributes on type <typeparamref name="T"/> and its ancestors for the default ruleset
+        /// retrieving configuration information from the supplied <see cref="IConfigurationSource"/>.
+        /// </summary>
+        /// <typeparam name="T">The type to get the validator for.</typeparam>
+        /// <param name="configurationSource">The configuration source from where configuration information is to be retrieved.</param>
+        /// <returns>The validator.</returns>
+        /// <exception cref="ArgumentNullException">when the <paramref name="configurationSource"/> is <see langword="null"/>.</exception>
+        public static Validator<T> CreateValidator<T>(IConfigurationSource configurationSource)
+        {
+            return CreateValidator<T>(string.Empty, configurationSource);
+        }
 
-		/// <summary>
-		/// Returns a validator representing the validation criteria specified for type <typeparamref name="T"/>
-		/// through configuration and attributes on type <typeparamref name="T"/> and its ancestors for the default ruleset
-		/// retrieving configuration information from the supplied <see cref="IConfigurationSource"/>.
-		/// </summary>
-		/// <typeparam name="T">The type to get the validator for.</typeparam>
-		/// <param name="configurationSource">The configuration source from where configuration information is to be retrieved.</param>
-		/// <returns>The validator.</returns>
-		/// <exception cref="ArgumentNullException">when the <paramref name="configurationSource"/> is <see langword="null"/>.</exception>
-		public static Validator<T> CreateValidator<T>(IConfigurationSource configurationSource)
-		{
-			return CreateValidator<T>(string.Empty, configurationSource, false);
-		}
+        /// <summary>
+        /// Returns a validator representing the validation criteria specified for type <typeparamref name="T"/>
+        /// through configuration and attributes on type <typeparamref name="T"/> and its ancestors for the supplied ruleset
+        /// retrieving configuration information from the supplied <see cref="IConfigurationSource"/>.
+        /// </summary>
+        /// <typeparam name="T">The type to get the validator for.</typeparam>
+        /// <param name="ruleset">The name of the required ruleset.</param>
+        /// <param name="configurationSource">The configuration source from where configuration information is to be retrieved.</param>
+        /// <returns>The validator.</returns>
+        /// <exception cref="ArgumentNullException">when the <paramref name="ruleset"/> is <see langword="null"/>.</exception>
+        /// <exception cref="ArgumentNullException">when the <paramref name="configurationSource"/> is <see langword="null"/>.</exception>
+        public static Validator<T> CreateValidator<T>(string ruleset, IConfigurationSource configurationSource)
+        {
+            var validatorFactory = CreateCompositeValidatorFactory(configurationSource);
 
-		/// <summary>
-		/// Returns a validator representing the validation criteria specified for type <typeparamref name="T"/>
-		/// through configuration and attributes on type <typeparamref name="T"/> and its ancestors for the supplied ruleset
-		/// retrieving configuration information from the supplied <see cref="IConfigurationSource"/>.
-		/// </summary>
-		/// <typeparam name="T">The type to get the validator for.</typeparam>
-		/// <param name="ruleset">The name of the required ruleset.</param>
-		/// <param name="configurationSource">The configuration source from where configuration information is to be retrieved.</param>
-		/// <returns>The validator.</returns>
-		/// <exception cref="ArgumentNullException">when the <paramref name="ruleset"/> is <see langword="null"/>.</exception>
-		/// <exception cref="ArgumentNullException">when the <paramref name="configurationSource"/> is <see langword="null"/>.</exception>
-		public static Validator<T> CreateValidator<T>(string ruleset, IConfigurationSource configurationSource)
-		{
-			return CreateValidator<T>(ruleset, configurationSource, false);
-		}
+            return validatorFactory.CreateValidator<T>(ruleset);
+        }
 
-		private static Validator<T> CreateValidator<T>(string ruleset, IConfigurationSource configurationSource, bool cacheValidator)
-		{
-			Validator<T> wrapperValidator = null;
+        /// <summary>
+        /// Returns a validator representing the validation criteria specified for type <paramref name="targetType"/>
+        /// through configuration and aatributes on type <paramref name="targetType"/> and its ancestors for the default ruleset.
+        /// </summary>
+        /// <param name="targetType">The type to get the validator for.</param>
+        /// <returns>The validator.</returns>
+        public static Validator CreateValidator(Type targetType)
+        {
+            return DefaultCompositeValidatorFactory.CreateValidator(targetType);
+        }
 
-			if (cacheValidator)
-			{
-				lock (attributeAndDefaultConfigurationValidatorsCacheLock)
-				{
-					ValidatorCacheKey key = new ValidatorCacheKey(typeof(T), ruleset, true);
+        /// <summary>
+        /// Returns a validator representing the validation criteria specified for type <paramref name="targetType"/>
+        /// through configuration and attributes on type <paramref name="targetType"/> and its ancestors for the supplied ruleset.
+        /// </summary>
+        /// <param name="targetType">The type to get the validator for.</param>
+        /// <param name="ruleset">The name of the required ruleset.</param>
+        /// <returns>The validator.</returns>
+        /// <exception cref="ArgumentNullException">when the <paramref name="ruleset"/> is <see langword="null"/>.</exception>
+        public static Validator CreateValidator(Type targetType, string ruleset)
+        {
+            return DefaultCompositeValidatorFactory.CreateValidator(targetType, ruleset);
+        }
 
-					Validator cachedValidator;
-					if (attributeAndDefaultConfigurationValidatorsCache.TryGetValue(key, out cachedValidator))
-					{
-						return (Validator<T>)cachedValidator;
-					}
+        /// <summary>
+        /// Returns a validator representing the validation criteria specified for type <paramref name="targetType"/>
+        /// through configuration and attributes on type <paramref name="targetType"/> and its ancestors for the supplied ruleset
+        /// retrieving configuration information from the supplied <see cref="IConfigurationSource"/>.
+        /// </summary>
+        /// <param name="targetType">The type to get the validator for.</param>
+        /// <param name="ruleset">The name of the required ruleset.</param>
+        /// <param name="configurationSource">The configuration source from where configuration information is to be retrieved.</param>
+        /// <returns>The validator.</returns>
+        /// <exception cref="ArgumentNullException">when the <paramref name="ruleset"/> is <see langword="null"/>.</exception>
+        /// <exception cref="ArgumentNullException">when the <paramref name="configurationSource"/> is <see langword="null"/>.</exception>
+        public static Validator CreateValidator(Type targetType, string ruleset, IConfigurationSource configurationSource)
+        {
+            var factory = CreateCompositeValidatorFactory(configurationSource);
+
+            return factory.CreateValidator(targetType, ruleset);
+
+        }
+
+        /// <summary>
+        /// Returns a validator representing the validation criteria specified for type <typeparamref name="T"/>
+        /// through attributes on type <typeparamref name="T"/> and its ancestors for the default ruleset.
+        /// </summary>
+        /// <typeparam name="T">The type to get the validator for.</typeparam>
+        /// <returns>The validator.</returns>
+        public static Validator<T> CreateValidatorFromAttributes<T>()
+        {
+            return DefaultAttributeValidatorFactory.CreateValidator<T>();
+        }
+
+        /// <summary>
+        /// Returns a validator representing the validation criteria specified for type <typeparamref name="T"/>
+        /// through attributes on type <typeparamref name="T"/> and its ancestors for the supplied ruleset.
+        /// </summary>
+        /// <typeparam name="T">The type to get the validator for.</typeparam>
+        /// <param name="ruleset">The name of the required ruleset.</param>
+        /// <returns>The validator.</returns>
+        /// <exception cref="ArgumentNullException">when the <paramref name="ruleset"/> is <see langword="null"/>.</exception>
+        public static Validator<T> CreateValidatorFromAttributes<T>(string ruleset)
+        {
+            return DefaultAttributeValidatorFactory.CreateValidator<T>(ruleset);
+        }
+
+        /// <summary>
+        /// Returns a validator representing the validation criteria specified for type <paramref name="targetType"/>
+        /// through attributes on type <paramref name="targetType"/> and its ancestors for the supplied ruleset.
+        /// </summary>
+        /// <param name="targetType">The type to get the validator for.</param>
+        /// <param name="ruleset">The name of the required ruleset.</param>
+        /// <returns>The validator.</returns>
+        /// <exception cref="ArgumentNullException">when the <paramref name="ruleset"/> is <see langword="null"/>.</exception>
+        public static Validator CreateValidatorFromAttributes(Type targetType, string ruleset)
+        {
+            return DefaultAttributeValidatorFactory.CreateValidator(targetType, ruleset);
+        }
 
 
-                    Validator validator = GetValidator(InnerCreateValidatorFromAttributes(typeof(T), ruleset), InnerCreateValidatorFromConfiguration(typeof(T), ruleset, configurationSource));
+        /// <summary>
+        /// Returns a validator representing the validation criteria specified for type <typeparamref name="T"/>
+        /// through configuration for the default ruleset.
+        /// </summary>
+        /// <typeparam name="T">The type to get the validator for.</typeparam>
+        /// <returns>The validator.</returns>
+        public static Validator<T> CreateValidatorFromConfiguration<T>()
+        {
+            return DefaultConfigurationValidatorFactory.CreateValidator<T>();
+        }
 
-					wrapperValidator = WrapAndInstrumentValidator<T>(validator, configurationSource);
+        /// <summary>
+        /// Returns a validator representing the validation criteria specified for type <typeparamref name="T"/>
+        /// through configuration for the default ruleset
+        /// retrieving configuration information from the supplied <see cref="IConfigurationSource"/>.
+        /// </summary>
+        /// <typeparam name="T">The type to get the validator for.</typeparam>
+        /// <param name="configurationSource">The configuration source from where configuration information is to be retrieved.</param>
+        /// <returns>The validator.</returns>
+        /// <exception cref="ArgumentNullException">when the <paramref name="configurationSource"/> is <see langword="null"/>.</exception>
+        public static Validator<T> CreateValidatorFromConfiguration<T>(IConfigurationSource configurationSource)
+        {
+            var validationFactory = ConfigurationValidatorFactory.FromConfigurationSource(configurationSource);
 
-					attributeAndDefaultConfigurationValidatorsCache[key] = wrapperValidator;
-				}
-			}
-			else
-			{
-                Validator validator = GetValidator(InnerCreateValidatorFromAttributes(typeof(T), ruleset), InnerCreateValidatorFromConfiguration(typeof(T), ruleset, configurationSource));
-				wrapperValidator = WrapAndInstrumentValidator<T>(validator, configurationSource);
-			}
+            return validationFactory.CreateValidator<T>();
+        }
 
-			return wrapperValidator;
-		}
+        /// <summary>
+        /// Returns a validator representing the validation criteria specified for type <typeparamref name="T"/>
+        /// through configuration for the supplied ruleset.
+        /// </summary>
+        /// <typeparam name="T">The type to get the validator for.</typeparam>
+        /// <param name="ruleset">The name of the required ruleset.</param>
+        /// <returns>The validator.</returns>
+        /// <exception cref="ArgumentNullException">when the <paramref name="ruleset"/> is <see langword="null"/>.</exception>
+        public static Validator<T> CreateValidatorFromConfiguration<T>(string ruleset)
+        {
+            return DefaultConfigurationValidatorFactory.CreateValidator<T>(ruleset);
+        }
 
-		/// <summary>
-		/// Returns a validator representing the validation criteria specified for type <paramref name="targetType"/>
-		/// through configuration and aatributes on type <paramref name="targetType"/> and its ancestors for the default ruleset.
-		/// </summary>
-		/// <param name="targetType">The type to get the validator for.</param>
-		/// <returns>The validator.</returns>
-		public static Validator CreateValidator(Type targetType)
-		{
-			return CreateValidator(targetType, string.Empty);
-		}
-
-		/// <summary>
-		/// Returns a validator representing the validation criteria specified for type <paramref name="targetType"/>
-		/// through configuration and attributes on type <paramref name="targetType"/> and its ancestors for the supplied ruleset.
-		/// </summary>
-		/// <param name="targetType">The type to get the validator for.</param>
-		/// <param name="ruleset">The name of the required ruleset.</param>
-		/// <returns>The validator.</returns>
-		/// <exception cref="ArgumentNullException">when the <paramref name="ruleset"/> is <see langword="null"/>.</exception>
-		public static Validator CreateValidator(Type targetType, string ruleset)
-		{
-			return CreateValidator(targetType, ruleset, ConfigurationSourceFactory.Create(), true);
-		}
-
-		/// <summary>
-		/// Returns a validator representing the validation criteria specified for type <paramref name="targetType"/>
-		/// through configuration and attributes on type <paramref name="targetType"/> and its ancestors for the supplied ruleset
-		/// retrieving configuration information from the supplied <see cref="IConfigurationSource"/>.
-		/// </summary>
-		/// <param name="targetType">The type to get the validator for.</param>
-		/// <param name="ruleset">The name of the required ruleset.</param>
-		/// <param name="configurationSource">The configuration source from where configuration information is to be retrieved.</param>
-		/// <returns>The validator.</returns>
-		/// <exception cref="ArgumentNullException">when the <paramref name="ruleset"/> is <see langword="null"/>.</exception>
-		/// <exception cref="ArgumentNullException">when the <paramref name="configurationSource"/> is <see langword="null"/>.</exception>
-		public static Validator CreateValidator(Type targetType, string ruleset, IConfigurationSource configurationSource)
-		{
-			return CreateValidator(targetType, ruleset, configurationSource, false);
-		}
-
-		private static Validator CreateValidator(Type targetType, string ruleset, IConfigurationSource configurationSource, bool cacheValidator)
-		{
-			Validator wrapperValidator = null;
-
-            if (cacheValidator)
-            {
-                lock (attributeAndDefaultConfigurationValidatorsCacheLock)
-                {
-                    ValidatorCacheKey key = new ValidatorCacheKey(targetType, ruleset, false);
-
-                    Validator cachedValidator;
-                    if (attributeAndDefaultConfigurationValidatorsCache.TryGetValue(key, out cachedValidator))
-                    {
-                        return cachedValidator;
-                    }
-
-                    Validator validator = GetValidator(InnerCreateValidatorFromAttributes(targetType, ruleset), InnerCreateValidatorFromConfiguration(targetType, ruleset, configurationSource));
-
-                    wrapperValidator = WrapAndInstrumentValidator(validator, configurationSource);
-
-                    attributeAndDefaultConfigurationValidatorsCache[key] = wrapperValidator;
-                }
-            }
-            else
-            {
-                Validator validator = GetValidator(InnerCreateValidatorFromAttributes(targetType, ruleset), InnerCreateValidatorFromConfiguration(targetType, ruleset, configurationSource));
-                wrapperValidator = WrapAndInstrumentValidator(validator, configurationSource);
-            }
-
-            return wrapperValidator;
-		}
-
-		/// <summary>
-		/// Returns a validator representing the validation criteria specified for type <typeparamref name="T"/>
-		/// through attributes on type <typeparamref name="T"/> and its ancestors for the default ruleset.
-		/// </summary>
-		/// <typeparam name="T">The type to get the validator for.</typeparam>
-		/// <returns>The validator.</returns>
-		public static Validator<T> CreateValidatorFromAttributes<T>()
-		{
-			return CreateValidatorFromAttributes<T>(string.Empty);
-		}
-
-		/// <summary>
-		/// Returns a validator representing the validation criteria specified for type <typeparamref name="T"/>
-		/// through attributes on type <typeparamref name="T"/> and its ancestors for the supplied ruleset.
-		/// </summary>
-		/// <typeparam name="T">The type to get the validator for.</typeparam>
-		/// <param name="ruleset">The name of the required ruleset.</param>
-		/// <returns>The validator.</returns>
-		/// <exception cref="ArgumentNullException">when the <paramref name="ruleset"/> is <see langword="null"/>.</exception>
-		public static Validator<T> CreateValidatorFromAttributes<T>(string ruleset)
-		{
-			if (null == ruleset)
-			{
-				throw new ArgumentNullException("ruleset");
-			}
-
-			Validator<T> wrapperValidator = null;
-
-			lock (attributeOnlyValidatorsCacheLock)
-			{
-				ValidatorCacheKey key = new ValidatorCacheKey(typeof(T), ruleset, true);
-
-				Validator cachedValidator;
-				if (attributeOnlyValidatorsCache.TryGetValue(key, out cachedValidator))
-				{
-					return (Validator<T>)cachedValidator;
-				}
-
-				Validator validator = InnerCreateValidatorFromAttributes(typeof(T), ruleset);
-				wrapperValidator = WrapAndInstrumentValidator<T>(validator, ConfigurationSourceFactory.Create());
-
-				attributeOnlyValidatorsCache[key] = wrapperValidator;
-			}
-
-			return wrapperValidator;
-		}
-
-		/// <summary>
-		/// Returns a validator representing the validation criteria specified for type <paramref name="targetType"/>
-		/// through attributes on type <paramref name="targetType"/> and its ancestors for the supplied ruleset.
-		/// </summary>
-		/// <param name="targetType">The type to get the validator for.</param>
-		/// <param name="ruleset">The name of the required ruleset.</param>
-		/// <returns>The validator.</returns>
-		/// <exception cref="ArgumentNullException">when the <paramref name="ruleset"/> is <see langword="null"/>.</exception>
-		public static Validator CreateValidatorFromAttributes(Type targetType, string ruleset)
-		{
-			if (null == ruleset)
-			{
-				throw new ArgumentNullException("ruleset");
-			}
-
-			Validator wrapperValidator = null;
-
-			lock (attributeOnlyValidatorsCacheLock)
-			{
-				ValidatorCacheKey key = new ValidatorCacheKey(targetType, ruleset, false);
-
-				Validator cachedValidator;
-				if (attributeOnlyValidatorsCache.TryGetValue(key, out cachedValidator))
-				{
-					return cachedValidator;
-				}
-
-				Validator validator = InnerCreateValidatorFromAttributes(targetType, ruleset);
-				wrapperValidator = WrapAndInstrumentValidator(validator, ConfigurationSourceFactory.Create());
-
-				attributeOnlyValidatorsCache[key] = wrapperValidator;
-			}
-
-			return wrapperValidator;
-		}
-
-		/// <summary>
-		/// Returns a validator representing the validation criteria specified for type <typeparamref name="T"/>
-		/// through configuration for the default ruleset.
-		/// </summary>
-		/// <typeparam name="T">The type to get the validator for.</typeparam>
-		/// <returns>The validator.</returns>
-		public static Validator<T> CreateValidatorFromConfiguration<T>()
-		{
-			return CreateValidatorFromConfiguration<T>(string.Empty, ConfigurationSourceFactory.Create(), true);
-		}
-
-		/// <summary>
-		/// Returns a validator representing the validation criteria specified for type <typeparamref name="T"/>
-		/// through configuration for the default ruleset
-		/// retrieving configuration information from the supplied <see cref="IConfigurationSource"/>.
-		/// </summary>
-		/// <typeparam name="T">The type to get the validator for.</typeparam>
-		/// <param name="configurationSource">The configuration source from where configuration information is to be retrieved.</param>
-		/// <returns>The validator.</returns>
-		/// <exception cref="ArgumentNullException">when the <paramref name="configurationSource"/> is <see langword="null"/>.</exception>
-		public static Validator<T> CreateValidatorFromConfiguration<T>(IConfigurationSource configurationSource)
-		{
-			return CreateValidatorFromConfiguration<T>(string.Empty, configurationSource, false);
-		}
-
-		/// <summary>
-		/// Returns a validator representing the validation criteria specified for type <typeparamref name="T"/>
-		/// through configuration for the supplied ruleset.
-		/// </summary>
-		/// <typeparam name="T">The type to get the validator for.</typeparam>
-		/// <param name="ruleset">The name of the required ruleset.</param>
-		/// <returns>The validator.</returns>
-		/// <exception cref="ArgumentNullException">when the <paramref name="ruleset"/> is <see langword="null"/>.</exception>
-		public static Validator<T> CreateValidatorFromConfiguration<T>(string ruleset)
-		{
-			return CreateValidatorFromConfiguration<T>(ruleset, ConfigurationSourceFactory.Create(), true);
-		}
-
-		/// <summary>
-		/// Returns a validator representing the validation criteria specified for type <typeparamref name="T"/>
-		/// through configuration for the supplied ruleset
-		/// retrieving configuration information from the supplied <see cref="IConfigurationSource"/>.
-		/// </summary>
-		/// <typeparam name="T">The type to get the validator for.</typeparam>
-		/// <param name="ruleset">The name of the required ruleset.</param>
-		/// <param name="configurationSource">The configuration source from where configuration information is to be retrieved.</param>
-		/// <returns>The validator.</returns>
-		/// <exception cref="ArgumentNullException">when the <paramref name="ruleset"/> is <see langword="null"/>.</exception>
-		/// <exception cref="ArgumentNullException">when the <paramref name="configurationSource"/> is <see langword="null"/>.</exception>
-		public static Validator<T> CreateValidatorFromConfiguration<T>(string ruleset, IConfigurationSource configurationSource)
-		{
-			return CreateValidatorFromConfiguration<T>(ruleset, configurationSource, false);
-		}
-
-		private static Validator<T> CreateValidatorFromConfiguration<T>(string ruleset, IConfigurationSource configurationSource, bool cacheValidator)
-		{
-
-			if (null == ruleset)
-			{
-				throw new ArgumentNullException("ruleset");
-			}
-
-			if (null == configurationSource)
-			{
-				throw new ArgumentNullException("configurationSource");
-			}
-
-			Validator<T> wrapperValidator = null;
-
-			if (cacheValidator)
-			{
-				lock (defaultConfigurationOnlyValidatorsCacheLock)
-				{
-					ValidatorCacheKey key = new ValidatorCacheKey(typeof(T), ruleset, true);
-
-					Validator cachedValidator;
-					if (defaultConfigurationOnlyValidatorsCache.TryGetValue(key, out cachedValidator))
-					{
-						return (Validator<T>)cachedValidator;
-					}
-
-					Validator validator = InnerCreateValidatorFromConfiguration(typeof(T), ruleset, configurationSource);
-					wrapperValidator = WrapAndInstrumentValidator<T>(validator, configurationSource);
-
-					defaultConfigurationOnlyValidatorsCache[key] = wrapperValidator;
-				}
-			}
-			else
-			{
-				Validator validator = InnerCreateValidatorFromConfiguration(typeof(T), ruleset, configurationSource);
-				wrapperValidator = WrapAndInstrumentValidator<T>(validator, configurationSource);
-			}
-
-			return wrapperValidator;
-		}
+        /// <summary>
+        /// Returns a validator representing the validation criteria specified for type <typeparamref name="T"/>
+        /// through configuration for the supplied ruleset
+        /// retrieving configuration information from the supplied <see cref="IConfigurationSource"/>.
+        /// </summary>
+        /// <typeparam name="T">The type to get the validator for.</typeparam>
+        /// <param name="ruleset">The name of the required ruleset.</param>
+        /// <param name="configurationSource">The configuration source from where configuration information is to be retrieved.</param>
+        /// <returns>The validator.</returns>
+        /// <exception cref="ArgumentNullException">when the <paramref name="ruleset"/> is <see langword="null"/>.</exception>
+        /// <exception cref="ArgumentNullException">when the <paramref name="configurationSource"/> is <see langword="null"/>.</exception>
+        public static Validator<T> CreateValidatorFromConfiguration<T>(string ruleset, IConfigurationSource configurationSource)
+        {
+            var validationFactory = ConfigurationValidatorFactory.FromConfigurationSource(configurationSource);
+            return validationFactory.CreateValidator<T>(ruleset);
+        }
 
         /// <summary>
         /// Returns a validator representing the validation criteria specified for type <paramref name="targetType"/>
@@ -402,203 +238,63 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         /// <returns>The validator.</returns>
         public static Validator CreateValidatorFromConfiguration(Type targetType, string ruleset)
         {
-            return CreateValidatorFromConfiguration(targetType, ruleset, ConfigurationSourceFactory.Create(), true);
+            return DefaultConfigurationValidatorFactory.CreateValidator(targetType, ruleset);
         }
 
-		/// <summary>
-		/// Returns a validator representing the validation criteria specified for type <paramref name="targetType"/>
-		/// through configuration for the supplied ruleset
-		/// retrieving configuration information from the supplied <see cref="IConfigurationSource"/>.
-		/// </summary>
-		/// <param name="targetType">The type to get the validator for.</param>
-		/// <param name="ruleset">The name of the required ruleset.</param>
-		/// <param name="configurationSource">The configuration source from where configuration information is to be retrieved.</param>
-		/// <returns>The validator.</returns>
-		/// <exception cref="ArgumentNullException">when the <paramref name="ruleset"/> is <see langword="null"/>.</exception>
-		/// <exception cref="ArgumentNullException">when the <paramref name="configurationSource"/> is <see langword="null"/>.</exception>
-		public static Validator CreateValidatorFromConfiguration(Type targetType, string ruleset, IConfigurationSource configurationSource)
-		{
-            return CreateValidatorFromConfiguration(targetType, ruleset, configurationSource, true);
-		}
-
-        private static Validator CreateValidatorFromConfiguration(Type targetType, string ruleset, IConfigurationSource configurationSource, bool cacheValidator)
+        /// <summary>
+        /// Returns a validator representing the validation criteria specified for type <paramref name="targetType"/>
+        /// through configuration for the supplied ruleset
+        /// retrieving configuration information from the supplied <see cref="IConfigurationSource"/>.
+        /// </summary>
+        /// <param name="targetType">The type to get the validator for.</param>
+        /// <param name="ruleset">The name of the required ruleset.</param>
+        /// <param name="configurationSource">The configuration source from where configuration information is to be retrieved.</param>
+        /// <returns>The validator.</returns>
+        /// <exception cref="ArgumentNullException">when the <paramref name="ruleset"/> is <see langword="null"/>.</exception>
+        /// <exception cref="ArgumentNullException">when the <paramref name="configurationSource"/> is <see langword="null"/>.</exception>
+        public static Validator CreateValidatorFromConfiguration(Type targetType, string ruleset, IConfigurationSource configurationSource)
         {
+            var validationFactory = ConfigurationValidatorFactory.FromConfigurationSource(configurationSource);
 
-            if (null == ruleset)
-            {
-                throw new ArgumentNullException("ruleset");
-            }
+            return validationFactory.CreateValidator(targetType, ruleset);
+        }
 
-            if (null == configurationSource)
-            {
-                throw new ArgumentNullException("configurationSource");
-            }
+        private static CompositeValidatorFactory CreateCompositeValidatorFactory(IConfigurationSource configurationSource)
+        {
+            var instrumentationProvider = ValidationInstrumentationProvider.FromConfigurationSource(configurationSource);
 
-            Validator wrapperValidator = null;
+            return CreateCompositeValidatorFactory(
+                instrumentationProvider,
+                new ConfigurationValidatorFactory(configurationSource, instrumentationProvider));
+        }
 
-            if (cacheValidator)
-            {
-                lock (defaultConfigurationOnlyValidatorsCacheLock)
+        private static CompositeValidatorFactory CreateCompositeValidatorFactory(
+            IValidationInstrumentationProvider instrumentationProvider,
+            ConfigurationValidatorFactory configurationValidatorFactory)
+        {
+            return new CompositeValidatorFactory(
+                instrumentationProvider,
+                new ValidatorFactory[]
                 {
-                    ValidatorCacheKey key = new ValidatorCacheKey(targetType, ruleset, true);
-
-                    Validator cachedValidator;
-                    if (defaultConfigurationOnlyValidatorsCache.TryGetValue(key, out cachedValidator))
-                    {
-                        return cachedValidator;
-                    }
-
-                    Validator validator = InnerCreateValidatorFromConfiguration(targetType, ruleset, configurationSource);
-                    wrapperValidator = WrapAndInstrumentValidator(validator, configurationSource);
-
-                    defaultConfigurationOnlyValidatorsCache[key] = wrapperValidator;
-                }
-            }
-            else
-            {
-                Validator validator = InnerCreateValidatorFromConfiguration(targetType, ruleset, configurationSource);
-                wrapperValidator = WrapAndInstrumentValidator(validator, configurationSource);
-            }
-
-            return wrapperValidator;
+                    DefaultAttributeValidatorFactory,
+                    configurationValidatorFactory
+                });
         }
 
-        private static Validator InnerCreateValidatorFromAttributes(Type targetType, string ruleset)
-		{
-			MetadataValidatorBuilder builder = new MetadataValidatorBuilder();
-			Validator validator = builder.CreateValidator(targetType, ruleset);
-
-			return validator;
-		}
-
-		private static Validator InnerCreateValidatorFromConfiguration(Type targetType, string ruleset, IConfigurationSource configurationSource)
-		{
-			ConfigurationValidatorBuilder builder = new ConfigurationValidatorBuilder(configurationSource);
-			Validator validator = builder.CreateValidator(targetType, ruleset);
-
-			return validator;
-		}
-
-		private static Validator<T> WrapAndInstrumentValidator<T>(Validator validator, IConfigurationSource configurationSource)
-		{
-			GenericValidatorWrapper<T> validatorWrapper = new GenericValidatorWrapper<T>(validator);
-			AttachInstrumentationListener(validatorWrapper, configurationSource);
-
-			return validatorWrapper;
-		}
-
-		private static Validator WrapAndInstrumentValidator(Validator validator, IConfigurationSource configurationSource)
-		{
-			ValidatorWrapper validatorWrapper = new ValidatorWrapper(validator);
-			AttachInstrumentationListener(validatorWrapper, configurationSource);
-
-			return validatorWrapper;
-		}
-
-		private static void AttachInstrumentationListener(IInstrumentationEventProvider validator, IConfigurationSource configurationSource)
-		{
-			ValidationInstrumentationListener instrumentationListener = CreateInstrumentationListener(configurationSource);
-
-			if (instrumentationListener.EventLoggingEnabled || instrumentationListener.PerformanceCountersEnabled || instrumentationListener.WmiEnabled)
-			{
-				ReflectionInstrumentationBinder instrumentationBinder = new ReflectionInstrumentationBinder();
-				instrumentationBinder.Bind(validator.GetInstrumentationEventProvider(), instrumentationListener);
-			}
-		}
-
-		private static ValidationInstrumentationListener CreateInstrumentationListener(IConfigurationSource configurationSource)
-		{
-			ValidationInstrumentationListenerCustomFactory instrumentationListenerFactory = new ValidationInstrumentationListenerCustomFactory();
-			return (ValidationInstrumentationListener)instrumentationListenerFactory.CreateObject(null, null, configurationSource, null);
-        }
-
-        #region Private implementation
-        private static Validator GetValidator(Validator validatorFromAttributes, Validator validatorFromConfiguration)
+        private static AttributeValidatorFactory DefaultAttributeValidatorFactory
         {
-            Validator validator = null;
-
-            if (!CheckIfValidatorIsAppropiate(validatorFromAttributes))
-            {
-                validator = validatorFromConfiguration;
-            }
-            else if (!CheckIfValidatorIsAppropiate(validatorFromConfiguration))
-            {
-                validator = validatorFromAttributes;
-            }
-            else
-            {
-                validator = new AndCompositeValidator(validatorFromAttributes, validatorFromConfiguration);
-            }
-
-            return validator;
+            get { return EnterpriseLibraryContainer.Current.GetInstance<AttributeValidatorFactory>(); }
         }
 
-        private static bool CheckIfValidatorIsAppropiate(Validator validator)
+        private static ConfigurationValidatorFactory DefaultConfigurationValidatorFactory
         {
-            if (IsComposite(validator))
-            {
-                return CompositeHasValidators(validator);
-            }
-            else
-            {
-                return true;
-            }
+            get { return EnterpriseLibraryContainer.Current.GetInstance<ConfigurationValidatorFactory>(); }
         }
 
-        private static bool IsComposite(Validator validator)
+        private static ValidatorFactory DefaultCompositeValidatorFactory
         {
-            return validator is AndCompositeValidator || validator is OrCompositeValidator;
+            get { return EnterpriseLibraryContainer.Current.GetInstance<ValidatorFactory>(); }
         }
 
-        private static bool CompositeHasValidators(Validator validator)
-        {
-            AndCompositeValidator andValidator = validator as AndCompositeValidator;
-
-            if (andValidator != null)
-            {
-                return ((Validator[])andValidator.Validators).Length > 0;
-            }
-
-            OrCompositeValidator orValidator = validator as OrCompositeValidator;
-
-            if (orValidator != null)
-            {
-                return ((Validator[])orValidator.Validators).Length > 0;
-            }
-
-            return false;
-        }
-        #endregion
-
-        private struct ValidatorCacheKey : IEquatable<ValidatorCacheKey>
-		{
-			private Type sourceType;
-			private string ruleset;
-			private bool generic;
-
-			public ValidatorCacheKey(Type sourceType, string ruleset, bool generic)
-			{
-				this.sourceType = sourceType;
-				this.ruleset = ruleset;
-				this.generic = generic;
-			}
-
-			public override int GetHashCode()
-			{
-				return this.sourceType.GetHashCode()
-					^ (this.ruleset != null ? this.ruleset.GetHashCode() : 0);
-			}
-
-			#region IEquatable<ValidatorCacheKey> Members
-
-			bool IEquatable<ValidatorCacheKey>.Equals(ValidatorCacheKey other)
-			{
-				return (this.sourceType == other.sourceType)
-					&& (this.ruleset == null ? other.ruleset == null : this.ruleset.Equals(other.ruleset))
-					&& (this.generic == other.generic);
-			}
-
-			#endregion
-		}
-	}
+    }
 }

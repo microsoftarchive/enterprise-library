@@ -37,8 +37,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
             DictionaryConfigurationSource source = new DictionaryConfigurationSource();
             source.Add(DatabaseSettings.SectionName, databaseSettings);
 
-            DatabaseConfigurationView view = new DatabaseConfigurationView(source);
-            DbProviderMapping mapping = view.GetProviderMapping("ignore", OdbcProviderName);
+            DatabaseSyntheticConfigSettings settings = new DatabaseSyntheticConfigSettings(source);
+            DbProviderMapping mapping = settings.GetProviderMapping(OdbcProviderName);
 
             Assert.IsNotNull(mapping);
             Assert.AreEqual(OdbcProviderName, mapping.DbProviderName);
@@ -54,8 +54,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
             DictionaryConfigurationSource source = new DictionaryConfigurationSource();
             source.Add(DatabaseSettings.SectionName, databaseSettings);
 
-            DatabaseConfigurationView view = new DatabaseConfigurationView(source);
-            DbProviderMapping mapping = view.GetProviderMapping("ignore", DbProviderMapping.DefaultSqlProviderName);
+            DatabaseSyntheticConfigSettings settings = new DatabaseSyntheticConfigSettings(source);
+            DbProviderMapping mapping = settings.GetProviderMapping(DbProviderMapping.DefaultSqlProviderName);
 
             Assert.IsNotNull(mapping);
             Assert.AreEqual(DbProviderMapping.DefaultSqlProviderName, mapping.DbProviderName);
@@ -70,8 +70,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
             DictionaryConfigurationSource source = new DictionaryConfigurationSource();
             source.Add(DatabaseSettings.SectionName, databaseSettings);
 
-            DatabaseConfigurationView view = new DatabaseConfigurationView(source);
-            DbProviderMapping mapping = view.GetProviderMapping("ignore", DbProviderMapping.DefaultSqlProviderName);
+            DatabaseSyntheticConfigSettings settings = new DatabaseSyntheticConfigSettings(source);
+            DbProviderMapping mapping = settings.GetProviderMapping(DbProviderMapping.DefaultSqlProviderName);
 
             Assert.IsNotNull(mapping);
             Assert.AreEqual(DbProviderMapping.DefaultSqlProviderName, mapping.DbProviderName);
@@ -86,8 +86,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
             DictionaryConfigurationSource source = new DictionaryConfigurationSource();
             source.Add(DatabaseSettings.SectionName, databaseSettings);
 
-            DatabaseConfigurationView view = new DatabaseConfigurationView(source);
-            DbProviderMapping mapping = view.GetProviderMapping("ignore", DbProviderMapping.DefaultOracleProviderName);
+            DatabaseSyntheticConfigSettings settings = new DatabaseSyntheticConfigSettings(source);
+            DbProviderMapping mapping = settings.GetProviderMapping(DbProviderMapping.DefaultOracleProviderName);
 
             Assert.IsNotNull(mapping);
             Assert.AreEqual(DbProviderMapping.DefaultOracleProviderName, mapping.DbProviderName);
@@ -102,8 +102,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
             DictionaryConfigurationSource source = new DictionaryConfigurationSource();
             source.Add(DatabaseSettings.SectionName, databaseSettings);
 
-            DatabaseConfigurationView view = new DatabaseConfigurationView(source);
-            DbProviderMapping mapping = view.GetProviderMapping("ignore", OdbcProviderName);
+            DatabaseSyntheticConfigSettings settings = new DatabaseSyntheticConfigSettings(source);
+            DbProviderMapping mapping = settings.GetProviderMapping(OdbcProviderName);
 
             Assert.IsNotNull(mapping);
             Assert.AreEqual(typeof(GenericDatabase), mapping.DatabaseType);
@@ -114,8 +114,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
         {
             DictionaryConfigurationSource source = new DictionaryConfigurationSource();
 
-            DatabaseConfigurationView view = new DatabaseConfigurationView(source);
-            DbProviderMapping mapping = view.GetProviderMapping("ignore", DbProviderMapping.DefaultSqlProviderName);
+            DatabaseSyntheticConfigSettings settings = new DatabaseSyntheticConfigSettings(source);
+            DbProviderMapping mapping = settings.GetProviderMapping(DbProviderMapping.DefaultSqlProviderName);
 
             Assert.IsNotNull(mapping);
             Assert.AreEqual(DbProviderMapping.DefaultSqlProviderName, mapping.DbProviderName);
@@ -127,8 +127,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
         {
             DictionaryConfigurationSource source = new DictionaryConfigurationSource();
 
-            DatabaseConfigurationView view = new DatabaseConfigurationView(source);
-            DbProviderMapping mapping = view.GetProviderMapping("ignore", OdbcProviderName);
+            DatabaseSyntheticConfigSettings settings = new DatabaseSyntheticConfigSettings(source);
+            DbProviderMapping mapping = settings.GetProviderMapping(OdbcProviderName);
 
             Assert.IsNotNull(mapping);
             Assert.AreEqual(typeof(GenericDatabase), mapping.DatabaseType);

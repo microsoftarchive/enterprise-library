@@ -84,6 +84,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners.Tests
         }
 
         [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void CosntructWithNullInstrumentationProviderThrows()
+        {
+            new WmiTraceListener(null);
+        }
+
+        [TestMethod]
         public void TestWMIEventOccurred()
         {
             WmiTraceListener listener = new WmiTraceListener();

@@ -17,9 +17,7 @@ using System.Security.Permissions;
 using System.Transactions;
 using System.Xml;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Unity;
-using Microsoft.Practices.EnterpriseLibrary.Data.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Unity;
+using Microsoft.Practices.EnterpriseLibrary.Data.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Data.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Data.Sql.Configuration;
 
@@ -34,8 +32,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql
     /// </para>  
     /// </remarks>
     [SqlClientPermission(SecurityAction.Demand)]
-    [DatabaseAssembler(typeof(SqlDatabaseAssembler))]
-    [ContainerPolicyCreator(typeof(SqlDatabasePolicyCreator))]
     [ConfigurationElementType(typeof(SqlDatabaseData))]
     public class SqlDatabase : Database
     {
@@ -46,6 +42,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql
         public SqlDatabase(string connectionString)
             : base(connectionString, SqlClientFactory.Instance)
         {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SqlDatabase"/> class with a
+        /// connection string and instrumentation provider.
+        /// </summary>
+        /// <param name="connectionString">The connection string.</param>
+        /// <param name="instrumentationProvider">The instrumentation provider.</param>
+        public SqlDatabase(string connectionString, IDataInstrumentationProvider instrumentationProvider)
+            : base(connectionString, SqlClientFactory.Instance, instrumentationProvider)
+        {
+            
         }
 
         /// <summary>

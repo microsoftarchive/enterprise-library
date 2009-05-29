@@ -21,24 +21,33 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
     public sealed class ExpirationPollTimer : IDisposable
     {
         private Timer pollTimer;
+        private int expirationPollFrequencyInMilliSeconds;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="expirationPollFrequencyInMilliSeconds"></param>
+        public ExpirationPollTimer(int expirationPollFrequencyInMilliSeconds)
+        {
+            if (expirationPollFrequencyInMilliSeconds == 0)
+            {
+                throw new ArgumentException(); //todo: message
+            }
+            this.expirationPollFrequencyInMilliSeconds = expirationPollFrequencyInMilliSeconds;
+        }
 
 		/// <summary>
 		/// Start the polling process.
 		/// </summary>
 		/// <param name="callbackMethod">The method to callback when a cycle has completed.</param>
-		/// <param name="pollCycleInMilliseconds">The time in milliseconds to poll.</param>
-        public void StartPolling(TimerCallback callbackMethod, int pollCycleInMilliseconds)
+        public void StartPolling(TimerCallback callbackMethod)
         {
             if (callbackMethod == null)
             {
                 throw new ArgumentNullException("callbackMethod");
             }
-            if (pollCycleInMilliseconds <= 0)
-            {
-                throw new ArgumentException(Resources.InvalidExpirationPollCycleTime, "pollCycleInMilliseconds");
-            }
 
-            pollTimer = new Timer(callbackMethod, null, pollCycleInMilliseconds, pollCycleInMilliseconds);
+            pollTimer = new Timer(callbackMethod, null, expirationPollFrequencyInMilliSeconds, expirationPollFrequencyInMilliSeconds);
         }
 
 		/// <summary>

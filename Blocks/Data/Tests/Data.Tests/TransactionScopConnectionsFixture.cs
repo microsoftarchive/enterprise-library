@@ -14,6 +14,7 @@ using System.Data.Common;
 using System.Threading;
 using System.Transactions;
 using Microsoft.Practices.EnterpriseLibrary.Data.Sql;
+using Microsoft.Practices.EnterpriseLibrary.Data.TestSupport;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Sql

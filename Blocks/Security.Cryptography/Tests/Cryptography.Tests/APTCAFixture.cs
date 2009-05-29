@@ -13,6 +13,7 @@ using System;
 using System.Security.Permissions;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests
 {
@@ -27,10 +28,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests
                 ZoneIdentityPermission zoneIdentityPermission = new ZoneIdentityPermission(PermissionState.None);
                 zoneIdentityPermission.Deny();
 
-                IConfigurationSource configSource = new SystemConfigurationSource();
-
-                Type type = typeof(CryptographyConfigurationView);
-                object createdObject = Activator.CreateInstance(type, configSource);
+                Type type = typeof(CryptographySettings);
+                object createdObject = Activator.CreateInstance(type);
             }
             finally
             {

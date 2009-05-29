@@ -13,25 +13,10 @@ using System;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
-using Microsoft.Practices.ObjectBuilder2;
+using System.Linq.Expressions;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.TestSupport
 {
-	public class MockCacheManagerAssembler : IAssembler<ICacheManager, CacheManagerDataBase>
-	{
-		public ICacheManager Assemble(IBuilderContext context, CacheManagerDataBase objectConfiguration, IConfigurationSource configurationSource, ConfigurationReflectionCache reflectionCache)
-		{
-			MockCacheManagerData cacheManagerData = (MockCacheManagerData)objectConfiguration;
-
-			MockCacheManager createdObject
-				= new MockCacheManager(cacheManagerData.Foo);
-
-			return createdObject;
-		}
-	}
-
-	[Assembler(typeof(MockCacheManagerAssembler))]
 	public class MockCacheManagerData : CacheManagerDataBase
 	{
 		public MockCacheManagerData()
@@ -50,6 +35,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.TestSupport
 			get { return (string)base["foo"]; }
 			set { base["foo"] = value; }
 		}
+
+        protected override Expression<Func<ICacheManager>> GetCacheManagerCreationExpression()
+        {
+            return () => new MockCacheManager(Foo);
+        }
 	}
 
 	[ConfigurationElementType(typeof(MockCacheManagerData))]

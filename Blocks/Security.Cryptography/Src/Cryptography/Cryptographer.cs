@@ -10,10 +10,8 @@
 //===============================================================================
 
 using System;
-using System.Configuration;
 using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
 using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Properties;
 
@@ -136,21 +134,21 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography
             return DecryptSymmetric(provider, ciphertextBase64);
         }
 
-		private static void TryLogHashConfigurationError(ConfigurationErrorsException configurationException, string hashInstance)
+		private static void TryLogHashConfigurationError(Exception configurationException, string hashInstance)
 		{
 			TryLogConfigurationError(configurationException, Resources.ErrorHashProviderConfigurationFailedMessage, hashInstance);
 		}
 
-		private static void TryLogSymmetricConfigurationError(ConfigurationErrorsException configurationException, string symmetricInstance)
+		private static void TryLogSymmetricConfigurationError(Exception configurationException, string symmetricInstance)
 		{
 			TryLogConfigurationError(configurationException, Resources.ErrorSymmetricEncryptionConfigurationFailedMessage, symmetricInstance);
 		}
 
-		private static void TryLogConfigurationError(ConfigurationErrorsException configurationException, string hashInstance, string template)
+		private static void TryLogConfigurationError(Exception configurationException, string hashInstance, string template)
 		{
 			try
 			{
-				DefaultCryptographyEventLogger eventLogger = EnterpriseLibraryFactory.BuildUp<DefaultCryptographyEventLogger>();
+                var eventLogger = EnterpriseLibraryContainer.Current.GetInstance<IDefaultCryptographyInstrumentationProvider>();
 				if (eventLogger != null)
 				{
 					eventLogger.LogConfigurationError(hashInstance, template, configurationException);
@@ -174,7 +172,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography
 
                 return symmetricProvider;
             }
-            catch (ConfigurationErrorsException configurationException)
+            catch (Exception configurationException)
             {
                 TryLogSymmetricConfigurationError(configurationException, symmetricInstance);
                 throw;
@@ -195,7 +193,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography
 
                 return hashProvider;
             }
-            catch (ConfigurationErrorsException configurationException)
+            catch (Exception configurationException)
             {
                 TryLogHashConfigurationError(configurationException, hashInstance);
                 throw;

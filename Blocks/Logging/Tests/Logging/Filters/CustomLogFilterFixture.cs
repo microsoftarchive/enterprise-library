@@ -13,11 +13,9 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport;
-using Microsoft.Practices.ObjectBuilder2;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Filters.Tests
@@ -39,12 +37,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Filters.Tests
             filterData.SetAttributeValue(MockCustomProviderBase.AttributeKey, "value1");
 
             MockLogObjectsHelper helper = new MockLogObjectsHelper();
-            ILogFilter filter
-                = LogFilterCustomFactory.Instance.Create(
-                    new BuilderContext(new StrategyChain(), null, null, new PolicyList(), null, null),
-                    filterData,
-                    helper.configurationSource,
-                    new ConfigurationReflectionCache());
+            helper.loggingSettings.LogFilters.Add(filterData);
+
+            ILogFilter filter = 
+                EnterpriseLibraryContainer.CreateDefaultContainer(helper.configurationSource)
+                    .GetInstance<ILogFilter>(filterData.Name);
 
             Assert.IsNotNull(filter);
             Assert.AreSame(typeof(MockCustomLogFilter), filter.GetType());

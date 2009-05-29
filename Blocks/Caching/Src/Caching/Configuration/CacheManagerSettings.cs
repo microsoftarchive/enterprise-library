@@ -9,16 +9,22 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using System;
 using System.Configuration;
+using System.Linq;
+using Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Caching.BackingStoreImplementations;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using System.Collections.Generic;
+using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
 {
     /// <summary>
     /// Overall configuration settings for Caching
     /// </summary>    
-    public class CacheManagerSettings : SerializableConfigurationSection
+    public class CacheManagerSettings : SerializableConfigurationSection, ITypeRegistrationsProvider
     {
 		/// <summary>
 		/// Configuration key for cache manager settings.
@@ -75,5 +81,64 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
 		{
             get { return (NameTypeConfigurationElementCollection<StorageEncryptionProviderData, StorageEncryptionProviderData>)base[encryptionProvidersProperty]; }
 		}
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<TypeRegistration> GetRegistrations(IConfigurationSource configurationSource)
+        {
+            var cacheManagerRegistrations = SetDefaultCacheManagerRegistration(CacheManagers.SelectMany(cmd => cmd.GetRegistrations(configurationSource)));
+            cacheManagerRegistrations = SetDefaultCacheManagerRegistration(cacheManagerRegistrations);
+
+            var encryptionProviderRegistrations = EncryptionProviders.SelectMany(epd => epd.GetRegistrations());
+            var backingStoreRegistrations = BackingStores.SelectMany(bsd => bsd.GetRegistrations());
+
+            return backingStoreRegistrations
+                                .Concat(GetDefaultEventLoggerRegistrations(configurationSource))
+                                .Concat(cacheManagerRegistrations)
+                                .Concat(encryptionProviderRegistrations);
+        }
+
+        /// <summary>
+        /// Return the <see cref="TypeRegistration"/> objects needed to reconfigure
+        /// the container after a configuration source has changed.
+        /// </summary>
+        /// <remarks>If there are no reregistrations, return an empty sequence.</remarks>
+        /// <param name="configurationSource">The <see cref="IConfigurationSource"/> containing
+        /// the configuration information.</param>
+        /// <returns>The sequence of <see cref="TypeRegistration"/> objects.</returns>
+        public IEnumerable<TypeRegistration> GetUpdatedRegistrations(IConfigurationSource configurationSource)
+        {
+            return Enumerable.Empty<TypeRegistration>();
+        }
+
+        private IEnumerable<TypeRegistration> SetDefaultCacheManagerRegistration(IEnumerable<TypeRegistration> cacheManagerRegistrations)
+        {
+            foreach (TypeRegistration registration in cacheManagerRegistrations)
+            {
+                if (registration.ServiceType == typeof(ICacheManager) && string.Equals(registration.Name, DefaultCacheManager))
+                {
+                    registration.IsDefault = true;
+                    yield return registration;
+                }
+                else
+                {
+                    yield return registration;
+                }
+            }
+        }
+
+        private static IEnumerable<TypeRegistration> GetDefaultEventLoggerRegistrations(IConfigurationSource configurationSource)
+        {
+            var instrumentationSection = InstrumentationConfigurationSection.GetSection(configurationSource);
+            return new TypeRegistration[]
+                       {
+                           new TypeRegistration<DefaultCachingEventLogger>(
+                               () =>
+                               new DefaultCachingEventLogger(instrumentationSection.EventLoggingEnabled,
+                                                             instrumentationSection.WmiEnabled))
+                       };
+        }
     }
 }

@@ -12,12 +12,23 @@
 using System;
 using System.Security.Principal;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Security.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Tests
 {
 	[ConfigurationElementType(typeof(MockSecurityCacheProviderData))]
 	public class MockSecurityCacheProvider : SecurityCacheProvider
 	{
+        public MockSecurityCacheProvider(ISecurityCacheProviderInstrumentationProvider instrumentationProvider)
+            :base(instrumentationProvider)
+        {
+        }
+        
+        public ISecurityCacheProviderInstrumentationProvider GetInstrumentationProvder()
+        {
+            return base.InstrumentationProvider;
+        }
+
 		public override IToken SaveIdentity(IIdentity identity)
 		{
 			return null;

@@ -16,6 +16,7 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Security.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Security.Tests.Properties;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Practices.EnterpriseLibrary.Security.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Tests
 {
@@ -32,7 +33,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Tests
             Dictionary<string, IAuthorizationRule> rules = new Dictionary<string, IAuthorizationRule>();
             rules.Add(testRuleName, new AuthorizationRuleData(testRuleName, "I:user1"));
 
-            provider = new AuthorizationRuleProvider(rules);
+            provider = new AuthorizationRuleProvider(rules, new NullAuthorizationProviderInstrumentationProvider());
 
             principal = new GenericPrincipal(new GenericIdentity("user1"), new string[] { "Admin", "Manager" });
         }
@@ -104,6 +105,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Tests
         public void ConstructorCallWithNullArgumentsThrows()
         {
             provider = new AuthorizationRuleProvider(null);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void ConstructorCallWithNullInstrumentationProviderThrows()
+        {
+            provider = new AuthorizationRuleProvider(new Dictionary<string, IAuthorizationRule>(), null);
         }
     }
 }

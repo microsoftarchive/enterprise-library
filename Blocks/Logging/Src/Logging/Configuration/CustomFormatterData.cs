@@ -12,21 +12,16 @@
 using System;
 using System.Collections.Specialized;
 using System.Configuration;
-using System.Linq.Expressions;
-using System.Reflection;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Unity;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
+using System.Collections.Generic;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 {
     /// <summary>
     /// Configuration object for custom log formatters.
     /// </summary>
-    [Assembler(typeof(CustomProviderAssembler<ILogFormatter, FormatterData, CustomFormatterData>))]
-    [ContainerPolicyCreator(typeof(CustomProviderPolicyCreator<CustomFormatterData>))]
     public class CustomFormatterData
         : FormatterData, IHelperAssistedCustomConfigurationData<CustomFormatterData>
     {
@@ -177,9 +172,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// Returns the <see cref="TypeRegistration"/> entry for this data section.
         /// </summary>
         /// <returns>The type registration for this data section</returns>
-        public override TypeRegistration GetContainerConfigurationModel()
+        public override IEnumerable<TypeRegistration> GetRegistrations()
         {
-            return new TypeRegistration(
+            yield return new TypeRegistration(
                 RegistrationExpressionBuilder.BuildExpression(this.Type, Attributes),
                 typeof(ILogFormatter)) { Name = this.Name };
         }

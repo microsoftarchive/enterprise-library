@@ -22,29 +22,23 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration.Unit
 	[TestClass]
 	public class FiltersPolicyCreationFixture
 	{
-		private IUnityContainer container;
 		private LoggingSettings loggingSettings;
 		private DictionaryConfigurationSource configurationSource;
 
 		[TestInitialize]
 		public void SetUp()
 		{
-			loggingSettings = new LoggingSettings();
-			configurationSource = new DictionaryConfigurationSource();
-			configurationSource.Add(LoggingSettings.SectionName, loggingSettings);
-
-			container = new UnityContainer();
-
-			container.AddExtension(new EnterpriseLibraryCoreExtension(configurationSource));
+		    loggingSettings = new LoggingSettings();
+		    configurationSource = new DictionaryConfigurationSource();
+		    configurationSource.Add(LoggingSettings.SectionName, loggingSettings);
 		}
 
-		[TestCleanup]
-		public void TearDown()
-		{
-			container.Dispose();
-		}
-
-		[TestMethod]
+        private IUnityContainer CreateContainer()
+        {
+            return new UnityContainer()
+                .AddExtension(new EnterpriseLibraryCoreExtension(configurationSource));
+        }
+	    [TestMethod]
 		public void CanCreatePoliciesForCategoryFilter()
 		{
 			CategoryFilterData data = new CategoryFilterData();
@@ -55,15 +49,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration.Unit
 			data.CategoryFilters.Add(new CategoryFilterEntry("bar"));
 			loggingSettings.LogFilters.Add(data);
 
-			container.AddExtension(new LoggingBlockExtension());
+            using(var container = CreateContainer())
+            {
+                CategoryFilter createdObject = (CategoryFilter)container.Resolve<ILogFilter>("name");
 
-			CategoryFilter createdObject = (CategoryFilter)container.Resolve<ILogFilter>("name");
-
-			Assert.IsNotNull(createdObject);
-			Assert.AreEqual(CategoryFilterMode.DenyAllExceptAllowed, createdObject.CategoryFilterMode);
-			Assert.AreEqual(2, createdObject.CategoryFilters.Count);
-			Assert.IsTrue(createdObject.CategoryFilters.Contains("foo"));
-			Assert.IsTrue(createdObject.CategoryFilters.Contains("bar"));
+                Assert.IsNotNull(createdObject);
+                Assert.AreEqual(CategoryFilterMode.DenyAllExceptAllowed, createdObject.CategoryFilterMode);
+                Assert.AreEqual(2, createdObject.CategoryFilters.Count);
+                Assert.IsTrue(createdObject.CategoryFilters.Contains("foo"));
+                Assert.IsTrue(createdObject.CategoryFilters.Contains("bar"));
+            }
 		}
 
 		[TestMethod]
@@ -73,14 +68,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration.Unit
 			data.MaximumPriority = 100;
 			loggingSettings.LogFilters.Add(data);
 
-			container.AddExtension(new LoggingBlockExtension());
+		    using (var container = CreateContainer())
+		    {
+		        PriorityFilter createdObject = (PriorityFilter)container.Resolve<ILogFilter>("provider name");
 
-			PriorityFilter createdObject = (PriorityFilter)container.Resolve<ILogFilter>("provider name");
-
-			Assert.IsNotNull(createdObject);
-			Assert.AreEqual("provider name", createdObject.Name);
-			Assert.AreEqual(10, createdObject.MinimumPriority);
-			Assert.AreEqual(100, createdObject.MaximumPriority);
+		        Assert.IsNotNull(createdObject);
+		        Assert.AreEqual("provider name", createdObject.Name);
+		        Assert.AreEqual(10, createdObject.MinimumPriority);
+		        Assert.AreEqual(100, createdObject.MaximumPriority);
+		    }
 		}
 
 		[TestMethod]
@@ -89,13 +85,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration.Unit
 			LogEnabledFilterData data = new LogEnabledFilterData("provider name", true);
 			loggingSettings.LogFilters.Add(data);
 
-			container.AddExtension(new LoggingBlockExtension());
+		    using (var container = CreateContainer())
+		    {
+		        LogEnabledFilter createdObject = (LogEnabledFilter)container.Resolve<ILogFilter>("provider name");
 
-			LogEnabledFilter createdObject = (LogEnabledFilter)container.Resolve<ILogFilter>("provider name");
-
-			Assert.IsNotNull(createdObject);
-			Assert.AreEqual("provider name", createdObject.Name);
-			Assert.AreEqual(true, createdObject.Enabled);
+		        Assert.IsNotNull(createdObject);
+		        Assert.AreEqual("provider name", createdObject.Name);
+		        Assert.AreEqual(true, createdObject.Enabled);
+		    }
 		}
 	}
 }

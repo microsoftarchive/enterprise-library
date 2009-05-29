@@ -508,4 +508,10 @@ Message:
   <data name="ExceptionMethodMustBeImplementedBySubclasses" xml:space="preserve">
     <value>Must be implemented by subclasses.</value>
   </data>
+  <data name="ExceptionCannotFindAppropriateConstructor" xml:space="preserve">
+    <value>Unable to find appropriate {1} argument constructor for {0}</value>
+  </data>
+  <data name="ExceptionCreationLinqExpressionMustBeNew" xml:space="preserve">
+    <value>The creation expression for this type registration must be a Linq New or MemberInit Expression.</value>
+  </data>
 </root>

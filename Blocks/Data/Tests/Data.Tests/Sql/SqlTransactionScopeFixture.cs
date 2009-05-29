@@ -12,6 +12,7 @@
 using System.Data;
 using System.Transactions;
 using Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests;
+using Microsoft.Practices.EnterpriseLibrary.Data.TestSupport;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Sql

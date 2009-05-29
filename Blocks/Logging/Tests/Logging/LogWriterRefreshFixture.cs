@@ -23,6 +23,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
     /// Summary description for LoggerRefreshFixture
     /// </summary>
     [TestClass]
+    [Ignore] // Until we do the config change story.
     public class LogWriterRefreshFixture
     {
         [TestCleanup]
@@ -38,6 +39,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
         }
 
         [TestMethod]
+        [Ignore] // Ignored until we get to the configuration notification story
         public void ConfigurationChangeNotificationRefreshesLogger()
         {
             SystemConfigurationSource.ResetImplementation(false);

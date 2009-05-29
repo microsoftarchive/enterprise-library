@@ -15,6 +15,7 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
 using Microsoft.Practices.ObjectBuilder2;
 using System.Collections.Generic;
+using System.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
 {
@@ -36,6 +37,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
         public object CreateObject(IBuilderContext context, string name, IConfigurationSource configurationSource, ConfigurationReflectionCache reflectionCache)
 		{
 			ExceptionPolicyData objectConfiguration = GetConfiguration(name, configurationSource);
+            if (objectConfiguration == null) throw new ConfigurationErrorsException(); //TODO: temp fix. this whole class needs to be removed
+
 
 			Dictionary<Type, ExceptionPolicyEntry> policyEntries = new Dictionary<Type,ExceptionPolicyEntry>();
 			foreach (ExceptionTypeData exceptionTypeData in objectConfiguration.ExceptionTypes)
@@ -63,7 +66,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
         /// configuration section from <paramref name="configurationSource"/></returns>
         private ExceptionPolicyData GetConfiguration(string id, IConfigurationSource configurationSource)
 		{
-			return new ExceptionHandlingConfigurationView(configurationSource).GetExceptionPolicyData(id);
+            ExceptionHandlingSettings settings = (ExceptionHandlingSettings)configurationSource.GetSection(ExceptionHandlingSettings.SectionName);
+            return settings.ExceptionPolicies.Get(id);
 		}
 
 	}

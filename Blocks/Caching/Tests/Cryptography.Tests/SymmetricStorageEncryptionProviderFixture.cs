@@ -35,7 +35,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Cryptography.Tests
         [TestMethod]
         public void GetProvider()
         {
-            SymmetricStorageEncryptionProvider provider = new SymmetricStorageEncryptionProvider(new DpapiSymmetricCryptoProvider(DataProtectionScope.CurrentUser, null));
+            SymmetricStorageEncryptionProvider provider = new SymmetricStorageEncryptionProvider(new DpapiSymmetricCryptoProvider(DataProtectionScope.CurrentUser, (byte[])null));
 
             byte[] plainText = new byte[] { 0, 1, 2, 3, 4 };
             byte[] encrypted = provider.Encrypt(plainText);

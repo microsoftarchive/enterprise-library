@@ -24,12 +24,47 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography
 	/// <para>A symmetric provider for any symmetric algorithm which derives from <see cref="System.Security.Cryptography.SymmetricAlgorithm"/>.</para>
 	/// </summary>
 	[ConfigurationElementType(typeof(SymmetricAlgorithmProviderData))]
-	public class SymmetricAlgorithmProvider : ISymmetricCryptoProvider, IInstrumentationEventProvider
+	public class SymmetricAlgorithmProvider : ISymmetricCryptoProvider
 	{
 		Type algorithmType;
 
-		SymmetricAlgorithmInstrumentationProvider instrumentationProvider;
+		ISymmetricAlgorithmInstrumentationProvider instrumentationProvider;
 		ProtectedKey key;
+
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SymmetricAlgorithmProvider"/> class.
+        /// </summary>
+        /// <param name="algorithmType">The symmetric algorithm type.</param>
+        /// <param name="protectedKeyFileName">Input file from which DPAPI-protected key is to be read.</param>
+        /// <param name="protectedKeyProtectionScope"><see cref="DataProtectionScope"/> used to protect the key on disk. </param>
+        public SymmetricAlgorithmProvider(Type algorithmType,
+                                          string protectedKeyFileName,
+                                          DataProtectionScope protectedKeyProtectionScope)
+            : this(algorithmType, protectedKeyFileName, protectedKeyProtectionScope, new NullSymmetricAlgorithmInstrumentationProvider()) { }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SymmetricAlgorithmProvider"/> class.
+        /// </summary>
+        /// <param name="algorithmType">The cryptographic algorithm type.</param>
+        /// <param name="protectedKeyStream">Input <see cref="Stream"/> from which DPAPI-protected key is to be read.</param>
+        /// <param name="protectedKeyProtectionScope"><see cref="DataProtectionScope"/> used to protect the key on disk. </param>
+        public SymmetricAlgorithmProvider(Type algorithmType,
+                                          Stream protectedKeyStream,
+                                          DataProtectionScope protectedKeyProtectionScope)
+            : this(algorithmType, protectedKeyStream, protectedKeyProtectionScope, new NullSymmetricAlgorithmInstrumentationProvider()) { }
+
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SymmetricAlgorithmProvider"/> class.
+        /// </summary>
+        /// <param name="algorithmType">The symmetric algorithm type.</param>
+        /// <param name="key">The <see cref="ProtectedKey"/> for the provider.</param>
+        public SymmetricAlgorithmProvider(Type algorithmType,
+                                          ProtectedKey key)
+            :this(algorithmType, key, new NullSymmetricAlgorithmInstrumentationProvider())
+        {
+        }
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="SymmetricAlgorithmProvider"/> class.
@@ -37,10 +72,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography
 		/// <param name="algorithmType">The symmetric algorithm type.</param>
 		/// <param name="protectedKeyFileName">Input file from which DPAPI-protected key is to be read.</param>
 		/// <param name="protectedKeyProtectionScope"><see cref="DataProtectionScope"/> used to protect the key on disk. </param>
+        /// <param name="instrumentationProvider">The <see cref="ISymmetricAlgorithmInstrumentationProvider"/> to use.</param>
 		public SymmetricAlgorithmProvider(Type algorithmType,
 										  string protectedKeyFileName,
-										  DataProtectionScope protectedKeyProtectionScope)
-			: this(algorithmType, KeyManager.Read(protectedKeyFileName, protectedKeyProtectionScope)) { }
+										  DataProtectionScope protectedKeyProtectionScope, 
+                                          ISymmetricAlgorithmInstrumentationProvider instrumentationProvider)
+            : this(algorithmType, KeyManager.Read(protectedKeyFileName, protectedKeyProtectionScope), instrumentationProvider) { }
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="SymmetricAlgorithmProvider"/> class.
@@ -48,19 +85,24 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography
 		/// <param name="algorithmType">The cryptographic algorithm type.</param>
 		/// <param name="protectedKeyStream">Input <see cref="Stream"/> from which DPAPI-protected key is to be read.</param>
 		/// <param name="protectedKeyProtectionScope"><see cref="DataProtectionScope"/> used to protect the key on disk. </param>
-		public SymmetricAlgorithmProvider(Type algorithmType,
+        /// <param name="instrumentationProvider">The <see cref="ISymmetricAlgorithmInstrumentationProvider"/> to use.</param>
+        public SymmetricAlgorithmProvider(Type algorithmType,
 										  Stream protectedKeyStream,
-										  DataProtectionScope protectedKeyProtectionScope)
-			: this(algorithmType, KeyManager.Read(protectedKeyStream, protectedKeyProtectionScope)) { }
+                                          DataProtectionScope protectedKeyProtectionScope,
+                                          ISymmetricAlgorithmInstrumentationProvider instrumentationProvider)
+			: this(algorithmType, KeyManager.Read(protectedKeyStream, protectedKeyProtectionScope), instrumentationProvider) { }
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="SymmetricAlgorithmProvider"/> class.
 		/// </summary>
 		/// <param name="algorithmType">The symmetric algorithm type.</param>
 		/// <param name="key">The <see cref="ProtectedKey"/> for the provider.</param>
+        /// <param name="instrumentationProvider">The <see cref="ISymmetricAlgorithmInstrumentationProvider"/> to use.</param>
 		public SymmetricAlgorithmProvider(Type algorithmType,
-										  ProtectedKey key)
+                                          ProtectedKey key,
+                                          ISymmetricAlgorithmInstrumentationProvider instrumentationProvider)
 		{
+            if (instrumentationProvider == null) throw new ArgumentNullException("instrumentationProvider");
 			if (algorithmType == null) throw new ArgumentNullException("algorithmType");
 			if (!typeof(SymmetricAlgorithm).IsAssignableFrom(algorithmType)) throw new ArgumentException(Resources.ExceptionCreatingSymmetricAlgorithmInstance, "algorithmType");
 
@@ -68,17 +110,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography
 
 			this.key = key;
 
-			instrumentationProvider = new SymmetricAlgorithmInstrumentationProvider();
+            this.instrumentationProvider = instrumentationProvider;
 		}
 
-		/// <summary>
-		/// Gets the <see cref="SymmetricAlgorithmInstrumentationProvider"/> instance that defines the logical events 
-		/// used to instrument this symmetric crypto provider.
-		/// </summary>
-		protected SymmetricAlgorithmInstrumentationProvider InstrumentationProvider
-		{
-			get { return instrumentationProvider; }
-		}
+
+        /// <summary>
+        /// Gets the <see cref="ISymmetricAlgorithmInstrumentationProvider"/> instance that defines the logical events 
+        /// used to instrument this Symmetric Algorithm Provider.
+        /// </summary>
+        protected ISymmetricAlgorithmInstrumentationProvider InstrumentationProvider
+        {
+            get { return instrumentationProvider; }
+        }
+
 
 		/// <summary>
 		/// Decrypts a secret using the configured <c>SymmetricAlgorithm</c>.
@@ -104,10 +148,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography
 			}
 			catch (Exception e)
 			{
-				InstrumentationProvider.FireCyptographicOperationFailed(Resources.DecryptionFailed, e);
+                instrumentationProvider.FireCyptographicOperationFailed(Resources.DecryptionFailed, e);
 				throw;
 			}
-			InstrumentationProvider.FireSymmetricDecryptionPerformed();
+            instrumentationProvider.FireSymmetricDecryptionPerformed();
 
 			return output;
 		}
@@ -135,23 +179,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography
 			}
 			catch (Exception e)
 			{
-				InstrumentationProvider.FireCyptographicOperationFailed(Resources.EncryptionFailed, e);
+                instrumentationProvider.FireCyptographicOperationFailed(Resources.EncryptionFailed, e);
 				throw;
 			}
-			InstrumentationProvider.FireSymmetricEncryptionPerformed();
+            instrumentationProvider.FireSymmetricEncryptionPerformed();
 
 			return output;
-		}
-
-		/// <summary>
-		/// Gets the <see cref="SymmetricAlgorithmInstrumentationProvider"/> instance that defines the logical events 
-		/// used to instrument this symmetric crypto provider.
-		/// </summary>
-		/// <returns>The <see cref="SymmetricAlgorithmInstrumentationProvider"/> instance that defines the logical 
-		/// events used to instrument this symmetric crypto provider.</returns>
-		public object GetInstrumentationEventProvider()
-		{
-			return instrumentationProvider;
 		}
 	}
 }

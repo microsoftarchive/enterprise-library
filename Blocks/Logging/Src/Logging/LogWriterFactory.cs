@@ -9,47 +9,51 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
-using Microsoft.Practices.ObjectBuilder2;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using Microsoft.Practices.ServiceLocation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging
 {
-	/// <summary>
-	/// Factory to create <see cref="LogWriter"/> instances.
-	/// </summary>
-	public class LogWriterFactory
-	{
-		private IConfigurationSource configurationSource;
+    /// <summary>
+    /// Factory to create <see cref="LogWriter"/> instances.
+    /// </summary>
+    public class LogWriterFactory : ContainerBasedInstanceFactory<LogWriter>
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LogWriter"/> class with the default <see cref="IConfigurationSource"/> instance.
+        /// </summary>
+        public LogWriterFactory()
+        {
+        }
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="LogWriter"/> class with the default <see cref="IConfigurationSource"/> instance.
-		/// </summary>
-		public LogWriterFactory()
-			: this(ConfigurationSourceFactory.Create())
-		{
-		}
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LogWriter"/> class with a <see cref="IConfigurationSource"/> instance.
+        /// </summary>
+        /// <param name="configurationSource">The source for configuration information.</param>
+        public LogWriterFactory(IConfigurationSource configurationSource)
+            : base(configurationSource)
+        {
+        }
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="LogWriter"/> class with a <see cref="IConfigurationSource"/> instance.
-		/// </summary>
-		/// <param name="configurationSource">The source for configuration information.</param>
-		public LogWriterFactory(IConfigurationSource configurationSource)
-		{
-			this.configurationSource = configurationSource;
-		}
+        /// <summary>
+        /// Create an instance of <see cref="LogWriterFactory"/> that resolves objects
+        /// using the supplied <paramref name="container"/>.
+        /// </summary>
+        /// <param name="container"><see cref="IServiceLocator"/> to use to resolve objects.</param>
+        public LogWriterFactory(IServiceLocator container)
+            : base(container)
+        {
+        }
 
-		/// <summary>
-		/// Creates a new instance of <see cref="LogWriter"/> based on the configuration in the <see cref="IConfigurationSource"/> 
-		/// instance of the factory.
-		/// </summary>
-		/// <returns>The created <see cref="LogWriter"/> object.</returns>
-		public LogWriter Create()
-		{
-			return EnterpriseLibraryFactory.BuildUp<LogWriter>(configurationSource);
-		}
-	}
+        /// <summary>
+        /// Creates a new instance of <see cref="LogWriter"/> based on the configuration in the <see cref="IConfigurationSource"/> 
+        /// instance of the factory.
+        /// </summary>
+        /// <returns>The created <see cref="LogWriter"/> object.</returns>
+        public LogWriter Create()
+        {
+            return CreateDefault();
+        }
+    }
 }

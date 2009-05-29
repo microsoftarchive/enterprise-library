@@ -23,7 +23,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests
         static Hashtable inMemoryCache;
         private int inMemoryCacheRequests;
         private EventWaitHandle inMemoryCacheRequestSemaphore;
-        CachingInstrumentationProvider instrumentationProvider;
+        ICachingInstrumentationProvider instrumentationProvider;
 
 
         [TestInitialize]
@@ -33,7 +33,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests
             inMemoryCache = new Hashtable();
             inMemoryCacheRequests = 0;
             inMemoryCacheRequestSemaphore = null;
-            instrumentationProvider = new CachingInstrumentationProvider();
+            instrumentationProvider = new NullCachingInstrumentationProvider();
         }
 
         [TestCleanup]
@@ -48,8 +48,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests
         [TestMethod]
         public void WillRemoveSingleItemFromCache()
         {
-            CacheCapacityScavengingPolicy scavengingPolicy = new CacheCapacityScavengingPolicy(0);
-            ScavengerTask scavenger = new ScavengerTask(1, scavengingPolicy, this, instrumentationProvider);
+            ScavengerTask scavenger = new ScavengerTask(1, 0, this, instrumentationProvider);
             CacheItem itemToRemove = new CacheItem("key", "value", CacheItemPriority.Low, null);
             itemToRemove.MakeEligibleForScavenging();
             AddCacheItem("key", itemToRemove);
@@ -62,8 +61,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests
         [TestMethod]
         public void WillNotRemoveItemIfNotEligibleForScavenging()
         {
-            CacheCapacityScavengingPolicy scavengingPolicy = new CacheCapacityScavengingPolicy(1);
-            ScavengerTask scavenger = new ScavengerTask(0, scavengingPolicy, this, instrumentationProvider);
+            ScavengerTask scavenger = new ScavengerTask(0, 1, this, instrumentationProvider);
             CacheItem itemToRemove = new CacheItem("key", "value", CacheItemPriority.Low, null);
             itemToRemove.MakeNotEligibleForScavenging();
             AddCacheItem("key", itemToRemove);
@@ -76,8 +74,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests
         [TestMethod]
         public void WillRemoveMultipleEligibleForScavenging()
         {
-            CacheCapacityScavengingPolicy scavengingPolicy = new CacheCapacityScavengingPolicy(2);
-            ScavengerTask scavenger = new ScavengerTask(3, scavengingPolicy, this, instrumentationProvider);
+            ScavengerTask scavenger = new ScavengerTask(3, 2, this, instrumentationProvider);
             CacheItem itemToRemove = new CacheItem("key1", "value", CacheItemPriority.High, null);
             CacheItem itemToRemain = new CacheItem("key2", "value", CacheItemPriority.Low, null);
             CacheItem itemToRemoveAlso = new CacheItem("key3", "value", CacheItemPriority.Normal, null);
@@ -98,8 +95,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests
         [TestMethod]
         public void WillStopRemovingAtLimitForScavenging()
         {
-            CacheCapacityScavengingPolicy scavengingPolicy = new CacheCapacityScavengingPolicy(2);
-            ScavengerTask scavenger = new ScavengerTask(2, scavengingPolicy, this, instrumentationProvider);
+            ScavengerTask scavenger = new ScavengerTask(2, 2, this, instrumentationProvider);
             CacheItem itemToRemove = new CacheItem("key1", "value", CacheItemPriority.High, null);
             CacheItem itemToRemain = new CacheItem("key2", "value", CacheItemPriority.Low, null);
             CacheItem itemToRemoveAlso = new CacheItem("key3", "value", CacheItemPriority.Normal, null);
@@ -120,8 +116,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests
         [TestMethod]
         public void WillNotDieIfNotEnoughItemsToScavenge()
         {
-            CacheCapacityScavengingPolicy scavengingPolicy = new CacheCapacityScavengingPolicy(2);
-            ScavengerTask scavenger = new ScavengerTask(4, scavengingPolicy, this, instrumentationProvider);
+            ScavengerTask scavenger = new ScavengerTask(4, 2, this, instrumentationProvider);
             CacheItem itemToRemove = new CacheItem("key1", "value", CacheItemPriority.High, null);
             CacheItem itemToRemain = new CacheItem("key2", "value", CacheItemPriority.Low, null);
             CacheItem itemToRemoveAlso = new CacheItem("key3", "value", CacheItemPriority.Normal, null);
@@ -152,8 +147,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests
             AddCacheItem("key3", item3);
             AddCacheItem("key4", item4);
 
-            CacheCapacityScavengingPolicy scavengingPolicy = new CacheCapacityScavengingPolicy(1);
-            ScavengerTask scavenger = new ScavengerTask(2, scavengingPolicy, this, instrumentationProvider);
+            ScavengerTask scavenger = new ScavengerTask(2, 1, this, instrumentationProvider);
             scavenger.DoScavenging();
 
             Assert.AreEqual("key4key3", scavengedKeys);
@@ -170,16 +164,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests
             AddCacheItem("key2", item2);
             AddCacheItem("key3", item3);
 
-            CacheCapacityScavengingPolicy scavengingPolicy = new CacheCapacityScavengingPolicy(2);
-            ScavengerTask scavenger = new ScavengerTask(1, scavengingPolicy, this, instrumentationProvider);
+            ScavengerTask scavenger = new ScavengerTask(1, 2, this, instrumentationProvider);
             BackgroundScheduler scheduler = new BackgroundScheduler(null, scavenger, instrumentationProvider);
-            scheduler.Start();
 
-            Thread.Sleep(500);
             scheduler.StartScavenging();
-            Thread.Sleep(250);
-
-            scheduler.Stop();
             Thread.Sleep(250);
 
             Assert.AreEqual("key1", scavengedKeys);
@@ -189,7 +177,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests
         /// This test depends on timing
         /// </summary>
         [TestMethod]
-        public void WillNotScheduleNewScavengeTaksIfOneIsAlreadyScheduled()
+        public void WillNotScheduleNewScavengeTaskIfOneIsAlreadyScheduled()
         {
             inMemoryCacheRequestSemaphore = new EventWaitHandle(false, EventResetMode.ManualReset);
 
@@ -205,12 +193,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests
             AddCacheItem("key2", item2);
             AddCacheItem("key3", item3);
 
-            CacheCapacityScavengingPolicy scavengingPolicy = new CacheCapacityScavengingPolicy(3);
-            ScavengerTask scavenger = new ScavengerTask(2, scavengingPolicy, this, instrumentationProvider);
+            ScavengerTask scavenger = new ScavengerTask(2, 3, this, instrumentationProvider);
             BackgroundScheduler scheduler = new BackgroundScheduler(null, scavenger, instrumentationProvider);
-            scheduler.Start();
 
-            Thread.Sleep(500);
             AddCacheItem("key4", item4);
             // this new scavenge request will be scheduled, it's the first one
             scheduler.StartScavenging();
@@ -231,10 +216,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests
             bool value = inMemoryCacheRequestSemaphore.Set();
             Thread.Sleep(250);
 
-            scheduler.Stop();
-            Thread.Sleep(250);
-
-            Assert.AreEqual(3, inMemoryCacheRequests);
+            Assert.AreEqual(2, inMemoryCacheRequests);
         }
 
         [TestMethod]
@@ -248,8 +230,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests
             AddCacheItem("key2", item2);
             AddCacheItem("key3", item3);
 
-            CacheCapacityScavengingPolicy scavengingPolicy = new CacheCapacityScavengingPolicy(2);
-            ScavengerTask scavenger = new ScavengerTask(0, scavengingPolicy, this, instrumentationProvider);
+            ScavengerTask scavenger = new ScavengerTask(0, 2, this, instrumentationProvider);
             scavenger.DoScavenging();
 
             Assert.AreEqual("", scavengedKeys);
@@ -278,6 +259,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests
                                         CacheItemRemovedReason removalReason)
         {
             scavengedKeys += keyToRemove;
+        }
+
+        public int Count
+        {
+            get { return inMemoryCache.Count; }
         }
     }
 }

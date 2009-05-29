@@ -15,6 +15,7 @@ using System.Threading;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Expirations;
 using Microsoft.Practices.EnterpriseLibrary.Caching.TestSupport.Expirations;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Practices.ServiceLocation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests
 {
@@ -46,14 +47,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ConfigurationErrorsException))]
+        [ExpectedException(typeof(ActivationException))]
         public void BadStorageProviderNameThrowsException()
         {
             factory.Create("BadStorageProvider");
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ConfigurationErrorsException))]
+        [ExpectedException(typeof(ActivationException))]
         public void BadBackingStoreNameThrowsException()
         {
             factory.Create("BadBackingStore");

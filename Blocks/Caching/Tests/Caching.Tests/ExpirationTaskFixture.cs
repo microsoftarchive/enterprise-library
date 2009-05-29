@@ -27,13 +27,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests
         static string expiredItemKeys = "";
         public static int callbackCount;
         public static CacheItemRemovedReason callbackReason;
-        CachingInstrumentationProvider instrumentationProvider;
+        ICachingInstrumentationProvider instrumentationProvider;
 
         [TestInitialize]
         public void TestInitialize()
         {
             inMemoryCache = new Hashtable();
-            instrumentationProvider = new CachingInstrumentationProvider();
+            instrumentationProvider = new NullCachingInstrumentationProvider();
             expirer = new ExpirationTask(this, instrumentationProvider);
             expiredItemKeys = "";
             callbackCount = 0;
@@ -157,16 +157,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests
             AddCacheItem("1", itemOne);
 
             ExpirationTask expirer = new ExpirationTask(this, instrumentationProvider);
-            BackgroundScheduler scheduler =
-                new BackgroundScheduler(expirer, null, null);
-            scheduler.Start();
+            BackgroundScheduler scheduler = new BackgroundScheduler(expirer, null, null);
 
             Thread.Sleep(1000);
 
             scheduler.ExpirationTimeoutExpired(null);
 
             Thread.Sleep(100);
-            scheduler.Stop();
 
             Assert.AreEqual("1", expiredItemKeys, "Item should have been expired in the background");
         }
@@ -249,6 +246,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests
         public Hashtable CurrentCacheState
         {
             get { return inMemoryCache; }
+        }
+
+        int ICacheOperations.Count
+        {
+            get { return inMemoryCache.Count; }
         }
 
         public void RemoveItemFromCache(string keyToRemove,

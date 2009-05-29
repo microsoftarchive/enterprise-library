@@ -41,9 +41,9 @@
     <CodeAnalysisRules>-Microsoft.Security#CA2116;-Microsoft.Security#CA2117;-Microsoft.Naming#CA1702;-Microsoft.Naming#CA1704;-Microsoft.Performance#CA1824;-Microsoft.Naming#CA1701;-Microsoft.Security#CA2109;-Microsoft.Globalization#CA1305;-Microsoft.Globalization#CA1307;-Microsoft.Globalization#CA1309</CodeAnalysisRules>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Practices.ObjectBuilder2, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31BF3856AD364E35, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Lib\Microsoft.Practices.ObjectBuilder2.dll</HintPath>
+      <HintPath>..\..\..\..\Lib\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.Unity, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -154,11 +154,7 @@
     <Compile Include="Configuration\LoggingSettings.cs" />
     <Compile Include="Configuration\PriorityFilterData.cs" />
     <Compile Include="Configuration\SpecialTraceSourcesData.cs" />
-    <Compile Include="Configuration\TraceListenerAsssembler.cs" />
-    <Compile Include="Configuration\Unity\CategoryFilterPolicyCreator.cs" />
     <Compile Include="Configuration\Unity\LoggingBlockExtension.cs" />
-    <Compile Include="Configuration\Unity\BaseCustomTraceListenerPolicyCreator.cs" />
-    <Compile Include="Configuration\Unity\TraceListenerConstructorArgumentMatchingPolicyCreator.cs" />
     <Compile Include="Configuration\WmiTraceListenerData.cs" />
     <Compile Include="Configuration\XmlTraceListenerData.cs" />
     <Compile Include="ContextItems.cs" />
@@ -180,26 +176,16 @@
     <Compile Include="Filters\ILogFilterErrorHandler.cs" />
     <Compile Include="Filters\LogEnabledFilter.cs" />
     <Compile Include="Filters\LogFilter.cs" />
-    <Compile Include="Filters\LogFilterCustomFactory.cs" />
     <Compile Include="Formatters\BinaryLogFormatter.cs" />
-    <Compile Include="Formatters\LogFormatterCustomFactory.cs" />
     <Compile Include="Formatters\XmlLogFormatter.cs" />
-    <Compile Include="ILogWriterStructureUpdater.cs" />
     <Compile Include="Instrumentation\DefaultLoggingEventLogger.cs" />
-    <Compile Include="Instrumentation\DefaultLoggingEventLoggerCustomFactory.cs" />
     <Compile Include="Instrumentation\LoggingConfigurationFailureEvent.cs" />
     <Compile Include="Instrumentation\LoggingEvent.cs" />
     <Compile Include="Instrumentation\LoggingFailureLoggingErrorEvent.cs" />
-    <Compile Include="Instrumentation\TracerInstrumentationListener.cs" />
-    <Compile Include="Instrumentation\TracerInstrumentationListenerCustomFactory.cs" />
     <Compile Include="Instrumentation\TracerPerformanceCounter.cs" />
     <Compile Include="LoggingException.cs" />
-    <Compile Include="Instrumentation\LoggingInstrumentationListener.cs" />
     <Compile Include="LogWriterStructureHolder.cs" />
-    <Compile Include="LogWriterCustomFactory.cs" />
     <Compile Include="LogWriterFactory.cs" />
-    <Compile Include="LogWriterStructureHolderCustomFactory.cs" />
-    <Compile Include="LogWriterStructureHolderUpdater.cs" />
     <Compile Include="ProjectInstaller.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -216,7 +202,6 @@
     <Compile Include="TraceListeners\RollFileExistsBehavior.cs" />
     <Compile Include="TraceListeners\RollingFlatFileTraceListener.cs" />
     <Compile Include="TraceListeners\RollInterval.cs" />
-    <Compile Include="TraceListeners\TraceListenerCustomFactory.cs" />
     <Compile Include="TraceListeners\WmiTraceListener.cs" />
     <Compile Include="TraceListeners\IMsmqSendInterface.cs" />
     <Compile Include="TraceListeners\IMsmqSendInterfaceFactory.cs" />
@@ -250,7 +235,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="LogSourceCustomFactory.cs" />
     <Compile Include="LogSource.cs" />
     <Compile Include="XmlLogEntry.cs" />
   </ItemGroup>
@@ -278,6 +262,11 @@
   <ItemGroup>
     <Compile Include="Configuration\AttributeSettingTraceListenerWrapper.cs" />
     <Compile Include="Formatters\GenericTextFormatter.cs" />
+    <Compile Include="Instrumentation\ILoggingInstrumentationProvider.cs" />
+    <Compile Include="Instrumentation\ITracerInstrumentationProvider.cs" />
+    <Compile Include="Instrumentation\NullLoggingInstrumentationProvider.cs" />
+    <Compile Include="Instrumentation\NullTracerInstrumentationProvider.cs" />
+    <Compile Include="Instrumentation\TracerInstrumentationProvider.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -9,10 +9,13 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using System;
+using System.Collections.Generic;
 using System.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using System.Linq.Expressions;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
-using Microsoft.Practices.Unity;
+using Microsoft.Practices.EnterpriseLibrary.Validation;
 using Microsoft.Practices.Unity.InterceptionExtension;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Configuration
@@ -77,19 +80,39 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
         }
 
         /// <summary>
-        /// Adds the call handler represented by this configuration object to <paramref name="policy"/>.
+        /// Get the set of <see cref="TypeRegistration"/> objects needed to
+        /// register the call handler represented by this config element and its associated objects.
         /// </summary>
-        /// <param name="policy">The policy to which the rule must be added.</param>
-        /// <param name="configurationSource">The configuration source from which additional information
-        /// can be retrieved, if necessary.</param>
-        public override void ConfigurePolicy(PolicyDefinition policy, IConfigurationSource configurationSource)
+        /// <param name="nameSuffix">A suffix for the names in the generated type registration objects.</param>
+        /// <returns>The set of <see cref="TypeRegistration"/> objects.</returns>
+        public override IEnumerable<TypeRegistration> GetRegistrations(string nameSuffix)
         {
-            policy.AddCallHandler<ValidationCallHandler>(
-                new ContainerControlledLifetimeManager(),
-                new InjectionConstructor(
-                    new InjectionParameter<string>(this.RuleSet),
-                    new InjectionParameter<SpecificationSource>(this.SpecificationSource)),
-                new InjectionProperty("Order", new InjectionParameter<int>(this.Order)));
+            Expression<Func<ICallHandler>> registrationExpression;
+            switch (this.SpecificationSource)
+            {
+                case SpecificationSource.Both:
+                    registrationExpression = () =>
+                        new ValidationCallHandler(this.RuleSet, Container.Resolved<ValidatorFactory>(), this.Order);
+                    break;
+                case SpecificationSource.Attributes:
+                    registrationExpression = () =>
+                        new ValidationCallHandler(this.RuleSet, Container.Resolved<AttributeValidatorFactory>(), this.Order);
+                    break;
+                case SpecificationSource.Configuration:
+                    registrationExpression = () =>
+                        new ValidationCallHandler(this.RuleSet, Container.Resolved<ConfigurationValidatorFactory>(), this.Order);
+                    break;
+                default:
+                    registrationExpression = () =>
+                        new ValidationCallHandler(this.RuleSet, (ValidatorFactory)null, this.Order);
+                    break;
+            }
+
+            yield return
+                new TypeRegistration<ICallHandler>(registrationExpression)
+                {
+                    Name = this.Name + nameSuffix
+                };
         }
     }
 }

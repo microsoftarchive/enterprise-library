@@ -12,8 +12,9 @@
 using System;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
 using Microsoft.Practices.EnterpriseLibrary.Security.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using Microsoft.Practices.ServiceLocation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security
 {
@@ -21,16 +22,25 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security
     /// Provides methods for the creation of
     /// <see cref="IAuthorizationProvider"/> instances.
     /// </summary>
-	public class AuthorizationProviderFactory : NameTypeFactoryBase<IAuthorizationProvider>
+    public class AuthorizationProviderFactory : ContainerBasedInstanceFactory<IAuthorizationProvider>
     {
 		/// <summary>
 		/// <para>Initializes a new instance of the <see cref="AuthorizationProviderFactory"/> class 
 		/// with the default configuration source.</para>
 		/// </summary>
-		protected AuthorizationProviderFactory()
+		public AuthorizationProviderFactory()
 			: base()
 		{
 		}
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="serviceLocator"></param>
+        public AuthorizationProviderFactory(IServiceLocator serviceLocator)
+            : base(serviceLocator)
+        {
+        }
  
 		/// <summary>
 		/// <para>Initializes a new instance of the <see cref="AuthorizationProviderFactory"/> class 

@@ -10,21 +10,21 @@
 //===============================================================================
 
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using Microsoft.Practices.ServiceLocation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography
 {
     /// <summary>
     /// Represents a factory for creating instances of a class which implements <see cref="IHashProvider"/>.
     /// </summary>
-	public class HashProviderFactory : NameTypeFactoryBase<IHashProvider>
+	public class HashProviderFactory : ContainerBasedInstanceFactory<IHashProvider>
     {
 		/// <summary>
 		/// <para>Initializes a new instance of the <see cref="HashProviderFactory"/> class 
 		/// with the default configuration source.</para>
 		/// </summary>
-		protected HashProviderFactory()
-			: base()
+		public HashProviderFactory()
 		{
 		}
  
@@ -35,7 +35,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography
 		/// <param name="configurationSource"></param>
 		public HashProviderFactory(IConfigurationSource configurationSource)
 			: base(configurationSource)
-        {}		
+        {}
 
-	}
+        /// <summary>
+        /// <para>Initializes a new instance of the <see cref="HashProviderFactory"/> class that
+        /// uses the given <paramref name="container"/> to create instances.</para>
+        /// </summary>
+        /// <param name="container">Container to use.</param>
+        public HashProviderFactory(IServiceLocator container) : base(container)
+        {
+        }
+    }
 }

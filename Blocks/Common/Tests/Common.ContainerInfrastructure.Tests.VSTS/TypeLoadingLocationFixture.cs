@@ -20,22 +20,22 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Common.ContainerInfrastructure.Tests.VSTS
 {
     [TestClass]
-    public class GivenATypeLoadingLocationStrategyWithAnUnloadableType
+    public class GivenATypeLoadingLocatorWithAnUnloadableType
     {
-        private TypeLoadingLocationStrategy loadStrategy;
+        private TypeLoadingLocator loadStrategy;
 
         [TestInitialize]
         public void Given()
         {
-            loadStrategy = new TypeLoadingLocationStrategy("bad type name");
+            loadStrategy = new TypeLoadingLocator("bad type name");
         }
 
         [TestMethod]
         public void WhenCallingStrategy_ThenItReturnsNull()
         {
-            var provider = loadStrategy.GetProvider(new DictionaryConfigurationSource());
+            var registrations = loadStrategy.GetRegistrations(new DictionaryConfigurationSource());
 
-            Assert.IsNull(provider);
+            Assert.AreEqual(0, registrations.Count());
         }
     }
 
@@ -44,25 +44,42 @@ namespace Common.ContainerInfrastructure.Tests.VSTS
     {
         class BadProvider : ITypeRegistrationsProvider
         {
-            public IEnumerable<TypeRegistration> CreateRegistrations()
+            public BadProvider(int someValue)
+            {
+            }
+
+            public IEnumerable<TypeRegistration> GetRegistrations(IConfigurationSource configurationSource)
             {
                 throw new NotImplementedException();
             }
+
+            /// <summary>
+            /// Return the <see cref="TypeRegistration"/> objects needed to reconfigure
+            /// the container after a configuration source has changed.
+            /// </summary>
+            /// <remarks>If there are no reregistrations, return an empty sequence.</remarks>
+            /// <param name="configurationSource">The <see cref="IConfigurationSource"/> containing
+            /// the configuration information.</param>
+            /// <returns>The sequence of <see cref="TypeRegistration"/> objects.</returns>
+            public IEnumerable<TypeRegistration> GetUpdatedRegistrations(IConfigurationSource configurationSource)
+            {
+                return Enumerable.Empty<TypeRegistration>();
+            }
         }
 
-        private TypeLoadingLocationStrategy loadStrategy;
+        private TypeLoadingLocator loadStrategy;
 
         [TestInitialize]
         public void Given()
         {
-            loadStrategy = new TypeLoadingLocationStrategy(typeof(BadProvider).AssemblyQualifiedName);
+            loadStrategy = new TypeLoadingLocator(typeof(BadProvider).AssemblyQualifiedName);
         }
 
         [TestMethod]
         [ExpectedException(typeof(MissingMethodException))]
         public void WhenCallingStrategy_ThenItThrows()
         {
-            loadStrategy.GetProvider(new DictionaryConfigurationSource());
+            loadStrategy.GetRegistrations(new DictionaryConfigurationSource());
         }
 	
     }

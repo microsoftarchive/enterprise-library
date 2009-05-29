@@ -40,8 +40,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Database.Tests
         [TestCleanup]
         public void TestCleanup()
         {
-            cache.Flush();
-            cache.Dispose();
+            if (cache != null)
+            {
+                cache.Flush();
+                cache.Dispose();
+            }
         }
 
         [TestMethod]

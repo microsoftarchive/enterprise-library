@@ -102,7 +102,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Tests
         [TestMethod]
         public void WhenCreatesRegistration_ThenCreatedRegistrationIsForLogSourceWithTheSuppliedName()
         {
-            data.GetContainerConfigurationModel()
+            data.GetRegistrations()
                 .AssertForServiceType(typeof(LogSource))
                 .ForName("source")
                 .ForImplementationType(typeof(LogSource));
@@ -111,7 +111,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Tests
         [TestMethod]
         public void WhenCreatesRegistration_ThenCreatedRegistrationHasTheExpectedConstructorParameters()
         {
-            data.GetContainerConfigurationModel()
+            data.GetRegistrations()
                 .AssertConstructor()
                 .WithValueConstructorParameter("source")
                 .WithContainerResolvedEnumerableConstructorParameter<TraceListener>(new string[0])
@@ -143,7 +143,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Tests
         [TestMethod]
         public void WhenCreatesRegistration_ThenCreatedRegistrationIsForLogSourceWithTheSuppliedName()
         {
-            data.GetContainerConfigurationModel()
+            data.GetRegistrations()
                 .AssertForServiceType(typeof(LogSource))
                 .ForName("source")
                 .ForImplementationType(typeof(LogSource));
@@ -152,7 +152,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Tests
         [TestMethod]
         public void WhenCreatesRegistration_ThenCreatedRegistrationHasTheExpectedConstructorParameters()
         {
-            data.GetContainerConfigurationModel()
+            data.GetRegistrations()
                 .AssertConstructor()
                 .WithValueConstructorParameter("source")
                 .WithContainerResolvedEnumerableConstructorParameter<TraceListener>(new[] { "listener1", "listener2" })

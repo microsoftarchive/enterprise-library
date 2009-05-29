@@ -9,12 +9,14 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using System;
 using System.Diagnostics;
 using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
+using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners.Tests;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -41,7 +43,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         [TestMethod]
         public void ThenRegistrationIsForCorrectServiceAndType()
         {
-            TypeRegistration registry = listenerData.GetContainerConfigurationModel().ElementAt(0);
+            TypeRegistration registry = listenerData.GetRegistrations().ElementAt(0);
 
             registry.AssertForServiceType(typeof(TraceListener))
                 .ForName("custom trace listener")
@@ -51,7 +53,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         [TestMethod]
         public void ThenRegistrationTargetsConstructorWithInitialData()
         {
-            TypeRegistration registry = listenerData.GetContainerConfigurationModel().ElementAt(0);
+            TypeRegistration registry = listenerData.GetRegistrations().ElementAt(0);
 
             registry.AssertConstructor()
                 .WithValueConstructorParameter<string>("someInitData")
@@ -61,7 +63,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         [TestMethod]
         public void ThenRegistryEntryIncludesPropertyForTraceOptions()
         {
-            TypeRegistration registry = listenerData.GetContainerConfigurationModel().ElementAt(0);
+            TypeRegistration registry = listenerData.GetRegistrations().ElementAt(0);
 
             registry.AssertProperties()
                 .WithValueProperty("TraceOutputOptions", TraceOptions.None)
@@ -91,7 +93,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         [TestMethod]
         public void ThenRegistrationIsForCorrectServiceAndType()
         {
-            TypeRegistration registry = listenerData.GetContainerConfigurationModel().ElementAt(0);
+            TypeRegistration registry = listenerData.GetRegistrations().ElementAt(0);
 
             registry.AssertForServiceType(typeof(TraceListener))
                 .ForName("custom trace listener")
@@ -101,7 +103,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         [TestMethod]
         public void ThenRegistrationTargetsConstructorWithInitialData()
         {
-            TypeRegistration registry = listenerData.GetContainerConfigurationModel().ElementAt(0);
+            TypeRegistration registry = listenerData.GetRegistrations().ElementAt(0);
 
             registry.AssertConstructor()
                 .WithValueConstructorParameter<string>("someInitData")
@@ -111,7 +113,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         [TestMethod]
         public void ThenRegistryEntryIncludesPropertyForTraceOptions()
         {
-            TypeRegistration registry = listenerData.GetContainerConfigurationModel().ElementAt(0);
+            TypeRegistration registry = listenerData.GetRegistrations().ElementAt(0);
 
             registry.AssertProperties()
                 .WithValueProperty("TraceOutputOptions", TraceOptions.None)
@@ -142,7 +144,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         [TestMethod]
         public void ThenRegistrationIsForCorrectServiceAndType()
         {
-            TypeRegistration registry = listenerData.GetContainerConfigurationModel().ElementAt(0);
+            TypeRegistration registry = listenerData.GetRegistrations().ElementAt(0);
 
             registry.AssertForServiceType(typeof(TraceListener))
                 .ForName("custom trace listener")
@@ -152,7 +154,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         [TestMethod]
         public void ThenRegistrationTargetsConstructorWithInitialData()
         {
-            TypeRegistration registry = listenerData.GetContainerConfigurationModel().ElementAt(0);
+            TypeRegistration registry = listenerData.GetRegistrations().ElementAt(0);
 
             registry.AssertConstructor()
                 .WithValueConstructorParameter<string>("someInitData")
@@ -162,7 +164,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         [TestMethod]
         public void ThenRegistryEntryIncludesPropertyForTraceOptions()
         {
-            TypeRegistration registry = listenerData.GetContainerConfigurationModel().ElementAt(0);
+            TypeRegistration registry = listenerData.GetRegistrations().ElementAt(0);
 
             registry.AssertProperties()
                 .WithValueProperty("TraceOutputOptions", TraceOptions.None)
@@ -170,4 +172,43 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
                 .VerifyProperties();
         }
     }
+
+    [TestClass]
+    public class GivenCustomTraceListenerWithoutExpectedConstructor
+    {
+        private CustomTraceListenerData listenerData;
+
+        [TestInitialize]
+        public void Given()
+        {
+            listenerData = new CustomTraceListenerData("someName",
+                                                       typeof (MockCustomTraceListenerWithoutExpectedConstructor),
+                                                       "initData");
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void WhenRegistrationsRetrieved_ThenThrowsException()
+        {
+            var registrations = listenerData.GetRegistrations();
+        }
+    }
+
+    internal class MockCustomTraceListenerWithoutExpectedConstructor : CustomTraceListener
+    {
+        public MockCustomTraceListenerWithoutExpectedConstructor()
+        {
+        }
+
+        public override void Write(string message)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public override void WriteLine(string message)
+        {
+            throw new System.NotImplementedException();
+        }
+    }
 }
+

@@ -20,9 +20,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Tests
     [TestClass]
     public class SecurityCacheInstrumentationFixture
     {
-        SecurityCacheProviderInstrumentationProvider instrumentationProvider;
-        SecurityCacheProviderInstrumentationListener disabledInstrumentationListener;
-        SecurityCacheProviderInstrumentationListener enabledInstrumentationListener;
+        SecurityCacheProviderInstrumentationProvider enabledInstrumentationProvider;
+        SecurityCacheProviderInstrumentationProvider disabledInstrumentationProvider;
         EnterpriseLibraryPerformanceCounter totalSecurityCacheReadPerformedCounter;
         AppDomainNameFormatter formatter;
         const string instanceName = "testInstance";
@@ -34,10 +33,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Tests
         {
             formatter = new AppDomainNameFormatter();
             formattedInstanceName = formatter.CreateName(instanceName);
-            instrumentationProvider = new SecurityCacheProviderInstrumentationProvider();
-            enabledInstrumentationListener = new SecurityCacheProviderInstrumentationListener(instanceName, true, true, true, formatter);
-            disabledInstrumentationListener = new SecurityCacheProviderInstrumentationListener(instanceName, false, false, false, formatter);
-            totalSecurityCacheReadPerformedCounter = new EnterpriseLibraryPerformanceCounter(SecurityCacheProviderInstrumentationListener.PerfomanceCountersCategoryName, SecurityCacheProviderInstrumentationListener.TotalSecurityCacheReadPerformedCounterName, formattedInstanceName);
+            enabledInstrumentationProvider = new SecurityCacheProviderInstrumentationProvider(instanceName, true, true, true, formatter);
+            disabledInstrumentationProvider = new SecurityCacheProviderInstrumentationProvider(instanceName, false, false, false, formatter);
+
+            totalSecurityCacheReadPerformedCounter = new EnterpriseLibraryPerformanceCounter(SecurityCacheProviderInstrumentationProvider.PerfomanceCountersCategoryName, SecurityCacheProviderInstrumentationProvider.TotalSecurityCacheReadPerformedCounterName, formattedInstanceName);
 
             ClearCounters();
         }
@@ -50,7 +49,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Tests
         [TestMethod]
         public void TotalSecurityCacheReadPerformedCounterIncremented()
         {
-            enabledInstrumentationListener.SecurityCacheReadPerformed(this, new SecurityCacheOperationEventArgs(SecurityEntityType.Identity, null));
+            enabledInstrumentationProvider.FireSecurityCacheReadPerformed(SecurityEntityType.Identity, null);
 
             Assert.AreEqual(1, totalSecurityCacheReadPerformedCounter.Value);
         }
@@ -58,11 +57,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Tests
         [TestMethod]
         public void SecurityCacheCheckDoesNotifyWmiIfEnabled()
         {
-            new ReflectionInstrumentationBinder().Bind(instrumentationProvider, enabledInstrumentationListener);
-
             using (WmiEventWatcher eventListener = new WmiEventWatcher(numberOfEvents))
             {
-                FireSecurityCacheReadPerformed();
+                FireSecurityCacheReadPerformed(enabledInstrumentationProvider);
                 eventListener.WaitForEvents();
 
                 Assert.AreEqual(numberOfEvents, eventListener.EventsReceived.Count);
@@ -72,11 +69,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Tests
         [TestMethod]
         public void SecurityCacheCheckDoesNotNotifyWmiIfDisabled()
         {
-            new ReflectionInstrumentationBinder().Bind(instrumentationProvider, disabledInstrumentationListener);
-
             using (WmiEventWatcher eventListener = new WmiEventWatcher(numberOfEvents))
             {
-                FireSecurityCacheReadPerformed();
+                FireSecurityCacheReadPerformed(disabledInstrumentationProvider);
                 eventListener.WaitForEvents();
 
                 Assert.AreEqual(0, eventListener.EventsReceived.Count);
@@ -86,14 +81,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Tests
         [TestMethod]
         public void SecurityCacheCheckDoesUpdatePerformanceCountersIfEnabled()
         {
-            new ReflectionInstrumentationBinder().Bind(instrumentationProvider, enabledInstrumentationListener);
-
             EnterpriseLibraryPerformanceCounter performanceCounter
-                = CreatePerformanceCounter(SecurityCacheProviderInstrumentationListener.SecurityCacheReadPerformedCounterName);
+                = CreatePerformanceCounter(SecurityCacheProviderInstrumentationProvider.SecurityCacheReadPerformedCounterName);
             performanceCounter.Clear();
             Assert.IsTrue(performanceCounter.GetValueFor(formattedInstanceName) == 0);
 
-            FireSecurityCacheReadPerformed();
+            FireSecurityCacheReadPerformed(enabledInstrumentationProvider);
 
             // Timing dependant
             Assert.IsFalse(performanceCounter.GetValueFor(formattedInstanceName) == 0);
@@ -102,14 +95,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Tests
         [TestMethod]
         public void SecurityCacheCheckDoesNotUpdatePerformanceCountersIfDisabled()
         {
-            new ReflectionInstrumentationBinder().Bind(instrumentationProvider, disabledInstrumentationListener);
-
             EnterpriseLibraryPerformanceCounter performanceCounter
-                = CreatePerformanceCounter(SecurityCacheProviderInstrumentationListener.SecurityCacheReadPerformedCounterName);
+                = CreatePerformanceCounter(SecurityCacheProviderInstrumentationProvider.SecurityCacheReadPerformedCounterName);
             performanceCounter.Clear();
             Assert.IsTrue(performanceCounter.GetValueFor(formattedInstanceName) == 0);
 
-            FireSecurityCacheReadPerformed();
+            FireSecurityCacheReadPerformed(disabledInstrumentationProvider);
 
             // Timing dependant
             Assert.IsTrue(performanceCounter.GetValueFor(formattedInstanceName) == 0);
@@ -118,12 +109,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Tests
         EnterpriseLibraryPerformanceCounter CreatePerformanceCounter(string counterName)
         {
             return new EnterpriseLibraryPerformanceCounter(
-                SecurityCacheProviderInstrumentationListener.PerfomanceCountersCategoryName,
+                SecurityCacheProviderInstrumentationProvider.PerfomanceCountersCategoryName,
                 counterName,
                 formattedInstanceName);
         }
 
-        void FireSecurityCacheReadPerformed()
+        void FireSecurityCacheReadPerformed(ISecurityCacheProviderInstrumentationProvider instrumentationProvider)
         {
             for (int i = 0; i < numberOfEvents; i++)
             {

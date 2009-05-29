@@ -15,6 +15,7 @@ using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Data.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Data.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Data.Oracle.Configuration
 {
@@ -63,13 +64,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Oracle.Configuration
         /// this configuration object.
         /// </summary>
         /// <returns>A <see cref="TypeRegistration"/> instance describing a database.</returns>
-        public override TypeRegistration GetContainerConfigurationModel()
+        public override IEnumerable<TypeRegistration> GetRegistrations()
         {
-            return new TypeRegistration<Database>(
-                () =>
-                new OracleDatabase(
+            yield return new TypeRegistration<Database>(
+                () => new OracleDatabase(
                     ConnectionString,
-                    from opd in PackageMappings select (IOraclePackage)opd)) { Name = Name };
+                    from opd in PackageMappings select (IOraclePackage)opd,
+                    Container.Resolved<IDataInstrumentationProvider>(Name)))
+                {
+                    Name = Name,
+                    Lifetime = TypeRegistrationLifetime.Transient
+                };
         }
     }
 }

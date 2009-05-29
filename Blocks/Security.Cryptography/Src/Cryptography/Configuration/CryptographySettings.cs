@@ -15,6 +15,8 @@ using System.Configuration;
 using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration
 {
@@ -27,7 +29,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
 		private const string defaultHashProviderNameProperty = "defaultHashInstance";
 		private const string symmetricCryptoProvidersProperty = "symmetricCryptoProviders";
 		private const string defaultSymmetricCryptoProviderNameProperty = "defaultSymmetricCryptoInstance";
-		
+
+        /// <summary>
+        /// Gets the configuration section name for the Cryptography Application Block.
+        /// </summary>
+        public const string SectionName = "securityCryptographyConfiguration";
+
 		/// <summary>
         /// <para>Initialize a new instance of the <see cref="CryptographySettings"/> class.</para>
         /// </summary>
@@ -90,28 +97,87 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         /// Creates <see cref="TypeRegistration"/> entries registration by a container.
         /// </summary>
         /// <returns>The type registration entries.</returns>
-        public IEnumerable<TypeRegistration> CreateRegistrations()
+        public IEnumerable<TypeRegistration> GetRegistrations(IConfigurationSource configurationSource)
         {
-            return
-                (from data in this.HashProviders
-                 select CreateRegistration(data, string.Equals(this.DefaultHashProviderName, data.Name)))
-                    .Concat(
-                    from data in this.SymmetricCryptoProviders
-                    select CreateRegistration(data, String.Equals(this.DefaultSymmetricCryptoProviderName, data.Name)));
+            var hashProviderRegistrations = HashProviders.SelectMany(hpd => hpd.GetRegistrations(configurationSource));
+            hashProviderRegistrations = SetDefaultHashProviderRegistration(hashProviderRegistrations);
+
+            var symmetricCryptoProviderRegistrations = SymmetricCryptoProviders.SelectMany(scpd => scpd.GetRegistrations(configurationSource));
+            symmetricCryptoProviderRegistrations = SetDefaultSymmetricCryptoProvider(symmetricCryptoProviderRegistrations);
+
+            var cryptoManagerRegistrations = CreateCryptographyManagerRegistrations(configurationSource);
+
+            return hashProviderRegistrations
+                .Concat(symmetricCryptoProviderRegistrations)
+                .Concat(cryptoManagerRegistrations);
         }
 
-        private static TypeRegistration CreateRegistration(HashProviderData data, bool isDefault)
+        /// <summary>
+        /// Return the <see cref="TypeRegistration"/> objects needed to reconfigure
+        /// the container after a configuration source has changed.
+        /// </summary>
+        /// <remarks>If there are no reregistrations, return an empty sequence.</remarks>
+        /// <param name="configurationSource">The <see cref="IConfigurationSource"/> containing
+        /// the configuration information.</param>
+        /// <returns>The sequence of <see cref="TypeRegistration"/> objects.</returns>
+        public IEnumerable<TypeRegistration> GetUpdatedRegistrations(IConfigurationSource configurationSource)
         {
-            var registry = data.GetContainerConfigurationModel();
-            registry.IsDefault = isDefault;
-            return registry;
+            return Enumerable.Empty<TypeRegistration>();
         }
 
-        private static TypeRegistration CreateRegistration(SymmetricProviderData data, bool isDefault)
+        private IEnumerable<TypeRegistration> SetDefaultHashProviderRegistration(IEnumerable<TypeRegistration> hashProviderRegisrations)
         {
-            var registry = data.GetContainerConfigurationModel();
-            registry.IsDefault = isDefault;
-            return registry;
+            foreach (TypeRegistration registration in hashProviderRegisrations)
+            {
+                if (registration.ServiceType == typeof(IHashProvider) && string.Equals(registration.Name, DefaultHashProviderName))
+                {
+                    registration.IsDefault = true;
+                    yield return registration;
+                }
+                else
+                {
+                    yield return registration;
+                }
+            }
+        }
+
+        private IEnumerable<TypeRegistration> SetDefaultSymmetricCryptoProvider(IEnumerable<TypeRegistration> symmetricCryptoProviders)
+        {
+            foreach (TypeRegistration registration in symmetricCryptoProviders)
+            {
+                if (registration.ServiceType == typeof(ISymmetricCryptoProvider) && string.Equals(registration.Name, DefaultSymmetricCryptoProviderName))
+                {
+                    registration.IsDefault = true;
+                    yield return registration;
+                }
+                else
+                {
+                    yield return registration;
+                }
+            }
+        }
+
+        private IEnumerable<TypeRegistration> CreateCryptographyManagerRegistrations(IConfigurationSource configurationSource)
+        {
+            var hashProviderNames = (from data in HashProviders select data.Name).ToArray();
+            var algorithmProviderNames = (from data in SymmetricCryptoProviders select data.Name).ToArray();
+
+            var instrumentationSection = InstrumentationConfigurationSection.GetSection(configurationSource);
+            yield return new TypeRegistration<IDefaultCryptographyInstrumentationProvider>(
+                () => new DefaultCryptographyEventLogger(instrumentationSection.PerformanceCountersEnabled,
+                                                         instrumentationSection.EventLoggingEnabled,
+                                                         instrumentationSection.WmiEnabled,
+                                                         instrumentationSection.ApplicationInstanceName))
+                             {
+                                 Lifetime = TypeRegistrationLifetime.Transient
+                             };
+
+            yield return new TypeRegistration<CryptographyManager>(() =>
+                new CryptographyManagerImpl(hashProviderNames,
+                Container.ResolvedEnumerable<IHashProvider>(hashProviderNames),
+                algorithmProviderNames,
+                Container.ResolvedEnumerable<ISymmetricCryptoProvider>(algorithmProviderNames),
+                Container.Resolved<IDefaultCryptographyInstrumentationProvider>()));
         }
     }
 }

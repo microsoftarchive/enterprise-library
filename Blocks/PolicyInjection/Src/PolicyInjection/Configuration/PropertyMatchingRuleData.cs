@@ -11,7 +11,9 @@
 
 using System.Collections.Generic;
 using System.Configuration;
+using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
 using FakeRules = Microsoft.Practices.EnterpriseLibrary.PolicyInjection.MatchingRules;
@@ -71,21 +73,21 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         }
 
         /// <summary>
-        /// Adds the rule represented by this configuration object to <paramref name="policy"/>.
+        /// Get the set of <see cref="TypeRegistration"/> objects needed to
+        /// register the matching rule represented by this config element and its associated objects.
         /// </summary>
-        /// <param name="policy">The policy to which the rule must be added.</param>
-        /// <param name="configurationSource">The configuration source from which additional information
-        /// can be retrieved, if necessary.</param>
-        public override void ConfigurePolicy(PolicyDefinition policy, IConfigurationSource configurationSource)
+        /// <param name="nameSuffix">A suffix for the names in the generated type registration objects.</param>
+        /// <returns>The set of <see cref="TypeRegistration"/> objects.</returns>
+        public override IEnumerable<TypeRegistration> GetRegistrations(string nameSuffix)
         {
-            List<PropertyMatchingInfo> info = new List<PropertyMatchingInfo>();
-            foreach (PropertyMatchData data in this.Matches)
-            {
-                info.Add(new PropertyMatchingInfo(data.Match, data.MatchOption, data.IgnoreCase));
-            }
-
-            policy.AddMatchingRule<PropertyMatchingRule>(
-                new InjectionConstructor(new InjectionParameter<IEnumerable<PropertyMatchingInfo>>(info)));
+            yield return
+                new TypeRegistration<IMatchingRule>(() =>
+                    new PropertyMatchingRule(
+                        this.Matches.Select(
+                            match => new PropertyMatchingInfo(match.Match, match.MatchOption, match.IgnoreCase)).ToArray()))
+                {
+                    Name = this.Name + nameSuffix
+                };
         }
     }
 

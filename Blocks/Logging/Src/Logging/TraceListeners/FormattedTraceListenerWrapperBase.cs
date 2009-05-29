@@ -11,6 +11,7 @@
 
 using System.Diagnostics;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
 {
@@ -25,7 +26,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         /// <summary>
         /// Initializes a <see cref="FormattedTraceListenerWrapperBase"/>.
         /// </summary>
-        protected FormattedTraceListenerWrapperBase()
+        protected FormattedTraceListenerWrapperBase() //!~! remove?
         {
         }
 
@@ -34,6 +35,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         /// </summary>
         /// <param name="slaveListener">The wrapped listener.</param>
         protected FormattedTraceListenerWrapperBase(TraceListener slaveListener)
+            :this(slaveListener, new NullLoggingInstrumentationProvider())
+        {
+        }
+
+        /// <summary>
+        /// Initializes a <see cref="FormattedTraceListenerWrapperBase"/> with a slave <see cref="TraceListener"/>.
+        /// </summary>
+        /// <param name="slaveListener">The wrapped listener.</param>
+        /// <param name="instrumentationProvider">The instrumentation provider to use.</param>
+        protected FormattedTraceListenerWrapperBase(TraceListener slaveListener, ILoggingInstrumentationProvider instrumentationProvider)
+            :base(instrumentationProvider)
         {
             this.slaveListener = slaveListener;
         }
@@ -45,7 +57,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         /// <param name="slaveListener">The wrapped listener.</param>
         /// <param name="formater">The formatter.</param>
         protected FormattedTraceListenerWrapperBase(TraceListener slaveListener, ILogFormatter formater)
-            : base(formater)
+            : this(slaveListener, formater, new NullLoggingInstrumentationProvider())
+        {
+            this.slaveListener = slaveListener;
+        }
+
+        /// <summary>
+        /// Initializes a <see cref="FormattedTraceListenerWrapperBase"/> with a slave <see cref="TraceListener"/> 
+        /// and a <see cref="ILogFormatter"/>.
+        /// </summary>
+        /// <param name="slaveListener">The wrapped listener.</param>
+        /// <param name="formater">The formatter.</param>
+        /// <param name="instrumentationProvider">The instrumentation provider to use.</param>
+        protected FormattedTraceListenerWrapperBase(TraceListener slaveListener, ILogFormatter formater, ILoggingInstrumentationProvider instrumentationProvider)
+            : base(formater, instrumentationProvider)
         {
             this.slaveListener = slaveListener;
         }

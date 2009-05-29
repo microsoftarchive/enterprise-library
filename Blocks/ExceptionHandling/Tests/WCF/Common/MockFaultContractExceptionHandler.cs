@@ -12,11 +12,9 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
-using Microsoft.Practices.ObjectBuilder2;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.Tests
 {
@@ -36,7 +34,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.Tests
         #endregion
     }
 
-    [Assembler(typeof(MockFaultContractHandlerAssembler))]
     public class MockFaultContractExceptionHandlerData : ExceptionHandlerData
     {
         public MockFaultContractExceptionHandlerData()
@@ -47,19 +44,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.Tests
             : base(name, typeof(FaultContractExceptionHandler))
         {
         }
-    }
 
-    public class MockFaultContractHandlerAssembler : IAssembler<IExceptionHandler, ExceptionHandlerData>
-    {
-        public IExceptionHandler Assemble(IBuilderContext context,
-            ExceptionHandlerData objectConfiguration,
-            IConfigurationSource configurationSource,
-            ConfigurationReflectionCache reflectionCache)
+        public override IEnumerable<TypeRegistration> GetRegistrations(string namePrefix)
         {
-            MockFaultContractExceptionHandler createdObject
-                = new MockFaultContractExceptionHandler();
-
-            return createdObject;
+            yield return new TypeRegistration<IExceptionHandler>(() => new MockFaultContractExceptionHandler())
+            {
+                Name = namePrefix + "." + this.Name
+            };
         }
     }
+
 }

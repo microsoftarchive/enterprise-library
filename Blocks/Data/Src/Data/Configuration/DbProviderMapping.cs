@@ -34,7 +34,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration
     /// </list>
     /// </para>
     /// </remarks>
-    /// <seealso cref="DatabaseConfigurationView.GetProviderMapping(string, string)"/>
+    /// <seealso cref="DatabaseSyntheticConfigSettings.GetProviderMapping(string)"/>
     /// <seealso cref="System.Data.Common.DbProviderFactory"/>
     public class DbProviderMapping : NamedConfigurationElement
     {

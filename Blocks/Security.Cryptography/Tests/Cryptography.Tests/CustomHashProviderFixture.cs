@@ -13,7 +13,6 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -38,11 +37,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests
             CryptographySettings settings = new CryptographySettings();
             settings.HashProviders.Add(customData);
             DictionaryConfigurationSource configurationSource = new DictionaryConfigurationSource();
-            configurationSource.Add(CryptographyConfigurationView.SectionName, settings);
+            configurationSource.Add(CryptographySettings.SectionName, settings);
 
-            IHashProvider custom
-                = EnterpriseLibraryFactory.BuildUp<IHashProvider>("custom", configurationSource);
-
+            IHashProvider custom = EnterpriseLibraryContainer
+                .CreateDefaultContainer(configurationSource)
+                .GetInstance<IHashProvider>("custom");
+                
             Assert.IsNotNull(custom);
             Assert.AreSame(typeof(MockCustomHashProvider), custom.GetType());
             Assert.AreEqual("value1", ((MockCustomHashProvider)custom).customValue);
@@ -58,12 +58,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests
             settings.HashProviders.Add(customData);
 
             IDictionary<string, ConfigurationSection> sections = new Dictionary<string, ConfigurationSection>(1);
-            sections[CryptographyConfigurationView.SectionName] = settings;
+            sections[CryptographySettings.SectionName] = settings;
             IConfigurationSource configurationSource
                 = ConfigurationTestHelper.SaveSectionsInFileAndReturnConfigurationSource(sections);
 
-            IHashProvider custom
-                = EnterpriseLibraryFactory.BuildUp<IHashProvider>("custom", configurationSource);
+            IHashProvider custom = EnterpriseLibraryContainer
+                .CreateDefaultContainer(configurationSource)
+                .GetInstance<IHashProvider>("custom");
 
             Assert.IsNotNull(custom);
             Assert.AreSame(typeof(MockCustomHashProvider), custom.GetType());

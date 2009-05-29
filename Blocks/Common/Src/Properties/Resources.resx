@@ -291,4 +291,7 @@
   <data name="ExceptionTypeDoesNotProvideCorrectConstructor" xml:space="preserve">
     <value>Type does not provide a construtor taking a single parameter type of NameValueCollection</value>
   </data>
+  <data name="ExceptionShouldBeImplementedBySubclass" xml:space="preserve">
+    <value>Method must be overriden by subclass.</value>
+  </data>
 </root>

@@ -12,22 +12,35 @@
 using System.Security.Principal;
 using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Security.Instrumentation;
+using System;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security
 {
 	/// <summary>
     /// Abstract implementation of the <see cref="ISecurityCacheProvider"/> interface.
 	/// </summary>
-	public abstract class SecurityCacheProvider : ISecurityCacheProvider, IInstrumentationEventProvider
+	public abstract class SecurityCacheProvider : ISecurityCacheProvider
 	{
-		private SecurityCacheProviderInstrumentationProvider instrumentationProvider;
+        private ISecurityCacheProviderInstrumentationProvider instrumentationProvider;
+
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SecurityCacheProvider"/> class. 
+        /// </summary>
+        protected SecurityCacheProvider()
+            :this(new NullSecurityCacheProviderInstrumentationProvider())
+        {
+        }
 
 		/// <summary>
         /// Initializes a new instance of the <see cref="SecurityCacheProvider"/> class. 
 		/// </summary>
-		protected SecurityCacheProvider()
+		/// <param name="instrumentationProvider">The instrumentation provider to use.</param>
+        protected SecurityCacheProvider(ISecurityCacheProviderInstrumentationProvider instrumentationProvider)
 		{
-			this.instrumentationProvider = new SecurityCacheProviderInstrumentationProvider();
+            if (instrumentationProvider == null) throw new ArgumentNullException("instrumentationProvider");
+
+            this.instrumentationProvider = instrumentationProvider;
 		}
 
 		/// <summary>
@@ -153,16 +166,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security
 		/// <summary>
         /// Gets the <see cref="SecurityCacheProviderInstrumentationProvider"/> instance that defines the logical events used to instrument this Security Cache instance.
 		/// </summary>
-        /// <returns>The <see cref="SecurityCacheProviderInstrumentationProvider"/> instance that defines the logical events used to instrument this Security Cache instance.</returns>
-		public object GetInstrumentationEventProvider()
-		{
-			return instrumentationProvider;
-		}
-
-		/// <summary>
-        /// Gets the <see cref="SecurityCacheProviderInstrumentationProvider"/> instance that defines the logical events used to instrument this Security Cache instance.
-		/// </summary>
-		protected SecurityCacheProviderInstrumentationProvider InstrumentationProvider
+        protected ISecurityCacheProviderInstrumentationProvider InstrumentationProvider
 		{
 			get { return this.instrumentationProvider; }
 		}

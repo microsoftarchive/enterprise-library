@@ -10,11 +10,7 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel.Unity;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Unity;
-using Microsoft.Practices.ObjectBuilder2;
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.Unity
 {
@@ -22,24 +18,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
 	/// Container extension to the policies required to create the Exception Handling Application Block's
 	/// objects described in the configuration file.
 	/// </summary>
+	/// <remarks>This function is now performed directly by the <see cref="EnterpriseLibraryCoreExtension"/>.
+	/// This extension is now a noop and is obsolete.</remarks>
+	[Obsolete]
 	public class ExceptionHandlingBlockExtension : EnterpriseLibraryBlockExtension
 	{
-		/// <summary>
-		/// Adds the policies describing the Exception Handling Application Block's objects.
-		/// </summary>
-		protected override void Initialize()
-		{
-			ExceptionHandlingSettings settings
-				= (ExceptionHandlingSettings)ConfigurationSource.GetSection(ExceptionHandlingSettings.SectionName);
-
-			if (settings == null)
-			{
-				return;
-			}
-
-            UnityContainerConfigurator unityContainerConfigurator = new UnityContainerConfigurator(Container);
-		    unityContainerConfigurator.RegisterAll(settings.CreateRegistrations());
-		}
-
 	}
 }

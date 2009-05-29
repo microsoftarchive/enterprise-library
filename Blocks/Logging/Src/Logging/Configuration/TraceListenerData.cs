@@ -144,8 +144,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         ///<summary>
         ///</summary>
         ///<returns></returns>
-        ///<exception cref="NotImplementedException"></exception>
-        public virtual IEnumerable<TypeRegistration> GetContainerConfigurationModel()
+        public virtual IEnumerable<TypeRegistration> GetRegistrations()
         {
             return new TypeRegistration[] { GetTraceListenerTypeRegistration() };
         }
@@ -175,7 +174,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
                 }
                 else
                 {
-                    throw new NotSupportedException("Creation expression must be New or Member Init");  // TODO
+                    throw new NotSupportedException(Logging.Properties.Resources.ExceptionCreationLinqExpressionMustBeNew);
                 }
             }
 
@@ -232,12 +231,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         }
 
         /// <summary>
-        /// 
+        /// Gets the creation expression used to produce a <see cref="TypeRegistration"/> during
+        /// <see cref="GetRegistrations"/>.
         /// </summary>
-        /// <returns></returns>
+        /// <remarks>
+        /// This must be overridden by a subclass, but is not marked as abstract due to configuration serialization needs.
+        /// </remarks>
+        /// <returns>A <see cref="Expression"/> that creates a <see cref="TraceListener"/></returns>
         protected virtual Expression<Func<TraceListener>> GetCreationExpression()
         {
-            throw new NotImplementedException();    // TODO Add message
+            throw new NotImplementedException(Logging.Properties.Resources.ExceptionMethodMustBeImplementedBySubclasses);
         }
     }
 }

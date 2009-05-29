@@ -27,20 +27,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests
         EnterpriseLibraryPerformanceCounter totalHashMismatchesPerformedPerformanceCounter;
         EnterpriseLibraryPerformanceCounter totalHashOperationPerformedPerformanceCounter;
         AppDomainNameFormatter nameFormatter;
-        HashAlgorithmInstrumentationListener listener;
 
         const string applicationInstanceName = "applicationInstanceName";
         const string instanceName = "Foo";
         string formattedInstanceName;
 
+        IHashAlgorithmInstrumentationProvider instrumentationProvider;
+
         HashProviderHelper HashProviderHelper
         {
             get
             {
-                HashAlgorithmProvider defaultProvider = new HashAlgorithmProvider(typeof(SHA1Managed), false);
-                HashAlgorithmProvider saltedProvider = new HashAlgorithmProvider(typeof(SHA1Managed), true);
-
-                return new HashProviderHelper(defaultProvider, saltedProvider);
+                return new HashProviderHelper(
+                    instrumentationProvider => new HashAlgorithmProvider(typeof(SHA1Managed), false, instrumentationProvider), 
+                    instrumentationProvider => new HashAlgorithmProvider(typeof(SHA1Managed), true, instrumentationProvider));
             }
         }
 
@@ -48,17 +48,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests
         public void SetUp()
         {
             nameFormatter = new AppDomainNameFormatter(applicationInstanceName);
-            listener = new HashAlgorithmInstrumentationListener(instanceName, true, true, true, nameFormatter);
+            instrumentationProvider = new HashAlgorithmInstrumentationProvider(instanceName, true, true, true, nameFormatter);
             formattedInstanceName = nameFormatter.CreateName(instanceName);
-            totalHashComparisonPerformedPerformanceCounter = new EnterpriseLibraryPerformanceCounter(HashAlgorithmInstrumentationListener.counterCategoryName, HashAlgorithmInstrumentationListener.TotalHashComparisonPerformedPerformanceCounterName, formattedInstanceName);
-            totalHashMismatchesPerformedPerformanceCounter = new EnterpriseLibraryPerformanceCounter(HashAlgorithmInstrumentationListener.counterCategoryName, HashAlgorithmInstrumentationListener.TotalHashMismatchesPerformedPerformanceCounterName, formattedInstanceName);
-            totalHashOperationPerformedPerformanceCounter = new EnterpriseLibraryPerformanceCounter(HashAlgorithmInstrumentationListener.counterCategoryName, HashAlgorithmInstrumentationListener.TotalHashOperationPerformedPerformanceCounterName, formattedInstanceName);
+            totalHashComparisonPerformedPerformanceCounter = new EnterpriseLibraryPerformanceCounter(HashAlgorithmInstrumentationProvider.counterCategoryName, HashAlgorithmInstrumentationProvider.TotalHashComparisonPerformedPerformanceCounterName, formattedInstanceName);
+            totalHashMismatchesPerformedPerformanceCounter = new EnterpriseLibraryPerformanceCounter(HashAlgorithmInstrumentationProvider.counterCategoryName, HashAlgorithmInstrumentationProvider.TotalHashMismatchesPerformedPerformanceCounterName, formattedInstanceName);
+            totalHashOperationPerformedPerformanceCounter = new EnterpriseLibraryPerformanceCounter(HashAlgorithmInstrumentationProvider.counterCategoryName, HashAlgorithmInstrumentationProvider.TotalHashOperationPerformedPerformanceCounterName, formattedInstanceName);
         }
 
         [TestMethod]
         public void TotalHashComparisonPerformedPerformanceCounterIncremented()
         {
-            listener.HashComparisonPerformed(this, EventArgs.Empty);
+            instrumentationProvider.FireHashComparisonPerformed();
 
             long expected = 1;
             Assert.AreEqual(expected, totalHashComparisonPerformedPerformanceCounter.Value);
@@ -67,7 +67,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests
         [TestMethod]
         public void TotalHashMismatchesPerformedPerformanceCounterIncremented()
         {
-            listener.HashMismatchDetected(this, EventArgs.Empty);
+            instrumentationProvider.FireHashMismatchDetected();
 
             long expected = 1;
             Assert.AreEqual(expected, totalHashMismatchesPerformedPerformanceCounter.Value);
@@ -76,7 +76,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests
         [TestMethod]
         public void TotalHashOperationPerformedPerformanceCounterIncremented()
         {
-            listener.HashOperationPerformed(this, EventArgs.Empty);
+            instrumentationProvider.FireHashOperationPerformed();
 
             long expected = 1;
             Assert.AreEqual(expected, totalHashOperationPerformedPerformanceCounter.Value);
@@ -97,7 +97,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests
         [ExpectedException(typeof(ArgumentException))]
         public void HashWithBadTypeThrows()
         {
-            HashAlgorithmProvider hashProvider = new HashAlgorithmProvider(typeof(Exception), false);
+            HashAlgorithmProvider hashProvider = new HashAlgorithmProvider(typeof(Exception), false, new NullHashAlgorithmInstrumentationProvider());
             hashProvider.CreateHash(plainText);
         }
 
@@ -105,7 +105,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests
         [ExpectedException(typeof(ArgumentNullException))]
         public void ConstructWithNullAlgorithmTypeThrows()
         {
-            new HashAlgorithmProvider(null, true);
+            new HashAlgorithmProvider(null, true, new NullHashAlgorithmInstrumentationProvider());
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void CostructWithNullInstrumentationProviderThrows()
+        {
+            new HashAlgorithmProvider(typeof(SHA1Managed), true, null);
         }
 
         [TestMethod]
@@ -200,10 +207,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests
         [ExpectedException(typeof(ArgumentNullException))]
         public void HashFailureThrowsWithInstrumentationEnabled()
         {
-            HashAlgorithmProvider hashProvider = new HashAlgorithmProvider(typeof(SHA1Managed), false);
-            ReflectionInstrumentationBinder binder = new ReflectionInstrumentationBinder();
-            binder.Bind(hashProvider.GetInstrumentationEventProvider(), new HashAlgorithmInstrumentationListener("foo", true, true, true, "fooApplicationInstanceName"));
-
+            HashAlgorithmProvider hashProvider = new HashAlgorithmProvider(typeof(SHA1Managed), false, new NullHashAlgorithmInstrumentationProvider());
+            
             hashProvider.CreateHash(null);
         }
 

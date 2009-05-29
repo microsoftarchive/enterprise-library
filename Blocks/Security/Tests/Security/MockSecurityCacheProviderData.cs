@@ -9,12 +9,15 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
+using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Security.Configuration;
+using System.Collections.Generic;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Security.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Tests
 {
-	[Assembler(typeof(TypeInstantiationAssembler<ISecurityCacheProvider, SecurityCacheProviderData>))]
 	public class MockSecurityCacheProviderData : SecurityCacheProviderData
 	{
 		public MockSecurityCacheProviderData()
@@ -25,5 +28,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Tests
 			: base(name, typeof(MockSecurityCacheProvider))
 		{
 		}
+
+
+        public override IEnumerable<TypeRegistration> GetRegistrations(IConfigurationSource configurationSource)
+        {
+            return base.GetRegistrations(configurationSource).Concat(new TypeRegistration[]{base.GetInstrumentationProviderRegistration(configurationSource)});
+        }
+
+        protected override System.Linq.Expressions.Expression<System.Func<ISecurityCacheProvider>> GetCreationExpression()
+        {
+            return () => new MockSecurityCacheProvider(Container.Resolved<ISecurityCacheProviderInstrumentationProvider>(this.Name));
+        }
 	}
 }

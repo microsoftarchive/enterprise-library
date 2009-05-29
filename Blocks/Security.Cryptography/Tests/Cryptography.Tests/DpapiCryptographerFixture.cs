@@ -13,6 +13,7 @@ using System;
 using System.Security.Cryptography;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests
 {
     [TestClass]
@@ -21,6 +22,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests
         static byte[] plainText;
         static byte[] entropy;
 
+        
         [TestInitialize]
         public void Setup()
         {

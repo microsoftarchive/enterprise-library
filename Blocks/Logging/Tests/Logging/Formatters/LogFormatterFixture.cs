@@ -14,12 +14,9 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Globalization;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Tests;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport;
-using Microsoft.Practices.ObjectBuilder2;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Formatters.Tests
@@ -27,16 +24,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Formatters.Tests
 	[TestClass]
 	public class LogFormatterFixture
 	{
-		IBuilderContext context;
-		ConfigurationReflectionCache reflectionCache;
-
 		[TestInitialize]
 		public void SetUp()
 		{
 			AppDomain.CurrentDomain.SetData("APPBASE", Environment.CurrentDirectory);
-			context = new BuilderContext(new StrategyChain(), null, null, new PolicyList(), null, null);
-			reflectionCache = new ConfigurationReflectionCache();
 		}
+
+        private static ILogFormatter GetFormatter(string name, IConfigurationSource configurationSource)
+        {
+            var container = EnterpriseLibraryContainer.CreateDefaultContainer(configurationSource);
+            return container.GetInstance<ILogFormatter>(name);
+        }
 
 		[TestMethod]
 		public void FormatsWithNoTokens()
@@ -754,23 +752,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Formatters.Tests
 			DictionaryConfigurationSource configurationSource = new DictionaryConfigurationSource();
 			configurationSource.Add(LoggingSettings.SectionName, settings);
 
-			ILogFormatter formatter = LogFormatterCustomFactory.Instance.Create(context, "ignore", configurationSource, reflectionCache);
+			ILogFormatter formatter = GetFormatter("ignore", configurationSource);
 
 			Assert.IsNotNull(formatter);
 			Assert.AreEqual(formatter.GetType(), typeof(TextFormatter));
 			Assert.AreEqual("template", ((TextFormatter)formatter).Template);
-		}
-
-		[TestMethod]
-		public void CanCreateTextFormatterFromUnnamedDataBug1883()
-		{
-			string template = "{message}";
-			TextFormatterData data = new TextFormatterData(template);
-
-			ILogFormatter formatter = LogFormatterCustomFactory.Instance.Create(context, data, null, reflectionCache);
-
-			Assert.AreSame(typeof(TextFormatter), formatter.GetType());
-			Assert.AreEqual(template, ((TextFormatter)formatter).Template);
 		}
 
 		[TestMethod]

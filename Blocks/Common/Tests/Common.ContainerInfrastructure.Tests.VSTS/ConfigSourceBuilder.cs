@@ -18,6 +18,7 @@ using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography;
 using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
 
 namespace Common.ContainerInfrastructure.Tests.VSTS
 {
@@ -46,7 +47,7 @@ namespace Common.ContainerInfrastructure.Tests.VSTS
 
             cryptoSettings.DefaultHashProviderName = "md5";
 
-            configSource.Add(CryptographyConfigurationView.SectionName, cryptoSettings);
+            configSource.Add(CryptographySettings.SectionName, cryptoSettings);
 
             return this;
         }
@@ -74,13 +75,30 @@ namespace Common.ContainerInfrastructure.Tests.VSTS
         {
             var connectionStrings = new ConnectionStringsSection();
 
-            connectionStrings.ConnectionStrings.Add(new ConnectionStringSettings("northwind", 
+            connectionStrings.ConnectionStrings.Add(new ConnectionStringSettings("northwind",
                 NorthwindConnectionString,
                 DbProviderMapping.DefaultSqlProviderName));
             configSource.Add("connectionStrings", connectionStrings);
 
-            var databaseSettings = new DatabaseSettings() {DefaultDatabase = "northwind"};
+            var databaseSettings = new DatabaseSettings() { DefaultDatabase = "northwind" };
             configSource.Add(DatabaseSettings.SectionName, databaseSettings);
+
+            return this;
+        }
+
+        public const string PolicyName = "policy";
+
+        public ConfigSourceBuilder AddPolicyInjectionSettings()
+        {
+            var policyInjectionSettings = new PolicyInjectionSettings();
+
+            policyInjectionSettings.Policies.Add(
+                new PolicyData(PolicyName)
+                {
+                    MatchingRules = { },
+                    Handlers = { }
+                });
+            configSource.Add(PolicyInjectionSettings.SectionName, policyInjectionSettings);
 
             return this;
         }

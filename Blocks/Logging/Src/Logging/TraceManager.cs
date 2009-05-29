@@ -10,10 +10,8 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
+using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging
 {
@@ -22,8 +20,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
     /// </summary>
     public class TraceManager
     {
-        private LogWriter logWriter;
-        private TracerInstrumentationListener instrumentationListener;
+        private readonly LogWriter logWriter;
+        private readonly ITracerInstrumentationProvider instrumentationProvider;
 
         /// <summary>
         /// For testing purpose
@@ -36,9 +34,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// <summary>
         /// For testing purpose
         /// </summary>
-        public TracerInstrumentationListener InstrumentationListener
+        public ITracerInstrumentationProvider InstrumentationProvider
         {
-            get { return this.instrumentationListener; }
+            get { return this.instrumentationProvider; }
         }
 
         /// <summary>
@@ -46,7 +44,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// </summary>
         /// <param name="logWriter">The <see cref="LogWriter"/> that is used to write trace messages.</param>
         public TraceManager(LogWriter logWriter):
-            this(logWriter, null)
+            this(logWriter, new NullTracerInstrumentationProvider())
         {
         }
 
@@ -54,8 +52,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// Create an instance of <see cref="TraceManager"/> giving the <see cref="LogWriter"/>.
         /// </summary>
         /// <param name="logWriter">The <see cref="LogWriter"/> that is used to write trace messages.</param>
-        /// <param name="instrumentationListener">The <see cref="TracerInstrumentationListener"/> used to determine if instrumentation should be enabled</param>
-        public TraceManager(LogWriter logWriter, TracerInstrumentationListener instrumentationListener)
+        /// <param name="instrumentationProvider">The <see cref="ITracerInstrumentationProvider"/> used to determine if instrumentation should be enabled</param>
+        public TraceManager(LogWriter logWriter, ITracerInstrumentationProvider instrumentationProvider)
         {
             if (logWriter == null)
             {
@@ -63,7 +61,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
             }
 
             this.logWriter = logWriter;
-            this.instrumentationListener = instrumentationListener;
+            this.instrumentationProvider = instrumentationProvider;
         }
 
         /// <summary>
@@ -73,7 +71,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// <returns></returns>
         public Tracer StartTrace(string operation)
         {
-            return new Tracer(operation, this.logWriter, this.instrumentationListener);
+            return new Tracer(operation, this.logWriter, this.instrumentationProvider);
         }
 
         /// <summary>
@@ -84,7 +82,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// <returns></returns>
         public Tracer StartTrace(string operation, Guid activityId)
         {
-            return new Tracer(operation, activityId, this.logWriter, this.instrumentationListener);
+            return new Tracer(operation, activityId, this.logWriter, this.instrumentationProvider);
         }
     }
 }

@@ -13,7 +13,10 @@ using System;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Caching.BackingStoreImplementations;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using System.Linq.Expressions;
+using System.Reflection;
+using System.Collections.Generic;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
 {
@@ -21,7 +24,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
 	/// Configuration data defining CacheStorageData. This configuration section defines the name and type
 	/// of the IBackingStore used by a CacheManager
 	/// </summary>
-	[Assembler(typeof(TypeInstantiationAssembler<IBackingStore, CacheStorageData>))]
 	public class CacheStorageData : NameTypeConfigurationElement
 	{
 		private const string encryptionProviderNameProperty = "encryptionProviderName";
@@ -64,6 +66,29 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
 			get { return (string)base[encryptionProviderNameProperty]; }
 			set { base[encryptionProviderNameProperty] = value; }
 		}
-	}
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public virtual IEnumerable<TypeRegistration> GetRegistrations()
+        {
+            ConstructorInfo constructor = Type.GetConstructor(new Type[0]);
+            if (constructor == null)
+                throw new NotImplementedException(Caching.Properties.Resources.ExceptionBackingStoresWithNonDefaultConstructorsShouldOverrideGetRegistrations);
+
+            LambdaExpression newExpression =  Expression.Lambda(
+                Expression.New(constructor)
+                );
+
+            yield return new TypeRegistration(newExpression, typeof(IBackingStore))
+            {
+                Name = this.Name
+            };
+        }
+
+
+    }
 }
 

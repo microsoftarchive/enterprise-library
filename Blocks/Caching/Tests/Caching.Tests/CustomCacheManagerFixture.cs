@@ -14,7 +14,6 @@ using System.Collections.Generic;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -42,7 +41,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests
             configurationSource.Add(CacheManagerSettings.SectionName, settings);
 
             ICacheManager custom
-                = EnterpriseLibraryFactory.BuildUp<ICacheManager>("custom", configurationSource);
+                = EnterpriseLibraryContainer.CreateDefaultContainer(configurationSource).GetInstance<ICacheManager>("custom");
 
             Assert.IsNotNull(custom);
             Assert.AreSame(typeof(CustomCacheManager), custom.GetType());
@@ -64,7 +63,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests
                 = ConfigurationTestHelper.SaveSectionsInFileAndReturnConfigurationSource(sections);
 
             ICacheManager custom
-                = EnterpriseLibraryFactory.BuildUp<ICacheManager>("custom", configurationSource);
+                = EnterpriseLibraryContainer.CreateDefaultContainer(configurationSource).GetInstance<ICacheManager>("custom");
 
             Assert.IsNotNull(custom);
             Assert.AreSame(typeof(CustomCacheManager), custom.GetType());

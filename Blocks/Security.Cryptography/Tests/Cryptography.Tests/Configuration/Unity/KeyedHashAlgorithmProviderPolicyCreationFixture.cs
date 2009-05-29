@@ -44,7 +44,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests.Conf
 		[TestMethod]
 		public void CanCreatePoliciesTo_CreateAndCompareHashBytes()
 		{
-			container.AddExtension(new CryptographyBlockExtension());
 			Assert.IsInstanceOfType(container.Resolve<IHashProvider>(hashInstance), typeof(KeyedHashAlgorithmProvider));
 
 			byte[] hash = container.Resolve<IHashProvider>(hashInstance).CreateHash(plainTextBytes);
@@ -56,7 +55,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests.Conf
 		[TestMethod]
 		public void CanCreatePoliciesTo_CreateAndCompareInvalidHashBytes()
 		{
-			container.AddExtension(new CryptographyBlockExtension());
 			Assert.IsInstanceOfType(container.Resolve<IHashProvider>(hashInstance), typeof(KeyedHashAlgorithmProvider));
 
 			byte[] hash = container.Resolve<IHashProvider>(hashInstance).CreateHash(plainTextBytes);

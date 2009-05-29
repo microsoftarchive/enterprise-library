@@ -56,7 +56,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
             ApplicationNode.Hierarchy.Open();
             Assert.AreEqual(0, ErrorLogService.ConfigurationErrorCount);
             IConfigurationSource source = ApplicationNode.Hierarchy.BuildConfigurationSource();
-            Assert.IsNotNull(source.GetSection(CryptographyConfigurationView.SectionName));
+            Assert.IsNotNull(source.GetSection(CryptographySettings.SectionName));
         }
     }
 }

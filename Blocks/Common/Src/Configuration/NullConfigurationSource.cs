@@ -10,7 +10,6 @@
 //===============================================================================
 
 using System;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using System.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
@@ -20,7 +19,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 	/// </summary>
 	public class NullConfigurationSource : IConfigurationSource
 	{
-		/// <summary>
+        /// <summary>
+        /// Event raised when configuration source contents have changed.
+        /// </summary>
+        /// <remarks>This class never raises this event.</remarks>
+#pragma warning disable 67
+	    public event EventHandler<ConfigurationSourceChangedEventArgs> SourceChanged;
+#pragma warning restore 67
+
+	    /// <summary>
 		/// Returns null for the section.
 		/// </summary>
 		/// <param name="sectionName">The section name to retrieve.</param>

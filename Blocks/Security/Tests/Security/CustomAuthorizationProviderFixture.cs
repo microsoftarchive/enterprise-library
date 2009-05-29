@@ -13,7 +13,6 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Security.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -41,7 +40,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Tests
             configurationSource.Add(SecuritySettings.SectionName, settings);
 
             IAuthorizationProvider custom
-                = EnterpriseLibraryFactory.BuildUp<IAuthorizationProvider>("custom", configurationSource);
+                = EnterpriseLibraryContainer.CreateDefaultContainer(configurationSource).GetInstance<IAuthorizationProvider>("custom");
 
             Assert.IsNotNull(custom);
             Assert.AreSame(typeof(MockCustomAuthorizationProvider), custom.GetType());
@@ -63,7 +62,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Tests
                 = ConfigurationTestHelper.SaveSectionsInFileAndReturnConfigurationSource(sections);
 
             IAuthorizationProvider custom
-                = EnterpriseLibraryFactory.BuildUp<IAuthorizationProvider>("custom", configurationSource);
+                = EnterpriseLibraryContainer.CreateDefaultContainer(configurationSource).GetInstance<IAuthorizationProvider>("custom");
 
             Assert.IsNotNull(custom);
             Assert.AreSame(typeof(MockCustomAuthorizationProvider), custom.GetType());
@@ -77,7 +76,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Tests
                 = new SystemConfigurationSource();
 
             IAuthorizationProvider custom
-                = EnterpriseLibraryFactory.BuildUp<IAuthorizationProvider>("custom", configurationSource);
+                = EnterpriseLibraryContainer.CreateDefaultContainer(configurationSource).GetInstance<IAuthorizationProvider>("custom");
 
             Assert.IsNotNull(custom);
             Assert.AreSame(typeof(MockCustomAuthorizationProvider), custom.GetType());

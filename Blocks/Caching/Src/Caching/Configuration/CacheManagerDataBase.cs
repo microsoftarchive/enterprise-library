@@ -9,10 +9,12 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
 using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
+
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
 {
@@ -20,7 +22,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
 	/// Base class for configuration data defining CacheManagerDataBase. Defines the information needed to properly configure
 	/// a ICacheManager instance.
 	/// </summary>    	
-	[Assembler(typeof(TypeInstantiationAssembler<ICacheManager, CacheManagerDataBase>))]
 	public class CacheManagerDataBase : NameTypeConfigurationElement
 	{
 		/// <summary>
@@ -41,5 +42,37 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
 			: base(name, type)
 		{
 		}
-	}
+
+
+        /// <summary>
+        /// Get the set of <see cref="TypeRegistration"/> object needed to
+        /// register the CacheManager represented by this config element.
+        /// </summary>
+        /// <returns>The sequence of <see cref="TypeRegistration"/> objects.</returns>
+        public virtual IEnumerable<TypeRegistration> GetRegistrations(IConfigurationSource configurationSource)
+        {
+            Expression<Func<ICacheManager>> newExpression = GetCacheManagerCreationExpression();
+
+            TypeRegistration cacheManagerRegistration = new TypeRegistration<ICacheManager>(newExpression)
+            {
+                Name = this.Name
+            };
+
+            return new TypeRegistration[] { cacheManagerRegistration };
+
+        }
+
+        /// <summary>
+        /// Gets the creation expression used to produce a <see cref="TypeRegistration"/> during
+        /// <see cref="GetRegistrations"/>.
+        /// </summary>
+        /// <remarks>
+        /// This must be overridden by a subclass, but is not marked as abstract due to configuration serialization needs.
+        /// </remarks>
+        /// <returns>A <see cref="Expression"/> that creates a <see cref="ICacheManager"/></returns>
+        protected virtual Expression<Func<ICacheManager>> GetCacheManagerCreationExpression()
+        {
+            throw new NotImplementedException(Caching.Properties.Resources.ExceptionMethodMustBeImplementedBySubclasses);
+        }
+    }
 }

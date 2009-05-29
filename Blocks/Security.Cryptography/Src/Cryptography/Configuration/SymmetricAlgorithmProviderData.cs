@@ -14,15 +14,14 @@ using System.Configuration;
 using System.Security.Cryptography;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
-using Microsoft.Practices.ObjectBuilder2;
+using System.Collections.Generic;
+using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration
 {
     /// <summary>
     /// <para>Configuration data for the <c>SymmetricAlgorithm</c> provider.</para>
     /// </summary>	
-    [Assembler(typeof(SymmetricAlgorithmProviderAssembler))]
     public class SymmetricAlgorithmProviderData : SymmetricProviderData
     {
         private AssemblyQualifiedTypeNameConverter typeConverter = new AssemblyQualifiedTypeNameConverter();
@@ -102,52 +101,22 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         /// this configuration object.
         /// </summary>
         /// <returns>A <see cref="TypeRegistration"/> instance describing a provider.</returns>
-        public override TypeRegistration GetContainerConfigurationModel()
+        /// <param name="configurationSource">TODO</param>
+        public override IEnumerable<TypeRegistration> GetRegistrations(IConfigurationSource configurationSource)
         {
-            return
+            yield return base.GetInstrumentationProviderRegistration(configurationSource);
+
+            yield return
                 new TypeRegistration<ISymmetricCryptoProvider>(
                     () =>
                         new SymmetricAlgorithmProvider(
                             AlgorithmType,
                             ProtectedKeyFilename,
-                            ProtectedKeyProtectionScope))
+                            ProtectedKeyProtectionScope,
+                            Container.Resolved<ISymmetricAlgorithmInstrumentationProvider>(Name)))
                 {
                     Name = Name
                 };
-        }
-    }
-
-    /// <summary>
-    /// This type supports the Enterprise Library infrastructure and is not intended to be used directly from your code.
-    /// Represents the process to build a <see cref="SymmetricAlgorithmProvider"/> described by a <see cref="SymmetricAlgorithmProviderData"/> configuration object.
-    /// </summary>
-    /// <remarks>This type is linked to the <see cref="SymmetricAlgorithmProviderData"/> type and it is used by the <see cref="SymmetricCryptoProviderCustomFactory"/> 
-    /// to build the specific <see cref="ISymmetricCryptoProvider"/> object represented by the configuration object.
-    /// </remarks>
-    public class SymmetricAlgorithmProviderAssembler : IAssembler<ISymmetricCryptoProvider, SymmetricProviderData>
-    {
-        /// <summary>
-        /// This method supports the Enterprise Library infrastructure and is not intended to be used directly from your code.
-        /// Builds a <see cref="SymmetricAlgorithmProvider"/> based on an instance of <see cref="SymmetricAlgorithmProviderData"/>.
-        /// </summary>
-        /// <seealso cref="SymmetricCryptoProviderCustomFactory"/>
-        /// <param name="context">The <see cref="IBuilderContext"/> that represents the current building process.</param>
-        /// <param name="objectConfiguration">The configuration object that describes the object to build. Must be an instance of <see cref="SymmetricAlgorithmProviderData"/>.</param>
-        /// <param name="configurationSource">The source for configuration objects.</param>
-        /// <param name="reflectionCache">The cache to use retrieving reflection information.</param>
-        /// <returns>A fully initialized instance of <see cref="SymmetricAlgorithmProvider"/>.</returns>
-        public ISymmetricCryptoProvider Assemble(IBuilderContext context, SymmetricProviderData objectConfiguration, IConfigurationSource configurationSource, ConfigurationReflectionCache reflectionCache)
-        {
-            SymmetricAlgorithmProviderData castedObjectConfiguration
-                = (SymmetricAlgorithmProviderData)objectConfiguration;
-
-            ISymmetricCryptoProvider createdObject
-                = new SymmetricAlgorithmProvider(
-                        castedObjectConfiguration.AlgorithmType,
-                        castedObjectConfiguration.ProtectedKeyFilename,
-                        castedObjectConfiguration.ProtectedKeyProtectionScope);
-
-            return createdObject;
         }
     }
 }

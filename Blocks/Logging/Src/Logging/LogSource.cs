@@ -21,13 +21,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
     /// <summary>
     /// Provides tracing services through a set of <see cref="TraceListener"/>s.
     /// </summary>
-    public class LogSource : IInstrumentationEventProvider, IDisposable
+    public class LogSource : IDisposable
     {
         /// <summary>
         /// Default Auto Flush property for the LogSource instance.
         /// </summary>
         public const bool DefaultAutoFlushProperty = true;
-        private LoggingInstrumentationProvider instrumentationProvider;
+        private readonly ILoggingInstrumentationProvider instrumentationProvider;
         private SourceLevels level;
         private string name;
         private IList<TraceListener> traceListeners;
@@ -62,6 +62,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
             : this(name, traceListeners, level, DefaultAutoFlushProperty)
         { }
 
+
         /// <summary>
         /// Initializes a new instance of the <see cref="LogSource"/> class with a name, a collection of <see cref="TraceListener"/>s, a level and the auto flush.
         /// </summary>
@@ -70,11 +71,24 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// <param name="level">The <see cref="SourceLevels"/> value.</param>
         /// <param name="autoFlush">If Flush should be called on the Listeners after every write.</param>
         public LogSource(string name, IEnumerable<TraceListener> traceListeners, SourceLevels level, bool autoFlush)
+            :this(name, traceListeners, level, autoFlush, new NullLoggingInstrumentationProvider())
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LogSource"/> class with a name, a collection of <see cref="TraceListener"/>s, a level and the auto flush.
+        /// </summary>
+        /// <param name="name">The name for the instance.</param>
+        /// <param name="traceListeners">The collection of <see cref="TraceListener"/>s.</param>
+        /// <param name="level">The <see cref="SourceLevels"/> value.</param>
+        /// <param name="autoFlush">If Flush should be called on the Listeners after every write.</param>
+        /// <param name="instrumentationProvider">The instrumentation provider to use.</param>
+        public LogSource(string name, IEnumerable<TraceListener> traceListeners, SourceLevels level, bool autoFlush, ILoggingInstrumentationProvider instrumentationProvider)
         {
             this.name = name;
             this.traceListeners = new List<TraceListener>(traceListeners);
             this.level = level;
-            this.instrumentationProvider = new LoggingInstrumentationProvider();
+            this.instrumentationProvider = instrumentationProvider;
             this.autoFlush = autoFlush;
         }
 
@@ -171,15 +185,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
             }
         }
 
-        /// <summary>
-        /// Returns the object that provides instrumentation services for the <see cref="LogSource"/>.
-        /// </summary>
-        /// <see cref="IInstrumentationEventProvider.GetInstrumentationEventProvider()"/>
-        /// <returns>The object that providers intrumentation services. This object may be null if instrumentation services are not created for this instance.</returns>
-        public object GetInstrumentationEventProvider()
-        {
-            return instrumentationProvider;
-        }
 
         /// <summary>
         /// Releases the resources used by the <see cref="LogSource"/>.

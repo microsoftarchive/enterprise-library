@@ -35,7 +35,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         {
             formatterData = new CustomFormatterData("myName", typeof(MockCustomLogFormatter));
             formatterData.Attributes.Add("foo", "bar");
-            registry = formatterData.GetContainerConfigurationModel();
+            registry = formatterData.GetRegistrations().First();
         }
 
         [TestMethod]

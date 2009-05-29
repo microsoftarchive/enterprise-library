@@ -14,8 +14,6 @@ using System.Data;
 using System.Data.Common;
 using System.Globalization;
 using System.Transactions;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
-using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Data.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Data.Properties;
 
@@ -28,9 +26,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
     /// The <see cref="Database"/> class leverages the provider factory model from ADO.NET. A database instance holds 
     /// a reference to a concrete <see cref="DbProviderFactory"/> object to which it forwards the creation of ADO.NET objects.
     /// </remarks>
-    [ConfigurationNameMapper(typeof(DatabaseMapper))]
-    [CustomFactory(typeof(DatabaseCustomFactory))]
-    public abstract class Database : IInstrumentationEventProvider
+    public abstract class Database
     {
         static readonly ParameterCache parameterCache = new ParameterCache();
         static readonly string VALID_PASSWORD_TOKENS = Resources.Password;
@@ -40,9 +36,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
         readonly DbProviderFactory dbProviderFactory;
 
         /// <summary>
-        /// The <see cref="DataInstrumentationProvider"/> instance that defines the logical events used to instrument this <see cref="Database"/> instance.
+        /// The <see cref="IDataInstrumentationProvider"/> instance that defines the logical events used to instrument this <see cref="Database"/> instance.
         /// </summary>
-        protected DataInstrumentationProvider instrumentationProvider;
+        protected IDataInstrumentationProvider instrumentationProvider;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Database"/> class with a connection string and a <see cref="DbProviderFactory"/>.
@@ -51,13 +47,26 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
         /// <param name="dbProviderFactory">A <see cref="DbProviderFactory"/> object.</param>
         protected Database(string connectionString,
                            DbProviderFactory dbProviderFactory)
+            : this(connectionString, dbProviderFactory, new NullDataInstrumentationProvider())
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Database"/> class with a connection string,
+        /// a <see cref="DbProviderFactory"/> and an <see cref="IDataInstrumentationProvider"/>.
+        /// </summary>
+        /// <param name="connectionString">The connection string for the database.</param>
+        /// <param name="dbProviderFactory">A <see cref="DbProviderFactory"/> object.</param>
+        /// <param name="instrumentationProvider">Instrumentation provider to use.</param>
+        protected Database(string connectionString, DbProviderFactory dbProviderFactory, IDataInstrumentationProvider instrumentationProvider)
         {
             if (string.IsNullOrEmpty(connectionString)) throw new ArgumentException(Resources.ExceptionNullOrEmptyString, "connectionString");
             if (dbProviderFactory == null) throw new ArgumentNullException("dbProviderFactory");
+            if(instrumentationProvider == null) throw new ArgumentNullException("instrumentationProvider");
 
             this.connectionString = new ConnectionString(connectionString, VALID_USER_ID_TOKENS, VALID_PASSWORD_TOKENS);
             this.dbProviderFactory = dbProviderFactory;
-            instrumentationProvider = new DataInstrumentationProvider();
+            this.instrumentationProvider = instrumentationProvider;
         }
 
         /// <summary>
@@ -1132,7 +1141,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
         /// Returns the object to which the instrumentation events have been delegated.
         /// </summary>
         /// <returns>Object to which the instrumentation events have been delegated.</returns>
-        public object GetInstrumentationEventProvider()
+        public IDataInstrumentationProvider GetInstrumentationEventProvider()
         {
             return instrumentationProvider;
         }

@@ -13,6 +13,7 @@ using System;
 using System.Configuration;
 using System.IO;
 using System.Security.Cryptography;
+using Microsoft.Practices.ServiceLocation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests
@@ -184,14 +185,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ConfigurationErrorsException))]
+        [ExpectedException(typeof(ActivationException))]
         public void CreateHashWithInvalidInstanceThrows()
         {
             Cryptographer.CreateHash("invalid instance", plainTextString);
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ConfigurationErrorsException))]
+        [ExpectedException(typeof(ActivationException))]
         public void EncryptWithInvalidInstanceThrows()
         {
             Cryptographer.EncryptSymmetric("invalid instance", plainTextString);

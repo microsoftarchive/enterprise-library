@@ -12,8 +12,8 @@
 using Microsoft.Practices.EnterpriseLibrary.Caching.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Tests;
 using Microsoft.Practices.EnterpriseLibrary.Caching.TestSupport.BackingStoreImplementations;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.BackingStoreImplementations.Tests
 {
@@ -42,7 +42,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.BackingStoreImplementati
             StorageEncryptionProviderData encryptionProviderData = settings.EncryptionProviders.Get(cacheStorageData.StorageEncryption);
 
             IStorageEncryptionProvider provider =
-                EnterpriseLibraryFactory.BuildUp<IStorageEncryptionProvider>(encryptionProviderData.Name, TestConfigurationSource.GenerateConfiguration());
+                EnterpriseLibraryContainer.CreateDefaultContainer(TestConfigurationSource.GenerateConfiguration()).GetInstance<IStorageEncryptionProvider>(encryptionProviderData.Name);
 
             Assert.IsNotNull(provider);
 

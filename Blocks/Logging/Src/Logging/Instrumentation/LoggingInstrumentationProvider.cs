@@ -13,175 +13,143 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Properties;
+using System.Diagnostics;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation
 {
 	/// <summary>
 	/// Defines the logical events that can be instrumented for the logging block.
 	/// </summary>
-	/// <remarks>
-	/// The concrete instrumentation is provided by an object bound to the events of the provider. 
-	/// The default listener, automatically bound during construction, is <see cref="LoggingInstrumentationListener"/>.
-	/// </remarks>
-	[InstrumentationListener(typeof(LoggingInstrumentationListener))]
-	public class LoggingInstrumentationProvider
+    [HasInstallableResourcesAttribute]
+    [PerformanceCountersDefinition(counterCategoryName, "LoggingCountersHelpResource")]
+    [EventLogDefinition("Application", "Enterprise Library Logging")]
+    public class LoggingInstrumentationProvider : InstrumentationListener, ILoggingInstrumentationProvider
 	{
-		/// <summary>
-		/// Occurs when a log entry is traced by a trace listener.
-		/// </summary>
-		[InstrumentationProvider("TraceListenerEntryWritten")]
-		public event EventHandler<EventArgs> traceListenerEntryWritten;
+		static EnterpriseLibraryPerformanceCounterFactory factory = new EnterpriseLibraryPerformanceCounterFactory();
+        private const string TotalLoggingEventsRaised = "Total Logging Events Raised";
+        private const string TotalTraceListenerEntriesWritten = "Total Trace Listener Entries Written";
+
+		[PerformanceCounter("Logging Events Raised/sec", "LoggingEventRaisedHelpResource", PerformanceCounterType.RateOfCountsPerSecond32)]
+		private EnterpriseLibraryPerformanceCounter logEventRaised;
+
+        [PerformanceCounter(TotalLoggingEventsRaised, "TotalLoggingEventsRaisedHelpResource", PerformanceCounterType.NumberOfItems32)]
+        private EnterpriseLibraryPerformanceCounter totalLoggingEventsRaised;
+
+		[PerformanceCounter("Trace Listener Entries Written/sec", "TraceListenerEntryWrittenHelpResource", PerformanceCounterType.RateOfCountsPerSecond32)]
+		private EnterpriseLibraryPerformanceCounter traceListenerEntryWritten;
+
+        [PerformanceCounter(TotalTraceListenerEntriesWritten, "TotalTraceListenerEntriesWrittenHelpResource", PerformanceCounterType.NumberOfItems32)]
+        private EnterpriseLibraryPerformanceCounter totalTraceListenerEntriesWritten;
+
+		private const string counterCategoryName = "Enterprise Library Logging Counters";
+		private IEventLogEntryFormatter eventLogEntryFormatter;
 
 		/// <summary>
-		/// Occurs when a failure is detected and it cannot be logged though the errors special log source.
+        /// Initializes a new instance of the <see cref="LoggingInstrumentationProvider"/> class.
 		/// </summary>
-		[InstrumentationProvider("FailureLoggingError")]
-		public event EventHandler<FailureLoggingErrorEventArgs> failureLoggingError;
+		/// <param name="performanceCountersEnabled"><code>true</code> if performance counters should be updated.</param>
+		/// <param name="eventLoggingEnabled"><code>true</code> if event log entries should be written.</param>
+		/// <param name="wmiEnabled"><code>true</code> if WMI events should be fired.</param>
+        /// <param name="applicationInstanceName">The application instance name.</param>
+		public LoggingInstrumentationProvider(bool performanceCountersEnabled,
+											  bool eventLoggingEnabled,
+											  bool wmiEnabled,
+                                              string applicationInstanceName)
+            : base(performanceCountersEnabled, eventLoggingEnabled, wmiEnabled, new AppDomainNameFormatter(applicationInstanceName))
+		{
+			this.eventLogEntryFormatter = new EventLogEntryFormatter(Resources.BlockName);
+		}
 
 		/// <summary>
-		/// Occurs when a failure in the configuration is detected while building the logging objects.
+        /// Initializes a new instance of the <see cref="LoggingInstrumentationProvider"/> class.
 		/// </summary>
-		[InstrumentationProvider("ConfigurationFailure")]
-		public event EventHandler<LoggingConfigurationFailureEventArgs> configurationFailure;
-
-		/// <summary>
-		/// Occurs when a log entry is logged.
-		/// </summary>
-		[InstrumentationProvider("LoggingEventRaised")]
-		public event EventHandler<EventArgs> logEventRaised;
-
-		/// <summary>
-		/// Occurs when a timeout is detected while trying to acquire a lock in the log writer.
-		/// </summary>
-		[InstrumentationProvider("LockAcquisitionError")]
-		public event EventHandler<LockAcquisitionErrorEventArgs> lockAcquisitionError;
+		/// <param name="instanceName">The instance name.</param>
+		/// <param name="performanceCountersEnabled"><code>true</code> if performance counters should be updated.</param>
+		/// <param name="eventLoggingEnabled"><code>true</code> if event log entries should be written.</param>
+		/// <param name="wmiEnabled"><code>true</code> if WMI events should be fired.</param>
+        /// <param name="applicationInstanceName">The application instance name.</param>
+        public LoggingInstrumentationProvider(string instanceName,
+											  bool performanceCountersEnabled,
+											  bool eventLoggingEnabled,
+											  bool wmiEnabled,
+                                              string applicationInstanceName)
+            : base(instanceName, performanceCountersEnabled, eventLoggingEnabled, wmiEnabled, new AppDomainNameFormatter(applicationInstanceName))
+		{
+			this.eventLogEntryFormatter = new EventLogEntryFormatter(Resources.BlockName);
+		}
 
 		/// <summary>
 		/// Fires the <see cref="LoggingInstrumentationProvider.traceListenerEntryWritten"/> event.
 		/// </summary>
 		public void FireTraceListenerEntryWrittenEvent()
-		{
-			if (traceListenerEntryWritten != null) traceListenerEntryWritten(this, new EventArgs());
+        {
+            if (PerformanceCountersEnabled)
+            {
+                traceListenerEntryWritten.Increment();
+                totalTraceListenerEntriesWritten.Increment();
+            }
 		}
 
-		/// <summary>
-		/// Fires the <see cref="LoggingInstrumentationProvider.failureLoggingError"/> event.
-		/// </summary>
+		/// <summary />
 		/// <param name="message">A message describing the failure.</param>
 		/// <param name="exception">The exception that caused the failure, or <see langword="null"/>.</param>
-		public void FireFailureLoggingErrorEvent(string message, Exception exception)
-		{
-			if (failureLoggingError != null) failureLoggingError(this, new FailureLoggingErrorEventArgs(message, exception));
-		}
+        public void FireFailureLoggingErrorEvent(string message, Exception exception)
+        {
+            if (WmiEnabled) FireManagementInstrumentation(new LoggingFailureLoggingErrorEvent(message, exception.ToString()));
+            if (EventLoggingEnabled)
+            {
+                string entryText = eventLogEntryFormatter.GetEntryText(message, exception);
 
-		/// <summary>
-		/// Fires the <see cref="LoggingInstrumentationProvider.configurationFailure"/> event.
-		/// </summary>
+                EventLog.WriteEntry(GetEventSourceName(), entryText, EventLogEntryType.Error);
+            }
+        }
+
+		/// <summary/>
 		/// <param name="configurationException">The exception that describes the configuration error.</param>
-		public void FireConfigurationFailureEvent(System.Configuration.ConfigurationErrorsException configurationException)
-		{
-			if (configurationFailure != null) configurationFailure(this, new LoggingConfigurationFailureEventArgs(configurationException));
+		public void FireConfigurationFailureEvent(Exception configurationException)
+        {
+            if (WmiEnabled) FireManagementInstrumentation(new LoggingConfigurationFailureEvent(configurationException.Message));
+            if (EventLoggingEnabled)
+            {
+                string entryText = eventLogEntryFormatter.GetEntryText(Resources.ConfigurationFailureUpdating, configurationException);
+                EventLog.WriteEntry(GetEventSourceName(), entryText, EventLogEntryType.Error);
+            }
 		}
 
 		/// <summary>
 		/// Fires the <see cref="LoggingInstrumentationProvider.logEventRaised"/> event.
 		/// </summary>
 		public void FireLogEventRaised()
-		{
-			if (logEventRaised != null) logEventRaised(this, new EventArgs());
+        {
+            if (PerformanceCountersEnabled)
+            {
+                logEventRaised.Increment();
+                totalLoggingEventsRaised.Increment();
+            }
 		}
 
-		internal void FireLockAcquisitionError(string message)
-		{
-			if (lockAcquisitionError != null) lockAcquisitionError(this, new LockAcquisitionErrorEventArgs(message));
-		}
-	}
+        /// <summary/>
+        /// <param name="message"></param>
+		public void FireLockAcquisitionError(string message)
+        {
+            if (EventLoggingEnabled)
+            {
+                string entryText = eventLogEntryFormatter.GetEntryText(message);
+                EventLog.WriteEntry(GetEventSourceName(), entryText, EventLogEntryType.Error);
+            }
+        }
 
-	/// <summary>
-	/// Provides data for the <see cref="LoggingInstrumentationProvider.failureLoggingError"/> event.
-	/// </summary>
-	public class FailureLoggingErrorEventArgs : EventArgs
-	{
-		private string errorMessage;
-		private Exception exception;
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="FailureLoggingErrorEventArgs"/> class.
-		/// </summary>
-		/// <param name="errorMessage">The message that describes the failure.</param>
-		/// <param name="exception">The exception that caused the failure.</param>
-		public FailureLoggingErrorEventArgs(string errorMessage, Exception exception)
-		{
-			this.errorMessage = errorMessage;
-			this.exception = exception;
-		}
-
-		/// <summary>
-		/// Gets the message that describes the failure.
-		/// </summary>
-		public string ErrorMessage
-		{
-			get { return this.errorMessage; }
-		}
-
-		/// <summary>
-		/// Gets the exception that caused the failure.
-		/// </summary>
-		public Exception Exception
-		{
-			get { return exception; }
-		}
-	}
-
-	/// <summary>
-	/// Provides data for the <see cref="LoggingInstrumentationProvider.configurationFailure"/> event.
-	/// </summary>
-	public class LoggingConfigurationFailureEventArgs : EventArgs
-	{
-		private Exception exception;
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="LoggingConfigurationFailureEventArgs"/> class.
-		/// </summary>
-		/// <param name="exception">The exception that describes the configuration error.</param>
-		public LoggingConfigurationFailureEventArgs(Exception exception)
-		{
-			this.exception = exception;
-		}
-
-		/// <summary>
-		/// Gets the exception that describes the configuration error.
-		/// </summary>
-		public Exception Exception
-		{
-			get { return exception; }
-		}
-	}
-
-	/// <summary>
-	/// </summary>
-	public class LockAcquisitionErrorEventArgs : EventArgs
-	{
-		private string errorMessage;
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="LockAcquisitionErrorEventArgs"/> class.
-		/// </summary>
-		/// <param name="errorMessage">Error message to be included in the event.</param>
-		public LockAcquisitionErrorEventArgs(string errorMessage)
-		{
-			this.errorMessage = errorMessage;
-		}
-
-		/// <summary>
-		/// Error message displayed for this event.
-		/// </summary>
-		public string ErrorMessage
-		{
-			get
-			{
-				return errorMessage;
-			}
-		}
+        /// <summary>
+        /// Creates the performance counters to instrument the logging events to the instance names.
+        /// </summary>
+        /// <param name="instanceNames">The instance names for the performance counters.</param>
+        protected override void CreatePerformanceCounters(string[] instanceNames)
+        {
+            logEventRaised = factory.CreateCounter(counterCategoryName, "Logging Events Raised/sec", instanceNames);
+            traceListenerEntryWritten = factory.CreateCounter(counterCategoryName, "Trace Listener Entries Written/sec", instanceNames);
+            totalLoggingEventsRaised = factory.CreateCounter(counterCategoryName, TotalLoggingEventsRaised, instanceNames);
+            totalTraceListenerEntriesWritten = factory.CreateCounter(counterCategoryName, TotalTraceListenerEntriesWritten, instanceNames);
+        }
 	}
 }

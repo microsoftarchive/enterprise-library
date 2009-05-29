@@ -9,12 +9,9 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System.Collections.Generic;
-using System.Linq;
+using System;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Unity;
-using Microsoft.Practices.ObjectBuilder2;
 using Microsoft.Practices.Unity;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel.Unity;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration.Unity
 {
@@ -23,53 +20,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
     /// to create <see cref="IHashProvider"/> and <see cref="ISymmetricCryptoProvider"/> instances described in the standard
     /// configuration file.
     /// </summary>
+    /// <remarks>This function is now performed by the <see cref="EnterpriseLibraryCoreExtension"/>.
+    /// This extension is no longer necessary.</remarks>
+    [Obsolete]
     public class CryptographyBlockExtension : EnterpriseLibraryBlockExtension
     {
-        /// <summary>
-        /// Initialize this extension by adding the Enterprise Library Cryptography Block's policies.
-        /// </summary>
-        protected override void Initialize()
-        {
-            CryptographySettings settings
-                = (CryptographySettings)ConfigurationSource.GetSection(CryptographyConfigurationView.SectionName);
-            if (settings == null)
-            {
-                return;	// no policies to set up
-            }
-
-            var configurator = new UnityContainerConfigurator(Container);
-            var typeRegistrations = settings.CreateRegistrations();
-            configurator.RegisterAll(typeRegistrations);
-
-            CreateDefaultProviderPolicy<IHashProvider, HashProviderData>(
-                Context.Policies,
-                settings.DefaultHashProviderName,
-                settings.HashProviders);
-
-            CreateDefaultProviderPolicy<ISymmetricCryptoProvider, SymmetricProviderData>(
-                Context.Policies,
-                settings.DefaultSymmetricCryptoProviderName,
-                settings.SymmetricCryptoProviders);
-
-
-            CreateCryptographyManagerPolicies(
-                Context.Policies,
-                settings);
-
-            Container.RegisterType<CryptographyManager, CryptographyManagerImpl>();
-        }
-
-        private void CreateCryptographyManagerPolicies(IPolicyList policies, CryptographySettings settings)
-        {
-            new PolicyBuilder<CryptographyManagerImpl, CryptographySettings>(
-                NamedTypeBuildKey.Make<CryptographyManagerImpl>(),
-                settings,
-                c => new CryptographyManagerImpl(
-                    Resolve.ReferenceDictionary<Dictionary<string, IHashProvider>, IHashProvider, string>(
-                        from p in c.HashProviders select new KeyValuePair<string, string>(p.Name, p.Name)),
-                    Resolve.ReferenceDictionary<Dictionary<string, ISymmetricCryptoProvider>, ISymmetricCryptoProvider, string>(
-                        from p in c.SymmetricCryptoProviders select new KeyValuePair<string, string>(p.Name, p.Name))))
-                .AddPoliciesToPolicyList(policies);
-        }
     }
 }

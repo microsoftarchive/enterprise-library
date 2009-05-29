@@ -17,6 +17,7 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Data.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Data.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Data.Oracle;
 using Microsoft.Practices.EnterpriseLibrary.Data.Oracle.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Data.Sql;
@@ -29,19 +30,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration
     public class GivenNoConnectionStrings
     {
         private DatabaseSyntheticConfigSettings settings;
+        private DictionaryConfigurationSource configurationSource;
 
         [TestInitialize]
         public void Given()
         {
-            var configurationSource = new DictionaryConfigurationSource();
+            configurationSource = new DictionaryConfigurationSource();
             configurationSource.Add("connectionStrings", new ConnectionStringsSection());
-            settings = new DatabaseSyntheticConfigSettings(configurationSource);
+            settings = new DatabaseSyntheticConfigSettings();
         }
 
         [TestMethod]
-        public void WhenCreatingRegistrations_ThenCreatesNoRegistrations()
+        public void WhenCreatingRegistrations_ThenCreatesNoRegistrationsForDatabases()
         {
-            var typeRegistrations = settings.CreateRegistrations();
+            var typeRegistrations = settings.GetRegistrations(configurationSource).Where(r => r.ServiceType == typeof(Database));
 
             Assert.AreEqual(0, typeRegistrations.Count());
         }
@@ -50,12 +52,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration
     [TestClass]
     public class GivenConnectionStringForSqlServer
     {
+        private DictionaryConfigurationSource configurationSource;
         private DatabaseSyntheticConfigSettings settings;
 
         [TestInitialize]
         public void Given()
         {
-            var configurationSource = new DictionaryConfigurationSource();
+            configurationSource = new DictionaryConfigurationSource();
             var connectionStringsSection = new ConnectionStringsSection();
             connectionStringsSection.ConnectionStrings.Add(
                 new ConnectionStringSettings
@@ -66,22 +69,25 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration
                     });
             configurationSource.Add("connectionStrings", connectionStringsSection);
 
-            settings = new DatabaseSyntheticConfigSettings(configurationSource);
+            settings = new DatabaseSyntheticConfigSettings();
         }
 
         [TestMethod]
-        public void WhenCreatingRegistrations_ThenCreatesSingleTypeRegistrationForTheSuppliedName()
+        public void WhenCreatingRegistrations_ThenCreatesSingleTypeRegistrationForTheSuppliedNamedDatabase()
         {
-            var typeRegistrations = settings.CreateRegistrations();
+            var typeRegistrations = settings.GetRegistrations(configurationSource)
+                .Where(r => r.ServiceType == typeof (Database)
+                            && r.ImplementationType == typeof (SqlDatabase)
+                            && r.Name == "sql connection");
 
             Assert.AreEqual(1, typeRegistrations.Count());
-            Assert.AreEqual("sql connection", typeRegistrations.ElementAt(0).Name);
         }
 
         [TestMethod]
         public void WhenCreatingRegistrations_ThenCreatedTypeRegistrationDescribingTheProvider()
         {
-            var typeRegistrations = settings.CreateRegistrations();
+            var typeRegistrations = settings.GetRegistrations(configurationSource)
+                .Where(r => r.ServiceType == typeof (Database));
 
             TypeRegistration registration = typeRegistrations.ElementAt(0);
 
@@ -92,6 +98,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration
 
             registration.AssertConstructor()
                 .WithValueConstructorParameter("connection string")
+                .WithContainerResolvedParameter<IDataInstrumentationProvider>("sql connection")
                 .VerifyConstructorParameters();
         }
     }
@@ -99,12 +106,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration
     [TestClass]
     public class GivenConnectionForOdbcDatabase
     {
+        private DictionaryConfigurationSource configurationSource;
         private DatabaseSyntheticConfigSettings settings;
 
         [TestInitialize]
         public void Given()
         {
-            var configurationSource = new DictionaryConfigurationSource();
+            configurationSource = new DictionaryConfigurationSource();
             var connectionStringsSection = new ConnectionStringsSection();
             connectionStringsSection.ConnectionStrings.Add(
                 new ConnectionStringSettings
@@ -115,19 +123,23 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration
                     });
             configurationSource.Add("connectionStrings", connectionStringsSection);
 
-            settings = new DatabaseSyntheticConfigSettings(configurationSource);
+            settings = new DatabaseSyntheticConfigSettings();
         }
 
         [TestMethod]
         public void WhenCreatingRegistrations_ThenShouldReturnASingleRegistration()
         {
-            Assert.AreEqual(1, settings.CreateRegistrations().Count());
+            Assert.AreEqual(1, 
+                settings.GetRegistrations(configurationSource)
+                    .Where(r => r.ServiceType == typeof(Database) && r.ImplementationType == typeof(GenericDatabase))
+                    .Count());
         }
 
         [TestMethod]
         public void WhenCreatingRegistrations_ThenShouldProvideOdbcRegistration()
         {
-            var typeRegistrations = settings.CreateRegistrations();
+            var typeRegistrations = settings.GetRegistrations(configurationSource)
+                .Where(r => r.ServiceType == typeof (Database));
 
             TypeRegistration registration = typeRegistrations.ElementAt(0);
 
@@ -139,6 +151,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration
             registration.AssertConstructor()
                 .WithValueConstructorParameter("connection string")
                 .WithValueConstructorParameter<DbProviderFactory>(System.Data.Odbc.OdbcFactory.Instance)
+                .WithContainerResolvedParameter<IDataInstrumentationProvider>("odbc connection")
                 .VerifyConstructorParameters();
         }
     }
@@ -148,11 +161,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration
     {
         private DatabaseSyntheticConfigSettings settings;
         private ConnectionStringsSection connectionStringsSection;
-
+        private DictionaryConfigurationSource configurationSource;
         [TestInitialize]
         public void Context()
         {
-            var configurationSource = new DictionaryConfigurationSource();
+            configurationSource = new DictionaryConfigurationSource();
             connectionStringsSection = new ConnectionStringsSection();
             connectionStringsSection.ConnectionStrings.Add(
                 new ConnectionStringSettings
@@ -176,13 +189,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration
                         ProviderName = "System.Data.OracleClient"
                     });
             configurationSource.Add("connectionStrings", connectionStringsSection);
-            settings = new DatabaseSyntheticConfigSettings(configurationSource);
+            settings = new DatabaseSyntheticConfigSettings();
         }
 
         [TestMethod]
-        public void WhenRegistrationsRequested_ThenReturnsThreeRegistration()
+        public void WhenRegistrationsRequested_ThenReturnsThreeRegistrationsForDatabases()
         {
-            Assert.AreEqual(3, settings.CreateRegistrations().Count());
+            Assert.AreEqual(3, settings.GetRegistrations(configurationSource).Where(r=> r.ServiceType == typeof(Database)).Count());
         }
 
         [TestMethod]
@@ -190,7 +203,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration
         {
             CollectionAssert.AreEqual(
                 new List<string>(connectionStringsSection.ConnectionStrings.Cast<ConnectionStringSettings>().Select(s => s.Name)),
-                new List<string>(settings.CreateRegistrations().Select(r => r.Name))
+                new List<string>(settings.GetRegistrations(configurationSource)
+                    .Where(r => r.ServiceType == typeof(Database)).Select(r => r.Name))
                 );
         }
     }
@@ -198,13 +212,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration
     [TestClass]
     public class GivenConfigurationForAnOracleDatabase
     {
+        private DictionaryConfigurationSource configurationSource;
         private DatabaseSyntheticConfigSettings settings;
 
         [TestInitialize]
         public void Given()
         {
             // Setup connection strings
-            var configurationSource = new DictionaryConfigurationSource();
+            configurationSource = new DictionaryConfigurationSource();
             var connectionStringsSection = new ConnectionStringsSection();
             connectionStringsSection.ConnectionStrings.Add(
                 new ConnectionStringSettings
@@ -226,19 +241,23 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration
             configurationSource.Add(OracleConnectionSettings.SectionName, oracleSettings);
 
 
-            settings = new DatabaseSyntheticConfigSettings(configurationSource);
+            settings = new DatabaseSyntheticConfigSettings();
         }
 
         [TestMethod]
-        public void WhenRegistrationsRequested_ThenResultsInASingleRegistration()
+        public void WhenRegistrationsRequested_ThenResultsInASingleRegistrationForOracleDatabase()
         {
-            Assert.AreEqual(1, settings.CreateRegistrations().Count());
+            var registrations = settings.GetRegistrations(configurationSource)
+                .Where(r => r.ServiceType == typeof (Database) && r.ImplementationType == typeof(OracleDatabase));
+
+            Assert.AreEqual(1, registrations.Count());
         }
 
         [TestMethod]
         public void WhenRegistrationsRequested_ThenProvidesRegistrationForOracleDatabase()
         {
-            var registration = settings.CreateRegistrations().ElementAt(0);
+            var registration = settings.GetRegistrations(configurationSource).
+                Where(r => r.ServiceType == typeof(Database)).ElementAt(0);
 
             registration.AssertForServiceType(typeof(Database))
                 .ForName("myConnectionName")
@@ -249,6 +268,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration
             registration.AssertConstructor()
                 .WithValueConstructorParameter("myConnectionString")
                 .WithValueConstructorParameter(out packages)
+                .WithContainerResolvedParameter<IDataInstrumentationProvider>("myConnectionName")
                 .VerifyConstructorParameters();
 
             Assert.AreEqual(1, packages.Count());
@@ -275,7 +295,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration
                                                    new DictionaryConfigurationSource()
                 );
 
-            registration = databaseData.GetContainerConfigurationModel();
+            registration = databaseData.GetRegistrations().First();
         }
 
         [TestMethod]
@@ -292,6 +312,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration
         {
             registration.AssertConstructor()
                 .WithValueConstructorParameter("myConnectionString")
+                .WithContainerResolvedParameter<IDataInstrumentationProvider>("myConnectionName")
                 .VerifyConstructorParameters();
         }
     }
@@ -313,7 +334,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration
                                                        new DictionaryConfigurationSource()
                 );
 
-            registration = databaseData.GetContainerConfigurationModel();
+            registration = databaseData.GetRegistrations().First();
         }
 
         [TestMethod]
@@ -331,6 +352,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration
             registration.AssertConstructor()
                 .WithValueConstructorParameter("myConnectionString")
                 .WithValueConstructorParameter<DbProviderFactory>(System.Data.Odbc.OdbcFactory.Instance)
+                .WithContainerResolvedParameter<IDataInstrumentationProvider>("myConnectionName")
                 .VerifyConstructorParameters();
         }
     }
@@ -360,7 +382,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration
                     },
                 configurationSource);
 
-            registration = databaseData.GetContainerConfigurationModel();
+            registration = databaseData.GetRegistrations().First();
         }
 
         [TestMethod]
@@ -380,11 +402,112 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration
             registration.AssertConstructor()
                 .WithValueConstructorParameter("myConnectionString")
                 .WithValueConstructorParameter(out packages)
+                .WithContainerResolvedParameter<IDataInstrumentationProvider>("myConnectionName")
                 .VerifyConstructorParameters();
 
             Assert.AreEqual(1, packages.Count());
             Assert.AreEqual("foo", packages.ElementAt(0).Name);
             Assert.AreEqual("bar", packages.ElementAt(0).Prefix);
+        }
+    }
+
+    [TestClass]
+    public class GivenSyntheticConfigSettingsWithConnectionStringAndNoDatabaseSettings
+    {
+        private DictionaryConfigurationSource configurationSource;
+        private DatabaseSyntheticConfigSettings settings;
+
+        [TestInitialize]
+        public void Given()
+        {
+            configurationSource = new DictionaryConfigurationSource();
+            var connectionStringsSection = new ConnectionStringsSection();
+            connectionStringsSection.ConnectionStrings.Add(
+                new ConnectionStringSettings
+                {
+                    Name = "sql connection",
+                    ConnectionString = "connection string",
+                    ProviderName = "System.Data.SqlClient"
+                });
+            configurationSource.Add("connectionStrings", connectionStringsSection);
+            settings = new DatabaseSyntheticConfigSettings();
+        }
+
+        [TestMethod]
+        public void WhenCreatingRegistrations_CreatesNonDefaultEntryForTheConnectionString()
+        {
+            var typeRegistration = settings.GetRegistrations(configurationSource)
+                .First(db => db.Name == "sql connection");
+
+            Assert.IsFalse(typeRegistration.IsDefault);
+        }
+    }
+
+    [TestClass]
+    public class GivenSyntheticConfigSettingsWithConnectionStringAndDatabaseSettingsWithNoDefaultSet
+    {
+        private DictionaryConfigurationSource configurationSource;
+        private DatabaseSyntheticConfigSettings settings;
+
+        [TestInitialize]
+        public void Given()
+        {
+            configurationSource = new DictionaryConfigurationSource();
+            var connectionStringsSection = new ConnectionStringsSection();
+            connectionStringsSection.ConnectionStrings.Add(
+                new ConnectionStringSettings
+                {
+                    Name = "sql connection",
+                    ConnectionString = "connection string",
+                    ProviderName = "System.Data.SqlClient"
+                });
+            configurationSource.Add("connectionStrings", connectionStringsSection);
+            configurationSource.Add(DatabaseSettings.SectionName, new DatabaseSettings());
+            settings = new DatabaseSyntheticConfigSettings();
+        }
+
+        [TestMethod]
+        public void WhenCreatingRegistrations_CreatesNonDefaultEntryForTheConnectionString()
+        {
+            var typeRegistration = settings.GetRegistrations(configurationSource)
+                .First(db => db.Name == "sql connection");
+
+            Assert.IsFalse(typeRegistration.IsDefault);
+        }
+    }
+
+    [TestClass]
+    public class GivenSyntheticConfigSettingsWithConnectionStringAndDatabaseSettingsWithDefaultSet
+    {
+        private DictionaryConfigurationSource configurationSource;
+        private DatabaseSyntheticConfigSettings settings;
+
+        [TestInitialize]
+        public void Given()
+        {
+            configurationSource = new DictionaryConfigurationSource();
+            var connectionStringsSection = new ConnectionStringsSection();
+            connectionStringsSection.ConnectionStrings.Add(
+                new ConnectionStringSettings
+                {
+                    Name = "sql connection",
+                    ConnectionString = "connection string",
+                    ProviderName = "System.Data.SqlClient"
+                });
+            configurationSource.Add("connectionStrings", connectionStringsSection);
+            configurationSource.Add(
+                DatabaseSettings.SectionName,
+                new DatabaseSettings { DefaultDatabase = "sql connection" });
+            settings = new DatabaseSyntheticConfigSettings();
+        }
+
+        [TestMethod]
+        public void WhenCreatingRegistrations_CreatesNonDefaultEntryForTheConnectionString()
+        {
+            var typeRegistration = settings.GetRegistrations(configurationSource)
+                .First(db => db.Name == "sql connection");
+
+            Assert.IsTrue(typeRegistration.IsDefault);
         }
     }
 }

@@ -9,11 +9,10 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel.Unity;
+using Microsoft.Practices.ServiceLocation;
+using Microsoft.Practices.Unity;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 {
@@ -22,6 +21,30 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
     /// </summary>
     public class EnterpriseLibraryContainer
     {
+        private static volatile IServiceLocator currentContainer;
+        private static readonly object currentContainerLock = new object();
+
+        /// <summary>
+        /// Get the current container used to resolve Entlib objects (for use by the
+        /// various static factories).
+        /// </summary>
+        public static IServiceLocator Current
+        {
+            get
+            {
+                SetCurrentContainerIfNotSet();
+                return currentContainer;
+            }
+
+            set
+            {
+                lock(currentContainerLock)
+                {
+                    currentContainer = value;
+                }
+            }
+        }
+
         /// <summary>
         /// Read the current Enterprise Library configuration in the given <paramref name="configSource"/>
         /// and supply the corresponding type information to the <paramref name="configurator"/>.
@@ -31,28 +54,63 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         /// <param name="configSource">Configuration information.</param>
         public static void ConfigureContainer(IContainerConfigurator configurator, IConfigurationSource configSource)
         {
-            ConfigureContainer(new TypeRegistrationsProviderLocator(), configurator, configSource);
+            ConfigureContainer(TypeRegistrationsProvider.CreateDefaultProvider(configSource), configurator, configSource);
         }
 
         /// <summary>
         /// Read the current Enterprise Library configuration in the given <paramref name="configSource"/>
         /// and supply the corresponding type information to the <paramref name="configurator"/>.
         /// </summary>
-        /// <param name="locator"><see cref="TypeRegistrationsProviderLocator"/> used to identify what information
+        /// <param name="locator"><see cref="TypeRegistrationsProvider"/> used to identify what information
         /// to pull from the config file.</param>
         /// <param name="configurator"><see cref="IContainerConfigurator"/> object used to consume the configuration
         /// information.</param>
         /// <param name="configSource">Configuration information.</param>
-        public static void ConfigureContainer(TypeRegistrationsProviderLocator locator, 
-            IContainerConfigurator configurator, 
+        public static void ConfigureContainer(ITypeRegistrationsProvider locator,
+            IContainerConfigurator configurator,
             IConfigurationSource configSource)
         {
-            var registrations = from provider in locator.GetProviders(configSource)
-                                from registration in provider.CreateRegistrations()
-                                select registration;
+            configurator.RegisterAll(configSource, locator);
 
-            configurator.RegisterAll(registrations);
-            
+        }
+
+        private static void SetCurrentContainerIfNotSet()
+        {
+            if (currentContainer == null)
+            {
+                lock (currentContainerLock)
+                {
+                    if (currentContainer == null)
+                    {
+                        currentContainer = CreateDefaultContainer();
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Create a new instance of <see cref="IServiceLocator"/> that has been configured
+        /// with the information in the default <see cref="IConfigurationSource"/>
+        /// </summary>
+        /// <returns>The <see cref="IServiceLocator"/> object.</returns>
+        public static IServiceLocator CreateDefaultContainer()
+        {
+            return CreateDefaultContainer(ConfigurationSourceFactory.Create());
+        }
+
+        /// <summary>
+        /// Create a new instance of <see cref="IServiceLocator"/> that has been configured
+        /// with the information in the given <paramref name="configurationSource"/>.
+        /// </summary>
+        /// <param name="configurationSource"><see cref="IConfigurationSource"/> containing Enterprise Library
+        /// configuration information.</param>
+        /// <returns>The <see cref="IServiceLocator"/> object.</returns>
+        public static IServiceLocator CreateDefaultContainer(IConfigurationSource configurationSource)
+        {
+            IUnityContainer container = new UnityContainer();
+            var configurator = new UnityContainerConfigurator(container);
+            ConfigureContainer(configurator, configurationSource);
+            return new UnityServiceLocator(container);
         }
     }
 }

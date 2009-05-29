@@ -9,8 +9,10 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using System;
 using System.Collections.Generic;
 using System.Management;
+using System.Reflection;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability;
 using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;

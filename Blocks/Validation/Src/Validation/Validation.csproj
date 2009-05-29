@@ -41,9 +41,9 @@
     <CodeAnalysisRules>-Microsoft.Security#CA2116;-Microsoft.Security#CA2117;-Microsoft.Design#CA2210;-Microsoft.Design#CA1021;-Microsoft.Performance#CA1823;-Microsoft.Design#CA1011;-Microsoft.Design#CA1019;-Microsoft.Design#CA1031;-Microsoft.Design#CA1002;-Microsoft.Performance#CA1805;-Microsoft.Naming#CA1709;-Microsoft.Naming#CA1710;-Microsoft.Usage#CA2208;-Microsoft.Design#CA1033;-Microsoft.Design#CA1017;-Microsoft.Performance#CA1824;-Microsoft.Performance#CA1822;-Microsoft.Naming#CA1717;-Microsoft.Naming#CA1721;-Microsoft.Usage#CA1801;-Microsoft.Performance#CA1820;-Microsoft.Naming#CA1724;-Microsoft.Design#CA1024</CodeAnalysisRules>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Practices.ObjectBuilder2, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31BF3856AD364E35, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Lib\Microsoft.Practices.ObjectBuilder2.dll</HintPath>
+      <HintPath>..\..\..\..\Lib\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
@@ -59,7 +59,10 @@
     <Compile Include="..\..\..\GlobalAssemblyInfo.cs">
       <Link>GlobalAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="AttributeValidatorFactory.cs" />
+    <Compile Include="ConfigurationValidatorFactory.cs" />
     <Compile Include="Configuration\PropertyComparisonValidatorData.cs" />
+    <Compile Include="Configuration\ValidationTypeRegistrationProvider.cs" />
     <Compile Include="Instrumentation\ValidationCalledEvent.cs" />
     <Compile Include="Instrumentation\ValidationInstrumentationInstaller.cs">
       <SubType>Component</SubType>
@@ -72,15 +75,16 @@
     <Compile Include="Instrumentation\ValidationConfigurationFailureEvent.cs" />
     <Compile Include="Instrumentation\ValidationEvent.cs" />
     <Compile Include="Instrumentation\ValidationFailedEvent.cs" />
-    <Compile Include="Instrumentation\ValidationInstrumentationListener.cs" />
-    <Compile Include="Instrumentation\ValidationInstrumentationListenerCustomFactory.cs" />
     <Compile Include="Instrumentation\ValidationInstrumentationProvider.cs" />
-    <Compile Include="Instrumentation\ValidationPerformanceCounter.cs" />
+    <Compile Include="Instrumentation\IValidationInstrumentationProvider.cs" />
     <Compile Include="MemberValueAccessBuilder.cs" />
     <Compile Include="MetadataValidatedParameterElement.cs" />
     <Compile Include="ParameterValidatorFactory.cs" />
     <Compile Include="ReflectionMemberValueAccessBuilder.cs" />
+    <Compile Include="CompositeValidatorFactory.cs" />
     <Compile Include="ValidationReflectionHelper.cs" />
+    <Compile Include="ValidatorCacheKey.cs" />
+    <Compile Include="ValidatorFactory.cs" />
     <Compile Include="Validators\BaseValidationAttribute.cs" />
     <Compile Include="Validators\ComparisonOperator.cs" />
     <Compile Include="CompositeValidatorBuilder.cs" />
@@ -154,7 +158,6 @@
     <Compile Include="Validators\TypeConversionValidator.cs" />
     <Compile Include="Validators\TypeConversionValidatorAttribute.cs" />
     <Compile Include="Validators\ValidatorArgumentsValidatorHelper.cs" />
-    <Compile Include="Validators\ValidatorWrapper.cs" />
     <Compile Include="Validators\ValueAccessComparisonValidator.cs" />
     <Compile Include="Validators\ValueValidator.cs" />
     <Compile Include="Validators\EnumConversionValidator.cs" />

@@ -20,16 +20,12 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 using System;
-using Microsoft.Practices.EnterpriseLibrary.Caching.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching
 {
 	/// <summary>
 	/// This interface defines the contract that must be implemented by all cache managers. 
 	/// </summary>
-	[ConfigurationNameMapper(typeof(CacheManagerDataRetriever))]
-	[CustomFactory(typeof(CacheManagerCustomFactory))]
 	public interface ICacheManager
 	{
 		/// <summary>

@@ -13,7 +13,6 @@ using System;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Unity;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.Unity;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.Configuration;
 using Microsoft.Practices.Unity;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -23,26 +22,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.Tests
 	[TestClass]
 	public class FaultContractExceptionHandlerPolicyCreatorFixture
 	{
-		private IUnityContainer container;
 		private ExceptionHandlingSettings settings;
 		private DictionaryConfigurationSource configurationSource;
 
 		[TestInitialize]
 		public void SetUp()
 		{
-			container = new UnityContainer();
-
 			settings = new ExceptionHandlingSettings();
 			configurationSource = new DictionaryConfigurationSource();
 			configurationSource.Add(ExceptionHandlingSettings.SectionName, settings);
-
-			container.AddExtension(new EnterpriseLibraryCoreExtension(configurationSource));
-		}
-
-		[TestCleanup]
-		public void TearDown()
-		{
-			container.Dispose();
 		}
 
 		// test logic copied from FaultContractExceptionHandlerFixture.CanInjectAttributesIntoFaultContract()
@@ -63,25 +51,27 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.Tests
 			exceptionHandlerData.PropertyMappings.Add(new FaultContractExceptionHandlerMappingData("SomeNumber", "{OffendingNumber}"));
 			exceptionTypeData.ExceptionHandlers.Add(exceptionHandlerData);
 
-			container.AddExtension(new ExceptionHandlingBlockExtension());
+		    using(var container = new UnityContainer()
+		        .AddExtension(new EnterpriseLibraryCoreExtension(configurationSource)))
+		    {
+		        ExceptionPolicyImpl policy = container.Resolve<ExceptionPolicyImpl>("policy");
 
-			ExceptionPolicyImpl policy = container.Resolve<ExceptionPolicyImpl>("policy");
-
-			NotFiniteNumberException originalException = new NotFiniteNumberException("MyException", 12341234123412);
-			originalException.Data.Add("someKey", "someValue");
-			try
-			{
-				policy.HandleException(originalException);
-				Assert.Fail("a new exception should have been thrown");
-			}
-			catch (FaultContractWrapperException e)
-			{
-				MockFaultContract fault = (MockFaultContract)e.FaultContract;
-				Assert.AreEqual(originalException.Message, fault.Message);
-				Assert.AreEqual(originalException.Data.Count, fault.Data.Count);
-				Assert.AreEqual(originalException.Data["someKey"], fault.Data["someKey"]);
-				Assert.AreEqual(originalException.OffendingNumber, fault.SomeNumber);
-			}
+		        NotFiniteNumberException originalException = new NotFiniteNumberException("MyException", 12341234123412);
+		        originalException.Data.Add("someKey", "someValue");
+		        try
+		        {
+		            policy.HandleException(originalException);
+		            Assert.Fail("a new exception should have been thrown");
+		        }
+		        catch (FaultContractWrapperException e)
+		        {
+		            MockFaultContract fault = (MockFaultContract)e.FaultContract;
+		            Assert.AreEqual(originalException.Message, fault.Message);
+		            Assert.AreEqual(originalException.Data.Count, fault.Data.Count);
+		            Assert.AreEqual(originalException.Data["someKey"], fault.Data["someKey"]);
+		            Assert.AreEqual(originalException.OffendingNumber, fault.SomeNumber);
+		        }
+		    }
 		}
 	}
 }

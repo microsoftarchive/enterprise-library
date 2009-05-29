@@ -13,6 +13,7 @@ using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Security.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Practices.ServiceLocation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Tests
 {
@@ -54,7 +55,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Tests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ConfigurationErrorsException))]
+        [ExpectedException(typeof(ActivationException))]
         public void AuthorizationProviderNotFoundTest()
         {
             AuthorizationProviderFactory factory = new AuthorizationProviderFactory(GetConfigurationSource());
@@ -62,7 +63,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Tests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ConfigurationErrorsException))]
+        [ExpectedException(typeof(ActivationException))]
         public void MissingSecuritySectionTest()
         {
             AuthorizationProviderFactory factory = new AuthorizationProviderFactory(new DictionaryConfigurationSource());
@@ -70,7 +71,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Tests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ConfigurationErrorsException))]
+        [ExpectedException(typeof(ActivationException))]
         public void MissingDefaultProviderTest()
         {
             DictionaryConfigurationSource source = new DictionaryConfigurationSource();

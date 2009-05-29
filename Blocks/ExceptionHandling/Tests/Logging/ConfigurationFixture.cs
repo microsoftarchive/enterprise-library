@@ -40,7 +40,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Tests
 
             Assert.AreEqual("test", data.Name);
             Assert.AreEqual("cat1", data.LogCategory);
-            Assert.AreEqual(false, data.UseDefaultLogger);
             Assert.AreEqual(1, data.EventId);
             Assert.AreEqual(TraceEventType.Error, data.Severity);
             Assert.AreEqual("title", data.Title);

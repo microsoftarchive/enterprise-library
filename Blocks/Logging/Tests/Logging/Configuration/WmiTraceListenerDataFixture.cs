@@ -37,13 +37,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         [TestMethod]
         public void ThenCreatesSingleTypeRegistration()
         {
-            Assert.AreEqual(1, listenerData.GetContainerConfigurationModel().Count());
+            Assert.AreEqual(1, listenerData.GetRegistrations().Count());
         }
 
         [TestMethod]
         public void WhenCreatesRegistration_ThenCreatedRegistrationMapsTraceListenerToWmiTraceListenerForTheSuppliedName()
         {
-            listenerData.GetContainerConfigurationModel().ElementAt(0)
+            listenerData.GetRegistrations().ElementAt(0)
                 .AssertForServiceType(typeof(TraceListener))
                 .ForName("listener")
                 .ForImplementationType(typeof(WmiTraceListener));
@@ -52,7 +52,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         [TestMethod]
         public void WhenCreatesRegistration_ThenCreatedRegistrationHasNoConstructorParameters()
         {
-            listenerData.GetContainerConfigurationModel().ElementAt(0)
+            listenerData.GetRegistrations().ElementAt(0)
                 .AssertConstructor()
                 .VerifyConstructorParameters();
         }
@@ -60,7 +60,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         [TestMethod]
         public void WhenCreatesRegistration_ThenCreatedRegistrationInjectsNameAndTraceOutputOptionsProperties()
         {
-            listenerData.GetContainerConfigurationModel().ElementAt(0)
+            listenerData.GetRegistrations().ElementAt(0)
                 .AssertProperties()
                 .WithValueProperty("Name", "listener")
                 .WithValueProperty("TraceOutputOptions", TraceOptions.None)
@@ -83,7 +83,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         [TestMethod]
         public void ThenRegistrationIncludesInitializationsForTraceOutputOptions()
         {
-            TypeRegistration registration = listenerData.GetContainerConfigurationModel().ElementAt(0);
+            TypeRegistration registration = listenerData.GetRegistrations().ElementAt(0);
 
             registration
                 .AssertProperties()
@@ -107,13 +107,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         [TestMethod]
         public void ThenCreatesSingleTypeRegistration()
         {
-            Assert.AreEqual(1, listenerData.GetContainerConfigurationModel().Count());
+            Assert.AreEqual(1, listenerData.GetRegistrations().Count());
         }
 
         [TestMethod]
         public void WhenCreatesRegistration_ThenCreatedRegistrationMapsTraceListenerToWmiTraceListenerForTheSuppliedName()
         {
-            listenerData.GetContainerConfigurationModel().ElementAt(0)
+            listenerData.GetRegistrations().ElementAt(0)
                 .AssertForServiceType(typeof(TraceListener))
                 .ForName("listener")
                 .ForImplementationType(typeof(WmiTraceListener));
@@ -122,7 +122,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         [TestMethod]
         public void WhenCreatesRegistration_ThenCreatedRegistrationHasNoConstructorParameters()
         {
-            listenerData.GetContainerConfigurationModel().ElementAt(0)
+            listenerData.GetRegistrations().ElementAt(0)
                 .AssertConstructor()
                 .VerifyConstructorParameters();
         }
@@ -132,7 +132,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         {
             TraceFilter filter;
 
-            listenerData.GetContainerConfigurationModel().ElementAt(0)
+            listenerData.GetRegistrations().ElementAt(0)
                 .AssertProperties()
                 .WithValueProperty("Name", "listener")
                 .WithValueProperty("TraceOutputOptions", TraceOptions.None)

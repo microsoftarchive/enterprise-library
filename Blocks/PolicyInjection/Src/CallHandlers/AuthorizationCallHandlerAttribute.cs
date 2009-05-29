@@ -10,7 +10,7 @@
 //===============================================================================
 
 using System;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Security;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
 
@@ -65,11 +65,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
         /// configuration.
         /// </summary>
         /// <returns>A new call handler object.</returns>
-        public override ICallHandler CreateHandler(IUnityContainer ignored)
+        public override ICallHandler CreateHandler(IUnityContainer container)
         {
-            return new AuthorizationCallHandler(providerName,
-                operationName,
-                ConfigurationSourceFactory.Create(), Order);
+            return new AuthorizationCallHandler(
+                container.Resolve<IAuthorizationProvider>(this.ProviderName),
+                this.OperationName,
+                this.Order);
         }
     }
 }

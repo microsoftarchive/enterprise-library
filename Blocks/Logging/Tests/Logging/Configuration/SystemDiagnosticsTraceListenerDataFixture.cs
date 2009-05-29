@@ -40,7 +40,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         [TestMethod]
         public void ThenRegistryEntryReturnsNamedServiceEntry()
         {
-            TypeRegistration registry = listenerData.GetContainerConfigurationModel().ElementAt(0);
+            TypeRegistration registry = listenerData.GetRegistrations().ElementAt(0);
 
             registry.AssertForServiceType(typeof(TraceListener))
                 .ForName("systemDiagnosticsTraceListener")
@@ -50,7 +50,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         [TestMethod]
         public void ThenRegistryEntryReturnsEmptyConstructor()
         {
-            TypeRegistration registry = listenerData.GetContainerConfigurationModel().ElementAt(0);
+            TypeRegistration registry = listenerData.GetRegistrations().ElementAt(0);
 
             registry.AssertConstructor()
                 .VerifyConstructorParameters();
@@ -75,7 +75,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         [TestMethod]
         public void ThenRegistrationIsForCorrectServiceAndType()
         {
-            TypeRegistration registry = listenerData.GetContainerConfigurationModel().ElementAt(0);
+            TypeRegistration registry = listenerData.GetRegistrations().ElementAt(0);
 
             registry.AssertForServiceType(typeof(TraceListener))
                 .ForName("systemDiagnosticsTraceListener")
@@ -85,7 +85,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         [TestMethod]
         public void ThenRegistrationTargetsConstructorWithInitialData()
         {
-            TypeRegistration registry = listenerData.GetContainerConfigurationModel().ElementAt(0);
+            TypeRegistration registry = listenerData.GetRegistrations().ElementAt(0);
 
             registry.AssertConstructor()
                 .WithValueConstructorParameter<string>("someInitData")
@@ -95,7 +95,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         [TestMethod]
         public void ThenRegistryEntryIncludesPropertyForTraceOptions()
         {
-            TypeRegistration registry = listenerData.GetContainerConfigurationModel().ElementAt(0);
+            TypeRegistration registry = listenerData.GetRegistrations().ElementAt(0);
 
             registry.AssertProperties()
                 .WithValueProperty("TraceOutputOptions", TraceOptions.None)
@@ -120,7 +120,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
                 );
 
             listenerData.Filter = SourceLevels.Critical;
-            registryEntry = listenerData.GetContainerConfigurationModel().ElementAt(0);
+            registryEntry = listenerData.GetRegistrations().ElementAt(0);
         }
 
         [TestMethod]
@@ -158,13 +158,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         [TestMethod]
         public void ThenTwoRegistryEntriesAreProvided()
         {
-            Assert.AreEqual(2, listenerData.GetContainerConfigurationModel().Count());
+            Assert.AreEqual(2, listenerData.GetRegistrations().Count());
         }
 
         [TestMethod]
         public void ThenWrappedRegistrationIsRootName()
         {
-            var registration = listenerData.GetContainerConfigurationModel().First(r => r.Name == listenerData.Name);
+            var registration = listenerData.GetRegistrations().First(r => r.Name == listenerData.Name);
             registration.AssertForServiceType(typeof(TraceListener))
                 .ForName(listenerData.Name)
                 .ForImplementationType(typeof(AttributeSettingTraceListenerWrapper));
@@ -173,7 +173,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         [TestMethod]
         public void ThenWrappedRegistrationResolvesInnerRegistrationBySynthesizedName()
         {
-            var registrations = listenerData.GetContainerConfigurationModel();
+            var registrations = listenerData.GetRegistrations();
             var wrappingRegistration = registrations.First(r => r.Name == listenerData.Name);
             var resolvedParameter = (ContainerResolvedParameter)wrappingRegistration.ConstructorParameters.ElementAt(0);
 
@@ -187,7 +187,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         [TestMethod]
         public void ThenWrappedRegistrationProvidesAttributesToConstructors()
         {
-            var registration = listenerData.GetContainerConfigurationModel().First(r => r.Name == listenerData.Name);
+            var registration = listenerData.GetRegistrations().First(r => r.Name == listenerData.Name);
 
             var parameterValue = (ConstantParameterValue)registration.ConstructorParameters.ElementAt(1);
             CollectionAssert.AreEquivalent(listenerData.Attributes, ((NameValueCollection)parameterValue.Value));

@@ -12,6 +12,8 @@
 using System;
 using System.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.ServiceLocation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Tests
 {
@@ -38,10 +40,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Tests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ConfigurationErrorsException))]
+        [ExpectedException(typeof(ActivationException))]
         public void TryToCreateSecurityCacheProviderFromConfigurationThatDoesNotExist()
         {
-            ISecurityCacheProvider provider = SecurityCacheFactory.GetSecurityCacheProvider("provider3");
+            ISecurityCacheProvider provider =  SecurityCacheFactory.GetSecurityCacheProvider("provider3");
         }
     }
 }

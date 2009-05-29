@@ -90,6 +90,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
         }
 
         /// <summary>
+        /// Event raised when any section in this configuration source has changed.
+        /// </summary>
+#pragma warning disable 67        
+        public event EventHandler<ConfigurationSourceChangedEventArgs> SourceChanged;
+#pragma warning restore 67
+
+        /// <summary>
         /// Adds a handler to be called when changes to section <code>sectionName</code> are detected.
         /// This call should always be followed by a <see cref="RemoveSectionChangeHandler"/>. Failure to remove change
         /// handlers will result in .Net resource leaks.

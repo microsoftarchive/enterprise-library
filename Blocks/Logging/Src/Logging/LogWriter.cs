@@ -13,17 +13,18 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Configuration;
 using System.Diagnostics;
 using System.Security;
 using System.Security.Principal;
 using System.Threading;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
-using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Filters;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Properties;
+using Microsoft.Practices.ServiceLocation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging
 {
@@ -49,8 +50,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
     /// is set to true, then the logEntry is logged to the "logging errors and warnings" special log source.
     /// </para>
     /// </remarks>
-    [CustomFactory(typeof(LogWriterCustomFactory))]
-    public class LogWriter : ILogFilterErrorHandler, IInstrumentationEventProvider, IDisposable
+    public class LogWriter : ILogFilterErrorHandler, IDisposable
     {
         const int defaultTimeout = 2500;
 
@@ -63,10 +63,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         static int writerLockAcquireTimeout = defaultTimeout;
 
         LogFilterHelper filter;
-        readonly LoggingInstrumentationProvider instrumentationProvider;
+        readonly ILoggingInstrumentationProvider instrumentationProvider;
         LogWriterStructureHolder structureHolder;
         readonly ReaderWriterLock structureHolderLock = new ReaderWriterLock();
-        readonly ILogWriterStructureUpdater structureUpdater;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LogWriter"/> class.
@@ -81,6 +80,23 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
                          string defaultCategory)
             : this(filters, traceSources, null, null, errorsTraceSource, defaultCategory, false, false)
         { }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LogWriter"/> class.
+        /// </summary>
+        /// <param name="filters">The collection of filters to use when processing an entry.</param>
+        /// <param name="traceSources">The trace sources to dispatch entries to.</param>
+        /// <param name="errorsTraceSource">The special <see cref="LogSource"/> to which internal errors must be logged.</param>
+        /// <param name="defaultCategory">The default category to set when entry categories list is empty.</param>
+        /// <param name="instrumentationProvider">The instrumentation provider to use.</param>
+        public LogWriter(IEnumerable<ILogFilter> filters,
+                         IDictionary<string, LogSource> traceSources,
+                         LogSource errorsTraceSource,
+                         string defaultCategory,
+                         ILoggingInstrumentationProvider instrumentationProvider)
+            : this(filters, traceSources, null, null, errorsTraceSource, defaultCategory, false, false, true, instrumentationProvider)
+        { }
+
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LogWriter"/> class.
@@ -147,18 +163,48 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
                     tracingEnabled,
                     logWarningsWhenNoCategoriesMatch,
                     revertImpersonation),
+                new NullLoggingInstrumentationProvider(),
                 null)
         { }
 
-        internal LogWriter(LogWriterStructureHolder structureHolder,
-                           ILogWriterStructureUpdater structureUpdater)
-        {
-            this.structureHolder = structureHolder;
-            filter = new LogFilterHelper(structureHolder.Filters, this);
-            this.structureUpdater = structureUpdater;
-
-            instrumentationProvider = new LoggingInstrumentationProvider();
-        }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LogWriter"/> class.
+        /// </summary>
+        /// <param name="filters">The collection of filters to use when processing an entry.</param>
+        /// <param name="traceSources">The trace sources to dispatch entries to.</param>
+        /// <param name="allEventsTraceSource">The special <see cref="LogSource"/> to which all log entries should be logged.</param>
+        /// <param name="notProcessedTraceSource">The special <see cref="LogSource"/> to which log entries with at least one non-matching category should be logged.</param>
+        /// <param name="errorsTraceSource">The special <see cref="LogSource"/> to which internal errors must be logged.</param>
+        /// <param name="defaultCategory">The default category to set when entry categories list of a log entry is empty.</param>
+        /// <param name="tracingEnabled">The tracing status.</param>
+        /// <param name="logWarningsWhenNoCategoriesMatch">true if warnings should be logged when a non-matching category is found.</param>
+        /// <param name="revertImpersonation">true if impersonation should be reverted while logging.</param>
+        /// <param name="instrumentationProvider">The instrumentation provider to use.</param>
+        public LogWriter(
+            IEnumerable<ILogFilter> filters,
+            IDictionary<string, LogSource> traceSources,
+            LogSource allEventsTraceSource,
+            LogSource notProcessedTraceSource,
+            LogSource errorsTraceSource,
+            string defaultCategory,
+            bool tracingEnabled,
+            bool logWarningsWhenNoCategoriesMatch,
+            bool revertImpersonation,
+            ILoggingInstrumentationProvider instrumentationProvider)
+            : this(
+                CreateStructureHolder(
+                    filters,
+                    traceSources,
+                    allEventsTraceSource,
+                    notProcessedTraceSource,
+                    errorsTraceSource,
+                    defaultCategory,
+                    tracingEnabled,
+                    logWarningsWhenNoCategoriesMatch,
+                    revertImpersonation),
+                instrumentationProvider,
+                null)
+        { }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LogWriter"/> class.
@@ -200,6 +246,87 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
                    defaultCategory,
                    tracingEnabled,
                    logWarningsWhenNoCategoriesMatch) { }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LogWriter"/> class.
+        /// </summary>
+        /// <param name="filters">The collection of filters to use when processing an entry.</param>
+        /// <param name="traceSources">The trace sources to dispatch entries to.</param>
+        /// <param name="allEventsTraceSource">The special <see cref="LogSource"/> to which all log entries should be logged.</param>
+        /// <param name="notProcessedTraceSource">The special <see cref="LogSource"/> to which log entries with at least one non-matching category should be logged.</param>
+        /// <param name="errorsTraceSource">The special <see cref="LogSource"/> to which internal errors must be logged.</param>
+        /// <param name="defaultCategory">The default category to set when entry categories list is empty.</param>
+        /// <param name="tracingEnabled">The tracing status.</param>
+        /// <param name="logWarningsWhenNoCategoriesMatch">true if warnings should be logged when a non-matching category is found.</param>
+        /// <param name="instrumentationProvider">The instrumentation provider to use.</param>
+        public LogWriter(IEnumerable<ILogFilter> filters,
+                         IEnumerable<LogSource> traceSources,
+                         LogSource allEventsTraceSource,
+                         LogSource notProcessedTraceSource,
+                         LogSource errorsTraceSource,
+                         string defaultCategory,
+                         bool tracingEnabled,
+                         bool logWarningsWhenNoCategoriesMatch,
+                         ILoggingInstrumentationProvider instrumentationProvider)
+            : this(filters,
+                   CreateTraceSourcesDictionary(traceSources),
+                   allEventsTraceSource,
+                   notProcessedTraceSource,
+                   errorsTraceSource,
+                   defaultCategory,
+                   tracingEnabled,
+                   logWarningsWhenNoCategoriesMatch,
+                   true,
+                   instrumentationProvider) { }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="structureHolder"></param>
+        /// <param name="instrumentationProvider"></param>
+        /// <param name="configurationChangeEventSource"></param>
+        public LogWriter(
+            LogWriterStructureHolder structureHolder,
+            ILoggingInstrumentationProvider instrumentationProvider,
+            ConfigurationChangeEventSource configurationChangeEventSource)
+        {
+            this.instrumentationProvider = instrumentationProvider;
+            this.ReplaceStructureHolder(structureHolder);
+
+            this.configurationChangeEventSource = configurationChangeEventSource;
+            if (this.configurationChangeEventSource != null)
+            {
+                this.configurationChangeEventSource.GetSection<LoggingSettings>().SectionChanged
+                    += this.OnSectionChanged;
+            }
+        }
+
+        private ConfigurationChangeEventSource configurationChangeEventSource;
+
+        private void OnSectionChanged(object sender, SectionChangedEventArgs<LoggingSettings> args)
+        {
+            try
+            {
+                LogWriterStructureHolder newStructureHolder = null;
+
+                structureHolderLock.AcquireWriterLock(writerLockAcquireTimeout);
+                try
+                {
+                    newStructureHolder = args.Container.GetInstance<LogWriterStructureHolder>();
+                }
+                catch (ActivationException activationException)
+                {
+                    this.ReportConfigurationFailure(activationException);
+                    return;
+                }
+
+                this.ReplaceStructureHolder(newStructureHolder);
+            }
+            finally
+            {
+                structureHolderLock.ReleaseWriterLock();
+            }
+        }
 
         /// <summary>
         /// Gets the <see cref="LogSource"/> mappings available for the <see cref="LogWriter"/>.
@@ -292,7 +419,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         public void Dispose()
         {
             structureHolder.Dispose();
-            if (structureUpdater != null) structureUpdater.Dispose();
+
+            if (this.configurationChangeEventSource != null)
+            {
+                this.configurationChangeEventSource.GetSection<LoggingSettings>().SectionChanged -=
+                    this.OnSectionChanged;
+                this.configurationChangeEventSource = null;
+            }
         }
 
         /// <summary>
@@ -402,17 +535,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
             return filter.GetFilter(name);
         }
 
-        /// <summary>
-        /// This method supports the Enterprise Library infrastructure and is not intended to be used directly from your code.
-        /// Returns the object that provides instrumentation services for the <see cref="LogWriter"/>.
-        /// </summary>
-        /// <see cref="IInstrumentationEventProvider.GetInstrumentationEventProvider()"/>
-        /// <returns>The object that providers intrumentation services.</returns>
-        public object GetInstrumentationEventProvider()
-        {
-            return instrumentationProvider;
-        }
-
         static Stack GetLogicalOperationStack()
         {
             return Trace.CorrelationManager.LogicalOperationStack;
@@ -425,15 +547,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// <returns>A collection of <see cref="LogSource"/> objects.</returns>
         public IEnumerable<LogSource> GetMatchingTraceSources(LogEntry logEntry)
         {
-            structureHolderLock.AcquireReaderLock(readerLockAcquireTimeout);
-            try
-            {
-                return DoGetMatchingTraceSources(logEntry);
-            }
-            finally
-            {
-                structureHolderLock.ReleaseReaderLock();
-            }
+            return DoGetMatchingTraceSources(logEntry);
         }
 
         /// <summary>
@@ -534,20 +648,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         {
             try
             {
-                structureHolderLock.AcquireWriterLock(writerLockAcquireTimeout);
-                try
-                {
-                    // Switch old and new structures.
-                    LogWriterStructureHolder oldStructureHolder = structureHolder;
-                    structureHolder = newStructureHolder;
-                    filter = new LogFilterHelper(structureHolder.Filters, this);
+                // Switch old and new structures.
+                LogWriterStructureHolder oldStructureHolder = structureHolder;
+                structureHolder = newStructureHolder;
+                filter = new LogFilterHelper(structureHolder.Filters, this);
 
-                    // Dispose has to be fully performed before allowing the new structure to be used.
-                    oldStructureHolder.Dispose();
-                }
-                finally
+                // Dispose has to be fully performed before allowing the new structure to be used.
+                if (oldStructureHolder != null)
                 {
-                    structureHolderLock.ReleaseWriterLock();
+                    oldStructureHolder.Dispose();
                 }
             }
             catch (ApplicationException)
@@ -556,7 +665,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
             }
         }
 
-        internal void ReportConfigurationFailure(ConfigurationErrorsException configurationException)
+        internal void ReportConfigurationFailure(Exception configurationException)
         {
             instrumentationProvider.FireConfigurationFailureEvent(configurationException);
         }

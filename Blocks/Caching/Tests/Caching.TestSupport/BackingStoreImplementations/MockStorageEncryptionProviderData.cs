@@ -11,11 +11,11 @@
 
 using Microsoft.Practices.EnterpriseLibrary.Caching.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Caching.BackingStoreImplementations;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
+using System;
+using System.Linq.Expressions;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.TestSupport.BackingStoreImplementations
 {   
-	[Assembler(typeof(TypeInstantiationAssembler<IStorageEncryptionProvider, StorageEncryptionProviderData>))]
     public class MockStorageEncryptionProviderData : StorageEncryptionProviderData
     {
         public MockStorageEncryptionProviderData()
@@ -26,6 +26,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.TestSupport.BackingStore
 			: base(name, typeof(MockStorageEncryptionProvider))
 		{
 		}
+
+        protected override Expression<Func<IStorageEncryptionProvider>> GetCreationExpression()
+        {
+            return () => new MockStorageEncryptionProvider();
+        }
     }
 }
 

@@ -33,6 +33,4 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Tests
             Assert.AreEqual(data.Filter, SourceLevels.All);
         }
     }
-
-
 }

@@ -37,16 +37,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation
         }
 
         /// <summary>
-		/// Increments the associated performance counters by one.
-        /// </summary>
-        /// <param name="instanceName">The instance to be incremented.</param>
-        public void Increment(string instanceName)
-        {
-            PerformanceCounter counter = InstantiateCounter(instanceName);
-            counter.Increment();
-        }
-
-        /// <summary>
 		/// Increments or decrements the value of the associated performance counter by a specified amount.
         /// </summary>
         /// <param name="instanceName">The instance to be incremented.</param>

@@ -13,6 +13,8 @@ using System.Configuration;
 using System.Data.Common;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using System.Collections.Generic;
+using Microsoft.Practices.EnterpriseLibrary.Data.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration
 {
@@ -47,11 +49,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration
         /// this configuration object.
         /// </summary>
         /// <returns>A <see cref="TypeRegistration"/> instance describing a database.</returns>
-        public override TypeRegistration GetContainerConfigurationModel()
+        public override IEnumerable<TypeRegistration> GetRegistrations()
         {
-            return new TypeRegistration<Database>(
+            yield return new TypeRegistration<Database>(
                 () => new GenericDatabase(ConnectionString,
-                                          DbProviderFactories.GetFactory(ProviderName))) { Name = Name };
+                    DbProviderFactories.GetFactory(ProviderName),
+                    Container.Resolved<IDataInstrumentationProvider>(Name)))
+                {
+                    Name = Name,
+                    Lifetime = TypeRegistrationLifetime.Transient
+                };
         }
     }
 }

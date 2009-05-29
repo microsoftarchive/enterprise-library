@@ -24,30 +24,25 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests.Conf
     [TestClass]
     public class CryptographyApplicationBlockExtensionFixture
     {
-        private IUnityContainer container;
         private CryptographySettings settings;
         private DictionaryConfigurationSource configurationSource;
 
         [TestInitialize]
         public void SetUp()
         {
-            container = new UnityContainer();
-
             settings = new CryptographySettings();
 
             configurationSource = new DictionaryConfigurationSource();
-            configurationSource.Add(CryptographyConfigurationView.SectionName, settings);
+            configurationSource.Add(CryptographySettings.SectionName, settings);
 
             configurationSource.Add(InstrumentationConfigurationSection.SectionName,
                 new InstrumentationConfigurationSection(false, false, true));
-
-            container.AddExtension(new EnterpriseLibraryCoreExtension(configurationSource));
         }
 
-        [TestCleanup]
-        public void TearDown()
+        private IUnityContainer CreateContainer()
         {
-            container.Dispose();
+            return new UnityContainer()
+                .AddExtension(new EnterpriseLibraryCoreExtension(configurationSource));
         }
 
         [TestMethod]
@@ -58,13 +53,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests.Conf
             data.Attributes.Add(MockCustomHashProvider.AttributeKey, "value");
             settings.HashProviders.Add(data);
 
-            container.AddExtension(new CryptographyBlockExtension());
+            using (var container = CreateContainer())
+            {
+                IHashProvider provider = container.Resolve<IHashProvider>("provider");
 
-            IHashProvider provider = container.Resolve<IHashProvider>("provider");
-
-            Assert.IsNotNull(provider);
-            Assert.IsInstanceOfType(provider, typeof(MockCustomHashProvider));
-            Assert.AreEqual("value", ((MockCustomHashProvider)provider).customValue);
+                Assert.IsNotNull(provider);
+                Assert.IsInstanceOfType(provider, typeof(MockCustomHashProvider));
+                Assert.AreEqual("value", ((MockCustomHashProvider)provider).customValue);
+            }
         }
 
         [TestMethod]
@@ -82,13 +78,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests.Conf
 
             settings.DefaultHashProviderName = "provider1";
 
-            container.AddExtension(new CryptographyBlockExtension());
+            using (var container = CreateContainer())
+            {
+                IHashProvider provider = container.Resolve<IHashProvider>();
 
-            IHashProvider provider = container.Resolve<IHashProvider>("provider1");
-
-            Assert.IsNotNull(provider);
-            Assert.IsInstanceOfType(provider, typeof(MockCustomHashProvider));
-            Assert.AreEqual("value1", ((MockCustomHashProvider)provider).customValue);
+                Assert.IsNotNull(provider);
+                Assert.IsInstanceOfType(provider, typeof(MockCustomHashProvider));
+                Assert.AreEqual("value1", ((MockCustomHashProvider)provider).customValue);
+            }
         }
 
         [TestMethod]
@@ -99,13 +96,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests.Conf
             data.Attributes.Add(MockCustomSymmetricProvider.AttributeKey, "value");
             settings.SymmetricCryptoProviders.Add(data);
 
-            container.AddExtension(new CryptographyBlockExtension());
+            using (var container = CreateContainer())
+            {
+                ISymmetricCryptoProvider provider = container.Resolve<ISymmetricCryptoProvider>("provider");
 
-            ISymmetricCryptoProvider provider = container.Resolve<ISymmetricCryptoProvider>("provider");
-
-            Assert.IsNotNull(provider);
-            Assert.IsInstanceOfType(provider, typeof(MockCustomSymmetricProvider));
-            Assert.AreEqual("value", ((MockCustomSymmetricProvider)provider).customValue);
+                Assert.IsNotNull(provider);
+                Assert.IsInstanceOfType(provider, typeof(MockCustomSymmetricProvider));
+                Assert.AreEqual("value", ((MockCustomSymmetricProvider)provider).customValue);
+            }
         }
 
         [TestMethod]
@@ -123,34 +121,36 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests.Conf
 
             settings.DefaultSymmetricCryptoProviderName = "provider1";
 
-            container.AddExtension(new CryptographyBlockExtension());
+            using (var container = CreateContainer())
+            {
+                ISymmetricCryptoProvider provider = container.Resolve<ISymmetricCryptoProvider>();
 
-            ISymmetricCryptoProvider provider = container.Resolve<ISymmetricCryptoProvider>("provider1");
-
-            Assert.IsNotNull(provider);
-            Assert.IsInstanceOfType(provider, typeof(MockCustomSymmetricProvider));
-            Assert.AreEqual("value1", ((MockCustomSymmetricProvider)provider).customValue);
+                Assert.IsNotNull(provider);
+                Assert.IsInstanceOfType(provider, typeof(MockCustomSymmetricProvider));
+                Assert.AreEqual("value1", ((MockCustomSymmetricProvider)provider).customValue);
+            }
         }
 
         [TestMethod]
         public void CryptographyManagerGetsInstrumented()
         {
-            container.AddExtension(new CryptographyBlockExtension());
-
-            CryptographyManager manager = container.Resolve<CryptographyManager>();
-            Assert.IsNotNull(manager);
-
-            using (WmiEventWatcher eventListener = new WmiEventWatcher(1))
+            using (var container = CreateContainer())
             {
-                try
+                CryptographyManager manager = container.Resolve<CryptographyManager>();
+                Assert.IsNotNull(manager);
+
+                using (WmiEventWatcher eventListener = new WmiEventWatcher(1))
                 {
-                    manager.CreateHash("foo", "");
-                }
-                catch (ConfigurationErrorsException)
-                {
-                    eventListener.WaitForEvents();
-                    Assert.AreEqual(1, eventListener.EventsReceived.Count);
-                    Assert.AreEqual("foo", eventListener.EventsReceived[0].GetPropertyValue("InstanceName"));
+                    try
+                    {
+                        manager.CreateHash("foo", "");
+                    }
+                    catch (ConfigurationErrorsException)
+                    {
+                        eventListener.WaitForEvents();
+                        Assert.AreEqual(1, eventListener.EventsReceived.Count);
+                        Assert.AreEqual("foo", eventListener.EventsReceived[0].GetPropertyValue("InstanceName"));
+                    }
                 }
             }
         }

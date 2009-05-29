@@ -30,26 +30,25 @@ namespace Common.ContainerInfrastructure.Tests.VSTS
         }
 
         [TestMethod]
-        public void WhenUsingLocatorWithEmptyStrategyList_ThenNoProvidersAreIsReturned()
+        public void WhenUsingLocatorWithEmptyProviderList_ThenNoProvidersAreReturned()
         {
-            var locator = new TypeRegistrationsProviderLocator(new TypeRegistrationsProviderLocationStrategy[0]);
+            var locator = new CompositeTypeRegistrationsProviderLocator();
 
-            var providers = locator.GetProviders(configSource).ToList();
+            var registrations = locator.GetRegistrations(configSource);
 
-            Assert.AreEqual(0, providers.Count);
+            Assert.AreEqual(0, registrations.Count());
         }
 
         [TestMethod]
         public void WhenUsingOneLocatorStrategy_ThenThatStrategyIsCalled()
         {
-            var mocks = new MockStrategyBuilder(1);
+            var mocks = new MockLocatorBuilder(1);
 
-            var locator = new TypeRegistrationsProviderLocator(mocks.Strategies);
+            var locator = mocks.Locator;
 
-            var providers = locator.GetProviders(configSource).ToList();
+            var registrations = locator.GetRegistrations(configSource);
 
-            Assert.AreEqual(1, providers.Count);
-            Assert.AreSame(mocks.Providers[0], providers[0]);
+            Assert.AreEqual(0, registrations.Count());
 
             mocks.Verify();
         }
@@ -57,40 +56,24 @@ namespace Common.ContainerInfrastructure.Tests.VSTS
         [TestMethod]
         public void WhenUsingMultipleLocatorStrategies_ThenTheyAreAllCalled()
         {
-            var mocks = new MockStrategyBuilder(3);
+            var mocks = new MockLocatorBuilder(3);
 
-            var locator = new TypeRegistrationsProviderLocator(mocks.Strategies);
+            var locator = mocks.Locator;
 
-            var providers = locator.GetProviders(configSource).ToList();
+            var registrations = locator.GetRegistrations(configSource).ToList();
 
-            CollectionAssert.AreEqual(mocks.Providers, providers);
-
-            mocks.Verify();
-        }
-
-        [TestMethod]
-        public void WhenLocatorStrategyReturnsNull_ThenTheCorrectProvidersAreReturned()
-        {
-            var mocks = new MockStrategyBuilder(1);
-            mocks.AddNullReturningLocator();
-            mocks.AddProvider();
-
-            var locator = new TypeRegistrationsProviderLocator(mocks.Strategies);
-            var providers = locator.GetProviders(configSource).ToList();
-
-            Assert.AreEqual(2, providers.Count);
+            //CollectionAssert.AreEqual(mocks.Providers, registrations);
 
             mocks.Verify();
         }
     }
 
-    class MockStrategyBuilder
+    class MockLocatorBuilder
     {
-        private readonly List<ITypeRegistrationsProvider> providers = new List<ITypeRegistrationsProvider>();
-        private readonly List<TypeRegistrationsProviderLocationStrategy> strategies = new List<TypeRegistrationsProviderLocationStrategy>();
+        private readonly List<ITypeRegistrationsProvider> locators = new List<ITypeRegistrationsProvider>();
         private readonly MockFactory mockFactory = new MockFactory(MockBehavior.Strict);
 
-        public MockStrategyBuilder(int numProviders)
+        public MockLocatorBuilder(int numProviders)
         {
             for(int i = 0; i < numProviders; ++i)
             {
@@ -98,8 +81,7 @@ namespace Common.ContainerInfrastructure.Tests.VSTS
             }
         }
 
-        public List<ITypeRegistrationsProvider> Providers { get { return providers; } }
-        public List<TypeRegistrationsProviderLocationStrategy> Strategies { get { return strategies;  } }
+        public TypeRegistrationsProvider Locator { get { return new CompositeTypeRegistrationsProviderLocator(locators); } }
 
         public void Verify()
         {
@@ -108,21 +90,10 @@ namespace Common.ContainerInfrastructure.Tests.VSTS
 
         public void AddProvider()
         {
-            var mockProvider = mockFactory.Create<ITypeRegistrationsProvider>();
-            providers.Add(mockProvider.Object);
+            var mockProvider = mockFactory.Create<TypeRegistrationsProvider>();
+            mockProvider.Setup(p => p.GetRegistrations(It.IsAny<IConfigurationSource>())).Returns(new TypeRegistration[0]).Verifiable();
 
-            var mockStrategy = mockFactory.Create<TypeRegistrationsProviderLocationStrategy>();
-            mockStrategy.Setup(s => s.GetProvider(It.IsAny<IConfigurationSource>())).Returns(mockProvider.Object)
-                .Verifiable();
-
-            strategies.Add(mockStrategy.Object);
-        }
-
-        public void AddNullReturningLocator()
-        {
-            var mockStrategy = mockFactory.Create<TypeRegistrationsProviderLocationStrategy>();
-            mockStrategy.Setup(s => s.GetProvider(It.IsAny<IConfigurationSource>())).Returns((ITypeRegistrationsProvider)null).Verifiable();
-            strategies.Add(mockStrategy.Object);
+            locators.Add(mockProvider.Object);
         }
     }
 }

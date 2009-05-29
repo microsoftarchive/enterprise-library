@@ -36,7 +36,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Config
         int priority;
         TraceEventType severity;
         string title;
-        bool useDefaultLogger;
 
         /// <summary>
         /// Initialize a new instance of the <see cref="LoggingExceptionHandlerNode"/> class.
@@ -61,7 +60,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Config
             priority = loggingExceptionHandlerData.Priority;
             logCategoryNodeRemoved = new EventHandler<ConfigurationNodeChangedEventArgs>(OnLogCategoryNodeRemoved);
             logCategoryNodeRenamed = new EventHandler<ConfigurationNodeChangedEventArgs>(OnLogCategoryNodeRenamed);
-            useDefaultLogger = loggingExceptionHandlerData.UseDefaultLogger;
         }
 
         /// <summary>
@@ -87,7 +85,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Config
         /// </value>
         public override ExceptionHandlerData ExceptionHandlerData
         {
-            get { return new LoggingExceptionHandlerData(Name, logCategoryName, eventId, severity, title, formatterTypeName, priority, useDefaultLogger); }
+            get { return new LoggingExceptionHandlerData(Name, logCategoryName, eventId, severity, title, formatterTypeName, priority); }
         }
 
         /// <summary>
@@ -175,17 +173,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Config
         {
             get { return title; }
             set { title = value; }
-        }
-
-        /// <summary>
-        /// Gets or sets the use default logger.
-        /// </summary>
-        [SRDescription("UseDefaultLoggerDescription", typeof(Resources))]
-        [SRCategory("CategoryGeneral", typeof(Resources))]
-        public bool UseDefaultLogger
-        {
-            get { return useDefaultLogger; }
-            set { useDefaultLogger = value; }
         }
 
         /// <summary>

@@ -10,6 +10,7 @@
 //===============================================================================
 
 using System;
+using System.Linq;
 using System.Collections.Specialized;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.Configuration;
@@ -197,7 +198,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.Tests
                 new FaultContractExceptionHandlerData("name", typeof(object).AssemblyQualifiedName) { ExceptionMessage = "message" };
             handlerData.Attributes["foo"] = "bar";
 
-            var registration = handlerData.GetContainerConfigurationModel("prefix");
+            var registration = handlerData.GetRegistrations("prefix").First();
 
             registration
                 .AssertForServiceType(typeof(IExceptionHandler))

@@ -10,9 +10,13 @@
 //===============================================================================
 
 using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Configuration;
+using System.Linq.Expressions;
+using System.Reflection;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
 
@@ -147,21 +151,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         }
 
         /// <summary>
-        /// Adds the call handler represented by this configuration object to <paramref name="policy"/>.
-        /// </summary>
-        /// <param name="policy">The policy to which the rule must be added.</param>
-        /// <param name="configurationSource">The configuration source from which additional information
-        /// can be retrieved, if necessary.</param>
-        public override void ConfigurePolicy(PolicyDefinition policy, IConfigurationSource configurationSource)
-        {
-            policy.AddCallHandler(
-                this.Type,
-                new ContainerControlledLifetimeManager(),
-                new InjectionConstructor(new InjectionParameter<NameValueCollection>(this.Attributes)),
-                new InjectionProperty("Order", new InjectionParameter<int>(this.Order)));
-        }
-
-        /// <summary>
         /// Gets the helper.
         /// </summary>
         CustomProviderDataHelper<CustomCallHandlerData> IHelperAssistedCustomConfigurationData<CustomCallHandlerData>.Helper
@@ -208,6 +197,28 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         bool IHelperAssistedCustomConfigurationData<CustomCallHandlerData>.BaseIsModified()
         {
             return base.IsModified();
+        }
+
+        /// <summary>
+        /// Get the set of <see cref="TypeRegistration"/> objects needed to
+        /// register the call handler represented by this config element and its associated objects.
+        /// </summary>
+        /// <param name="nameSuffix">A suffix for the names in the generated type registration objects.</param>
+        /// <returns>The set of <see cref="TypeRegistration"/> objects.</returns>
+        public override IEnumerable<TypeRegistration> GetRegistrations(string nameSuffix)
+        {
+            yield return
+                new TypeRegistration(
+                    Expression.Lambda(
+                        Expression.MemberInit(
+                            RegistrationExpressionBuilder.BuildNewExpression(this.Type, this.Attributes),
+                            Expression.Bind(
+                                this.Type.GetProperty("Order", BindingFlags.Public | BindingFlags.Instance),
+                                Expression.Constant(this.Order)))),
+                    typeof(ICallHandler))
+                {
+                    Name = this.Name + nameSuffix
+                };
         }
     }
 }

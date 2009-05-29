@@ -20,6 +20,7 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Unity;
 using Microsoft.Practices.EnterpriseLibrary.Data.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Unity;
+using Microsoft.Practices.EnterpriseLibrary.Data.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Data.Oracle.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Data.Properties;
 
@@ -41,8 +42,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Oracle
     /// </para>
     /// </remarks>
     [OraclePermission(SecurityAction.Demand)]
-    [DatabaseAssembler(typeof(OracleDatabaseAssembler))]
-    [ContainerPolicyCreator(typeof(OracleDatabasePolicyCreator))]
     [ConfigurationElementType(typeof(OracleDatabaseData))]
     public class OracleDatabase : Database
     {
@@ -67,7 +66,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Oracle
         /// <param name="connectionString">The connection string for the database.</param>
         /// <param name="packages">A list of <see cref="IOraclePackage"/> objects.</param>
         public OracleDatabase(string connectionString, IEnumerable<IOraclePackage> packages)
-            : base(connectionString, OracleClientFactory.Instance)
+            : this(connectionString, packages, new NullDataInstrumentationProvider())
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OracleDatabase"/> class with a connection string,
+        /// a list of Oracle packages, and an instrumentation provider.
+        /// </summary>
+        /// <param name="connectionString">The connection string for the database.</param>
+        /// <param name="packages">A list of <see cref="IOraclePackage"/> objects.</param>
+        /// <param name="instrumentationProvider">The instrumentation provider.</param>
+        public OracleDatabase(string connectionString, IEnumerable<IOraclePackage> packages, IDataInstrumentationProvider instrumentationProvider)
+            : base(connectionString, OracleClientFactory.Instance, instrumentationProvider)
         {
             if (packages == null) throw new ArgumentNullException("packages");
 

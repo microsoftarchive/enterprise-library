@@ -13,22 +13,36 @@ using System.Security.Principal;
 using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Security.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Security.Instrumentation;
+using System;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security
 {
 	/// <summary>
     /// Abstract implementation of the <see cref="IAuthorizationProvider"/> interface.
 	/// </summary>
-	public abstract class AuthorizationProvider : IAuthorizationProvider, IInstrumentationEventProvider
+	public abstract class AuthorizationProvider : IAuthorizationProvider
 	{
-		AuthorizationProviderInstrumentationProvider instrumentationProvider;
+        IAuthorizationProviderInstrumentationProvider instrumentationProvider;
+
+
+        /// <summary>
+        /// Initializes a new instance of <see cref="AuthorizationProvider"/>.
+        /// </summary>
+        protected AuthorizationProvider()
+            :this(new NullAuthorizationProviderInstrumentationProvider())
+        {
+        }
+
 
 		/// <summary>
         /// Initializes a new instance of <see cref="AuthorizationProvider"/>.
 		/// </summary>
-		protected AuthorizationProvider()
+        /// <param name="instrumentationProvider">The instrumentation prover to use.</param>
+		protected AuthorizationProvider(IAuthorizationProviderInstrumentationProvider instrumentationProvider)
 		{
-			this.instrumentationProvider = new AuthorizationProviderInstrumentationProvider();
+            if (instrumentationProvider == null) throw new ArgumentNullException("instrumentationProvider");
+
+            this.instrumentationProvider = instrumentationProvider;
 		}
 
         /// <summary>
@@ -40,18 +54,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security
 		public abstract bool Authorize(IPrincipal principal, string context);
 
         /// <summary>
-        /// Gets the <see cref="AuthorizationProviderInstrumentationProvider"/> instance that defines the logical events used to instrument this Authorization Provider instance.
+        /// Gets the <see cref="IAuthorizationProviderInstrumentationProvider"/> instance that defines the logical events used to instrument this Authorization Provider instance.
         /// </summary>
-        /// <returns>The <see cref="AuthorizationProviderInstrumentationProvider"/> instance that defines the logical events used to instrument this Authorization Provider instance.</returns>
-		public object GetInstrumentationEventProvider()
-		{
-			return this.instrumentationProvider;
-		}
-
-        /// <summary>
-        /// Gets the <see cref="AuthorizationProviderInstrumentationProvider"/> instance that defines the logical events used to instrument this Authorization Provider instance.
-        /// </summary>
-		protected AuthorizationProviderInstrumentationProvider InstrumentationProvider
+		protected IAuthorizationProviderInstrumentationProvider InstrumentationProvider
 		{
 			get { return this.instrumentationProvider; }
 		}

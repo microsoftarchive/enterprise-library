@@ -17,19 +17,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests
     [TestClass]
     public class BackgroundSchedulerFixture
     {
-        [TestMethod]
-        public void SchedulerCanBeStoppedWhenRequested()
-        {
-            BackgroundScheduler scheduler = new BackgroundScheduler(null, null, null);
-            scheduler.Start();
-            Thread.Sleep(2500);
+        //[TestMethod]
+        //public void SchedulerCanBeStoppedWhenRequested()
+        //{
+        //    BackgroundScheduler scheduler = new BackgroundScheduler(null, null, null);
+        //    scheduler.Start();
+        //    Thread.Sleep(2500);
 
-            Assert.IsTrue(scheduler.IsActive);
+        //    Assert.IsTrue(scheduler.IsActive);
 
-            scheduler.Stop();
-            Thread.Sleep(10000);
+        //    scheduler.Stop();
+        //    Thread.Sleep(10000);
 
-            Assert.IsFalse(scheduler.IsActive);
-        }
+        //    Assert.IsFalse(scheduler.IsActive);
+        //}
     }
 }

@@ -9,9 +9,8 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel.Unity;
 using Microsoft.Practices.Unity;
-using Microsoft.Practices.Unity.ObjectBuilder;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Unity
 {
@@ -19,8 +18,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Unity
 	/// Main <see cref="UnityContainerExtension"/> for Enterprise Library.
 	/// </summary>
 	/// <remarks>
-	/// This extension specifies the <see cref="IConfigurationSource"/> to be used by all the extensions for the Blocks
-	/// and adds the <see cref="InstrumentationStrategy"/> to the strategy chain.
+	/// This extension configures its container to resolve all Enterprise Library
+	/// objects. It's a convienence method to save having to manually create a 
+	/// <see cref="UnityContainerConfigurator"/> object and configure it yourself.
 	/// </remarks>
 	public class EnterpriseLibraryCoreExtension : UnityContainerExtension
 	{
@@ -46,20 +46,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Unity
 		}
 
 		/// <summary>
-		/// Adds the policies used by other extensions to locate an <see cref="IConfigurationSource"/> and
-		/// a <see cref="ConfigurationReflectionCache"/>, and adds the <see cref="InstrumentationStrategy"/>
-		/// to the strategy chain.
+		/// Configures the Unity container to be able to resolve Enterprise Library
+		/// objects.
 		/// </summary>
 		protected override void Initialize()
 		{
-			Context.Policies.Set<IConfigurationObjectPolicy>(
-				new ConfigurationObjectPolicy(this.configurationSource), 
-				typeof(IConfigurationSource));
-			Context.Policies.Set<IReflectionCachePolicy>(
-				new ReflectionCachePolicy(new ConfigurationReflectionCache()),
-				typeof(IReflectionCachePolicy));
-
-			Context.Strategies.AddNew<InstrumentationStrategy>(UnityBuildStage.PostInitialization);
+            // Only need to do this once; do nothing if this extension has already
+            // been added.
+            if(Container.Configure<EnterpriseLibraryCoreExtension>() == this)
+            {
+                var configurator = new UnityContainerConfigurator(Container);
+                EnterpriseLibraryContainer.ConfigureContainer(configurator, configurationSource);
+            }
 		}
 	}
 }

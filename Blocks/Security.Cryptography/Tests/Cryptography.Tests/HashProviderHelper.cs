@@ -14,9 +14,11 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests
 {
+
     public class HashProviderHelper
     {
         IHashProvider defaultHashProvider;
@@ -25,14 +27,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests
         IHashProvider saltedHashProvider;
         MockHashInstrumentationListener saltedHashProviderListener;
 
-        public HashProviderHelper(IHashProvider defaultHashProvider,
-                                  IHashProvider saltedHashProvider)
+        public HashProviderHelper(Func<IHashAlgorithmInstrumentationProvider, IHashProvider> defaultHashProviderFunc,
+                                  Func<IHashAlgorithmInstrumentationProvider, IHashProvider> saltedHashProviderFunc)
         {
-            this.defaultHashProvider = defaultHashProvider;
-            BindNewInstrumentationListener(this.defaultHashProvider, out defaultHashProviderListener);
+            defaultHashProviderListener = new MockHashInstrumentationListener();
+            this.defaultHashProvider = defaultHashProviderFunc(defaultHashProviderListener);
 
-            this.saltedHashProvider = saltedHashProvider;
-            BindNewInstrumentationListener(this.saltedHashProvider, out saltedHashProviderListener);
+            saltedHashProviderListener = new MockHashInstrumentationListener();
+            this.saltedHashProvider = saltedHashProviderFunc(saltedHashProviderListener);
+            
         }
 
         public IHashProvider DefaultHashProvider
@@ -45,19 +48,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests
             get { return saltedHashProvider; }
         }
 
-        void BindNewInstrumentationListener(IHashProvider hashProvider,
-                                            out MockHashInstrumentationListener hashInstrumentationListener)
-        {
-            if (hashProvider is HashAlgorithmProvider)
-            {
-                hashInstrumentationListener = new MockHashInstrumentationListener();
-                new ReflectionInstrumentationBinder().Bind((hashProvider as HashAlgorithmProvider).GetInstrumentationEventProvider(), hashInstrumentationListener);
-            }
-            else
-            {
-                hashInstrumentationListener = null;
-            }
-        }
 
         void CheckEvents(MockHashInstrumentationListener listener,
                          int failed,
@@ -222,15 +212,28 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests
         }
     }
 
-    public class MockHashInstrumentationListener
+    public class MockHashInstrumentationListener : IHashAlgorithmInstrumentationProvider
     {
         IDictionary<string, int> notifications = new Dictionary<string, int>();
 
-        [InstrumentationConsumer("CyptographicOperationFailed")]
-        public void CyptographicOperationFailed(object sender,
-                                                EventArgs e)
+        public void FireCyptographicOperationFailed(string message, Exception exception)
         {
             IncreaseNotificationTally("CyptographicOperationFailed");
+        }
+
+        public void FireHashComparisonPerformed()
+        {
+            IncreaseNotificationTally("HashComparisonPerformed");
+        }
+
+        public void FireHashMismatchDetected()
+        {
+            IncreaseNotificationTally("HashMismatchDetected");
+        }
+
+        public void FireHashOperationPerformed()
+        {
+            IncreaseNotificationTally("HashOperationPerformed");
         }
 
         internal int GetNotificationTally(string key)
@@ -238,26 +241,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests
             return notifications.ContainsKey(key) ? notifications[key] : 0;
         }
 
-        [InstrumentationConsumer("HashComparisonPerformed")]
-        public void HashComparisonPerformed(object sender,
-                                            EventArgs e)
-        {
-            IncreaseNotificationTally("HashComparisonPerformed");
-        }
-
-        [InstrumentationConsumer("HashMismatchDetected")]
-        public void HashMismatchDetected(object sender,
-                                         EventArgs e)
-        {
-            IncreaseNotificationTally("HashMismatchDetected");
-        }
-
-        [InstrumentationConsumer("HashOperationPerformed")]
-        public void HashOperationPerformed(object sender,
-                                           EventArgs e)
-        {
-            IncreaseNotificationTally("HashOperationPerformed");
-        }
 
         void IncreaseNotificationTally(string key)
         {

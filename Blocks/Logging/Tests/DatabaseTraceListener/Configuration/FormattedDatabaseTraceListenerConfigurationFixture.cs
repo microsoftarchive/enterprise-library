@@ -14,14 +14,12 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Utility;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Database.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport;
-using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
-using Microsoft.Practices.ObjectBuilder2;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Tests.Configuration
@@ -29,21 +27,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Tests.Configura
     [TestClass]
     public class FormattedDatabaseTraceListenerConfigurationFixture
     {
-        private IBuilderContext context;
-        private ConfigurationReflectionCache reflectionCache;
-
         [TestInitialize]
         public void SetUp()
         {
             AppDomain.CurrentDomain.SetData("APPBASE", Environment.CurrentDirectory);
-            context
-                = new BuilderContext(new StrategyChain(new object[] { new ConfiguredObjectStrategy() }),
-                                     null,
-                                     null,
-                                     new PolicyList(),
-                                     null,
-                                     null);
-            reflectionCache = new ConfigurationReflectionCache();
         }
 
         [TestMethod]
@@ -135,8 +122,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Tests.Configura
             helper.loggingSettings.Formatters.Add(new TextFormatterData("formatter", "foobar template"));
             helper.loggingSettings.TraceListeners.Add(listenerData);
 
-            TraceListener listener =
-                TraceListenerCustomFactory.Instance.Create(context, "listener", helper.configurationSource, reflectionCache);
+            TraceListener listener = GetListener("listener", helper.configurationSource);
 
             Assert.IsNotNull(listener);
             Assert.AreEqual(listener.GetType(), typeof(FormattedDatabaseTraceListener));
@@ -153,11 +139,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Tests.Configura
             loggingSettings.TraceListeners.Add(
                 new FormattedDatabaseTraceListenerData("listener", "WriteLog", "AddCategory", "LoggingDb", "formatter"));
 
-            TraceListener listener =
-                TraceListenerCustomFactory.Instance.Create(context,
-                                                           "listener",
-                                                           CommonUtil.SaveSectionsAndGetConfigurationSource(loggingSettings),
-                                                           reflectionCache);
+            TraceListener listener = GetListener("listener", CommonUtil.SaveSectionsAndGetConfigurationSource(loggingSettings));
 
             Assert.IsNotNull(listener);
             Assert.AreEqual(listener.GetType(), typeof(FormattedDatabaseTraceListener));
@@ -173,15 +155,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Tests.Configura
             loggingSettings.TraceListeners.Add(
                 new FormattedDatabaseTraceListenerData("listener", "WriteLog", "AddCategory", "LoggingDb", null));
 
-            TraceListener listener =
-                TraceListenerCustomFactory.Instance.Create(context,
-                                                           "listener",
-                                                           CommonUtil.SaveSectionsAndGetConfigurationSource(loggingSettings),
-                                                           reflectionCache);
-
+            TraceListener listener = GetListener("listener",
+                                                 CommonUtil.SaveSectionsAndGetConfigurationSource(loggingSettings));
             Assert.IsNotNull(listener);
             Assert.AreEqual(listener.GetType(), typeof(FormattedDatabaseTraceListener));
             Assert.IsNull(((FormattedDatabaseTraceListener)listener).Formatter);
+        }
+
+        private static TraceListener GetListener(string name, IConfigurationSource configurationSource)
+        {
+            var container = EnterpriseLibraryContainer.CreateDefaultContainer(configurationSource);
+            var listener = container.GetInstance<TraceListener>(name);
+            container.Dispose();
+            return listener;
         }
     }
 }

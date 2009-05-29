@@ -14,8 +14,8 @@ using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Caching.TestSupport;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.ObjectBuilder2;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Practices.ServiceLocation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests
 {
@@ -38,7 +38,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ConfigurationErrorsException))]
+        [ExpectedException(typeof(ActivationException))]
         public void WillThrowExceptionIfCannotFindCacheInstance()
         {
             factory.Create("ThisIsABadName");
@@ -47,7 +47,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ConfigurationErrorsException))]
+        [ExpectedException(typeof(ActivationException))]
         public void WillThrowExceptionIfCannotFindSection()
         {
             CacheManagerFactory factory2 = new CacheManagerFactory(new DictionaryConfigurationSource());
@@ -58,7 +58,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ConfigurationErrorsException))]
+        [ExpectedException(typeof(ActivationException))]
         public void WillThrowExceptionIfCannotDefault()
         {
             DictionaryConfigurationSource source = new DictionaryConfigurationSource();
@@ -85,14 +85,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(BuildFailedException))]
+        [ExpectedException(typeof(ActivationException))]
         public void WillThrowExceptionIfNullCacheStorage()
         {
             factory.Create("CacheManagerWithBadCacheStorageInstance");
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ConfigurationErrorsException))]
+        [ExpectedException(typeof(ActivationException))]
         public void WillThrowExceptionIfCannotCreateNamedStorageType()
         {
             factory.Create("CacheManagerWithBadStoreType");

@@ -16,14 +16,17 @@ using System.Diagnostics;
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 {
     /// <summary>
-    /// 
+    /// Wraps a <see cref="TraceListener"/> to allow the attribute properties to
+    /// be injected.  This is primarily used with custom trace listeners that
+    /// provide attributes in their configuration.
     /// </summary>
     public class AttributeSettingTraceListenerWrapper : TraceListener
     {
         ///<summary>
+        /// Initializes an instance of <see cref="AttributeSettingTraceListenerWrapper"/>.
         ///</summary>
-        ///<param name="listener"></param>
-        ///<param name="attributes"></param>
+        ///<param name="listener">The <see cref="TraceListener"/> to wrap.</param>
+        ///<param name="attributes">The attributes to set on the trace listener.</param>
         public AttributeSettingTraceListenerWrapper(
             TraceListener listener,
             NameValueCollection attributes)
@@ -42,7 +45,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 
 
         ///<summary>
-        /// The wrapped <see cref="InnerTraceListener"/>.
+        /// The wrapped <see cref="TraceListener"/>.
         ///</summary>
         public TraceListener InnerTraceListener { get; private set; }
 

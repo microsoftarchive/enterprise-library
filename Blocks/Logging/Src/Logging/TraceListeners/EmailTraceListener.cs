@@ -15,6 +15,7 @@ using System.IO;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
 {
@@ -31,23 +32,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
 		string smtpServer = String.Empty;
 		int smtpPort = 25;
 
-		/// <summary>
-		/// Initializes a new instance of <see cref="EmailTraceListener"/>.
-		/// </summary>
-		public EmailTraceListener()
-			: base()
-		{
-		}
-
-		/// <summary>
-		/// Initializes a new instance of <see cref="EmailTraceListener"/> with a <see cref="ILogFormatter"/>.
-		/// </summary>
-		/// <param name="formatter">The formatter.</param>
-		public EmailTraceListener(ILogFormatter formatter)
-			: base(formatter)
-		{
-		}
-
+	
 		/// <summary>
 		/// Initializes a new instance of <see cref="EmailTraceListener"/> with a toaddress, fromaddress, 
 		/// subjectlinestarter, subjectlinender, smtpserver, and a formatter
@@ -87,16 +72,43 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
 			int smtpPort,
 			ILogFormatter formatter
 		)
-			: base(formatter)
+			: this(toAddress, fromAddress, subjectLineStarter, subjectLineEnder, smtpServer, smtpPort, formatter, new NullLoggingInstrumentationProvider())
 		{
-			this.toAddress = toAddress;
-			this.fromAddress = fromAddress;
-			this.subjectLineStarter = subjectLineStarter;
-			this.subjectLineEnder = subjectLineEnder;
-			this.smtpServer = smtpServer;
-			this.smtpPort = smtpPort;
 		}
 
+        /// <summary>
+        /// Initializes a new instance of <see cref="EmailTraceListener"/> with a toaddress, fromaddress, 
+        /// subjectlinestarter, subjectlinender, smtpserver, smtpport, and a formatter
+        /// a <see cref="ILogFormatter"/>.
+        /// </summary>
+        /// <param name="toAddress">A semicolon delimited string the represents to whom the email should be sent.</param>
+        /// <param name="fromAddress">Represents from whom the email is sent.</param>
+        /// <param name="subjectLineStarter">Starting text for the subject line.</param>
+        /// <param name="subjectLineEnder">Ending text for the subject line.</param>
+        /// <param name="smtpServer">The name of the SMTP server.</param>
+        /// <param name="smtpPort">The port on the SMTP server to use for sending the email.</param>
+        /// <param name="formatter">The Formatter <see cref="ILogFormatter"/> which determines how the 
+        /// email message should be formatted</param>
+        /// <param name="instrumentationProvider">The instrumentation provider to use.</param>
+        public EmailTraceListener(
+            string toAddress,
+            string fromAddress,
+            string subjectLineStarter,
+            string subjectLineEnder,
+            string smtpServer,
+            int smtpPort,
+            ILogFormatter formatter,
+            ILoggingInstrumentationProvider instrumentationProvider
+        )
+            : base(formatter, instrumentationProvider)
+        {
+            this.toAddress = toAddress;
+            this.fromAddress = fromAddress;
+            this.subjectLineStarter = subjectLineStarter;
+            this.subjectLineEnder = subjectLineEnder;
+            this.smtpServer = smtpServer;
+            this.smtpPort = smtpPort;
+        }
 
 		/// <summary>
 		/// Initializes a new instance of <see cref="EmailTraceListener"/> with a toaddress, fromaddress, 
@@ -113,27 +125,43 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
 		{
 		}
 
-		/// <summary>
-		/// Initializes a new instance of <see cref="EmailTraceListener"/> with a toaddress, fromaddress, 
-		/// subjectlinestarter, subjectlinender, smtpserver, smtpport, and a formatter
-		/// a <see cref="ILogFormatter"/>.
-		/// </summary>
-		/// <param name="toAddress">A semicolon delimited string the represents to whom the email should be sent.</param>
-		/// <param name="fromAddress">Represents from whom the email is sent.</param>
-		/// <param name="subjectLineStarter">Starting text for the subject line.</param>
-		/// <param name="subjectLineEnder">Ending text for the subject line.</param>
-		/// <param name="smtpServer">The name of the SMTP server.</param>
-		/// <param name="smtpPort">The port on the SMTP server to use for sending the email.</param>
-		public EmailTraceListener(string toAddress, string fromAddress, string subjectLineStarter, string subjectLineEnder, string smtpServer, int smtpPort)
-			: base()
-		{
-			this.toAddress = toAddress;
-			this.fromAddress = fromAddress;
-			this.subjectLineStarter = subjectLineStarter;
-			this.subjectLineEnder = subjectLineEnder;
-			this.smtpServer = smtpServer;
-			this.smtpPort = smtpPort;
-		}
+        /// <summary>
+        /// Initializes a new instance of <see cref="EmailTraceListener"/> with a toaddress, fromaddress, 
+        /// subjectlinestarter, subjectlinender, smtpserver, smtpport, and a formatter
+        /// a <see cref="ILogFormatter"/>.
+        /// </summary>
+        /// <param name="toAddress">A semicolon delimited string the represents to whom the email should be sent.</param>
+        /// <param name="fromAddress">Represents from whom the email is sent.</param>
+        /// <param name="subjectLineStarter">Starting text for the subject line.</param>
+        /// <param name="subjectLineEnder">Ending text for the subject line.</param>
+        /// <param name="smtpServer">The name of the SMTP server.</param>
+        /// <param name="smtpPort">The port on the SMTP server to use for sending the email.</param>
+        public EmailTraceListener(string toAddress, string fromAddress, string subjectLineStarter, string subjectLineEnder, string smtpServer, int smtpPort)
+            : this(toAddress, fromAddress, subjectLineStarter, subjectLineEnder, smtpServer, smtpPort, new NullLoggingInstrumentationProvider())
+        { }
+
+        /// <summary>
+        /// Initializes a new instance of <see cref="EmailTraceListener"/> with a toaddress, fromaddress, 
+        /// subjectlinestarter, subjectlinender, smtpserver, smtpport, and a formatter
+        /// a <see cref="ILogFormatter"/>.
+        /// </summary>
+        /// <param name="toAddress">A semicolon delimited string the represents to whom the email should be sent.</param>
+        /// <param name="fromAddress">Represents from whom the email is sent.</param>
+        /// <param name="subjectLineStarter">Starting text for the subject line.</param>
+        /// <param name="subjectLineEnder">Ending text for the subject line.</param>
+        /// <param name="smtpServer">The name of the SMTP server.</param>
+        /// <param name="smtpPort">The port on the SMTP server to use for sending the email.</param>
+        /// <param name="instrumentationProvider">The instrumentation provider to use.</param>
+        public EmailTraceListener(string toAddress, string fromAddress, string subjectLineStarter, string subjectLineEnder, string smtpServer, int smtpPort, ILoggingInstrumentationProvider instrumentationProvider)
+            : base(instrumentationProvider)
+        {
+            this.toAddress = toAddress;
+            this.fromAddress = fromAddress;
+            this.subjectLineStarter = subjectLineStarter;
+            this.subjectLineEnder = subjectLineEnder;
+            this.smtpServer = smtpServer;
+            this.smtpPort = smtpPort;
+        }
 
 		/// <summary>
 		/// Sends an email message given a predefined string

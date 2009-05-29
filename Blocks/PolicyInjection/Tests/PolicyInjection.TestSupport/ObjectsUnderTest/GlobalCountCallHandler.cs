@@ -22,20 +22,23 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.TestSupport.Obje
     public class GlobalCountCallHandler : ICallHandler
     {
         public static Dictionary<string, int> Calls = new Dictionary<string, int>();
+        private CallCounter counter;
         string callHandlerName;
         private int order = 0;
 
         public GlobalCountCallHandler(string name)
+            : this(name, new CallCounter())
+        { }
+
+        public GlobalCountCallHandler(string name, CallCounter counter)
         {
             callHandlerName = name;
-
+            this.counter = counter;
         }
 
         public GlobalCountCallHandler(NameValueCollection attributes)
-        {
-            callHandlerName = attributes["callhandler"];
-
-        }
+            : this(attributes["callhandler"])
+        { }
 
         #region ICallHandler Members
         /// <summary>
@@ -61,6 +64,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.TestSupport.Obje
             }
             Calls[callHandlerName]++;
 
+            this.counter.CountCall(this.callHandlerName);
+
             return getNext().Invoke(input, getNext);
         }
 
@@ -71,10 +76,23 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.TestSupport.Obje
     {
         public override ICallHandler CreateHandler(IUnityContainer container)
         {
-            return new GlobalCountCallHandler(this.Name);
+            return new GlobalCountCallHandler(this.Name, container.Resolve<CallCounter>());
         }
 
         public string Name { get; set; }
     }
 
+    public class CallCounter
+    {
+        public IDictionary<string, int> Calls = new Dictionary<string, int>();
+
+        internal void CountCall(string name)
+        {
+            if (!Calls.ContainsKey(name))
+            {
+                Calls.Add(name, 0);
+            }
+            Calls[name]++;
+        }
+    }
 }

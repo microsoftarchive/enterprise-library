@@ -12,6 +12,7 @@
 using System;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using System.Collections.Generic;
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
 {
@@ -51,7 +52,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
         /// </remarks>
         /// <param name="namePrefix">The prefix to use when building references to child elements.</param>
         /// <returns>A <see cref="TypeRegistration"/> for the exception handler data</returns>
-        public virtual TypeRegistration GetContainerConfigurationModel(string namePrefix)
+        public virtual IEnumerable<TypeRegistration> GetRegistrations(string namePrefix)
         {
             // Cannot make abstract for serialization reasons.
             throw new NotImplementedException("Must be implemented by subclasses.");

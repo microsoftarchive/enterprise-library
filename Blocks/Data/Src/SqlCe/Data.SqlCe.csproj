@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{14DD9908-BB61-4402-810A-4C8A999163A9}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -58,9 +58,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="SqlCeDatabaseAssembler.cs" />
     <Compile Include="SqlCeConnectionPool.cs" />
     <Compile Include="SqlCeDatabase.cs" />
+    <Compile Include="SqlCeDatabaseData.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\Src\Common.csproj">

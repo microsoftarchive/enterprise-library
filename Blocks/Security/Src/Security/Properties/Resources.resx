@@ -183,4 +183,13 @@
   <data name="NoDefaultSecurityCacheProvider" xml:space="preserve">
     <value>There is no default security cache provider defined in the "securityConfiguration" section available in the supplied configuration source.</value>
   </data>
+  <data name="ExceptionMustBeImplementedBySubclass" xml:space="preserve">
+    <value>Must be implemented by subclasses.</value>
+  </data>
+  <data name="ExceptionTypeForCustomAuthProviderMustDeriveFrom" xml:space="preserve">
+    <value>The Custom Authentication Provider '{0}' with Type '{1}' must derive from IAuthorizationProvider</value>
+  </data>
+  <data name="ExceptionTypeForCustomCacheProviderMustDeriveFrom" xml:space="preserve">
+    <value>The Custom Security Cache Provider '{0}' with Type '{1}' must derive from ISecurityCacheProvider</value>
+  </data>
 </root>

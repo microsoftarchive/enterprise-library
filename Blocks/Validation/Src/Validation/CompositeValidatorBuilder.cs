@@ -76,9 +76,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
             if (this.validatedElement.IgnoreNulls)
             {
                 valueValidator = new OrCompositeValidator(new NotNullValidator(true), validator);
-                valueValidator.MessageTemplate = this.validatedElement.IgnoreNullsMessageTemplate != null
-                    ? this.validatedElement.IgnoreNullsMessageTemplate
-                    : Resources.IgnoreNullsDefaultMessageTemplate;
+                valueValidator.MessageTemplate = this.validatedElement.IgnoreNullsMessageTemplate ?? Resources.IgnoreNullsDefaultMessageTemplate;
                 valueValidator.Tag = this.validatedElement.IgnoreNullsTag;
             }
             else

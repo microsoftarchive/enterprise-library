@@ -13,6 +13,7 @@ using System;
 using System.Configuration;
 using System.Security.Principal;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Practices.ServiceLocation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Tests
 {
@@ -50,7 +51,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Tests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ConfigurationErrorsException))]
+        [ExpectedException(typeof(ActivationException))]
         public void TryToCreateAuthorizationProviderFromConfigurationThatDoesNotExist()
         {
             AuthorizationFactory.GetAuthorizationProvider("provider3");

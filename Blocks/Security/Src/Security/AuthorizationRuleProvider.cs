@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Security.Principal;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Security.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Security.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security
 {
@@ -28,11 +29,23 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security
 	{
 		private readonly IDictionary<string, IAuthorizationRule> authorizationRules;
 
+
+        /// <summary>
+        /// Initialize an instance of the <see cref="AuthorizationRuleProvider"/> class.
+        /// </summary>
+        /// <param name="authorizationRules">The collection of rules.</param>
+        public AuthorizationRuleProvider(IDictionary<string, IAuthorizationRule> authorizationRules)
+            : this(authorizationRules, new NullAuthorizationProviderInstrumentationProvider())
+        {
+        }
+
 		/// <summary>
 		/// Initialize an instance of the <see cref="AuthorizationRuleProvider"/> class.
 		/// </summary>
 		/// <param name="authorizationRules">The collection of rules.</param>
-		public AuthorizationRuleProvider(IDictionary<string, IAuthorizationRule> authorizationRules)
+        /// <param name="instrumentationProvider">The instrumentation prover to use.</param>
+        public AuthorizationRuleProvider(IDictionary<string, IAuthorizationRule> authorizationRules, IAuthorizationProviderInstrumentationProvider instrumentationProvider)
+            :base(instrumentationProvider)
 		{
 			if (authorizationRules == null) throw new ArgumentNullException("authorizationRules");
 

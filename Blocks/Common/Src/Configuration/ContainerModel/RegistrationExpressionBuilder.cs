@@ -34,17 +34,30 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerMo
         ///<exception cref="ArgumentException">Is thrown if the <paramref name="typeToBuild"/> does not provide a proper constructor.</exception>
         public static LambdaExpression BuildExpression(Type typeToBuild, NameValueCollection attributes)
         {
+            return Expression.Lambda(BuildNewExpression(typeToBuild, attributes));
+        }
+
+        ///<summary>
+        /// Builds a <see cref="NewExpression"/> expected for custom Enterprise Library objects based on the supplied type's object
+        /// and provide attributes.
+        ///</summary>
+        /// <remarks>
+        /// The <paramref name="typeToBuild"/> must supply an accessible constructor that takes a single parameter of type <see cref="NameValueCollection"/>.
+        /// </remarks>
+        ///<param name="typeToBuild">The object type to build the expression around.</param>
+        ///<param name="attributes">Attributes to pass to the constructor of <paramref name="typeToBuild"/></param>
+        ///<returns>A <see cref="NewExpression"/> that defines the construction of <paramref name="typeToBuild"/> in a <see cref="NewExpression"/>.</returns>
+        ///<exception cref="ArgumentException">Is thrown if the <paramref name="typeToBuild"/> does not provide a proper constructor.</exception>
+        public static NewExpression BuildNewExpression(Type typeToBuild, NameValueCollection attributes)
+        {
             NameValueCollection collectionArgument = attributes ?? new NameValueCollection();
             ConstructorInfo constructor = typeToBuild.GetConstructor(new[] { typeof(NameValueCollection) });
             if (constructor == null)
+            {
                 throw new ArgumentException(Properties.Resources.ExceptionTypeDoesNotProvideCorrectConstructor);
+            }
 
-            return Expression.Lambda(
-                Expression.New(
-                    constructor,
-                    Expression.Constant(collectionArgument)
-                    )
-                );
+            return Expression.New(constructor, Expression.Constant(collectionArgument));
         }
     }
 }

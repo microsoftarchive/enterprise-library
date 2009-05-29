@@ -19,6 +19,7 @@ using System.Security.Principal;
 using Microsoft.Interop.Security.AzRoles;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Security.AzMan.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Security.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.AzMan
 {
@@ -44,6 +45,22 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.AzMan
 		private readonly string scopeName;
 
 		private readonly object contextLock = new object();
+        /// <summary>
+        /// Creates a new instance of the <see cref="AzManAuthorizationProvider"/> class.
+        /// </summary>
+        /// <param name="storeLocation">The AzMan store location.</param>
+        /// <param name="applicationName">The AzMan application name.</param>
+        /// <param name="auditIdentifierPrefix">The AzMan identifier prefix.</param>
+        /// <param name="scopeName">The AzMan scope name.</param>
+        public AzManAuthorizationProvider(
+            string storeLocation,
+            string applicationName,
+            string auditIdentifierPrefix,
+            string scopeName)
+            : this(storeLocation, applicationName, auditIdentifierPrefix, scopeName, new NullAuthorizationProviderInstrumentationProvider())
+        {
+        }
+
 
 		/// <summary>
 		/// Creates a new instance of the <see cref="AzManAuthorizationProvider"/> class.
@@ -52,11 +69,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.AzMan
 		/// <param name="applicationName">The AzMan application name.</param>
 		/// <param name="auditIdentifierPrefix">The AzMan identifier prefix.</param>
 		/// <param name="scopeName">The AzMan scope name.</param>
+        /// <param name="instrumentationProvider">The instrumentation provider to use.</param>
 		public AzManAuthorizationProvider(
 			string storeLocation,
 			string applicationName,
 			string auditIdentifierPrefix,
-			string scopeName)
+			string scopeName,
+            IAuthorizationProviderInstrumentationProvider instrumentationProvider)
+            :base(instrumentationProvider)
 		{
 			this.storeLocation = GetStoreLocationPath(storeLocation);
 			this.applicationName = applicationName;

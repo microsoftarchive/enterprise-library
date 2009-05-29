@@ -12,10 +12,9 @@
 using System;
 using System.Data;
 using System.Data.Common;
-using System.Data.OracleClient;
+using System.Data.Odbc;
 using System.Data.SqlClient;
 using System.Xml;
-using Microsoft.Practices.EnterpriseLibrary.Data.Tests;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Practices.EnterpriseLibrary.Data.TestSupport;
 
@@ -87,7 +86,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
         [ExpectedException(typeof(ArgumentException))]
         public void ExecuteXmlReaderWithWrongCommandTypeWillThrow()
         {
-            sqlDatabase.ExecuteXmlReader(new OracleCommand());
+            sqlDatabase.ExecuteXmlReader(new OdbcCommand());
         }
 
         [TestMethod]

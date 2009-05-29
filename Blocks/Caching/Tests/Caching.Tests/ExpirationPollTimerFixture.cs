@@ -34,8 +34,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests
         [TestMethod]
         public void WillCallBackAtSetInterval()
         {
-            ExpirationPollTimer timer = new ExpirationPollTimer();
-            timer.StartPolling(new TimerCallback(CallbackMethod), 100);
+            ExpirationPollTimer timer = new ExpirationPollTimer(100);
+            timer.StartPolling(new TimerCallback(CallbackMethod));
             Thread.Sleep(1100);
             timer.StopPolling();
             Assert.IsTrue((counter >= 9) && (counter <= 12));
@@ -44,8 +44,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests
         [TestMethod]
         public void CanStopPolling()
         {
-            ExpirationPollTimer timer = new ExpirationPollTimer();
-            timer.StartPolling(new TimerCallback(CallbackMethod), 100);
+            ExpirationPollTimer timer = new ExpirationPollTimer(100);
+            timer.StartPolling(new TimerCallback(CallbackMethod));
             Thread.Sleep(1100);
             timer.StopPolling();
             Thread.Sleep(250);
@@ -56,23 +56,22 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests
         [ExpectedException(typeof(ArgumentNullException))]
         public void StartingWithNullCallbackThrowsException()
         {
-            ExpirationPollTimer timer = new ExpirationPollTimer();
-            timer.StartPolling(null, 100);
+            ExpirationPollTimer timer = new ExpirationPollTimer(100);
+            timer.StartPolling(null);
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
         public void StartingWithZeroPollTimeThrowsException()
         {
-            ExpirationPollTimer timer = new ExpirationPollTimer();
-            timer.StartPolling(new TimerCallback(CallbackMethod), 0);
+            ExpirationPollTimer timer = new ExpirationPollTimer(0);
         }
 
         [TestMethod]
         [ExpectedException(typeof(InvalidOperationException))]
         public void CannotCallStopBeforeCallingStart()
         {
-            ExpirationPollTimer timer = new ExpirationPollTimer();
+            ExpirationPollTimer timer = new ExpirationPollTimer(100);
             timer.StopPolling();
         }
     }

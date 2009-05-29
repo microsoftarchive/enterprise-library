@@ -16,8 +16,11 @@ using System.Data.Common;
 using System.Data.OracleClient;
 using System.Data.SqlClient;
 using System.Globalization;
+using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Data.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Data.Oracle;
 using Microsoft.Practices.EnterpriseLibrary.Data.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Data.Sql;
@@ -40,13 +43,21 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration
         private static readonly DbProviderMapping defaultGenericMapping =
             new DbProviderMapping(DbProviderMapping.DefaultGenericProviderName, typeof(GenericDatabase));
 
-        private readonly IConfigurationSource configurationSource;
+        private IConfigurationSource configurationSource;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DatabaseSyntheticConfigSettings"/> class with a configuration 
-        /// source.
+        /// Default constructor, used when creating registrations for containers.
         /// </summary>
-        /// <param name="configurationSource">The configuration source.</param>
+        public DatabaseSyntheticConfigSettings()
+        {
+            
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DatabaseSyntheticConfigSettings"/> class
+        /// with the given <see cref="IConfigurationSource"/>.
+        /// </summary>
+        /// <remarks>This constructor is primarily for test convenience.</remarks>
         public DatabaseSyntheticConfigSettings(IConfigurationSource configurationSource)
         {
             this.configurationSource = configurationSource;
@@ -85,6 +96,47 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration
                 }
             }
         }
+
+
+        /// <summary>
+        /// Returns the <see cref="ConnectionStringSettings"/> object with the given name from the connection strings
+        /// configuration section in the receiver's configuration source.
+        /// </summary>
+        /// <remarks>
+        /// The connection string will be retrieved from the configuration source if it contains the connection strings section,
+        /// otherwise it will be retrieved from the default configuration file.
+        /// </remarks>
+        /// <param name="name">The name for the desired connection string configuration.</param>
+        /// <returns>The connection string configuration.</returns>
+        /// <exception cref="ArgumentException">if <paramref name="name"/> is <see langword="null"/> (<b>Nothing</b> in Visual Basic) or empty.</exception>
+        /// <exception cref="ConfigurationErrorsException">if the connection string object is not found, or if it does not specify a provider name.</exception>
+        public ConnectionStringSettings GetConnectionStringSettings(string name)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                throw new ArgumentException(Resources.ExceptionNullOrEmptyString);
+            }
+
+            ConnectionStringSettingsCollection connectionStringsCollection = GetConnectionStrings();
+            ConnectionStringSettings connectionStringSettings = connectionStringsCollection[name];
+
+            ValidateConnectionStringSettings(name, connectionStringSettings);
+            return connectionStringSettings;
+        }
+
+        private static void ValidateConnectionStringSettings(string name, ConnectionStringSettings connectionStringSettings)
+        {
+            if (connectionStringSettings == null)
+            {
+                throw new ConfigurationErrorsException(string.Format(Resources.Culture, Resources.ExceptionNoDatabaseDefined, name));
+            }
+
+            if (string.IsNullOrEmpty(connectionStringSettings.ProviderName))
+            {
+                throw new ConfigurationErrorsException(string.Format(Resources.Culture, Resources.ExceptionNoProviderDefinedForConnectionString, name));
+            }
+        }
+
 
         private ConnectionStringSettingsCollection GetConnectionStrings()
         {
@@ -165,6 +217,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration
             }
         }
 
+        /// <summary>
+        /// This method is made public for unit testing purposes.
+        /// </summary>
+        /// <param name="dbProviderName"></param>
+        /// <returns></returns>
+        public DbProviderMapping GetProviderMapping(string dbProviderName)
+        {
+            DatabaseSettings settings = (DatabaseSettings)configurationSource.GetSection(DatabaseSettings.SectionName);
+            return GetProviderMapping(dbProviderName, settings);
+        }
+
         private static DbProviderMapping GetProviderMapping(string dbProviderName, DatabaseSettings databaseSettings)
         {
             if (databaseSettings != null)
@@ -206,17 +269,71 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration
             return defaultGenericMapping;
         }
 
-        
+        private static TypeRegistration GetInstrumentationProviderRegistration(string instanceName, IConfigurationSource configurationSource)
+        {
+            var instrumentationSection = InstrumentationConfigurationSection.GetSection(configurationSource);
+            return new TypeRegistration<IDataInstrumentationProvider>(
+                () => new NewDataInstrumentationProvider(
+                    instanceName,
+                    instrumentationSection.PerformanceCountersEnabled,
+                    instrumentationSection.EventLoggingEnabled,
+                    instrumentationSection.WmiEnabled,
+                    instrumentationSection.ApplicationInstanceName))
+                {
+                    Name = instanceName
+                };
+        }
+
+        private TypeRegistration GetDefaultDataEventLoggerRegistration()
+        {
+            var instrumentationConfigurationSection = InstrumentationConfigurationSection.GetSection(configurationSource);
+            return new TypeRegistration<DefaultDataEventLogger>(
+                () => new DefaultDataEventLogger(
+                    instrumentationConfigurationSection.EventLoggingEnabled, 
+                    instrumentationConfigurationSection.WmiEnabled));
+        }
+
         /// <summary>
         /// Creates <see cref="TypeRegistration"/> entries based on <see cref="DatabaseSyntheticConfigSettings"/>
         /// </summary>
         /// <returns>An set of <see cref="TypeRegistration"/> entries.</returns>
-        public IEnumerable<TypeRegistration> CreateRegistrations()
+        public IEnumerable<TypeRegistration> GetRegistrations(IConfigurationSource configurationSource)
         {
-            foreach (var data in Databases)
+            if(configurationSource == null) throw new ArgumentNullException("configurationSource");
+
+            this.configurationSource = configurationSource;
+
+            var defaultDatabase = DefaultDatabase;
+
+            foreach (DatabaseData data in Databases)
             {
-                yield return data.GetContainerConfigurationModel();
+                foreach (TypeRegistration typeRegistration in data.GetRegistrations())
+                {
+                    if (typeRegistration.ServiceType == typeof(Database)
+                        && String.Equals(typeRegistration.Name, defaultDatabase))
+                    {
+                        typeRegistration.IsDefault = true;
+                    }
+
+                    yield return typeRegistration;
+                    yield return GetInstrumentationProviderRegistration(typeRegistration.Name, configurationSource);
+                }
             }
+
+            yield return GetDefaultDataEventLoggerRegistration();
+        }
+
+        /// <summary>
+        /// Return the <see cref="TypeRegistration"/> objects needed to reconfigure
+        /// the container after a configuration source has changed.
+        /// </summary>
+        /// <remarks>If there are no reregistrations, return an empty sequence.</remarks>
+        /// <param name="configurationSource">The <see cref="IConfigurationSource"/> containing
+        /// the configuration information.</param>
+        /// <returns>The sequence of <see cref="TypeRegistration"/> objects.</returns>
+        public IEnumerable<TypeRegistration> GetUpdatedRegistrations(IConfigurationSource configurationSource)
+        {
+            return Enumerable.Empty<TypeRegistration>();
         }
     }
 }

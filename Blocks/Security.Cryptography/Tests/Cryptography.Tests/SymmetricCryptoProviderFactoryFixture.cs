@@ -10,11 +10,10 @@
 //===============================================================================
 
 using System;
-using System.Configuration;
 using System.Security.Cryptography;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration;
-using Microsoft.Practices.ObjectBuilder2;
+using Microsoft.Practices.ServiceLocation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests
@@ -35,7 +34,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ConfigurationErrorsException))]
+        [ExpectedException(typeof(ActivationException))]
         public void LookupInvalidProviderThrows()
         {
             SymmetricCryptoProviderFactory factory = new SymmetricCryptoProviderFactory(CreateSource(providerName));
@@ -52,7 +51,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(BuildFailedException))]
+        [ExpectedException(typeof(ActivationException))]
         public void CreateDefaultProviderWithNoneDefinedThrows()
         {
             SymmetricCryptoProviderFactory factory = new SymmetricCryptoProviderFactory(CreateSource(string.Empty));
@@ -83,7 +82,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests
             settings.DefaultSymmetricCryptoProviderName = defaultName;
             settings.SymmetricCryptoProviders.Add(new DpapiSymmetricCryptoProviderData(providerName, DataProtectionScope.CurrentUser));
             settings.SymmetricCryptoProviders.Add(new SymmetricAlgorithmProviderData(symmetricAlgorithm, typeof(RijndaelManaged), "ProtectedKey.file", DataProtectionScope.CurrentUser));
-            sections.Add(CryptographyConfigurationView.SectionName, settings);
+            sections.Add(CryptographySettings.SectionName, settings);
             return sections;
         }
     }

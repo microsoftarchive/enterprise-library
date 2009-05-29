@@ -9,10 +9,7 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel
 {
@@ -26,7 +23,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerMo
         /// Return the <see cref="TypeRegistration"/> objects needed to configure
         /// the container.
         /// </summary>
+        /// <param name="configurationSource">The <see cref="IConfigurationSource"/> containing
+        /// the configuration information.</param>
         /// <returns>The sequence of <see cref="TypeRegistration"/> objects.</returns>
-        IEnumerable<TypeRegistration> CreateRegistrations();
+        IEnumerable<TypeRegistration> GetRegistrations(IConfigurationSource configurationSource);
+
+        /// <summary>
+        /// Return the <see cref="TypeRegistration"/> objects needed to reconfigure
+        /// the container after a configuration source has changed.
+        /// </summary>
+        /// <remarks>If there are no reregistrations, return an empty sequence.</remarks>
+        /// <param name="configurationSource">The <see cref="IConfigurationSource"/> containing
+        /// the configuration information.</param>
+        /// <returns>The sequence of <see cref="TypeRegistration"/> objects.</returns>
+        IEnumerable<TypeRegistration> GetUpdatedRegistrations(IConfigurationSource configurationSource);
     }
 }

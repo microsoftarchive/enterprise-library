@@ -13,13 +13,16 @@ using System;
 using System.Linq;
 using System.Reflection;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel.Unity;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.TestSupport.ObjectsUnderTest;
+using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using RuleDrivenPolicy = Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration.PolicyData.RuleDrivenPolicy;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tests
 {
@@ -32,6 +35,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         {
             ValidationCallHandlerData validationCallHandler = new ValidationCallHandlerData("validationHandler");
             IUnityContainer container = new UnityContainer().AddNewExtension<Interception>();
+            new UnityContainerConfigurator(container)
+                .RegisterAll(new DictionaryConfigurationSource(), new ValidationTypeRegistrationProvider());
 
             RuleDrivenPolicy policy = CreatePolicySetContainingCallHandler(validationCallHandler, container);
 
@@ -101,6 +106,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
             ValidationFixtureTarget target = factory.Resolve<ValidationFixtureTarget>();
 
             target.AcceptTest(new TestObject(false, true));
+        }
+
+        [TestMethod]
+        [DeploymentItem("Validation.config")]
+        public void ValidationCallHandlerIgnoresConfigurationAndAttributesValidationIfSpecificationSourceIsParameterAttributesOnly()
+        {
+            IUnityContainer factory = new UnityContainer().AddNewExtension<Interception>();
+            factory.Configure<Interception>().SetDefaultInterceptorFor<ValidationFixtureTarget>(new TransparentProxyInterceptor());
+            AddValidationPolicy(factory, string.Empty, SpecificationSource.ParameterAttributesOnly, new TypeMatchingRule("ValidationFixtureTarget"));
+            ValidationFixtureTarget target = factory.Resolve<ValidationFixtureTarget>();
+
+            target.AcceptTest(new TestObject(true, true));
         }
 
         [TestMethod]

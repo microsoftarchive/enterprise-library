@@ -15,12 +15,17 @@ using System.Reflection;
 using System.Security.Principal;
 using System.Threading;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel.Unity;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.TestSupport.ObjectsUnderTest;
+using Microsoft.Practices.EnterpriseLibrary.Security;
+using Microsoft.Practices.EnterpriseLibrary.Security.Configuration;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using RuleDrivenPolicy = Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration.PolicyData.RuleDrivenPolicy;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tests
 {
@@ -34,10 +39,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         IUnityContainer AllowJackPolicyContainer;
         IUnityContainer AllowBasedOnTokensPolicyContainer;
 
+        IConfigurationSource authorizationConfiguration;
+
         [TestInitialize]
         public void TestInitialize()
         {
-            IConfigurationSource authorizationConfiguration = new FileConfigurationSource("Authorization.config");
+            authorizationConfiguration = new FileConfigurationSource("Authorization.config");
+            var securitySettings = (SecuritySettings)authorizationConfiguration.GetSection(SecuritySettings.SectionName);
 
             AllowFredPolicyContainer = new UnityContainer();
             AllowFredPolicyContainer
@@ -45,9 +53,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
                 .Configure<Interception>()
                     .SetDefaultInterceptorFor<AuthorizationTestTarget>(new TransparentProxyInterceptor())
                     .AddPolicy("allowFred")
-                        .AddCallHandler(
-                            new AuthorizationCallHandler("RuleProvider", "OnlyFredHasAccess", authorizationConfiguration))
+                        .AddCallHandler<AuthorizationCallHandler>(
+                            new InjectionConstructor(typeof(IAuthorizationProvider), "OnlyFredHasAccess", 0))
                         .AddMatchingRule(new AlwaysMatchingRule());
+            new UnityContainerConfigurator(AllowFredPolicyContainer).RegisterAll(authorizationConfiguration, securitySettings);
 
             AllowJackPolicyContainer = new UnityContainer();
             AllowJackPolicyContainer
@@ -55,9 +64,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
                 .Configure<Interception>()
                     .SetDefaultInterceptorFor<AuthorizationTestTarget>(new TransparentProxyInterceptor())
                     .AddPolicy("allowJack")
-                        .AddCallHandler(
-                            new AuthorizationCallHandler("RuleProvider", "OnlyJackHasAccess", authorizationConfiguration))
+                        .AddCallHandler<AuthorizationCallHandler>(
+                            new InjectionConstructor(typeof(IAuthorizationProvider), "OnlyJackHasAccess", 0))
                         .AddMatchingRule(new AlwaysMatchingRule());
+            new UnityContainerConfigurator(AllowJackPolicyContainer).RegisterAll(authorizationConfiguration, securitySettings);
 
             AllowBasedOnTokensPolicyContainer = new UnityContainer();
             AllowBasedOnTokensPolicyContainer
@@ -65,9 +75,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
                 .Configure<Interception>()
                     .SetDefaultInterceptorFor<AuthorizationTestTarget>(new TransparentProxyInterceptor())
                     .AddPolicy("tokens")
-                        .AddCallHandler(
-                            new AuthorizationCallHandler(string.Empty, "{type}-{method}", authorizationConfiguration))
+                        .AddCallHandler<AuthorizationCallHandler>(
+                            new InjectionConstructor(typeof(IAuthorizationProvider), "{type}-{method}", 0))
                         .AddMatchingRule(new AlwaysMatchingRule());
+            new UnityContainerConfigurator(AllowBasedOnTokensPolicyContainer).RegisterAll(authorizationConfiguration, securitySettings);
         }
 
         [TestMethod, DeploymentItem("Authorization.config"), ExpectedException(typeof(UnauthorizedAccessException))]
@@ -137,6 +148,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         }
 
         [TestMethod]
+        [DeploymentItem("Authorization.config")]
         public void ShouldAllowJackToCallGetCurrentPrincipalName()
         {
             using (new PrincipalSwitcher(JackPrincipal))
@@ -147,7 +159,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         }
 
         [TestMethod]
-        public void CreateCachingCallHandlerFromConfiguration()
+        [DeploymentItem("Authorization.config")]
+        public void CreateAuthorizationCallHandlerFromConfiguration()
         {
             PolicyInjectionSettings settings = new PolicyInjectionSettings();
 
@@ -157,29 +170,23 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
             policyData.Handlers.Add(data);
             settings.Policies.Add(policyData);
 
-            DictionaryConfigurationSource dictConfigurationSource = new DictionaryConfigurationSource();
-            dictConfigurationSource.Add(PolicyInjectionSettings.SectionName, settings);
-
+            var configSource = new FileConfigurationSource("Authorization.config");
             IUnityContainer container = new UnityContainer().AddNewExtension<Interception>();
-            settings.ConfigureContainer(container, dictConfigurationSource);
+            settings.ConfigureContainer(container, configSource);
+            new UnityContainerConfigurator(container)
+                .RegisterAll(configSource, (ITypeRegistrationsProvider)configSource.GetSection(SecuritySettings.SectionName));
 
             RuleDrivenPolicy policy = container.Resolve<RuleDrivenPolicy>("policy");
 
-            ICallHandler handler
-                = (policy.GetHandlersFor(new MethodImplementationInfo(null, (MethodInfo)MethodBase.GetCurrentMethod()), container)).ElementAt(0);
+            ICallHandler handler =
+                (policy.GetHandlersFor(new MethodImplementationInfo(null, (MethodInfo)MethodBase.GetCurrentMethod()), container)).ElementAt(0);
             Assert.IsNotNull(handler);
             Assert.AreEqual(handler.Order, data.Order);
+            //Assert.AreSame(authorizationProvider, ((AuthorizationCallHandler)handler).AutorizationProvider); // TODO this test only checked for provider name, so it didn't fail even though the configuration source supplied didn't have the settings required to build it
         }
 
         [TestMethod]
-        public void ShouldCreateCacheUsingDefaultConfiguration()
-        {
-            AuthorizationCallHandler handler = new AuthorizationCallHandler("providerName", "operationName", null);
-
-            Assert.AreEqual(0, handler.Order);
-        }
-
-        [TestMethod]
+        [DeploymentItem("Authorization.config")]
         public void CreatesHandlerProperlyFromAttributes()
         {
             MethodInfo method = typeof(AuthorizationTestTarget).GetMethod("GetName");
@@ -191,7 +198,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
             Assert.AreEqual(1, attributes.Length);
 
             AuthorizationCallHandlerAttribute att = attributes[0] as AuthorizationCallHandlerAttribute;
-            ICallHandler callHandler = att.CreateHandler(null);
+            ICallHandler callHandler = att.CreateHandler(AllowFredPolicyContainer);
 
             Assert.IsNotNull(callHandler);
             Assert.AreEqual(3, callHandler.Order);

@@ -14,13 +14,11 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
-using Microsoft.Practices.ObjectBuilder2;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Configuration
@@ -28,15 +26,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
     [TestClass]
     public class FormattedEmailTraceListenerConfigurationFixture
     {
-        IBuilderContext context;
-        ConfigurationReflectionCache reflectionCache;
-
         [TestInitialize]
         public void SetUp()
         {
             AppDomain.CurrentDomain.SetData("APPBASE", Environment.CurrentDirectory);
-            context = new BuilderContext(new StrategyChain(), null, null, new PolicyList(), null, null);
-            reflectionCache = new ConfigurationReflectionCache();
+        }
+
+        private static TraceListener GetListener(string name, IConfigurationSource configurationSource)
+        {
+            var container = EnterpriseLibraryContainer.CreateDefaultContainer(configurationSource);
+            return container.GetInstance<TraceListener>(name);
         }
 
         [TestMethod]
@@ -105,7 +104,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
             helper.loggingSettings.TraceListeners.Add(listenerData);
             helper.loggingSettings.Formatters.Add(new TextFormatterData("formatter", "foobar template"));
 
-            TraceListener listener = TraceListenerCustomFactory.Instance.Create(context, "listener", helper.configurationSource, reflectionCache);
+            TraceListener listener = GetListener("listener", helper.configurationSource);
 
             Assert.IsNotNull(listener);
             Assert.AreEqual("listener", listener.Name);
@@ -124,8 +123,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
 
             MockLogObjectsHelper helper = new MockLogObjectsHelper();
             helper.loggingSettings.Formatters.Add(new TextFormatterData("formatter", "foobar template"));
+            helper.loggingSettings.TraceListeners.Add(listenerData);
 
-            TraceListener listener = TraceListenerCustomFactory.Instance.Create(context, listenerData, helper.configurationSource, reflectionCache);
+            TraceListener listener = GetListener(listenerData.Name, helper.configurationSource);
 
             Assert.IsNotNull(listener);
             Assert.AreEqual("listener", listener.Name);
@@ -143,8 +143,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
                                            "has occurred", "smtphost", 25, null);
 
             MockLogObjectsHelper helper = new MockLogObjectsHelper();
+            helper.loggingSettings.TraceListeners.Add(listenerData);
 
-            TraceListener listener = TraceListenerCustomFactory.Instance.Create(context, listenerData, helper.configurationSource, reflectionCache);
+            TraceListener listener = GetListener(listenerData.Name, helper.configurationSource);
 
             Assert.IsNotNull(listener);
             Assert.AreEqual("listener", listener.Name);
@@ -161,7 +162,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
                 new EmailTraceListenerData("listener", "obviously.bad.email.address@127.0.0.1", "logging@entlib.com", "EntLib-Logging:",
                                            "has occurred", "smtphost", 25, "formatter"));
 
-            TraceListener listener = TraceListenerCustomFactory.Instance.Create(context, "listener", CommonUtil.SaveSectionsAndGetConfigurationSource(loggingSettings), reflectionCache);
+            TraceListener listener = GetListener("listener", CommonUtil.SaveSectionsAndGetConfigurationSource(loggingSettings));
 
             Assert.IsNotNull(listener);
             Assert.AreEqual(listener.GetType(), typeof(EmailTraceListener));
@@ -178,7 +179,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
                 new EmailTraceListenerData("listener", "obviously.bad.email.address@127.0.0.1", "logging@entlib.com", "EntLib-Logging:",
                                            "has occurred", "smtphost", 25, null));
 
-            TraceListener listener = TraceListenerCustomFactory.Instance.Create(context, "listener", CommonUtil.SaveSectionsAndGetConfigurationSource(loggingSettings), reflectionCache);
+            TraceListener listener = GetListener("listener", CommonUtil.SaveSectionsAndGetConfigurationSource(loggingSettings));
 
             Assert.IsNotNull(listener);
             Assert.AreEqual(listener.GetType(), typeof(EmailTraceListener));

@@ -15,6 +15,8 @@ using System.Configuration;
 using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
 {
@@ -65,41 +67,76 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
         /// Creates the <see cref="TypeRegistration"/> entries to use when configuring a container for Exception Handling
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<TypeRegistration> CreateRegistrations()
+        public IEnumerable<TypeRegistration> GetRegistrations(IConfigurationSource configurationSource)
         {
-            List<TypeRegistration> registrations = new List<TypeRegistration>();
+            var registrations = new List<TypeRegistration>();
+
+            registrations.AddRange(GetDefaultInstrumentationRegistrations(configurationSource));
 
             foreach (ExceptionPolicyData policyData in ExceptionPolicies)
             {
-                registrations.Add(policyData.GetContainerConfigurationModel());
+                registrations.AddRange(policyData.GetRegistration(configurationSource));
 
                 foreach (var policyTypeData in policyData.ExceptionTypes)
                 {
                     TypeRegistration policyTypeRegistration =
-                        policyTypeData.GetContainerConfigurationModel(policyData.Name);
+                        policyTypeData.GetRegistration(policyData.Name);
                     registrations.Add(policyTypeRegistration);
 
                     registrations.AddRange(
-                        from handlerData in policyTypeData.ExceptionHandlers
-                        select handlerData.GetContainerConfigurationModel(policyTypeRegistration.Name));
+                        policyTypeData.ExceptionHandlers.SelectMany(ehd =>ehd.GetRegistrations(policyTypeRegistration.Name)));
                 }
             }
 
             registrations.Add(
                 GetManagerRegistration(ExceptionPolicies.Select(p => p.Name).ToArray())
                 );
+
             return registrations;
+        }
+
+        /// <summary>
+        /// Return the <see cref="TypeRegistration"/> objects needed to reconfigure
+        /// the container after a configuration source has changed.
+        /// </summary>
+        /// <remarks>If there are no reregistrations, return an empty sequence.</remarks>
+        /// <param name="configurationSource">The <see cref="IConfigurationSource"/> containing
+        /// the configuration information.</param>
+        /// <returns>The sequence of <see cref="TypeRegistration"/> objects.</returns>
+        public IEnumerable<TypeRegistration> GetUpdatedRegistrations(IConfigurationSource configurationSource)
+        {
+            return Enumerable.Empty<TypeRegistration>();
+        }
+
+        private static IEnumerable<TypeRegistration> GetDefaultInstrumentationRegistrations(IConfigurationSource configurationSource)
+        {
+            var instrumentationSection = InstrumentationConfigurationSection.GetSection(configurationSource);
+
+            yield return new TypeRegistration<DefaultExceptionHandlingEventLogger>(
+                () => new DefaultExceptionHandlingEventLogger(
+                    instrumentationSection.EventLoggingEnabled, 
+                    instrumentationSection.WmiEnabled))
+                {
+                    Lifetime = TypeRegistrationLifetime.Transient
+                };
+
+            yield return new TypeRegistration<IDefaultExceptionHandlingInstrumentationProvider>(
+                () => new DefaultExceptionHandlingEventLogger(
+                    instrumentationSection.PerformanceCountersEnabled,
+                    instrumentationSection.EventLoggingEnabled,
+                    instrumentationSection.WmiEnabled,
+                    instrumentationSection.ApplicationInstanceName))
+                {
+                    Lifetime = TypeRegistrationLifetime.Transient
+                };
         }
 
         private static TypeRegistration GetManagerRegistration(string[] policyNames)
         {
             return new TypeRegistration<ExceptionManager>(
-                () => new ExceptionManagerImpl(Container.ResolvedEnumerable<ExceptionPolicyImpl>(policyNames))
+                () => new ExceptionManagerImpl(Container.ResolvedEnumerable<ExceptionPolicyImpl>(policyNames),
+                    Container.Resolved<IDefaultExceptionHandlingInstrumentationProvider>())
                 );
         }
-
-
     }
-
-
 }

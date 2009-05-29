@@ -12,9 +12,8 @@
 using System;
 using System.Data.Common;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Unity;
 using Microsoft.Practices.EnterpriseLibrary.Data.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Unity;
+using Microsoft.Practices.EnterpriseLibrary.Data.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Data.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Data
@@ -26,8 +25,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
     /// This database exposes the <see cref="DbProviderFactory"/> used to allow for a provider 
     /// agnostic programming model.
     /// </remarks>
-    [DatabaseAssembler(typeof(GenericDatabaseAssembler))]
-    [ContainerPolicyCreator(typeof(GenericDatabasePolicyCreator))]
     [ConfigurationElementType(typeof(GenericDatabaseData))]
     public class GenericDatabase : Database
     {
@@ -41,6 +38,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
         )
             : base(connectionString, dbProviderFactory)
         {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GenericDatabase"/> class with a connection string, 
+        /// a provider factory, and an instrumentation provider.
+        /// </summary>
+        /// <param name="connectionString">The connection string.</param>
+        /// <param name="dbProviderFactory">The provider factory.</param>
+        /// <param name="instrumentationProvider">The instrumentation provider.</param>
+        public GenericDatabase(string connectionString, DbProviderFactory dbProviderFactory, IDataInstrumentationProvider instrumentationProvider)
+            : base(connectionString, dbProviderFactory, instrumentationProvider)
+        {
+            
         }
 
         /// <summary>

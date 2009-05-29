@@ -9,13 +9,13 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
+using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
 {
@@ -63,9 +63,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
         /// Retrieves the <see cref="TypeRegistration"/> for registering a <see cref="ExceptionPolicyImpl"/> in the container.
         /// </summary>
         /// <returns>A completed <see cref="TypeRegistration"/></returns>
-        public TypeRegistration GetContainerConfigurationModel()
+        public IEnumerable<TypeRegistration> GetRegistration(IConfigurationSource configurationSource)
         {
-            return new TypeRegistration<ExceptionPolicyImpl>(
+            yield return new TypeRegistration<ExceptionPolicyImpl>(
                 () => new ExceptionPolicyImpl(
                     Name, 
                     Container.ResolvedEnumerable<ExceptionPolicyEntry>(
@@ -74,11 +74,28 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
                     
                     )))
                     {Name = Name};
+
+            yield return GetInstrumentationRegistration(configurationSource);
         }
 
         private string BuildChildName(string childName)
         {
             return string.Format("{0}.{1}", Name, childName);
+        }
+
+        private TypeRegistration GetInstrumentationRegistration(IConfigurationSource configurationSource)
+        {
+            var instrumentationSection = InstrumentationConfigurationSection.GetSection(configurationSource);
+
+            return new TypeRegistration<IExceptionHandlingInstrumentationProvider>(
+                () => new ExceptionHandlingInstrumentationProvider(Name,
+                                                                      instrumentationSection.PerformanceCountersEnabled,
+                                                                      instrumentationSection.EventLoggingEnabled,
+                                                                      instrumentationSection.WmiEnabled,
+                                                                      instrumentationSection.ApplicationInstanceName))
+                       {
+                           Name = Name
+                       };
         }
     }
 }

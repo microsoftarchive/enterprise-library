@@ -30,6 +30,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Lib\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Practices.Unity, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Lib\Microsoft.Practices.Unity.dll</HintPath>
@@ -63,6 +67,10 @@
     <ProjectReference Include="..\..\..\ExceptionHandling\Src\ExceptionHandling\ExceptionHandling.csproj">
       <Project>{2DB0AD6D-BF59-4EBB-9F99-49ABD8539FD2}</Project>
       <Name>ExceptionHandling</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\PolicyInjection\Src\PolicyInjection\PolicyInjection.csproj">
+      <Project>{3E6129C8-18E4-410D-89FC-0DBBE6009FC5}</Project>
+      <Name>PolicyInjection</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\Security.Cryptography\Src\Cryptography\Security.Cryptography.csproj">
       <Project>{6A4E6A8A-A39F-4643-BA9B-87AED00BB03E}</Project>

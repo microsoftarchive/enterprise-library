@@ -343,6 +343,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unable to find appropriate {1} argument constructor for {0}.
+        /// </summary>
+        internal static string ExceptionCannotFindAppropriateConstructor {
+            get {
+                return ResourceManager.GetString("ExceptionCannotFindAppropriateConstructor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The default category &apos;{0}&apos; is not defined in Logging Distributor configuration..
         /// </summary>
         internal static string ExceptionCannotLoadDefaultCategory {
@@ -393,6 +402,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Properties {
         internal static string ExceptionConfigurationObjectIsNotCustomTraceListenerData {
             get {
                 return ResourceManager.GetString("ExceptionConfigurationObjectIsNotCustomTraceListenerData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The creation expression for this type registration must be a Linq New or MemberInit Expression..
+        /// </summary>
+        internal static string ExceptionCreationLinqExpressionMustBeNew {
+            get {
+                return ResourceManager.GetString("ExceptionCreationLinqExpressionMustBeNew", resourceCulture);
             }
         }
         

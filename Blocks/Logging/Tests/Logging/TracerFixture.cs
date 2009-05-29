@@ -16,15 +16,16 @@ using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Threading;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Storage;
 using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport;
+using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Filters;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport.TraceListeners;
+using Microsoft.Practices.ServiceLocation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
@@ -44,7 +45,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
         const string badOperation = "bad operation";
         const string category = "category";
 
-        [TestMethod]
+        [TestMethod] //misterious build fail on commandline runner
         public void UsingTracerWritesEntryAndExitMessages()
         {
             MockTraceListener.Reset();
@@ -62,7 +63,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
             AssertLogEntryIsValid(MockTraceListener.LastEntry, Tracer.endTitle, operation, currentActivityId, false);
         }
 
-        [TestMethod]
+        [TestMethod] //misterious build fail on commandline runner
         public void UsingTracerWritesEntryAndExitMessagesIgnoring_NoActivityIdCheck()
         {
             MockTraceListener.Reset();
@@ -93,7 +94,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
             Assert.IsTrue(MockTraceListener.Entries[0].Message.Contains(MyTypeAndMethodName));
         }
 
-        void SetTracingFlag(bool tracingEnabled)
+        static IServiceLocator GetContainerWithTracingFlag(bool tracingEnabled)
+        {
+            var config = new FileConfigurationSource(
+                AppDomain.CurrentDomain.SetupInformation.ConfigurationFile);
+            var loggingSettings = ((LoggingSettings) config.GetSection(LoggingSettings.SectionName));
+            loggingSettings.TracingEnabled = tracingEnabled;
+            Logger.Reset();
+
+            return EnterpriseLibraryContainer.CreateDefaultContainer(config);
+        }
+
+        static void SetTracingFlag(bool tracingEnabled)
         {
             ConfigurationChangeFileWatcher.SetDefaultPollDelayInMilliseconds(100);
             SystemConfigurationSource.ResetImplementation(true);
@@ -113,24 +125,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
         [TestMethod]
         public void UsingTracerDoesNotWriteWhenDisabled()
         {
-            SystemConfigurationSource.ResetImplementation(false);
-
-            //turn tracing off
-            SetTracingFlag(false);
-
-            MockTraceListener.Reset();
-            Guid currentActivityId = Guid.Empty;
-
-            using (new Tracer(operation))
+            using (new ContainerSwitcher(GetContainerWithTracingFlag(false), true))
             {
-                currentActivityId = Trace.CorrelationManager.ActivityId;
+                MockTraceListener.Reset();
+                Guid currentActivityId = Guid.Empty;
+
+                using (new Tracer(operation))
+                {
+                    currentActivityId = Trace.CorrelationManager.ActivityId;
+                    Assert.AreEqual(0, MockTraceListener.Entries.Count);
+                }
+
                 Assert.AreEqual(0, MockTraceListener.Entries.Count);
             }
-
-            Assert.AreEqual(0, MockTraceListener.Entries.Count);
-
-            //turn tracing back on
-            SetTracingFlag(true);
+            Logger.Reset();
         }
 
         [TestMethod]
@@ -290,6 +298,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
         public void LoggedMessagesDuringTracerAddsCategoryIds()
         {
             MockTraceListener.Reset();
+            Logger.Reset();
 
             using (new Tracer(operation))
             {
@@ -366,24 +375,26 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
         [TestMethod]
         public void TracingCanBeTurnedOnAndOff()
         {
-            //turn tracing off
-            SetTracingFlag(false);
-
-            MockTraceListener.Reset();
             Guid currentActivityId = Guid.Empty;
 
-            using (new Tracer(operation))
+            using(new ContainerSwitcher(GetContainerWithTracingFlag(false), true))
             {
-                currentActivityId = Trace.CorrelationManager.ActivityId;
+                MockTraceListener.Reset();
+
+                using (new Tracer(operation))
+                {
+                    currentActivityId = Trace.CorrelationManager.ActivityId;
+                    Assert.AreEqual(0, MockTraceListener.Entries.Count);
+                }
+
                 Assert.AreEqual(0, MockTraceListener.Entries.Count);
+                
             }
 
-            Assert.AreEqual(0, MockTraceListener.Entries.Count);
+            // TODO: Take this line out once the change notification stuff is working again
+            Logger.Reset();
+
             MockTraceListener.Reset();
-
-            //turn tracing back on
-            SetTracingFlag(true);
-
             currentActivityId = Guid.Empty;
 
             using (new Tracer(operation))
@@ -421,9 +432,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
         //    AssertLogEntryIsValid(MockTraceListener.Entries[2], Tracer.endTitle, operation, testActivityId1, false);
         //    AssertLogEntryIsValid(MockTraceListener.Entries[3], Tracer.endTitle, nestedOperation, testActivityId2, false);
         //}
-
-        [TestMethod]
-        public void ThreadLaunchedWithinTracerInheritsLogicalOperationsStack() { }
 
         [TestMethod]
         public void ThreadsDoNotShareLogicalOperationsStack()
@@ -489,7 +497,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
         {
             int initialValue = GetCounterValue(performanceCounterTracesPerSecondName, operation);
 
-            LogWriter logWriter = EnterpriseLibraryFactory.BuildUp<LogWriter>();
+            LogWriter logWriter = EnterpriseLibraryContainer.Current.GetInstance<LogWriter>();
 
             using (Tracer tracer = new Tracer(operation, logWriter, null))
             {
@@ -503,21 +511,22 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
         [TestMethod]
         public void PerformanceCountersAreNotIncrementedWhenTracingIsTurnedOff()
         {
-            //turn tracing off
-            SetTracingFlag(false);
-
             int initialValue = GetCounterValue(performanceCounterTracesPerSecondName, operation);
 
-            using (new Tracer(operation))
+            using (new ContainerSwitcher(GetContainerWithTracingFlag(false), true))
             {
-                int i = new Random().Next();
+                Logger.Reset();
+                using (new Tracer(operation))
+                {
+                    int i = new Random().Next();
+                }
+                
             }
+            Logger.Reset();
+
             int valueAfterTracing = GetCounterValue(performanceCounterTracesPerSecondName, operation);
 
             Assert.IsTrue(valueAfterTracing == initialValue);
-
-            //turn tracing back on
-            SetTracingFlag(true);
         }
 
         [TestMethod]
@@ -657,4 +666,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
             return pattern;
         }
     }
+
+   
 }

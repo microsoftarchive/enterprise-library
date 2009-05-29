@@ -15,13 +15,10 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Unity;
 using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Unity;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Filters;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport.TraceListeners;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
-using Microsoft.Practices.ObjectBuilder2;
 using Microsoft.Practices.Unity;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -44,8 +41,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration.Unit
             configurationSource.Add(LoggingSettings.SectionName, loggingSettings);
 
             container = new UnityContainer();
-
-            container.AddExtension(new EnterpriseLibraryCoreExtension(configurationSource));
         }
 
         [TestCleanup]
@@ -59,25 +54,23 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration.Unit
         {
             configurationSource.Add(InstrumentationConfigurationSection.SectionName, instrumentationSettings);
 
-            container.AddExtension(new LoggingBlockExtension());
+            InitializeContainer();
 
-            TraceManager createdObject = (TraceManager)container.Resolve<TraceManager>();
+            TraceManager createdObject = container.Resolve<TraceManager>();
 
             Assert.IsNotNull(createdObject);
-
-            Assert.IsTrue(createdObject.InstrumentationListener.PerformanceCountersEnabled);
+            Assert.IsNotNull(createdObject.InstrumentationProvider);
         }
 
         [TestMethod]
         public void CanCreateTraceManagerWithNoConfiguration()
         {
-            container.AddExtension(new LoggingBlockExtension());
+            InitializeContainer();
 
             TraceManager createdObject = (TraceManager)container.Resolve<TraceManager>();
 
             Assert.IsNotNull(createdObject);
-
-            Assert.IsFalse(createdObject.InstrumentationListener.PerformanceCountersEnabled);
+            Assert.IsNotNull(createdObject.InstrumentationProvider);
         }
 
         [TestMethod]
@@ -86,7 +79,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration.Unit
             FormatterData data = new TextFormatterData("name", "template");
             loggingSettings.Formatters.Add(data);
 
-            container.AddExtension(new LoggingBlockExtension());
+            InitializeContainer();
 
             TextFormatter createdObject = (TextFormatter)container.Resolve<ILogFormatter>("name");
 
@@ -105,7 +98,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration.Unit
             data.CategoryFilters.Add(new CategoryFilterEntry("bar"));
             loggingSettings.LogFilters.Add(data);
 
-            container.AddExtension(new LoggingBlockExtension());
+            InitializeContainer();
 
             CategoryFilter createdObject = (CategoryFilter)container.Resolve<ILogFilter>("name");
 
@@ -126,7 +119,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration.Unit
             traceListenerData.TraceOutputOptions = TraceOptions.ProcessId;
             loggingSettings.TraceListeners.Add(traceListenerData);
 
-            container.AddExtension(new LoggingBlockExtension());
+            InitializeContainer();
 
             FlatFileTraceListener createdObject = (FlatFileTraceListener)container.Resolve<TraceListener>("name");
 
@@ -146,7 +139,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration.Unit
             TraceListenerData traceListenerData = new FlatFileTraceListenerData("name", "filename.log", "formattername");
             loggingSettings.TraceListeners.Add(traceListenerData);
 
-            container.AddExtension(new LoggingBlockExtension());
+            InitializeContainer();
 
             FlatFileTraceListener createdObject1 = (FlatFileTraceListener)container.Resolve<TraceListener>("name");
             FlatFileTraceListener createdObject2 = (FlatFileTraceListener)container.Resolve<TraceListener>("name");
@@ -165,7 +158,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration.Unit
             sourceData.TraceListeners.Add(new TraceListenerReferenceData("mock2"));
             loggingSettings.TraceSources.Add(sourceData);
 
-            container.AddExtension(new LoggingBlockExtension());
+            InitializeContainer();
 
             LogSource createdObject = container.Resolve<LogSource>("name");
 
@@ -208,7 +201,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration.Unit
             loggingSettings.LogWarningWhenNoCategoriesMatch = true;
             loggingSettings.TracingEnabled = false;
 
-            container.AddExtension(new LoggingBlockExtension());
+            InitializeContainer();
 
             LogWriter createdObject = container.Resolve<LogWriter>();
 
@@ -245,21 +238,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration.Unit
             // the order in which the extensions are added should not matter because they should only record policies
             // but the bug caused an attempt to actually try to build a log writer, and this set up would cause
             // an error because a required extension was not added yet.
-            container.AddNewExtension<LoggingBlockExtension>();
-            container.AddNewExtension<FakeBlockExtension>();
+            InitializeContainer();
         }
 
+        private void InitializeContainer()
+        {
+            container.AddExtension(new EnterpriseLibraryCoreExtension(configurationSource));
+        }
 
         #region test fakes
-
-        public class FakeBlockExtension : EnterpriseLibraryBlockExtension
-        {
-            protected override void Initialize()
-            {
-                new PolicyBuilder<FakeBlockObject, object>(NamedTypeBuildKey.Make<FakeBlockObject>(), null, c => new FakeBlockObject("some string"))
-                    .AddPoliciesToPolicyList(Context.Policies);
-            }
-        }
 
         public class FakeBlockObject
         {

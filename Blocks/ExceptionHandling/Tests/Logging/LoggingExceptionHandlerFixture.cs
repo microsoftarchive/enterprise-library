@@ -92,20 +92,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Tests
         }
 
         [TestMethod]
-        public void LoggingHandlerUsesNewLoggingStackByDefault()
-        {
-            MockTraceListener.Reset();
-
-            Assert.IsFalse(ExceptionPolicy.HandleException(new Exception("TEST EXCEPTION"), "Logging Policy"));
-            Logger.Write("Test");
-
-            Assert.AreEqual(2, MockTraceListener.Entries.Count);
-            Assert.AreEqual(2, MockTraceListener.Instances.Count);
-            Assert.AreNotSame(MockTraceListener.Instances[0], MockTraceListener.Instances[1]);
-        }
-
-        [TestMethod]
-        public void LoggingHandlerUsesDefaultLoggingStackWhenIndicated()
+        public void LoggingHandlerReusesLoggingStack()
         {
             MockTraceListener.Reset();
 

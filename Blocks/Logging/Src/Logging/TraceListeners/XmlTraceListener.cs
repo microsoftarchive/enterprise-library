@@ -17,6 +17,7 @@ using System.Xml.XPath;
 using System.Xml.Serialization;
 using System.IO;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
 {
@@ -25,10 +26,26 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
 	/// </summary>
 	public class XmlTraceListener : XmlWriterTraceListener
 	{
-		/// <summary>
+        private readonly ILoggingInstrumentationProvider instrumentationProvider;
+        
+        /// <summary>
 		/// Initializes a new instance of <see cref="XmlTraceListener"/>.
 		/// </summary>
-		public XmlTraceListener(string filename) : base(filename) { }
+		public XmlTraceListener(string filename) 
+            : this(filename, new NullLoggingInstrumentationProvider()) 
+        { }
+
+
+        /// <summary>
+        /// Initializes a new instance of <see cref="XmlTraceListener"/>.
+        /// </summary>
+        public XmlTraceListener(string filename, ILoggingInstrumentationProvider instrumentationProvider) 
+            : base(filename) 
+        {
+            if (instrumentationProvider == null) throw new ArgumentNullException("instrumentationProvider");
+
+            this.instrumentationProvider = instrumentationProvider;
+        }
 
 		/// <summary>
 		/// Delivers the trace data as an XML message.

@@ -9,8 +9,9 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System.Configuration;
 using System.Diagnostics;
+using Microsoft.Practices.EnterpriseLibrary.Data.TestSupport;
+using Microsoft.Practices.ServiceLocation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SysConfig=System.Configuration;
 
@@ -46,7 +47,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ConfigurationErrorsException))]
+        [ExpectedException(typeof(ActivationException))]
         public void ExceptionThrownWhenAskingForDatabaseWithUnknownName()
         {
             Database db = DatabaseFactory.CreateDatabase("ThisIsAnUnknownKey");
@@ -86,7 +87,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
             {
                 Database db = DatabaseFactory.CreateDatabase("ThisIsAnUnknownKey");
             }
-            catch (ConfigurationErrorsException)
+            catch (ActivationException)
             {
                 using (EventLog applicationLog = new EventLog("Application"))
                 {
@@ -98,7 +99,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
                 return;
             }
 
-            Assert.Fail("ConfigurationErrorsException expected");
+            Assert.Fail("ActivationException expected");
         }
 
         [TestMethod]

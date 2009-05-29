@@ -9,6 +9,11 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel.Unity;
+using Microsoft.Practices.EnterpriseLibrary.Validation;
+using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration;
+using Microsoft.Practices.Unity;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tests.AttributeDrivenPolicy
@@ -16,6 +21,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
     [TestClass]
     public class ValidationCallHandlerAttributeFixture
     {
+        private IUnityContainer container;
+
+        [TestInitialize]
+        public void Setup()
+        {
+            container = new UnityContainer();
+            var configurationSource = new DictionaryConfigurationSource();
+            new UnityContainerConfigurator(container)
+                .RegisterAll(configurationSource, new ValidationTypeRegistrationProvider());
+        }
+
         [TestMethod]
         public void ShouldCreateDefaultHandlerFromAttribute()
         {
@@ -23,7 +39,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
             ValidationCallHandler handler = GetHandlerFromAttribute(attribute);
 
             Assert.AreEqual(string.Empty, handler.RuleSet);
-            Assert.AreEqual(SpecificationSource.Both, handler.SpecificationSource);
+            Assert.IsTrue(handler.ValidatorFactory is CompositeValidatorFactory);
         }
 
         [TestMethod]
@@ -33,22 +49,42 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
             ValidationCallHandlerAttribute attribute = new ValidationCallHandlerAttribute(ruleset);
             ValidationCallHandler handler = GetHandlerFromAttribute(attribute);
             Assert.AreEqual(ruleset, handler.RuleSet);
-            Assert.AreEqual(SpecificationSource.Both, handler.SpecificationSource);
+            Assert.IsTrue(handler.ValidatorFactory is CompositeValidatorFactory);
         }
 
         [TestMethod]
-        public void ShouldSetSpecificationSourceFromAttribute()
+        public void ShouldUseConfigurationValidatorFactoryIfSpecified()
+        {
+            ValidationCallHandlerAttribute attribute = new ValidationCallHandlerAttribute();
+            attribute.SpecificationSource = SpecificationSource.Configuration;
+            ValidationCallHandler handler = GetHandlerFromAttribute(attribute);
+            Assert.AreEqual(string.Empty, handler.RuleSet);
+            Assert.IsTrue(handler.ValidatorFactory is ConfigurationValidatorFactory);
+        }
+
+        [TestMethod]
+        public void ShouldUseAttributeValidatorFactoryIfSpecified()
+        {
+            ValidationCallHandlerAttribute attribute = new ValidationCallHandlerAttribute();
+            attribute.SpecificationSource = SpecificationSource.Attributes;
+            ValidationCallHandler handler = GetHandlerFromAttribute(attribute);
+            Assert.AreEqual(string.Empty, handler.RuleSet);
+            Assert.IsTrue(handler.ValidatorFactory is AttributeValidatorFactory);
+        }
+
+        [TestMethod]
+        public void ShouldUseNoValidatorFactoryIfSpecified()
         {
             ValidationCallHandlerAttribute attribute = new ValidationCallHandlerAttribute();
             attribute.SpecificationSource = SpecificationSource.ParameterAttributesOnly;
             ValidationCallHandler handler = GetHandlerFromAttribute(attribute);
             Assert.AreEqual(string.Empty, handler.RuleSet);
-            Assert.AreEqual(SpecificationSource.ParameterAttributesOnly, handler.SpecificationSource);
+            Assert.IsNull(handler.ValidatorFactory);
         }
 
         ValidationCallHandler GetHandlerFromAttribute(ValidationCallHandlerAttribute attribute)
         {
-            return (ValidationCallHandler)attribute.CreateHandler(null);
+            return (ValidationCallHandler)attribute.CreateHandler(this.container);
         }
     }
 }

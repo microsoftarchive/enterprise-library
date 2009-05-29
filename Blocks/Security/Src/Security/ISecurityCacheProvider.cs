@@ -11,7 +11,6 @@
 
 using System;
 using System.Security.Principal;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
 using Microsoft.Practices.EnterpriseLibrary.Security.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security
@@ -19,8 +18,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security
 	/// <summary>
 	///	Allows end users to implement their own Security Caches.
 	/// </summary>
-	[ConfigurationNameMapper(typeof(SecurityCacheDataRetriever))]
-	[CustomFactory(typeof(SecurityCacheProviderCustomFactory))]
 	public interface ISecurityCacheProvider
 	{
 		/// <summary>

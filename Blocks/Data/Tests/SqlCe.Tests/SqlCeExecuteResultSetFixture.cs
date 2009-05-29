@@ -17,6 +17,7 @@ using Data.SqlCe.Tests.VSTS;
 using Microsoft.Practices.EnterpriseLibrary.Data.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Data.TestSupport;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Data.SqlCe.Tests
 {
@@ -224,25 +225,21 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.SqlCe.Tests
         [TestMethod]
         public void ExecuteResultSetCallsInstrumentationFireCommandExecutedEvent()
         {
-            SqlCeDatabase db = (SqlCeDatabase)this.db;
             int executeCount = 0;
             int failedCount = 0;
 
-            DataInstrumentationProvider instrumentation = (DataInstrumentationProvider)db.GetInstrumentationEventProvider();
-            instrumentation.commandExecuted += delegate(object sender,
-                                                        CommandExecutedEventArgs e)
-                                               {
-                                                   executeCount++;
-                                               };
-            instrumentation.commandFailed += delegate(object sender,
-                                                      CommandFailedEventArgs e)
-                                             {
-                                                 failedCount++;
-                                             };
+            var mockProvider = new Mock<IDataInstrumentationProvider>();
+            mockProvider.Setup(p => p.FireCommandExecutedEvent(It.IsAny<DateTime>()))
+                .Callback<DateTime>(dt => ++executeCount);
+            mockProvider.Setup(
+                p => p.FireCommandFailedEvent(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Exception>()))
+                .Callback<string, string, Exception>((c, cs, ex) => ++failedCount);
 
-            using (DbCommand command = db.GetSqlStringCommand(queryString))
+            var ceDb = GetDatabase(mockProvider.Object);
+
+            using (DbCommand command = ceDb.GetSqlStringCommand(queryString))
             {
-                SqlCeResultSet reader = db.ExecuteResultSet(command);
+                SqlCeResultSet reader = ceDb.ExecuteResultSet(command);
                 reader.Close();
 
                 command.Connection.Close();
@@ -254,27 +251,23 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.SqlCe.Tests
         [TestMethod]
         public void ExecuteResultSetWithBadCommandCallsInstrumentationFireCommandFailedEvent()
         {
-            SqlCeDatabase db = (SqlCeDatabase)this.db;
             int executeCount = 0;
             int failedCount = 0;
 
-            DataInstrumentationProvider instrumentation = (DataInstrumentationProvider)db.GetInstrumentationEventProvider();
-            instrumentation.commandExecuted += delegate(object sender,
-                                                        CommandExecutedEventArgs e)
-                                               {
-                                                   executeCount++;
-                                               };
-            instrumentation.commandFailed += delegate(object sender,
-                                                      CommandFailedEventArgs e)
-                                             {
-                                                 failedCount++;
-                                             };
+            var mockProvider = new Mock<IDataInstrumentationProvider>();
+            mockProvider.Setup(p => p.FireCommandExecutedEvent(It.IsAny<DateTime>()))
+                .Callback<DateTime>(dt => ++executeCount);
+            mockProvider.Setup(
+                p => p.FireCommandFailedEvent(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Exception>()))
+                .Callback<string, string, Exception>((c, cs, ex) => ++failedCount);
+
+            SqlCeDatabase ceDb = GetDatabase(mockProvider.Object);
 
             try
             {
-                using (DbCommand command = db.GetSqlStringCommand("select * from junk"))
+                using (DbCommand command = ceDb.GetSqlStringCommand("select * from junk"))
                 {
-                    SqlCeResultSet reader = db.ExecuteResultSet(command);
+                    SqlCeResultSet reader = ceDb.ExecuteResultSet(command);
                     reader.Close();
 
                     command.Connection.Close();
@@ -284,6 +277,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.SqlCe.Tests
 
             Assert.AreEqual(0, executeCount);
             Assert.AreEqual(1, failedCount);
+        }
+
+        private static SqlCeDatabase GetDatabase(IDataInstrumentationProvider instrumentationProvider)
+        {
+            var testConnection = new TestConnectionString();
+            testConnection.CopyFile();
+
+            return new SqlCeDatabase(testConnection.ConnectionString, instrumentationProvider);
         }
     }
 }

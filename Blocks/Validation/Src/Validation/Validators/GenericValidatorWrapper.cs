@@ -20,20 +20,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
     /// Used to provide a generic API over the unknown validators.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public sealed class GenericValidatorWrapper<T> : Validator<T>, IInstrumentationEventProvider
+    public sealed class GenericValidatorWrapper<T> : Validator<T>
     {
-        private ValidationInstrumentationProvider instrumentationProvider;
-        private Validator wrappedValidator;
+        private readonly IValidationInstrumentationProvider instrumentationProvider;
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="wrappedValidator"></param>
-        public GenericValidatorWrapper(Validator wrappedValidator)
+        /// <param name="instrumentationProvider"></param>
+        public GenericValidatorWrapper(Validator wrappedValidator, IValidationInstrumentationProvider instrumentationProvider)
             : base(null, null)
         {
-            this.wrappedValidator = wrappedValidator;
-            this.instrumentationProvider = new ValidationInstrumentationProvider();
+            this.WrappedValidator = wrappedValidator;
+            this.instrumentationProvider = instrumentationProvider;
         }
 
         /// <summary>
@@ -47,24 +47,24 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         {
             Type typeBeingValidated = typeof(T);
 
-            instrumentationProvider.FireConfigurationCalledEvent(typeBeingValidated);
+            instrumentationProvider.FireConfigurationCalled(typeBeingValidated);
 
             try
             {
-                this.wrappedValidator.DoValidate(objectToValidate, currentTarget, key, validationResults);
+                this.WrappedValidator.DoValidate(objectToValidate, currentTarget, key, validationResults);
 
                 if (validationResults.IsValid)
                 {
-                    instrumentationProvider.FireValidationSucceededEvent(typeBeingValidated);
+                    instrumentationProvider.FireValidationSucceeded(typeBeingValidated);
                 }
                 else
                 {
-                    instrumentationProvider.FireValidationFailedEvent(typeBeingValidated, validationResults);
+                    instrumentationProvider.FireValidationFailed(typeBeingValidated, validationResults);
                 }
             }
             catch (ConfigurationErrorsException configurationErrors)
             {
-                instrumentationProvider.FireConfigurationFailureEvent(configurationErrors);
+                instrumentationProvider.FireConfigurationFailure(configurationErrors);
                 throw;
             }
             catch (Exception ex)
@@ -75,25 +75,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         }
 
         /// <summary>
-        /// 
+        /// Gets the message template to use when logging results no message is supplied.
         /// </summary>
         protected override string DefaultMessageTemplate
         {
             get { return null; }
         }
 
-        #region IInstrumentationEventProvider Members
+        ///<summary>
+        /// Returns the validator wrapped by <see cref="GenericValidatorWrapper{T}"/>
+        ///</summary>
+        public Validator WrappedValidator { get; private set; }
 
-        /// <summary>
-        /// Returns the object that provides instrumentation services for the <see cref="Validator"/>.
-        /// </summary>
-        /// <see cref="IInstrumentationEventProvider.GetInstrumentationEventProvider()"/>
-        /// <returns>The object that providers intrumentation services. This object may be null if instrumentation services are not created for this instance.</returns>
-        public object GetInstrumentationEventProvider()
-        {
-            return instrumentationProvider;
-        }
-
-        #endregion
+      
     }
 }

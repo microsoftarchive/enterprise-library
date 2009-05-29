@@ -29,7 +29,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration.Unity
 		{
 			IUnityContainer container = new UnityContainer();
 			container.AddExtension(new EnterpriseLibraryCoreExtension());
-			container.AddNewExtension<DataAccessBlockExtension>();
 
 			Database createdObject = container.Resolve<Database>("Service_Dflt");
 
@@ -44,7 +43,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration.Unity
 		{
 			IUnityContainer container = new UnityContainer();
 			container.AddExtension(new EnterpriseLibraryCoreExtension());
-			container.AddNewExtension<DataAccessBlockExtension>();
 
 			Database createdObject = container.Resolve<Database>();
 
@@ -59,7 +57,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration.Unity
 		{
 			IUnityContainer container = new UnityContainer();
 			container.AddExtension(new EnterpriseLibraryCoreExtension());
-			container.AddNewExtension<DataAccessBlockExtension>();
 
 			SqlDatabase createdObject = container.Resolve<SqlDatabase>("Service_Dflt");
 			Assert.IsNotNull(createdObject);
@@ -80,7 +77,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration.Unity
 
             IUnityContainer container = new UnityContainer();
             container.AddExtension(new EnterpriseLibraryCoreExtension(configurationSource));
-            container.AddNewExtension<DataAccessBlockExtension>();
 
             Assert.AreEqual("cs1", container.Resolve<Database>("cs1").ConnectionString);
             Assert.AreEqual("cs4", container.Resolve<Database>("cs4").ConnectionString);
@@ -109,19 +105,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration.Unity
 		{
 			IUnityContainer container = new UnityContainer();
 			container.AddExtension(new EnterpriseLibraryCoreExtension());
-			container.AddNewExtension<DataAccessBlockExtension>();
 
 			OracleDatabase createdObject = container.Resolve<OracleDatabase>("OracleTest");
 			Assert.IsNotNull(createdObject);
 			Assert.AreEqual(@"server=entlib;", createdObject.ConnectionStringWithoutCredentials);
 
 			// can do the configured package mapping?
-			Assert.AreEqual(DatabaseWithObjectBuildUperFixture.OracleTestTranslatedStoredProcedureInPackageWithTranslation,
+			Assert.AreEqual(DatabaseWithContainerFixture.OracleTestTranslatedStoredProcedureInPackageWithTranslation,
 			                createdObject.GetStoredProcCommand(
-			                	DatabaseWithObjectBuildUperFixture.OracleTestStoredProcedureInPackageWithTranslation).CommandText);
-			Assert.AreEqual(DatabaseWithObjectBuildUperFixture.OracleTestStoredProcedureInPackageWithoutTranslation,
+			                	DatabaseWithContainerFixture.OracleTestStoredProcedureInPackageWithTranslation).CommandText);
+			Assert.AreEqual(DatabaseWithContainerFixture.OracleTestStoredProcedureInPackageWithoutTranslation,
 			                createdObject.GetStoredProcCommand(
-			                	DatabaseWithObjectBuildUperFixture.OracleTestStoredProcedureInPackageWithoutTranslation).CommandText);
+			                	DatabaseWithContainerFixture.OracleTestStoredProcedureInPackageWithoutTranslation).CommandText);
 		}
 
 		[TestMethod]
@@ -129,7 +124,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration.Unity
 		{
 			IUnityContainer container = new UnityContainer();
 			container.AddExtension(new EnterpriseLibraryCoreExtension());
-			container.AddNewExtension<DataAccessBlockExtension>();
 
 			GenericDatabase createdObject = container.Resolve<GenericDatabase>("OdbcDatabase");
 			Assert.IsNotNull(createdObject);

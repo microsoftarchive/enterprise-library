@@ -12,7 +12,10 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
+using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using Microsoft.Practices.EnterpriseLibrary.Logging;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
@@ -175,15 +178,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
         }
 
         /// <summary>
-        /// Adds the call handler represented by this configuration object to <paramref name="policy"/>.
+        /// Get the set of <see cref="TypeRegistration"/> objects needed to
+        /// register the call handler represented by this config element and its associated objects.
         /// </summary>
-        /// <param name="policy">The policy to which the rule must be added.</param>
-        /// <param name="configurationSource">The configuration source from which additional information
-        /// can be retrieved, if necessary.</param>
-        public override void ConfigurePolicy(PolicyDefinition policy, IConfigurationSource configurationSource)
+        /// <param name="nameSuffix">A suffix for the names in the generated type registration objects.</param>
+        /// <returns>The set of <see cref="TypeRegistration"/> objects.</returns>
+        public override IEnumerable<TypeRegistration> GetRegistrations(string nameSuffix)
         {
-            bool logBeforeCall = false;
-            bool logAfterCall = false;
+            var logBeforeCall = false;
+            var logAfterCall = false;
             switch (this.LogBehavior)
             {
                 case HandlerLogBehavior.Before:
@@ -199,30 +202,28 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
                     logAfterCall = true;
                     break;
             }
+            var categories = new List<string>(this.Categories.Select(cat => cat.Name));
 
-            List<string> categories = new List<string>();
-            this.Categories.ForEach(
-                delegate(LogCallHandlerCategoryEntry entry)
+            yield return
+                new TypeRegistration<ICallHandler>(() =>
+                    new LogCallHandler(Container.Resolved<LogWriter>())
+                    {
+                        Order = this.Order,
+                        LogBeforeCall = logBeforeCall,
+                        LogAfterCall = logAfterCall,
+                        BeforeMessage = this.BeforeMessage,
+                        AfterMessage = this.AfterMessage,
+                        EventId = this.EventId,
+                        IncludeCallStack = this.IncludeCallStack,
+                        IncludeCallTime = this.IncludeCallTime,
+                        IncludeParameters = this.IncludeParameterValues,
+                        Priority = this.Priority,
+                        Severity = this.Severity,
+                        Categories = categories
+                    })
                 {
-                    categories.Add(entry.Name);
-                }
-            );
-
-            policy.AddCallHandler<LogCallHandler>(
-                new ContainerControlledLifetimeManager(),
-                new InjectionConstructor(new InjectionParameter<IConfigurationSource>(configurationSource)),
-                new InjectionProperty("LogBeforeCall", logBeforeCall),
-                new InjectionProperty("LogAfterCall", logAfterCall),
-                new InjectionProperty("Order", this.Order),
-                new InjectionProperty("BeforeMessage", new InjectionParameter<string>(this.BeforeMessage)),
-                new InjectionProperty("AfterMessage", new InjectionParameter<string>(this.AfterMessage)),
-                new InjectionProperty("EventId", this.EventId),
-                new InjectionProperty("IncludeCallStack", this.IncludeCallStack),
-                new InjectionProperty("IncludeCallTime", this.IncludeCallTime),
-                new InjectionProperty("IncludeParameters", this.IncludeParameterValues),
-                new InjectionProperty("Priority", this.Priority),
-                new InjectionProperty("Severity", this.Severity),
-                new InjectionProperty("Categories", categories));
+                    Name = this.Name + nameSuffix
+                };
         }
     }
 

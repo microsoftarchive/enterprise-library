@@ -10,6 +10,7 @@
 //===============================================================================
 
 using System;
+using Microsoft.Practices.EnterpriseLibrary.Validation;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
 
@@ -60,9 +61,26 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
         /// configuration.
         /// </summary>
         /// <returns>A new call handler object.</returns>
-        public override ICallHandler CreateHandler(IUnityContainer ignored)
+        public override ICallHandler CreateHandler(IUnityContainer container)
         {
-            return new ValidationCallHandler(ruleSet, specificationSource, Order);
+            Type factoryType = null;
+            switch (this.specificationSource)
+            {
+                case SpecificationSource.Both:
+                    factoryType = typeof(CompositeValidatorFactory);
+                    break;
+                case SpecificationSource.Attributes:
+                    factoryType = typeof(AttributeValidatorFactory);
+                    break;
+                case SpecificationSource.Configuration:
+                    factoryType = typeof(ConfigurationValidatorFactory);
+                    break;
+            }
+
+            return new ValidationCallHandler(
+                ruleSet,
+                factoryType != null ? (ValidatorFactory)container.Resolve(factoryType) : null,
+                Order);
         }
     }
 }

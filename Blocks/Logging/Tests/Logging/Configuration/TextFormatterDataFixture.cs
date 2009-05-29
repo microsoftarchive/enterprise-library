@@ -33,7 +33,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         {
             formatter = new TextFormatterData("formatterName", "someTemplate");
 
-             registration = formatter.GetContainerConfigurationModel();
+             registration = formatter.GetRegistrations().First();
         }
 
         [TestMethod]

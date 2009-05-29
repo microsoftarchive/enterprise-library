@@ -12,7 +12,6 @@
 using System;
 using System.Collections.Specialized;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests

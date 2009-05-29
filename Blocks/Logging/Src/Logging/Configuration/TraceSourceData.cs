@@ -89,7 +89,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// 
         /// </summary>
         /// <returns></returns>
-        public TypeRegistration GetContainerConfigurationModel()
+        public TypeRegistration GetRegistrations()
         {
             return
                 new TypeRegistration<LogSource>(
@@ -100,7 +100,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
                             this.DefaultLevel,
                             this.AutoFlush))
                 {
-                    Name = this.Name
+                    Name = this.Name,
                 };
         }
     }

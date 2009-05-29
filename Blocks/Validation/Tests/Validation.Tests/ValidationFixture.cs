@@ -11,6 +11,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Validation.TestSupport.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.TestSupport.TestClasses;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -163,6 +167,35 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         public void ValidationFromAttributesRequestForNullRuleThrows()
         {
             Validation.ValidateFromAttributes("", null);
+        }
+
+
+        [TestMethod]
+        public void CanBuildValidationInstnceFactoryFromGivenConfiguration()
+        {
+            DictionaryConfigurationSource configurationSource = new DictionaryConfigurationSource();
+            ValidationSettings settings = new ValidationSettings();
+            configurationSource.Add(ValidationSettings.SectionName, settings);
+            ValidatedTypeReference typeReference = new ValidatedTypeReference(typeof(BaseTestDomainObject));
+            settings.Types.Add(typeReference);
+            typeReference.DefaultRuleset = "RuleA";
+            ValidationRulesetData ruleData = new ValidationRulesetData("RuleA");
+            typeReference.Rulesets.Add(ruleData);
+            ValidatedPropertyReference propertyReference1 = new ValidatedPropertyReference("Property1");
+            ruleData.Properties.Add(propertyReference1);
+            MockValidatorData validator11 = new MockValidatorData("validator1", true);
+            propertyReference1.Validators.Add(validator11);
+            validator11.MessageTemplate = "message-from-config1-RuleA";
+
+            CompositeValidatorFactory factory
+                =EnterpriseLibraryContainer.CreateDefaultContainer(configurationSource)
+                        .GetInstance<CompositeValidatorFactory>();
+
+            var validator = factory.CreateValidator<BaseTestDomainObject>("RuleA");
+            var results = validator.Validate(new BaseTestDomainObject());
+            Assert.IsNotNull(factory);
+            Assert.IsFalse(results.IsValid);
+            Assert.AreEqual(validator11.MessageTemplate, results.ElementAt(0).Message);
         }
     }
 }

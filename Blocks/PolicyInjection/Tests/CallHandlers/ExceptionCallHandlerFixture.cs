@@ -13,6 +13,8 @@ using System;
 using System.Linq;
 using System.Reflection;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel.Unity;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Configuration;
@@ -21,6 +23,7 @@ using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.TestSupport.ObjectsU
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using RuleDrivenPolicy = Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration.PolicyData.RuleDrivenPolicy;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tests
 {
@@ -45,6 +48,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         {
             IUnityContainer factory = new UnityContainer().AddNewExtension<Interception>();
             factory.Configure<Interception>().SetDefaultInterceptorFor<TargetType>(new TransparentProxyInterceptor());
+            AddExceptionHandlingConfiguration(factory);
             AddExceptionPolicy(factory, "Swallow Exceptions", new TypeMatchingRule("TargetType"));
 
             TargetType target = factory.Resolve<TargetType>();
@@ -57,6 +61,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         {
             IUnityContainer factory = new UnityContainer().AddNewExtension<Interception>();
             factory.Configure<Interception>().SetDefaultInterceptorFor<TargetType>(new TransparentProxyInterceptor());
+            AddExceptionHandlingConfiguration(factory);
             AddExceptionPolicy(factory, "Translate Exceptions", new TypeMatchingRule("TargetType"));
 
             TargetType target = factory.Resolve<TargetType>();
@@ -69,6 +74,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         {
             IUnityContainer factory = new UnityContainer().AddNewExtension<Interception>();
             factory.Configure<Interception>().SetDefaultInterceptorFor<TargetType>(new TransparentProxyInterceptor());
+            AddExceptionHandlingConfiguration(factory);
             AddExceptionPolicy(factory, "No-Op Policy", new TypeMatchingRule("TargetType"));
 
             TargetType target = factory.Resolve<TargetType>();
@@ -81,6 +87,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         {
             IUnityContainer factory = new UnityContainer().AddNewExtension<Interception>();
             factory.Configure<Interception>().SetDefaultInterceptorFor<TargetType>(new TransparentProxyInterceptor());
+            AddExceptionHandlingConfiguration(factory);
             AddExceptionPolicy(factory, "Swallow Exceptions", new TypeMatchingRule("TargetType"));
 
             TargetType target = factory.Resolve<TargetType>();
@@ -93,6 +100,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         {
             IUnityContainer factory = new UnityContainer().AddNewExtension<Interception>();
             factory.Configure<Interception>().SetDefaultInterceptorFor<TargetType>(new TransparentProxyInterceptor());
+            AddExceptionHandlingConfiguration(factory);
             AddExceptionPolicy(factory, "Swallow Exceptions", new TypeMatchingRule("TargetType"));
 
             TargetType target = factory.Resolve<TargetType>();
@@ -105,6 +113,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         {
             IUnityContainer factory = new UnityContainer().AddNewExtension<Interception>();
             factory.Configure<Interception>().SetDefaultInterceptorFor<TargetType>(new TransparentProxyInterceptor());
+            AddExceptionHandlingConfiguration(factory);
             AddExceptionPolicy(factory, "Swallow Exceptions", new TypeMatchingRule("TargetType"));
 
             TargetType target = factory.Resolve<TargetType>();
@@ -128,8 +137,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
             dictConfigurationSource.Add(PolicyInjectionSettings.SectionName, settings);
             dictConfigurationSource.Add(ExceptionHandlingSettings.SectionName, ehabSettings);
 
-            TargetType target = PolicyInjection.Create<TargetType>(dictConfigurationSource);
-            target.WillThrowException();
+            using (PolicyInjector injector = new PolicyInjector(dictConfigurationSource))
+            {
+                TargetType target = injector.Create<TargetType>();
+                target.WillThrowException();
+            }
         }
 
         [TestMethod]
@@ -153,6 +165,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
 
             IUnityContainer container = new UnityContainer().AddNewExtension<Interception>();
             settings.ConfigureContainer(container, dictConfigurationSource);
+            new UnityContainerConfigurator(container).RegisterAll(dictConfigurationSource, ehabSettings);
 
             RuleDrivenPolicy policy = container.Resolve<RuleDrivenPolicy>("policy");
 
@@ -183,7 +196,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
             {
                 policy.AddMatchingRule(rule);
             }
-            policy.AddCallHandler(new ExceptionCallHandler(exceptionPolicyName));
+            policy.AddCallHandler(
+                typeof(ExceptionCallHandler),
+                new InjectionConstructor(new ResolvedParameter<ExceptionPolicyImpl>(exceptionPolicyName)));
+        }
+
+        private static void AddExceptionHandlingConfiguration(IUnityContainer factory)
+        {
+            var configSource = new SystemConfigurationSource();
+            new UnityContainerConfigurator(factory).RegisterAll(
+                configSource,
+                (ITypeRegistrationsProvider)configSource.GetSection(ExceptionHandlingSettings.SectionName));
         }
     }
 

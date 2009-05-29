@@ -38,6 +38,10 @@
     </NoWarn>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Lib\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Practices.Unity, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Lib\Microsoft.Practices.Unity.dll</HintPath>
@@ -63,7 +67,8 @@
     </Compile>
     <Compile Include="APTCAFixture.cs" />
     <Compile Include="AzManProviderFixture.cs" />
-    <Compile Include="Configuration\Unity\AzManAuthorizationProviderPolicyCreatorFixture.cs" />
+    <Compile Include="Configuration\AzManAuthorizationProviderConfigurationnTypeRegistrationFixture.cs" />
+    <Compile Include="Configuration\Unity\AzManAuthorizationProviderInstantiationFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -11,15 +11,12 @@
 
 using System.Security.Principal;
 using Microsoft.Practices.EnterpriseLibrary.Security.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security
 {
     /// <summary>
     /// Defines the basic functionality of an authorization provider.
     /// </summary>
-    [ConfigurationNameMapper(typeof(AuthorizationProviderDataRetriever))]
-	[CustomFactory(typeof(AuthorizationProviderCustomFactory))]
     public interface IAuthorizationProvider
     {
         /// <summary>

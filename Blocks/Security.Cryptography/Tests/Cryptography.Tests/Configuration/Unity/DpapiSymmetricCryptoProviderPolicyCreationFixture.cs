@@ -39,8 +39,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests.Conf
 		[TestMethod]
 		public void CanCreatePoliciesTo_EncryptAndDecryptOneMegabyte()
 		{
-			container.AddExtension(new CryptographyBlockExtension());
-
 			Assert.IsInstanceOfType(container.Resolve<ISymmetricCryptoProvider>(symmInstance),
 				typeof(DpapiSymmetricCryptoProvider));
 

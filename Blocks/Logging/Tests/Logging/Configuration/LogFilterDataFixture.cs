@@ -11,6 +11,7 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
@@ -34,7 +35,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         [TestMethod]
         public void WhenCreatesRegistration_ThenCreatedRegistrationMapsLogFilterToPriorityFilterForTheSuppliedName()
         {
-            filterData.GetContainerConfigurationModel()
+            filterData.GetRegistrations().First()
                 .AssertForServiceType(typeof(ILogFilter))
                 .ForName("filter")
                 .ForImplementationType(typeof(PriorityFilter));
@@ -43,7 +44,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         [TestMethod]
         public void WhenCreatesRegistration_ThenCreatedRegistrationHasTheExpectedConstructorParameters()
         {
-            filterData.GetContainerConfigurationModel()
+            filterData.GetRegistrations().First()
                 .AssertConstructor()
                 .WithValueConstructorParameter("filter")
                 .WithValueConstructorParameter(100)
@@ -72,7 +73,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         [TestMethod]
         public void WhenCreatesRegistration_ThenCreatedRegistrationMapsLogFilterToCategoryFilterForTheSuppliedName()
         {
-            filterData.GetContainerConfigurationModel()
+            filterData.GetRegistrations().First()
                 .AssertForServiceType(typeof(ILogFilter))
                 .ForName("filter")
                 .ForImplementationType(typeof(CategoryFilter));
@@ -83,7 +84,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         {
             ICollection<string> categories;
 
-            filterData.GetContainerConfigurationModel()
+            filterData.GetRegistrations().First()
                 .AssertConstructor()
                 .WithValueConstructorParameter("filter")
                 .WithValueConstructorParameter(out categories)
@@ -108,7 +109,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         [TestMethod]
         public void WhenCreatesRegistration_ThenCreatedRegistrationMapsLogFilterToCategoryFilterForTheSuppliedName()
         {
-            filterData.GetContainerConfigurationModel()
+            filterData.GetRegistrations().First()
                 .AssertForServiceType(typeof(ILogFilter))
                 .ForName("filter")
                 .ForImplementationType(typeof(LogEnabledFilter));
@@ -117,7 +118,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         [TestMethod]
         public void WhenCreatesRegistration_ThenCreatedRegistrationHasTheExpectedConstructorParameters()
         {
-            filterData.GetContainerConfigurationModel()
+            filterData.GetRegistrations().First()
                 .AssertConstructor()
                 .WithValueConstructorParameter("filter")
                 .WithValueConstructorParameter(true)
@@ -143,7 +144,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         [TestMethod]
         public void WhenCreatesRegistration_ThenCreatedRegistrationMapsLogFilterToCustomFilterForTheSuppliedName()
         {
-            filterData.GetContainerConfigurationModel()
+            filterData.GetRegistrations().First()
                 .AssertForServiceType(typeof(ILogFilter))
                 .ForName("filter")
                 .ForImplementationType(typeof(MockCustomLogFilter));
@@ -152,7 +153,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         [TestMethod]
         public void WhenCreatesRegistration_ThenCreatedRegistrationHasTheExpectedConstructorParameters()
         {
-            filterData.GetContainerConfigurationModel()
+            filterData.GetRegistrations().First()
                 .AssertConstructor()
                 .WithValueConstructorParameter(((CustomLogFilterData)filterData).Attributes)
                 .VerifyConstructorParameters();

@@ -17,7 +17,6 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Configuration
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.Unity;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests.Properties;
 using Microsoft.Practices.Unity;
@@ -28,29 +27,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests.Configur
     [TestClass]
     public class ExceptionHandlingBlockExtensionFixture
     {
-        private IUnityContainer container;
         private ExceptionHandlingSettings settings;
         private DictionaryConfigurationSource configurationSource;
 
         [TestInitialize]
         public void SetUp()
         {
-            container = new UnityContainer();
-
             settings = new ExceptionHandlingSettings();
             configurationSource = new DictionaryConfigurationSource();
             configurationSource.Add(ExceptionHandlingSettings.SectionName, settings);
             configurationSource.Add(
                 InstrumentationConfigurationSection.SectionName,
                 new InstrumentationConfigurationSection(false, false, true));
-
-            container.AddExtension(new EnterpriseLibraryCoreExtension(configurationSource));
-        }
-
-        [TestCleanup]
-        public void TearDown()
-        {
-            container.Dispose();
         }
 
         [TestMethod]
@@ -59,11 +47,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests.Configur
             ExceptionPolicyData exceptionPolicyData = new ExceptionPolicyData("policy");
             settings.ExceptionPolicies.Add(exceptionPolicyData);
 
-            container.AddExtension(new ExceptionHandlingBlockExtension());
-
-            ExceptionPolicyImpl policy = container.Resolve<ExceptionPolicyImpl>("policy");
-
-            Assert.IsNotNull(policy);
+            using(var container = new UnityContainer().AddExtension(new EnterpriseLibraryCoreExtension(configurationSource)))
+            {
+                ExceptionPolicyImpl policy = container.Resolve<ExceptionPolicyImpl>("policy");
+                Assert.IsNotNull(policy);
+            }
         }
 
         [TestMethod]
@@ -79,18 +67,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests.Configur
                 = new ExceptionTypeData("type2", typeof(ArgumentException), PostHandlingAction.NotifyRethrow);
             exceptionPolicyData.ExceptionTypes.Add(exceptionTypeData2);
 
-            container.AddExtension(new ExceptionHandlingBlockExtension());
+            using(var container = new UnityContainer().AddExtension(new EnterpriseLibraryCoreExtension(configurationSource)))
+            {
+                ExceptionPolicyImpl policy = container.Resolve<ExceptionPolicyImpl>("policy");
 
-            ExceptionPolicyImpl policy = container.Resolve<ExceptionPolicyImpl>("policy");
+                Assert.IsNotNull(policy);
+                Assert.IsNotNull(policy.GetPolicyEntry(typeof(Exception)));
+                Assert.IsNotNull(policy.GetPolicyEntry(typeof(ArgumentException)));
+                Assert.IsNull(policy.GetPolicyEntry(typeof(InvalidOperationException)));
 
-            Assert.IsNotNull(policy);
-            Assert.IsNotNull(policy.GetPolicyEntry(typeof(Exception)));
-            Assert.IsNotNull(policy.GetPolicyEntry(typeof(ArgumentException)));
-            Assert.IsNull(policy.GetPolicyEntry(typeof(InvalidOperationException)));
-
-            // little detail is exposed for policy entries - need to probe its behavior for a proper assert
-            Assert.IsFalse(policy.GetPolicyEntry(typeof(Exception)).Handle(new Exception()));
-            Assert.IsTrue(policy.GetPolicyEntry(typeof(ArgumentException)).Handle(new ArgumentException()));
+                // little detail is exposed for policy entries - need to probe its behavior for a proper assert
+                Assert.IsFalse(policy.GetPolicyEntry(typeof(Exception)).Handle(new Exception()));
+                Assert.IsTrue(policy.GetPolicyEntry(typeof(ArgumentException)).Handle(new ArgumentException()));
+                
+            }
         }
 
         [TestMethod]
@@ -116,18 +106,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests.Configur
                 = new ExceptionTypeData("type2", typeof(ArgumentNullException), PostHandlingAction.NotifyRethrow);
             exceptionPolicy2Data.ExceptionTypes.Add(exceptionTypeData22);
 
-            container.AddExtension(new ExceptionHandlingBlockExtension());
+            using(var container = new UnityContainer().AddExtension(new EnterpriseLibraryCoreExtension(configurationSource)))
+            {
+                ExceptionPolicyImpl policy = container.Resolve<ExceptionPolicyImpl>("policy1");
 
-            ExceptionPolicyImpl policy = container.Resolve<ExceptionPolicyImpl>("policy1");
+                Assert.IsNotNull(policy);
+                Assert.IsNotNull(policy.GetPolicyEntry(typeof(Exception)));
+                Assert.IsNotNull(policy.GetPolicyEntry(typeof(ArgumentException)));
+                Assert.IsNull(policy.GetPolicyEntry(typeof(InvalidOperationException)));
 
-            Assert.IsNotNull(policy);
-            Assert.IsNotNull(policy.GetPolicyEntry(typeof(Exception)));
-            Assert.IsNotNull(policy.GetPolicyEntry(typeof(ArgumentException)));
-            Assert.IsNull(policy.GetPolicyEntry(typeof(InvalidOperationException)));
-
-            // this breaks if the type1 for policy2 overrides the policy for policy1's type
-            Assert.IsFalse(policy.GetPolicyEntry(typeof(Exception)).Handle(new Exception()));
-            Assert.IsTrue(policy.GetPolicyEntry(typeof(ArgumentException)).Handle(new ArgumentException()));
+                // this breaks if the type1 for policy2 overrides the policy for policy1's type
+                Assert.IsFalse(policy.GetPolicyEntry(typeof(Exception)).Handle(new Exception()));
+                Assert.IsTrue(policy.GetPolicyEntry(typeof(ArgumentException)).Handle(new ArgumentException()));
+            }
         }
 
         [TestMethod]
@@ -143,18 +134,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests.Configur
                 typeof(ArgumentException).AssemblyQualifiedName);
             exceptionTypeData.ExceptionHandlers.Add(exceptionHandlerData);
 
-            container.AddExtension(new ExceptionHandlingBlockExtension());
-
-            ExceptionPolicyImpl policy = container.Resolve<ExceptionPolicyImpl>("policy");
-
-            try
+            using(var container = new UnityContainer().AddExtension(new EnterpriseLibraryCoreExtension(configurationSource)))
             {
-                policy.HandleException(new Exception("to be wrapped"));
-                Assert.Fail("a new exception should have been thrown");
-            }
-            catch (ArgumentException e)
-            {
-                Assert.AreEqual("message", e.Message);
+                ExceptionPolicyImpl policy = container.Resolve<ExceptionPolicyImpl>("policy");
+
+                try
+                {
+                    policy.HandleException(new Exception("to be wrapped"));
+                    Assert.Fail("a new exception should have been thrown");
+                }
+                catch (ArgumentException e)
+                {
+                    Assert.AreEqual("message", e.Message);
+                }
+                
             }
         }
 
@@ -179,18 +172,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests.Configur
 
             exceptionTypeData.ExceptionHandlers.Add(exceptionHandlerData);
 
-            container.AddExtension(new ExceptionHandlingBlockExtension());
-
-            ExceptionPolicyImpl policy = container.Resolve<ExceptionPolicyImpl>("policy");
-
-            try
+            using(var container = new UnityContainer().AddExtension(new EnterpriseLibraryCoreExtension(configurationSource)))
             {
-                policy.HandleException(new Exception("to be wrapped"));
-                Assert.Fail("a new exception should have been thrown");
-            }
-            catch (ArgumentException e)
-            {
-                Assert.AreEqual(resourceValue, e.Message);
+                ExceptionPolicyImpl policy = container.Resolve<ExceptionPolicyImpl>("policy");
+
+                try
+                {
+                    policy.HandleException(new Exception("to be wrapped"));
+                    Assert.Fail("a new exception should have been thrown");
+                }
+                catch (ArgumentException e)
+                {
+                    Assert.AreEqual(resourceValue, e.Message);
+                }
+                
             }
         }
 
@@ -217,18 +212,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests.Configur
                 typeof(ArgumentException).AssemblyQualifiedName);
             exceptionTypeData21.ExceptionHandlers.Add(exceptionHandlerData21);
 
-            container.AddExtension(new ExceptionHandlingBlockExtension());
-
-            ExceptionPolicyImpl policy = container.Resolve<ExceptionPolicyImpl>("policy1");
-
-            try
+            using(var container = new UnityContainer().AddExtension(new EnterpriseLibraryCoreExtension(configurationSource)))
             {
-                policy.HandleException(new Exception("to be wrapped"));
-                Assert.Fail("a new exception should have been thrown");
-            }
-            catch (ArgumentException e)
-            {
-                Assert.AreEqual("message1", e.Message, "Policy 1 is using the handler definitions from policy 2");
+                ExceptionPolicyImpl policy = container.Resolve<ExceptionPolicyImpl>("policy1");
+
+                try
+                {
+                    policy.HandleException(new Exception("to be wrapped"));
+                    Assert.Fail("a new exception should have been thrown");
+                }
+                catch (ArgumentException e)
+                {
+                    Assert.AreEqual("message1", e.Message, "Policy 1 is using the handler definitions from policy 2");
+                }
+                
             }
         }
 
@@ -245,51 +242,83 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests.Configur
             exceptionHandlerData11.Attributes.Add(TestCustomExceptionHandler.AttributeKey, "handler1");
             exceptionTypeData11.ExceptionHandlers.Add(exceptionHandlerData11);
 
-            container.AddExtension(new ExceptionHandlingBlockExtension());
-
-            ExceptionManager manager = container.Resolve<ExceptionManager>();
-            Assert.IsNotNull(manager);
-
-            Exception exceptionToThrow = new Exception("some message");
-
-            try
+            using(var container = new UnityContainer().AddExtension(new EnterpriseLibraryCoreExtension(configurationSource)))
             {
-                manager.Process(() => { throw exceptionToThrow; }, "policy1");
-                Assert.Fail("a new exception should have been thrown");
-            }
-            catch (Exception e)
-            {
-                Assert.AreSame(exceptionToThrow, e.InnerException);
-                Assert.AreEqual("handler1", e.Message);
+                ExceptionManager manager = container.Resolve<ExceptionManager>();
+                Assert.IsNotNull(manager);
+
+                Exception exceptionToThrow = new Exception("some message");
+
+                try
+                {
+                    manager.Process(() => { throw exceptionToThrow; }, "policy1");
+                    Assert.Fail("a new exception should have been thrown");
+                }
+                catch (Exception e)
+                {
+                    Assert.AreSame(exceptionToThrow, e.InnerException);
+                    Assert.AreEqual("handler1", e.Message);
+                }
             }
         }
 
         [TestMethod]
         public void ExceptionManagerGetsInstrumented()
         {
-            container.AddExtension(new ExceptionHandlingBlockExtension());
-
-            ExceptionManager manager = container.Resolve<ExceptionManager>();
-            Assert.IsNotNull(manager);
-
-            Exception exceptionToThrow = new Exception("some message");
-
-            using (WmiEventWatcher eventListener = new WmiEventWatcher(1))
+            using(var container = new UnityContainer().AddExtension(new EnterpriseLibraryCoreExtension(configurationSource)))
             {
-                try
+                ExceptionManager manager = container.Resolve<ExceptionManager>();
+                Assert.IsNotNull(manager);
+
+                Exception exceptionToThrow = new Exception("some message");
+
+                using (WmiEventWatcher eventListener = new WmiEventWatcher(1))
                 {
-                    manager.HandleException(new Exception(), "non-existing policy");
+                    try
+                    {
+                        manager.HandleException(new Exception(), "non-existing policy");
+                    }
+                    catch (ExceptionHandlingException)
+                    {
+                        eventListener.WaitForEvents();
+                        Assert.AreEqual(1, eventListener.EventsReceived.Count);
+                        Assert.AreEqual(typeof(ExceptionHandlingFailureEvent).Name,
+                                        eventListener.EventsReceived[0].ClassPath.ClassName);
+                        Assert.AreEqual("non-existing policy", eventListener.EventsReceived[0].GetPropertyValue("InstanceName"));
+                    }
                 }
-                catch (ExceptionHandlingException)
-                {
-                    eventListener.WaitForEvents();
-                    Assert.AreEqual(1, eventListener.EventsReceived.Count);
-                    Assert.AreEqual(typeof(ExceptionHandlingFailureEvent).Name,
-                        eventListener.EventsReceived[0].ClassPath.ClassName);
-                    Assert.AreEqual("non-existing policy", eventListener.EventsReceived[0].GetPropertyValue("InstanceName"));
-                }
+                
             }
         }
+
+
+        [TestMethod]
+        public void ExceptionManagerLifetimeIsSingleton()
+        {
+            using(var container = new UnityContainer().AddExtension(new EnterpriseLibraryCoreExtension(configurationSource)))
+            {
+                ExceptionManager manager = container.Resolve<ExceptionManager>();
+                ExceptionManager manager2 = container.Resolve<ExceptionManager>();
+
+                Assert.AreSame(manager, manager2);
+            }
+        }
+
+        [TestMethod]
+        public void ExceptionPolicyLifetimeIsSingleton()
+        {
+            ExceptionPolicyData exceptionPolicyData = new ExceptionPolicyData("policy");
+            settings.ExceptionPolicies.Add(exceptionPolicyData);
+
+            using (var container = new UnityContainer().AddExtension(new EnterpriseLibraryCoreExtension(configurationSource)))
+            {
+                ExceptionPolicyImpl policy = container.Resolve<ExceptionPolicyImpl>("policy");
+                ExceptionPolicyImpl policy2 = container.Resolve<ExceptionPolicyImpl>("policy");
+
+                Assert.AreSame(policy, policy2);
+            }
+        }
+
 
         public class TestCustomExceptionHandler : MockCustomProviderBase, IExceptionHandler
         {
@@ -299,7 +328,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests.Configur
 
             public Exception HandleException(Exception exception, Guid handlingInstanceId)
             {
-                return new Exception(this.customValue, exception);
+                return new Exception(customValue, exception);
             }
         }
     }

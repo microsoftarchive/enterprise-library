@@ -13,7 +13,6 @@ using System;
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
-using Microsoft.Practices.EnterpriseLibrary.Data.Tests;
 using Microsoft.Practices.EnterpriseLibrary.Data.TestSupport;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 

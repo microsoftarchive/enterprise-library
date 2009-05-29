@@ -9,11 +9,11 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System.Collections.Generic;
-using System.Reflection;
+using System.Linq;
+using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.TestSupport.ObjectsUnderTest;
-using Microsoft.Practices.Unity;
+using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Security;
 using Microsoft.Practices.Unity.InterceptionExtension;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -39,60 +39,55 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
             Assert.AreEqual(data.Order, deserialized.Order);
         }
 
-        [TestMethod]
-        public void CanCreateHandlerFromDataWithCorrectProperties()
+    }
+
+    [TestClass]
+    public class GivenAnAuthorizationCallHandlerData
+    {
+        private CallHandlerData callHandlerData;
+
+        [TestInitialize]
+        public void Setup()
         {
-            AuthorizationCallHandlerData data = new AuthorizationCallHandlerData("Auth handler");
-            data.AuthorizationProvider = "authorizationProvider";
-            data.OperationName = "op";
-            data.Order = 7;
-
-            IUnityContainer container = new UnityContainer().AddNewExtension<Interception>();
-            var policy = container.Configure<Interception>().AddPolicy("test");
-            policy.AddMatchingRule(new AlwaysMatchingRule());
-            data.ConfigurePolicy(policy, null);
-
-            var handlers
-                = new List<ICallHandler>(
-                    container.Resolve<InjectionPolicy>("test")
-                        .GetHandlersFor(GetMethodImpl(MethodBase.GetCurrentMethod()), container));
-
-            Assert.AreEqual(1, handlers.Count);
-
-            AuthorizationCallHandler handler = (AuthorizationCallHandler)handlers[0];
-            Assert.AreEqual(data.AuthorizationProvider, handler.ProviderName);
-            Assert.AreEqual(data.OperationName, handler.OperationName);
-            Assert.AreEqual(data.Order, handler.Order);
+            callHandlerData =
+                new AuthorizationCallHandlerData("authorization")
+                {
+                    AuthorizationProvider = "provider",
+                    OperationName = "operation",
+                    Order = 200
+                };
         }
 
         [TestMethod]
-        public void ConfiguresHandlerAsSingleton()
+        public void WhenCreatesTypeRegistration_ThenCreatesSingleRegistration()
         {
-            AuthorizationCallHandlerData data = new AuthorizationCallHandlerData("Auth handler");
-            data.AuthorizationProvider = "authorizationProvider";
-            data.OperationName = "op";
-            data.Order = 7;
+            var registrations = callHandlerData.GetRegistrations("-suffix");
 
-            IUnityContainer container = new UnityContainer().AddNewExtension<Interception>();
-            var policy = container.Configure<Interception>().AddPolicy("test");
-            policy.AddMatchingRule(new AlwaysMatchingRule());
-            data.ConfigurePolicy(policy, null);
-
-            var handlers1
-                = new List<ICallHandler>(
-                    container.Resolve<InjectionPolicy>("test")
-                        .GetHandlersFor(GetMethodImpl(MethodBase.GetCurrentMethod()), container));
-            var handlers2
-                = new List<ICallHandler>(
-                    container.Resolve<InjectionPolicy>("test")
-                        .GetHandlersFor(GetMethodImpl(MethodBase.GetCurrentMethod()), container));
-
-            CollectionAssert.AreEquivalent(handlers1, handlers2);
+            Assert.AreEqual(1, registrations.Count());
         }
 
-        private static MethodImplementationInfo GetMethodImpl(MethodBase method)
+        [TestMethod]
+        public void WhenCreatesRegistration_ThenRegistrationIsForCallHandlerForGivenName()
         {
-            return new MethodImplementationInfo(null, ((MethodInfo) method));
+            var registrations = callHandlerData.GetRegistrations("-suffix");
+
+            registrations.ElementAt(0)
+                .AssertForServiceType(typeof(ICallHandler))
+                .ForName("authorization-suffix")
+                .ForImplementationType(typeof(AuthorizationCallHandler));
+        }
+
+        [TestMethod]
+        public void WhenCreatesRegistrations_ThenCallHandlerRegistrationConfiguresInjectsExpirationTimeAndOrder()
+        {
+            var registrations = callHandlerData.GetRegistrations("-suffix");
+
+            registrations.ElementAt(0)
+                .AssertConstructor()
+                .WithContainerResolvedParameter<IAuthorizationProvider>("provider")
+                .WithValueConstructorParameter("operation")
+                .WithValueConstructorParameter(200)
+                .VerifyConstructorParameters();
         }
     }
 }

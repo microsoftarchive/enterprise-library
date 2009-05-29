@@ -15,6 +15,7 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests.Configuration
 {
@@ -30,11 +31,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests.Conf
         }
 
         [TestMethod]
-        public void WhenCreatingRegistrations_ThenCreatesNoRegistrations()
+        public void WhenCreatingRegistrations_ThenCreatesOneRegistrationForCryptographyManager()
         {
-            var typeRegistrations = cryptographySettings.CreateRegistrations();
+            var typeRegistrations = cryptographySettings.GetRegistrations(null).Where(r => r.ServiceType == typeof(CryptographyManager));
 
-            Assert.AreEqual(0, typeRegistrations.Count());
+            Assert.AreEqual(1, typeRegistrations.Count());
         }
     }
 
@@ -52,20 +53,22 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests.Conf
         }
 
         [TestMethod]
-        public void WhenCreatingRegistrations_ThenCreatesSingleTypeRegistrationForTheSuppliedName()
+        public void WhenCreatingRegistrations_ThenCreatesSingleTypeRegistrationForTheSuppliedNameAndOneForCryptographyManager()
         {
-            var typeRegistrations = cryptographySettings.CreateRegistrations();
+            var mangerRegistrations = cryptographySettings.GetRegistrations(null).Where(x=>x.ServiceType == typeof(CryptographyManager));
+            Assert.AreEqual(1, mangerRegistrations.Count());
 
-            Assert.AreEqual(1, typeRegistrations.Count());
-            Assert.AreEqual("name", typeRegistrations.ElementAt(0).Name);
+            var hashAlgorithmRegistrations = cryptographySettings.GetRegistrations(null).Where(x => x.ServiceType == typeof(IHashProvider));
+            Assert.AreEqual(1, hashAlgorithmRegistrations.Count());
+            Assert.AreEqual("name", hashAlgorithmRegistrations.ElementAt(0).Name);
         }
 
         [TestMethod]
         public void WhenCreatingRegistrations_ThenCreatedTypeRegistrationDescribingTheProvider()
         {
-            var typeRegistrations = cryptographySettings.CreateRegistrations();
+            var typeRegistrations = cryptographySettings.GetRegistrations(null);
 
-            TypeRegistration registration = typeRegistrations.ElementAt(0);
+            TypeRegistration registration = typeRegistrations.Where(x=>x.ServiceType == typeof(IHashProvider)).ElementAt(0);
 
             registration
                 .AssertForServiceType(typeof(IHashProvider))
@@ -75,6 +78,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests.Conf
             registration.AssertConstructor()
                 .WithValueConstructorParameter(typeof(RijndaelManaged))
                 .WithValueConstructorParameter(true)
+                .WithContainerResolvedParameter<IHashAlgorithmInstrumentationProvider>("name")
                 .VerifyConstructorParameters();
                 
         }
@@ -101,18 +105,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests.Conf
         [TestMethod]
         public void WhenCreatingRegistrations_ThenCreatesSingleTypeRegistrationForTheSuppliedName()
         {
-            var typeRegistrations = cryptographySettings.CreateRegistrations();
+            var mangerRegistrations = cryptographySettings.GetRegistrations(null).Where(x => x.ServiceType == typeof(CryptographyManager));
+            Assert.AreEqual(1, mangerRegistrations.Count());
 
-            Assert.AreEqual(1, typeRegistrations.Count());
-            Assert.AreEqual("keyed", typeRegistrations.ElementAt(0).Name);
+            var hashAlgorithmRegistrations = cryptographySettings.GetRegistrations(null).Where(x => x.ServiceType == typeof(IHashProvider));
+            Assert.AreEqual(1, hashAlgorithmRegistrations.Count());
+            Assert.AreEqual("keyed", hashAlgorithmRegistrations.ElementAt(0).Name);
         }
 
         [TestMethod]
         public void WhenCreatingRegistrations_ThenCreatedTypeRegistrationDescribingTheProvider()
         {
-            var typeRegistrations = cryptographySettings.CreateRegistrations();
+            var typeRegistrations = cryptographySettings.GetRegistrations(null);
 
-            TypeRegistration registration = typeRegistrations.ElementAt(0);
+            TypeRegistration registration = typeRegistrations.Where(x=>x.ServiceType == typeof(IHashProvider)).ElementAt(0);
 
             registration
                 .AssertForServiceType(typeof(IHashProvider))
@@ -124,6 +130,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests.Conf
                 .WithValueConstructorParameter(true)
                 .WithValueConstructorParameter("protected key")
                 .WithValueConstructorParameter(DataProtectionScope.LocalMachine)
+                .WithContainerResolvedParameter<IHashAlgorithmInstrumentationProvider>("keyed")
                 .VerifyConstructorParameters();
                 
         }
@@ -134,11 +141,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests.Conf
     {
         private CryptographySettings cryptographySettings;
         private CustomHashProviderData customHashProviderData;
-
-        public GivenConfigurationSectionWithCustomHashProviderData()
-        {
-            
-        }
 
         [TestInitialize]
         public void Given()
@@ -152,16 +154,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests.Conf
         [TestMethod]
         public void WhenCreatingRegistrations_ThenCreatesSingleTypeRegistrationForTheSuppliedName()
         {
-            var typeRegistrations = cryptographySettings.CreateRegistrations();
+            var mangerRegistrations = cryptographySettings.GetRegistrations(null).Where(x => x.ServiceType == typeof(CryptographyManager));
+            Assert.AreEqual(1, mangerRegistrations.Count());
 
-            Assert.AreEqual(1, typeRegistrations.Count());
-            Assert.AreEqual("custom", typeRegistrations.ElementAt(0).Name);
+            var hashAlgorithmRegistrations = cryptographySettings.GetRegistrations(null).Where(x => x.ServiceType == typeof(IHashProvider));
+            Assert.AreEqual(1, hashAlgorithmRegistrations.Count());
+            Assert.AreEqual("custom", hashAlgorithmRegistrations.ElementAt(0).Name);
         }
 
         [TestMethod]
         public void WhenCreatingRegistrations_ThenCreatedTypeRegistrationDescribingTheProvider()
         {
-            var typeRegistrations = cryptographySettings.CreateRegistrations();
+            var typeRegistrations = cryptographySettings.GetRegistrations(null);
 
             TypeRegistration registration = typeRegistrations.ElementAt(0);
 
@@ -182,11 +186,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests.Conf
     {
         private CryptographySettings cryptographySettings;
 
-        public GivenConfigurationSectionWithDefaultHashProvider()
-        {
-            
-        }
-
         [TestInitialize]
         public void Given()
         {
@@ -198,9 +197,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests.Conf
         [TestMethod]
         public void WhenCreatingRegistration_ThenCreatesDefaultRegistration()
         {
-            var typeRegistrations = cryptographySettings.CreateRegistrations();
+            
+            var mangerRegistrations = cryptographySettings.GetRegistrations(null).Where(x=>x.ServiceType == typeof(CryptographyManager));
+            Assert.AreEqual(1, mangerRegistrations.Count());
 
-            TypeRegistration registration = typeRegistrations.ElementAt(0);
+            var registration = cryptographySettings.GetRegistrations(null).Where(x => x.ServiceType == typeof(IHashProvider)).First();
             Assert.IsTrue(registration.IsDefault);
         }
     }
@@ -209,10 +210,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests.Conf
     public class GivenConfigurationSectionWithoutDefaultHashProvider
     {
         private CryptographySettings cryptographySettings;
-
-        public GivenConfigurationSectionWithoutDefaultHashProvider()
-        {            
-        }
 
         [TestInitialize]
         public void Given()
@@ -225,7 +222,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests.Conf
         [TestMethod]
         public void WhenCreatingRegistration_ThenCreatesNonDefaultRegistration()
         {
-            var typeRegistrations = cryptographySettings.CreateRegistrations();
+            var typeRegistrations = cryptographySettings.GetRegistrations(null);
 
             TypeRegistration registration = typeRegistrations.ElementAt(0);
             Assert.IsFalse(registration.IsDefault);
@@ -236,9 +233,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests.Conf
     public class GivenConfigurationSectionWithSymmetricAlgorithmProviderData
     {
         private CryptographySettings cryptographySettings;
-
-        public GivenConfigurationSectionWithSymmetricAlgorithmProviderData()
-        {}
 
         [TestInitialize]
         public void Given()
@@ -255,16 +249,21 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests.Conf
         [TestMethod]
         public void WhenCreatingRegistrations_ThenCreatesSingleTypeRegistrationForTheSuppliedName()
         {
-            var typeRegistrations = cryptographySettings.CreateRegistrations();
 
-            Assert.AreEqual(1, typeRegistrations.Count());
-            Assert.AreEqual("symmetric algorithm", typeRegistrations.ElementAt(0).Name);
+            var mangerRegistrations = cryptographySettings.GetRegistrations(null).Where(x => x.ServiceType == typeof(CryptographyManager));
+            Assert.AreEqual(1, mangerRegistrations.Count());
+
+            var symmProviderRegistrations = cryptographySettings.GetRegistrations(null).Where(x => x.ServiceType == typeof(ISymmetricCryptoProvider));
+            Assert.AreEqual(1, symmProviderRegistrations.Count());
+
+            Assert.AreEqual("symmetric algorithm", symmProviderRegistrations.ElementAt(0).Name);
+            var typeRegistrations = cryptographySettings.GetRegistrations(null);
         }
 
         [TestMethod]
         public void WhenCreatingRegistrations_ThenCreatedTypeRegistrationDescribingTheProvider()
         {
-            var typeRegistrations = cryptographySettings.CreateRegistrations();
+            var typeRegistrations = cryptographySettings.GetRegistrations(null).Where(x=>x.ServiceType == typeof(ISymmetricCryptoProvider));
 
             TypeRegistration registration = typeRegistrations.ElementAt(0);
 
@@ -277,6 +276,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests.Conf
                 .WithValueConstructorParameter(typeof(RijndaelManaged))
                 .WithValueConstructorParameter("protected key")
                 .WithValueConstructorParameter(DataProtectionScope.LocalMachine)
+                .WithContainerResolvedParameter<ISymmetricAlgorithmInstrumentationProvider>("symmetric algorithm")
                 .VerifyConstructorParameters();
                 
         }
@@ -286,11 +286,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests.Conf
     public class GivenConfigurationSectionWithDpapiSymmetricProviderData
     {
         private CryptographySettings cryptographySettings;
-
-        public GivenConfigurationSectionWithDpapiSymmetricProviderData()
-        {
-            
-        }
 
         [TestInitialize]
         public void Given()
@@ -303,7 +298,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests.Conf
         [TestMethod]
         public void WhenCreatingRegistrations_ThenCreatesSingleTypeRegistrationForTheSuppliedName()
         {
-            var typeRegistrations = cryptographySettings.CreateRegistrations();
+            var typeRegistrations =
+                cryptographySettings.GetRegistrations(null).Where(
+                    r => r.ServiceType == typeof (ISymmetricCryptoProvider));
 
             Assert.AreEqual(1, typeRegistrations.Count());
             Assert.AreEqual("dpapi", typeRegistrations.ElementAt(0).Name);
@@ -312,7 +309,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests.Conf
         [TestMethod]
         public void WhenCreatingRegistrations_ThenCreatedTypeRegistrationDescribingTheProvider()
         {
-            var typeRegistrations = cryptographySettings.CreateRegistrations();
+            var typeRegistrations = cryptographySettings.GetRegistrations(null);
 
             TypeRegistration registration = typeRegistrations.ElementAt(0);
 
@@ -334,11 +331,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests.Conf
         private CryptographySettings cryptographySettings;
         private CustomSymmetricCryptoProviderData customSymmetricCryptoProviderData;
 
-        public GivenConfigurationSectionWithCustomCryptoProviderData()
-        {
-            
-        }
-
         [TestInitialize]
         public void Given()
         {
@@ -352,7 +344,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests.Conf
         [TestMethod]
         public void WhenCreatingRegistrations_ThenCreatesSingleTypeRegistrationForTheSuppliedName()
         {
-            var typeRegistrations = cryptographySettings.CreateRegistrations();
+            var typeRegistrations =
+                cryptographySettings.GetRegistrations(null).Where(
+                    r => r.ServiceType == typeof (ISymmetricCryptoProvider));
 
             Assert.AreEqual(1, typeRegistrations.Count());
             Assert.AreEqual("custom", typeRegistrations.ElementAt(0).Name);
@@ -361,7 +355,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests.Conf
         [TestMethod]
         public void WhenCreatingRegistrations_ThenCreatedTypeRegistrationDescribingTheProvider()
         {
-            var typeRegistrations = cryptographySettings.CreateRegistrations();
+            var typeRegistrations = cryptographySettings.GetRegistrations(null);
 
             TypeRegistration registration = typeRegistrations.ElementAt(0);
 
@@ -382,11 +376,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests.Conf
     {
         private CryptographySettings cryptographySettings;
 
-        public GivenConfigurationSectionWithDefaultCryptoProvider()
-        {
-            
-        }
-
         [TestInitialize]
         public void Given()
         {
@@ -404,7 +393,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests.Conf
         [TestMethod]
         public void WhenCreatingRegistration_ThenCreatesDefaultRegistration()
         {
-            var typeRegistrations = cryptographySettings.CreateRegistrations();
+            var typeRegistrations = cryptographySettings.GetRegistrations(null).Where(x=>x.ServiceType == typeof(ISymmetricCryptoProvider));
 
             TypeRegistration registration = typeRegistrations.ElementAt(0);
             Assert.IsTrue(registration.IsDefault);
@@ -415,11 +404,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests.Conf
     public class GivenConfigurationSectionWithoutDefaultSymmetricProvider
     {
         private CryptographySettings cryptographySettings;
-
-        public GivenConfigurationSectionWithoutDefaultSymmetricProvider()
-        {
-            
-        }
 
         [TestInitialize]
         public void Given()
@@ -436,7 +420,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests.Conf
         [TestMethod]
         public void WhenCreatingRegistration_ThenCreatesNonDefaultRegistration()
         {
-            var typeRegistrations = cryptographySettings.CreateRegistrations();
+            var typeRegistrations = cryptographySettings.GetRegistrations(null);
 
             TypeRegistration registration = typeRegistrations.ElementAt(0);
             Assert.IsFalse(registration.IsDefault);

@@ -110,5 +110,27 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Configura
             get { return (string)this[applicationInstanceName]; }
             set { this[applicationInstanceName] = value; }
         }
+
+        /// <summary>
+        /// Retrieve the <see cref="InstrumentationConfigurationSection"/> from the given configuratio source.
+        /// If the source is null, or does not contain an instrumentation section, then return a default
+        /// section with instrumentation turned off.
+        /// </summary>
+        /// <param name="configurationSource">Configuration source containing section (or not).</param>
+        /// <returns>The configuration section.</returns>
+        public static InstrumentationConfigurationSection GetSection(IConfigurationSource configurationSource)
+        {
+            if(configurationSource != null)
+            {
+                var section =
+                    configurationSource.GetSection(SectionName) as InstrumentationConfigurationSection;
+                if(section != null)
+                {
+                    return section;
+                }
+            }
+
+            return new InstrumentationConfigurationSection();
+        }
     }
 }

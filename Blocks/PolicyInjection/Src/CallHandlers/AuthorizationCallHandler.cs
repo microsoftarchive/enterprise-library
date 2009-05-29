@@ -27,54 +27,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
     [ConfigurationElementType(typeof(AuthorizationCallHandlerData))]
     public class AuthorizationCallHandler : ICallHandler
     {
-        private string providerName;
-        private string operationName;
-        private IConfigurationSource configurationSource;
-        private int order = 0;
-
         /// <summary>
         /// Constructs a new <see cref="AuthorizationCallHandler"/> that checks using the given
         /// information.
         /// </summary>
-        /// <param name="providerName">Name of authorization provider.</param>
+        /// <param name="provider">Authorization provider.</param>
         /// <param name="operationName">Operation name to use to check authorization rules.</param>
-        /// <param name="configurationSource">Configuration source to read authorization configuration from.</param>
-        public AuthorizationCallHandler(string providerName, string operationName, IConfigurationSource configurationSource)
-        {
-            this.providerName = providerName;
-            this.operationName = operationName;
-            this.configurationSource = configurationSource;
-        }
-
-        /// <summary>
-        /// Constructs a new <see cref="AuthorizationCallHandler"/> that checks using the given
-        /// information.
-        /// </summary>
-        /// <param name="providerName">Name of authorization provider.</param>
-        /// <param name="operationName">Operation name to use to check authorization rules.</param>
-        /// <param name="configurationSource">Configuration source to read authorization configuration from.</param>
         /// <param name="order">Order in which the handler will be executed.</param>
-        public AuthorizationCallHandler(string providerName, string operationName, IConfigurationSource configurationSource, int order)
+        public AuthorizationCallHandler(IAuthorizationProvider provider, string operationName, int order)
         {
-            this.providerName = providerName;
-            this.operationName = operationName;
-            this.configurationSource = configurationSource;
-            this.order = order;
-        }
-
-        /// <summary>
-        /// Gets or sets the order in which the handler will be executed
-        /// </summary>
-        public int Order
-        {
-            get
-            {
-                return order;
-            }
-            set
-            {
-                order = value;
-            }
+            this.AutorizationProvider = provider;
+            this.OperationName = operationName;
+            this.Order = order;
         }
 
         /// <summary>
@@ -86,11 +50,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
         /// if the call fails the authorization check.</returns>
         public IMethodReturn Invoke(IMethodInvocation input, GetNextHandlerDelegate getNext)
         {
-            IAuthorizationProvider authProvider = GetAuthorizationProvider();
             ReplacementFormatter formatter = new MethodInvocationFormatter(input);
-            if (!authProvider.Authorize(Thread.CurrentPrincipal, formatter.Format(operationName)))
+            if (!this.AutorizationProvider.Authorize(Thread.CurrentPrincipal, formatter.Format(OperationName)))
             {
-                UnauthorizedAccessException unauthorizedExeption = new UnauthorizedAccessException(Resources.AuthorizationFailed);
+                UnauthorizedAccessException unauthorizedExeption =
+                    new UnauthorizedAccessException(Resources.AuthorizationFailed);
                 return input.CreateExceptionMethodReturn(unauthorizedExeption);
             }
 
@@ -98,13 +62,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
         }
 
         /// <summary>
-        /// Gets or sets the security provider name.
+        /// Gets the authorization provider to use when performing authorizations.
         /// </summary>
-        /// <value>security provider name.</value>
-        public string ProviderName
+        public IAuthorizationProvider AutorizationProvider
         {
-            get { return providerName; }
-            set { providerName = value; }
+            get;
+            private set;
         }
 
         /// <summary>
@@ -115,21 +78,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
         /// <value>operation name.</value>
         public string OperationName
         {
-            get { return operationName; }
-            set { operationName = value; }
+            get;
+            set;
         }
 
-        private IAuthorizationProvider GetAuthorizationProvider()
+        /// <summary>
+        /// Gets or sets the order in which the handler will be executed
+        /// </summary>
+        public int Order
         {
-            AuthorizationProviderFactory authorizationProviderFactory = new AuthorizationProviderFactory(configurationSource);
-            if (string.IsNullOrEmpty(providerName))
-            {
-                return authorizationProviderFactory.CreateDefault();
-            }
-            else
-            {
-                return authorizationProviderFactory.Create(providerName);
-            }
+            get;
+            set;
         }
     }
 }

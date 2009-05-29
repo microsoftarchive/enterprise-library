@@ -18,19 +18,17 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests
 {
 	[TestClass]
-	public class CacheExceptionHandlingFixture : ICacheScavenger
+	public class CacheExceptionHandlingFixture
 	{
 		[TestMethod]
 		public void ExceptionThrownDuringAddResultsInObjectBeingRemovedFromCacheCompletely()
 		{
 			MockBackingStore backingStore = new MockBackingStore();
-			CacheCapacityScavengingPolicy scavengingPolicy = new CacheCapacityScavengingPolicy(10);
-			CachingInstrumentationProvider instrumentationProvider = new CachingInstrumentationProvider();
+			ICachingInstrumentationProvider instrumentationProvider = new NullCachingInstrumentationProvider();
 
-			Cache cache = new Cache(backingStore, scavengingPolicy, instrumentationProvider);
-			cache.Initialize(this);
+			Cache cache = new Cache(backingStore, instrumentationProvider);
 
-			try
+            try
 			{
 				cache.Add("foo", "bar");
 				Assert.Fail("Should have thrown exception thrown internally to Cache.Add");
@@ -47,11 +45,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests
 		{
 			using (IsolatedStorageBackingStore backingStore = new IsolatedStorageBackingStore("foo", null))
 			{
-				CacheCapacityScavengingPolicy scavengingPolicy = new CacheCapacityScavengingPolicy(10);
-				CachingInstrumentationProvider instrumentationProvider = new CachingInstrumentationProvider();
+				ICachingInstrumentationProvider instrumentationProvider = new NullCachingInstrumentationProvider();
 
-				Cache cache = new Cache(backingStore, scavengingPolicy, instrumentationProvider);
-				cache.Initialize(this);
+				Cache cache = new Cache(backingStore, instrumentationProvider);
 
 				try
 				{
@@ -78,11 +74,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests
 		{
 			using (IsolatedStorageBackingStore backingStore = new IsolatedStorageBackingStore("foo", null))
 			{
-				CacheCapacityScavengingPolicy scavengingPolicy = new CacheCapacityScavengingPolicy(10);
-				CachingInstrumentationProvider instrumentationProvider = new CachingInstrumentationProvider();
+				ICachingInstrumentationProvider instrumentationProvider = new NullCachingInstrumentationProvider();
 
-				Cache cache = new Cache(backingStore, scavengingPolicy, instrumentationProvider);
-				cache.Initialize(this);
+				Cache cache = new Cache(backingStore, instrumentationProvider);
 
 				cache.Add("my", new SerializableClass());
 
@@ -151,7 +145,32 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests
 			public void UpdateLastAccessedTime(string key,
 											   DateTime timestamp) { }
 		}
-
-		void ICacheScavenger.StartScavenging() { }
 	}
+
+    class NullCachingInstrumentationProvider : ICachingInstrumentationProvider
+    {
+        public void FireCacheUpdated(long updatedEntriesCount, long totalEntriesCount)
+        {
+        }
+
+        public void FireCacheAccessed(string key, bool hit)
+        {
+        }
+
+        public void FireCacheExpired(long itemsExpired)
+        {
+        }
+
+        public void FireCacheScavenged(long itemsScavenged)
+        {
+        }
+
+        public void FireCacheCallbackFailed(string key, Exception exception)
+        {
+        }
+
+        public void FireCacheFailed(string errorMessage, Exception exception)
+        {
+        }
+    }
 }

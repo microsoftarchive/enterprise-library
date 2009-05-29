@@ -111,6 +111,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerMo
         public bool IsDefault { get; set; }
 
         /// <summary>
+        /// The required lifetime for this service implementation.
+        /// </summary>
+        public TypeRegistrationLifetime Lifetime { get; set; }
+
+        /// <summary>
         /// Gets the <see cref="ParameterValue"/> instances describing values injected through the constructor.
         /// </summary>
         public IEnumerable<ParameterValue> ConstructorParameters
@@ -196,5 +201,23 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerMo
             : base(expression, typeof(T))
         {
         }
+    }
+
+    /// <summary>
+    /// A set of values indicating what the lifetime of service implementations
+    /// in the container should be.
+    /// </summary>
+    public enum TypeRegistrationLifetime
+    {
+        /// <summary>
+        /// This implementation should be stored by the container and it should return
+        /// the same object for each request.
+        /// </summary>
+        Singleton = 0,
+
+        /// <summary>
+        /// A new instance should be returned for each request.
+        /// </summary>
+        Transient
     }
 }

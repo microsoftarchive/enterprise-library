@@ -9,16 +9,13 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System.Collections;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Diagnostics;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Filters;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
 using System;
+using Microsoft.Practices.ServiceLocation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging
 {
@@ -30,7 +27,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
 		private static object sync = new object();
 		private static volatile LogWriter writer;
 
-		private static LogWriterFactory factory = new LogWriterFactory(ConfigurationSourceFactory.Create());
+		private static LogWriterFactory factory = new LogWriterFactory();
 
 		private const int DefaultPriority = -1;
 		private const TraceEventType DefaultSeverity = TraceEventType.Information;
@@ -424,9 +421,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
 						{
 							try
 							{
-								writer = factory.Create();
+								writer = new LogWriterFactory().Create();
 							}
-							catch (ConfigurationErrorsException configurationException)
+							catch (ActivationException configurationException)
 							{
 								TryLogConfigurationFailure(configurationException);
 
@@ -439,11 +436,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
 			}
 		}
 
-		internal static void TryLogConfigurationFailure(ConfigurationErrorsException configurationException)
+		internal static void TryLogConfigurationFailure(ActivationException configurationException)
 		{
 			try
 			{
-				DefaultLoggingEventLogger logger = EnterpriseLibraryFactory.BuildUp<DefaultLoggingEventLogger>();
+				var logger = EnterpriseLibraryContainer.Current.GetInstance<DefaultLoggingEventLogger>();
 				logger.LogConfigurationError(configurationException);
 			}
 			catch

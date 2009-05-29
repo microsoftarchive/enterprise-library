@@ -12,7 +12,6 @@
 using System;
 using System.IO;
 using System.Security.Cryptography;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
 using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Instrumentation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -28,10 +27,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests
         EnterpriseLibraryPerformanceCounter totalSymmetricEncryptionPerformedCounter;
         EnterpriseLibraryPerformanceCounter totalSymmetricDecryptionPerformedCounter;
         AppDomainNameFormatter nameFormatter;
-        SymmetricAlgorithmInstrumentationListener listener;
+        ISymmetricAlgorithmInstrumentationProvider instrumentationProvider;
 
-        const string applicationInstanceName = "applicationInstanceName";
-        const string instanceName = "Foo";
+        const string applicationInstanceName = "app";
+        const string instanceName = "isntance";
         string formattedInstanceName;
 
         SymmetricProviderHelper SymmetricProviderHelper
@@ -43,19 +42,22 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests
         public void SetUp()
         {
             nameFormatter = new AppDomainNameFormatter(applicationInstanceName);
-            listener = new SymmetricAlgorithmInstrumentationListener(instanceName, true, true, true, nameFormatter);
+            instrumentationProvider = new SymmetricAlgorithmInstrumentationProvider(instanceName, true, true, true, nameFormatter);
             formattedInstanceName = nameFormatter.CreateName(instanceName);
-            totalSymmetricDecryptionPerformedCounter = new EnterpriseLibraryPerformanceCounter(SymmetricAlgorithmInstrumentationListener.counterCategoryName, SymmetricAlgorithmInstrumentationListener.TotalSymmetricDecryptionPerformedCounterName, formattedInstanceName);
-            totalSymmetricEncryptionPerformedCounter = new EnterpriseLibraryPerformanceCounter(SymmetricAlgorithmInstrumentationListener.counterCategoryName, SymmetricAlgorithmInstrumentationListener.TotalSymmetricEncryptionPerformedCounterName, formattedInstanceName);
+            totalSymmetricDecryptionPerformedCounter = new EnterpriseLibraryPerformanceCounter(SymmetricAlgorithmInstrumentationProvider.counterCategoryName, SymmetricAlgorithmInstrumentationProvider.TotalSymmetricDecryptionPerformedCounterName, formattedInstanceName);
+            totalSymmetricEncryptionPerformedCounter = new EnterpriseLibraryPerformanceCounter(SymmetricAlgorithmInstrumentationProvider.counterCategoryName, SymmetricAlgorithmInstrumentationProvider.TotalSymmetricEncryptionPerformedCounterName, formattedInstanceName);
 
             stream = CreateSymmetricKey();
-            provider = new SymmetricAlgorithmProvider(typeof(RijndaelManaged), stream, DataProtectionScope.CurrentUser);
+            provider = new SymmetricAlgorithmProvider(typeof(RijndaelManaged), stream, DataProtectionScope.CurrentUser, instrumentationProvider);
+
+            totalSymmetricDecryptionPerformedCounter.Clear();
+            totalSymmetricEncryptionPerformedCounter.Clear();
         }
 
         [TestMethod]
         public void TotalSymmetricDecryptionPerformedCounterIncremented()
         {
-            listener.SymmetricDecryptionPerformed(this, EventArgs.Empty);
+            instrumentationProvider.FireSymmetricDecryptionPerformed();
 
             long expected = 1;
             Assert.AreEqual(expected, totalSymmetricDecryptionPerformedCounter.Value);
@@ -64,7 +66,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests
         [TestMethod]
         public void TotalSymmetricEncryptionPerformedCounterIncremented()
         {
-            listener.SymmetricEncryptionPerformed(this, EventArgs.Empty);
+            instrumentationProvider.FireSymmetricEncryptionPerformed();
 
             long expected = 1;
             Assert.AreEqual(expected, totalSymmetricEncryptionPerformedCounter.Value);
@@ -121,6 +123,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests
         }
 
         [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void ConstructWithNullInstrumentationProviderThrows()
+        {
+            new SymmetricAlgorithmProvider(typeof(RijndaelManaged), ProtectedKey.CreateFromPlaintextKey(new byte[] { 0x00, 0x01 }, DataProtectionScope.CurrentUser), null);
+        }
+
+        [TestMethod]
         [ExpectedException(typeof(CryptographicException))]
         public void DecryptBadTextThrows()
         {
@@ -131,7 +140,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests
         public void EncryptAndDecrypt()
         {
             SymmetricProviderHelper.EncryptAndDecrypt();
-            ;
         }
 
         [TestMethod]
@@ -180,26 +188,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests
             SymmetricProviderHelper.DecryptZeroLength();
         }
 
-        [TestMethod]
-        public void InstrumentationUsesExplicitBinder()
-        {
-            byte[] key = Guid.NewGuid().ToByteArray();
-
-            InstrumentationAttacherFactory attacherFactory = new InstrumentationAttacherFactory();
-            IInstrumentationAttacher binder = attacherFactory.CreateBinder(provider.GetInstrumentationEventProvider(), new object[] { "foo", true, true, true, "fooApplicationInstanceName" }, new ConfigurationReflectionCache());
-            binder.BindInstrumentation();
-
-            Assert.AreSame(typeof(ExplicitInstrumentationAttacher), binder.GetType());
-        }
 
         [TestMethod]
         [ExpectedException(typeof(CryptographicException))]
         public void CryptoFailureThrowsWithInstrumentationEnabled()
         {
             byte[] key = Guid.NewGuid().ToByteArray();
-
-            ReflectionInstrumentationBinder binder = new ReflectionInstrumentationBinder();
-            binder.Bind(provider.GetInstrumentationEventProvider(), new SymmetricAlgorithmInstrumentationListener("foo", true, true, true, "fooApplicationInstanceName"));
 
             provider.Decrypt(new byte[] { 0, 1, 2, 3, 4 });
         }

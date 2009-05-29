@@ -10,9 +10,11 @@
 //===============================================================================
 
 using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
 
@@ -143,19 +145,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         }
 
         /// <summary>
-        /// Adds the rule represented by this configuration object to <paramref name="policy"/>.
-        /// </summary>
-        /// <param name="policy">The policy to which the rule must be added.</param>
-        /// <param name="configurationSource">The configuration source from which additional information
-        /// can be retrieved, if necessary.</param>
-        public override void ConfigurePolicy(PolicyDefinition policy, IConfigurationSource configurationSource)
-        {
-            policy.AddMatchingRule(
-                this.Type,
-                new InjectionConstructor(new InjectionParameter<NameValueCollection>(this.Attributes)));
-        }
-
-        /// <summary>
         /// Gets the helper.
         /// </summary>
         CustomProviderDataHelper<CustomMatchingRuleData> IHelperAssistedCustomConfigurationData<CustomMatchingRuleData>.Helper
@@ -202,6 +191,23 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         bool IHelperAssistedCustomConfigurationData<CustomMatchingRuleData>.BaseIsModified()
         {
             return base.IsModified();
+        }
+
+        /// <summary>
+        /// Get the set of <see cref="TypeRegistration"/> objects needed to
+        /// register the matching rule represented by this config element and its associated objects.
+        /// </summary>
+        /// <param name="nameSuffix">A suffix for the names in the generated type registration objects.</param>
+        /// <returns>The set of <see cref="TypeRegistration"/> objects.</returns>
+        public override IEnumerable<TypeRegistration> GetRegistrations(string nameSuffix)
+        {
+            yield return
+                new TypeRegistration(
+                    RegistrationExpressionBuilder.BuildExpression(this.Type, this.Attributes),
+                     typeof(IMatchingRule))
+                {
+                    Name = this.Name + nameSuffix
+                };
         }
     }
 }

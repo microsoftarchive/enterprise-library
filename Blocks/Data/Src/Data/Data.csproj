@@ -76,9 +76,9 @@
     <CodeAnalysisRules>-Microsoft.Security#CA2116;-Microsoft.Security#CA2117;-Microsoft.Naming#CA1702;-Microsoft.Naming#CA1704;-Microsoft.Performance#CA1824;-Microsoft.Security#CA2109;-Microsoft.Globalization#CA1307</CodeAnalysisRules>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Practices.ObjectBuilder2, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31BF3856AD364E35, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Lib\Microsoft.Practices.ObjectBuilder2.dll</HintPath>
+      <HintPath>..\..\..\..\Lib\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.Unity, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -120,7 +120,6 @@
     <Compile Include="CachingMechanism.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Configuration\DatabaseAssemblerAttribute.cs" />
     <Compile Include="Configuration\DatabaseData.cs" />
     <Compile Include="Configuration\DatabaseSettings.cs">
       <SubType>Code</SubType>
@@ -128,7 +127,6 @@
     <Compile Include="Configuration\DatabaseSyntheticConfigSettings.cs" />
     <Compile Include="Configuration\DbProviderMapping.cs" />
     <Compile Include="Configuration\GenericDatabaseData.cs" />
-    <Compile Include="Configuration\IDatabaseAssembler.cs" />
     <Compile Include="Configuration\Manageability\ConnectionStringSetting.cs" />
     <Compile Include="Configuration\Manageability\ConnectionStringsManageabilityProvider.cs" />
     <Compile Include="Configuration\Manageability\ConnectionStringsWmiMapper.cs" />
@@ -145,26 +143,21 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Configuration\Manageability\ProviderMappingSetting.cs" />
+    <Compile Include="Instrumentation\IDataInstrumentationProvider.cs" />
+    <Compile Include="Instrumentation\NewDataInstrumentationProvider.cs" />
+    <Compile Include="Instrumentation\NullDataInstrumentationProvider.cs" />
     <Compile Include="Sql\Configuration\SqlDatabaseData.cs" />
     <Compile Include="Oracle\Configuration\OracleDatabaseData.cs" />
     <Compile Include="Configuration\Unity\DataAccessBlockExtension.cs" />
-    <Compile Include="Configuration\Unity\GenericDatabasePolicyCreator.cs" />
-    <Compile Include="Configuration\Unity\OracleDatabasePolicyCreator.cs" />
-    <Compile Include="Configuration\Unity\SqlDatabasePolicyCreator.cs" />
     <Compile Include="DatabaseProviderFactory.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="GenericDatabaseAssembler.cs" />
     <Compile Include="Instrumentation\CommandFailedEvent.cs" />
     <Compile Include="Instrumentation\ConnectionFailedEvent.cs" />
     <Compile Include="Instrumentation\DataConfigurationFailureEvent.cs" />
-    <Compile Include="Instrumentation\DataInstrumentationListenerBuilder.cs" />
-    <Compile Include="Instrumentation\DataInstrumentationProvider.cs" />
     <Compile Include="Instrumentation\DataEvent.cs" />
     <Compile Include="Instrumentation\DefaultDataEventLogger.cs" />
-    <Compile Include="Instrumentation\DefaultDataEventLoggerCustomFactory.cs" />
     <Compile Include="Oracle\Configuration\OracleConnectionData.cs" />
-    <Compile Include="DatabaseCustomFactory.cs" />
     <Compile Include="Oracle\Configuration\OracleConnectionSettings.cs" />
     <Compile Include="Oracle\Configuration\OraclePackageData.cs">
       <SubType>Code</SubType>
@@ -175,29 +168,20 @@
     <Compile Include="Database.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DatabaseConfigurationView.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="DatabaseFactory.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DatabaseMapper.cs" />
     <Compile Include="GenericDatabase.cs" />
-    <Compile Include="Instrumentation\CommandExecutedEventArgs.cs" />
-    <Compile Include="Instrumentation\CommandFailedEventArgs.cs" />
-    <Compile Include="Instrumentation\ConnectionFailedEventArgs.cs" />
     <Compile Include="Instrumentation\DataInstrumentationInstaller.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Instrumentation\DataInstrumentationInstaller.Designer.cs">
       <DependentUpon>DataInstrumentationInstaller.cs</DependentUpon>
     </Compile>
-    <Compile Include="Instrumentation\DataInstrumentationListener.cs" />
     <Compile Include="Oracle\IOraclePackage.cs" />
     <Compile Include="Oracle\OracleDatabase.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Oracle\OracleDatabaseAssembler.cs" />
     <Compile Include="Oracle\OracleDataReaderWrapper.cs" />
     <Compile Include="ParameterCache.cs">
       <SubType>Code</SubType>
@@ -206,7 +190,6 @@
     <Compile Include="Sql\SqlDatabase.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Sql\SqlDatabaseAssembler.cs" />
     <Compile Include="TransactionScopeConnections.cs" />
     <Compile Include="UpdateBehavior.cs">
       <SubType>Code</SubType>

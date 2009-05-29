@@ -11,6 +11,7 @@
 
 using System.Diagnostics;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
 {
@@ -117,6 +118,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
 			: base(new EventLogTraceListener(new EventLog(log, NormalizeMachineName(machineName), source)), formatter)
 		{
 		}
+
+        /// <summary>
+        /// Initializes a new instance of <see cref="FormattedEventLogTraceListener"/> with an 
+        /// <see cref="ILogFormatter"/> and a <see cref="EventLogTraceListener"/> 
+        /// </summary>
+        /// <param name="source">The source name for the wrapped listener.</param>
+        /// <param name="log">The name of the event log.</param>
+        /// <param name="machineName">The machine name for the event log.</param>
+        /// <param name="formatter">The formatter for the wrapper.</param>
+        /// <param name="instrumentationProvider">The istrumentation provider to use.</param>
+        public FormattedEventLogTraceListener(string source, string log, string machineName, ILogFormatter formatter, ILoggingInstrumentationProvider instrumentationProvider)
+            : base(new EventLogTraceListener(new EventLog(log, NormalizeMachineName(machineName), source)), formatter, instrumentationProvider)
+        {
+        }
 
 		private static string NormalizeMachineName(string machineName)
 		{

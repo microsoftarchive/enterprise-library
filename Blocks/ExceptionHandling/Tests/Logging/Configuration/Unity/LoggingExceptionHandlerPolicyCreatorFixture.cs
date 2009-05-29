@@ -44,9 +44,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Tests.
         {
             MockTraceListener.Reset();
 
-            container.AddExtension(new ExceptionHandlingBlockExtension());
-            container.AddExtension(new LoggingBlockExtension());
-
             ExceptionPolicyImpl policy = container.Resolve<ExceptionPolicyImpl>("Logging Policy");
 
             Assert.IsFalse(policy.HandleException(new Exception("TEST EXCEPTION")));
@@ -62,9 +59,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Tests.
         public void MultipleRequestsUseSameLogWriterInstance()
         {
             MockTraceListener.Reset();
-
-            container.AddExtension(new ExceptionHandlingBlockExtension());
-            container.AddExtension(new LoggingBlockExtension());
 
             {
                 ExceptionPolicyImpl policy = container.Resolve<ExceptionPolicyImpl>("Logging Policy");

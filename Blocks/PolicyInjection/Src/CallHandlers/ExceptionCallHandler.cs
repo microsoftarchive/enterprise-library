@@ -30,52 +30,26 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
     [ConfigurationElementType(typeof(ExceptionCallHandlerData))]
     public class ExceptionCallHandler : ICallHandler
     {
-        private string exceptionPolicyName;
         private ExceptionPolicyImpl exceptionPolicy;
         private int order = 0;
 
         /// <summary>
-        /// Creates a new <see cref="ExceptionCallHandler"/> that processes exceptions
-        /// using the given exception policy name and default configuration.
-        /// </summary>
-        /// <param name="exceptionPolicyName">Exception policy name.</param>
-        public ExceptionCallHandler(string exceptionPolicyName)
-            : this(exceptionPolicyName, ConfigurationSourceFactory.Create())
-        {
-        }
-
-        /// <summary>
-        /// Creates a new <see cref="ExceptionCallHandler"/> that processes exceptions
-        /// using the given exception policy name and default configuration.
-        /// </summary>
-        /// <param name="exceptionPolicyName">Exception policy name.</param>
-        /// <param name="handlerOrder">The Order for the handler.</param>
-        public ExceptionCallHandler(string exceptionPolicyName, int handlerOrder)
-            : this(exceptionPolicyName, ConfigurationSourceFactory.Create())
-        {
-            this.order = handlerOrder;
-        }
-
-        /// <summary>
         /// Creates a new <see cref="ExceptionCallHandler"/> that processses exceptions
-        /// using the given exception policy name, as defined in <paramref name="configurationSource"/>.
+        /// using the given exception policy.
         /// </summary>
-        /// <param name="exceptionPolicyName">Exception policy name.</param>
-        /// <param name="configurationSource">Configuration source defining the exception handling policy.</param>
-        public ExceptionCallHandler(string exceptionPolicyName, IConfigurationSource configurationSource)
+        /// <param name="exceptionPolicy">Exception policy.</param>
+        public ExceptionCallHandler(ExceptionPolicyImpl exceptionPolicy)
         {
-            this.exceptionPolicyName = exceptionPolicyName;
-            ExceptionPolicyFactory policyFactory = new ExceptionPolicyFactory(configurationSource);
-            exceptionPolicy = policyFactory.Create(exceptionPolicyName);
+            this.exceptionPolicy = exceptionPolicy;
         }
 
         /// <summary>
-        /// Gets the exception policy name used by this handler.
+        /// Gets the exception policy used by this handler.
         /// </summary>
-        /// <value>Exception policy name.</value>
-        public string ExceptionPolicyName
+        /// <value>Exception policy.</value>
+        public ExceptionPolicyImpl ExceptionPolicy
         {
-            get { return exceptionPolicyName; }
+            get { return exceptionPolicy; }
         }
 
         #region ICallHandler Members

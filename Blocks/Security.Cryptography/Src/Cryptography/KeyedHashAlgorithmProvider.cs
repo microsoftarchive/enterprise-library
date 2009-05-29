@@ -14,6 +14,7 @@ using System.Security.Cryptography;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Properties;
+using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography
 {
@@ -33,12 +34,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography
         /// </param>
         /// <param name="saltEnabled"><see langword="true"/> if salt should be used; otherwise, <see langword="false"/>.</param>
         /// <param name="protectedKeyFileName">File name of DPAPI-protected key used to encrypt and decrypt secrets through this provider.</param>
-		/// <param name="protectedKeyProtectionScope"><see cref="DataProtectionScope"/> used to protect the key on disk. </param>
+        /// <param name="protectedKeyProtectionScope"><see cref="DataProtectionScope"/> used to protect the key on disk. </param>
         public KeyedHashAlgorithmProvider(Type algorithmType,
                                           bool saltEnabled,
                                           string protectedKeyFileName,
                                           DataProtectionScope protectedKeyProtectionScope)
-            : this(algorithmType, saltEnabled, KeyManager.Read(protectedKeyFileName, protectedKeyProtectionScope)) {}
+            : this(algorithmType, saltEnabled, protectedKeyFileName, protectedKeyProtectionScope, new NullHashAlgorithmInstrumentationProvider()) { }
 
         /// <summary>
         /// Initialize a new instance of the <see cref="KeyedHashAlgorithmProvider"/> class with a <see cref="KeyedHashAlgorithm"/>, if salt is enabled, and the key to use.
@@ -51,7 +52,42 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography
         public KeyedHashAlgorithmProvider(Type algorithmType,
                                           bool saltEnabled,
                                           ProtectedKey protectedKey)
-            : base(algorithmType, saltEnabled)
+            : this(algorithmType, saltEnabled, protectedKey, new NullHashAlgorithmInstrumentationProvider())
+        {
+        }
+
+
+        /// <summary>
+        /// Initialize a new instance of the <see cref="KeyedHashAlgorithmProvider"/> class with a <see cref="KeyedHashAlgorithm"/>, if salt is enabled, and the key to use.
+        /// </summary>
+        /// <param name="algorithmType">
+        /// The <see cref="KeyedHashAlgorithm"/> to use.
+        /// </param>
+        /// <param name="saltEnabled"><see langword="true"/> if salt should be used; otherwise, <see langword="false"/>.</param>
+        /// <param name="protectedKeyFileName">File name of DPAPI-protected key used to encrypt and decrypt secrets through this provider.</param>
+		/// <param name="protectedKeyProtectionScope"><see cref="DataProtectionScope"/> used to protect the key on disk. </param>
+        /// <param name="instrumentationProvider">The <see cref="IHashAlgorithmInstrumentationProvider"/> to use.</param>
+        public KeyedHashAlgorithmProvider(Type algorithmType,
+                                          bool saltEnabled,
+                                          string protectedKeyFileName,
+                                          DataProtectionScope protectedKeyProtectionScope,
+                                          IHashAlgorithmInstrumentationProvider instrumentationProvider)
+            : this(algorithmType, saltEnabled, KeyManager.Read(protectedKeyFileName, protectedKeyProtectionScope), instrumentationProvider) { }
+
+        /// <summary>
+        /// Initialize a new instance of the <see cref="KeyedHashAlgorithmProvider"/> class with a <see cref="KeyedHashAlgorithm"/>, if salt is enabled, and the key to use.
+        /// </summary>
+        /// <param name="algorithmType">
+        /// The <see cref="KeyedHashAlgorithm"/> to use.
+        /// </param>
+        /// <param name="saltEnabled"><see langword="true"/> if salt should be used; otherwise, <see langword="false"/>.</param>
+        /// <param name="protectedKey">The <see cref="ProtectedKey"/> for the provider.</param>
+        /// <param name="instrumentationProvider">The <see cref="IHashAlgorithmInstrumentationProvider"/> to use.</param>
+        public KeyedHashAlgorithmProvider(Type algorithmType,
+                                          bool saltEnabled,
+                                          ProtectedKey protectedKey,
+                                          IHashAlgorithmInstrumentationProvider instrumentationProvider)
+            : base(algorithmType, saltEnabled, instrumentationProvider)
         {
             if (protectedKey == null) 
                 throw new ArgumentNullException("protectedKey");

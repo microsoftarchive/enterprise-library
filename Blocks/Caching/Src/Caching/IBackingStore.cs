@@ -11,8 +11,6 @@
 
 using System;
 using System.Collections;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
-using Microsoft.Practices.EnterpriseLibrary.Caching.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching
 {
@@ -30,7 +28,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
 	/// Due to the way the Caching class is implemented, implementations of this class will always be called in 
 	/// a thread-safe way. There is no need to make these classes thread-safe on its own.
 	/// </remarks>
-	[CustomFactory(typeof(BackingStoreCustomFactory))]
 	public interface IBackingStore : IDisposable
 	{
 		/// <summary>

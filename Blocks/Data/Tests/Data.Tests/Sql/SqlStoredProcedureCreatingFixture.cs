@@ -11,7 +11,7 @@
 
 using System;
 using System.Data.Common;
-using Microsoft.Practices.EnterpriseLibrary.Data.Tests;
+using Microsoft.Practices.EnterpriseLibrary.Data.TestSupport;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests

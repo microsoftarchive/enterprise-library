@@ -9,9 +9,8 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using System;
 using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
@@ -19,3 +18,4 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Enterprise Library Logging Application Block Tests")]
 [assembly: AssemblyDescription("Enterprise Library Logging Application Block Tests")]
 [assembly: AssemblyVersion("4.1.0.0")]
+[assembly: CLSCompliant(false)]

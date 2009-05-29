@@ -35,14 +35,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation.Tests
         [TestMethod]
         public void CacheScavengingWithInstrumentationDisabledDoesNotFireWmiEvent()
         {
-            CachingInstrumentationListener listener
-                = new CachingInstrumentationListener(instanceName, false, false, false, formatter);
+            ICachingInstrumentationProvider provider
+                = new CachingInstrumentationProvider(instanceName, false, false, false, formatter);
 
             using (WmiEventWatcher eventListener = new WmiEventWatcher(1))
             {
-                CacheScavengedEventArgs args = new CacheScavengedEventArgs(10);
-
-                listener.CacheScavenged(null, args);
+                provider.FireCacheScavenged(10);
 
                 eventListener.WaitForEvents();
                 Assert.AreEqual(0, eventListener.EventsReceived.Count);
@@ -52,14 +50,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation.Tests
         [TestMethod]
         public void CacheScavengingWithInstrumentationEnabledDoesFireWmiEvent()
         {
-            CachingInstrumentationListener listener
-                = new CachingInstrumentationListener(instanceName, false, false, true, formatter);
+            ICachingInstrumentationProvider provider
+                = new CachingInstrumentationProvider(instanceName, false, false, true, formatter);
 
             using (WmiEventWatcher eventListener = new WmiEventWatcher(1))
             {
-                CacheScavengedEventArgs args = new CacheScavengedEventArgs(10);
-
-                listener.CacheScavenged(null, args);
+                provider.FireCacheScavenged(10);
 
                 eventListener.WaitForEvents();
                 Assert.AreEqual(1, eventListener.EventsReceived.Count);
@@ -72,15 +68,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation.Tests
         [TestMethod]
         public void CacheFailureWithInstrumentationDisabledDoesNotFireWmiEvent()
         {
-            CachingInstrumentationListener listener
-                = new CachingInstrumentationListener(instanceName, false, false, false, formatter);
+            ICachingInstrumentationProvider provider
+                = new CachingInstrumentationProvider(instanceName, false, false, false, formatter);
             Exception exception = new Exception(exceptionMessage);
 
             using (WmiEventWatcher eventListener = new WmiEventWatcher(1))
             {
-                CacheFailureEventArgs args = new CacheFailureEventArgs(errorMessage, exception);
-
-                listener.CacheFailed(null, args);
+                provider.FireCacheFailed(errorMessage, exception);
 
                 eventListener.WaitForEvents();
                 Assert.AreEqual(0, eventListener.EventsReceived.Count);
@@ -90,15 +84,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation.Tests
         [TestMethod]
         public void CacheFailureWithInstrumentationEnabledDoesFireWmiEvent()
         {
-            CachingInstrumentationListener listener
-                = new CachingInstrumentationListener(instanceName, false, false, true, formatter);
+            ICachingInstrumentationProvider provider
+                = new CachingInstrumentationProvider(instanceName, false, false, true, formatter);
             Exception exception = new Exception(exceptionMessage);
 
             using (WmiEventWatcher eventListener = new WmiEventWatcher(1))
             {
-                CacheFailureEventArgs args = new CacheFailureEventArgs(errorMessage, exception);
-
-                listener.CacheFailed(null, args);
+                provider.FireCacheFailed(errorMessage, exception);
 
                 eventListener.WaitForEvents();
                 Assert.AreEqual(1, eventListener.EventsReceived.Count);
@@ -111,15 +103,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation.Tests
         [TestMethod]
         public void CacheCallbackFailureWithInstrumentationDisabledDoesNotFireWmiEvent()
         {
-            CachingInstrumentationListener listener
-                = new CachingInstrumentationListener(instanceName, false, false, false, formatter);
+            ICachingInstrumentationProvider provider
+                = new CachingInstrumentationProvider(instanceName, false, false, false, formatter);
             Exception exception = new Exception(exceptionMessage);
 
             using (WmiEventWatcher eventListener = new WmiEventWatcher(1))
             {
-                CacheCallbackFailureEventArgs args = new CacheCallbackFailureEventArgs(key, exception);
-
-                listener.CacheCallbackFailed(null, args);
+                provider.FireCacheCallbackFailed(key, exception);
 
                 eventListener.WaitForEvents();
                 Assert.AreEqual(0, eventListener.EventsReceived.Count);
@@ -129,15 +119,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation.Tests
         [TestMethod]
         public void CacheCallbackFailureWithInstrumentationEnabledDoesFireWmiEvent()
         {
-            CachingInstrumentationListener listener
-                = new CachingInstrumentationListener(instanceName, false, false, true, formatter);
+            ICachingInstrumentationProvider provider
+                = new CachingInstrumentationProvider(instanceName, false, false, true, formatter);
             Exception exception = new Exception(exceptionMessage);
 
             using (WmiEventWatcher eventListener = new WmiEventWatcher(1))
             {
-                CacheCallbackFailureEventArgs args = new CacheCallbackFailureEventArgs(key, exception);
-
-                listener.CacheCallbackFailed(null, args);
+                provider.FireCacheCallbackFailed(key, exception);
 
                 eventListener.WaitForEvents();
                 Assert.AreEqual(1, eventListener.EventsReceived.Count);

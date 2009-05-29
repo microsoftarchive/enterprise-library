@@ -11,11 +11,9 @@
 
 using System;
 using System.Diagnostics;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport;
-using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
-using Microsoft.Practices.ObjectBuilder2;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Configuration
@@ -23,15 +21,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
     [TestClass]
     public class DelimitedListTraceListenerConfigurationFixture
     {
-        IBuilderContext context;
-        ConfigurationReflectionCache reflectionCache;
-
         [TestInitialize]
         public void SetUp()
         {
             AppDomain.CurrentDomain.SetData("APPBASE", Environment.CurrentDirectory);
-            context = new BuilderContext(new StrategyChain(), null, null, new PolicyList(), null, null);
-            reflectionCache = new ConfigurationReflectionCache();
         }
 
         [TestMethod]
@@ -42,7 +35,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
 
             MockLogObjectsHelper helper = new MockLogObjectsHelper();
             helper.loggingSettings.TraceListeners.Add(listenerData);
-            TraceListener listener = TraceListenerCustomFactory.Instance.Create(context, "listener", helper.configurationSource, reflectionCache);
+
+            var container = EnterpriseLibraryContainer.CreateDefaultContainer(helper.configurationSource);
+
+            TraceListener listener = container.GetInstance<TraceListener>("listener");
 
             Assert.IsNotNull(listener);
             Assert.AreEqual("listener", listener.Name);
@@ -56,7 +52,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
                 = new SystemDiagnosticsTraceListenerData("listener", typeof(DelimitedListTraceListener), "log.txt");
 
             MockLogObjectsHelper helper = new MockLogObjectsHelper();
-            TraceListener listener = TraceListenerCustomFactory.Instance.Create(context, listenerData, helper.configurationSource, reflectionCache);
+            helper.loggingSettings.TraceListeners.Add(listenerData);
+
+            var container = EnterpriseLibraryContainer.CreateDefaultContainer(helper.configurationSource);
+
+            TraceListener listener = container.GetInstance<TraceListener>("listener");
 
             Assert.IsNotNull(listener);
             Assert.AreEqual("listener", listener.Name);
@@ -71,12 +71,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
             listenerData.SetAttributeValue("delimiter", "||");
 
             MockLogObjectsHelper helper = new MockLogObjectsHelper();
-            TraceListener listener = TraceListenerCustomFactory.Instance.Create(context, listenerData, helper.configurationSource, reflectionCache);
+            helper.loggingSettings.TraceListeners.Add(listenerData);
+
+            var container = EnterpriseLibraryContainer.CreateDefaultContainer(helper.configurationSource);
+
+            TraceListener listener = container.GetInstance<TraceListener>("listener");
 
             Assert.IsNotNull(listener);
             Assert.AreEqual("listener", listener.Name);
-            Assert.AreEqual(typeof(DelimitedListTraceListener), listener.GetType());
-            Assert.AreEqual("||", ((DelimitedListTraceListener)listener).Delimiter);
+            Assert.IsInstanceOfType(listener, typeof (AttributeSettingTraceListenerWrapper));
+
+            var innerListener =
+                (DelimitedListTraceListener) ((AttributeSettingTraceListenerWrapper) listener).InnerTraceListener;
+            Assert.AreEqual("||", innerListener.Delimiter);
         }
 
         [TestMethod]
@@ -88,13 +95,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
             LoggingSettings loggingSettings = new LoggingSettings();
             loggingSettings.TraceListeners.Add(listenerData);
 
-            TraceListener listener
-                = TraceListenerCustomFactory.Instance.Create(context, "listener", CommonUtil.SaveSectionsAndGetConfigurationSource(loggingSettings), reflectionCache);
+            var container = EnterpriseLibraryContainer.CreateDefaultContainer(CommonUtil.SaveSectionsAndGetConfigurationSource(loggingSettings));
+
+            TraceListener listener = container.GetInstance<TraceListener>("listener");
 
             Assert.IsNotNull(listener);
             Assert.AreEqual("listener", listener.Name);
-            Assert.AreEqual(typeof(DelimitedListTraceListener), listener.GetType());
-            Assert.AreEqual("||", ((DelimitedListTraceListener)listener).Delimiter);
+            Assert.IsInstanceOfType(listener, typeof (AttributeSettingTraceListenerWrapper));
+
+            var innerListener =
+                (DelimitedListTraceListener) ((AttributeSettingTraceListenerWrapper) listener).InnerTraceListener;
+
+            Assert.AreEqual("||", innerListener.Delimiter);
         }
     }
 }

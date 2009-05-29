@@ -62,9 +62,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\..\GlobalAssemblyInfo.cs">
-      <Link>GlobalAssemblyInfo.cs</Link>
-    </Compile>
     <Compile Include="AddNodeCommandsFixture.cs" />
     <Compile Include="CacheManagerNodeFixture.cs" />
     <Compile Include="CacheManagerSettingsNodeFixture.cs" />

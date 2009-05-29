@@ -10,8 +10,13 @@
 //===============================================================================
 
 using System.Configuration;
+using System.Linq;
 using System.Configuration.Provider;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using System.Collections.Generic;
+using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Security.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration
 {
@@ -19,7 +24,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration
     /// Represents the configuration data for the 
     /// security providers.
     /// </summary>
-    public class SecuritySettings : SerializableConfigurationSection
+    public class SecuritySettings : SerializableConfigurationSection, ITypeRegistrationsProvider
     {
 		/// <summary>
 		/// The name of the configuration section for the security providers.
@@ -108,5 +113,80 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration
                 return (NameTypeConfigurationElementCollection<SecurityCacheProviderData, CustomSecurityCacheProviderData>)base[securityCacheProvidersProperty];
 			}
 		}
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<TypeRegistration> GetRegistrations(IConfigurationSource configurationSource)
+        {
+            var defaultLoggerRegistrations = GetDefaultSecurityEventLoggerRegistrations(configurationSource);
+
+            var authorizationProviderRegistrations = AuthorizationProviders.SelectMany(azp => azp.GetRegistrations(configurationSource));
+            authorizationProviderRegistrations = SetDefaultAuthorizationProvider(authorizationProviderRegistrations);
+
+            var securityCacheProviderRegistrations = SecurityCacheProviders.SelectMany(scp => scp.GetRegistrations(configurationSource));
+            securityCacheProviderRegistrations = SetDefaultSecurityCacheProvider(securityCacheProviderRegistrations);
+
+            return defaultLoggerRegistrations
+                .Concat(authorizationProviderRegistrations)
+                .Concat(securityCacheProviderRegistrations);
+        }
+
+        /// <summary>
+        /// Return the <see cref="TypeRegistration"/> objects needed to reconfigure
+        /// the container after a configuration source has changed.
+        /// </summary>
+        /// <remarks>If there are no reregistrations, return an empty sequence.</remarks>
+        /// <param name="configurationSource">The <see cref="IConfigurationSource"/> containing
+        /// the configuration information.</param>
+        /// <returns>The sequence of <see cref="TypeRegistration"/> objects.</returns>
+        public IEnumerable<TypeRegistration> GetUpdatedRegistrations(IConfigurationSource configurationSource)
+        {
+            return Enumerable.Empty<TypeRegistration>();
+        }
+
+        private IEnumerable<TypeRegistration> GetDefaultSecurityEventLoggerRegistrations(IConfigurationSource configurationSource)
+        {
+            var instrumentationSection = InstrumentationConfigurationSection.GetSection(configurationSource);
+
+            yield return new TypeRegistration<DefaultSecurityEventLogger>(
+                () => new DefaultSecurityEventLogger(instrumentationSection.EventLoggingEnabled, instrumentationSection.WmiEnabled))
+                {
+                    Lifetime = TypeRegistrationLifetime.Transient
+                };
+        }
+
+        private IEnumerable<TypeRegistration> SetDefaultSecurityCacheProvider(IEnumerable<TypeRegistration> securityCacheProviderRegistrations)
+        {
+            foreach (TypeRegistration registration in securityCacheProviderRegistrations)
+            {
+                if (registration.ServiceType == typeof(ISecurityCacheProvider) && string.Equals(registration.Name, DefaultSecurityCacheProviderName))
+                {
+                    registration.IsDefault = true;
+                    yield return registration;
+                }
+                else
+                {
+                    yield return registration;
+                }
+            }
+        }
+
+        private IEnumerable<TypeRegistration> SetDefaultAuthorizationProvider(IEnumerable<TypeRegistration> authorizationProviderRegistrations)
+        {
+            foreach (TypeRegistration registration in authorizationProviderRegistrations)
+            {
+                if (registration.ServiceType == typeof(IAuthorizationProvider) && string.Equals(registration.Name, DefaultAuthorizationProviderName))
+                {
+                    registration.IsDefault = true;
+                    yield return registration;
+                }
+                else
+                {
+                    yield return registration;
+                }
+            }
+        }
     }
 }

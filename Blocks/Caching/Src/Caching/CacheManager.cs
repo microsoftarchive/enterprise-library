@@ -11,7 +11,6 @@
 
 using System;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching
@@ -23,14 +22,23 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
 	public class CacheManager : IDisposable, ICacheManager
 	{
 		private Cache realCache;
-		private BackgroundScheduler scheduler;
 		private ExpirationPollTimer pollTimer;
+        private readonly BackgroundScheduler backgroundScheduler;
 
-		internal CacheManager(Cache realCache, BackgroundScheduler scheduler, ExpirationPollTimer pollTimer)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="realCache"></param>
+        /// <param name="backgroundScheduler"></param>
+        /// <param name="pollTimer"></param>
+        public CacheManager(Cache realCache, BackgroundScheduler backgroundScheduler, ExpirationPollTimer pollTimer)
 		{
 			this.realCache = realCache;
-			this.scheduler = scheduler;
 			this.pollTimer = pollTimer;
+            this.backgroundScheduler = backgroundScheduler;
+
+
+            pollTimer.StartPolling(backgroundScheduler.ExpirationTimeoutExpired);
 		}
 
 		/// <summary>
@@ -97,6 +105,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
 		public void Add(string key, object value, CacheItemPriority scavengingPriority, ICacheItemRefreshAction refreshAction, params ICacheItemExpiration[] expirations)
 		{
 			realCache.Add(key, value, scavengingPriority, refreshAction, expirations);
+            
+            backgroundScheduler.StartScavengingIfNeeded();
 		}
 
 		/// <summary>
@@ -144,11 +154,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
 		{
 			GC.SuppressFinalize(this);
 
-			if (scheduler != null)
-			{
-				scheduler.Stop();
-				scheduler = null;
-			}
 			if (pollTimer != null)
 			{
 				pollTimer.StopPolling();

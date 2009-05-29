@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Validation.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 
@@ -183,11 +184,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
 
             lock (attributeOnlyPropertyValidatorsCacheLock)
             {
-                PropertyValidatorCacheKey key = new PropertyValidatorCacheKey(type, propertyInfo.Name, ruleset);
+                var key = new PropertyValidatorCacheKey(type, propertyInfo.Name, ruleset);
                 if (!attributeOnlyPropertyValidatorsCache.TryGetValue(key, out validator))
                 {
                     validator
-                        = GetTypeValidatorBuilder(memberAccessValidatorBuilderFactory).CreateValidatorForProperty(propertyInfo, ruleset);
+                        = new MetadataValidatorBuilder(memberAccessValidatorBuilderFactory)
+                                .CreateValidatorForProperty(propertyInfo, ruleset);
 
                     attributeOnlyPropertyValidatorsCache[key] = validator;
                 }
@@ -214,9 +216,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
                 PropertyValidatorCacheKey key = new PropertyValidatorCacheKey(type, propertyInfo.Name, ruleset);
                 if (!defaultConfigurationOnlyPropertyValidatorsCache.TryGetValue(key, out validator))
                 {
-                    ConfigurationValidatorBuilder builder = GetConfigurationValidatorBuilder(memberAccessValidatorBuilderFactory);
+                    IConfigurationSource configurationSource = ConfigurationSourceFactory.Create();
+                    ConfigurationValidatorBuilder builder = ConfigurationValidatorBuilder.FromConfiguration(configurationSource, memberAccessValidatorBuilderFactory);
 
-                    ValidatedPropertyReference propertyReference = GetValidatedPropertyReference(type, ruleset, propertyInfo.Name, builder.ConfigurationSource);
+                    ValidatedPropertyReference propertyReference = GetValidatedPropertyReference(type, ruleset, propertyInfo.Name, configurationSource);
                     if (null == propertyReference)
                         validator = null;
                     else
@@ -229,18 +232,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
             return validator;
         }
 
-        private static MetadataValidatorBuilder GetTypeValidatorBuilder(MemberAccessValidatorBuilderFactory memberAccessValidatorBuilderFactory)
-        {
-            return new MetadataValidatorBuilder(memberAccessValidatorBuilderFactory);
-        }
-
-        private static ConfigurationValidatorBuilder GetConfigurationValidatorBuilder(MemberAccessValidatorBuilderFactory memberAccessValidatorBuilderFactory)
-        {
-            IConfigurationSource configurationSource = ConfigurationSourceFactory.Create();
-            ConfigurationValidatorBuilder builder = new ConfigurationValidatorBuilder(configurationSource, memberAccessValidatorBuilderFactory);
-
-            return builder;
-        }
+     
 
         private static ValidatedPropertyReference GetValidatedPropertyReference(Type type,
             string ruleset,

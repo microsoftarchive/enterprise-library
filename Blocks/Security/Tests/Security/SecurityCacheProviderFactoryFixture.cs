@@ -17,6 +17,7 @@ using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Security.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Security.Instrumentation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Practices.ServiceLocation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Tests
 {
@@ -61,14 +62,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Tests
             ISecurityCacheProvider provider = factory.Create("provider1");
 
             Assert.AreEqual(typeof(MockSecurityCacheProvider), provider.GetType());
-            object instrumentationProvider = ((MockSecurityCacheProvider)provider).GetInstrumentationEventProvider();
-            Assert.AreSame(typeof(SecurityCacheProviderInstrumentationProvider), instrumentationProvider.GetType());
-            SecurityCacheProviderInstrumentationProvider castedInstrumentationProvider = (SecurityCacheProviderInstrumentationProvider)instrumentationProvider;
+
+            MockSecurityCacheProvider mockProvider = (MockSecurityCacheProvider)provider;
+            ISecurityCacheProviderInstrumentationProvider instrumentationProvider = mockProvider.GetInstrumentationProvder();
+            Assert.IsInstanceOfType(instrumentationProvider, typeof(SecurityCacheProviderInstrumentationProvider));
+
+            SecurityCacheProviderInstrumentationProvider castedProvider = (SecurityCacheProviderInstrumentationProvider)instrumentationProvider;
 
             using (WmiEventWatcher eventWatcher = new WmiEventWatcher(1))
             {
                 IToken token = new GuidToken();
-                castedInstrumentationProvider.FireSecurityCacheReadPerformed(SecurityEntityType.Identity, token);
+                castedProvider.FireSecurityCacheReadPerformed(SecurityEntityType.Identity, token);
                 eventWatcher.WaitForEvents();
 
                 Assert.AreEqual(1, eventWatcher.EventsReceived.Count);
@@ -88,7 +92,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Tests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ConfigurationErrorsException))]
+        [ExpectedException(typeof(ActivationException))]
         public void TryToCreateSecurityCacheProviderFromConfigurationThatDoesNotExist()
         {
             SecurityCacheProviderFactory factory = new SecurityCacheProviderFactory(GetConfigurationSource());

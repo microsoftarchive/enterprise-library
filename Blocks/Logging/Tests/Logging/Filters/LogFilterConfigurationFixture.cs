@@ -12,10 +12,8 @@
 using System.Configuration;
 using System.IO;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport;
-using Microsoft.Practices.ObjectBuilder2;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Filters.Tests
@@ -23,14 +21,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Filters.Tests
     [TestClass]
     public class LogFilterConfigurationFixture
     {
-        IBuilderContext context;
-        ConfigurationReflectionCache reflectionCache;
-
         [TestInitialize]
         public void SetUp()
         {
-            context = new BuilderContext(new StrategyChain(), null, null, new PolicyList(), null, null);
-            reflectionCache = new ConfigurationReflectionCache();
+        }
+
+        private static ILogFilter GetFilter(string name, IConfigurationSource configurationSource)
+        {
+            var container = EnterpriseLibraryContainer.CreateDefaultContainer(configurationSource);
+            return container.GetInstance<ILogFilter>(name);
         }
 
         [TestMethod]
@@ -74,12 +73,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Filters.Tests
         [TestMethod]
         public void CanCreateCategoryFilterFromEmptyCategoryConfiguration()
         {
-            NamedElementCollection<CategoryFilterEntry> categoryEntries = new NamedElementCollection<CategoryFilterEntry>();
-            CategoryFilterData filterData = new CategoryFilterData("category", categoryEntries, CategoryFilterMode.DenyAllExceptAllowed);
+            var categoryEntries = new NamedElementCollection<CategoryFilterEntry>();
+            var filterData = new CategoryFilterData("category", categoryEntries, CategoryFilterMode.DenyAllExceptAllowed);
 
-            MockLogObjectsHelper helper = new MockLogObjectsHelper();
-            ILogFilter filter = LogFilterCustomFactory.Instance.Create(context, filterData, helper.configurationSource, reflectionCache);
-            ;
+            var helper = new MockLogObjectsHelper();
+            helper.loggingSettings.LogFilters.Add(filterData);
+
+            ILogFilter filter = GetFilter(filterData.Name, helper.configurationSource);
 
             Assert.IsNotNull(filter);
             Assert.AreEqual(filter.GetType(), typeof(CategoryFilter));
@@ -97,8 +97,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Filters.Tests
             CategoryFilterData filterData = new CategoryFilterData("category", categoryEntries, CategoryFilterMode.AllowAllExceptDenied);
 
             MockLogObjectsHelper helper = new MockLogObjectsHelper();
-            ILogFilter filter = LogFilterCustomFactory.Instance.Create(context, filterData, helper.configurationSource, reflectionCache);
-            ;
+            helper.loggingSettings.LogFilters.Add(filterData);
+
+            ILogFilter filter = GetFilter(filterData.Name, helper.configurationSource);
 
             Assert.IsNotNull(filter);
             Assert.AreEqual(filter.GetType(), typeof(CategoryFilter));
@@ -116,8 +117,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Filters.Tests
             PriorityFilterData filterData = new PriorityFilterData(1000);
 
             MockLogObjectsHelper helper = new MockLogObjectsHelper();
-            ILogFilter filter = LogFilterCustomFactory.Instance.Create(context, filterData, helper.configurationSource, reflectionCache);
-            ;
+            helper.loggingSettings.LogFilters.Add(filterData);
+
+            ILogFilter filter = GetFilter(filterData.Name, helper.configurationSource);
 
             Assert.IsNotNull(filter);
             Assert.AreEqual(filter.GetType(), typeof(PriorityFilter));
@@ -128,10 +130,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Filters.Tests
         public void PriorityFilterMaximumPriotDefaultsToMaxIntWhenNotSpecified()
         {
             PriorityFilterData filterData = new PriorityFilterData(1000);
-
             MockLogObjectsHelper helper = new MockLogObjectsHelper();
-            ILogFilter filter = LogFilterCustomFactory.Instance.Create(context, filterData, helper.configurationSource, reflectionCache);
-            ;
+            helper.loggingSettings.LogFilters.Add(filterData);
+
+            ILogFilter filter = GetFilter(filterData.Name, helper.configurationSource);
 
             Assert.IsNotNull(filter);
             Assert.AreEqual(filter.GetType(), typeof(PriorityFilter));
@@ -141,12 +143,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Filters.Tests
         [TestMethod]
         public void PriorityFilterShouldNotLogWhenPriotityIsAboveMaxPriority()
         {
-            PriorityFilterData filterData = new PriorityFilterData(0);
-            filterData.MaximumPriority = 100;
+            var filterData = new PriorityFilterData(0) {
+                MaximumPriority = 100
+            };
 
             MockLogObjectsHelper helper = new MockLogObjectsHelper();
-            ILogFilter filter = LogFilterCustomFactory.Instance.Create(context, filterData, helper.configurationSource, reflectionCache);
-            ;
+            helper.loggingSettings.LogFilters.Add(filterData);
+
+            ILogFilter filter = GetFilter(filterData.Name, helper.configurationSource);
 
             Assert.IsNotNull(filter);
             Assert.AreEqual(filter.GetType(), typeof(PriorityFilter));
@@ -160,8 +164,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Filters.Tests
             LogEnabledFilterData filterData = new LogEnabledFilterData(true);
 
             MockLogObjectsHelper helper = new MockLogObjectsHelper();
-            ILogFilter filter = LogFilterCustomFactory.Instance.Create(context, filterData, helper.configurationSource, reflectionCache);
-            ;
+            helper.loggingSettings.LogFilters.Add(filterData);
+
+            ILogFilter filter = GetFilter(filterData.Name, helper.configurationSource);
 
             Assert.IsNotNull(filter);
             Assert.AreEqual(filter.GetType(), typeof(LogEnabledFilter));

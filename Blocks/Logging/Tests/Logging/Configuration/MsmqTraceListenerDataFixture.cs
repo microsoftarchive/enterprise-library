@@ -17,6 +17,7 @@ using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration.Con
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Tests
 {
@@ -50,13 +51,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Tests
         [TestMethod]
         public void ThenCreatesSingleTypeRegistration()
         {
-            Assert.AreEqual(1, listenerData.GetContainerConfigurationModel().Count());
+            Assert.AreEqual(1, listenerData.GetRegistrations().Count());
         }
 
         [TestMethod]
         public void WhenCreatesRegistration_ThenCreatedRegistrationMapsTraceListenerToMsmqTraceListenerForTheSuppliedName()
         {
-            listenerData.GetContainerConfigurationModel().ElementAt(0)
+            listenerData.GetRegistrations().ElementAt(0)
                 .AssertForServiceType(typeof(TraceListener))
                 .ForName("listener")
                 .ForImplementationType(typeof(MsmqTraceListener));
@@ -65,7 +66,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Tests
         [TestMethod]
         public void WhenCreatesRegistration_ThenCreatedRegistrationHasTheExpectedConstructorParameters()
         {
-            listenerData.GetContainerConfigurationModel().ElementAt(0)
+            listenerData.GetRegistrations().ElementAt(0)
                 .AssertConstructor()
                 .WithValueConstructorParameter("listener")
                 .WithValueConstructorParameter("queue path")
@@ -78,6 +79,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Tests
                 .WithValueConstructorParameter(true)
                 .WithValueConstructorParameter(false)
                 .WithValueConstructorParameter(MessageQueueTransactionType.Automatic)
+                .WithContainerResolvedParameter<ILoggingInstrumentationProvider>(null)
                 .VerifyConstructorParameters();
         }
 
@@ -86,7 +88,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Tests
         {
             TraceFilter filter;
 
-            listenerData.GetContainerConfigurationModel().ElementAt(0)
+            listenerData.GetRegistrations().ElementAt(0)
                 .AssertProperties()
                 .WithValueProperty("Name", "listener")
                 .WithValueProperty("TraceOutputOptions", TraceOptions.DateTime | TraceOptions.Callstack)

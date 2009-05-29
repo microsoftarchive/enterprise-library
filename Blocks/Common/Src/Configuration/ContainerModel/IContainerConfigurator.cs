@@ -9,11 +9,6 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel
 {
     /// <summary>
@@ -29,8 +24,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerMo
         /// Consume the set of <see cref="TypeRegistration"/> objects and
         /// configure the associated container.
         /// </summary>
-        /// <param name="registrations">The <see cref="TypeRegistration"/> objects
-        /// describing the current Enterprise Library configuration.</param>
-        void RegisterAll(IEnumerable<TypeRegistration> registrations);
+        /// <param name="configurationSource">Configuration source to read registrations from.</param>
+        /// <param name="rootProvider"><see cref="ITypeRegistrationsProvider"/> that knows how to
+        /// read the <paramref name="configurationSource"/> and return all relevant type registrations.</param>
+        void RegisterAll(IConfigurationSource configurationSource, ITypeRegistrationsProvider rootProvider);
     }
 }

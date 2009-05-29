@@ -12,7 +12,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Properties;
 
@@ -26,31 +25,46 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
     /// facade.
     /// </remarks>
     /// <seealso cref="ExceptionPolicy"/>
-    public class ExceptionManagerImpl : ExceptionManager, IInstrumentationEventProvider
+    public class ExceptionManagerImpl : ExceptionManager
     {
         private readonly IDictionary<string, ExceptionPolicyImpl> exceptionPolicies;
-        private readonly DefaultExceptionHandlingInstrumentationProvider instrumentationProvider;
+        private readonly IDefaultExceptionHandlingInstrumentationProvider instrumentationProvider;
 
         /// <summary>
-        /// 
+        /// Initializes a new instance of the <see cref="ExceptionManagerImpl"/> class with a set
+        /// of exception policies.
         /// </summary>
-        /// <param name="exceptionPolicies"></param>
-        public ExceptionManagerImpl(IEnumerable<ExceptionPolicyImpl> exceptionPolicies)
-            : this(exceptionPolicies.ToDictionary(e => e.PolicyName))
+        /// <param name="exceptionPolicies">The complete set of exception policies.</param>
+        /// <param name="instrumentationProvider">Instrumentation provider used to report errors.</param>
+        public ExceptionManagerImpl(IEnumerable<ExceptionPolicyImpl> exceptionPolicies,
+            IDefaultExceptionHandlingInstrumentationProvider instrumentationProvider)
+            : this(exceptionPolicies.ToDictionary(e => e.PolicyName), instrumentationProvider)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the class <see cref="ExceptionManagerImpl"/> with a set of policies
+        /// and no instrumentation.
+        /// </summary>
+        /// <param name="exceptionPolicies">The complete set of exception policies.</param>
+        public ExceptionManagerImpl(IDictionary<string, ExceptionPolicyImpl> exceptionPolicies)
+            : this(exceptionPolicies, new NullDefaultExceptionHandlingInstrumentationProvider())
         {
         }
 
         /// <summary>
         /// Initializes a new instance of the class <see cref="ExceptionManagerImpl"/> with a set of policies.
         /// </summary>
-        /// <param name="exceptionPolicies"></param>
-        public ExceptionManagerImpl(IDictionary<string, ExceptionPolicyImpl> exceptionPolicies)
+        /// <param name="exceptionPolicies">The complete set of exception policies.</param>
+        /// <param name="instrumentationProvider">Instrumentation provider used to report errors.</param>
+        public ExceptionManagerImpl(IDictionary<string, ExceptionPolicyImpl> exceptionPolicies, IDefaultExceptionHandlingInstrumentationProvider instrumentationProvider)
         {
             if (exceptionPolicies == null)
                 throw new ArgumentNullException("exceptionPolicies");
+            if (instrumentationProvider == null) throw new ArgumentNullException("instrumentationProvider");
 
             this.exceptionPolicies = exceptionPolicies;
-            this.instrumentationProvider = new DefaultExceptionHandlingInstrumentationProvider();
+            this.instrumentationProvider = instrumentationProvider;
         }
 
         /// <summary>
@@ -85,10 +99,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
                 throw new ArgumentNullException("exceptionToHandle");
 
             ExceptionPolicyImpl exceptionPolicy;
-            if (!this.exceptionPolicies.TryGetValue(policyName, out exceptionPolicy))
+            if (!exceptionPolicies.TryGetValue(policyName, out exceptionPolicy))
             {
                 string message = string.Format(Resources.ExceptionPolicyNotFound, policyName);
-                this.instrumentationProvider.FireExceptionHandlingErrorOccurred(policyName, message);
+                instrumentationProvider.FireExceptionHandlingErrorOccurred(policyName, message);
                 throw new ExceptionHandlingException(message);
             }
 
@@ -136,10 +150,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
         {
             try
             {
-                bool retrowAdviced = HandleException(exceptionToHandle, policyName);
+                bool shouldRethrow = HandleException(exceptionToHandle, policyName);
                 exceptionToThrow = null;
 
-                return retrowAdviced;
+                return shouldRethrow;
             }
             catch (Exception exception)
             {
@@ -174,11 +188,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
                     throw;
                 }
             }
-        }
-
-        object IInstrumentationEventProvider.GetInstrumentationEventProvider()
-        {
-            return this.instrumentationProvider;
         }
     }
 }

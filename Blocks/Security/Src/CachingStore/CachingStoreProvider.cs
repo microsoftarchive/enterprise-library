@@ -15,9 +15,9 @@ using Microsoft.Practices.EnterpriseLibrary.Caching;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Expirations;
 using Microsoft.Practices.EnterpriseLibrary.Common;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
 using Microsoft.Practices.EnterpriseLibrary.Security.Cache.CachingStore.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Security.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Security.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Cache.CachingStore
 {
@@ -36,11 +36,21 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cache.CachingStore
 		/// <para>Initialize a new instance of the <see cref="CachingStoreProvider"/> class.</para>
 		/// </summary>
 		public CachingStoreProvider(int slidingExpiration, int absoluteExpiration, ICacheManager securityCacheManager)
+            :this(slidingExpiration, absoluteExpiration, securityCacheManager, new NullSecurityCacheProviderInstrumentationProvider())
 		{
-			this.slidingExpiration = slidingExpiration;
-			this.absoluteExpiration = absoluteExpiration;
-			this.securityCacheManager = securityCacheManager;
 		}
+
+
+        /// <summary>
+        /// <para>Initialize a new instance of the <see cref="CachingStoreProvider"/> class with a specific <see cref="ISecurityCacheProviderInstrumentationProvider"/>.</para>
+        /// </summary>
+        public CachingStoreProvider(int slidingExpiration, int absoluteExpiration, ICacheManager securityCacheManager, ISecurityCacheProviderInstrumentationProvider instrumentationProvider)
+            :base(instrumentationProvider)
+        {
+            this.slidingExpiration = slidingExpiration;
+            this.absoluteExpiration = absoluteExpiration;
+            this.securityCacheManager = securityCacheManager;
+        }
 
 		/// <summary>
         /// Caches an authenticated <see cref="IIdentity"/> object.

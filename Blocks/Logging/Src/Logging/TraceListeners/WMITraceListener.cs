@@ -20,18 +20,29 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
 	/// <summary>
 	/// WmiTraceListener is a <see cref="TraceListener"/> that send a WMI event
 	/// </summary>
-	public class WmiTraceListener : TraceListener, IInstrumentationEventProvider
+	public class WmiTraceListener : TraceListener
 	{
-		private LoggingInstrumentationProvider instrumentationProvider;
+		private readonly ILoggingInstrumentationProvider instrumentationProvider;
 
 		/// <summary>
 		/// Initializes a new instance of <see cref="WmiTraceListener"/> 
 		/// </summary>
 		public WmiTraceListener()
-			: base()
+			: this(new NullLoggingInstrumentationProvider())
 		{
-			instrumentationProvider = new LoggingInstrumentationProvider();
 		}
+
+        /// <summary>
+        /// Initializes a new instance of <see cref="WmiTraceListener"/> 
+        /// </summary>
+        /// <param name="instrumentationProvider">The instrumentation provider to use.</param>
+        public WmiTraceListener(ILoggingInstrumentationProvider instrumentationProvider)
+            : base()
+        {
+            if (instrumentationProvider == null) throw new ArgumentNullException("instrumentationProvider");
+
+            this.instrumentationProvider = instrumentationProvider;
+        }
 
 		/// <summary>
 		/// Sends an event given a predefined string
@@ -79,17 +90,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
                     base.TraceData(eventCache, source, eventType, id, data);
                 }
             }
-		}
-
-		/// <summary>
-		/// This method supports the Enterprise Library infrastructure and is not intended to be used directly from your code.
-		/// Returns the object that provides instrumentation services for the trace listener.
-		/// </summary>
-		/// <see cref="IInstrumentationEventProvider.GetInstrumentationEventProvider()"/>
-		/// <returns>The object that providers intrumentation services.</returns>
-		public object GetInstrumentationEventProvider()
-		{
-			return instrumentationProvider;
 		}
 	}
 }

@@ -9,12 +9,9 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
-using System.Collections;
-using System.Threading;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
-using Microsoft.Practices.EnterpriseLibrary.Caching.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using Microsoft.Practices.ServiceLocation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching
 {
@@ -22,16 +19,24 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
     /// Factory for <see cref="CacheManager"/>s. This class is responsible for creating all the internal
 	/// classes needed to implement a CacheManager.
 	/// </summary>
-	public class CacheManagerFactory : LocatorNameTypeFactoryBase<ICacheManager>
+    public class CacheManagerFactory : ContainerBasedInstanceFactory<ICacheManager>
 	{
 		/// <summary>
 		/// <para>Initializes a new instance of the <see cref="CacheManagerFactory"/> class 
 		/// with the default configuration source.</para>
 		/// </summary>
-		protected CacheManagerFactory()
-			: base()
+		public CacheManagerFactory()
 		{
 		}
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="serviceLocator"></param>
+        public CacheManagerFactory(IServiceLocator serviceLocator)
+            :base(serviceLocator)
+        {
+        }
  
 		/// <summary>
 		/// <para>Initializes a new instance of the <see cref="CacheManagerFactory"/> class 

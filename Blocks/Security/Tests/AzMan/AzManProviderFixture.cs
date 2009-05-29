@@ -22,6 +22,7 @@ using Microsoft.Practices.EnterpriseLibrary.Security.AzMan.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Security.Instrumentation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+
 namespace Microsoft.Practices.EnterpriseLibrary.Security.AzMan.Tests
 {
     [TestClass]
@@ -46,6 +47,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.AzMan.Tests
             data.Scope = "";
             data.StoreLocation = @"msxml://{currentPath}/testAzStore.xml";
             azman = new AzManAuthorizationProvider(data.StoreLocation, data.Application, data.AuditIdentifierPrefix, data.Scope);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void ConstructWithNullAuthorizationProviderThrows()
+        {
+            azman = new AzManAuthorizationProvider(data.StoreLocation, data.Application, data.AuditIdentifierPrefix, data.Scope, null);
         }
 
         [TestMethod]
@@ -89,7 +97,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.AzMan.Tests
         public void AuthorizedScopeTask()
         {
             data.Scope = scope;
-            azman = new AzManAuthorizationProvider(data.StoreLocation, data.Application, data.AuditIdentifierPrefix, data.Scope);
+            azman = new AzManAuthorizationProvider(data.StoreLocation, data.Application, data.AuditIdentifierPrefix, data.Scope, new NullAuthorizationProviderInstrumentationProvider());
 
             string task = "Manage Extranet";
             bool res = azman.Authorize(cryptographyProviderCollection, task);
@@ -103,7 +111,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.AzMan.Tests
             string task = "Publish Extranet";
 
             data.Scope = scope;
-            azman = new AzManAuthorizationProvider(data.StoreLocation, data.Application, data.AuditIdentifierPrefix, data.Scope);
+            azman = new AzManAuthorizationProvider(data.StoreLocation, data.Application, data.AuditIdentifierPrefix, data.Scope, new NullAuthorizationProviderInstrumentationProvider());
             bool res = azman.Authorize(cryptographyProviderCollection, task);
 
             Assert.IsFalse(res);
@@ -164,7 +172,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.AzMan.Tests
         public void InvalidApplication()
         {
             data.Application = "INVALID";
-            azman = new AzManAuthorizationProvider(data.StoreLocation, data.Application, data.AuditIdentifierPrefix, data.Scope);
+            azman = new AzManAuthorizationProvider(data.StoreLocation, data.Application, data.AuditIdentifierPrefix, data.Scope, new NullAuthorizationProviderInstrumentationProvider());
             azman.Authorize(cryptographyProviderCollection, authorizedTask);
         }
 
@@ -178,12 +186,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.AzMan.Tests
         [TestMethod]
         public void AuthorizationFailedFires2WmiEvents()
         {
-            AzManAuthorizationProvider instrumentedAzman = new AzManAuthorizationProvider(data.StoreLocation, data.Application, data.AuditIdentifierPrefix, data.Scope);
-            AuthorizationProviderInstrumentationListener listener = new AuthorizationProviderInstrumentationListener("foo", false, false, true, "fooApplicationInstanceName");
-
-            ReflectionInstrumentationBinder binder = new ReflectionInstrumentationBinder();
-            binder.Bind(instrumentedAzman.GetInstrumentationEventProvider(), listener);
-
+            AuthorizationProviderInstrumentationProvider instrumentationProvider = new AuthorizationProviderInstrumentationProvider("foo", false, false, true, "fooApplicationInstanceName");
+            AzManAuthorizationProvider instrumentedAzman = new AzManAuthorizationProvider(data.StoreLocation, data.Application, data.AuditIdentifierPrefix, data.Scope, instrumentationProvider);
+            
             using (WmiEventWatcher eventWatcher = new WmiEventWatcher(2))
             {
                 bool res = instrumentedAzman.Authorize(cryptographyProviderCollection, unauthorizedTask);
@@ -207,12 +212,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.AzMan.Tests
         [TestMethod]
         public void AuthorizeFiresWmiEvent()
         {
-            AzManAuthorizationProvider instrumentedAzman = new AzManAuthorizationProvider(data.StoreLocation, data.Application, data.AuditIdentifierPrefix, data.Scope);
-            AuthorizationProviderInstrumentationListener listener = new AuthorizationProviderInstrumentationListener("foo", false, false, true, "fooApplicationInstanceName");
-
-            ReflectionInstrumentationBinder binder = new ReflectionInstrumentationBinder();
-            binder.Bind(instrumentedAzman.GetInstrumentationEventProvider(), listener);
-
+            AuthorizationProviderInstrumentationProvider instrumentationProvider = new AuthorizationProviderInstrumentationProvider("foo", false, false, true, "fooApplicationInstanceName");
+            AzManAuthorizationProvider instrumentedAzman = new AzManAuthorizationProvider(data.StoreLocation, data.Application, data.AuditIdentifierPrefix, data.Scope, instrumentationProvider);
+            
             using (WmiEventWatcher eventWatcher = new WmiEventWatcher(1))
             {
                 bool res = instrumentedAzman.Authorize(cryptographyProviderCollection, authorizedTask);
@@ -297,21 +299,24 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.AzMan.Tests
             f.Close();
         }
 
+        private static string currentSid = null;
+
         static string GetUserSID()
         {
-            string currentSid = "";
-            string ident = WindowsIdentity.GetCurrent().Name;
-            string domain = ident.Substring(0, ident.IndexOf(@"\"));
-            string user = ident.Substring(domain.Length + 1);
-
-            // get current users sid
-            string pGroup = "ROOT\\CIMV2:Win32_Account.Domain=\"" + domain + "\",Name=\"" + user + "\"";
-            ManagementPath path = new ManagementPath(pGroup);
-            using (ManagementObject o = new ManagementObject(path))
+            if (string.IsNullOrEmpty(currentSid))
             {
-                currentSid = o["SID"].ToString();
-            }
+                string ident = WindowsIdentity.GetCurrent().Name;
+                string domain = ident.Substring(0, ident.IndexOf(@"\"));
+                string user = ident.Substring(domain.Length + 1);
 
+                // get current users sid
+                string pGroup = "ROOT\\CIMV2:Win32_Account.Domain=\"" + domain + "\",Name=\"" + user + "\"";
+                ManagementPath path = new ManagementPath(pGroup);
+                using (ManagementObject o = new ManagementObject(path))
+                {
+                    currentSid = o["SID"].ToString();
+                }
+            }
             return currentSid;
         }
     }

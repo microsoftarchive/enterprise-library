@@ -12,6 +12,7 @@
 using System;
 using System.Security.Cryptography;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests
 {
@@ -22,10 +23,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests
         {
             get
             {
-                HashAlgorithmProvider defaultProvider = new KeyedHashAlgorithmProvider(typeof(HMACSHA1), false, key);
-                HashAlgorithmProvider saltedProvider = new KeyedHashAlgorithmProvider(typeof(HMACSHA1), true, key);
-
-                return new HashProviderHelper(defaultProvider, saltedProvider);
+                return new HashProviderHelper(
+                    instrumentationProvider => new KeyedHashAlgorithmProvider(typeof(HMACSHA1), false, key, instrumentationProvider),
+                    instrumentationProvider => new KeyedHashAlgorithmProvider(typeof(HMACSHA1), true, key, instrumentationProvider));
             }
         }
 
@@ -55,6 +55,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests
         public void ConstructWithNonKeyedHashAlgorithmThrows()
         {
             new KeyedHashAlgorithmProvider(typeof(SHA1), true, key);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void ConstructWithNullInstrumentationProviderThrows()
+        {
+            new KeyedHashAlgorithmProvider(typeof(HMACSHA1), true, key, null);
         }
 
         [TestMethod]

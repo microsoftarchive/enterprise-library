@@ -18,7 +18,6 @@ using Microsoft.Practices.EnterpriseLibrary.Caching.BackingStoreImplementations;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Database;
 using Microsoft.Practices.EnterpriseLibrary.Caching.TestSupport.Expirations;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
 using Microsoft.Practices.EnterpriseLibrary.Data;
 using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -76,7 +75,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.DatabaseAndCryptography.
         public void AttemptingToReadEncryptedDataWithoutDecryptingThrowsException()
         {
             IStorageEncryptionProvider encryptionProvider = null;
-            encryptionProvider = EnterpriseLibraryFactory.BuildUp<IStorageEncryptionProvider>("Fred");
+            encryptionProvider = EnterpriseLibraryContainer.Current.GetInstance<IStorageEncryptionProvider>("Fred");
 
             DataBackingStore encryptingBackingStore = new DataBackingStore(db, "encryptionTests", encryptionProvider);
 
@@ -100,7 +99,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.DatabaseAndCryptography.
         public void DecryptedDataCanBeReadBackFromDatabase()
         {
             IStorageEncryptionProvider encryptionProvider = null;
-            encryptionProvider = EnterpriseLibraryFactory.BuildUp<IStorageEncryptionProvider>("Fred");
+            encryptionProvider = EnterpriseLibraryContainer.Current.GetInstance<IStorageEncryptionProvider>("Fred");
 
             DataBackingStore encryptingBackingStore = new DataBackingStore(db, "encryptionTests", encryptionProvider);
 

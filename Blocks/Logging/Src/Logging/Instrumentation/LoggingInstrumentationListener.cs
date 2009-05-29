@@ -83,7 +83,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation
 
 		/// <summary>
 		/// This method supports the Enterprise Library infrastructure and is not intended to be used directly from your code.
-		/// Handler for the <see cref="LoggingInstrumentationProvider.failureLoggingError"/> event.
 		/// </summary>
 		/// <param name="sender">Sender of the event.</param>
 		/// <param name="e">Data for the event.</param>
@@ -133,7 +132,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation
 
 		/// <summary>
 		/// This method supports the Enterprise Library infrastructure and is not intended to be used directly from your code.
-		/// Handler for the <see cref="LoggingInstrumentationProvider.configurationFailure"/> event.
 		/// </summary>
 		/// <param name="sender">Sender of the event.</param>
 		/// <param name="e">Data for the event.</param>
@@ -150,7 +148,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation
 
 		/// <summary>
 		/// This method supports the Enterprise Library infrastructure and is not intended to be used directly from your code.
-		/// Handler for the <see cref="LoggingInstrumentationProvider.lockAcquisitionError"/> event.
 		/// </summary>
 		/// <param name="sender">Sender of the event.</param>
 		/// <param name="e">Data for the event.</param>

@@ -13,7 +13,6 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Security.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -41,7 +40,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Tests
             configurationSource.Add(SecuritySettings.SectionName, settings);
 
             ISecurityCacheProvider custom
-                = EnterpriseLibraryFactory.BuildUp<ISecurityCacheProvider>("custom", configurationSource);
+                = EnterpriseLibraryContainer.CreateDefaultContainer(configurationSource).GetInstance<ISecurityCacheProvider>("custom");
 
             Assert.IsNotNull(custom);
             Assert.AreSame(typeof(MockCustomSecurityCacheProvider), custom.GetType());
@@ -63,7 +62,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Tests
                 = ConfigurationTestHelper.SaveSectionsInFileAndReturnConfigurationSource(sections);
 
             ISecurityCacheProvider custom
-                = EnterpriseLibraryFactory.BuildUp<ISecurityCacheProvider>("custom", configurationSource);
+                = EnterpriseLibraryContainer.CreateDefaultContainer(configurationSource).GetInstance<ISecurityCacheProvider>("custom");
 
             Assert.IsNotNull(custom);
             Assert.AreSame(typeof(MockCustomSecurityCacheProvider), custom.GetType());

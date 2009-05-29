@@ -9,9 +9,13 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using System.Collections.Generic;
 using System.Configuration;
+using System.Linq;
 using System.Xml;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel.Unity;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.Utility;
 
@@ -20,7 +24,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
     /// <summary>
     /// A <see cref="ConfigurationSection"/> that stores the policy set in configuration.
     /// </summary>
-    public class PolicyInjectionSettings : SerializableConfigurationSection
+    public class PolicyInjectionSettings : SerializableConfigurationSection, ITypeRegistrationsProvider
     {
         //private const string InjectorsPropertyName = "injectors";
         private const string PoliciesPropertyName = "policies";
@@ -28,7 +32,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// <summary>
         /// Section name as it appears in the config file.
         /// </summary>
-        public const string SectionName = "policyInjection";
+        public const string SectionName = BlockSectionNames.PolicyInjection;
 
         /// <summary>
         /// Gets or sets the collection of Policies from configuration.
@@ -70,10 +74,38 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
             Guard.ArgumentNotNull(container, "container");
             Guard.ArgumentNotNull(configurationSource, "configurationSource");
 
-            foreach (var policy in Policies)
+            UnityContainerConfigurator configurator = new UnityContainerConfigurator(container);
+            configurator.RegisterAll(configurationSource, this);
+        }
+
+        /// <summary>
+        /// Get the set of <see cref="TypeRegistration"/> objects needed to
+        /// register the Policy Injection settings represented by this config section.
+        /// </summary>
+        /// <returns>The set of <see cref="TypeRegistration"/> objects.</returns>
+        public IEnumerable<TypeRegistration> GetRegistrations(IConfigurationSource ignored)
+        {
+            List<TypeRegistration> registrations = new List<TypeRegistration>();
+
+            foreach (var policyData in this.Policies)
             {
-                policy.ConfigureContainer(container, configurationSource);
+                registrations.AddRange(policyData.GetRegistrations());
             }
+
+            return registrations;
+        }
+
+        /// <summary>
+        /// Return the <see cref="TypeRegistration"/> objects needed to reconfigure
+        /// the container after a configuration source has changed.
+        /// </summary>
+        /// <remarks>If there are no reregistrations, return an empty sequence.</remarks>
+        /// <param name="configurationSource">The <see cref="IConfigurationSource"/> containing
+        /// the configuration information.</param>
+        /// <returns>The sequence of <see cref="TypeRegistration"/> objects.</returns>
+        public IEnumerable<TypeRegistration> GetUpdatedRegistrations(IConfigurationSource configurationSource)
+        {
+            return Enumerable.Empty<TypeRegistration>();
         }
     }
 }

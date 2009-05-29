@@ -15,14 +15,11 @@ using System.Configuration;
 using System.Diagnostics;
 using System.Messaging;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration.ObjectBuilder;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
-using Microsoft.Practices.ObjectBuilder2;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Configuration
@@ -34,15 +31,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
         const MessagePriority priority = MessagePriority.VeryHigh;
         const string formatterName = "BinnaryFormatter";
 
-        IBuilderContext context;
-        ConfigurationReflectionCache reflectionCache;
 
         [TestInitialize]
         public void SetUp()
         {
             AppDomain.CurrentDomain.SetData("APPBASE", Environment.CurrentDirectory);
-			context = new BuilderContext(new StrategyChain(), null, null, new PolicyList(), null, null);
-            reflectionCache = new ConfigurationReflectionCache();
+        }
+        private static TraceListener GetListener(string name, IConfigurationSource configurationSource)
+        {
+            var container = EnterpriseLibraryContainer.CreateDefaultContainer(configurationSource);
+            return container.GetInstance<TraceListener>(name);
         }
 
         [TestMethod]
@@ -211,7 +209,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
             helper.loggingSettings.TraceListeners.Add(listenerData);
             helper.loggingSettings.Formatters.Add(new BinaryLogFormatterData(formatterName));
 
-            TraceListener listener = TraceListenerCustomFactory.Instance.Create(context, "listener", helper.configurationSource, reflectionCache);
+            TraceListener listener = GetListener("listener", helper.configurationSource);
 
             Assert.IsNotNull(listener);
             Assert.AreEqual(listener.GetType(), typeof(MsmqTraceListener));
@@ -230,8 +228,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
 
             MockLogObjectsHelper helper = new MockLogObjectsHelper();
             helper.loggingSettings.Formatters.Add(new BinaryLogFormatterData(formatterName));
+            helper.loggingSettings.TraceListeners.Add(listenerData);
 
-            TraceListener listener = TraceListenerCustomFactory.Instance.Create(context, listenerData, helper.configurationSource, reflectionCache);
+            TraceListener listener = GetListener(listenerData.Name, helper.configurationSource);
 
             Assert.IsNotNull(listener);
             Assert.AreEqual(listener.GetType(), typeof(MsmqTraceListener));
@@ -250,7 +249,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
             loggingSettings.Formatters.Add(new FormatterData(formatterName, typeof(BinaryLogFormatter)));
             loggingSettings.TraceListeners.Add(new MsmqTraceListenerData("listener", CommonUtil.MessageQueuePath, formatterName));
 
-            TraceListener listener = TraceListenerCustomFactory.Instance.Create(context, "listener", CommonUtil.SaveSectionsAndGetConfigurationSource(loggingSettings), reflectionCache);
+            TraceListener listener = GetListener("listener", CommonUtil.SaveSectionsAndGetConfigurationSource(loggingSettings));
 
             Assert.IsNotNull(listener);
             Assert.AreEqual(listener.GetType(), typeof(MsmqTraceListener));

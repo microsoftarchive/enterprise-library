@@ -13,16 +13,14 @@ using System;
 using System.Collections.Specialized;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Unity;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using System.Collections.Generic;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
 {
 	/// <summary>
 	/// Configuration object for Custom Providers.
 	/// </summary>
-	[Assembler(typeof(CustomProviderAssembler<IBackingStore, CacheStorageData, CustomCacheStorageData>))]
-	[ContainerPolicyCreator(typeof(CustomProviderPolicyCreator<CustomCacheStorageData>))]
 	public class CustomCacheStorageData
 		: CacheStorageData, IHelperAssistedCustomConfigurationData<CustomCacheStorageData>
 	{
@@ -168,5 +166,21 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
 		{
 			return base.IsModified();
 		}
-	}
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public override IEnumerable<TypeRegistration> GetRegistrations()
+        {
+            if (!typeof(IBackingStore).IsAssignableFrom(this.Type))
+            {
+                throw new ConfigurationErrorsException(string.Format(Caching.Properties.Resources.Culture, Caching.Properties.Resources.ExceptionTypeForCustomBackingStoreMustDeriveFrom, Name, this.Type.FullName));
+            }
+
+            yield return new TypeRegistration(
+                RegistrationExpressionBuilder.BuildExpression(this.Type, Attributes),
+                typeof(IBackingStore)) { Name = this.Name };
+        }
+	} 
 }

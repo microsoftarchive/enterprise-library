@@ -12,9 +12,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.Utility;
+using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests.Properties;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -39,7 +41,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
         [TestMethod]
         public void WhenRegistrationsRequested_ResultsInExceptionManagerImplementationRegistration()
         {
-            var registrations = settings.CreateRegistrations();
+            var registrations = settings.GetRegistrations(null).Where(r => r.ServiceType == typeof(ExceptionManager));
+
             Assert.AreEqual(1, registrations.Count());
 
             var registration = registrations.ElementAt(0);
@@ -48,7 +51,21 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
                 .ForName(null)
                 .ForImplementationType(typeof(ExceptionManagerImpl));
         }
-    }
+
+        [TestMethod]
+        public void WhenRegistrationsRequested_ThenTheDefaultExceptionHandlingEventLoggerIsRegistered()
+        {
+            var registrations =
+                settings.GetRegistrations(null).Where(r => r.ServiceType == typeof (DefaultExceptionHandlingEventLogger));
+
+            Assert.AreEqual(1, registrations.Count());
+
+            var registration = registrations.ElementAt(0);
+            registration.AssertForServiceType(typeof (DefaultExceptionHandlingEventLogger))
+                .ForName(null)
+                .ForImplementationType(typeof (DefaultExceptionHandlingEventLogger));
+        }
+	}
 
     [TestClass]
     public class GivenConfigurationSettingsWithASinglePolicy
@@ -73,7 +90,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
         [TestMethod]
         public void WhenRegistrationsAreRequested_ThenReturnsARegistrationForExceptionPolicyEntry()
         {
-            var registrations = settings.CreateRegistrations();
+            var registrations = settings.GetRegistrations(null);
 
             TypeRegistration registration = registrations.First(r => r.ImplementationType == typeof(ExceptionPolicyImpl));
             registration.AssertForServiceType(typeof(ExceptionPolicyImpl))
@@ -84,7 +101,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
         [TestMethod]
         public void WhenRegistrationsAreRequested_ThenReturnsExceptionTypeRegistrationEntryWithCorrectName()
         {
-            var registrations = settings.CreateRegistrations();
+            var registrations = settings.GetRegistrations(null);
 
             TypeRegistration registration = registrations.First(r => r.ImplementationType == typeof(ExceptionPolicyEntry));
 
@@ -97,7 +114,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
         [TestMethod]
         public void WhenRegistrationsAreRequested_ThenReturnsWrapHandlerRegistrationWithCorrectName()
         {
-            var registrations = settings.CreateRegistrations();
+            var registrations = settings.GetRegistrations(null);
 
             TypeRegistration registration = registrations.First(r => r.ImplementationType == typeof(WrapHandler));
 
@@ -140,7 +157,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
         [TestMethod]
         public void WhenRegistrationTypesRequested_ThenWillProduceUniqueNamesForExceptionHandlersAtTheSameLevel()
         {
-            IEnumerable<TypeRegistration> registrations = settings.CreateRegistrations();
+            IEnumerable<TypeRegistration> registrations = settings.GetRegistrations(null);
 
             registrations.First(r => r.Name == "aPolicy.ExceptionType.aHandler");
             registrations.First(r => r.Name == "aPolicy.AnotherExceptionType.aHandler");
@@ -173,7 +190,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
         [TestMethod]
         public void WhenRegistrationTypesRequested_ThenWillProduceUniqueNamesForExceptionHandlersAtTheSameLevel()
         {
-            IEnumerable<TypeRegistration> registrations = settings.CreateRegistrations();
+            IEnumerable<TypeRegistration> registrations = settings.GetRegistrations(null);
 
             registrations.First(r => r.Name == "aPolicy.ExceptionType");
             registrations.First(r => r.Name == "anotherPolicy.ExceptionType");
@@ -217,7 +234,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
             exceptionType21.ExceptionHandlers.Add(
                 new WrapHandlerData("handler3", "message", typeof(Exception).AssemblyQualifiedName));
 
-            registrations = settings.CreateRegistrations();
+            registrations = settings.GetRegistrations(null);
         }
 
         [TestMethod]
@@ -266,7 +283,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
         [TestMethod]
         public void WhenAskedForTypeRegistration_ThenReturnsTypeRegistrationConfiguringMessageAndExceptionType()
         {
-            TypeRegistration typeRegistration = handlerData.GetContainerConfigurationModel("prefix");
+            TypeRegistration typeRegistration = handlerData.GetRegistrations("prefix").First();
 
             IStringResolver resolver;
             typeRegistration
@@ -301,7 +318,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
         [TestMethod]
         public void WhenAskedForTypeRegistration_ThenReturnsTypeRegistrationConfiguringMessageAndExceptionType()
         {
-            TypeRegistration typeRegistration = handlerData.GetContainerConfigurationModel("prefix");
+            TypeRegistration typeRegistration = handlerData.GetRegistrations("prefix").First();
 
             IStringResolver resolver;
             typeRegistration
@@ -336,7 +353,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
         public void WhenAskedForTypeRegitration_ThenReturnsTypeRegistrationConfiguringReplaceHandler()
         {
 
-            TypeRegistration typeRegistration = handlerData.GetContainerConfigurationModel("prefix");
+            TypeRegistration typeRegistration = handlerData.GetRegistrations("prefix").First();
             IStringResolver resolver;
 
             typeRegistration
@@ -374,7 +391,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
         [TestMethod]
         public void WhenAskedForTypeRegitration_ThenReturnsTypeRegistrationConfiguringReplaceHandler()
         {
-            TypeRegistration typeRegistration = handlerData.GetContainerConfigurationModel("prefix");
+            TypeRegistration typeRegistration = handlerData.GetRegistrations("prefix").First();
             IStringResolver resolver;
 
             typeRegistration
@@ -407,7 +424,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
         [TestMethod]
         public void WhenAskedForTypeRegistration_ThenReturnsTypeRegistrationConfiguringMockExceptionHandlerWithTheAttributesCollection()
         {
-            TypeRegistration typeRegistration = handlerData.GetContainerConfigurationModel("prefix");
+            TypeRegistration typeRegistration = handlerData.GetRegistrations("prefix").First();
 
             typeRegistration
                 .AssertForServiceType(typeof(IExceptionHandler))
@@ -432,7 +449,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
         {
             exceptionTypeData = new ExceptionTypeData("name", typeof(ArgumentException), PostHandlingAction.ThrowNewException);
 
-            registration = exceptionTypeData.GetContainerConfigurationModel("prefix");
+            registration = exceptionTypeData.GetRegistration("prefix");
         }
 
         [TestMethod]
@@ -452,6 +469,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
                 .WithValueConstructorParameter(typeof(ArgumentException))
                 .WithValueConstructorParameter(PostHandlingAction.ThrowNewException)
                 .WithContainerResolvedEnumerableConstructorParameter<IExceptionHandler>(new string[0])
+                .WithContainerResolvedParameter<IExceptionHandlingInstrumentationProvider>("prefix")
                 .VerifyConstructorParameters();
         }
     }
@@ -474,7 +492,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
                 new WrapHandlerData("wrap", "except", typeof(Exception).AssemblyQualifiedName)
                 );
 
-            registration = exceptionTypeData.GetContainerConfigurationModel("prefix");
+            registration = exceptionTypeData.GetRegistration("prefix");
         }
 
         [TestMethod]
@@ -494,6 +512,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
                 .WithValueConstructorParameter(typeof(ArgumentNullException))
                 .WithValueConstructorParameter(PostHandlingAction.None)
                 .WithContainerResolvedEnumerableConstructorParameter<IExceptionHandler>(new[] { "prefix.name.replace", "prefix.name.wrap" })
+                .WithContainerResolvedParameter<IExceptionHandlingInstrumentationProvider>("prefix")
                 .VerifyConstructorParameters();
         }
     }
@@ -502,14 +521,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
     public class GivenExceptionPolicyDataWithNoTypes
     {
         private ExceptionPolicyData exceptionPolicyData;
+        private List<TypeRegistration> registrations;
         private TypeRegistration registration;
-
         [TestInitialize]
         public void Setup()
         {
             exceptionPolicyData = new ExceptionPolicyData("policy");
 
-            registration = exceptionPolicyData.GetContainerConfigurationModel();
+            registrations = exceptionPolicyData.GetRegistration(new DictionaryConfigurationSource()).ToList();
+
+            registration = registrations.Where(r => r.ServiceType == typeof(ExceptionPolicyImpl)).ElementAt(0);
         }
 
         [TestMethod]
@@ -544,7 +565,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
             exceptionPolicyData = new ExceptionPolicyData("policy");
             exceptionPolicyData.ExceptionTypes.Add(new ExceptionTypeData("type", typeof(ArgumentException), PostHandlingAction.None));
 
-            registration = exceptionPolicyData.GetContainerConfigurationModel();
+            registration = exceptionPolicyData.GetRegistration(new DictionaryConfigurationSource())
+                .Where(r => r.ServiceType == typeof(ExceptionPolicyImpl))
+                .ElementAt(0);
         }
 
         [TestMethod]

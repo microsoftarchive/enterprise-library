@@ -13,19 +13,16 @@ using System;
 using System.Configuration;
 using System.Diagnostics;
 using System.Linq.Expressions;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
-using Microsoft.Practices.ObjectBuilder2;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 {
     /// <summary>
     /// Represents the configuration data for a <see cref="RollingFlatFileTraceListenerData"/>.
     /// </summary>	
-    [Assembler(typeof(RollingTraceListenerAssembler))]
     public class RollingFlatFileTraceListenerData : TraceListenerData
     {
         const string FileNamePropertyName = "fileName";
@@ -210,52 +207,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
                         this.RollSizeKB,
                         this.TimeStampPattern,
                         this.RollFileExistsBehavior,
-                        this.RollInterval);
-        }
-    }
-
-    /// <summary>
-    /// This type supports the Enterprise Library infrastructure and is not intended to be used directly from your code.
-    /// Represents the process to build a <see cref="RollingFlatFileTraceListener"/> described by a <see cref="RollingFlatFileTraceListenerData"/> configuration object.
-    /// </summary>
-    /// <remarks>This type is linked to the <see cref="RollingFlatFileTraceListenerData"/> type and it is used by the  Custom Factory
-    /// to build the specific <see cref="TraceListener"/> object represented by the configuration object.
-    /// </remarks>
-    public class RollingTraceListenerAssembler : TraceListenerAsssembler
-    {
-        /// <summary>
-        /// This method supports the Enterprise Library infrastructure and is not intended to be used directly from your code.
-        /// Builds a <see cref="FlatFileTraceListener"/> based on an instance of <see cref="FlatFileTraceListenerData"/>.
-        /// </summary>
-        /// <seealso cref="TraceListenerCustomFactory"/>
-        /// <param name="context">The <see cref="IBuilderContext"/> that represents the current building process.</param>
-        /// <param name="objectConfiguration">The configuration object that describes the object to build. Must be an instance of <see cref="FlatFileTraceListenerData"/>.</param>
-        /// <param name="configurationSource">The source for configuration objects.</param>
-        /// <param name="reflectionCache">The cache to use retrieving reflection information.</param>
-        /// <returns>A fully initialized instance of <see cref="FlatFileTraceListener"/>.</returns>
-        public override TraceListener Assemble(IBuilderContext context,
-                                               TraceListenerData objectConfiguration,
-                                               IConfigurationSource configurationSource,
-                                               ConfigurationReflectionCache reflectionCache)
-        {
-            RollingFlatFileTraceListenerData castObjectConfiguration
-                = (RollingFlatFileTraceListenerData)objectConfiguration;
-
-            ILogFormatter formatter = GetFormatter(context, castObjectConfiguration.Formatter, configurationSource, reflectionCache);
-
-            RollingFlatFileTraceListener createdObject
-                = new RollingFlatFileTraceListener(
-                    castObjectConfiguration.FileName,
-                    castObjectConfiguration.Header,
-                    castObjectConfiguration.Footer,
-                    formatter,
-                    castObjectConfiguration.RollSizeKB,
-                    castObjectConfiguration.TimeStampPattern,
-                    castObjectConfiguration.RollFileExistsBehavior,
-                    castObjectConfiguration.RollInterval
-                    );
-
-            return createdObject;
+                        this.RollInterval,
+                        Container.Resolved<ILoggingInstrumentationProvider>());
         }
     }
 }

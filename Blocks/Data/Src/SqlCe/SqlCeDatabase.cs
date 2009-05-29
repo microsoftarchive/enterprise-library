@@ -10,12 +10,11 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Data.Common;
 using System.Data.SqlServerCe;
 using System.Data;
-using Microsoft.Practices.EnterpriseLibrary.Data.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Data.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Data.SqlCe.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Data.SqlCe
@@ -34,7 +33,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.SqlCe
 	///			environments.
 	///		</para>
 	/// </remarks>
-	[DatabaseAssembler(typeof(SqlCeDatabaseAssembler))]
+    [ConfigurationElementType(typeof(SqlCeDatabaseData))]
 	public class SqlCeDatabase : Database
 	{
 		/// <summary>
@@ -45,6 +44,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.SqlCe
 			: base(connectionString, SqlCeProviderFactory.Instance)
 		{
 		}
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SqlCeDatabase"/> class with a connection string
+        /// and an instrumentation provider.
+        /// </summary>
+        /// <param name="connectionString">The connection string.</param>
+        /// <param name="instrumentationProvider">The instrumentation provider.</param>
+        public SqlCeDatabase(string connectionString, IDataInstrumentationProvider instrumentationProvider)
+            : base(connectionString, SqlCeProviderFactory.Instance, instrumentationProvider)
+        {
+            
+        }
 
 		/// <summary>
 		///		This will close the "keep alive" connection that is kept open once you first access
@@ -89,7 +100,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.SqlCe
 		/// <param name="adapter">The <see cref="DbDataAdapter"/> to set the event.</param>
 		protected override void SetUpRowUpdatedEvent(DbDataAdapter adapter)
 		{
-			((SqlCeDataAdapter)adapter).RowUpdated += new SqlCeRowUpdatedEventHandler(OnSqlRowUpdated);
+			((SqlCeDataAdapter)adapter).RowUpdated += OnSqlRowUpdated;
 		}
 
 		internal void SetConnectionString(DbConnection connection)
@@ -182,9 +193,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.SqlCe
 		/// <returns>A correctly formated parameter name.</returns>
 		public override string BuildParameterName(string name)
 		{
-			if (name[0] != this.ParameterToken)
+			if (name[0] != ParameterToken)
 			{
-				return name.Insert(0, new string(this.ParameterToken, 1));
+				return name.Insert(0, new string(ParameterToken, 1));
 			}
 			return name;
 		}
@@ -404,7 +415,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.SqlCe
 		}
 
 		/// <summary>
-		///		Executes the <paramref name="command"/> and returns the first column of the first
+		///		Executes the <paramref name="sqlCommand"/> and returns the first column of the first
 		///		row in the result set returned by the query. Extra columns or rows are ignored.
 		/// </summary>
 		/// <param name="sqlCommand">The SQL statement to execute.</param>
@@ -439,9 +450,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.SqlCe
 				{
 					if (!reader.Read())
 						return -1;
-					else if (reader[0] is DBNull)
+					if (reader[0] is DBNull)
 						return -1;
-					else return Convert.ToInt32(reader[0]);
+					return Convert.ToInt32(reader[0]);
 				}
 			}
 		}
@@ -468,7 +479,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.SqlCe
 		public virtual bool TableExists(string tableName)
 		{
 			if (string.IsNullOrEmpty(tableName))
-				throw new ArgumentException(Properties.Resources.ExceptionNullOrEmptyString, "tableName");
+				throw new ArgumentException(Resources.ExceptionNullOrEmptyString, "tableName");
 
 			string sql = @"
 					SELECT	COUNT(*) 

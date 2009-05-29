@@ -10,6 +10,7 @@
 //===============================================================================
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Threading;
@@ -25,6 +26,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
         const string localSectionSource = "";
 
         IDictionary<string, int> updatedSectionsTally;
+        ICollection updatedSectionNames;
 
         [TestInitialize]
         public void Setup()
@@ -83,6 +85,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
         }
 
         [TestMethod]
+        public void CanReceiveSourceNotificationsFromImplementation()
+        {
+            SystemConfigurationSource.ResetImplementation(false);
+
+            SystemConfigurationSource source = new SystemConfigurationSource();
+            source.GetSection(localSection);
+            source.SourceChanged += this.OnConfigurationSourceChanged;
+
+            SystemConfigurationSource.Implementation.ConfigSourceChanged(localSectionSource);
+
+            CollectionAssert.AreEqual(new[] { localSection }, updatedSectionNames);
+        }
+
+        [TestMethod]
         public void SystemConfigurationSourceReturnsReadOnlySections()
         {
             SystemConfigurationSource.ResetImplementation(false);
@@ -112,6 +128,27 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
             source.AddSectionChangeHandler(localSection, new ConfigurationChangedEventHandler(OnConfigurationChanged));
             SystemConfigurationSource.Implementation.ConfigSourceChanged(localSectionSource);
             Assert.AreEqual(2, updatedSectionsTally[localSection]);
+        }
+
+        [TestMethod]
+        public void CanStopReceivingSourceChangedNotificationsFromImplementation()
+        {
+            SystemConfigurationSource.ResetImplementation(false);
+
+            SystemConfigurationSource source = new SystemConfigurationSource();
+            source.GetSection(localSection);
+
+            this.updatedSectionNames = null;
+
+            source.SourceChanged += this.OnConfigurationSourceChanged;
+            SystemConfigurationSource.Implementation.ConfigSourceChanged(localSectionSource);
+            CollectionAssert.AreEqual(new[] { localSection }, this.updatedSectionNames);
+
+            this.updatedSectionNames = null;
+
+            source.SourceChanged -= this.OnConfigurationSourceChanged;
+            SystemConfigurationSource.Implementation.ConfigSourceChanged(localSectionSource);
+            Assert.IsNull(this.updatedSectionNames);
         }
 
         [TestMethod]
@@ -156,6 +193,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
             {
                 updatedSectionsTally[args.SectionName] = 1;
             }
+        }
+
+        void OnConfigurationSourceChanged(object sender, ConfigurationSourceChangedEventArgs args)
+        {
+            this.updatedSectionNames = args.ChangedSectionNames;
         }
     }
 }

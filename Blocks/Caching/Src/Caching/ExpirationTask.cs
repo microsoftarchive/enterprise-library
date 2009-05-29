@@ -22,14 +22,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
     public class ExpirationTask
     {
         private ICacheOperations cacheOperations;
-		private CachingInstrumentationProvider instrumentationProvider;
+		private ICachingInstrumentationProvider instrumentationProvider;
 
 		/// <summary>
 		/// Initialize an instance of the <see cref="ExpirationTask"/> class with an <see cref="ICacheOperations"/> object.
 		/// </summary>
 		/// <param name="cacheOperations">An <see cref="ICacheOperations"/> object.</param>
 		/// <param name="instrumentationProvider">An instrumentation provider.</param>
-		public ExpirationTask(ICacheOperations cacheOperations, CachingInstrumentationProvider instrumentationProvider)
+		public ExpirationTask(ICacheOperations cacheOperations, ICachingInstrumentationProvider instrumentationProvider)
         {
             this.cacheOperations = cacheOperations;
 			this.instrumentationProvider = instrumentationProvider;

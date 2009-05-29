@@ -22,8 +22,31 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
     {
         bool exceptionHandlerExecutedCallbackCalled;
         bool exceptionHandledCallbackCalled;
-        ExceptionHandlingInstrumentationProvider instrumentationProvider;
         ExceptionPolicyEntry policyEntry;
+
+        class TestInstrumentationProvider : IExceptionHandlingInstrumentationProvider
+        {
+            private readonly ExceptionPolicyEntryInstrumentationFixture outer;
+
+            public TestInstrumentationProvider(ExceptionPolicyEntryInstrumentationFixture outer)
+            {
+                this.outer = outer;    
+            }
+
+            public void FireExceptionHandledEvent()
+            {
+                outer.exceptionHandledCallbackCalled = true;
+            }
+
+            public void FireExceptionHandlerExecutedEvent()
+            {
+                outer.exceptionHandlerExecutedCallbackCalled = true;
+            }
+
+            public void FireExceptionHandlingErrorOccurred(string errorMessage)
+            {
+            }
+        }
 
         [TestInitialize]
         public void SetUp()
@@ -31,15 +54,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
             exceptionHandlerExecutedCallbackCalled = false;
             exceptionHandledCallbackCalled = false;
 
-            List<IExceptionHandler> handlers = new List<IExceptionHandler>();
-            handlers.Add(new MockExceptionHandler(new NameValueCollection()));
-            policyEntry = new ExceptionPolicyEntry(typeof(Exception), PostHandlingAction.None, handlers);
+            var handlers = new List<IExceptionHandler> { new MockExceptionHandler(new NameValueCollection()) };
 
-            instrumentationProvider = new ExceptionHandlingInstrumentationProvider();
-            instrumentationProvider.exceptionHandled += new EventHandler<EventArgs>(ExceptionHandledCallback);
-            instrumentationProvider.exceptionHandlerExecuted += new EventHandler<EventArgs>(ExceptionHandlerExecutedCallback);
-
-            policyEntry.SetInstrumentationProvider(instrumentationProvider);
+            var instrumentationProvider = new TestInstrumentationProvider(this);
+            policyEntry = new ExceptionPolicyEntry(typeof(Exception), PostHandlingAction.None, handlers, instrumentationProvider);
         }
 
         [TestMethod]
@@ -62,25 +80,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
         [ExpectedException(typeof(ExceptionHandlingException))]
         public void ExceptionHandlerInChainReturnsNullThrows()
         {
-            List<IExceptionHandler> handlers = new List<IExceptionHandler>();
-            handlers.Add(new MockReturnNullExceptionHandler());
-            ExceptionPolicyEntry entry = new ExceptionPolicyEntry(
+            var handlers = new List<IExceptionHandler> {new MockReturnNullExceptionHandler()};
+            var entry = new ExceptionPolicyEntry(
                 typeof(Exception),
                 PostHandlingAction.ThrowNewException,
                 handlers);
             entry.Handle(new ApplicationException());
-        }
-
-        public void ExceptionHandlerExecutedCallback(object sender,
-                                                     EventArgs e)
-        {
-            exceptionHandlerExecutedCallbackCalled = true;
-        }
-
-        public void ExceptionHandledCallback(object sender,
-                                             EventArgs e)
-        {
-            exceptionHandledCallbackCalled = true;
         }
     }
 }

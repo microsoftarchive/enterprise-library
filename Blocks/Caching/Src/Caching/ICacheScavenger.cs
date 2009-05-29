@@ -9,6 +9,7 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using System;
 namespace Microsoft.Practices.EnterpriseLibrary.Caching
 {
 	/// <summary>

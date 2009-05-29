@@ -20,7 +20,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
     public class ExceptionPolicyEntryErrorLoggingFixture
     {
         bool errorCalledBack;
-        ExceptionHandlingInstrumentationProvider instrumentationProvider;
 
         [TestInitialize]
         public void SetUp()
@@ -61,23 +60,42 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
         {
             List<IExceptionHandler> handlerList = new List<IExceptionHandler>();
             handlerList.Add(exceptionHandler);
+
+
+
             ExceptionPolicyEntry policyEntry = new ExceptionPolicyEntry(
                 typeof(Exception), 
                 postHandlingAction, 
-                handlerList);
-
-            instrumentationProvider = new ExceptionHandlingInstrumentationProvider();
-            instrumentationProvider.exceptionHandlingErrorOccurred += new EventHandler<ExceptionHandlingErrorEventArgs>(ErrorCallback);
-
-            policyEntry.SetInstrumentationProvider(instrumentationProvider);
+                handlerList,
+                new TestInstrumentationProvider(this));
 
             return policyEntry;
         }
 
-        void ErrorCallback(object sender,
-                           ExceptionHandlingErrorEventArgs e)
+        private class TestInstrumentationProvider : IExceptionHandlingInstrumentationProvider
         {
-            errorCalledBack = true;
+            private readonly ExceptionPolicyEntryErrorLoggingFixture outer;
+
+            /// <summary>
+            /// Initializes a new instance of the <see cref="T:System.Object"/> class.
+            /// </summary>
+            public TestInstrumentationProvider(ExceptionPolicyEntryErrorLoggingFixture outer)
+            {
+                this.outer = outer;
+            }
+
+            public void FireExceptionHandledEvent()
+            {
+            }
+
+            public void FireExceptionHandlerExecutedEvent()
+            {
+            }
+
+            public void FireExceptionHandlingErrorOccurred(string errorMessage)
+            {
+                outer.errorCalledBack = true;
+            }
         }
     }
 }

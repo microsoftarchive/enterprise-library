@@ -10,12 +10,11 @@
 //===============================================================================
 
 using System;
-using System.Configuration;
 using System.IO;
 using System.Security.Cryptography;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration;
-using Microsoft.Practices.ObjectBuilder2;
+using Microsoft.Practices.ServiceLocation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests
@@ -58,7 +57,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ConfigurationErrorsException))]
+        [ExpectedException(typeof(ActivationException))]
         public void LookupInvalidParmeterNameThrows()
         {
             HashProviderFactory factory = new HashProviderFactory(CreateSource(providerName));
@@ -75,7 +74,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(BuildFailedException))]
+        [ExpectedException(typeof(ActivationException))]
         public void TryToCreateDefaultProviderWithNoneDefinedThrows()
         {
             HashProviderFactory factory = new HashProviderFactory(CreateSource(string.Empty));
@@ -106,7 +105,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests
             settings.DefaultHashProviderName = defaultName;
             settings.HashProviders.Add(new KeyedHashAlgorithmProviderData(providerName, typeof(HMACSHA1), false, keyedHashKeyFile, DataProtectionScope.CurrentUser));
             settings.HashProviders.Add(new HashAlgorithmProviderData(hashAlgorithm, typeof(SHA1Managed), false));
-            sections.Add(CryptographyConfigurationView.SectionName, settings);
+            sections.Add(CryptographySettings.SectionName, settings);
             return sections;
         }
 

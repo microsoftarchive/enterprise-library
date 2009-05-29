@@ -162,17 +162,8 @@
   <data name="ExceptionMustBeAKeyedHashAlgorithm" xml:space="preserve">
     <value>The type must be a KeyedHashAlgorithm.</value>
   </data>
-  <data name="ExceptionNoHashProviderDefined" xml:space="preserve">
-    <value>The hash provider {0} is not defined in the current configuration.</value>
-  </data>
-  <data name="ExceptionNoSymmetricCrytoProviderDefined" xml:space="preserve">
-    <value>The symmetric crypto provider{0} is not defined in the current configuration.</value>
-  </data>
   <data name="ExceptionNullOrEmptyString" xml:space="preserve">
     <value>The value can not be a null or empty string.</value>
-  </data>
-  <data name="ExceptionSectionNotDefined" xml:space="preserve">
-    <value>The configuration section {0} is not defined in the current configuration for the AppDomain.</value>
   </data>
   <data name="HashComparisonFailed" xml:space="preserve">
     <value>The hash comparison failed.</value>

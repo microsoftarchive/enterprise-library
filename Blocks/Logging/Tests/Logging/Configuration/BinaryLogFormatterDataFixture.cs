@@ -30,7 +30,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         public void Given()
         {
             var formatterData = new BinaryLogFormatterData("formatterName");
-            registration = formatterData.GetContainerConfigurationModel();
+            registration = formatterData.GetRegistrations().First();
         }
 
         [TestMethod]

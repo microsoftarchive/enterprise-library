@@ -13,19 +13,16 @@ using System;
 using System.Configuration;
 using System.Diagnostics;
 using System.Linq.Expressions;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
-using Microsoft.Practices.ObjectBuilder2;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 {
     /// <summary>
     /// Represents the configuration settings that describe a <see cref="EmailTraceListener"/>.
     /// </summary>
-    [Assembler(typeof(EmailTraceListenerAssembler))]
     public class EmailTraceListenerData : TraceListenerData
     {
         private const string toAddressProperty = "toAddress";
@@ -233,47 +230,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
                         this.SubjectLineEnder,
                         this.SmtpServer,
                         this.SmtpPort,
-                        Container.ResolvedIfNotNull<ILogFormatter>(this.Formatter));
-        }
-    }
-
-    /// <summary>
-    /// This type supports the Enterprise Library infrastructure and is not intended to be used directly from your code.
-    /// Represents the process to build an <see cref="EmailTraceListener"/> described by a <see cref="EmailTraceListenerData"/> configuration object.
-    /// </summary>
-    /// <remarks>This type is linked to the <see cref="EmailTraceListenerData"/> type and it is used by the <see cref="TraceListenerCustomFactory"/> 
-    /// to build the specific <see cref="TraceListener"/> object represented by the configuration object.
-    /// </remarks>
-    public class EmailTraceListenerAssembler : TraceListenerAsssembler
-    {
-        /// <summary>
-        /// This method supports the Enterprise Library infrastructure and is not intended to be used directly from your code.
-        /// Builds an <see cref="EmailTraceListener"/> based on an instance of <see cref="EmailTraceListenerData"/>.
-        /// </summary>
-        /// <seealso cref="TraceListenerCustomFactory"/>
-        /// <param name="context">The <see cref="IBuilderContext"/> that represents the current building process.</param>
-        /// <param name="objectConfiguration">The configuration object that describes the object to build. Must be an instance of <see cref="EmailTraceListenerData"/>.</param>
-        /// <param name="configurationSource">The source for configuration objects.</param>
-        /// <param name="reflectionCache">The cache to use retrieving reflection information.</param>
-        /// <returns>A fully initialized instance of <see cref="EmailTraceListener"/>.</returns>
-        public override TraceListener Assemble(IBuilderContext context, TraceListenerData objectConfiguration, IConfigurationSource configurationSource, ConfigurationReflectionCache reflectionCache)
-        {
-            EmailTraceListenerData castedObjectConfiguration
-                = (EmailTraceListenerData)objectConfiguration;
-
-            ILogFormatter formatter = GetFormatter(context, castedObjectConfiguration.Formatter, configurationSource, reflectionCache);
-
-            TraceListener createdObject
-                = new EmailTraceListener(
-                    castedObjectConfiguration.ToAddress,
-                    castedObjectConfiguration.FromAddress,
-                    castedObjectConfiguration.SubjectLineStarter,
-                    castedObjectConfiguration.SubjectLineEnder,
-                    castedObjectConfiguration.SmtpServer,
-                    castedObjectConfiguration.SmtpPort,
-                    formatter);
-
-            return createdObject;
+                        Container.ResolvedIfNotNull<ILogFormatter>(this.Formatter),
+                        Container.Resolved<ILoggingInstrumentationProvider>());
         }
     }
 }

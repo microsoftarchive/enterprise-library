@@ -31,62 +31,25 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
     /// </remarks>
     public class BackgroundScheduler : ICacheScavenger
     {
-        private ProducerConsumerQueue inputQueue = new ProducerConsumerQueue();
-        private Thread inputQueueThread;
-        private ExpirationTask expirer;
-        private ScavengerTask scavenger;
-        private bool isActive;
-        private bool running;
-        private CachingInstrumentationProvider instrumentationProvider;
-        private object ignoredScavengeRequestsCountLock = new object();
-        private int ignoredScavengeRequestsCount;
+        private ExpirationTask expirationTask;
+        private ScavengerTask scavengerTask;
+        private ICachingInstrumentationProvider instrumentationProvider;
+
+        private object scavengeExpireLock = new object();
+        private int scavengePending = 0;
 
         /// <summary>
         /// Initialize a new instance of the <see cref="BackgroundScheduler"/> with a <see cref="ExpirationTask"/> and 
         /// a <see cref="ScavengerTask"/>.
         /// </summary>
-        /// <param name="expirer">The expiration task to use.</param>
-        /// <param name="scavenger">The scavenger task to use.</param>
+        /// <param name="expirationTask">The expiration task to use.</param>
+        /// <param name="scavengerTask">The scavenger task to use.</param>
         /// <param name="instrumentationProvider">The instrumentation provider to use.</param>
-        public BackgroundScheduler(ExpirationTask expirer, ScavengerTask scavenger, CachingInstrumentationProvider instrumentationProvider)
+        public BackgroundScheduler(ExpirationTask expirationTask, ScavengerTask scavengerTask, ICachingInstrumentationProvider instrumentationProvider)
         {
-            this.expirer = expirer;
-            this.scavenger = scavenger;
+            this.expirationTask = expirationTask;
+            this.scavengerTask = scavengerTask;
             this.instrumentationProvider = instrumentationProvider;
-            this.ignoredScavengeRequestsCount = 0;
-
-            ThreadStart queueReader = new ThreadStart(QueueReader);
-            inputQueueThread = new Thread(queueReader);
-            inputQueueThread.IsBackground = true;
-        }
-
-        /// <summary>
-        /// Starts the scavenger.
-        /// </summary>
-        public void Start()
-        {
-            running = true;
-            inputQueueThread.Start();
-        }
-
-        /// <summary>
-        /// Stops the scavenger.
-        /// </summary>
-        public void Stop()
-        {
-            running = false;
-            inputQueueThread.Interrupt();
-        }
-
-        /// <summary>
-        /// Determines if the scavenger is active.
-        /// </summary>
-        /// <value>
-        /// <see langword="true"/> if the scavenger is active; otherwise, <see langword="false"/>.
-        /// </value>
-        public bool IsActive
-        {
-            get { return isActive; }
         }
 
         /// <summary>
@@ -95,7 +58,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
         /// <param name="notUsed">Ignored.</param>
         public void ExpirationTimeoutExpired(object notUsed)
         {
-            inputQueue.Enqueue(new ExpirationTimeoutExpiredMsg(this));
+            ThreadPool.QueueUserWorkItem(unused => BackgroundWork(Expire));
         }
 
         /// <summary>
@@ -103,75 +66,51 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
         /// </summary>
         public void StartScavenging()
         {
-            // Despite its name, this method will schedule a scavenge task.
-            // This request will be ignored if the request is superfluous, ie if a previous request
-            // has not been processed yet and the current request would "fit" on it
-
-            bool scheduleRequest = false;
-
-            // This lock is required because by now the Cache would have released the lock for the in-memory 
-            // representation and would only have the lock for the specific item (see Cache.Add()).
-            // The overhead caused by acquiring this lock would be partially offset by avoiding the call to 
-            // ProducerConsumerQueue.Enqueue() in some occasions; how many times this call will be avoided will depend 
-            // on the load: the higher the load the more likely it will be avoided.
-            lock (ignoredScavengeRequestsCountLock)
+            int pendingScavengings = Interlocked.Increment(ref scavengePending);
+            if (pendingScavengings == 1)
             {
-                int currentCount = ignoredScavengeRequestsCount;
-
-                scheduleRequest = currentCount == 0;
-
-                ignoredScavengeRequestsCount = (currentCount + 1) % this.scavenger.NumberOfItemsToBeScavenged;
-            }
-
-            if (scheduleRequest)
-            {
-                inputQueue.Enqueue(new StartScavengingMsg(this));
+                ThreadPool.QueueUserWorkItem(unused => BackgroundWork(Scavenge));
             }
         }
 
-        internal void DoStartScavenging()
+        internal void StartScavengingIfNeeded()
         {
-            lock (ignoredScavengeRequestsCountLock)
+            if (scavengerTask.IsScavengingNeeded())
             {
-                // This will make the next schedule request to be scheduled even if it may not be necessary; the
-                // bookkeeping required to make a more accurate decision is more complex and the outcome cannot 
-                // be 100% reliable.
-                // The lock taken will impact the background scheduler thread only.
-                ignoredScavengeRequestsCount = 0;
-            }
-
-            scavenger.DoScavenging();
+                StartScavenging();
+            }              
         }
 
-        internal void DoExpirationTimeoutExpired()
+        internal void BackgroundWork(Action work)
         {
-            expirer.DoExpirations();
-        }
-
-        private void QueueReader()
-        {
-            isActive = true;
-            while (running)
+            try
             {
-                IQueueMessage msg = inputQueue.Dequeue() as IQueueMessage;
-                try
+                lock (scavengeExpireLock)
                 {
-                    if (msg == null)
-                    {
-                        continue;
-                    }
-
-                    msg.Run();
-                }
-                catch (ThreadInterruptedException)
-                {
-                }
-                catch (Exception e)
-                {
-                    instrumentationProvider.FireCacheFailed(Resources.BackgroundSchedulerProducerConsumerQueueFailure, e);
+                    work();
                 }
             }
-            isActive = false;
+            catch (Exception e)
+            {
+                instrumentationProvider.FireCacheFailed(Resources.BackgroundSchedulerProducerConsumerQueueFailure, e);
+            }
         }
+
+        internal void Scavenge()
+        {
+            int pendingScavengings = Interlocked.Exchange(ref scavengePending, 0);
+            int timesToScavenge = ((pendingScavengings - 1) % scavengerTask.NumberOfItemsToBeScavenged) + 1;
+            while (timesToScavenge > 0)
+            {
+                scavengerTask.DoScavenging();
+                --timesToScavenge;
+            }
+        }
+
+        internal void Expire()
+        {
+            expirationTask.DoExpirations();
+        }
+
     }
 }

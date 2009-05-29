@@ -134,5 +134,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
                 ConfigurationManager.RefreshSection(sectionName);
             }
         }
+
+        /// <summary>
+        /// Retuns an implementation of <see cref="IConfigurationSource"/> that represents the receiver.
+        /// </summary>
+        /// <returns>A <see cref="SystemConfigurationSource"/> source.</returns>
+        protected override IConfigurationSource GetConfigurationSource()
+        {
+            return new SystemConfigurationSource();
+        }
     }
 }

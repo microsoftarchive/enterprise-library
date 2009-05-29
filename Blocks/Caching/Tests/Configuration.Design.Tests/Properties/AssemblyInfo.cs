@@ -9,8 +9,8 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using System;
 using System.Reflection;
-using System.Security.Permissions;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Configuration.Design.Tests;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Configuration.Design;
@@ -20,4 +20,4 @@ using Microsoft.Practices.EnterpriseLibrary.Caching.Configuration.Design;
 [assembly: AssemblyVersion("4.1.0.0")]
 
 [assembly: ConfigurationDesignManager(typeof(MockCacheManagerDataConfigurationDesignManager), typeof(CachingConfigurationDesignManager))]
-
+[assembly: CLSCompliant(false)]

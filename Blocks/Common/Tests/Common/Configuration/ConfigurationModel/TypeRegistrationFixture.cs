@@ -541,6 +541,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
             Assert.AreEqual(typeof(IBar), param.Type);
             Assert.AreEqual(null, param.Value);
         }
+
+        [TestMethod]
+        public void ThenRegistrationLifetimeIsSingleton()
+        {
+            Assert.AreEqual(TypeRegistrationLifetime.Singleton, registration.Lifetime);
+        }
+	
     }
 
     [TestClass]

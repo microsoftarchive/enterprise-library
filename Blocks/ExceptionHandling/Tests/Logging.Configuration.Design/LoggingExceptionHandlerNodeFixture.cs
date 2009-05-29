@@ -59,7 +59,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Config
             data.Severity = severity;
             data.Title = "Title";
             data.LogCategory = "Category1";
-            data.UseDefaultLogger = false;
 
             LoggingExceptionHandlerNode node = new LoggingExceptionHandlerNode(data);
             node.LogCategory = new CategoryTraceSourceNode();
@@ -71,7 +70,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Config
             Assert.AreEqual(data.Severity, node.Severity);
             Assert.AreEqual(data.Title, node.Title);
             Assert.AreEqual(data.LogCategory, node.LogCategory.Name);
-            Assert.AreEqual(data.UseDefaultLogger, node.UseDefaultLogger);
+            
         }
 
         [TestMethod]
@@ -82,7 +81,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Config
             int priority = -1;
             Type formatterType = typeof(Guid);
             TraceEventType severity = TraceEventType.Resume;
-            bool useDefaultLogger = true;
 
             LoggingExceptionHandlerData loggingHandlerData = new LoggingExceptionHandlerData();
             loggingHandlerData.Name = name;
@@ -90,7 +88,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Config
             loggingHandlerData.Priority = priority;
             loggingHandlerData.FormatterType = formatterType;
             loggingHandlerData.Severity = severity;
-            loggingHandlerData.UseDefaultLogger = useDefaultLogger;
 
             LoggingExceptionHandlerNode exceptionHandlerNode = new LoggingExceptionHandlerNode(loggingHandlerData);
             ApplicationNode.AddNode(exceptionHandlerNode);
@@ -101,7 +98,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Config
             Assert.AreEqual(formatterType, nodeData.FormatterType);
             Assert.AreEqual(priority, nodeData.Priority);
             Assert.AreEqual(severity, nodeData.Severity);
-            Assert.AreEqual(useDefaultLogger, nodeData.UseDefaultLogger);
         }
     }
 }

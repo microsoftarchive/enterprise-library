@@ -12,9 +12,6 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
-using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
@@ -23,12 +20,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
     /// <summary>
     /// Represents a policy for handling exceptions.
     /// </summary>
-    [CustomFactory(typeof(ExceptionPolicyCustomFactory))]
-    public class ExceptionPolicyImpl : IInstrumentationEventProvider
+    public class ExceptionPolicyImpl
     {
         private IDictionary<Type, ExceptionPolicyEntry> policyEntries;
-        ExceptionHandlingInstrumentationProvider instrumentationProvider;
-
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ExceptionPolicyImpl"/> class with the policy name and a set of policy entries.
@@ -53,10 +47,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
 
             this.policyEntries = policyEntries;
             this.PolicyName = policyName;
-            this.instrumentationProvider = new ExceptionHandlingInstrumentationProvider();
 
-            InjectPolicyNameIntoEntries(policyName, policyEntries);
-            InjectInstrumentationProviderToEntries(policyEntries);
+            InjectPolicyNameIntoEntries();
         }
 
         /// <summary>
@@ -114,15 +106,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
             return null;
         }
 
-        /// <summary>
-        /// Gets the instrumentation provider that is used to fire instrumentation events for this instance.
-        /// </summary>
-        /// <returns>The <see cref="ExceptionHandlingInstrumentationProvider"/> that is used to fire instrumentation events for this instance.</returns>
-        public object GetInstrumentationEventProvider()
-        {
-            return instrumentationProvider;
-        }
-
         /// <devDoc>
         /// Traverses the specified type's inheritance hiearchy
         /// </devDoc>
@@ -132,7 +115,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
 
             while (exceptionType != typeof(Object))
             {
-                entry = this.GetPolicyEntry(exceptionType);
+                entry = GetPolicyEntry(exceptionType);
 
                 if (entry == null)
                 {
@@ -148,24 +131,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
             return entry;
         }
 
-        private void InjectPolicyNameIntoEntries(string policyName, IDictionary<Type, ExceptionPolicyEntry> policyEntries)
+        private void InjectPolicyNameIntoEntries()
         {
             foreach (ExceptionPolicyEntry entry in policyEntries.Values)
             {
-                entry.PolicyName = policyName;
-            }
-        }
-
-        private void InjectInstrumentationProviderToEntries(IDictionary<Type, ExceptionPolicyEntry> policyEntries)
-        {
-            foreach (ExceptionPolicyEntry entry in policyEntries.Values)
-            {
-                entry.SetInstrumentationProvider(instrumentationProvider);
+                entry.PolicyName = PolicyName;
             }
         }
 
         /// <summary>
-        /// 
+        /// Name of this exception policy.
         /// </summary>
         public string PolicyName { get; private set; }
     }

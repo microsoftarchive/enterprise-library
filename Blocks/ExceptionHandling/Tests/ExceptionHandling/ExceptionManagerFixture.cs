@@ -11,7 +11,6 @@
 
 using System;
 using System.Collections.Generic;
-using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Instrumentation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -20,12 +19,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
     [TestClass]
     public class ExceptionManagerFixture
     {
-        private DefaultExceptionHandlingErrorEventArgs firedEvent;
+        private string policyName;
 
         [TestInitialize]
         public void SetUp()
         {
-            this.firedEvent = null;
+            policyName = null;
             TestExceptionHandler.HandlingNames.Clear();
         }
 
@@ -33,7 +32,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
         [ExpectedException(typeof(ArgumentNullException))]
         public void CreationWithNullPolicyDictionaryThrows()
         {
-            new ExceptionManagerImpl((IDictionary<string, ExceptionPolicyImpl>)null);
+            new ExceptionManagerImpl(null);
         }
 
         [TestMethod]
@@ -60,9 +59,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
         [TestMethod]
         public void HandleWithNonExistingPolicyFiresInstrumentation()
         {
-            ExceptionManager manager = new ExceptionManagerImpl(new Dictionary<string, ExceptionPolicyImpl>());
-            ((DefaultExceptionHandlingInstrumentationProvider)((IInstrumentationEventProvider)manager).GetInstrumentationEventProvider())
-                .exceptionHandlingErrorOccurred += (sender, args) => { firedEvent = args; };
+            ExceptionManager manager = new ExceptionManagerImpl(
+                new Dictionary<string, ExceptionPolicyImpl>(),
+                new TestInstrumentationProvider(this));
+
             try
             {
                 manager.HandleException(new Exception(), "policy");
@@ -70,33 +70,66 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
             }
             catch (ExceptionHandlingException)
             {
-                Assert.IsNotNull(this.firedEvent);
-                Assert.AreEqual("policy", this.firedEvent.PolicyName);
+                Assert.IsNotNull(policyName);
+                Assert.AreEqual("policy", policyName);
+            }
+        }
+
+        private class TestInstrumentationProvider : IDefaultExceptionHandlingInstrumentationProvider
+        {
+            private readonly ExceptionManagerFixture outer;
+
+            /// <summary>
+            /// Initializes a new instance of the <see cref="T:System.Object"/> class.
+            /// </summary>
+            public TestInstrumentationProvider(ExceptionManagerFixture outer)
+            {
+                this.outer = outer;
+            }
+
+            /// <summary>
+            /// Fires the ExceptionHandlingErrorOccurred"/> event.
+            /// </summary>
+            /// <param name="policyName">The name of the policy involved with the error.</param>
+            /// <param name="message">The message that describes the failure.</param>
+            public void FireExceptionHandlingErrorOccurred(string policyName, string message)
+            {
+                outer.policyName = policyName;
             }
         }
 
         [TestMethod]
         public void HandleForwardsHandlingToConfiguredExceptionEntry()
         {
-            Dictionary<string, ExceptionPolicyImpl> policies = new Dictionary<string, ExceptionPolicyImpl>();
-            Dictionary<Type, ExceptionPolicyEntry> policy1Entries = new Dictionary<Type, ExceptionPolicyEntry>();
-            policy1Entries.Add(
-                typeof(ArithmeticException),
-                new ExceptionPolicyEntry(typeof(ArithmeticException), PostHandlingAction.NotifyRethrow, new IExceptionHandler[] { new TestExceptionHandler("handler11") }));
-            policy1Entries.Add(
-                typeof(ArgumentException),
-                new ExceptionPolicyEntry(typeof(ArgumentException), PostHandlingAction.ThrowNewException, new IExceptionHandler[] { new TestExceptionHandler("handler12") }));
-            policy1Entries.Add(
-                typeof(ArgumentOutOfRangeException),
-                new ExceptionPolicyEntry(typeof(ArgumentOutOfRangeException), PostHandlingAction.None, new IExceptionHandler[] { new TestExceptionHandler("handler13") }));
+            var policies = new Dictionary<string, ExceptionPolicyImpl>();
+            var policy1Entries = new Dictionary<Type, ExceptionPolicyEntry>
+            {
+                {
+                    typeof (ArithmeticException),
+                    new ExceptionPolicyEntry(typeof (ArithmeticException),
+                        PostHandlingAction.NotifyRethrow,
+                        new IExceptionHandler[] {new TestExceptionHandler("handler11")})
+                },
+                {
+                    typeof (ArgumentException),
+                    new ExceptionPolicyEntry(typeof (ArgumentException),
+                        PostHandlingAction.ThrowNewException,
+                        new IExceptionHandler[] {new TestExceptionHandler("handler12")})
+                },
+                {
+                    typeof (ArgumentOutOfRangeException),
+                    new ExceptionPolicyEntry(typeof (ArgumentOutOfRangeException),
+                        PostHandlingAction.None,
+                        new IExceptionHandler[] {new TestExceptionHandler("handler13")})
+                }
+            };
+
             policies.Add("policy1", new ExceptionPolicyImpl("policy1", policy1Entries));
 
             ExceptionManager manager = new ExceptionManagerImpl(policies);
 
-            Exception thrownException;
-
             // is the exception rethrown?
-            thrownException = new ArithmeticException();
+            Exception thrownException = new ArithmeticException();
             Assert.IsTrue(manager.HandleException(thrownException, "policy1"));
             Assert.AreEqual(1, TestExceptionHandler.HandlingNames.Count);
             Assert.AreEqual("handler11", TestExceptionHandler.HandlingNames[0]);
@@ -133,26 +166,37 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
         [TestMethod]
         public void HandleWithReturnForwardsHandlingToConfiguredExceptionEntry()
         {
-            Dictionary<string, ExceptionPolicyImpl> policies = new Dictionary<string, ExceptionPolicyImpl>();
-            Dictionary<Type, ExceptionPolicyEntry> policy1Entries = new Dictionary<Type, ExceptionPolicyEntry>();
-            policy1Entries.Add(
-                typeof(ArithmeticException),
-                new ExceptionPolicyEntry(typeof(ArithmeticException), PostHandlingAction.NotifyRethrow, new IExceptionHandler[] { new TestExceptionHandler("handler11") }));
-            policy1Entries.Add(
-                typeof(ArgumentException),
-                new ExceptionPolicyEntry(typeof(ArgumentException), PostHandlingAction.ThrowNewException, new IExceptionHandler[] { new TestExceptionHandler("handler12") }));
-            policy1Entries.Add(
-                typeof(ArgumentOutOfRangeException),
-                new ExceptionPolicyEntry(typeof(ArgumentOutOfRangeException), PostHandlingAction.None, new IExceptionHandler[] { new TestExceptionHandler("handler13") }));
+            var policies = new Dictionary<string, ExceptionPolicyImpl>();
+            var policy1Entries = new Dictionary<Type, ExceptionPolicyEntry>
+            {
+                {
+                    typeof (ArithmeticException),
+                    new ExceptionPolicyEntry(typeof (ArithmeticException),
+                        PostHandlingAction.NotifyRethrow,
+                        new IExceptionHandler[] {new TestExceptionHandler("handler11")})
+                },
+                {
+                    typeof (ArgumentException),
+                    new ExceptionPolicyEntry(typeof (ArgumentException),
+                        PostHandlingAction.ThrowNewException,
+                        new IExceptionHandler[] {new TestExceptionHandler("handler12")})
+                },
+                {
+                    typeof (ArgumentOutOfRangeException),
+                    new ExceptionPolicyEntry(typeof (ArgumentOutOfRangeException),
+                        PostHandlingAction.None,
+                        new IExceptionHandler[] {new TestExceptionHandler("handler13")})
+                }
+            };
+
             policies.Add("policy1", new ExceptionPolicyImpl("policy1", policy1Entries));
 
             ExceptionManager manager = new ExceptionManagerImpl(policies);
 
-            Exception thrownException;
             Exception exceptionToThrow;
 
             // is the exception rethrown?
-            thrownException = new ArithmeticException();
+            Exception thrownException = new ArithmeticException();
             Assert.IsTrue(manager.HandleException(thrownException, "policy1", out exceptionToThrow));
             Assert.IsNull(exceptionToThrow);
             Assert.AreEqual(1, TestExceptionHandler.HandlingNames.Count);
@@ -185,30 +229,38 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
         [TestMethod]
         public void ProcessForwardsHandlingToConfiguredExceptionEntry()
         {
-            Dictionary<string, ExceptionPolicyImpl> policies = new Dictionary<string, ExceptionPolicyImpl>();
-            Dictionary<Type, ExceptionPolicyEntry> policy1Entries = new Dictionary<Type, ExceptionPolicyEntry>();
-            policy1Entries.Add(
-                typeof(ArithmeticException),
-                new ExceptionPolicyEntry(typeof(ArithmeticException), PostHandlingAction.NotifyRethrow, new IExceptionHandler[] { new TestExceptionHandler("handler11") }));
-            policy1Entries.Add(
-                typeof(ArgumentException),
-                new ExceptionPolicyEntry(typeof(ArgumentException), PostHandlingAction.ThrowNewException, new IExceptionHandler[] { new TestExceptionHandler("handler12") }));
-            policy1Entries.Add(
-                typeof(ArgumentOutOfRangeException),
-                new ExceptionPolicyEntry(typeof(ArgumentOutOfRangeException), PostHandlingAction.None, new IExceptionHandler[] { new TestExceptionHandler("handler13") }));
+            var policies = new Dictionary<string, ExceptionPolicyImpl>();
+            var policy1Entries = new Dictionary<Type, ExceptionPolicyEntry>
+            {
+                {
+                    typeof (ArithmeticException),
+                    new ExceptionPolicyEntry(typeof (ArithmeticException),
+                        PostHandlingAction.NotifyRethrow,
+                        new IExceptionHandler[] {new TestExceptionHandler("handler11")})
+                },
+                {
+                    typeof (ArgumentException),
+                    new ExceptionPolicyEntry(typeof (ArgumentException),
+                        PostHandlingAction.ThrowNewException,
+                        new IExceptionHandler[] {new TestExceptionHandler("handler12")})
+                },
+                {
+                    typeof (ArgumentOutOfRangeException),
+                    new ExceptionPolicyEntry(typeof (ArgumentOutOfRangeException),
+                        PostHandlingAction.None,
+                        new IExceptionHandler[] {new TestExceptionHandler("handler13")})
+                }
+            };
             policies.Add("policy1", new ExceptionPolicyImpl("policy1", policy1Entries));
 
             ExceptionManager manager = new ExceptionManagerImpl(policies);
 
-            Exception thrownException;
-
             // is the exception rethrown?
-            thrownException = new ArithmeticException();
+            Exception thrownException = new ArithmeticException();
             try
             {
-                manager.Process(
-                    () => { throw (thrownException); },
-                    "policy1");
+                Exception ex1 = thrownException;
+                manager.Process( () => { throw ex1; }, "policy1");
                 Assert.Fail("should have thrown");
             }
             catch (Exception e)
@@ -223,9 +275,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
             thrownException = new ArgumentException();
             try
             {
-                manager.Process(
-                    () => { throw (thrownException); },
-                    "policy1");
+                Exception ex2 = thrownException;
+                manager.Process(() => { throw ex2; }, "policy1");
                 Assert.Fail("should have thrown");
             }
             catch (Exception e)
@@ -238,9 +289,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
             // is the exception swallowed? action == None
             TestExceptionHandler.HandlingNames.Clear();
             thrownException = new ArgumentOutOfRangeException();
-            manager.Process(
-                () => { throw (thrownException); },
-                "policy1");
+            Exception ex3 = thrownException;
+            manager.Process(() => { throw ex3; }, "policy1");
             Assert.AreEqual(1, TestExceptionHandler.HandlingNames.Count);
             Assert.AreEqual("handler13", TestExceptionHandler.HandlingNames[0]);
 
@@ -274,14 +324,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
         /// </summary>
         public TestExceptionHandler(string name)
         {
-            this.Name = name;
+            Name = name;
         }
 
         public Exception HandleException(Exception exception, Guid handlingInstanceId)
         {
-            HandlingNames.Add(this.Name);
+            HandlingNames.Add(Name);
 
-            Exception newException = new Exception("foo", exception);
+            var newException = new Exception("foo", exception);
 
             return newException;
         }

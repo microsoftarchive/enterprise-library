@@ -13,6 +13,7 @@ using System;
 using System.Security.Permissions;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Design.Tests
 {
@@ -27,7 +28,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Design.Tes
                 ZoneIdentityPermission zoneIdentityPermission = new ZoneIdentityPermission(PermissionState.None);
                 zoneIdentityPermission.Deny();
 
-                Type type = typeof(ExceptionPolicyCustomFactory);
+                Type type = typeof(ExceptionHandlingSettings);
                 object createdObject = Activator.CreateInstance(type);
             }
             finally

@@ -14,7 +14,7 @@ using System.Collections;
 namespace Microsoft.Practices.EnterpriseLibrary.Caching
 {
 	/// <summary>
-	/// Represents a cache operation.
+	/// Represents cache operations.
 	/// </summary>
     public interface ICacheOperations
     {
@@ -30,5 +30,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
 		/// <param name="key">The key of the item to remove.</param>
 		/// <param name="removalReason">One of the <see cref="CacheItemRemovedReason"/> values.</param>
         void RemoveItemFromCache(string key, CacheItemRemovedReason removalReason);
+
+        /// <summary>
+        /// Returns the number of items contained in the cache.
+        /// </summary>
+        int Count { get; }
     }
 }

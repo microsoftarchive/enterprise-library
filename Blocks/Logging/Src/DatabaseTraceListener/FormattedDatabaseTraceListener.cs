@@ -20,6 +20,7 @@ using Microsoft.Practices.EnterpriseLibrary.Logging.Database.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
 using System.Globalization;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database
 {
@@ -40,14 +41,26 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database
 		/// <param name="writeLogStoredProcName">The stored procedure name for writing the log.</param>
 		/// <param name="addCategoryStoredProcName">The stored procedure name for adding a category for this log.</param>
 		/// <param name="formatter">The formatter.</param>        
-		public FormattedDatabaseTraceListener(Data.Database database, string writeLogStoredProcName, string addCategoryStoredProcName, ILogFormatter formatter
-			)
-			: base(formatter)
+		public FormattedDatabaseTraceListener(Data.Database database, string writeLogStoredProcName, string addCategoryStoredProcName, ILogFormatter formatter)
+			: this(database, writeLogStoredProcName, addCategoryStoredProcName, formatter, new NullLoggingInstrumentationProvider())
 		{
-			this.writeLogStoredProcName = writeLogStoredProcName;
-			this.addCategoryStoredProcName = addCategoryStoredProcName;
-			this.database = database;
 		}
+
+        /// <summary>
+        /// Initializes a new instance of <see cref="FormattedDatabaseTraceListener"/>.
+        /// </summary>
+        /// <param name="database">The database for writing the log.</param>
+        /// <param name="writeLogStoredProcName">The stored procedure name for writing the log.</param>
+        /// <param name="addCategoryStoredProcName">The stored procedure name for adding a category for this log.</param>
+        /// <param name="formatter">The formatter.</param>        
+        /// <param name="instrumentationProvider">The instrumentation provider to use.</param>
+        public FormattedDatabaseTraceListener(Data.Database database, string writeLogStoredProcName, string addCategoryStoredProcName, ILogFormatter formatter, ILoggingInstrumentationProvider instrumentationProvider)
+            : base(formatter, instrumentationProvider)
+        {
+            this.writeLogStoredProcName = writeLogStoredProcName;
+            this.addCategoryStoredProcName = addCategoryStoredProcName;
+            this.database = database;
+        }
 
 
 		/// <summary>

@@ -10,14 +10,17 @@
 //===============================================================================
 
 using System;
+using System.Linq;
 using System.Threading;
-using Microsoft.Practices.EnterpriseLibrary.Caching.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Expirations;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Caching.TestSupport.Expirations;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel.Unity;
+using Microsoft.Practices.Unity;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using System.Collections.Generic;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests
 {
@@ -39,7 +42,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests
             callbackReason = CacheItemRemovedReason.Unknown;
             exceptionMessage = "";
 
-            cacheManager = MockCacheManagerFactory.Create("ShortInMemoryPersistence", TestConfigurationSource.GenerateConfiguration());
+            var defaultProvider = TypeRegistrationsProvider.CreateDefaultProvider();
+
+            var registrationProvider = new CompositeTypeRegistrationsProviderLocator(defaultProvider, new RaceConditionSimulatingExpirationTaskRegistrationProvider());
+            
+            IUnityContainer container = new UnityContainer();
+            var configurator = new UnityContainerConfigurator(container);
+            UnityServiceLocator unityServiceLocator = new UnityServiceLocator(container);
+
+            EnterpriseLibraryContainer.ConfigureContainer(registrationProvider, configurator, TestConfigurationSource.GenerateConfiguration());
+
+            cacheManager = (CacheManager)unityServiceLocator.GetInstance<ICacheManager>("ShortInMemoryPersistence");
         }
 
         [TestCleanup]
@@ -183,10 +196,52 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests
             cacheManager.Add("key1", "value1");
         }
 
-        class RaceConditionSimulatingExpirationTask : ExpirationTask
+        private class RaceConditionSimulatingExpirationTaskRegistrationProvider : TypeRegistrationsProvider
+        {
+            public override IEnumerable<TypeRegistration> GetRegistrations(IConfigurationSource configurationSource)
+            {
+                return
+                    new RaceConditionSimulationExpirationTaskTypeRegistrationProvider().GetRegistrations(
+                        configurationSource);
+            }
+
+            private class RaceConditionSimulationExpirationTaskTypeRegistrationProvider : ITypeRegistrationsProvider
+            {
+                #region ITypeRegistrationsProvider Members
+
+                public IEnumerable<TypeRegistration> GetRegistrations(IConfigurationSource configurationSource)
+                {
+                    var registration = new TypeRegistration<ExpirationTask>( 
+                        () => new RaceConditionSimulatingExpirationTask(Container.Resolved<Cache>("ShortInMemoryPersistence"),
+                                                               Container.Resolved<ICachingInstrumentationProvider>("ShortInMemoryPersistence")))
+                                                               {
+                                                                   Name = "ShortInMemoryPersistence"
+                                                               };
+
+                    return new TypeRegistration[] { registration };
+                }
+
+                /// <summary>
+                /// Return the <see cref="TypeRegistration"/> objects needed to reconfigure
+                /// the container after a configuration source has changed.
+                /// </summary>
+                /// <remarks>If there are no reregistrations, return an empty sequence.</remarks>
+                /// <param name="configurationSource">The <see cref="IConfigurationSource"/> containing
+                /// the configuration information.</param>
+                /// <returns>The sequence of <see cref="TypeRegistration"/> objects.</returns>
+                public IEnumerable<TypeRegistration> GetUpdatedRegistrations(IConfigurationSource configurationSource)
+                {
+                    return Enumerable.Empty<TypeRegistration>();
+                }
+
+                #endregion
+            }
+        }
+
+        public class RaceConditionSimulatingExpirationTask : ExpirationTask
         {
             public RaceConditionSimulatingExpirationTask(ICacheOperations cacheOperations,
-                                                         CachingInstrumentationProvider instrumentationProvider)
+                                                         ICachingInstrumentationProvider instrumentationProvider)
                 : base(cacheOperations, instrumentationProvider) { }
 
             public override void PrepareForSweep()
@@ -202,36 +257,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests
                         exceptionMessage = e.Message;
                     }
                 }
-            }
-        }
-
-        static class MockCacheManagerFactory
-        {
-            public static CacheManager Create(string name,
-                                              IConfigurationSource configurationSource)
-            {
-                CachingConfigurationView configurationView = new CachingConfigurationView(configurationSource);
-                CacheManagerData objectConfiguration = (CacheManagerData)configurationView.GetCacheManagerData(name);
-
-                IBackingStore backingStore =
-                    EnterpriseLibraryFactory.BuildUp<IBackingStore>(objectConfiguration.CacheStorage, configurationSource);
-
-                return new MockCacheManagerFactoryHelper().BuildCacheManager(
-                    name,
-                    backingStore,
-                    objectConfiguration.MaximumElementsInCacheBeforeScavenging,
-                    objectConfiguration.NumberToRemoveWhenScavenging,
-                    objectConfiguration.ExpirationPollFrequencyInSeconds,
-                    new CachingInstrumentationProvider());
-            }
-        }
-
-        class MockCacheManagerFactoryHelper : CacheManagerFactoryHelper
-        {
-            public override ExpirationTask CreateExpirationTask(ICacheOperations cacheOperations,
-                                                                            CachingInstrumentationProvider instrumentationProvider)
-            {
-                return new RaceConditionSimulatingExpirationTask(cacheOperations, instrumentationProvider);
             }
         }
 

@@ -10,6 +10,7 @@
 //===============================================================================
 
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
@@ -84,9 +85,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Config
                 handlerName111, handlerCategory111, 100, TraceEventType.Information, handlerMessage111,
                 typeof (ExceptionFormatter), 101);
 
-            var registration = handlerData.GetContainerConfigurationModel("prefix");
+            var registration = handlerData.GetRegistrations("prefix").First();
 
-            registration.AssertForServiceType(typeof (IExceptionHandler))
+            registration.AssertForServiceType(typeof(IExceptionHandler))
                 .ForName("prefix." + handlerName111)
                 .ForImplementationType(typeof (LoggingExceptionHandler));
 

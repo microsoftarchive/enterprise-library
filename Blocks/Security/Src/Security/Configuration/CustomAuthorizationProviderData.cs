@@ -13,17 +13,17 @@ using System;
 using System.Collections.Specialized;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Unity;
+using System.Linq.Expressions;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using System.Collections.Generic;
+using Microsoft.Practices.EnterpriseLibrary.Security.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration
 {
 	/// <summary>
 	/// Configuration object for Custom Providers.
 	/// </summary>
-	[Assembler(
-		typeof (CustomProviderAssembler<IAuthorizationProvider, AuthorizationProviderData, CustomAuthorizationProviderData>))]
-	[ContainerPolicyCreator(typeof (CustomProviderPolicyCreator<CustomAuthorizationProviderData>))]
 	public class CustomAuthorizationProviderData
 		: AuthorizationProviderData, IHelperAssistedCustomConfigurationData<CustomAuthorizationProviderData>
 	{
@@ -176,5 +176,25 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration
 		{
 			return base.IsModified();
 		}
-	}
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public override IEnumerable<TypeRegistration> GetRegistrations(IConfigurationSource configurationSource)
+        {
+            //missing type is handled by configuration system.
+
+            if (!typeof(IAuthorizationProvider).IsAssignableFrom(this.Type))
+            {
+                throw new ConfigurationErrorsException(string.Format(Resources.Culture, Resources.ExceptionTypeForCustomAuthProviderMustDeriveFrom, Name, this.Type.FullName)); 
+            }
+
+            yield return new TypeRegistration(
+                RegistrationExpressionBuilder.BuildExpression(this.Type, Attributes),
+                typeof(IAuthorizationProvider)) { Name = this.Name };
+
+            
+        }
+    }
 }

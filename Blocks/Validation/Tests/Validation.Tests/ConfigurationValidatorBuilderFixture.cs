@@ -32,7 +32,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         {
             mockFactory = new MockMemberAccessValidatorBuilderFactory();
             configurationSource = new DictionaryConfigurationSource();
-            builder = new ConfigurationValidatorBuilder(configurationSource, mockFactory);
+            builder = ConfigurationValidatorBuilder.FromConfiguration(configurationSource, mockFactory);
         }
 
         [TestMethod]
@@ -580,7 +580,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
             methodReference2.Validators.Add(new MockValidatorData("validator2", false));
             methodReference2.Validators.Get("validator2").MessageTemplate = "validator 2 message";
 
-            Validator validator = builder.CreateValidator(typeof(TestClass), "ruleset1");
+            // Note: Use a local builder here since the assumption was made about how and when the
+            //       the builder uses the configuration source....
+            var localBuilder = ConfigurationValidatorBuilder.FromConfiguration(configurationSource,mockFactory);
+            Validator validator = localBuilder.CreateValidator(typeof(TestClass), "ruleset1");
 
             Assert.IsNotNull(validator);
             Assert.AreSame(typeof(ValueAccessValidator), validator.GetType());
@@ -608,7 +611,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
             methodReference2.Validators.Add(new MockValidatorData("validator2", false));
             methodReference2.Validators.Get("validator2").MessageTemplate = "validator 2 message";
 
-            Validator validator = builder.CreateValidator(typeof(TestClass), string.Empty);
+            // Note: Use a local builder here since the assumption was made about how and when the
+            //       the builder uses the configuration source....
+            var localBuilder = ConfigurationValidatorBuilder.FromConfiguration(configurationSource, mockFactory);
+            Validator validator = localBuilder.CreateValidator(typeof(TestClass), string.Empty);
 
             Assert.IsNotNull(validator);
             Assert.AreSame(typeof(ValueAccessValidator), validator.GetType());
@@ -635,7 +641,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
             methodReference2.Validators.Add(new MockValidatorData("validator2", false));
             methodReference2.Validators.Get("validator2").MessageTemplate = "validator 2 message";
 
-            Validator validator = builder.CreateValidator(typeof(TestClass), "ruleset1");
+            // Note: Use a local builder here since the assumption was made about how and when the
+            //       the builder uses the configuration source....
+            var localBuilder = ConfigurationValidatorBuilder.FromConfiguration(configurationSource, mockFactory);
+            Validator validator = localBuilder.CreateValidator(typeof(TestClass), "ruleset1");
 
             Assert.IsNotNull(validator);
             Assert.AreSame(typeof(ValueAccessValidator), validator.GetType());
@@ -701,7 +710,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
             ruleDataB.Validators.Add(new MockValidatorData("validator2", false));
             ruleDataB.Validators.Get("validator2").MessageTemplate = "Message1-RuleB";
 
-            Validator validator = builder.CreateValidator(typeof(TestClass), "RuleA");
+            // Note: Use a local builder here since the assumption was made about how and when the
+            //       the builder uses the configuration source....
+            var localBuilder = ConfigurationValidatorBuilder.FromConfiguration(configurationSource, mockFactory);
+            Validator validator = localBuilder.CreateValidator(typeof(TestClass), "RuleA");
             Assert.IsNotNull(validator);
             CompositeValidatorBuilder compositeValidatorBuilder = mockFactory.requestedTypes["TestClass"];
 

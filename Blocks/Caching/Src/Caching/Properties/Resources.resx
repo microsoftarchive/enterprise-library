@@ -153,12 +153,6 @@
   <data name="CacheNotInitializedException" xml:space="preserve">
     <value>Add called without setting BackgroundScheduler.</value>
   </data>
-  <data name="UnableToFindCacheManagerInstance" xml:space="preserve">
-    <value>Cannot find CacheManager instance name {0}</value>
-  </data>
-  <data name="ExceptionBackingStoreNotDefined" xml:space="preserve">
-    <value>The backing store {0} is not defined in configuration.</value>
-  </data>
   <data name="InvalidExpirationPollCycleTime" xml:space="preserve">
     <value>Expiration poll cycle time must be at least 1 second.</value>
   </data>
@@ -167,9 +161,6 @@
   </data>
   <data name="ExceptionStorageAreaNullOrEmpty" xml:space="preserve">
     <value>The storage are name for the Isolated Storage Backing Store can not be null or an empty string.</value>
-  </data>
-  <data name="ExceptionEncryptionProviderNotDefined" xml:space="preserve">
-    <value>The encryption provider {0} is not defined in configuration.</value>
   </data>
   <data name="FailureToRemoveCacheItemInBackground" xml:space="preserve">
     <value>Failure while removing item from cache in background.</value>
@@ -243,10 +234,16 @@
   <data name="TotalCacheUpdatedEntriesHelpResource" xml:space="preserve">
     <value>Total Updated Entries is the total number of items updated in the cache. An update can be either an "add" or a "remove".</value>
   </data>
-  <data name="MissingSection" xml:space="preserve">
-    <value>The "cachingConfiguration" section is not available in the supplied configuration source.</value>
+  <data name="ExceptionMethodMustBeImplementedBySubclasses" xml:space="preserve">
+    <value>Must be implemented by subclasses.</value>
   </data>
-  <data name="NoDefaultCacheManager" xml:space="preserve">
-    <value>There is no default cache manager defined in the &amp;quot;cachingConfiguration&amp;quot; section available in the supplied configuration source.</value>
+  <data name="ExceptionTypeForCustomCacheManagerMustDeriveFrom" xml:space="preserve">
+    <value>The Custom Cache Manager '{0}' with Type '{1}' must derive from ICacheManager.</value>
+  </data>
+  <data name="ExceptionTypeForCustomBackingStoreMustDeriveFrom" xml:space="preserve">
+    <value>The Custom Backing Store '{0}' with Type '{1}' must derive from IBackingStore.</value>
+  </data>
+  <data name="ExceptionBackingStoresWithNonDefaultConstructorsShouldOverrideGetRegistrations" xml:space="preserve">
+    <value>Backing Stores with non-default constructors should override GetRegistrations().</value>
   </data>
 </root>

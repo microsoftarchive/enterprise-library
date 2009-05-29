@@ -23,7 +23,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration.Unit
 	[TestClass]
 	public class FormattersPolicyCreationFixture
 	{
-		private IUnityContainer container;
 		private LoggingSettings loggingSettings;
 		private DictionaryConfigurationSource configurationSource;
 
@@ -33,17 +32,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration.Unit
 			loggingSettings = new LoggingSettings();
 			configurationSource = new DictionaryConfigurationSource();
 			configurationSource.Add(LoggingSettings.SectionName, loggingSettings);
-
-			container = new UnityContainer();
-
-			container.AddExtension(new EnterpriseLibraryCoreExtension(configurationSource));
 		}
 
-		[TestCleanup]
-		public void TearDown()
-		{
-			container.Dispose();
-		}
+        private IUnityContainer CreateContainer()
+        {
+            return new UnityContainer()
+                .AddExtension(new EnterpriseLibraryCoreExtension(configurationSource));
+        }
 
 		[TestMethod]
 		public void CanCreatePoliciesForTextFormatter()
@@ -51,12 +46,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration.Unit
 			FormatterData data = new TextFormatterData("name", "template");
 			loggingSettings.Formatters.Add(data);
 
-			container.AddExtension(new LoggingBlockExtension());
+		    using (var container = CreateContainer())
+		    {
+		        TextFormatter createdObject = (TextFormatter)container.Resolve<ILogFormatter>("name");
 
-			TextFormatter createdObject = (TextFormatter)container.Resolve<ILogFormatter>("name");
-
-			Assert.IsNotNull(createdObject);
-			Assert.AreEqual("template", createdObject.Template);
+		        Assert.IsNotNull(createdObject);
+		        Assert.AreEqual("template", createdObject.Template);
+		    }
 		}
 
 		[TestMethod]
@@ -65,11 +61,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration.Unit
 			FormatterData data = new BinaryLogFormatterData("name");
 			loggingSettings.Formatters.Add(data);
 
-			container.AddExtension(new LoggingBlockExtension());
+		    using (var container = CreateContainer())
+		    {
+		        BinaryLogFormatter createdObject = (BinaryLogFormatter)container.Resolve<ILogFormatter>("name");
 
-			BinaryLogFormatter createdObject = (BinaryLogFormatter)container.Resolve<ILogFormatter>("name");
-
-			Assert.IsNotNull(createdObject);
+		        Assert.IsNotNull(createdObject);
+		    }
 		}
 
 		[TestMethod]
@@ -79,12 +76,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration.Unit
 			data.Attributes.Add(MockCustomLogFormatter.AttributeKey, "attribute value");
 			loggingSettings.Formatters.Add(data);
 
-			container.AddExtension(new LoggingBlockExtension());
+		    using (var container = CreateContainer())
+		    {
+		        MockCustomLogFormatter createdObject = (MockCustomLogFormatter)container.Resolve<ILogFormatter>("name");
 
-			MockCustomLogFormatter createdObject = (MockCustomLogFormatter)container.Resolve<ILogFormatter>("name");
-
-			Assert.IsNotNull(createdObject);
-			Assert.AreEqual("attribute value", createdObject.customValue);
+		        Assert.IsNotNull(createdObject);
+		        Assert.AreEqual("attribute value", createdObject.customValue);
+		    }
 		}
 	}
 }

@@ -12,18 +12,16 @@
 using System;
 using System.Collections.Specialized;
 using System.Configuration;
-using System.Linq.Expressions;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Filters;
+using System.Collections.Generic;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 {
     /// <summary>
     /// Configuration data for custom log filters. 
     /// </summary>
-    [Assembler(typeof(CustomProviderAssembler<ILogFilter, LogFilterData, CustomLogFilterData>))]
     public class CustomLogFilterData
         : LogFilterData, IHelperAssistedCustomConfigurationData<CustomLogFilterData>
     {
@@ -174,9 +172,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// 
         /// </summary>
         /// <returns></returns>
-        public override TypeRegistration GetContainerConfigurationModel()
+        public override IEnumerable<TypeRegistration> GetRegistrations()
         {
-            return
+            yield return
                    new TypeRegistration(
                        RegistrationExpressionBuilder.BuildExpression(this.Type, Attributes),
                         typeof(ILogFilter))

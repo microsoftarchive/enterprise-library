@@ -14,6 +14,7 @@ using System.Reflection;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation;
+using Microsoft.Practices.EnterpriseLibrary.Validation.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 using Microsoft.Practices.Unity.InterceptionExtension;
 
@@ -26,9 +27,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
     [ConfigurationElementType(typeof(ValidationCallHandlerData))]
     public class ValidationCallHandler : ICallHandler
     {
-        string ruleSet;
-        SpecificationSource specificationSource;
-        private int order = 0;
+        private readonly string ruleSet;
+        private readonly ValidatorFactory validatorFactory;
+        private int order;
 
         /// <summary>
         /// Creates a <see cref="ValidationCallHandler"/> that uses the given
@@ -37,10 +38,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
         /// <param name="ruleSet">Validation ruleset as specified in configuration.</param>
         /// <param name="specificationSource">Should the validation come from config, attributes, or both?</param>
         public ValidationCallHandler(string ruleSet, SpecificationSource specificationSource)
-        {
-            this.ruleSet = ruleSet;
-            this.specificationSource = specificationSource;
-        }
+            : this(ruleSet, specificationSource, 0)
+        { }
 
         /// <summary>
         /// Creates a <see cref="ValidationCallHandler"/> that uses the given
@@ -50,9 +49,21 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
         /// <param name="specificationSource">Should the validation come from config, attributes, or both?</param>
         /// <param name="handlerOrder">Order of the handler</param>
         public ValidationCallHandler(string ruleSet, SpecificationSource specificationSource, int handlerOrder)
+            : this(ruleSet, GetValidatorFactory(specificationSource), handlerOrder)
+        { }
+
+        /// <summary>
+        /// Creates a <see cref="ValidationCallHandler"/> that uses the given
+        /// ruleset and <see cref="ValidatorFactory"/> to get the validation rules.
+        /// </summary>
+        /// <param name="ruleSet">Validation ruleset as specified in configuration.</param>
+        /// <param name="validatorFactory">The <see cref="ValidatorFactory"/> to use when building the validator for the 
+        /// type of a parameter, or <see langword="null"/> if no such validator is desired.</param>
+        /// <param name="handlerOrder">Order of the handler</param>
+        public ValidationCallHandler(string ruleSet, ValidatorFactory validatorFactory, int handlerOrder)
         {
             this.ruleSet = ruleSet;
-            this.specificationSource = specificationSource;
+            this.validatorFactory = validatorFactory;
             this.order = handlerOrder;
         }
 
@@ -113,15 +124,29 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
 
         private Validator CreateValidator(Type type)
         {
+            return this.validatorFactory != null ? this.validatorFactory.CreateValidator(type, this.ruleSet) : null;
+        }
+
+        private static ValidatorFactory GetValidatorFactory(SpecificationSource specificationSource)
+        {
+            if (specificationSource == SpecificationSource.ParameterAttributesOnly)
+            {
+                return null;
+            }
+
+            var configurationSource = ConfigurationSourceFactory.Create();
+            var instrumentationProvider = ValidationInstrumentationProvider.FromConfigurationSource(configurationSource);
             switch (specificationSource)
             {
                 case SpecificationSource.Both:
-                    return ValidationFactory.CreateValidator(type, ruleSet);
+                    return new CompositeValidatorFactory(
+                        instrumentationProvider,
+                        new AttributeValidatorFactory(instrumentationProvider),
+                        new ConfigurationValidatorFactory(configurationSource, instrumentationProvider));
                 case SpecificationSource.Attributes:
-                    return ValidationFactory.CreateValidatorFromAttributes(type, ruleSet);
+                    return new AttributeValidatorFactory(instrumentationProvider);
                 case SpecificationSource.Configuration:
-                    return ValidationFactory.CreateValidatorFromConfiguration(type, ruleSet);
-                case SpecificationSource.ParameterAttributesOnly:
+                    return new ConfigurationValidatorFactory(configurationSource, instrumentationProvider);
                 default:
                     return null;
             }
@@ -139,12 +164,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
         }
 
         /// <summary>
-        /// Source for validation information.
+        /// Factory used to build validators.
         /// </summary>
-        /// <value>validation source.</value>
-        public SpecificationSource SpecificationSource
+        public ValidatorFactory ValidatorFactory
         {
-            get { return specificationSource; }
+            get { return this.validatorFactory; }
         }
 
         #endregion

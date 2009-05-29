@@ -13,16 +13,14 @@ using System;
 using System.Collections.Specialized;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Unity;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using System.Collections.Generic;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
 {
 	/// <summary>
 	/// Configuration object for Custom Providers.
 	/// </summary>
-	[Assembler(typeof(CustomProviderAssembler<ICacheManager, CacheManagerDataBase, CustomCacheManagerData>))]
-	[ContainerPolicyCreator(typeof(CustomProviderPolicyCreator<CustomCacheManagerData>))]
 	public class CustomCacheManagerData
 		: CacheManagerDataBase, IHelperAssistedCustomConfigurationData<CustomCacheManagerData>
 	{
@@ -168,5 +166,27 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
 		{
 			return base.IsModified();
 		}
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public override IEnumerable<TypeRegistration> GetRegistrations(IConfigurationSource configurationSource)
+        {
+            if (!typeof(ICacheManager).IsAssignableFrom(this.Type))
+            {
+                throw new ConfigurationErrorsException(string.Format(Caching.Properties.Resources.Culture, Caching.Properties.Resources.ExceptionTypeForCustomCacheManagerMustDeriveFrom, Name, this.Type.FullName));
+            }
+
+            TypeRegistration customCacheManagerRegistration = new TypeRegistration(
+                RegistrationExpressionBuilder.BuildExpression(this.Type, Attributes),
+                typeof(ICacheManager)) 
+                { 
+                    Name = this.Name
+                };
+
+            return new TypeRegistration[]{customCacheManagerRegistration};
+            
+        }
 	}
 }

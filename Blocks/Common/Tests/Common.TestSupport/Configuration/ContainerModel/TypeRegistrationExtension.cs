@@ -22,7 +22,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration
     {
         public static IAssertName AssertForServiceType(this TypeRegistration typeRegistration, Type serviceType)
         {
-            Assert.AreSame(serviceType, typeRegistration.ServiceType);
+            Assert.AreEqual(serviceType, typeRegistration.ServiceType);
 
             return new TypeRegistrationAssertion(typeRegistration);
         }
@@ -59,8 +59,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration
             public IAssertConstructor WithValueConstructorParameter<T>(T parameterValue)
             {
                 CheckConstantParameterValue<T>(
-                    _registration.ConstructorParameters.ElementAt(_currentParameterIndex++),
-                    parameterValue);
+                    _registration.ConstructorParameters.ElementAt(_currentParameterIndex),
+                    parameterValue,
+                    "parameter " + _currentParameterIndex++);
 
                 return this;
             }
@@ -68,8 +69,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration
             public IAssertConstructor WithValueConstructorParameter<T>(out T parameterValue)
             {
                 CheckConstantParameterValue<T>(
-                    _registration.ConstructorParameters.ElementAt(_currentParameterIndex++),
-                    out parameterValue);
+                    _registration.ConstructorParameters.ElementAt(_currentParameterIndex),
+                    out parameterValue,
+                    "parameter " + _currentParameterIndex++);
 
                 return this;
             }
@@ -77,8 +79,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration
             public IAssertConstructor WithContainerResolvedEnumerableConstructorParameter<T>(string[] names)
             {
                 CheckContainerResolvedEnumerableParameterValue<T>(
-                    _registration.ConstructorParameters.ElementAt(_currentParameterIndex++),
-                    names);
+                    _registration.ConstructorParameters.ElementAt(_currentParameterIndex),
+                    names,
+                    "parameter " + _currentParameterIndex++);
+
+                return this;
+            }
+
+            public IAssertConstructor WithContainerResolvedEnumerableConstructorParameter<T>(out string[] names)
+            {
+                CheckContainerResolvedEnumerableParameterValue<T>(
+                    _registration.ConstructorParameters.ElementAt(_currentParameterIndex),
+                    out names,
+                    "parameter " + _currentParameterIndex++);
 
                 return this;
             }
@@ -86,15 +99,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration
             public IAssertConstructor WithContainerResolvedParameter<T>(string name)
             {
                 CheckContainerResolvedParameterValue<T>(
-                    _registration.ConstructorParameters.ElementAt(_currentParameterIndex++),
-                    name);
+                    _registration.ConstructorParameters.ElementAt(_currentParameterIndex),
+                    name,
+                    "parameter " + _currentParameterIndex++);
 
                 return this;
             }
 
             public IAssertName ForImplementationType(Type implementationType)
             {
-                Assert.AreSame(implementationType, _registration.ImplementationType);
+                Assert.AreEqual(implementationType, _registration.ImplementationType);
 
                 return this;
             }
@@ -108,7 +122,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration
             {
                 CheckConstantParameterValue<T>(
                     GetInjectedProperty(propertyName).PropertyValue,
-                    parameterValue);
+                    parameterValue,
+                    "property " + propertyName);
 
                 return this;
             }
@@ -117,7 +132,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration
             {
                 CheckConstantParameterValue<T>(
                     GetInjectedProperty(propertyName).PropertyValue,
-                    out parameterValue);
+                    out parameterValue,
+                    "property " + propertyName);
 
                 return this;
             }
@@ -126,7 +142,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration
             {
                 CheckContainerResolvedEnumerableParameterValue<T>(
                     GetInjectedProperty(propertyName).PropertyValue,
-                    names);
+                    names,
+                    "property " + propertyName);
 
                 return this;
             }
@@ -135,7 +152,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration
             {
                 CheckContainerResolvedParameterValue<T>(
                     GetInjectedProperty(propertyName).PropertyValue,
-                    name);
+                    name,
+                    "property " + propertyName);
 
                 return this;
             }
@@ -160,36 +178,65 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration
                 return _registration.InjectedProperties.First(p => p.PropertyName == propertyName);
             }
 
-            private static void CheckConstantParameterValue<T>(ParameterValue parameterValue, T value)
+            private static void CheckConstantParameterValue<T>(ParameterValue parameterValue, T value, string description)
             {
-                var constantParameterValue = (ConstantParameterValue)parameterValue;
+                var constantParameterValue =
+                    GetCheckedParameterValue<ConstantParameterValue>(parameterValue, description);
 
-                Assert.AreSame(typeof(T), constantParameterValue.Type);
-                Assert.AreEqual(value, constantParameterValue.Value);
+                Assert.AreEqual(typeof(T), constantParameterValue.Type, description);
+                Assert.AreEqual(value, constantParameterValue.Value, description);
             }
 
-            private static void CheckConstantParameterValue<T>(ParameterValue parameterValue, out T value)
+            private static void CheckConstantParameterValue<T>(ParameterValue parameterValue, out T value, string description)
             {
-                var constantParameterValue = (ConstantParameterValue)parameterValue;
+                var constantParameterValue =
+                    GetCheckedParameterValue<ConstantParameterValue>(parameterValue, description);
 
-                Assert.IsTrue(typeof(T).IsAssignableFrom(constantParameterValue.Type));
+                Assert.IsTrue(typeof(T).IsAssignableFrom(constantParameterValue.Type), description);
                 value = (T)constantParameterValue.Value;
             }
 
-            private void CheckContainerResolvedEnumerableParameterValue<T>(ParameterValue parameterValue, string[] names)
+            private void CheckContainerResolvedEnumerableParameterValue<T>(ParameterValue parameterValue, string[] names, string description)
             {
-                var containerResolvedEnumerableParameter = (ContainerResolvedEnumerableParameter)parameterValue;
+                var containerResolvedEnumerableParameter =
+                    GetCheckedParameterValue<ContainerResolvedEnumerableParameter>(parameterValue, description);
 
-                Assert.AreEqual(typeof(IEnumerable<T>), containerResolvedEnumerableParameter.Type);
-                CollectionAssert.AreEqual(names, new List<string>(containerResolvedEnumerableParameter.Names));
+                Assert.AreEqual(typeof(IEnumerable<T>), containerResolvedEnumerableParameter.Type, description);
+                CollectionAssert.AreEqual(names, new List<string>(containerResolvedEnumerableParameter.Names), description);
             }
 
-            private void CheckContainerResolvedParameterValue<T>(ParameterValue parameterValue, string name)
+            private void CheckContainerResolvedEnumerableParameterValue<T>(ParameterValue parameterValue, out string[] names, string description)
             {
-                var containerResolvedParameter = (ContainerResolvedParameter)parameterValue;
+                var containerResolvedEnumerableParameter =
+                    GetCheckedParameterValue<ContainerResolvedEnumerableParameter>(parameterValue, description);
 
-                Assert.AreEqual(typeof(T), containerResolvedParameter.Type);
-                Assert.AreEqual(name, containerResolvedParameter.Name);
+                Assert.AreEqual(typeof(IEnumerable<T>), containerResolvedEnumerableParameter.Type, description);
+                names = containerResolvedEnumerableParameter.Names.ToArray();
+            }
+
+            private void CheckContainerResolvedParameterValue<T>(ParameterValue parameterValue, string name, string description)
+            {
+                var containerResolvedParameter =
+                    GetCheckedParameterValue<ContainerResolvedParameter>(parameterValue, description);
+
+                Assert.AreEqual(typeof(T), containerResolvedParameter.Type, description);
+                Assert.AreEqual(name, containerResolvedParameter.Name, description);
+            }
+
+            private static T GetCheckedParameterValue<T>(ParameterValue parameterValue, string description)
+                where T : ParameterValue
+            {
+                var containerResolvedParameter = parameterValue as T;
+                if (containerResolvedParameter == null)
+                {
+                    Assert.Fail(
+                        string.Format(
+                            "Invalid type for {2}: expected {0} but got {1}",
+                            typeof(T).Name,
+                            parameterValue.GetType().Name,
+                            description));
+                }
+                return containerResolvedParameter;
             }
         }
 
@@ -204,6 +251,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration
             IAssertConstructor WithValueConstructorParameter<T>(T parameterValue);
             IAssertConstructor WithValueConstructorParameter<T>(out T parameterValue);
             IAssertConstructor WithContainerResolvedEnumerableConstructorParameter<T>(string[] names);
+            IAssertConstructor WithContainerResolvedEnumerableConstructorParameter<T>(out string[] names);
             IAssertConstructor WithContainerResolvedParameter<T>(string name);
             void VerifyConstructorParameters();
         }

@@ -38,11 +38,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
             settings.SymmetricCryptoProviders.Add(new CustomSymmetricCryptoProviderData(name3, typeof(MockCustomSymmetricProvider)));
 
             IDictionary<string, ConfigurationSection> sections = new Dictionary<string, ConfigurationSection>();
-            sections[CryptographyConfigurationView.SectionName] = settings;
+            sections[CryptographySettings.SectionName] = settings;
             IConfigurationSource configurationSource
                 = ConfigurationTestHelper.SaveSectionsInFileAndReturnConfigurationSource(sections);
 
-            CryptographySettings roSettings = (CryptographySettings)configurationSource.GetSection(CryptographyConfigurationView.SectionName);
+            CryptographySettings roSettings = (CryptographySettings)configurationSource.GetSection(CryptographySettings.SectionName);
 
             Assert.IsNotNull(roSettings);
             Assert.AreEqual(name1, roSettings.DefaultSymmetricCryptoProviderName);

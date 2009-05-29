@@ -9,9 +9,6 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
-using Microsoft.Practices.EnterpriseLibrary.Caching.Configuration;
-
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.BackingStoreImplementations
 {
     /// <summary>
@@ -19,7 +16,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.BackingStoreImplementati
     /// to Isolated and Database backing stores.  Allows this block to use 
     /// Security.Cryptography without having a direct reference to that assembly.
     /// </summary>
-	[CustomFactory(typeof(StorageEncryptionProviderCustomFactory))]
     public interface IStorageEncryptionProvider 
     {
         /// <summary>

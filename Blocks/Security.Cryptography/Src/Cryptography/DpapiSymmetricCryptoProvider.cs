@@ -12,6 +12,9 @@
 using System.Security.Cryptography;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Instrumentation;
+using System;
+using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography
 {
@@ -23,24 +26,49 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography
     {		
 		private DataProtectionScope protectionScope;
 		private byte[] entropy;
+        private ISymmetricAlgorithmInstrumentationProvider instrumentationProvider;
+
+        /// <summary>
+        /// <para>Initialize a new instance of the <see cref="DpapiSymmetricCryptoProvider"/></para>
+        /// </summary>
+        /// <param name="scope"><para>One of the <see cref="DataProtectionScope"/> values.</para></param>
+        /// <param name="entropy"><para>The entropy to salt the phrase.</para></param>
+        public DpapiSymmetricCryptoProvider(DataProtectionScope scope, byte[] entropy)
+            :this(scope, entropy, new NullSymmetricAlgorithmInstrumentationProvider())
+        {
+        }
+
+        /// <summary>
+        /// <para>Initialize a new instance of the <see cref="DpapiSymmetricCryptoProvider"/></para>
+        /// </summary>
+        /// <param name="scope"><para>One of the <see cref="DataProtectionScope"/> values.</para></param>
+        public DpapiSymmetricCryptoProvider(DataProtectionScope scope)
+            : this(scope, null, new NullSymmetricAlgorithmInstrumentationProvider())
+        {
+        }
 
 		/// <summary>
 		/// <para>Initialize a new instance of the <see cref="DpapiSymmetricCryptoProvider"/></para>
 		/// </summary>
 		/// <param name="scope"><para>One of the <see cref="DataProtectionScope"/> values.</para></param>
 		/// <param name="entropy"><para>The entropy to salt the phrase.</para></param>
-		public DpapiSymmetricCryptoProvider(DataProtectionScope scope, byte[] entropy)
+        /// <param name="instrumentationProvider">Instrumentation provider to use.</param>
+		public DpapiSymmetricCryptoProvider(DataProtectionScope scope, byte[] entropy, ISymmetricAlgorithmInstrumentationProvider instrumentationProvider)
 		{
+            if (instrumentationProvider == null) throw new ArgumentNullException("instrumentationProvider");
+
 			this.protectionScope = scope;
 			this.entropy = entropy;
+            this.instrumentationProvider = instrumentationProvider;
 		}
 
 		/// <summary>
 		/// <para>Initialize a new instance of the <see cref="DpapiSymmetricCryptoProvider"/></para>
 		/// </summary>
 		/// <param name="scope"><para>One of the <see cref="DataProtectionScope"/> values.</para></param>
-		public DpapiSymmetricCryptoProvider(DataProtectionScope scope)
-			: this(scope, null)
+        /// <param name="instrumentationProvider">Instrumentation provider to use.</param>
+        public DpapiSymmetricCryptoProvider(DataProtectionScope scope, ISymmetricAlgorithmInstrumentationProvider instrumentationProvider)
+            : this(scope, null, instrumentationProvider)
 		{
 		}
 
@@ -60,10 +88,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography
         /// <seealso cref="ISymmetricCryptoProvider.Encrypt"/>
 		public byte[] Encrypt(byte[] plaintext)
         {
-			byte[] result = DpapiCrytographer.Encrypt(plaintext, entropy);
-			// INSTRUMENTATION
-			//SecurityCryptoSymmetricEncryptionEvent.Fire(string.Empty);
-            return result;
+            try
+            {
+                byte[] result = DpapiCrytographer.Encrypt(plaintext, entropy);
+                instrumentationProvider.FireSymmetricEncryptionPerformed();
+                return result;
+            }
+            catch (Exception e)
+            {
+                instrumentationProvider.FireCyptographicOperationFailed(Resources.EncryptionFailed, e);
+                throw;
+            }
         }
 
         /// <summary>
@@ -74,10 +109,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography
         /// <seealso cref="ISymmetricCryptoProvider.Decrypt"/>
 		public byte[] Decrypt(byte[] ciphertext)
         {
-			byte[] result = DpapiCrytographer.Decrypt(ciphertext, entropy);
-			// INSTRUMENTATION
-			//SecurityCryptoSymmetricDecryptionEvent.Fire(string.Empty);
-            return result;
+            try
+            {
+                byte[] result = DpapiCrytographer.Decrypt(ciphertext, entropy);
+                instrumentationProvider.FireSymmetricDecryptionPerformed();
+                return result;
+            }
+            catch (Exception e)
+            {
+                instrumentationProvider.FireCyptographicOperationFailed(Resources.DecryptionFailed, e);
+                throw;
+            }
         }
 	}
 }

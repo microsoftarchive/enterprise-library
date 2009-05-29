@@ -9,10 +9,15 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using System;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Caching.Configuration.Unity;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Unity;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation;
+using System.Collections.Generic;
+using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
 {
@@ -20,8 +25,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
 	/// Configuration data defining CacheManagerData. Defines the information needed to properly configure
 	/// a CacheManager instance.
 	/// </summary>
-	[Assembler(typeof(CacheManagerAssembler))]
-	[ContainerPolicyCreator(typeof(CacheManagerPolicyCreator))]
 	public class CacheManagerData : CacheManagerDataBase
 	{
 		private const string expirationPollFrequencyInSecondsProperty = "expirationPollFrequencyInSeconds";
@@ -104,5 +107,106 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
 			get { return (string)base[backingStoreNameProperty]; }
 			set { base[backingStoreNameProperty] = value; }
 		}
+
+
+        /// <summary>
+        /// Get the set of <see cref="TypeRegistration"/> object needed to
+        /// register the CacheManager represented by this config element.
+        /// </summary>
+        /// <returns>The sequence of <see cref="TypeRegistration"/> objects.</returns>
+        public override IEnumerable<TypeRegistration> GetRegistrations(IConfigurationSource configurationSource)
+        {
+            IEnumerable<TypeRegistration> baseRegistrations = base.GetRegistrations(configurationSource);
+
+            return baseRegistrations.Concat( new TypeRegistration[]{ 
+                GetBackgroundScheduler(),
+                GetExpirationTask(),
+                GetScavengerTask(),
+                GetExpirationPollTimer(),
+                GetInstrumentationProviderRegistration(configurationSource), 
+                GetCacheRegistration() });
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        protected override Expression<Func<ICacheManager>> GetCacheManagerCreationExpression()
+        {
+            return () =>
+                new CacheManager( Container.Resolved<Cache>(Name),
+                                  Container.Resolved<BackgroundScheduler>(Name),
+                                  Container.Resolved<ExpirationPollTimer>(Name));
+
+
+        }
+
+        private TypeRegistration GetBackgroundScheduler()
+        {
+            return new TypeRegistration<BackgroundScheduler>(() => new BackgroundScheduler(
+                Container.Resolved<ExpirationTask>(Name),
+                Container.Resolved<ScavengerTask>(Name),
+                Container.Resolved<ICachingInstrumentationProvider>(Name)))
+            {
+                Name = this.Name
+            };
+
+        }
+
+        private TypeRegistration GetExpirationTask()
+        {
+            return new TypeRegistration<ExpirationTask>(() => new ExpirationTask(
+                Container.Resolved<Cache>(Name),
+                Container.Resolved<ICachingInstrumentationProvider>(Name)))
+                {
+                    Name = this.Name
+                };
+        }
+
+        private TypeRegistration GetScavengerTask()
+        {
+            return new TypeRegistration<ScavengerTask>(() => new ScavengerTask(
+              NumberToRemoveWhenScavenging, 
+              MaximumElementsInCacheBeforeScavenging, 
+              Container.Resolved<Cache>(Name), 
+              Container.Resolved<ICachingInstrumentationProvider>(Name)))
+            {
+                Name = this.Name
+            };
+        }
+
+        private TypeRegistration GetExpirationPollTimer()
+        {
+            return new TypeRegistration<ExpirationPollTimer>(() => new ExpirationPollTimer(ExpirationPollFrequencyInSeconds * 1000))
+            {
+                Name = this.Name
+            };
+        }
+
+        private TypeRegistration GetCacheRegistration()
+        {
+            return new TypeRegistration<Cache>(() => new Cache(
+                Container.Resolved<IBackingStore>(CacheStorage),
+                Container.Resolved<ICachingInstrumentationProvider>(Name)))
+            {
+                Name = this.Name
+            };
+        }
+
+        private TypeRegistration GetInstrumentationProviderRegistration(IConfigurationSource configurationSource)
+        {
+            var instrumentationSection = InstrumentationConfigurationSection.GetSection(configurationSource);
+
+            return new TypeRegistration<ICachingInstrumentationProvider>(
+                () => new CachingInstrumentationProvider(
+                    Name,
+                    instrumentationSection.PerformanceCountersEnabled,
+                    instrumentationSection.EventLoggingEnabled,
+                    instrumentationSection.WmiEnabled,
+                    instrumentationSection.ApplicationInstanceName))
+               {
+                   Name = Name
+               };
+        }
 	}
 }

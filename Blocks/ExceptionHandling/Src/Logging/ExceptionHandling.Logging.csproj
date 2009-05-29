@@ -2,7 +2,7 @@
   <PropertyGroup>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <ProjectType>Local</ProjectType>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{EC311AD3-0A26-4808-901B-A983E97E5790}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -75,10 +75,6 @@
     <CodeAnalysisRules>-Microsoft.Security#CA2116;-Microsoft.Security#CA2117;-Microsoft.Performance#CA1824</CodeAnalysisRules>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Practices.ObjectBuilder2, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31BF3856AD364E35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Lib\Microsoft.Practices.ObjectBuilder2.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Practices.Unity, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Lib\Microsoft.Practices.Unity.dll</HintPath>
@@ -127,7 +123,6 @@
     <Compile Include="Configuration\Manageability\LoggingExceptionHandlerDataWmiMapper.cs" />
     <Compile Include="Configuration\Manageability\LoggingExceptionHandlerSetting.cs" />
     <Compile Include="Configuration\Manageability\Properties\AssemblyInfo.cs" />
-    <Compile Include="Configuration\Unity\LoggingExceptionHandlerPolicyCreator.cs" />
     <Compile Include="LoggingExceptionHandler.cs">
       <SubType>Code</SubType>
     </Compile>

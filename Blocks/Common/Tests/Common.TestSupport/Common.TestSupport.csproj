@@ -39,6 +39,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Lib\Microsoft.Practices.ObjectBuilder2.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Lib\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.configuration" />
@@ -56,11 +60,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\..\GlobalAssemblyInfo.cs">
-      <Link>GlobalAssemblyInfo.cs</Link>
-    </Compile>
     <Compile Include="Configuration\ConfigurationFileHelper.cs" />
     <Compile Include="Configuration\ConfigurationTestHelper.cs" />
+    <Compile Include="Configuration\ContainerModel\ContainerSwitcher.cs" />
     <Compile Include="Configuration\ContainerModel\TypeRegistrationExtension.cs" />
     <Compile Include="Configuration\Manageability\KeyValuePairParsingTestHelper.cs" />
     <Compile Include="Configuration\Manageability\Mocks\MockAdmContent.cs" />
@@ -74,8 +76,6 @@
     <Compile Include="Configuration\Manageability\Mocks\TestConfigurationSection.cs" />
     <Compile Include="Configuration\Manageability\Mocks\TestConfigurationSettings.cs" />
     <Compile Include="Configuration\MockCustomProviderBase.cs" />
-    <Compile Include="Configuration\ObjectBuilder\MockBuilderContext.cs" />
-    <Compile Include="Configuration\ObjectBuilder\MockFactoryStrategy.cs" />
     <Compile Include="CrossThreadTestRunner.cs" />
     <Compile Include="EventLogExtensions.cs" />
     <Compile Include="Instrumentation\WmiEventWatcher.cs" />

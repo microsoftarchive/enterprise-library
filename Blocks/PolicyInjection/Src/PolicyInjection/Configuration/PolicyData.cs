@@ -9,9 +9,11 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using System.Collections.Generic;
 using System.Configuration;
+using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.Unity;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.Unity.InterceptionExtension;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
@@ -65,34 +67,61 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         }
 
         /// <summary>
-        /// Adds to the <paramref name="container"/> the policy definition represented by the configuration element.
+        /// Get the set of <see cref="TypeRegistration"/> objects needed to
+        /// register the policy represented by this config element and its associated objects.
         /// </summary>
-        /// <param name="container">The container on which the injection policies must be configured.</param>
-        /// <param name="configurationSource">The configuration source from which additional information
-        /// can be retrieved, if necessary.</param>
-        internal void ConfigureContainer(IUnityContainer container, IConfigurationSource configurationSource)
+        /// <returns>The set of <see cref="TypeRegistration"/> objects.</returns>
+        public IEnumerable<TypeRegistration> GetRegistrations()
         {
-            Interception interception = container.Configure<Interception>();
-            if (interception == null)
+            List<TypeRegistration> registrations = new List<TypeRegistration>();
+            List<string> matchingRuleNames = new List<string>();
+            List<string> callHandlerNames = new List<string>();
+
+            var nameSuffix = "-" + this.Name;
+
+            foreach (var matchingRuleData in this.MatchingRules)
             {
-                interception = new Interception();
-                container.AddExtension(interception);
+                var matchingRuleRegistrations = matchingRuleData.GetRegistrations(nameSuffix);
+
+                registrations.AddRange(matchingRuleRegistrations);
+                matchingRuleNames.AddRange(
+                    matchingRuleRegistrations.Where(tr => tr.ServiceType == typeof(IMatchingRule)).Select(tr => tr.Name));
             }
 
-            var policy = interception.AddPolicy(this.Name);
-
-            foreach (var ruleData in this.MatchingRules)
+            foreach (var callHandlerData in this.Handlers)
             {
-                ruleData.ConfigurePolicy(policy, configurationSource);
+                var callHandlerRegistrations = callHandlerData.GetRegistrations(nameSuffix);
+
+                registrations.AddRange(callHandlerRegistrations);
+                callHandlerNames.AddRange(
+                    callHandlerRegistrations.Where(tr => tr.ServiceType == typeof(ICallHandler)).Select(tr => tr.Name));
             }
 
-            foreach (var handlerData in this.Handlers)
-            {
-                handlerData.ConfigurePolicy(policy, configurationSource);
-            }
+            registrations.Add(
+                new TypeRegistration<InjectionPolicy>(
+                    () =>
+                        new RuleDrivenPolicy(
+                            this.Name,
+                            Container.ResolvedEnumerable<IMatchingRule>(matchingRuleNames),
+                            callHandlerNames.ToArray()))
+                {
+                    Name = this.Name
+                });
 
-            // make it a singleton - no API support for this.
-            container.RegisterType<RuleDrivenPolicy>(this.Name, new ContainerControlledLifetimeManager());
+            return registrations;
+        }
+
+        /// <summary>
+        /// Injection-friendlier subclass of <see cref="Microsoft.Practices.Unity.InterceptionExtension.RuleDrivenPolicy"/>.
+        /// </summary>
+        public class RuleDrivenPolicy : Microsoft.Practices.Unity.InterceptionExtension.RuleDrivenPolicy
+        {
+            /// <summary>
+            /// Initializes a new instance of the <see cref="RuleDrivenPolicy"/> class.
+            /// </summary>
+            public RuleDrivenPolicy(string name, IEnumerable<IMatchingRule> matchingRules, string[] callHandlerNames)
+                : base(name, matchingRules.ToArray(), callHandlerNames)
+            { }
         }
     }
 }

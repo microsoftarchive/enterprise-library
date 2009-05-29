@@ -152,5 +152,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation
         {
             return new PerformanceCounter(counterCategoryName, counterName, instanceName, false);
         }
+
+        /// <summary>
+        /// Increments the associated performance counters by one.
+        /// </summary>
+        /// <param name="instanceName">The instance to be incremented.</param>
+        public void Increment(string instanceName)
+        {
+            PerformanceCounter counter = InstantiateCounter(instanceName);
+            counter.Increment();
+        }
     }
 }

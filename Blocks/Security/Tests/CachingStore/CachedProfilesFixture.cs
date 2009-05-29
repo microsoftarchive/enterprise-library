@@ -16,6 +16,7 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Security.Instrumentation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Cache.CachingStore.Tests
 {
@@ -134,10 +135,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cache.CachingStore.Test
         public void RetrieveCachedProfileFiresWmiEvent()
         {
             SecurityCacheProvider securityCache = SecurityCacheFactory.GetSecurityCacheProvider() as SecurityCacheProvider;
-            SecurityCacheProviderInstrumentationListener listener = new SecurityCacheProviderInstrumentationListener("foo", false, false, true, "fooApplicationInstanceName");
-
-            ReflectionInstrumentationBinder binder = new ReflectionInstrumentationBinder();
-            binder.Bind(securityCache.GetInstrumentationEventProvider(), listener);
 
             using (WmiEventWatcher eventWatcher = new WmiEventWatcher(1))
             {
@@ -149,7 +146,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cache.CachingStore.Test
                 Assert.AreEqual(1, eventWatcher.EventsReceived.Count);
                 Assert.AreEqual("SecurityCacheReadPerformedEvent", eventWatcher.EventsReceived[0].ClassPath.ClassName);
                 Assert.AreEqual(SecurityEntityType.Profile.ToString(), eventWatcher.EventsReceived[0].Properties["EntityType"].Value);
-                Assert.AreEqual("foo", eventWatcher.EventsReceived[0].Properties["InstanceName"].Value);
+                Assert.AreEqual("provider1", eventWatcher.EventsReceived[0].Properties["InstanceName"].Value);
                 Assert.AreEqual(token.Value, eventWatcher.EventsReceived[0].Properties["TokenUsed"].Value);
             }
         }

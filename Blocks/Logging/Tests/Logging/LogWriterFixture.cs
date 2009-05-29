@@ -12,7 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Filters;
@@ -41,15 +41,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
         EnterpriseLibraryPerformanceCounter totalTraceListenerEntriesWritten;
         EnterpriseLibraryPerformanceCounter totalTraceOperationsStartedCounter;
         AppDomainNameFormatter nameFormatter;
-        LoggingInstrumentationListener listener;
-        TracerInstrumentationListener tracerListener;
+        ILoggingInstrumentationProvider instrumentationProvider;
+        ITracerInstrumentationProvider tracerInstrumentationProvider;
 
         [TestInitialize]
         public void SetUp()
         {
             nameFormatter = new AppDomainNameFormatter(applicationInstanceName);
-            listener = new LoggingInstrumentationListener(instanceName, true, true, true, applicationInstanceName);
-            tracerListener = new TracerInstrumentationListener(true);
+            instrumentationProvider = new LoggingInstrumentationProvider(instanceName, true, true, true, applicationInstanceName);
+            tracerInstrumentationProvider = new TracerInstrumentationProvider(true, false, false, string.Empty);
             formattedInstanceName = nameFormatter.CreateName(instanceName);
             totalLoggingEventsRaised = new EnterpriseLibraryPerformanceCounter(counterCategoryName, TotalLoggingEventsRaised, formattedInstanceName);
             totalTraceListenerEntriesWritten = new EnterpriseLibraryPerformanceCounter(counterCategoryName, TotalTraceListenerEntriesWritten, formattedInstanceName);
@@ -58,13 +58,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
             nameFormatter = new AppDomainNameFormatter();
             formattedInstanceName = nameFormatter.CreateName(instanceName);
 
-            totalTraceOperationsStartedCounter = new EnterpriseLibraryPerformanceCounter(TracerInstrumentationListener.counterCategoryName, TracerInstrumentationListener.TotalTraceOperationsStartedCounterName, formattedInstanceName);
+            totalTraceOperationsStartedCounter = new EnterpriseLibraryPerformanceCounter(TracerInstrumentationProvider.counterCategoryName, TracerInstrumentationProvider.TotalTraceOperationsStartedCounterName, formattedInstanceName);
         }
 
         [TestMethod]
         public void TotalTraceOperationsStartedCounterIncremented()
         {
-            tracerListener.TracerOperationStarted("foo");
+            tracerInstrumentationProvider.FireTraceOperationStarted("foo");
 
             long expected = 1;
             Assert.AreEqual(expected, totalTraceOperationsStartedCounter.Value);
@@ -73,7 +73,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
         [TestMethod]
         public void TotalLoggingEventsRaisedCounterIncremented()
         {
-            listener.LoggingEventRaised(this, EventArgs.Empty);
+            instrumentationProvider.FireLogEventRaised();
 
             long expected = 1;
             Assert.AreEqual(expected, totalLoggingEventsRaised.Value);
@@ -82,7 +82,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
         [TestMethod]
         public void TotalTraceListenerEntriesWrittenIncremented()
         {
-            listener.TraceListenerEntryWritten(this, EventArgs.Empty);
+            instrumentationProvider.FireTraceListenerEntryWrittenEvent();
 
             long expected = 1;
             Assert.AreEqual(expected, totalTraceListenerEntriesWritten.Value);
@@ -116,9 +116,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
         }
 
         [TestMethod]
-        public void CanCreateLogWriterUsingFactory()
+        public void CanCreateLogWriterUsingContainer()
         {
-            LogWriter writer = EnterpriseLibraryFactory.BuildUp<LogWriter>();
+            LogWriter writer = EnterpriseLibraryContainer.Current.GetInstance<LogWriter>();
             Assert.IsNotNull(writer);
         }
 
@@ -175,7 +175,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
         }
 
         [TestMethod]
-        public void VerfiyTraceListenerPerfCounter()
+        public void VerifyTraceListenerPerfCounter()
         {
             Logger.Reset();
 
@@ -187,11 +187,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
             entry.Categories.Add("FormattedCategory");
             Logger.Write(entry);
             int loggedCount = GetCounterValue(counterName);
-            Assert.IsTrue((loggedCount - initialCount) == 1);
+            Assert.AreEqual(1, loggedCount - initialCount);
             initialCount = loggedCount;
             Logger.Write(entry);
             loggedCount = GetCounterValue(counterName);
-            Assert.IsTrue((loggedCount - initialCount) == 1);
+            Assert.AreEqual(1, loggedCount - initialCount);
         }
 
         int GetCounterValue(string counterName)
@@ -221,8 +221,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
             Dictionary<string, LogSource> logSources = new Dictionary<string, LogSource>();
             logSources.Add("foo", badSource);
 
-            LogWriter writer = new LogWriter(new List<ILogFilter>(), logSources, badSource, "foo");
-            new ReflectionInstrumentationBinder().Bind(writer.GetInstrumentationEventProvider(), new LoggingInstrumentationListener(false, false, true, "applicationInstanceName"));
+            LogWriter writer = new LogWriter(new List<ILogFilter>(), logSources, badSource, "foo", new LoggingInstrumentationProvider(false, false, true, "applicationInstanceName"));
 
             using (WmiEventWatcher eventListener = new WmiEventWatcher(1))
             {
@@ -248,8 +247,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
             Dictionary<string, LogSource> logSources = new Dictionary<string, LogSource>();
             logSources.Add("foo", badSource);
 
-            LogWriter writer = new LogWriter(new List<ILogFilter>(), logSources, badSource, "foo");
-            new ReflectionInstrumentationBinder().Bind(writer.GetInstrumentationEventProvider(), new LoggingInstrumentationListener(false, true, false, "applicationInstanceName"));
+            ILoggingInstrumentationProvider instrumentationProvider =  new LoggingInstrumentationProvider(false, true, false, "applicationInstanceName");
+            LogWriter writer = new LogWriter(new List<ILogFilter>(), logSources, badSource, "foo", instrumentationProvider);
 
             writer.Write(CommonUtil.GetDefaultLogEntry());
 

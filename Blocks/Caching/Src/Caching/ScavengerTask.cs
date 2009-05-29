@@ -21,25 +21,25 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
     /// </summary>
     public class ScavengerTask
     {
-        private CacheCapacityScavengingPolicy scavengingPolicy;
+        private readonly int maximumElementsInCacheBeforeScavenging;
         private readonly int numberToRemoveWhenScavenging;
         private ICacheOperations cacheOperations;
-        private CachingInstrumentationProvider instrumentationProvider;
+        private ICachingInstrumentationProvider instrumentationProvider;
 
         /// <summary>
-        /// Initialize a new instance of the <see cref="ScavengerTask"/> with a <see cref="CacheManager"/> name, a <see cref="CachingConfigurationView"/>, the <see cref="CacheCapacityScavengingPolicy"/> and the <see cref="ICacheOperations"/>.
+        /// Initialize a new instance of the <see cref="ScavengerTask"/> with a <see cref="CacheManager"/> name, the <see cref="CacheCapacityScavengingPolicy"/> and the <see cref="ICacheOperations"/>.
         /// </summary>
         /// <param name="numberToRemoveWhenScavenging">The number of items that should be removed from the cache when scavenging.</param>
-        /// <param name="scavengingPolicy">The <see cref="CacheCapacityScavengingPolicy"/> to use.</param>
+        /// <param name="maximumElementsInCacheBeforeScavenging">TODO: copy from configuration console :-)</param>
         /// <param name="cacheOperations">The <see cref="ICacheOperations"/> to perform.</param>
         /// <param name="instrumentationProvider">An instrumentation provider.</param>
         public ScavengerTask(int numberToRemoveWhenScavenging,
-                               CacheCapacityScavengingPolicy scavengingPolicy,
+                               int maximumElementsInCacheBeforeScavenging,
                                ICacheOperations cacheOperations,
-                               CachingInstrumentationProvider instrumentationProvider)
+                               ICachingInstrumentationProvider instrumentationProvider)
         {
             this.numberToRemoveWhenScavenging = numberToRemoveWhenScavenging;
-            this.scavengingPolicy = scavengingPolicy;
+            this.maximumElementsInCacheBeforeScavenging = maximumElementsInCacheBeforeScavenging;
             this.cacheOperations = cacheOperations;
             this.instrumentationProvider = instrumentationProvider;
         }
@@ -51,11 +51,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
         {
             if (NumberOfItemsToBeScavenged == 0) return;
 
-            Hashtable liveCacheRepresentation = cacheOperations.CurrentCacheState;
-            int currentNumberItemsInCache = liveCacheRepresentation.Count;
-
-            if (scavengingPolicy.IsScavengingNeeded(currentNumberItemsInCache))
+            if (IsScavengingNeeded())
             {
+                Hashtable liveCacheRepresentation = cacheOperations.CurrentCacheState;
+
                 ResetScavengingFlagInCacheItems(liveCacheRepresentation);
                 SortedList scavengableItems = SortItemsForScavenging(liveCacheRepresentation);
                 RemoveScavengableItems(scavengableItems);
@@ -121,6 +120,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
             }
 
             return false;
+        }
+
+        internal bool IsScavengingNeeded()
+        {
+            return cacheOperations.Count > this.maximumElementsInCacheBeforeScavenging;
         }
     }
 }

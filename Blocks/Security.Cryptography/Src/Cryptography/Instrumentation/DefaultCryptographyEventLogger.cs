@@ -11,7 +11,6 @@
 
 using System;
 using System.Diagnostics;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
 using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Properties;
 
@@ -21,10 +20,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Instrument
 	/// The instrumentation gateway when no instances of the objects from the block are involved.
 	/// </summary>
 	[EventLogDefinition("Application", EventLogSourceName)]
-	[CustomFactory(typeof(DefaultCryptographyEventLoggerCustomFactory))]
-	public class DefaultCryptographyEventLogger : InstrumentationListener
+	public class DefaultCryptographyEventLogger : InstrumentationListener, IDefaultCryptographyInstrumentationProvider
 	{
-		private IEventLogEntryFormatter eventLogEntryFormatter;
+		private readonly IEventLogEntryFormatter eventLogEntryFormatter;
 
 		/// For testing purposes
 		public const string EventLogSourceName = "Enterprise Library Cryptography";
@@ -104,15 +102,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Instrument
             }
         }
 
-        /// <summary>
-        /// Handler for the <see cref="DefaultCryptographyInstrumentationProvider.cryptographyErrorOccurred"/> event.
-        /// </summary>
-        /// <param name="sender">The originator of the event.</param>
-        /// <param name="e">The event parameters.</param>
-        [InstrumentationConsumer("CryptographyErrorOccurred")]
-        public void CryptographyErrorOccurred(object sender, DefaultCryptographyErrorEventArgs e)
-        {
-            LogConfigurationError(e.InstanceName, e.Message);
-        }
+	    /// <summary>
+	    /// Fires the CryptographyErrorOccurred event.
+	    /// </summary>
+	    /// <param name="providerName">The name of the provider with the errror.</param>
+	    /// <param name="instanceName">The name of the instance with the errror.</param>
+	    /// <param name="message">The message that describes the failure.</param>
+	    public void FireCryptographyErrorOccurred(string providerName, string instanceName, string message)
+	    {
+	        LogConfigurationError(instanceName, message);
+	    }
 	}
 }

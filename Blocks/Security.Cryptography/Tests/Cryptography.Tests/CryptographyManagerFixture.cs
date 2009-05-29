@@ -15,10 +15,13 @@ using System.Configuration;
 using System.IO;
 using System.Security.Cryptography;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Unity;
 using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Instrumentation;
+using Microsoft.Practices.Unity;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests
 {
@@ -39,7 +42,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests
         private ISymmetricCryptoProvider algorithSymmetricCryptoProvider;
         private CryptographyManager cryptographyManager;
         private IConfigurationSource configSource;
-        private DefaultCryptographyErrorEventArgs cryptoArgs;
 
         private readonly byte[] plainTextBytes = new byte[] { 0, 1, 2, 3 };
 
@@ -65,9 +67,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests
             symmetricCrytoProviders.Add(symmInstance, defaultSymmetricCryptoProvider);
             symmetricCrytoProviders.Add(symmetricAlgorithm1, algorithSymmetricCryptoProvider);
 
-            cryptographyManager = new CryptographyManagerImpl(hashProviders, symmetricCrytoProviders);
+            var container = EnterpriseLibraryContainer.CreateDefaultContainer(configSource);
 
-            this.cryptoArgs = null;
+            cryptographyManager = container.GetInstance<CryptographyManager>();
         }
 
         [TestCleanup]
@@ -214,18 +216,24 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests
             const string ProviderName = "IHashProvider";
             const string InvalidHashInstance = "invalidHashInstance";
 
-            ((DefaultCryptographyInstrumentationProvider)((IInstrumentationEventProvider)cryptographyManager).GetInstrumentationEventProvider())
-                .cryptographyErrorOccurred += (sender, args) => { cryptoArgs = args; };
-            try
+            var mockProvider = new Mock<IDefaultCryptographyInstrumentationProvider>(MockBehavior.Strict);
+            mockProvider.Setup(p => p.FireCryptographyErrorOccurred(ProviderName, InvalidHashInstance, It.IsAny<string>()))
+                .Verifiable();
+
+            using(var container = new UnityContainer().AddExtension(new EnterpriseLibraryCoreExtension(configSource)))
             {
-                cryptographyManager.CreateHash(InvalidHashInstance, new byte[0]);
-                Assert.Fail("should have thrown exception");
-            }
-            catch (ConfigurationErrorsException)
-            {
-                Assert.IsNotNull(this.cryptoArgs);
-                Assert.AreEqual(ProviderName, this.cryptoArgs.ProviderName);
-                Assert.AreEqual(InvalidHashInstance, this.cryptoArgs.InstanceName);
+                container.RegisterInstance<IDefaultCryptographyInstrumentationProvider>(mockProvider.Object);
+
+                var cryptoManager = container.Resolve<CryptographyManager>();
+                try
+                {
+                    cryptoManager.CreateHash(InvalidHashInstance, new byte[0]);
+                    Assert.Fail("should have thrown exception");
+                }
+                catch (ConfigurationErrorsException)
+                {
+                    mockProvider.Verify();
+                }
             }
         }
 
@@ -235,18 +243,26 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests
             const string ProviderName = "ISymmetricCryptoProvider";
             const string InvalidSymmectricInstance = "invalidSymmectricInstance";
 
-            ((DefaultCryptographyInstrumentationProvider)((IInstrumentationEventProvider)cryptographyManager).GetInstrumentationEventProvider())
-                .cryptographyErrorOccurred += (sender, args) => { cryptoArgs = args; };
-            try
+            using (var container = new UnityContainer().AddExtension(new EnterpriseLibraryCoreExtension(configSource)))
             {
-                cryptographyManager.DecryptSymmetric(InvalidSymmectricInstance, "text");
-                Assert.Fail("should have thrown exception");
-            }
-            catch (ConfigurationErrorsException)
-            {
-                Assert.IsNotNull(this.cryptoArgs);
-                Assert.AreEqual(ProviderName, this.cryptoArgs.ProviderName);
-                Assert.AreEqual(InvalidSymmectricInstance, this.cryptoArgs.InstanceName);
+                var mockProvider = new Mock<IDefaultCryptographyInstrumentationProvider>(MockBehavior.Strict);
+                mockProvider.Setup(
+                    p => p.FireCryptographyErrorOccurred(ProviderName, InvalidSymmectricInstance, It.IsAny<string>()))
+                    .Verifiable();
+
+                container.RegisterInstance<IDefaultCryptographyInstrumentationProvider>(mockProvider.Object);
+
+                var cryptoManager = container.Resolve<CryptographyManager>();
+
+                try
+                {
+                    cryptoManager.DecryptSymmetric(InvalidSymmectricInstance, "text");
+                    Assert.Fail("should have thrown exception");
+                }
+                catch (ConfigurationErrorsException)
+                {
+                    mockProvider.Verify();
+                }
             }
         }
 

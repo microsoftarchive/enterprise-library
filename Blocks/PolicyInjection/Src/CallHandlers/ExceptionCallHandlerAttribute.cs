@@ -10,6 +10,7 @@
 //===============================================================================
 
 using System;
+using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
 
@@ -52,9 +53,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
         /// configuration.
         /// </summary>
         /// <returns>A new call handler object.</returns>
-        public override ICallHandler CreateHandler(IUnityContainer ignored)
+        public override ICallHandler CreateHandler(IUnityContainer container)
         {
-            return new ExceptionCallHandler(policyName, Order);
+            var handler = new ExceptionCallHandler(container.Resolve<ExceptionPolicyImpl>(this.PolicyName));
+            handler.Order = this.Order;
+
+            return handler;
         }
     }
 }

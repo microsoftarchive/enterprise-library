@@ -54,11 +54,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
             settings.HashProviders.Add(new CustomHashProviderData(name3, typeof(MockCustomHashProvider)));
 
             IDictionary<string, ConfigurationSection> sections = new Dictionary<string, ConfigurationSection>();
-            sections[CryptographyConfigurationView.SectionName] = settings;
+            sections[CryptographySettings.SectionName] = settings;
             IConfigurationSource configurationSource
                 = ConfigurationTestHelper.SaveSectionsInFileAndReturnConfigurationSource(sections);
 
-            CryptographySettings roSettings = (CryptographySettings)configurationSource.GetSection(CryptographyConfigurationView.SectionName);
+            CryptographySettings roSettings = (CryptographySettings)configurationSource.GetSection(CryptographySettings.SectionName);
 
             Assert.IsNotNull(roSettings);
             Assert.AreEqual(name1, roSettings.DefaultHashProviderName);

@@ -12,19 +12,15 @@
 using System;
 using System.Collections.Specialized;
 using System.Configuration;
-using System.Linq.Expressions;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Unity;
+using System.Collections.Generic;
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
 {
     /// <summary>
     /// Configuration object for Custom Providers.
     /// </summary>
-    [Assembler(typeof(CustomProviderAssembler<IExceptionHandler, ExceptionHandlerData, CustomHandlerData>))]
-    [ContainerPolicyCreator(typeof(CustomProviderPolicyCreator<CustomHandlerData>))]
     public class CustomHandlerData
         : ExceptionHandlerData, IHelperAssistedCustomConfigurationData<CustomHandlerData>
     {
@@ -176,9 +172,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
         /// </summary>
         /// <param name="namePrefix">The child prefix to use when reference child elements</param>
         /// <returns>The type registration for the custom exception handler</returns>
-        public override TypeRegistration GetContainerConfigurationModel(string namePrefix)
+        public override IEnumerable<TypeRegistration> GetRegistrations(string namePrefix)
         {
-            return new TypeRegistration(
+            yield return new TypeRegistration(
                 RegistrationExpressionBuilder.BuildExpression(this.Type, Attributes),
                 typeof(IExceptionHandler)) { Name = BuildName(namePrefix) };
         }

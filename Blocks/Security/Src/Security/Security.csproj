@@ -1,7 +1,7 @@
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{CF2CBDAD-4D43-45EA-9D40-4CD9CC7EE744}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -73,9 +73,9 @@
     <CodeAnalysisRules>-Microsoft.Security#CA2116;-Microsoft.Security#CA2117;-Microsoft.Naming#CA1704;-Microsoft.Performance#CA1824;-Microsoft.Globalization#CA1308;-Microsoft.Security#CA2109;-Microsoft.Globalization#CA1307;-Microsoft.Globalization#CA1309</CodeAnalysisRules>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Practices.ObjectBuilder2, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31BF3856AD364E35, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Lib\Microsoft.Practices.ObjectBuilder2.dll</HintPath>
+      <HintPath>..\..\..\..\Lib\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.Unity, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -114,15 +114,12 @@
     <Compile Include="AnyExpression.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="AuthorizationOperationEventArgs.cs" />
-    <Compile Include="AuthorizationProviderCustomFactory.cs" />
     <Compile Include="AuthorizationRuleProvider.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="BooleanExpression.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Configuration\AuthorizationProviderDataRetriever.cs" />
     <Compile Include="Configuration\CustomAuthorizationProviderData.cs" />
     <Compile Include="Configuration\CustomSecurityCacheProviderData.cs" />
     <Compile Include="Configuration\Manageability\AuthorizationProviderSetting.cs" />
@@ -145,19 +142,17 @@
     <Compile Include="Configuration\Manageability\SecurityCacheProviderSetting.cs" />
     <Compile Include="Configuration\Manageability\SecuritySettingsManageabilityProvider.cs" />
     <Compile Include="Configuration\Manageability\SecuritySettingsWmiMapper.cs" />
-    <Compile Include="Configuration\Unity\AuthorizationRuleProviderPolicyCreator.cs" />
     <Compile Include="Configuration\Unity\SecurityBlockExtension.cs" />
-    <Compile Include="Configuration\SecurityCacheDataRetriever.cs" />
     <Compile Include="Instrumentation\AuthorizationCheckFailedEvent.cs" />
     <Compile Include="Instrumentation\AuthorizationCheckPerformedEvent.cs" />
+    <Compile Include="Instrumentation\IAuthorizationProviderInstrumentationProvider.cs" />
+    <Compile Include="Instrumentation\ISecurityCacheProviderInstrumentationProvider.cs" />
+    <Compile Include="Instrumentation\NullAuthorizationProviderInstrumentationProvider.cs" />
+    <Compile Include="Instrumentation\NullSecurityCacheProviderInstrumentationProvider.cs" />
     <Compile Include="Instrumentation\SecurityConfigurationFailureEvent.cs" />
     <Compile Include="Instrumentation\DefaultSecurityEventLogger.cs" />
-    <Compile Include="Instrumentation\DefaultSecurityEventLoggerCustomFactory.cs" />
     <Compile Include="Instrumentation\SecurityCacheReadPerformedEvent.cs" />
     <Compile Include="Instrumentation\SecurityEvent.cs" />
-    <Compile Include="Instrumentation\SecurityCacheOperationEventArgs.cs" />
-    <Compile Include="SecurityCacheProviderCustomFactory.cs" />
-    <Compile Include="Instrumentation\SecurityCacheProviderInstrumentationListener.cs" />
     <Compile Include="Instrumentation\SecurityCacheProviderInstrumentationProvider.cs" />
     <Compile Include="IAuthorizationRule.cs" />
     <Compile Include="IdentityExpression.cs">
@@ -184,7 +179,6 @@
     <Compile Include="RoleExpression.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Instrumentation\AuthorizationProviderInstrumentationListener.cs" />
     <Compile Include="Instrumentation\AuthorizationProviderInstrumentationProvider.cs" />
     <Compile Include="SecurityEntityType.cs" />
     <Compile Include="SyntaxException.cs">
@@ -237,7 +231,6 @@
     <Compile Include="SecurityCacheProviderFactory.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="SecurityConfigurationView.cs" />
     <!--Compile Include="SR.cs">
       <DependentUpon>SR.strings</DependentUpon>
       <SubType>Code</SubType>

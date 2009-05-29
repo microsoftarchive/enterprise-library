@@ -22,7 +22,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests
         static string removedKey;
         static object removedValue;
         static CacheItemRemovedReason callbackReason;
-        public CachingInstrumentationProvider instrumentationProvider;
+        public ICachingInstrumentationProvider instrumentationProvider;
 
         [TestInitialize]
         public void Reset()
@@ -31,7 +31,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests
             callbackHappened = false;
             callbackReason = CacheItemRemovedReason.Unknown;
             removedKey = null;
-            instrumentationProvider = new CachingInstrumentationProvider();
+            instrumentationProvider = new NullCachingInstrumentationProvider();
         }
 
         [TestMethod]

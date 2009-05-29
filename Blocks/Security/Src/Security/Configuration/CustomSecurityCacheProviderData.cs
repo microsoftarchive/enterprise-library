@@ -13,16 +13,16 @@ using System;
 using System.Collections.Specialized;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Unity;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using Microsoft.Practices.EnterpriseLibrary.Security.Properties;
+using System.Collections.Generic;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration
 {
 	/// <summary>
 	/// Configuration object for Custom Providers.
 	/// </summary>
-	[Assembler(typeof(CustomProviderAssembler<ISecurityCacheProvider, SecurityCacheProviderData,CustomSecurityCacheProviderData>))]
-	[ContainerPolicyCreator(typeof(CustomProviderPolicyCreator<CustomSecurityCacheProviderData>))]
 	public class CustomSecurityCacheProviderData
 		: SecurityCacheProviderData, IHelperAssistedCustomConfigurationData<CustomSecurityCacheProviderData>
 	{
@@ -167,5 +167,23 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration
 		{
 			return base.IsModified();
 		}
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public override IEnumerable<TypeRegistration> GetRegistrations(IConfigurationSource configurationSource)
+        {
+            //missing type is handled by configuration system.
+
+            if (!typeof(ISecurityCacheProvider).IsAssignableFrom(this.Type))
+            {
+                throw new ConfigurationErrorsException(string.Format(Resources.Culture, Resources.ExceptionTypeForCustomCacheProviderMustDeriveFrom, Name, this.Type.FullName)); 
+            }
+
+            yield return new TypeRegistration(
+                RegistrationExpressionBuilder.BuildExpression(this.Type, Attributes),
+                typeof(ISecurityCacheProvider)) { Name = this.Name };
+        }
 	}
 }

@@ -10,12 +10,8 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using ManagementInstrumentation = System.Management.Instrumentation.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation;
-using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
 using Microsoft.Practices.EnterpriseLibrary.Data.Properties;
 using System.Diagnostics;
 
@@ -25,7 +21,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Instrumentation
 	/// The instrumentation gateway when no instances of the objects from the block are involved.
 	/// </summary>
 	[EventLogDefinition("Application", "Enterprise Library Data")]
-	[CustomFactory(typeof(DefaultDataEventLoggerCustomFactory))]
 	public class DefaultDataEventLogger : InstrumentationListener
 	{
 		private readonly IEventLogEntryFormatter eventLogEntryFormatter;
@@ -39,7 +34,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Instrumentation
 		public DefaultDataEventLogger(bool eventLoggingEnabled, bool wmiEnabled)
 			: base((string)null, false, eventLoggingEnabled, wmiEnabled, null)
 		{
-			this.eventLogEntryFormatter = new EventLogEntryFormatter(Resources.BlockName);
+			eventLogEntryFormatter = new EventLogEntryFormatter(Resources.BlockName);
 		}
 
 

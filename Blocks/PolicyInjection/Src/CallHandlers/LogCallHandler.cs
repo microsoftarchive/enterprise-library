@@ -42,9 +42,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
         private int priority = LogCallHandlerDefaults.Priority;
         private TraceEventType severity = LogCallHandlerDefaults.Severity;
 
-        private static LogWriter lastUsedLogWriter = null;
-        private static IConfigurationSource lastUsedConfigSource = null;
-        private static object logWriterCacheLock = new object();
         private int order = 0;
 
         /// <summary>
@@ -54,9 +51,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
         /// <remarks>See the <see cref="LogCallHandlerDefaults"/> class for the default values.</remarks>
         public LogCallHandler()
             : this(Logger.Writer)
-        {
-
-        }
+        { }
 
         /// <summary>
         /// Creates a <see cref="LogCallHandler"/> with default settings that writes
@@ -67,17 +62,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
         public LogCallHandler(LogWriter logWriter)
         {
             this.logWriter = logWriter;
-        }
-
-        /// <summary>
-        /// Creates a <see cref="LogCallHandler"/> with default settings that writes
-        /// to the logging block as defined in <paramref name="configurationSource"/>.
-        /// </summary>
-        /// <remarks>See the <see cref="LogCallHandlerDefaults"/> class for the default values.</remarks>
-        /// <param name="configurationSource"><see cref="IConfigurationSource"/> containing logging configuration.</param>
-        public LogCallHandler(IConfigurationSource configurationSource)
-        {
-            this.logWriter = GetWriterFromConfiguration(configurationSource);
         }
 
         /// <summary>
@@ -101,44 +85,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
             bool includeCallTime, int priority)
         {
             this.logWriter = logWriter;
-            this.eventId = eventId;
-            this.logBeforeCall = logBeforeCall;
-            this.logAfterCall = logAfterCall;
-            this.beforeMessage = beforeMessage;
-            this.afterMessage = afterMessage;
-            this.includeParameters = includeParameters;
-            this.includeCallStack = includeCallStack;
-            this.includeCallTime = includeCallTime;
-            this.priority = priority;
-        }
-
-        /// <summary>
-        /// Creates a new <see cref="LogCallHandler"/> using the given logging settings.
-        /// The logging configuration is taken from <paramref name="configurationSource"/>.
-        /// </summary>
-        /// <param name="configurationSource"><see cref="IConfigurationSource"/> containing the logging block
-        /// configuration information.</param>
-        /// <param name="eventId">EventId to include in log entries.</param>
-        /// <param name="logBeforeCall">Should the handler log information before calling the target?</param>
-        /// <param name="logAfterCall">Should the handler log information after calling the target?</param>
-        /// <param name="beforeMessage">Message to include in a before-call log entry.</param>
-        /// <param name="afterMessage">Message to include in an after-call log entry.</param>
-        /// <param name="includeParameters">Should the parameter values be included in the log entry?</param>
-        /// <param name="includeCallStack">Should the current call stack be included in the log entry?</param>
-        /// <param name="includeCallTime">Should the time to execute the target be included in the log entry?</param>
-        /// <param name="priority">Priority of the log entry.</param>
-        public LogCallHandler(IConfigurationSource configurationSource,
-            int eventId,
-            bool logBeforeCall,
-            bool logAfterCall,
-            string beforeMessage,
-            string afterMessage,
-            bool includeParameters,
-            bool includeCallStack,
-            bool includeCallTime,
-            int priority)
-        {
-            this.logWriter = GetWriterFromConfiguration(configurationSource);
             this.eventId = eventId;
             this.logBeforeCall = logBeforeCall;
             this.logAfterCall = logAfterCall;
@@ -267,6 +213,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
             set { severity = value; }
         }
 
+        /// <summary>
+        /// Log writer to log to.
+        /// </summary>
+        public LogWriter LogWriter
+        {
+            get { return logWriter; }
+        }
+
         #region ICallHandler Members
         /// <summary>
         /// Gets or sets the order in which the handler will be executed
@@ -376,23 +330,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
         }
 
         #endregion
-
-        private static LogWriter GetWriterFromConfiguration(IConfigurationSource configSource)
-        {
-            if (configSource != lastUsedConfigSource)
-            {
-                lock (logWriterCacheLock)
-                {
-                    if (configSource != lastUsedConfigSource)
-                    {
-                        lastUsedConfigSource = configSource;
-                        LogWriterFactory factory = new LogWriterFactory(configSource);
-                        lastUsedLogWriter = factory.Create();
-                    }
-                }
-            }
-            return lastUsedLogWriter;
-        }
     }
 
     /// <summary>

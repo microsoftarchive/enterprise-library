@@ -11,6 +11,7 @@
 
 using System;
 using System.Diagnostics;
+using Microsoft.Practices.EnterpriseLibrary.Logging;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
 
@@ -153,9 +154,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
         /// Creates the log handler for the target using the configured values.
         /// </summary>
         /// <returns>the created <see cref="LogCallHandler"/>.</returns>
-        public override ICallHandler CreateHandler(IUnityContainer ignored)
+        public override ICallHandler CreateHandler(IUnityContainer container)
         {
-            LogCallHandler handler = new LogCallHandler();
+            LogCallHandler handler = new LogCallHandler(container.Resolve<LogWriter>());
 
             SetCategories(handler);
             handler.EventId = eventId;

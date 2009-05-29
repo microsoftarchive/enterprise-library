@@ -171,9 +171,6 @@
   <data name="ExceptionTypeNotException" xml:space="preserve">
     <value>The type must be of type Exception.</value>
   </data>
-  <data name="ExceptionSimpleProviderNotFound" xml:space="preserve">
-    <value>The requested exception policy '{0}' could not be found.</value>
-  </data>
   <data name="ExceptionStringNullOrEmpty" xml:space="preserve">
     <value>The value can not be an empty string or null.</value>
   </data>

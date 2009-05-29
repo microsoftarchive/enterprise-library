@@ -11,9 +11,11 @@
 
 using System.Configuration;
 using System.Diagnostics;
+using System.Linq;
+using Microsoft.Practices.EnterpriseLibrary.Caching.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
 using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Instrumentation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -30,9 +32,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation.Tests
         {
             DictionaryConfigurationSource configurationSource = new DictionaryConfigurationSource();
             configurationSource.Add(InstrumentationConfigurationSection.SectionName, new InstrumentationConfigurationSection(true, true, true, "fooApplicationName"));
+            configurationSource.Add(CacheManagerSettings.SectionName, new CacheManagerSettings());
 
             DefaultCachingEventLogger logger
-                = EnterpriseLibraryFactory.BuildUp<DefaultCachingEventLogger>(configurationSource);
+                =
+                EnterpriseLibraryContainer.CreateDefaultContainer(configurationSource).GetInstance
+                    <DefaultCachingEventLogger>();
+                //= EnterpriseLibraryFactory.BuildUp<DefaultCachingEventLogger>(configurationSource);
 
             Assert.IsNotNull(logger);
         }
@@ -46,12 +52,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation.Tests
 
             using (EventLog eventLog = GetEventLog())
             {
-                int eventCount = eventLog.Entries.Count;
+                int originalEventCount = eventLog.Entries.Count;
 
                 logger.LogConfigurationError(instanceName, exception);
 
-                Assert.AreEqual(eventCount + 1, eventLog.Entries.Count);
-                Assert.IsTrue(eventLog.Entries[eventCount].Message.IndexOf(exceptionMessage) > -1);
+                var newEntries = from entry in eventLog.GetNewEntries(originalEventCount)
+                                 where entry.Message.IndexOf(exceptionMessage) > -1
+                                 select entry;
+
+                Assert.AreEqual(1, newEntries.ToList().Count);
             }
         }
 

@@ -23,265 +23,69 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
     [TestClass]
     public class ValidationFactoryFixture
     {
-        [TestMethod]
-        public void CanCreateValidatorForType()
-        {
-            Validator<TestObjectWithFailingAttributesOnProperties> validator
-                = ValidationFactory.CreateValidatorFromAttributes<TestObjectWithFailingAttributesOnProperties>();
 
-            Assert.IsNotNull(validator);
+        [TestMethod]
+        public void ShouldCacheGenericValidatorWhenUsingUnspecifiedConfigSource()
+        {
+            var firstValidator = ValidationFactory.CreateValidator<TestObjectWithFailingAttributesOnProperties>();
+            var secondValidator = ValidationFactory.CreateValidator<TestObjectWithFailingAttributesOnProperties>();
+
+            Assert.AreSame(firstValidator, secondValidator);
         }
 
         [TestMethod]
-        public void CreatedValidatorIsBasedOnValidationAttributes()
+        public void ShouldCacheNonGenericValidatorWhenUsingUnspecifiedConfigSource()
         {
-            Validator<TestObjectWithFailingAttributesOnProperties> validator
-                = ValidationFactory.CreateValidatorFromAttributes<TestObjectWithFailingAttributesOnProperties>();
+            var firstValidator = ValidationFactory.CreateValidator(typeof (TestObjectWithFailingAttributesOnProperties));
+            var secondValidator = ValidationFactory.CreateValidator(typeof (TestObjectWithFailingAttributesOnProperties));
 
-            ValidationResults validationResults = validator.Validate(new TestObjectWithFailingAttributesOnProperties());
-
-            Assert.IsFalse(validationResults.IsValid);
-            IList<ValidationResult> resultsList = ValidationTestHelper.GetResultsList(validationResults);
-            Assert.AreEqual(2, resultsList.Count);
-            Assert.AreEqual("message1", resultsList[0].Message);
-            Assert.AreEqual("message2", resultsList[1].Message);
+            Assert.AreSame(firstValidator, secondValidator);
         }
 
         [TestMethod]
-        public void CreatedValidatorIsBasedOnValidationAttributesAndProvidedRuleset()
+        public void ShouldCacheGenericValidatorFromAttributes()
         {
-            Validator<TestObjectWithFailingAttributesOnProperties> validator
-                = ValidationFactory.CreateValidatorFromAttributes<TestObjectWithFailingAttributesOnProperties>("RuleA");
+            var firstValidator = ValidationFactory.CreateValidatorFromAttributes<TestObjectWithFailingAttributesOnProperties>();
+            var secondValidator = ValidationFactory.CreateValidatorFromAttributes<TestObjectWithFailingAttributesOnProperties>();
 
-            ValidationResults validationResults = validator.Validate(new TestObjectWithFailingAttributesOnProperties());
-
-            Assert.IsFalse(validationResults.IsValid);
-            IList<ValidationResult> resultsList = ValidationTestHelper.GetResultsList(validationResults);
-            Assert.AreEqual(1, resultsList.Count);
-            Assert.AreEqual("message1-RuleA", resultsList[0].Message);
+            Assert.AreSame(firstValidator, secondValidator);
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void ValidatorCreationWithNullRulesetNameThrows()
+        public void ShouldCacheNonGenericValidatorFromAttributes()
         {
-            ValidationFactory.CreateValidatorFromAttributes<object>((string)null);
+            var firstValidator = ValidationFactory.CreateValidatorFromAttributes(typeof(TestObjectWithFailingAttributesOnProperties), string.Empty);
+            var secondValidator = ValidationFactory.CreateValidatorFromAttributes(typeof(TestObjectWithFailingAttributesOnProperties), string.Empty);
+
+            Assert.AreSame(firstValidator, secondValidator);
         }
 
         [TestMethod]
-        public void CanCreateValidatorForTypeFromConfiguration()
+        public void ShouldCacheGenericValidatorFromConfig()
         {
-            DictionaryConfigurationSource configurationSource = new DictionaryConfigurationSource();
+            var firstValidator = ValidationFactory.CreateValidatorFromConfiguration<TestObjectWithFailingAttributesOnProperties>();
+            var secondValidator = ValidationFactory.CreateValidatorFromConfiguration<TestObjectWithFailingAttributesOnProperties>();
 
-            Validator<BaseTestDomainObject> validator
-                = ValidationFactory.CreateValidatorFromConfiguration<BaseTestDomainObject>(configurationSource);
-
-            Assert.IsNotNull(validator);
+            Assert.AreSame(firstValidator, secondValidator);
         }
 
         [TestMethod]
-        public void CanCreateValidatorForTypeFromConfigurationWithGivenRulesetName()
+        public void ShouldCacheNonGenericValidatorFromConfig()
         {
-            DictionaryConfigurationSource configurationSource = new DictionaryConfigurationSource();
-            ValidationSettings settings = new ValidationSettings();
-            configurationSource.Add(ValidationSettings.SectionName, settings);
-            ValidatedTypeReference typeReference = new ValidatedTypeReference(typeof(BaseTestDomainObject));
-            settings.Types.Add(typeReference);
-            ValidationRulesetData ruleData = new ValidationRulesetData("RuleA");
-            typeReference.Rulesets.Add(ruleData);
-            ValidatedPropertyReference propertyReference1 = new ValidatedPropertyReference("Property1");
-            ruleData.Properties.Add(propertyReference1);
-            MockValidatorData validator11 = new MockValidatorData("validator1", true);
-            propertyReference1.Validators.Add(validator11);
-            validator11.MessageTemplate = "message-from-config1-RuleA";
-            MockValidatorData validator12 = new MockValidatorData("validator2", true);
-            propertyReference1.Validators.Add(validator12);
-            validator12.MessageTemplate = "message-from-config2-RuleA";
-            MockValidatorData validator13 = new MockValidatorData("validator3", false);
-            propertyReference1.Validators.Add(validator13);
-            validator13.MessageTemplate = "message-from-config3-RuleA";
+            var firstValidator = ValidationFactory.CreateValidatorFromConfiguration(typeof(TestObjectWithFailingAttributesOnProperties), string.Empty);
+            var secondValidator = ValidationFactory.CreateValidatorFromConfiguration(typeof(TestObjectWithFailingAttributesOnProperties), string.Empty);
 
-            Validator<BaseTestDomainObject> validator
-                = ValidationFactory.CreateValidatorFromConfiguration<BaseTestDomainObject>("RuleA", (IConfigurationSource)configurationSource);
-
-            ValidationResults validationResults = validator.Validate(new BaseTestDomainObject());
-
-            Assert.IsFalse(validationResults.IsValid);
-            IList<ValidationResult> resultsList = ValidationTestHelper.GetResultsList(validationResults);
-            Assert.AreEqual(2, resultsList.Count);
-            Assert.AreEqual("message-from-config1-RuleA", resultsList[0].Message);
-            Assert.AreEqual("message-from-config2-RuleA", resultsList[1].Message);
+            Assert.AreSame(firstValidator, secondValidator);
         }
 
         [TestMethod]
-        public void CanCreateValidatorForTypeFromConfigurationWithDefaultRulesetName()
+        public void ResetCachesShouldReturnNewValidators()
         {
-            DictionaryConfigurationSource configurationSource = new DictionaryConfigurationSource();
-            ValidationSettings settings = new ValidationSettings();
-            configurationSource.Add(ValidationSettings.SectionName, settings);
-            ValidatedTypeReference typeReference = new ValidatedTypeReference(typeof(BaseTestDomainObject));
-            settings.Types.Add(typeReference);
-            typeReference.DefaultRuleset = "RuleA";
-            ValidationRulesetData ruleData = new ValidationRulesetData("RuleA");
-            typeReference.Rulesets.Add(ruleData);
-            ValidatedPropertyReference propertyReference1 = new ValidatedPropertyReference("Property1");
-            ruleData.Properties.Add(propertyReference1);
-            MockValidatorData validator11 = new MockValidatorData("validator1", true);
-            propertyReference1.Validators.Add(validator11);
-            validator11.MessageTemplate = "message-from-config1-RuleA";
-            MockValidatorData validator12 = new MockValidatorData("validator2", true);
-            propertyReference1.Validators.Add(validator12);
-            validator12.MessageTemplate = "message-from-config2-RuleA";
-            MockValidatorData validator13 = new MockValidatorData("validator3", false);
-            propertyReference1.Validators.Add(validator13);
-            validator13.MessageTemplate = "message-from-config3-RuleA";
+            var firstValidator = ValidationFactory.CreateValidator<TestObjectWithFailingAttributesOnProperties>();
+            ValidationFactory.ResetCaches();
+            var secondValidator = ValidationFactory.CreateValidator<TestObjectWithFailingAttributesOnProperties>();
 
-            Validator<BaseTestDomainObject> validator
-                = ValidationFactory.CreateValidatorFromConfiguration<BaseTestDomainObject>((IConfigurationSource)configurationSource);
-
-            ValidationResults validationResults = validator.Validate(new BaseTestDomainObject());
-
-            Assert.IsFalse(validationResults.IsValid);
-            IList<ValidationResult> resultsList = ValidationTestHelper.GetResultsList(validationResults);
-            Assert.AreEqual(2, resultsList.Count);
-            Assert.AreEqual("message-from-config1-RuleA", resultsList[0].Message);
-            Assert.AreEqual("message-from-config2-RuleA", resultsList[1].Message);
-        }
-
-        [TestMethod]
-        public void CanCreateValidatorForTypeFromAttributesAndConfigurationWithDefaultRulesetName()
-        {
-            DictionaryConfigurationSource configurationSource = new DictionaryConfigurationSource();
-            ValidationSettings settings = new ValidationSettings();
-            configurationSource.Add(ValidationSettings.SectionName, settings);
-            ValidatedTypeReference typeReference = new ValidatedTypeReference(typeof(TestObjectWithFailingAttributesOnProperties));
-            settings.Types.Add(typeReference);
-            typeReference.DefaultRuleset = "RuleA";
-            ValidationRulesetData ruleData = new ValidationRulesetData("RuleA");
-            typeReference.Rulesets.Add(ruleData);
-            ValidatedPropertyReference propertyReference1 = new ValidatedPropertyReference("FailingProperty1");
-            ruleData.Properties.Add(propertyReference1);
-            MockValidatorData validator11 = new MockValidatorData("validator1", true);
-            propertyReference1.Validators.Add(validator11);
-            validator11.MessageTemplate = "message-from-config1-RuleA";
-            MockValidatorData validator12 = new MockValidatorData("validator2", true);
-            propertyReference1.Validators.Add(validator12);
-            validator12.MessageTemplate = "message-from-config2-RuleA";
-            MockValidatorData validator13 = new MockValidatorData("validator3", false);
-            propertyReference1.Validators.Add(validator13);
-            validator13.MessageTemplate = "message-from-config3-RuleA";
-
-            Validator<TestObjectWithFailingAttributesOnProperties> validator
-                = ValidationFactory.CreateValidator<TestObjectWithFailingAttributesOnProperties>((IConfigurationSource)configurationSource);
-
-            ValidationResults validationResults = validator.Validate(new TestObjectWithFailingAttributesOnProperties());
-
-            Assert.IsFalse(validationResults.IsValid);
-            IDictionary<string, ValidationResult> resultsMapping = ValidationTestHelper.GetResultsMapping(validationResults);
-            Assert.AreEqual(4, resultsMapping.Count);
-            Assert.IsTrue(resultsMapping.ContainsKey("message-from-config1-RuleA"));
-            Assert.IsTrue(resultsMapping.ContainsKey("message-from-config1-RuleA"));
-            Assert.IsTrue(resultsMapping.ContainsKey("message1"));
-            Assert.IsTrue(resultsMapping.ContainsKey("message2"));
-        }
-
-        [TestMethod]
-        public void CanCreateValidatorForTypeFromAttributesAndConfigurationWithRulesetName()
-        {
-            DictionaryConfigurationSource configurationSource = new DictionaryConfigurationSource();
-            ValidationSettings settings = new ValidationSettings();
-            configurationSource.Add(ValidationSettings.SectionName, settings);
-            ValidatedTypeReference typeReference = new ValidatedTypeReference(typeof(TestObjectWithFailingAttributesOnProperties));
-            settings.Types.Add(typeReference);
-            typeReference.DefaultRuleset = "RuleA";
-            ValidationRulesetData ruleData = new ValidationRulesetData("RuleA");
-            typeReference.Rulesets.Add(ruleData);
-            ValidatedPropertyReference propertyReference1 = new ValidatedPropertyReference("FailingProperty1");
-            ruleData.Properties.Add(propertyReference1);
-            MockValidatorData validator11 = new MockValidatorData("validator1", true);
-            propertyReference1.Validators.Add(validator11);
-            validator11.MessageTemplate = "message-from-config1-RuleA";
-            MockValidatorData validator12 = new MockValidatorData("validator2", true);
-            propertyReference1.Validators.Add(validator12);
-            validator12.MessageTemplate = "message-from-config2-RuleA";
-            MockValidatorData validator13 = new MockValidatorData("validator3", false);
-            propertyReference1.Validators.Add(validator13);
-            validator13.MessageTemplate = "message-from-config3-RuleA";
-
-            Validator<TestObjectWithFailingAttributesOnProperties> validator
-                = ValidationFactory.CreateValidator<TestObjectWithFailingAttributesOnProperties>("RuleA", (IConfigurationSource)configurationSource);
-
-            ValidationResults validationResults = validator.Validate(new TestObjectWithFailingAttributesOnProperties());
-
-            Assert.IsFalse(validationResults.IsValid);
-            IDictionary<string, ValidationResult> resultsMapping = ValidationTestHelper.GetResultsMapping(validationResults);
-            Assert.AreEqual(3, resultsMapping.Count);
-            Assert.IsTrue(resultsMapping.ContainsKey("message-from-config1-RuleA"));
-            Assert.IsTrue(resultsMapping.ContainsKey("message-from-config2-RuleA"));
-            Assert.IsTrue(resultsMapping.ContainsKey("message1-RuleA"));
-        }
-
-        [TestMethod]
-        public void CanCreateValidatorFromConfigurationFile()
-        {
-            Validator<TestObjectWithFailingAttributesOnProperties> validator
-                = ValidationFactory.CreateValidatorFromConfiguration<TestObjectWithFailingAttributesOnProperties>("RuleA");
-
-            ValidationResults validationResults = validator.Validate(new TestObjectWithFailingAttributesOnProperties());
-
-            Assert.IsFalse(validationResults.IsValid);
-            IDictionary<string, ValidationResult> resultsMapping = ValidationTestHelper.GetResultsMapping(validationResults);
-            Assert.AreEqual(2, resultsMapping.Count);
-            Assert.IsTrue(resultsMapping.ContainsKey("message-from-config1-RuleA"));
-            Assert.IsTrue(resultsMapping.ContainsKey("message-from-config2-RuleA"));
-        }
-
-        [TestMethod]
-        public void CanCreateValidatorFromConfigurationFileAndAttributes()
-        {
-            Validator<TestObjectWithFailingAttributesOnProperties> validator
-                = ValidationFactory.CreateValidator<TestObjectWithFailingAttributesOnProperties>("RuleA");
-
-            ValidationResults validationResults = validator.Validate(new TestObjectWithFailingAttributesOnProperties());
-
-            Assert.IsFalse(validationResults.IsValid);
-            IDictionary<string, ValidationResult> resultsMapping = ValidationTestHelper.GetResultsMapping(validationResults);
-            Assert.AreEqual(3, resultsMapping.Count);
-            Assert.IsTrue(resultsMapping.ContainsKey("message-from-config1-RuleA"));
-            Assert.IsTrue(resultsMapping.ContainsKey("message-from-config2-RuleA"));
-            Assert.IsTrue(resultsMapping.ContainsKey("message1-RuleA"));
-        }
-
-        [TestMethod]
-        public void CanCreateValidatorFromConfigurationFileUsingDefaultRule()
-        {
-            Validator<TestObjectWithFailingAttributesOnProperties> validator
-                = ValidationFactory.CreateValidatorFromConfiguration<TestObjectWithFailingAttributesOnProperties>();
-
-            ValidationResults validationResults = validator.Validate(new TestObjectWithFailingAttributesOnProperties());
-
-            Assert.IsFalse(validationResults.IsValid);
-            IDictionary<string, ValidationResult> resultsMapping = ValidationTestHelper.GetResultsMapping(validationResults);
-            Assert.AreEqual(2, resultsMapping.Count);
-            Assert.IsTrue(resultsMapping.ContainsKey("message-from-config1"));
-            Assert.IsTrue(resultsMapping.ContainsKey("message-from-config2"));
-        }
-
-        [TestMethod]
-        public void CanCreateValidatorFromConfigurationFileAndAttributesUsingDefaultRule()
-        {
-            Validator<TestObjectWithFailingAttributesOnProperties> validator
-                = ValidationFactory.CreateValidator<TestObjectWithFailingAttributesOnProperties>();
-
-            ValidationResults validationResults = validator.Validate(new TestObjectWithFailingAttributesOnProperties());
-
-            Assert.IsFalse(validationResults.IsValid);
-            IDictionary<string, ValidationResult> resultsMapping = ValidationTestHelper.GetResultsMapping(validationResults);
-            Assert.AreEqual(4, resultsMapping.Count);
-            Assert.IsTrue(resultsMapping.ContainsKey("message-from-config1"));
-            Assert.IsTrue(resultsMapping.ContainsKey("message-from-config2"));
-            Assert.IsTrue(resultsMapping.ContainsKey("message1"));
-            Assert.IsTrue(resultsMapping.ContainsKey("message2"));
+            Assert.AreNotSame(firstValidator, secondValidator);
         }
 
         #region Test Fix "Remove unnecessary AndCompositeValidator from hierarchy"
@@ -292,9 +96,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
             Validator validator = ValidationFactory.CreateValidator(typeof(MockClassWithValidatorAttributesOnProperties), "");
 
             Assert.IsNotNull(validator);
-            Assert.AreSame(typeof(ValidatorWrapper), validator.GetType());
+            Assert.AreSame(typeof(GenericValidatorWrapper<MockClassWithValidatorAttributesOnProperties>), validator.GetType());
 
-            ValidatorWrapper validatorWrapper = validator as ValidatorWrapper;
+            var validatorWrapper = validator as GenericValidatorWrapper<MockClassWithValidatorAttributesOnProperties>;
 
             AndCompositeValidator compositeValidator = validatorWrapper.WrappedValidator as AndCompositeValidator;
 
@@ -330,7 +134,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
             Validator validator
                 = ValidationFactory.CreateValidatorFromConfiguration(typeof(BaseTestDomainObject), "RuleA", (IConfigurationSource)configurationSource);
 
-            ValidatorWrapper validatorWrapper = validator as ValidatorWrapper;
+            var validatorWrapper = validator as GenericValidatorWrapper<BaseTestDomainObject>;
 
             AndCompositeValidator compositeValidator = validatorWrapper.WrappedValidator as AndCompositeValidator;
 

@@ -11,7 +11,6 @@
 
 using System;
 using System.Diagnostics;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
 using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Properties;
 
@@ -21,10 +20,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Instrumentatio
 	/// Is the instrumentation gateway when no instances of the objects from the block are involved.
 	/// </summary>
 	[EventLogDefinition("Application", "Enterprise Library ExceptionHandling")]
-	[CustomFactory(typeof(DefaultExceptionHandlingEventLoggerCustomFactory))]
-	public class DefaultExceptionHandlingEventLogger : InstrumentationListener
+	public class DefaultExceptionHandlingEventLogger : InstrumentationListener, IDefaultExceptionHandlingInstrumentationProvider
 	{
-		private IEventLogEntryFormatter eventLogEntryFormatter;
+		private readonly IEventLogEntryFormatter eventLogEntryFormatter;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="DefaultExceptionHandlingEventLogger"/> class.
@@ -40,7 +38,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Instrumentatio
 			string applicationInstanceName)
 			: base(performanceCountersEnabled, eventLoggingEnabled, wmiEnabled, new AppDomainNameFormatter(applicationInstanceName))
 		{
-			this.eventLogEntryFormatter = new EventLogEntryFormatter(Resources.BlockName);
+			eventLogEntryFormatter = new EventLogEntryFormatter(Resources.BlockName);
 		}
 
 		/// <summary>
@@ -90,15 +88,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Instrumentatio
 			}
 		}
 
-		/// <summary>
-		/// Handler for the <see cref="DefaultExceptionHandlingInstrumentationProvider.exceptionHandlingErrorOccurred"/> event.
-		/// </summary>
-		/// <param name="sender">The originator of the event.</param>
-		/// <param name="e">The event parameters.</param>
-		[InstrumentationConsumer("ExceptionHandlingErrorOccurred")]
-		public void ExceptionHandlingErrorOccurred(object sender, DefaultExceptionHandlingErrorEventArgs e)
-		{
-			LogInternalError(e.PolicyName, e.Message);
-		}
+	    /// <summary>
+	    /// Fires the ExceptionHandlingErrorOccurred"/> event.
+	    /// </summary>
+	    /// <param name="policyName">The name of the policy involved with the error.</param>
+	    /// <param name="message">The message that describes the failure.</param>
+	    public void FireExceptionHandlingErrorOccurred(string policyName, string message)
+	    {
+	        LogInternalError(policyName, message);
+	    }
 	}
 }

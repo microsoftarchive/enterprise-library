@@ -10,7 +10,6 @@
 //===============================================================================
 
 using System.Diagnostics;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
 using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation
@@ -20,7 +19,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation
 	/// </summary>
 	[HasInstallableResourcesAttribute]
 	[PerformanceCountersDefinition(counterCategoryName, "LoggingCountersHelpResource")]
-	[CustomFactory(typeof(TracerInstrumentationListenerCustomFactory))]
 	public class TracerInstrumentationListener : InstrumentationListener
 	{
 		static EnterpriseLibraryPerformanceCounterFactory factory = new EnterpriseLibraryPerformanceCounterFactory();
@@ -46,6 +44,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation
         /// </summary>
 		public const string counterCategoryName = "Enterprise Library Logging Counters";
 
+
+        //todo: REMOVE
 		/// <summary>
 		/// Initializes a new instance of the <see cref="TracerInstrumentationListener"/> class.
 		/// </summary>
@@ -54,6 +54,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation
 			: base("", performanceCountersEnabled, false, false, new AppDomainNameFormatter())
 		{
 		}
+
+	   ///<summary>
+       /// Initializes a new instance of the <see cref="TracerInstrumentationListener"/> class.
+	   ///</summary>
+	   ///<param name="performanceCountersEnabled"></param>
+	   ///<param name="eventLoggingEnabled"></param>
+	   ///<param name="wmiEnabled"></param>
+	   ///<param name="applicationName"></param>
+	   public TracerInstrumentationListener(bool performanceCountersEnabled, bool eventLoggingEnabled, bool wmiEnabled, string applicationName)
+            : base(performanceCountersEnabled, eventLoggingEnabled, wmiEnabled, new AppDomainNameFormatter(applicationName))
+        {
+        }
 
 		/// <summary>
 		/// Instruments the start of a trace operation.
@@ -69,6 +81,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation
 			}
 		}
 
+        ///<summary>
+        ///</summary>
+        ///<param name="sender"></param>
+        ///<param name="e"></param>
+        public void TracerOperationStarted(object sender, TraceOperationStartedEventArgs e)
+        {
+            TracerOperationStarted(e.OperationName);
+        }
+
 		/// <summary>
 		/// Instruments the end of a trace operation.
 		/// </summary>
@@ -83,6 +104,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation
 				averageTraceExecutionTimeBase.Increment(instanceName);
 			}
 		}
+
+        ///<summary>
+        ///</summary>
+        ///<param name="sender"></param>
+        ///<param name="e"></param>
+        public void TracerOperationEnded(object sender, TraceOperationEndedEventArgs e)
+        {
+            TracerOperationEnded(e.OperationName, e.ElapsedTime);
+        }
 
 		/// <summary>
 		/// Creates the performance counters to instrument the <see cref="Tracer"/> operations associated to the instance names.

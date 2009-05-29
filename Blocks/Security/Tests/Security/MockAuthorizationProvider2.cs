@@ -9,13 +9,9 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System.Configuration;
 using System.Security.Principal;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Unity;
 using Microsoft.Practices.EnterpriseLibrary.Security.Configuration;
-using Microsoft.Practices.ObjectBuilder2;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Tests
 {
@@ -32,8 +28,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Tests
 		}
 	}
 
-	[Assembler(typeof(MockAuthorizationProvider2Assembler))]
-	[ContainerPolicyCreator(typeof(MockAuthorizationProvider2PolicyCreator))]
 	public class MockAuthorizationProvider2Data : AuthorizationProviderData
 	{
 		public MockAuthorizationProvider2Data()
@@ -44,31 +38,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Tests
 			: base(name, typeof(MockAuthorizationProvider2))
 		{
 		}
+
+        protected override System.Linq.Expressions.Expression<System.Func<IAuthorizationProvider>> GetCreationExpression()
+        {
+            return () => new MockAuthorizationProvider2();
+        }
 	}
 
-	public class MockAuthorizationProvider2Assembler : IAssembler<IAuthorizationProvider, AuthorizationProviderData>
-	{
-		public IAuthorizationProvider Assemble(IBuilderContext context,
-											   AuthorizationProviderData objectConfiguration,
-											   IConfigurationSource configurationSource,
-											   ConfigurationReflectionCache reflectionCache)
-		{
-			return new MockAuthorizationProvider2();
-		}
-	}
-
-	public class MockAuthorizationProvider2PolicyCreator : IContainerPolicyCreator
-	{
-		#region IContainerPolicyCreator Members
-
-		public void CreatePolicies(
-			IPolicyList policyList,
-			string instanceName,
-			ConfigurationElement configurationObject,
-			IConfigurationSource configurationSource)
-		{
-		}
-
-		#endregion
-	}
 }

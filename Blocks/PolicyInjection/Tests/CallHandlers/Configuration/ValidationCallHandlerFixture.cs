@@ -9,13 +9,12 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.TestSupport.ObjectsUnderTest;
-using Microsoft.Practices.Unity;
+using Microsoft.Practices.EnterpriseLibrary.Validation;
 using Microsoft.Practices.Unity.InterceptionExtension;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -41,88 +40,209 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
             Assert.AreEqual(data.Order, deserialized.Order);
         }
 
-        [TestMethod]
-        public void AssembledValidationCallHandler()
-        {
-            PolicyInjectionSettings settings = new PolicyInjectionSettings();
-
-            PolicyData policyData = new PolicyData("policy");
-            ValidationCallHandlerData data = new ValidationCallHandlerData("FooCallHandler", 2);
-            policyData.Handlers.Add(data);
-            settings.Policies.Add(policyData);
-
-            DictionaryConfigurationSource dictConfigurationSource = new DictionaryConfigurationSource();
-            dictConfigurationSource.Add(PolicyInjectionSettings.SectionName, settings);
-
-            IUnityContainer container = new UnityContainer().AddNewExtension<Interception>();
-            var policy = container.Configure<Interception>().AddPolicy("test");
-            policy.AddMatchingRule(new AlwaysMatchingRule());
-            data.ConfigurePolicy(policy, null);
-
-            var handlers
-                = new List<ICallHandler>(
-                    container.Resolve<InjectionPolicy>("test")
-                        .GetHandlersFor(GetMethodImpl(MethodBase.GetCurrentMethod()), container));
-
-            Assert.AreEqual(1, handlers.Count);
-
-            ICallHandler handler = handlers[0];
-
-            Assert.IsNotNull(handler);
-            Assert.AreEqual(handler.Order, data.Order);
-        }
-
-        [TestMethod]
-        public void ConfiguresCallHandlerAsSingleton()
-        {
-            PolicyInjectionSettings settings = new PolicyInjectionSettings();
-
-            PolicyData policyData = new PolicyData("policy");
-            ValidationCallHandlerData data = new ValidationCallHandlerData("FooCallHandler", 2);
-            policyData.Handlers.Add(data);
-            settings.Policies.Add(policyData);
-
-            DictionaryConfigurationSource dictConfigurationSource = new DictionaryConfigurationSource();
-            dictConfigurationSource.Add(PolicyInjectionSettings.SectionName, settings);
-
-            IUnityContainer container = new UnityContainer().AddNewExtension<Interception>();
-            var policy = container.Configure<Interception>().AddPolicy("test");
-            policy.AddMatchingRule(new AlwaysMatchingRule());
-            data.ConfigurePolicy(policy, null);
-
-            var handlers1
-                = new List<ICallHandler>(
-                    container.Resolve<InjectionPolicy>("test")
-                        .GetHandlersFor(GetMethodImpl(MethodBase.GetCurrentMethod()), container));
-            var handlers2
-                = new List<ICallHandler>(
-                    container.Resolve<InjectionPolicy>("test")
-                        .GetHandlersFor(GetMethodImpl(MethodBase.GetCurrentMethod()), container));
-
-            CollectionAssert.AreEquivalent(handlers1, handlers2);
-        }
-
-        [TestMethod]
-        public void CreatedValidationCallHandlerFromAttributes()
-        {
-            MethodInfo method = typeof(ValidationMock).GetMethod("ReturnSomething");
-            object[] attributes = method.GetCustomAttributes(typeof(ValidationCallHandlerAttribute), false);
-
-            Assert.AreEqual(attributes.Length, 1);
-
-            ValidationCallHandlerAttribute attribute = attributes[0] as ValidationCallHandlerAttribute;
-
-            Assert.IsNotNull(attribute);
-
-            ICallHandler handler = attribute.CreateHandler(null);
-
-            Assert.IsNotNull(handler);
-            Assert.AreEqual(handler.Order, 16);
-        }
-
         private static MethodImplementationInfo GetMethodImpl(MethodBase method)
         {
-            return new MethodImplementationInfo(null, ((MethodInfo) method));
+            return new MethodImplementationInfo(null, ((MethodInfo)method));
+        }
+    }
+
+    [TestClass]
+    public class GivenAValidationCallHandlerDataWithAttributesSource
+    {
+        private CallHandlerData callHandlerData;
+
+        [TestInitialize]
+        public void Setup()
+        {
+            callHandlerData =
+                new ValidationCallHandlerData("validation")
+                {
+                    Order = 300,
+                    SpecificationSource = SpecificationSource.Attributes,
+                    RuleSet = "ruleset"
+                };
+        }
+
+        [TestMethod]
+        public void WhenCreatesTypeRegistration_ThenCreatesSingleRegistration()
+        {
+            var registrations = callHandlerData.GetRegistrations("-suffix");
+
+            Assert.AreEqual(1, registrations.Count());
+        }
+
+        [TestMethod]
+        public void WhenCreatesTypeRegistration_ThenRegistrationIsForICallHandlerWithNameAndImplementationType()
+        {
+            var registrations = callHandlerData.GetRegistrations("-suffix");
+
+            registrations.ElementAt(0)
+                .AssertForServiceType(typeof(ICallHandler))
+                .ForName("validation-suffix")
+                .ForImplementationType(typeof(ValidationCallHandler));
+        }
+
+        [TestMethod]
+        public void WhenCreatesRegistrations_ThenCallHandlerRegistrationInjectsConstructorParameters()
+        {
+            var registrations = callHandlerData.GetRegistrations("-suffix");
+
+            registrations.ElementAt(0)
+                .AssertConstructor()
+                .WithValueConstructorParameter("ruleset")
+                .WithContainerResolvedParameter<AttributeValidatorFactory>(null)
+                .WithValueConstructorParameter(300)
+                .VerifyConstructorParameters();
+        }
+    }
+
+    [TestClass]
+    public class GivenAValidationCallHandlerDataWithConfigurationSource
+    {
+        private CallHandlerData callHandlerData;
+
+        [TestInitialize]
+        public void Setup()
+        {
+            callHandlerData =
+                new ValidationCallHandlerData("validation")
+                {
+                    Order = 400,
+                    SpecificationSource = SpecificationSource.Configuration,
+                    RuleSet = "ruleset"
+                };
+        }
+
+        [TestMethod]
+        public void WhenCreatesTypeRegistration_ThenCreatesSingleRegistration()
+        {
+            var registrations = callHandlerData.GetRegistrations("-suffix");
+
+            Assert.AreEqual(1, registrations.Count());
+        }
+
+        [TestMethod]
+        public void WhenCreatesTypeRegistration_ThenRegistrationIsForICallHandlerWithNameAndImplementationType()
+        {
+            var registrations = callHandlerData.GetRegistrations("-suffix");
+
+            registrations.ElementAt(0)
+                .AssertForServiceType(typeof(ICallHandler))
+                .ForName("validation-suffix")
+                .ForImplementationType(typeof(ValidationCallHandler));
+        }
+
+        [TestMethod]
+        public void WhenCreatesRegistrations_ThenCallHandlerRegistrationInjectsConstructorParameters()
+        {
+            var registrations = callHandlerData.GetRegistrations("-suffix");
+
+            registrations.ElementAt(0)
+                .AssertConstructor()
+                .WithValueConstructorParameter("ruleset")
+                .WithContainerResolvedParameter<ConfigurationValidatorFactory>(null)
+                .WithValueConstructorParameter(400)
+                .VerifyConstructorParameters();
+        }
+    }
+
+    [TestClass]
+    public class GivenAValidationCallHandlerDataWithBothSource
+    {
+        private CallHandlerData callHandlerData;
+
+        [TestInitialize]
+        public void Setup()
+        {
+            callHandlerData =
+                new ValidationCallHandlerData("validation")
+                {
+                    Order = 400,
+                    SpecificationSource = SpecificationSource.Both,
+                    RuleSet = "ruleset"
+                };
+        }
+
+        [TestMethod]
+        public void WhenCreatesTypeRegistration_ThenCreatesSingleRegistration()
+        {
+            var registrations = callHandlerData.GetRegistrations("-suffix");
+
+            Assert.AreEqual(1, registrations.Count());
+        }
+
+        [TestMethod]
+        public void WhenCreatesTypeRegistration_ThenRegistrationIsForICallHandlerWithNameAndImplementationType()
+        {
+            var registrations = callHandlerData.GetRegistrations("-suffix");
+
+            registrations.ElementAt(0)
+                .AssertForServiceType(typeof(ICallHandler))
+                .ForName("validation-suffix")
+                .ForImplementationType(typeof(ValidationCallHandler));
+        }
+
+        [TestMethod]
+        public void WhenCreatesRegistrations_ThenCallHandlerRegistrationInjectsConstructorParameters()
+        {
+            var registrations = callHandlerData.GetRegistrations("-suffix");
+
+            registrations.ElementAt(0)
+                .AssertConstructor()
+                .WithValueConstructorParameter("ruleset")
+                .WithContainerResolvedParameter<ValidatorFactory>(null)
+                .WithValueConstructorParameter(400)
+                .VerifyConstructorParameters();
+        }
+    }
+
+    [TestClass]
+    public class GivenAValidationCallHandlerDataWithParameterAttributesOnlySource
+    {
+        private CallHandlerData callHandlerData;
+
+        [TestInitialize]
+        public void Setup()
+        {
+            callHandlerData =
+                new ValidationCallHandlerData("validation")
+                {
+                    Order = 400,
+                    SpecificationSource = SpecificationSource.ParameterAttributesOnly,
+                    RuleSet = "ruleset"
+                };
+        }
+
+        [TestMethod]
+        public void WhenCreatesTypeRegistration_ThenCreatesSingleRegistration()
+        {
+            var registrations = callHandlerData.GetRegistrations("-suffix");
+
+            Assert.AreEqual(1, registrations.Count());
+        }
+
+        [TestMethod]
+        public void WhenCreatesTypeRegistration_ThenRegistrationIsForICallHandlerWithNameAndImplementationType()
+        {
+            var registrations = callHandlerData.GetRegistrations("-suffix");
+
+            registrations.ElementAt(0)
+                .AssertForServiceType(typeof(ICallHandler))
+                .ForName("validation-suffix")
+                .ForImplementationType(typeof(ValidationCallHandler));
+        }
+
+        [TestMethod]
+        public void WhenCreatesRegistrations_ThenCallHandlerRegistrationInjectsConstructorParameters()
+        {
+            var registrations = callHandlerData.GetRegistrations("-suffix");
+
+            registrations.ElementAt(0)
+                .AssertConstructor()
+                .WithValueConstructorParameter("ruleset")
+                .WithValueConstructorParameter<ValidatorFactory>(null)
+                .WithValueConstructorParameter(400)
+                .VerifyConstructorParameters();
         }
     }
 

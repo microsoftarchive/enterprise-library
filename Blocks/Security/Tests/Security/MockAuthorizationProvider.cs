@@ -9,13 +9,9 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System.Configuration;
 using System.Security.Principal;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Unity;
 using Microsoft.Practices.EnterpriseLibrary.Security.Configuration;
-using Microsoft.Practices.ObjectBuilder2;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Tests
 {
@@ -45,8 +41,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Tests
 		}
 	}
 
-	[Assembler(typeof(MockAuthorizationProviderAssembler))]
-	[ContainerPolicyCreator(typeof(MockAuthorizationProviderPolicyCreator))]
+
 	public class MockAuthorizationProviderData : AuthorizationProviderData
 	{
 		public MockAuthorizationProviderData()
@@ -57,31 +52,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Tests
 			: base(name, typeof(MockAuthorizationProvider))
 		{
 		}
-	}
 
-	public class MockAuthorizationProviderAssembler : IAssembler<IAuthorizationProvider, AuthorizationProviderData>
-	{
-		public IAuthorizationProvider Assemble(IBuilderContext context,
-											   AuthorizationProviderData objectConfiguration,
-											   IConfigurationSource configurationSource,
-											   ConfigurationReflectionCache reflectionCache)
-		{
-			return new MockAuthorizationProvider();
-		}
-	}
-
-	public class MockAuthorizationProviderPolicyCreator : IContainerPolicyCreator
-	{
-		#region IContainerPolicyCreator Members
-
-		public void CreatePolicies(
-			IPolicyList policyList,
-			string instanceName,
-			ConfigurationElement configurationObject,
-			IConfigurationSource configurationSource)
-		{
-		}
-
-		#endregion
+        protected override System.Linq.Expressions.Expression<System.Func<IAuthorizationProvider>> GetCreationExpression()
+        {
+            return () => new MockAuthorizationProvider();
+        }
 	}
 }

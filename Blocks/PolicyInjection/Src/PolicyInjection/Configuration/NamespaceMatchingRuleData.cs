@@ -11,7 +11,9 @@
 
 using System.Collections.Generic;
 using System.Configuration;
+using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
 using FakeRules = Microsoft.Practices.EnterpriseLibrary.PolicyInjection.MatchingRules;
@@ -80,21 +82,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         }
 
         /// <summary>
-        /// Adds the rule represented by this configuration object to <paramref name="policy"/>.
+        /// Get the set of <see cref="TypeRegistration"/> objects needed to
+        /// register the matching rule represented by this config element and its associated objects.
         /// </summary>
-        /// <param name="policy">The policy to which the rule must be added.</param>
-        /// <param name="configurationSource">The configuration source from which additional information
-        /// can be retrieved, if necessary.</param>
-        public override void ConfigurePolicy(PolicyDefinition policy, IConfigurationSource configurationSource)
+        /// <param name="nameSuffix">A suffix for the names in the generated type registration objects.</param>
+        /// <returns>The set of <see cref="TypeRegistration"/> objects.</returns>
+        public override IEnumerable<TypeRegistration> GetRegistrations(string nameSuffix)
         {
-            List<MatchingInfo> matches = new List<MatchingInfo>();
-            foreach (MatchData matchData in this.Matches)
-            {
-                matches.Add(new MatchingInfo(matchData.Match, matchData.IgnoreCase));
-            }
-
-            policy.AddMatchingRule<NamespaceMatchingRule>(
-                new InjectionConstructor(new InjectionParameter<IEnumerable<MatchingInfo>>(matches)));
+            yield return
+                new TypeRegistration<IMatchingRule>(() =>
+                    new NamespaceMatchingRule(
+                        this.Matches.Select(match => new MatchingInfo(match.Match, match.IgnoreCase)).ToArray()))
+                {
+                    Name = this.Name + nameSuffix
+                };
         }
     }
 }

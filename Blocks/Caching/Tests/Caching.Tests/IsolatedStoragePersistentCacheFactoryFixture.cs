@@ -30,8 +30,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests
         [TestCleanup]
         public void ReleaseCacheManager()
         {
-            cacheManager.Flush();
-            cacheManager.Dispose();
+            if (cacheManager != null)
+            {
+                cacheManager.Flush();
+                cacheManager.Dispose();
+            }
         }
 
         [TestMethod]

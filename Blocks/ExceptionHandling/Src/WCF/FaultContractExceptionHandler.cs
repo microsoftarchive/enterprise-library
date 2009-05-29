@@ -11,14 +11,8 @@
 
 using System;
 using System.Collections.Specialized;
-using System.Collections.Generic;
-using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
 using System.Reflection;
-using System.ComponentModel;
 using System.Globalization;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.Configuration;
 
@@ -36,7 +30,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF
 		private string exceptionMessage;
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:FaultContractExceptionHandler"/> class.
+		/// Initializes a new instance of the <see cref="FaultContractExceptionHandler"/> class.
 		/// </summary>
 		/// <param name="faultContractType">Type of the fault contract.</param>
 		/// <param name="attributes">The attributes.</param>
@@ -46,7 +40,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="T:FaultContractExceptionHandler"/> class.
+		/// Initializes a new instance of the <see cref="FaultContractExceptionHandler"/> class.
 		/// </summary>
 		/// <param name="faultContractType">Type of the fault contract.</param>
 		/// <param name="exceptionMessage">A fixed exception message that will replace the fault contract message.</param>

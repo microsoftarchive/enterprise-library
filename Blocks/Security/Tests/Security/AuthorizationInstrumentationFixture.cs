@@ -20,9 +20,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Tests
     [TestClass]
     public class AuthorizationInstrumentationFixture
     {
-        AuthorizationProviderInstrumentationProvider instrumentationProvider;
-        AuthorizationProviderInstrumentationListener disabledInstrumentationListener;
-        AuthorizationProviderInstrumentationListener enabledInstrumentationListener;
+        AuthorizationProviderInstrumentationProvider enabledInstrumentationProvider;
+        AuthorizationProviderInstrumentationProvider disabledInstrumentationProvider;
         EnterpriseLibraryPerformanceCounter totalAuthorizationCheckFailedCounter;
         EnterpriseLibraryPerformanceCounter totalAuthorizationCheckPerformedCounter;
         AppDomainNameFormatter formatter;
@@ -37,11 +36,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Tests
         {
             formatter = new AppDomainNameFormatter();
             formattedInstanceName = formatter.CreateName(instanceName);
-            instrumentationProvider = new AuthorizationProviderInstrumentationProvider();
-            enabledInstrumentationListener = new AuthorizationProviderInstrumentationListener(instanceName, true, true, true, formatter);
-            disabledInstrumentationListener = new AuthorizationProviderInstrumentationListener(instanceName, false, false, false, formatter);
-            totalAuthorizationCheckFailedCounter = new EnterpriseLibraryPerformanceCounter(AuthorizationProviderInstrumentationListener.PerformanceCountersCategoryName, AuthorizationProviderInstrumentationListener.TotalAuthorizationCheckFailedCounterName, formattedInstanceName);
-            totalAuthorizationCheckPerformedCounter = new EnterpriseLibraryPerformanceCounter(AuthorizationProviderInstrumentationListener.PerformanceCountersCategoryName, AuthorizationProviderInstrumentationListener.TotalAuthorizationCheckPerformedCounterName, formattedInstanceName);
+            enabledInstrumentationProvider = new AuthorizationProviderInstrumentationProvider(instanceName, true, true, true, formatter);
+            disabledInstrumentationProvider = new AuthorizationProviderInstrumentationProvider(instanceName, false, false, false, formatter);
+            totalAuthorizationCheckFailedCounter = new EnterpriseLibraryPerformanceCounter(AuthorizationProviderInstrumentationProvider.PerformanceCountersCategoryName, AuthorizationProviderInstrumentationProvider.TotalAuthorizationCheckFailedCounterName, formattedInstanceName);
+            totalAuthorizationCheckPerformedCounter = new EnterpriseLibraryPerformanceCounter(AuthorizationProviderInstrumentationProvider.PerformanceCountersCategoryName, AuthorizationProviderInstrumentationProvider.TotalAuthorizationCheckPerformedCounterName, formattedInstanceName);
 
             ClearCounters();
         }
@@ -55,7 +53,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Tests
         [TestMethod]
         public void TotalAuthorizationCheckPerformedCounterIncremented()
         {
-            enabledInstrumentationListener.AuthorizationCheckPerformed(this, new AuthorizationOperationEventArgs("foo", "bar"));
+            enabledInstrumentationProvider.FireAuthorizationCheckPerformed("foo", "bar");
 
             Assert.AreEqual(1, totalAuthorizationCheckPerformedCounter.Value);
         }
@@ -63,7 +61,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Tests
         [TestMethod]
         public void TotalAuthorizationCheckFailedCounterIncremented()
         {
-            enabledInstrumentationListener.AuthorizationCheckFailed(this, new AuthorizationOperationEventArgs("foo", "bar"));
+            enabledInstrumentationProvider.FireAuthorizationCheckFailed("foo", "bar");
 
             Assert.AreEqual(1, totalAuthorizationCheckFailedCounter.Value);
         }
@@ -71,11 +69,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Tests
         [TestMethod]
         public void AuthorizationCheckDoesNotifyWmiIfEnabled()
         {
-            new ReflectionInstrumentationBinder().Bind(instrumentationProvider, enabledInstrumentationListener);
-
             using (WmiEventWatcher eventListener = new WmiEventWatcher(numberOfEvents))
             {
-                FireAuthorizationCheckPerformed();
+                FireAuthorizationCheckPerformed(enabledInstrumentationProvider);
                 eventListener.WaitForEvents();
 
                 Assert.AreEqual(numberOfEvents, eventListener.EventsReceived.Count);
@@ -85,11 +81,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Tests
         [TestMethod]
         public void AuthorizationCheckDoesNotNotifyWmiIfDisabled()
         {
-            new ReflectionInstrumentationBinder().Bind(instrumentationProvider, disabledInstrumentationListener);
-
             using (WmiEventWatcher eventListener = new WmiEventWatcher(numberOfEvents))
             {
-                FireAuthorizationCheckPerformed();
+                FireAuthorizationCheckPerformed(disabledInstrumentationProvider);
                 eventListener.WaitForEvents();
 
                 Assert.AreEqual(0, eventListener.EventsReceived.Count);
@@ -99,14 +93,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Tests
         [TestMethod]
         public void AuthorizationCheckDoesUpdatePerformanceCountersIfEnabled()
         {
-            new ReflectionInstrumentationBinder().Bind(instrumentationProvider, enabledInstrumentationListener);
-
             EnterpriseLibraryPerformanceCounter performanceCounter
-                = CreatePerformanceCounter(AuthorizationProviderInstrumentationListener.AuthorizationCheckPerformedCounterName);
+                = CreatePerformanceCounter(AuthorizationProviderInstrumentationProvider.AuthorizationCheckPerformedCounterName);
             performanceCounter.Clear();
             Assert.AreEqual(0L, performanceCounter.GetValueFor(formattedInstanceName));
 
-            FireAuthorizationCheckPerformed();
+            FireAuthorizationCheckPerformed(enabledInstrumentationProvider);
 
             // Timing dependant
             Assert.AreEqual(50L, performanceCounter.GetValueFor(formattedInstanceName));
@@ -115,14 +107,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Tests
         [TestMethod]
         public void AuthorizationCheckDoesNotUpdatePerformanceCountersIfDisabled()
         {
-            new ReflectionInstrumentationBinder().Bind(instrumentationProvider, disabledInstrumentationListener);
-
             EnterpriseLibraryPerformanceCounter performanceCounter
-                = CreatePerformanceCounter(AuthorizationProviderInstrumentationListener.AuthorizationCheckPerformedCounterName);
+                = CreatePerformanceCounter(AuthorizationProviderInstrumentationProvider.AuthorizationCheckPerformedCounterName);
             performanceCounter.Clear();
             Assert.IsTrue(performanceCounter.GetValueFor(formattedInstanceName) == 0);
 
-            FireAuthorizationCheckPerformed();
+            FireAuthorizationCheckPerformed(disabledInstrumentationProvider);
 
             // Timing dependant
             Assert.IsTrue(performanceCounter.GetValueFor(formattedInstanceName) == 0);
@@ -131,11 +121,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Tests
         [TestMethod]
         public void AuthorizationFailureDoesNotifyWmiIfEnabled()
         {
-            new ReflectionInstrumentationBinder().Bind(instrumentationProvider, enabledInstrumentationListener);
-
             using (WmiEventWatcher eventListener = new WmiEventWatcher(numberOfEvents))
             {
-                FireAuthorizationCheckFailed();
+                FireAuthorizationCheckFailed(enabledInstrumentationProvider);
                 eventListener.WaitForEvents();
 
                 Assert.AreEqual(numberOfEvents, eventListener.EventsReceived.Count);
@@ -145,11 +133,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Tests
         [TestMethod]
         public void AuthorizationFailureDoesNotNotifyWmiIfDisabled()
         {
-            new ReflectionInstrumentationBinder().Bind(instrumentationProvider, disabledInstrumentationListener);
-
             using (WmiEventWatcher eventListener = new WmiEventWatcher(numberOfEvents))
             {
-                FireAuthorizationCheckFailed();
+                FireAuthorizationCheckFailed(disabledInstrumentationProvider);
                 eventListener.WaitForEvents();
 
                 Assert.AreEqual(0, eventListener.EventsReceived.Count);
@@ -159,14 +145,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Tests
         [TestMethod]
         public void AuthorizationFailureDoesUpdatePerformanceCountersIfEnabled()
         {
-            new ReflectionInstrumentationBinder().Bind(instrumentationProvider, enabledInstrumentationListener);
-
             EnterpriseLibraryPerformanceCounter performanceCounter
-                = CreatePerformanceCounter(AuthorizationProviderInstrumentationListener.AuthorizationCheckFailedCounterName);
+                = CreatePerformanceCounter(AuthorizationProviderInstrumentationProvider.AuthorizationCheckFailedCounterName);
             performanceCounter.Clear();
             Assert.AreEqual(0L, performanceCounter.GetValueFor(formattedInstanceName));
 
-            FireAuthorizationCheckFailed();
+            FireAuthorizationCheckFailed(enabledInstrumentationProvider);
 
             // Timing dependant
             Assert.AreEqual(50L, performanceCounter.GetValueFor(formattedInstanceName));
@@ -175,14 +159,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Tests
         [TestMethod]
         public void AuthorizationFailureDoesNotUpdatePerformanceCountersIfDisabled()
         {
-            new ReflectionInstrumentationBinder().Bind(instrumentationProvider, disabledInstrumentationListener);
-
             EnterpriseLibraryPerformanceCounter performanceCounter
-                = CreatePerformanceCounter(AuthorizationProviderInstrumentationListener.AuthorizationCheckFailedCounterName);
+                = CreatePerformanceCounter(AuthorizationProviderInstrumentationProvider.AuthorizationCheckFailedCounterName);
             performanceCounter.Clear();
             Assert.IsTrue(performanceCounter.GetValueFor(formattedInstanceName) == 0);
 
-            FireAuthorizationCheckFailed();
+            FireAuthorizationCheckFailed(disabledInstrumentationProvider);
 
             // Timing dependant
             Assert.IsTrue(performanceCounter.GetValueFor(formattedInstanceName) == 0);
@@ -191,12 +173,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Tests
         EnterpriseLibraryPerformanceCounter CreatePerformanceCounter(string counterName)
         {
             return new EnterpriseLibraryPerformanceCounter(
-                AuthorizationProviderInstrumentationListener.PerformanceCountersCategoryName,
+                AuthorizationProviderInstrumentationProvider.PerformanceCountersCategoryName,
                 counterName,
                 formattedInstanceName);
         }
 
-        void FireAuthorizationCheckPerformed()
+        void FireAuthorizationCheckPerformed(IAuthorizationProviderInstrumentationProvider instrumentationProvider)
         {
             for (int i = 0; i < numberOfEvents; i++)
             {
@@ -208,7 +190,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Tests
             }
         }
 
-        void FireAuthorizationCheckFailed()
+        void FireAuthorizationCheckFailed(IAuthorizationProviderInstrumentationProvider instrumentationProvider)
         {
             for (int i = 0; i < numberOfEvents; i++)
             {

@@ -19,6 +19,7 @@ using Microsoft.Practices.EnterpriseLibrary.Data.Oracle.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Data.Sql;
 using Microsoft.Practices.EnterpriseLibrary.Data.Sql.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration
 {
@@ -301,7 +302,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration
             {
             }
 
-            public override TypeRegistration GetContainerConfigurationModel()
+            public override IEnumerable<TypeRegistration> GetRegistrations()
             {
                 throw new NotImplementedException();
             }

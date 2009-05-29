@@ -14,7 +14,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Threading;
 using System.Timers;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Instrumentation;
 using Timer = System.Timers.Timer;
@@ -54,7 +54,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor
 			this.QueueTimerInterval = timerInterval;
 			this.eventLogger = distributorService.EventLogger;
 
-			this.logDistributor = new MsmqLogDistributor(EnterpriseLibraryFactory.BuildUp<LogWriter>(), msmqPath, this.eventLogger);
+			this.logDistributor = new MsmqLogDistributor(EnterpriseLibraryContainer.Current.GetInstance<LogWriter>(), msmqPath, this.eventLogger);
 		}
 
 		/// <summary>

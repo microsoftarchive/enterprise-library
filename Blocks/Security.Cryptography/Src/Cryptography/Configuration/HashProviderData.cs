@@ -12,6 +12,9 @@
 using System;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using System.Collections.Generic;
+using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration
 {
@@ -42,10 +45,32 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         /// this configuration object.
         /// </summary>
         /// <returns>A <see cref="TypeRegistration"/> instance describing a provider.</returns>
-        public virtual TypeRegistration GetContainerConfigurationModel()
+        public virtual IEnumerable<TypeRegistration> GetRegistrations(IConfigurationSource configurationSource)
         {
             // Cannot make abstract for serialization reasons.
             throw new NotImplementedException("Must be implemented by subclasses.");
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="configurationSource"></param>
+        /// <returns></returns>
+        protected TypeRegistration GetInstrumentationProviderRegistration(IConfigurationSource configurationSource)
+        {
+            var instrumentationSection = InstrumentationConfigurationSection.GetSection(configurationSource);
+
+            return new TypeRegistration<IHashAlgorithmInstrumentationProvider>(
+                () => new HashAlgorithmInstrumentationProvider(
+                    Name,
+                    instrumentationSection.PerformanceCountersEnabled,
+                    instrumentationSection.EventLoggingEnabled,
+                    instrumentationSection.WmiEnabled,
+                    instrumentationSection.ApplicationInstanceName))
+            {
+                Name = Name
+            };
         }
     }
 }

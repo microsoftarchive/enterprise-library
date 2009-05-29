@@ -9,17 +9,17 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
+using Microsoft.Practices.ServiceLocation;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
 {
     /// <summary>
     /// Factory for <see cref="ExceptionPolicyImpl"/>s. This class is responsible for creating all the internal
-    /// classes needed to implement a CacheManager.
+    /// classes needed to implement a <see cref="ExceptionPolicyImpl" />.
     /// </summary>
-	public class ExceptionPolicyFactory : LocatorNameTypeFactoryBase<ExceptionPolicyImpl>
+    public class ExceptionPolicyFactory : ContainerBasedInstanceFactory<ExceptionPolicyImpl>
 	{
         /// <summary>
         /// <para>Initializes a new instance of the <see cref="ExceptionPolicyFactory"/> class 
@@ -29,6 +29,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
 			: base()
 		{
 		}
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="serviceLocator"></param>
+        public ExceptionPolicyFactory(IServiceLocator serviceLocator)
+            :base(serviceLocator)
+        {
+        }
 
         /// <summary>
         /// <para>Initializes a new instance of the <see cref="ExceptionPolicyFactory"/> class 

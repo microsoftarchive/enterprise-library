@@ -14,19 +14,13 @@ using System.Configuration;
 using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Unity;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Unity;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Filters;
-using Microsoft.Practices.ObjectBuilder2;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 {
     /// <summary>
     /// Represents a single category filter configuration settings.
     /// </summary>
-    [Assembler(typeof(CategoryFilterAssembler))]
-    [ContainerPolicyCreator(typeof(CategoryFilterPolicyCreator))]
     public class CategoryFilterData : LogFilterData
     {
         private const string categoryFilterModeProperty = "categoryFilterMode";
@@ -44,7 +38,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// </summary>
         /// <param name="categoryFilters">The collection of category names to filter.</param>
         /// <param name="categoryFilterMode">The mode of filtering.</param>
-        public CategoryFilterData(NamedElementCollection<CategoryFilterEntry> categoryFilters, CategoryFilterMode categoryFilterMode)
+        public CategoryFilterData(NamedElementCollection<CategoryFilterEntry> categoryFilters,
+                                  CategoryFilterMode categoryFilterMode)
             : this("category", categoryFilters, categoryFilterMode)
         {
         }
@@ -55,11 +50,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// <param name="name">The name.</param>
         /// <param name="categoryFilters">The collection of category names to filter.</param>
         /// <param name="categoryFilterMode">The mode of filtering.</param>
-        public CategoryFilterData(string name, NamedElementCollection<CategoryFilterEntry> categoryFilters, CategoryFilterMode categoryFilterMode)
-            : base(name, typeof(CategoryFilter))
+        public CategoryFilterData(string name, NamedElementCollection<CategoryFilterEntry> categoryFilters,
+                                  CategoryFilterMode categoryFilterMode)
+            : base(name, typeof (CategoryFilter))
         {
-            this.CategoryFilters = categoryFilters;
-            this.CategoryFilterMode = categoryFilterMode;
+            CategoryFilters = categoryFilters;
+            CategoryFilterMode = categoryFilterMode;
         }
 
         /// <summary>
@@ -68,14 +64,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         [ConfigurationProperty(categoryFilterModeProperty)]
         public CategoryFilterMode CategoryFilterMode
         {
-            get
-            {
-                return (CategoryFilterMode)this[categoryFilterModeProperty];
-            }
-            set
-            {
-                this[categoryFilterModeProperty] = value;
-            }
+            get { return (CategoryFilterMode) this[categoryFilterModeProperty]; }
+            set { this[categoryFilterModeProperty] = value; }
         }
 
         /// <summary>
@@ -84,73 +74,27 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         [ConfigurationProperty(categoryFiltersProperty)]
         public NamedElementCollection<CategoryFilterEntry> CategoryFilters
         {
-            get
-            {
-                return (NamedElementCollection<CategoryFilterEntry>)base[categoryFiltersProperty];
-            }
+            get { return (NamedElementCollection<CategoryFilterEntry>) base[categoryFiltersProperty]; }
 
-            private set
-            {
-                base[categoryFiltersProperty] = value;
-            }
+            private set { base[categoryFiltersProperty] = value; }
         }
 
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        public override TypeRegistration GetContainerConfigurationModel()
+        public override IEnumerable<TypeRegistration> GetRegistrations()
         {
-            return
+            yield return
                 new TypeRegistration<ILogFilter>(
                     () =>
-                        new CategoryFilter(
-                            this.Name,
-                            this.CategoryFilters.Select(cfe => cfe.Name).ToArray(),
-                            this.CategoryFilterMode))
-                {
-                    Name = this.Name
-                };
+                    new CategoryFilter(
+                        Name,
+                        CategoryFilters.Select(cfe => cfe.Name).ToArray(),
+                        CategoryFilterMode))
+                    {
+                        Name = Name
+                    };
         }
     }
-
-    /// <summary>
-    /// This type supports the Enterprise Library infrastructure and is not intended to be used directly from your code.
-    /// Represents the process to build a <see cref="CategoryFilter"/> described by a <see cref="CategoryFilterData"/> configuration object.
-    /// </summary>
-    /// <remarks>This type is linked to the <see cref="CategoryFilterData"/> type and it is used by the <see cref="LogFilterCustomFactory"/> 
-    /// to build the specific <see cref="ILogFilter"/> object represented by the configuration object.
-    /// </remarks>
-    public class CategoryFilterAssembler : IAssembler<ILogFilter, LogFilterData>
-    {
-        /// <summary>
-        /// This method supports the Enterprise Library infrastructure and is not intended to be used directly from your code.
-        /// Builds a <see cref="CategoryFilter"/> based on an instance of <see cref="CategoryFilterData"/>.
-        /// </summary>
-        /// <seealso cref="LogFilterCustomFactory"/>
-        /// <param name="context">The <see cref="IBuilderContext"/> that represents the current building process.</param>
-        /// <param name="objectConfiguration">The configuration object that describes the object to build. Must be an instance of <see cref="CategoryFilterData"/>.</param>
-        /// <param name="configurationSource">The source for configuration objects.</param>
-        /// <param name="reflectionCache">The cache to use retrieving reflection information.</param>
-        /// <returns>A fully initialized instance of <see cref="CategoryFilter"/>.</returns>
-        public ILogFilter Assemble(IBuilderContext context, LogFilterData objectConfiguration, IConfigurationSource configurationSource, ConfigurationReflectionCache reflectionCache)
-        {
-            CategoryFilterData castedObjectConfiguration = (CategoryFilterData)objectConfiguration;
-
-            ICollection<string> categoryFilters = new List<string>();
-            foreach (CategoryFilterEntry entry in castedObjectConfiguration.CategoryFilters)
-            {
-                categoryFilters.Add(entry.Name);
-            }
-
-            ILogFilter createdObject
-                = new CategoryFilter(
-                    castedObjectConfiguration.Name,
-                    categoryFilters,
-                    castedObjectConfiguration.CategoryFilterMode);
-
-            return createdObject;
-        }
-    }
-
 }

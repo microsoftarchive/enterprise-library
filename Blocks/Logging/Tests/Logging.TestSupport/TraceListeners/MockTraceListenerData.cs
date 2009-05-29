@@ -9,17 +9,11 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
 using System.Diagnostics;
-using System.Linq.Expressions;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
-using Microsoft.Practices.ObjectBuilder2;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport.TraceListeners
 {
-    [Assembler(typeof(MockTraceListenerAssembler))]
     public class MockTraceListenerData : TraceListenerData
     {
         public MockTraceListenerData()
@@ -37,14 +31,4 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport.TraceListene
         }
     }
 
-    public class MockTraceListenerAssembler : IAssembler<TraceListener, TraceListenerData>
-    {
-        public TraceListener Assemble(IBuilderContext context,
-                                      TraceListenerData objectConfiguration,
-                                      IConfigurationSource configurationSource,
-                                      ConfigurationReflectionCache reflectionCache)
-        {
-            return new MockTraceListener();
-        }
-    }
 }

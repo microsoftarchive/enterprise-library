@@ -9,9 +9,6 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
-
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Formatters
 {
     /// <summary>

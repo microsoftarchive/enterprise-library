@@ -17,6 +17,7 @@ using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.TestSupport.ObjectsU
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using RuleDrivenPolicy = Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration.PolicyData.RuleDrivenPolicy;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests
 {
@@ -282,7 +283,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests
 
         public static List<IMatchingRule> GetRules(RuleDrivenPolicy policy)
         {
-            return (List<IMatchingRule>)typeof(RuleDrivenPolicy)
+            return (List<IMatchingRule>)typeof(Microsoft.Practices.Unity.InterceptionExtension.RuleDrivenPolicy)
                 .GetField(
                     "ruleSet",
                     System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)

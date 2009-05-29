@@ -18,7 +18,6 @@ using System.Security.Permissions;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.BackingStoreImplementations
 {

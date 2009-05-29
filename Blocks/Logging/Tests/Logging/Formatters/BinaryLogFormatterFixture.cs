@@ -13,12 +13,10 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport;
-using Microsoft.Practices.ObjectBuilder2;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Formatters
@@ -26,15 +24,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Formatters
     [TestClass]
     public class BinaryLogFormatterFixture
     {
-        IBuilderContext context;
-        ConfigurationReflectionCache reflectionCache;
-
         [TestInitialize]
         public void SetUp()
         {
             AppDomain.CurrentDomain.SetData("APPBASE", Environment.CurrentDirectory);
-            context = new BuilderContext(new StrategyChain(), null, null, new PolicyList(), null, null);
-            reflectionCache = new ConfigurationReflectionCache();
+        }
+
+        private static ILogFormatter GetFormatter(string name, IConfigurationSource configurationSource)
+        {
+            var container = EnterpriseLibraryContainer.CreateDefaultContainer(configurationSource);
+            return container.GetInstance<ILogFormatter>(name);
         }
 
         [TestMethod]
@@ -61,7 +60,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Formatters
         }
 
         [TestMethod]
-        public void CanCreateFormatterFromFactoryFromGivenName()
+        public void CanCreateFormatterFromContainerFromGivenName()
         {
             FormatterData data = new BinaryLogFormatterData("ignore");
             LoggingSettings settings = new LoggingSettings();
@@ -69,19 +68,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Formatters
             DictionaryConfigurationSource configurationSource = new DictionaryConfigurationSource();
             configurationSource.Add(LoggingSettings.SectionName, settings);
 
-            ILogFormatter formatter = LogFormatterCustomFactory.Instance.Create(context, "ignore", configurationSource, reflectionCache);
-
-            Assert.IsNotNull(formatter);
-            Assert.AreEqual(formatter.GetType(), typeof(BinaryLogFormatter));
-        }
-
-        [TestMethod]
-        public void CanCreateFormatterFromFactoryFromGivenConfiguration()
-        {
-            FormatterData data = new BinaryLogFormatterData("ignore");
-            DictionaryConfigurationSource configurationSource = new DictionaryConfigurationSource();
-
-            ILogFormatter formatter = LogFormatterCustomFactory.Instance.Create(context, data, configurationSource, reflectionCache);
+            ILogFormatter formatter = GetFormatter("ignore", configurationSource);
 
             Assert.IsNotNull(formatter);
             Assert.AreEqual(formatter.GetType(), typeof(BinaryLogFormatter));

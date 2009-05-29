@@ -20,15 +20,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
 	/// <summary>
 	/// Base class for <see cref="TraceListener"/>s that deal with formatters.
 	/// </summary>
-	public abstract class FormattedTraceListenerBase : TraceListener, IInstrumentationEventProvider
+	public abstract class FormattedTraceListenerBase : TraceListener
 	{
 		private ILogFormatter formatter;
-		private LoggingInstrumentationProvider instrumentationProvider;
+		private readonly ILoggingInstrumentationProvider instrumentationProvider;
 
 		/// <summary>
 		/// Gets the object that provides instrumentation services for the trace listener.
 		/// </summary>
-		protected LoggingInstrumentationProvider InstrumentationProvider
+		protected ILoggingInstrumentationProvider InstrumentationProvider
 		{
 			get { return instrumentationProvider; }
 		}
@@ -36,20 +36,42 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
 		/// <summary>
 		/// Initalizes a new instance of <see cref="FormattedTraceListenerBase"/>.
 		/// </summary>
-		public FormattedTraceListenerBase()
+        protected FormattedTraceListenerBase()
+            : this(new NullLoggingInstrumentationProvider())
 		{
-			instrumentationProvider = new LoggingInstrumentationProvider();
-		}
+        }
+
+        /// <summary>
+        /// Initalizes a new instance of <see cref="FormattedTraceListenerBase"/>.
+        /// </summary>
+        /// <param name="instrumentationProvider">The instrumentation provider to use.</param>
+        protected FormattedTraceListenerBase(ILoggingInstrumentationProvider instrumentationProvider)
+        {
+            this.instrumentationProvider = instrumentationProvider;
+        }
 
 		/// <summary>
 		/// Initalizes a new instance of <see cref="FormattedTraceListenerBase"/> with a <see cref="ILogFormatter"/>.
 		/// </summary>
 		/// <param name="formatter">The <see cref="ILogFormatter"/> to use when tracing a <see cref="LogEntry"/>.</param>
-		public FormattedTraceListenerBase(ILogFormatter formatter)
+        protected FormattedTraceListenerBase(ILogFormatter formatter)
+            :this(formatter, new NullLoggingInstrumentationProvider())
 		{
-			this.Formatter = formatter;
-			instrumentationProvider = new LoggingInstrumentationProvider();
 		}
+
+        /// <summary>
+        /// Initalizes a new instance of <see cref="FormattedTraceListenerBase"/> with a <see cref="ILogFormatter"/>.
+        /// </summary>
+        /// <param name="formatter">The <see cref="ILogFormatter"/> to use when tracing a <see cref="LogEntry"/>.</param>
+        /// <param name="instrumentationProvider">The instrumentation provider to use.</param>
+        protected FormattedTraceListenerBase(ILogFormatter formatter, ILoggingInstrumentationProvider instrumentationProvider)
+        {
+            if (instrumentationProvider == null) throw new ArgumentNullException("instrumentationProvider");
+
+            this.Formatter = formatter;
+            this.instrumentationProvider = instrumentationProvider;
+        }
+
 
         /// <summary>
         /// Specifies whether this TraceListener is threadsafe
@@ -76,17 +98,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
 			{
 				this.formatter = value;
 			}
-		}
-
-		/// <summary>
-		/// This method supports the Enterprise Library infrastructure and is not intended to be used directly from your code.
-		/// Returns the object that provides instrumentation services for the trace listener.
-		/// </summary>
-		/// <see cref="IInstrumentationEventProvider.GetInstrumentationEventProvider()"/>
-		/// <returns>The object that providers intrumentation services.</returns>
-		public object GetInstrumentationEventProvider()
-		{
-			return instrumentationProvider;
 		}
 
         /// <summary>

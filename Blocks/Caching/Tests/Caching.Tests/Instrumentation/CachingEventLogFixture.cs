@@ -10,8 +10,11 @@
 //===============================================================================
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation;
+using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation.Tests
@@ -35,17 +38,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation.Tests
         [TestMethod]
         public void CacheFailureWithInstrumentationDisabledDoesNotWriteToEventLog()
         {
-            CachingInstrumentationListener listener
-                = new CachingInstrumentationListener(instanceName, false, false, false, formatter);
+            ICachingInstrumentationProvider provider
+                = new CachingInstrumentationProvider(instanceName, false, false, false, formatter);
             Exception exception = new Exception(exceptionMessage);
-
-            CacheFailureEventArgs args = new CacheFailureEventArgs(errorMessage, exception);
 
             using (EventLog eventLog = GetEventLog())
             {
                 int eventCount = eventLog.Entries.Count;
 
-                listener.CacheFailed(null, args);
+                provider.FireCacheFailed(errorMessage, exception);
 
                 Assert.AreEqual(eventCount, eventLog.Entries.Count);
             }
@@ -54,65 +55,71 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation.Tests
         [TestMethod]
         public void CacheFailureWithInstrumentationEnabledDoesWriteToEventLog()
         {
-            CachingInstrumentationListener listener
-                = new CachingInstrumentationListener(instanceName, false, true, false, formatter);
+            ICachingInstrumentationProvider provider
+                = new CachingInstrumentationProvider(instanceName, false, true, false, formatter);
             Exception exception = new Exception(exceptionMessage);
-
-            CacheFailureEventArgs args = new CacheFailureEventArgs(errorMessage, exception);
 
             using (EventLog eventLog = GetEventLog())
             {
-                int eventCount = eventLog.Entries.Count;
+                int originalEventCount = eventLog.Entries.Count;
 
-                listener.CacheFailed(null, args);
+                provider.FireCacheFailed(errorMessage, exception);
 
-                Assert.AreEqual(eventCount + 1, eventLog.Entries.Count);
-                Assert.IsTrue(eventLog.Entries[eventCount].Message.IndexOf(exceptionMessage) > -1);
+                int newEventCount = eventLog.Entries.Count;
+                Assert.IsTrue(originalEventCount < newEventCount);
+                var newEntries = from entry in eventLog.GetNewEntries(originalEventCount)
+                                 where entry.Message.IndexOf(exceptionMessage) > -1
+                                 select entry;
+
+                Assert.AreEqual(1, newEntries.ToList().Count());
             }
         }
 
         [TestMethod]
         public void CacheCallbackFailureWithInstrumentationDisabledDoesNotWriteToEventLog()
         {
-            CachingInstrumentationListener listener
-                = new CachingInstrumentationListener(instanceName, false, false, false, formatter);
+            ICachingInstrumentationProvider provider
+                = new CachingInstrumentationProvider(instanceName, false, false, false, formatter);
             Exception exception = new Exception(exceptionMessage);
-
-            CacheCallbackFailureEventArgs args = new CacheCallbackFailureEventArgs(errorMessage, exception);
 
             using (EventLog eventLog = GetEventLog())
             {
-                int eventCount = eventLog.Entries.Count;
+                int originalEventCount = eventLog.Entries.Count;
 
-                listener.CacheCallbackFailed(null, args);
+                provider.FireCacheCallbackFailed(errorMessage, exception);
 
-                Assert.AreEqual(eventCount, eventLog.Entries.Count);
+                var newEntries = from entry in eventLog.GetNewEntries(originalEventCount)
+                                 where entry.Message.IndexOf(exceptionMessage) > -1
+                                 select entry;
+
+                Assert.AreEqual(0, newEntries.ToList().Count);
             }
         }
 
         [TestMethod]
         public void CacheCallbackFailureWithInstrumentationEnabledDoesWriteToEventLog()
         {
-            CachingInstrumentationListener listener
-                = new CachingInstrumentationListener(instanceName, false, true, false, formatter);
+            ICachingInstrumentationProvider provider
+                = new CachingInstrumentationProvider(instanceName, false, true, false, formatter);
             Exception exception = new Exception(exceptionMessage);
-
-            CacheCallbackFailureEventArgs args = new CacheCallbackFailureEventArgs(key, exception);
 
             using (EventLog eventLog = GetEventLog())
             {
-                int eventCount = eventLog.Entries.Count;
+                int originalEventCount = eventLog.Entries.Count;
 
-                listener.CacheCallbackFailed(null, args);
+                provider.FireCacheCallbackFailed(key, exception);
 
-                Assert.AreEqual(eventCount + 1, eventLog.Entries.Count);
-                Assert.IsTrue(eventLog.Entries[eventCount].Message.IndexOf(exceptionMessage) > -1);
+                var newEntries = from entry in eventLog.GetNewEntries(originalEventCount)
+                                 where entry.Message.IndexOf(exceptionMessage) > -1
+                                 select entry;
+
+                Assert.AreEqual(1, newEntries.ToList().Count);
             }
         }
 
         static EventLog GetEventLog()
         {
-            return new EventLog("Application", ".", CachingInstrumentationListener.EventLogSourceName);
+            return new EventLog("Application", ".", CachingInstrumentationProvider.EventLogSourceName);
         }
     }
 }

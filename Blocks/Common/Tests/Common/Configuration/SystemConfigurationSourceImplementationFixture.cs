@@ -35,6 +35,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
         const string externalSection2Source = "dummy.external2.config";
 
         IDictionary<string, int> updatedSectionsTally;
+        ICollection<string> updatedSections;
 
         [TestInitialize]
         public void Setup()
@@ -71,6 +72,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
             ConfigurationChangeFileWatcher.ResetDefaultPollDelay();
 
             updatedSectionsTally = new Dictionary<string, int>(0);
+            updatedSections = null;
         }
 
         [TestMethod]
@@ -691,8 +693,32 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
             Assert.AreEqual(4, updatedSectionsTally[localSection2]);
         }
 
-        void OnConfigurationChanged(object sender,
-                                    ConfigurationChangedEventArgs args)
+        [TestMethod]
+        public void GetsNotifiedOfSingleRetrievedSection()
+        {
+            SystemConfigurationSourceImplementation implementation = new SystemConfigurationSourceImplementation(false);
+            implementation.GetSection(localSection);
+            implementation.SourceChanged += this.OnConfigurationSourceChanged;
+
+            implementation.ConfigSourceChanged(localSectionSource);
+
+            CollectionAssert.AreEquivalent(new[] { localSection }, new List<string>(updatedSections));
+        }
+
+        [TestMethod]
+        public void GetsNotifiedOfMultipleRetrievedSection()
+        {
+            SystemConfigurationSourceImplementation implementation = new SystemConfigurationSourceImplementation(false);
+            implementation.GetSection(localSection);
+            implementation.GetSection(localSection2);
+            implementation.SourceChanged += this.OnConfigurationSourceChanged;
+
+            implementation.ConfigSourceChanged(localSectionSource);
+
+            CollectionAssert.AreEquivalent(new[] { localSection, localSection2 }, new List<string>(updatedSections));
+        }
+
+        void OnConfigurationChanged(object sender, ConfigurationChangedEventArgs args)
         {
             if (updatedSectionsTally.ContainsKey(args.SectionName))
             {
@@ -702,6 +728,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
             {
                 updatedSectionsTally[args.SectionName] = 1;
             }
+        }
+
+        void OnConfigurationSourceChanged(object sender, ConfigurationSourceChangedEventArgs args)
+        {
+            this.updatedSections = args.ChangedSectionNames;
         }
     }
 }

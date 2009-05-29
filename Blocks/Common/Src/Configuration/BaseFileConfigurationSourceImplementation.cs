@@ -286,6 +286,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 
         void NotifyUpdatedSections(IEnumerable<string> sectionsToNotify)
         {
+            this.OnSourceChanged(new ConfigurationSourceChangedEventArgs(GetConfigurationSource(), sectionsToNotify));
+
             foreach (string sectionName in sectionsToNotify)
             {
                 Delegate[] invocationList;
@@ -315,6 +317,25 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
                 {
                     //EventLog.WriteEntry(GetEventSourceName(), Resources.ExceptionEventRaisingFailed + GetType().FullName + " :" + e.Message);
                 }
+            }
+        }
+
+        /// <summary>
+        /// Retuns an implementation of <see cref="IConfigurationSource"/> that represents the receiver.
+        /// </summary>
+        /// <returns>A configuration source.</returns>
+        protected abstract IConfigurationSource GetConfigurationSource();
+
+        /// <summary>
+        /// Raises the <see cref="SourceChanged"/> event.
+        /// </summary>
+        /// <param name="configurationSourceChangedEventArgs">The argument for the raised event.</param>
+        protected virtual void OnSourceChanged(ConfigurationSourceChangedEventArgs configurationSourceChangedEventArgs)
+        {
+            var handler = this.SourceChanged;
+            if (handler != null)
+            {
+                handler(this, configurationSourceChangedEventArgs);
             }
         }
 
@@ -398,6 +419,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
                 }
             }
         }
+
+        /// <summary>
+        /// Event raised when any section in this configuration source has changed.
+        /// </summary>
+        public event EventHandler<ConfigurationSourceChangedEventArgs> SourceChanged;
 
         void SetWatcherForSection(string sectionName,
                                   string configSource)

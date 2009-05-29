@@ -9,11 +9,10 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System.Diagnostics;
+using System;
 using System.Reflection;
-using System.Security.Permissions;
 
 [assembly: AssemblyTitle("Enterprise Library Exception Handling Application Block Tests")]
 [assembly: AssemblyDescription("Enterprise Library Exception Handling Application Block Tests")]
 [assembly: AssemblyVersion("4.1.0.0")]
-
+[assembly: CLSCompliant(false)]

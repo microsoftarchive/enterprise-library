@@ -14,7 +14,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Filters;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Filters.Tests;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Properties;
@@ -38,7 +38,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Distributor.Tests
         {
             AppDomain.CurrentDomain.SetData("APPBASE", Environment.CurrentDirectory);
 
-            logWriter = EnterpriseLibraryFactory.BuildUp<LogWriter>();
+            logWriter = EnterpriseLibraryContainer.Current.GetInstance<LogWriter>();
             MockTraceListener.Reset();
             ErrorsMockTraceListener.Reset();
 
@@ -168,7 +168,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Distributor.Tests
         [TestMethod]
         public void LogWriterCanGetConfiguredCategories()
         {
-            LogWriter logWriter = EnterpriseLibraryFactory.BuildUp<LogWriter>();
+            LogWriter logWriter = EnterpriseLibraryContainer.Current.GetInstance<LogWriter>();
 
             LogSource source = null;
 

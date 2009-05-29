@@ -9,6 +9,8 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
+using Microsoft.Practices.Unity;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tests.AttributeDrivenPolicy
@@ -19,10 +21,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         [TestMethod]
         public void ShouldCreateHandlerWithCorrectPolicy()
         {
-            string policy = "Swallow Exceptions";
-            ExceptionCallHandlerAttribute attribute = new ExceptionCallHandlerAttribute(policy);
-            ExceptionCallHandler handler = (ExceptionCallHandler)attribute.CreateHandler(null);
-            Assert.AreEqual(policy, handler.ExceptionPolicyName);
+            string policyName = "Swallow Exceptions";
+            ExceptionCallHandlerAttribute attribute = new ExceptionCallHandlerAttribute(policyName);
+            attribute.Order = 400;
+            
+            IUnityContainer container = new UnityContainer();
+            var policy = new ExceptionPolicyImpl(policyName, new ExceptionPolicyEntry[0]);
+            container.RegisterInstance(policyName, policy);
+
+            ExceptionCallHandler handler = (ExceptionCallHandler)attribute.CreateHandler(container);
+            Assert.AreSame(policy, handler.ExceptionPolicy);
+            Assert.AreEqual(400, handler.Order);
         }
     }
 }

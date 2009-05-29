@@ -32,7 +32,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         private readonly string sectionName;
 
         /// <summary>
-        /// <para>Initialize a new instance of the <see cref="ConfigurationChangingEventArgs"/> class with the section name</para>
+        /// <para>Initialize a new instance of the <see cref="ConfigurationChangedEventArgs"/> class with the section name</para>
         /// </summary>
         /// <param name="sectionName"><para>The section name of the changes.</para></param>
         public ConfigurationChangedEventArgs(string sectionName)

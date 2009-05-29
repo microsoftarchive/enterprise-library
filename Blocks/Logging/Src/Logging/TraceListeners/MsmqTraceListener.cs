@@ -13,6 +13,7 @@ using System;
 using System.Diagnostics;
 using System.Messaging;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
 {
@@ -60,7 +61,39 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
 			: this(name, queuePath, formatter, messagePriority, recoverable,
 				   timeToReachQueue, timeToBeReceived,
 				   useAuthentication, useDeadLetterQueue, useEncryption,
-				   transactionType, new MsmqSendInterfaceFactory()) { }
+				   transactionType, new MsmqSendInterfaceFactory(), new NullLoggingInstrumentationProvider()) { }
+        
+        /// <summary>
+        /// Initializes a new instance of <see cref="MsmqTraceListener"/>.
+        /// </summary>
+        /// <param name="name">The name of the new instance.</param>
+        /// <param name="queuePath">The path to the queue to deliver to.</param>
+        /// <param name="formatter">The formatter to use.</param>
+        /// <param name="messagePriority">The priority for the messages to send.</param>
+        /// <param name="recoverable">The recoverable flag for the messages to send.</param>
+        /// <param name="timeToReachQueue">The timeToReachQueue for the messages to send.</param>
+        /// <param name="timeToBeReceived">The timeToBeReceived for the messages to send.</param>
+        /// <param name="useAuthentication">The useAuthentication flag for the messages to send.</param>
+        /// <param name="useDeadLetterQueue">The useDeadLetterQueue flag for the messages to send.</param>
+        /// <param name="useEncryption">The useEncryption flag for the messages to send.</param>
+        /// <param name="transactionType">The <see cref="MessageQueueTransactionType"/> for the message to send.</param>
+        /// <param name="instrumentationProvider">The instrumentation provider to use.</param>
+        public MsmqTraceListener(string name,
+                                 string queuePath,
+                                 ILogFormatter formatter,
+                                 MessagePriority messagePriority,
+                                 bool recoverable,
+                                 TimeSpan timeToReachQueue,
+                                 TimeSpan timeToBeReceived,
+                                 bool useAuthentication,
+                                 bool useDeadLetterQueue,
+                                 bool useEncryption,
+                                 MessageQueueTransactionType transactionType,
+                                 ILoggingInstrumentationProvider instrumentationProvider)
+            : this(name, queuePath, formatter, messagePriority, recoverable,
+                   timeToReachQueue, timeToBeReceived,
+                   useAuthentication, useDeadLetterQueue, useEncryption,
+                   transactionType, new MsmqSendInterfaceFactory(), instrumentationProvider) { }
 
 		/// <summary>
 		/// Initializes a new instance of <see cref="MsmqTraceListener"/>.
@@ -89,19 +122,54 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
 								 bool useEncryption,
 								 MessageQueueTransactionType transactionType,
 								 IMsmqSendInterfaceFactory msmqInterfaceFactory)
-			: base(formatter)
-		{
-			this.queuePath = queuePath;
-			this.messagePriority = messagePriority;
-			this.recoverable = recoverable;
-			this.timeToReachQueue = timeToReachQueue;
-			this.timeToBeReceived = timeToBeReceived;
-			this.useAuthentication = useAuthentication;
-			this.useDeadLetterQueue = useDeadLetterQueue;
-			this.useEncryption = useEncryption;
-			this.transactionType = transactionType;
-			this.msmqInterfaceFactory = msmqInterfaceFactory;
-		}
+			: this(name, queuePath, formatter, messagePriority,
+                   recoverable, timeToReachQueue, timeToBeReceived, 
+                   useAuthentication, useDeadLetterQueue, useEncryption,
+                   transactionType, msmqInterfaceFactory, new NullLoggingInstrumentationProvider())
+		{  }
+
+        /// <summary>
+        /// Initializes a new instance of <see cref="MsmqTraceListener"/>.
+        /// </summary>
+        /// <param name="name">The name of the new instance.</param>
+        /// <param name="queuePath">The path to the queue to deliver to.</param>
+        /// <param name="formatter">The formatter to use.</param>
+        /// <param name="messagePriority">The priority for the messages to send.</param>
+        /// <param name="recoverable">The recoverable flag for the messages to send.</param>
+        /// <param name="timeToReachQueue">The timeToReachQueue for the messages to send.</param>
+        /// <param name="timeToBeReceived">The timeToBeReceived for the messages to send.</param>
+        /// <param name="useAuthentication">The useAuthentication flag for the messages to send.</param>
+        /// <param name="useDeadLetterQueue">The useDeadLetterQueue flag for the messages to send.</param>
+        /// <param name="useEncryption">The useEncryption flag for the messages to send.</param>
+        /// <param name="transactionType">The <see cref="MessageQueueTransactionType"/> for the message to send.</param>
+        /// <param name="msmqInterfaceFactory">The factory to create the msmq interfaces.</param>
+        /// <param name="instrumentationProvider">The instrumentation provider to use.</param>
+        public MsmqTraceListener(string name,
+                                 string queuePath,
+                                 ILogFormatter formatter,
+                                 MessagePriority messagePriority,
+                                 bool recoverable,
+                                 TimeSpan timeToReachQueue,
+                                 TimeSpan timeToBeReceived,
+                                 bool useAuthentication,
+                                 bool useDeadLetterQueue,
+                                 bool useEncryption,
+                                 MessageQueueTransactionType transactionType,
+                                 IMsmqSendInterfaceFactory msmqInterfaceFactory,
+                                 ILoggingInstrumentationProvider instrumentationProvider)
+            : base(formatter, instrumentationProvider)
+        {
+            this.queuePath = queuePath;
+            this.messagePriority = messagePriority;
+            this.recoverable = recoverable;
+            this.timeToReachQueue = timeToReachQueue;
+            this.timeToBeReceived = timeToBeReceived;
+            this.useAuthentication = useAuthentication;
+            this.useDeadLetterQueue = useDeadLetterQueue;
+            this.useEncryption = useEncryption;
+            this.transactionType = transactionType;
+            this.msmqInterfaceFactory = msmqInterfaceFactory;
+        }
 
 		/// <summary>
 		/// Gets the path to the queue.

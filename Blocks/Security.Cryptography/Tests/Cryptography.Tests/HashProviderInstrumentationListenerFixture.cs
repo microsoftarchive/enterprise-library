@@ -11,9 +11,9 @@
 
 using System;
 using System.Security.Cryptography;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Instrumentation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests
 {
@@ -26,11 +26,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests
             int numberOfEvents = 50;
             using (WmiEventWatcher eventListener = new WmiEventWatcher(numberOfEvents))
             {
-                HashAlgorithmProvider hashProvider = new HashAlgorithmProvider(typeof(SHA1Managed), false);
-                InstrumentationAttacherFactory attacherFactory = new InstrumentationAttacherFactory();
-                IInstrumentationAttacher binder = attacherFactory.CreateBinder(hashProvider.GetInstrumentationEventProvider(), new object[] { "foo", true, true, true, "fooInstanceName" }, new ConfigurationReflectionCache());
-                binder.BindInstrumentation();
-
+                HashAlgorithmInstrumentationProvider instrumentationProvider = new HashAlgorithmInstrumentationProvider("instance", false, false, true, "app");
+                HashAlgorithmProvider hashProvider = new HashAlgorithmProvider(typeof(SHA1Managed), false, instrumentationProvider);
+                
                 for (int i = 0; i < numberOfEvents; i++)
                 {
                     try

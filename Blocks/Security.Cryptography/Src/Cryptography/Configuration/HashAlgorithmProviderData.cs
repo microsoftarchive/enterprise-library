@@ -13,15 +13,14 @@ using System;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
-using Microsoft.Practices.ObjectBuilder2;
+using System.Collections.Generic;
+using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration
 {
     /// <summary>
     /// Configuration settings for the <c>HashAlgorithm</c> hash provider.
     /// </summary>	
-    [Assembler(typeof(HashAlgorithmProviderAssembler))]
     public class HashAlgorithmProviderData : HashProviderData
     {
         private AssemblyQualifiedTypeNameConverter typeConverter = new AssemblyQualifiedTypeNameConverter();
@@ -97,49 +96,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         /// Creates a <see cref="TypeRegistration"/> instance describing the provider represented by 
         /// this configuration object.
         /// </summary>
+        /// <param name="configurationSource">TODO</param>
         /// <returns>A <see cref="TypeRegistration"/> instance describing a provider.</returns>
-        public override TypeRegistration GetContainerConfigurationModel()
+        public override IEnumerable<TypeRegistration> GetRegistrations(IConfigurationSource configurationSource)
         {
-            return
+            yield return base.GetInstrumentationProviderRegistration(configurationSource);
+
+            yield return
                 new TypeRegistration<IHashProvider>(
-                    () => new HashAlgorithmProvider(AlgorithmType, SaltEnabled))
+                    () => new HashAlgorithmProvider(AlgorithmType, SaltEnabled, Container.Resolved<IHashAlgorithmInstrumentationProvider>(Name)))
                         {
                             Name = Name
                         };
 
-        }
-    }
 
-    /// <summary>
-    /// This type supports the Enterprise Library infrastructure and is not intended to be used directly from your code.
-    /// Represents the process to build a <see cref="HashAlgorithmProvider"/> described by a <see cref="HashAlgorithmProviderData"/> configuration object.
-    /// </summary>
-    /// <remarks>This type is linked to the <see cref="HashAlgorithmProviderData"/> type and it is used by the <see cref="HashProviderCustomFactory"/> 
-    /// to build the specific <see cref="IHashProvider"/> object represented by the configuration object.
-    /// </remarks>
-    public class HashAlgorithmProviderAssembler : IAssembler<IHashProvider, HashProviderData>
-    {
-        /// <summary>
-        /// This method supports the Enterprise Library infrastructure and is not intended to be used directly from your code.
-        /// Builds a <see cref="HashAlgorithmProvider"/> based on an instance of <see cref="HashAlgorithmProviderData"/>.
-        /// </summary>
-        /// <seealso cref="HashProviderCustomFactory"/>
-        /// <param name="context">The <see cref="IBuilderContext"/> that represents the current building process.</param>
-        /// <param name="objectConfiguration">The configuration object that describes the object to build. Must be an instance of <see cref="HashAlgorithmProviderData"/>.</param>
-        /// <param name="configurationSource">The source for configuration objects.</param>
-        /// <param name="reflectionCache">The cache to use retrieving reflection information.</param>
-        /// <returns>A fully initialized instance of <see cref="HashAlgorithmProvider"/>.</returns>
-        public IHashProvider Assemble(IBuilderContext context, HashProviderData objectConfiguration, IConfigurationSource configurationSource, ConfigurationReflectionCache reflectionCache)
-        {
-            HashAlgorithmProviderData castedObjectConfiguration
-                = (HashAlgorithmProviderData)objectConfiguration;
-
-            IHashProvider createdObject
-                = new HashAlgorithmProvider(
-                    castedObjectConfiguration.AlgorithmType,
-                    castedObjectConfiguration.SaltEnabled);
-
-            return createdObject;
         }
     }
 }

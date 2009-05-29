@@ -33,12 +33,51 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         public const string ExceptionHandling = "exceptionHandling";
 
         /// <summary>
+        /// Caching block section name
+        /// </summary>
+        public const string Caching = "cachingConfiguration";
+
+        /// <summary>
+        /// Security block section name
+        /// </summary>
+        public const string Security = "securityConfiguration";
+
+        /// <summary>
+        /// Logging block section name
+        /// </summary>
+        public const string Logging = "loggingConfiguration";
+
+        /// <summary>
+        /// Instrumentation section name
+        /// </summary>
+        public const string Instrumentation = "instrumentationConfiguration";
+
+        /// <summary>
+        /// Policy injection section name
+        /// </summary>
+        public const string PolicyInjection = "policyInjection";
+
+
+        ///<summary>
+        /// Validation section name
+        ///</summary>
+        public const string Validation = "validation";
+
+        /// <summary>
         /// Not actually a section name, this is the type name used to get the
         /// TypeRegistrationProviderLocatorStrategy used to retrieve information
         /// for the Data block.
         /// </summary>
         public const string DataRegistrationProviderLocatorType =
             "Microsoft.Practices.EnterpriseLibrary.Data.Configuration.DatabaseSyntheticConfigSettings, Microsoft.Practices.EnterpriseLibrary.Data";
+
+        /// <summary>
+        /// Not actually a section name, this is the type name used to get the
+        /// TypeRegistrationProviderLocatorStrategy used to retrieve information
+        /// for the Validation block.
+        /// </summary>
+        public const string ValidationRegistrationProviderLocatorType =
+            "Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.ValidationTypeRegistrationProvider, Microsoft.Practices.EnterpriseLibrary.Validation";
 
     }
 }

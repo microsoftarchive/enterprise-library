@@ -12,7 +12,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners.Tests
 {

@@ -13,33 +13,13 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Unity;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration.Unity
 {
-	/// <summary>
-	/// Container extension to the policies required to create the Security Application Block's
-	/// objects described in the configuration file.
-	/// </summary>
-	public class SecurityBlockExtension : EnterpriseLibraryBlockExtension
-	{
-		/// <summary>
-		/// Adds the policies describing the Security Application Block's objects.
-		/// </summary>
-		protected override void Initialize()
-		{
-			SecuritySettings securitySettings = (SecuritySettings) ConfigurationSource.GetSection(SecuritySettings.SectionName);
-
-			if (securitySettings != null)
-			{
-				CreateProvidersPolicies<IAuthorizationProvider, AuthorizationProviderData>(
-					Context.Policies,
-					securitySettings.DefaultAuthorizationProviderName,
-					securitySettings.AuthorizationProviders,
-					ConfigurationSource);
-
-				CreateProvidersPolicies<ISecurityCacheProvider, SecurityCacheProviderData>(
-					Context.Policies,
-					securitySettings.DefaultSecurityCacheProviderName,
-					securitySettings.SecurityCacheProviders,
-					ConfigurationSource);
-			}
-		}
-	}
+    /// <summary>
+    /// Container extension to the policies required to create the Security Application Block's
+    /// objects described in the configuration file.
+    /// </summary>
+    /// <remarks>This function is now done by the <see cref="EnterpriseLibraryCoreExtension"/>.
+    /// This extension is no longer needed and does nothing.</remarks>
+    public class SecurityBlockExtension : EnterpriseLibraryBlockExtension
+    {
+    }
 }

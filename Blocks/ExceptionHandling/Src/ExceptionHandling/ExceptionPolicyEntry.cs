@@ -10,9 +10,7 @@
 //===============================================================================
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Properties;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Instrumentation;
 
@@ -25,37 +23,49 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
     /// </summary>
     public sealed class ExceptionPolicyEntry
     {
-        private PostHandlingAction postHandlingAction;
-        private IEnumerable<IExceptionHandler> handlers;
+        private readonly PostHandlingAction postHandlingAction;
+        private readonly IEnumerable<IExceptionHandler> handlers;
         private string policyName = string.Empty;
-        private ExceptionHandlingInstrumentationProvider instrumentationProvider;
+        private IExceptionHandlingInstrumentationProvider instrumentationProvider;
 
         /// <summary>
 		/// Instantiates a new instance of the 
 		/// <see cref="ExceptionPolicyEntry"/> class.
         /// </summary>
-        /// <param name="exceptionType"></param>
-        /// <param name="postHandlingAction"></param>
-        /// <param name="handlers"></param>
+        /// <param name="exceptionType">Type of exception this policy refers to.</param>
+        /// <param name="postHandlingAction">What to do after the exception is handled.</param>
+        /// <param name="handlers">Handlers to execute on the exception.</param>
         public ExceptionPolicyEntry(Type exceptionType, PostHandlingAction postHandlingAction, IEnumerable<IExceptionHandler> handlers)
+            : this(exceptionType, postHandlingAction, handlers, new NullExceptionHandlingInstrumentationProvider())
+        {
+        }
+
+        /// <summary>
+        /// Instantiates a new instance of the <see cref="ExceptionPolicyEntry"/> class.
+        /// </summary>
+        /// <param name="exceptionType">Type of exception this policy refers to.</param>
+        /// <param name="postHandlingAction">What to do after the exception is handled.</param>
+        /// <param name="handlers">Handlers to execute on the exception.</param>
+        /// <param name="instrumentationProvider">Instrumentation provider</param>
+        public ExceptionPolicyEntry(
+            Type exceptionType, 
+            PostHandlingAction postHandlingAction, 
+            IEnumerable<IExceptionHandler> handlers, 
+            IExceptionHandlingInstrumentationProvider instrumentationProvider)
         {
             if (exceptionType == null) throw new ArgumentNullException("exceptionType");
             if (handlers == null) throw new ArgumentNullException("handlers");
+            if(instrumentationProvider == null) throw new ArgumentNullException("instrumentationProvider");
 
             ExceptionType = exceptionType;
             this.postHandlingAction = postHandlingAction;
             this.handlers = handlers;
+            this.instrumentationProvider = instrumentationProvider;
         }
 
         internal string PolicyName
         {
             set { policyName = value; }
-        }
-
-        private ExceptionHandlingInstrumentationProvider InstrumentationProvider
-        {
-            get { return instrumentationProvider; }
-            set { instrumentationProvider = value; }
         }
 
         ///<summary>
@@ -75,7 +85,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
             Guid handlingInstanceID = Guid.NewGuid();
             Exception chainException = ExecuteHandlerChain(exceptionToHandle, handlingInstanceID);
 
-            if (InstrumentationProvider != null) InstrumentationProvider.FireExceptionHandledEvent();
+            instrumentationProvider.FireExceptionHandledEvent();
 
             return RethrowRecommended(chainException, exceptionToHandle);
         }
@@ -92,10 +102,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
             }
 
             Exception wrappedException = new ExceptionHandlingException(Resources.ExceptionNullException);
-            if (InstrumentationProvider != null)
-            {
-                InstrumentationProvider.FireExceptionHandlingErrorOccurred(ExceptionUtility.FormatExceptionHandlingExceptionMessage(policyName, wrappedException, chainException, originalException));
-            }
+            instrumentationProvider.FireExceptionHandlingErrorOccurred(
+                ExceptionUtility.FormatExceptionHandlingExceptionMessage(policyName, wrappedException, chainException, originalException));
 
             return wrappedException;
         }
@@ -122,34 +130,21 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
                 {
                     lastHandlerName = handler.GetType().Name;
                     ex = handler.HandleException(ex, handlingInstanceID);
-                    if (InstrumentationProvider != null) InstrumentationProvider.FireExceptionHandlerExecutedEvent();
+                    instrumentationProvider.FireExceptionHandlerExecutedEvent();
                 }
             }
             catch (Exception handlingException)
             {
-                if (InstrumentationProvider != null)
-                {
-                    InstrumentationProvider.FireExceptionHandlingErrorOccurred(
-                        ExceptionUtility.FormatExceptionHandlingExceptionMessage(
-                            policyName,
-                            new ExceptionHandlingException(string.Format(Resources.Culture, Resources.UnableToHandleException, lastHandlerName), handlingException),
-                            ex,
-                            originalException
-                        ));
-                }
+                instrumentationProvider.FireExceptionHandlingErrorOccurred(
+                    ExceptionUtility.FormatExceptionHandlingExceptionMessage(
+                        policyName,
+                        new ExceptionHandlingException(string.Format(Resources.Culture, Resources.UnableToHandleException, lastHandlerName), handlingException),
+                        ex,
+                        originalException));
                 throw new ExceptionHandlingException(string.Format(Resources.Culture, Resources.UnableToHandleException, lastHandlerName));
             }
 
             return ex;
-        }
-
-        /// <summary>
-        /// Attaches an <see cref="ExceptionHandlingInstrumentationProvider"/> to be used for instrumentation on this instance.
-        /// </summary>
-        /// <param name="provider">The <see cref="ExceptionHandlingInstrumentationProvider"/> that is attached.</param>
-        public void SetInstrumentationProvider(ExceptionHandlingInstrumentationProvider provider)
-        {
-            this.InstrumentationProvider = provider;
         }
     }
 }

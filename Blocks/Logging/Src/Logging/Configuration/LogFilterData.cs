@@ -12,6 +12,7 @@
 using System;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using System.Collections.Generic;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 {
@@ -42,12 +43,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         }
 
         /// <summary>
-        /// 
+        /// Returns a <see cref="TypeRegistration"/> for this data section.
         /// </summary>
+        /// <remarks>
+        /// This must be overridden by any subclasses, but is not abstract due to configuration section serialization constraints.
+        /// </remarks>
         /// <returns></returns>
-        public virtual TypeRegistration GetContainerConfigurationModel()
+        public virtual IEnumerable<TypeRegistration> GetRegistrations()
         {
-            throw new NotImplementedException();        // TODO add message
+            throw new NotImplementedException(Logging.Properties.Resources.ExceptionMethodMustBeImplementedBySubclasses);      
         }
     }
 }

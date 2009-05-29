@@ -16,6 +16,7 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
 {
@@ -62,7 +63,34 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
                                             string timeStampPattern,
                                             RollFileExistsBehavior rollFileExistsBehavior,
                                             RollInterval rollInterval)
-            : base(fileName, header, footer, formatter)
+            : this(fileName, header, footer, formatter, rollSizeKB,
+                   timeStampPattern, rollFileExistsBehavior, rollInterval,
+                   new NullLoggingInstrumentationProvider())
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of <see cref="RollingFlatFileTraceListener"/> 
+        /// </summary>
+        /// <param name="fileName">The filename where the entries will be logged.</param>
+        /// <param name="header">The header to add before logging an entry.</param>
+        /// <param name="footer">The footer to add after logging an entry.</param>
+        /// <param name="formatter">The formatter.</param>
+        /// <param name="rollSizeKB">The maxium file size (KB) before rolling.</param>
+        /// <param name="timeStampPattern">The date format that will be appended to the new roll file.</param>
+        /// <param name="rollFileExistsBehavior">Expected behavior that will be used when the rool file has to be created.</param>
+        /// <param name="rollInterval">The time interval that makes the file rolles.</param>
+        /// <param name="instrumentationProvider">The instrumentation provider to use.</param>
+        public RollingFlatFileTraceListener(string fileName,
+                                            string header,
+                                            string footer,
+                                            ILogFormatter formatter,
+                                            int rollSizeKB,
+                                            string timeStampPattern,
+                                            RollFileExistsBehavior rollFileExistsBehavior,
+                                            RollInterval rollInterval,
+                                            ILoggingInstrumentationProvider instrumentationProvider)
+            : base(fileName, header, footer, formatter, instrumentationProvider)
         {
             rollSizeInBytes = rollSizeKB * 1024;
             this.timeStampPattern = timeStampPattern;

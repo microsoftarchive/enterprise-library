@@ -10,12 +10,8 @@
 //===============================================================================
 
 using System;
-using System.Configuration;
 using System.Security.Cryptography;
-using Microsoft.Practices.EnterpriseLibrary.Common;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
-using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Instrumentation;
@@ -26,31 +22,43 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography
 	/// A hash provider for any hash algorithm which derives from <see cref="System.Security.Cryptography.HashAlgorithm"/>.
 	/// </summary>
 	[ConfigurationElementType(typeof(HashAlgorithmProviderData))]
-	public class HashAlgorithmProvider : IHashProvider, IInstrumentationEventProvider
+	public class HashAlgorithmProvider : IHashProvider
 	{
 		/// <summary>
 		/// Defines the salt length used by the provider.
 		/// </summary>
 		public const int SaltLength = 16;
 
-		private Type algorithmType;
-		private bool saltEnabled;
-		HashAlgorithmInstrumentationProvider instrumentationProvider;
+		private readonly Type algorithmType;
+		private readonly bool saltEnabled;
+	    readonly IHashAlgorithmInstrumentationProvider instrumentationProvider;
+
+        /// <summary>
+        /// Initialize a new instance of the <see cref="HashAlgorithmProvider"/> class with the <see cref="HashAlgorithm"/> type and if salt is enabled.
+        /// </summary>
+        /// <param name="algorithmType">The <see cref="HashAlgorithm"/> to use.</param>
+        /// <param name="saltEnabled"><see langword="true"/> if salt should be applied; otherwise, <see langword="false"/>.</param>
+        public HashAlgorithmProvider(Type algorithmType, bool saltEnabled)
+            :this(algorithmType, saltEnabled, new NullHashAlgorithmInstrumentationProvider())
+        {
+        }
 
 		/// <summary>
 		/// Initialize a new instance of the <see cref="HashAlgorithmProvider"/> class with the <see cref="HashAlgorithm"/> type and if salt is enabled.
 		/// </summary>
 		/// <param name="algorithmType">The <see cref="HashAlgorithm"/> to use.</param>
 		/// <param name="saltEnabled"><see langword="true"/> if salt should be applied; otherwise, <see langword="false"/>.</param>
-		public HashAlgorithmProvider(Type algorithmType, bool saltEnabled)
+        /// <param name="instrumentationProvider">The <see cref="IHashAlgorithmInstrumentationProvider"/> to use.</param>
+		public HashAlgorithmProvider(Type algorithmType, bool saltEnabled, IHashAlgorithmInstrumentationProvider instrumentationProvider)
 		{
+            if (instrumentationProvider == null) throw new ArgumentNullException("instrumentationProvider");
 			if (algorithmType == null) throw new ArgumentNullException("algorithmType");
 			if (!typeof(HashAlgorithm).IsAssignableFrom(algorithmType)) throw new ArgumentException(Resources.ExceptionMustBeAHashAlgorithm, "algorithmType");
 
 			this.algorithmType = algorithmType;
 			this.saltEnabled = saltEnabled;
 
-			this.instrumentationProvider = new HashAlgorithmInstrumentationProvider();
+            this.instrumentationProvider = instrumentationProvider;
 		}
 
 		/// <summary>
@@ -60,7 +68,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography
 		/// <returns>The computed hash code.</returns>
 		public byte[] CreateHash(byte[] plaintext)
 		{
-			byte[] hash = null;
+			byte[] hash;
 
 			try
 			{
@@ -88,12 +96,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography
 			if (hashedtext == null) throw new ArgumentNullException("hashedText");
 			if (hashedtext.Length == 0) throw new ArgumentException(Resources.ExceptionByteArrayValueMustBeGreaterThanZeroBytes, "hashedText");
 
-			bool result = false;
-			byte[] hashedPlainText = null;
-			byte[] salt = null;
+			bool result;
+		    byte[] salt = null;
 			try
 			{
-				try
+			    byte[] hashedPlainText;
+			    try
 				{
 					salt = ExtractSalt(hashedtext);
 					hashedPlainText = CreateHashWithSalt(plaintext, salt);
@@ -119,17 +127,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography
 		}
 
 		/// <summary>
-		/// Gets the <see cref="HashAlgorithmInstrumentationProvider"/> instance that defines the logical events 
-		/// used to instrument this hash provider.
-		/// </summary>
-		/// <returns>The <see cref="HashAlgorithmInstrumentationProvider"/> instance that defines the logical 
-		/// events used to instrument this hash provider.</returns>
-		public object GetInstrumentationEventProvider()
-		{
-			return instrumentationProvider;
-		}
-
-		/// <summary>
 		/// Creates a hash with a specified salt.
 		/// </summary>
 		/// <param name="plaintext">The plaintext to hash.</param>
@@ -138,7 +135,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography
 		protected virtual byte[] CreateHashWithSalt(byte[] plaintext, byte[] salt)
 		{
 			AddSaltToPlainText(ref salt, ref plaintext);
-			HashCryptographer cryptographer = this.HashCryptographer;
+			HashCryptographer cryptographer = HashCryptographer;
 			byte[] hash = cryptographer.ComputeHash(plaintext);
 			AddSaltToHash(salt, ref hash);
 			return hash;
@@ -191,7 +188,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography
 		/// Gets the <see cref="HashAlgorithmInstrumentationProvider"/> instance that defines the logical events 
 		/// used to instrument this hash provider.
 		/// </summary>
-		protected HashAlgorithmInstrumentationProvider InstrumentationProvider
+		protected IHashAlgorithmInstrumentationProvider InstrumentationProvider
 		{
 			get { return instrumentationProvider; }
 		}

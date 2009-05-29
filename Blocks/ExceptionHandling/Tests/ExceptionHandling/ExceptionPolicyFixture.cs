@@ -15,6 +15,7 @@ using System.Diagnostics;
 using System.Security;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Instrumentation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Practices.ServiceLocation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
 {
@@ -52,7 +53,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ConfigurationErrorsException))]
+        [ExpectedException(typeof(ActivationException))]
         public void UndefinedPolicyRequestedThrows()
         {
             ExceptionPolicy.HandleException(new MockException(), "Undefined Policy");
@@ -125,7 +126,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ConfigurationErrorsException))]
+        [ExpectedException(typeof(ActivationException))]
         public void InvalidExceptionTypeInConfigurationTest()
         {
             try
@@ -134,11 +135,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
             }
             catch (Exception ex)
             {
+
                 bool rethrow = ExceptionPolicy.HandleException(ex, "InvalidExceptionTypeInConfiguration");
                 if (rethrow)
                 {
                     throw;
                 }
+
             }
         }
 
@@ -151,7 +154,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
                 {
                     ExceptionPolicy.HandleException(new Exception(), "ThisIsAnUnknownKey");
                 }
-                catch (ConfigurationErrorsException)
+                catch (ActivationException)
                 {
                     eventListener.WaitForEvents();
                     Assert.AreEqual(1, eventListener.EventsReceived.Count);
@@ -171,7 +174,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
             {
                 ExceptionPolicy.HandleException(new Exception(), "ThisIsAnUnknownKey");
             }
-            catch (ConfigurationErrorsException)
+            catch (ActivationException)
             {
                 using (EventLog applicationLog = new EventLog("Application"))
                 {

@@ -77,10 +77,6 @@
       <Name>Microsoft.Interop.Security.AzRoles</Name>
       <HintPath>C:\WINDOWS\Microsoft.NET\AuthMan\Microsoft.Interop.Security.AzRoles.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Practices.ObjectBuilder2, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31BF3856AD364E35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Lib\Microsoft.Practices.ObjectBuilder2.dll</HintPath>
-    </Reference>
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
@@ -119,7 +115,6 @@
     <Compile Include="Configuration\AzManAuthorizationProviderData.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Configuration\Unity\AzManAuthorizationProviderPolicyCreator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>

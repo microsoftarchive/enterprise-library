@@ -9,10 +9,6 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
-using System.Collections;
-using System.Security.Cryptography;
-using System.Text;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
@@ -21,6 +17,7 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel.
 using Microsoft.Practices.EnterpriseLibrary.Data;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography;
+using Microsoft.Practices.ServiceLocation;
 using Microsoft.Practices.Unity;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -30,16 +27,15 @@ namespace Common.ContainerInfrastructure.Tests.VSTS
     public abstract class ContainerConfigurationContext
     {
         protected IConfigurationSource Config { get; set; }
-        protected TypeRegistrationsProviderLocator Locator { get; set; }
+        protected CompositeTypeRegistrationsProviderLocator Locator { get; set; }
+        protected abstract IContainerConfigurator Configurator { get; }
 
         [TestInitialize]
         public void SetupContext()
         {
             Config = CreateConfig();
 
-            Locator = new TypeRegistrationsProviderLocator();
-            // Remove data strategy, it looks at machine.config and can screw up our tests
-            Locator.RemoveStrategy(BlockSectionNames.DataRegistrationProviderLocatorType);
+            Locator = new CompositeTypeRegistrationsProviderLocator(TypeRegistrationsProvider.CreateDefaultProvider(Config));
 
             Given();
 
@@ -48,15 +44,19 @@ namespace Common.ContainerInfrastructure.Tests.VSTS
 
         protected virtual IConfigurationSource CreateConfig()
         {
-            return new DictionaryConfigurationSource();
+            IConfigurationSource source = new DictionaryConfigurationSource();
+            var registrationSettings = new TypeRegistrationProvidersConfigurationSection();
+
+            // Remove data strategy, it looks at machine.config and can screw up our tests
+            registrationSettings.TypeRegistrationProviders.Remove(TypeRegistrationProvidersConfigurationSection.DataAccessTypeRegistrationProviderName);
+            source.Add(null, TypeRegistrationProvidersConfigurationSection.SectionName, registrationSettings);
+
+            return source;
         }
 
         protected virtual void Given()
         {
-            
         }
-
-        protected abstract IContainerConfigurator Configurator { get; }
     }
 
     public abstract class MockContainerConfigurationContext : ContainerConfigurationContext
@@ -64,17 +64,21 @@ namespace Common.ContainerInfrastructure.Tests.VSTS
         protected Mock<IContainerConfigurator> MockConfigurator { get; set; }
         protected List<TypeRegistration> Registrations { get; private set; }
 
-        protected override void Given()
-        {
-            MockConfigurator = new Mock<IContainerConfigurator>(MockBehavior.Strict);
-            MockConfigurator.Setup(c => c.RegisterAll(It.IsAny<IEnumerable<TypeRegistration>>()))
-                .Callback<IEnumerable<TypeRegistration>>(reg => Registrations = reg.ToList())
-                .AtMostOnce().Verifiable();
-        }
-
         protected override IContainerConfigurator Configurator
         {
             get { return MockConfigurator.Object; }
+        }
+
+        protected override void Given()
+        {
+            MockConfigurator = new Mock<IContainerConfigurator>(MockBehavior.Strict);
+            MockConfigurator
+                .Setup(c => c.RegisterAll(
+                    It.IsAny<IConfigurationSource>(),
+                    It.IsAny<ITypeRegistrationsProvider>()))
+                .Callback<IConfigurationSource, ITypeRegistrationsProvider>(
+                    (cs, p) => Registrations = p.GetRegistrations(cs).ToList())
+                .AtMostOnce().Verifiable();
         }
     }
 
@@ -82,21 +86,20 @@ namespace Common.ContainerInfrastructure.Tests.VSTS
     {
         protected IUnityContainer Container;
 
-        protected override void Given()
-        {
-            Container = new UnityContainer();
-        }
-
         protected override IContainerConfigurator Configurator
         {
             get { return new UnityContainerConfigurator(Container); }
+        }
+
+        protected override void Given()
+        {
+            Container = new UnityContainer();
         }
     }
 
     [TestClass]
     public class GivenAnEmptyConfigSource : MockContainerConfigurationContext
     {
-
         [TestMethod]
         public void WhenConfiguringAContainer_ThenRegisterAllIsPassedAnEmptySequence()
         {
@@ -161,8 +164,8 @@ namespace Common.ContainerInfrastructure.Tests.VSTS
         {
             base.Given();
             // Add data back in for this one
-            Locator.AddStrategy(
-                new TypeLoadingLocationStrategy(
+            Locator = new CompositeTypeRegistrationsProviderLocator(Locator,
+                new TypeLoadingLocator(
                     BlockSectionNames.DataRegistrationProviderLocatorType));
         }
 
@@ -179,14 +182,14 @@ namespace Common.ContainerInfrastructure.Tests.VSTS
         public void WhenContainerIsConfigured_ThenCanResolveHashProvider()
         {
             var provider = Container.Resolve<IHashProvider>("md5");
-            Assert.IsInstanceOfType(provider, typeof(HashAlgorithmProvider));
+            Assert.IsInstanceOfType(provider, typeof (HashAlgorithmProvider));
         }
 
         [TestMethod]
         public void WhenContainerIsConfigured_ThenCanResolveOtherHashProvider()
         {
             var provider = Container.Resolve<IHashProvider>("sha512");
-            Assert.IsInstanceOfType(provider, typeof(HashAlgorithmProvider));
+            Assert.IsInstanceOfType(provider, typeof (HashAlgorithmProvider));
         }
 
         [TestMethod]
@@ -197,12 +200,12 @@ namespace Common.ContainerInfrastructure.Tests.VSTS
                 Container.Resolve<IHashProvider>("sha128");
                 Assert.Fail("Should have thrown ResolutionFailedException");
             }
-            catch (ResolutionFailedException ex)
+            catch (ResolutionFailedException)
             {
                 // ok if we get this.
             }
         }
-	
+
         [TestMethod]
         public void WhenContainerIsConfigured_ThenCanResolveDatabase()
         {
@@ -217,6 +220,48 @@ namespace Common.ContainerInfrastructure.Tests.VSTS
 
             Assert.AreEqual(ConfigSourceBuilder.DefaultExceptionPolicyName, policy.PolicyName);
         }
-	
+    }
+
+    [TestClass]
+    public class GivenDefaultEnterpriseLibraryContainer
+    {
+        [TestMethod]
+        public void WhenGettingCurrentProperty_ThenItIsNotNull()
+        {
+            Assert.IsNotNull(EnterpriseLibraryContainer.Current);
+        }
+
+        [TestMethod]
+        public void WhenSettingCurrentContainer_ThenYouGetBackTheSameContainer()
+        {
+            var mockContainer = new Mock<IServiceLocator>();
+
+            EnterpriseLibraryContainer.Current = mockContainer.Object;
+
+            Assert.AreSame(mockContainer.Object, EnterpriseLibraryContainer.Current);
+        }
+    }
+
+    [TestClass]
+    public class GivenAConfigSourceWithPolicyInjectionData : MockContainerConfigurationContext
+    {
+        protected override IConfigurationSource CreateConfig()
+        {
+            return new ConfigSourceBuilder()
+                .AddPolicyInjectionSettings()
+                .ConfigSource;
+        }
+
+        [TestMethod]
+        public void WhenConfiguringContainer_ThenRegisterAllIsCalledExactlyOnce()
+        {
+            MockConfigurator.Verify();
+        }
+
+        [TestMethod]
+        public void WhenConfiguringContainer_ThenRegistrationsArePresent()
+        {
+            Assert.IsTrue(Registrations.Count > 0);
+        }
     }
 }

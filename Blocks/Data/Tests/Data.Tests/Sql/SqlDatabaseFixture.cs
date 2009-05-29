@@ -13,8 +13,9 @@ using System;
 using System.Configuration;
 using System.Data.Common;
 using System.Data.SqlClient;
-using Microsoft.Practices.EnterpriseLibrary.Data.Tests;
+using Microsoft.Practices.EnterpriseLibrary.Data.TestSupport;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Practices.EnterpriseLibrary.Data.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
 {
@@ -24,8 +25,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
         [TestMethod]
         public void ConnectionTest()
         {
-            DatabaseConfigurationView view = new DatabaseConfigurationView(TestConfigurationSource.CreateConfigurationSource());
-            ConnectionStringSettings data = view.GetConnectionStringSettings("NewDatabase");
+            DatabaseSyntheticConfigSettings settings = new DatabaseSyntheticConfigSettings(TestConfigurationSource.CreateConfigurationSource());
+            ConnectionStringSettings data = settings.GetConnectionStringSettings("NewDatabase");
             SqlDatabase sqlDatabase = new SqlDatabase(data.ConnectionString);
 
             DbConnection connection = sqlDatabase.CreateConnection();
@@ -40,8 +41,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
         [TestMethod]
         public void CanGetConnectionWithoutCredentials()
         {
-            DatabaseConfigurationView view = new DatabaseConfigurationView(TestConfigurationSource.CreateConfigurationSource());
-            ConnectionStringSettings data = view.GetConnectionStringSettings("DbWithSqlServerAuthn");
+            DatabaseSyntheticConfigSettings settings = new DatabaseSyntheticConfigSettings(TestConfigurationSource.CreateConfigurationSource());
+            ConnectionStringSettings data = settings.GetConnectionStringSettings("DbWithSqlServerAuthn");
             SqlDatabase sqlDatabase = new SqlDatabase(data.ConnectionString);
 
             Assert.AreEqual(@"server=(local)\sqlexpress;database=northwind;", sqlDatabase.ConnectionStringWithoutCredentials);
@@ -50,8 +51,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
         [TestMethod]
         public void CanGetConnectionForStringWithNoCredentials()
         {
-            DatabaseConfigurationView view = new DatabaseConfigurationView(TestConfigurationSource.CreateConfigurationSource());
-            ConnectionStringSettings data = view.GetConnectionStringSettings("NewDatabase");
+            DatabaseSyntheticConfigSettings settings = new DatabaseSyntheticConfigSettings(TestConfigurationSource.CreateConfigurationSource());
+            ConnectionStringSettings data = settings.GetConnectionStringSettings("NewDatabase");
             SqlDatabase sqlDatabase = new SqlDatabase(data.ConnectionString);
 
             Assert.AreEqual(@"server=(local)\sqlexpress;database=northwind;integrated security=true;", sqlDatabase.ConnectionStringWithoutCredentials);
@@ -63,8 +64,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
             try
             {
                 CreateUser();
-                DatabaseConfigurationView view = new DatabaseConfigurationView(TestConfigurationSource.CreateConfigurationSource());
-                ConnectionStringSettings data = view.GetConnectionStringSettings("NorthwindPersistFalse");
+                DatabaseSyntheticConfigSettings settings = new DatabaseSyntheticConfigSettings(TestConfigurationSource.CreateConfigurationSource());
+                ConnectionStringSettings data = settings.GetConnectionStringSettings("NorthwindPersistFalse");
                 SqlDatabase sqlDatabase = new SqlDatabase(data.ConnectionString);
                 DbConnection dbConnection = sqlDatabase.CreateConnection();
                 dbConnection.Open();

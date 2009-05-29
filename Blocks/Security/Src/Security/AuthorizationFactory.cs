@@ -12,9 +12,9 @@
 using System;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
 using Microsoft.Practices.EnterpriseLibrary.Security.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Security.Properties;
+using Microsoft.Practices.ServiceLocation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security
 {
@@ -36,7 +36,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security
 				AuthorizationProviderFactory factory = new AuthorizationProviderFactory(ConfigurationSourceFactory.Create());
 				return factory.CreateDefault();
 			}
-			catch (ConfigurationErrorsException configurationException)
+			catch (ActivationException configurationException)
 			{
 				TryLogConfigurationError(configurationException, "default");
 
@@ -58,10 +58,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security
 		{
 			try
 			{
-				AuthorizationProviderFactory factory = new AuthorizationProviderFactory(ConfigurationSourceFactory.Create());
+				AuthorizationProviderFactory factory = new AuthorizationProviderFactory();
 				return factory.Create(authorizationProviderName);
 			}
-			catch (ConfigurationErrorsException configurationException)
+			catch (ActivationException configurationException)
 			{
 				TryLogConfigurationError(configurationException, authorizationProviderName);
 
@@ -69,11 +69,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security
 			}
 		}
 
-		private static void TryLogConfigurationError(ConfigurationErrorsException configurationException, string instanceName)
+		private static void TryLogConfigurationError(ActivationException configurationException, string instanceName)
 		{
 			try
 			{
-				DefaultSecurityEventLogger eventLogger = EnterpriseLibraryFactory.BuildUp<DefaultSecurityEventLogger>();
+				DefaultSecurityEventLogger eventLogger = EnterpriseLibraryContainer.Current.GetInstance<DefaultSecurityEventLogger>();
 				if (eventLogger != null)
 				{
 					eventLogger.LogConfigurationError(instanceName, Resources.ErrorAuthorizationConfigurationFailedMessage, configurationException);

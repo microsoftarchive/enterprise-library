@@ -12,19 +12,19 @@
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Caching;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Unity;
-using Microsoft.Practices.EnterpriseLibrary.Security.Cache.CachingStore.Configuration.Unity;
 using Microsoft.Practices.EnterpriseLibrary.Security.Configuration;
-using Microsoft.Practices.ObjectBuilder2;
+using System.Linq.Expressions;
+using System;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using System.Collections.Generic;
+using Microsoft.Practices.EnterpriseLibrary.Security.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Cache.CachingStore.Configuration
 {
 	/// <summary>
 	/// Configuration data for the Security Cache.
 	/// </summary>
-	[Assembler(typeof(CachingStoreProviderAssembler))]
-	[ContainerPolicyCreator(typeof(CachingStoreProviderPolicyCreator))]
 	public class CachingStoreProviderData : SecurityCacheProviderData
 	{
 		private const string cacheManagerProperty = "cacheManagerInstanceName";
@@ -86,49 +86,24 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cache.CachingStore.Conf
 			get { return (int)this[absoluteExpirationProperty]; }
 			set { this[absoluteExpirationProperty] = value; }
 		}
-	}
 
-	/// <summary>
-	/// This type supports the Enterprise Library infrastructure and is not intended to be used directly from your code.
-	/// Represents the process to build a <see cref="CachingStoreProvider"/> described by a <see cref="SecurityCacheProviderData"/> configuration object.
-	/// </summary>
-	/// <remarks>This type is linked to the <see cref="SecurityCacheProviderData"/> type and it is used by the <see cref="SecurityCacheProviderCustomFactory"/> 
-	/// to build the specific <see cref="ISecurityCacheProvider"/> object represented by the configuration object.
-	/// </remarks>
-	public class CachingStoreProviderAssembler : IAssembler<ISecurityCacheProvider, SecurityCacheProviderData>
-	{
-		/// <summary>
-		/// This method supports the Enterprise Library infrastructure and is not intended to be used directly from your code.
-		/// Builds an <see cref="CachingStoreProvider"/> based on an instance of <see cref="SecurityCacheProviderData"/>.
-		/// </summary>
-		/// <seealso cref="SecurityCacheProviderCustomFactory"/>
-		/// <param name="context">The <see cref="IBuilderContext"/> that represents the current building process.</param>
-		/// <param name="objectConfiguration">The configuration object that describes the object to build. Must be an instance of <see cref="CachingStoreProviderData"/>.</param>
-		/// <param name="configurationSource">The source for configuration objects.</param>
-		/// <param name="reflectionCache">The cache to use retrieving reflection information.</param>
-		/// <returns>A fully initialized instance of <see cref="CachingStoreProvider"/>.</returns>
-		public ISecurityCacheProvider Assemble(IBuilderContext context,
-											   SecurityCacheProviderData objectConfiguration,
-											   IConfigurationSource configurationSource,
-											   ConfigurationReflectionCache reflectionCache)
-		{
-			CachingStoreProviderData castedObjectConfiguration
-				= (CachingStoreProviderData)objectConfiguration;
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public override IEnumerable<TypeRegistration> GetRegistrations(IConfigurationSource configurationSource)
+        {
+            yield return base.GetInstrumentationProviderRegistration(configurationSource);
 
-			IBuilderContext cacheManagerContext
-				= context.CloneForNewBuild(
-					NamedTypeBuildKey.Make<ICacheManager>(castedObjectConfiguration.CacheManager), null);
-
-			ICacheManager securityCacheManager
-				= (ICacheManager)cacheManagerContext.Strategies.ExecuteBuildUp(cacheManagerContext);
-
-			ISecurityCacheProvider createdObject
-				= new CachingStoreProvider(
-					castedObjectConfiguration.SlidingExpiration,
-					castedObjectConfiguration.AbsoluteExpiration,
-					securityCacheManager);
-
-			return createdObject;
-		}
+            yield return new TypeRegistration<ISecurityCacheProvider>(() => new CachingStoreProvider(
+                            SlidingExpiration,
+                            AbsoluteExpiration,
+                            Container.Resolved<ICacheManager>(CacheManager),
+                            Container.Resolved<ISecurityCacheProviderInstrumentationProvider>(Name)))
+                            {
+                                Name = this.Name,
+                                Lifetime = TypeRegistrationLifetime.Transient
+                            };
+        }
 	}
 }

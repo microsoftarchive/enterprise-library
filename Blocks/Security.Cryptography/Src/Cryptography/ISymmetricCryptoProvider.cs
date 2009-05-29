@@ -9,16 +9,11 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
-using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration;
-
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography
 {
     /// <summary>
     /// <para>A contract for any provider for configurable symmetric cryptographic implementations.</para>
     /// </summary>
-	[ConfigurationNameMapper(typeof(SymmetricCryptoProviderNameMapper))]
-	[CustomFactory(typeof(SymmetricCryptoProviderCustomFactory))]
 	public interface ISymmetricCryptoProvider 
     {
         /// <summary>

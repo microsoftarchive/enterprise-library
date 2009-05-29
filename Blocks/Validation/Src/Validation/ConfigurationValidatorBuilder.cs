@@ -24,40 +24,56 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
     /// </summary>
     public class ConfigurationValidatorBuilder : ValidatorBuilderBase
     {
-        private IConfigurationSource configurationSource;
-        private ValidationInstrumentationListener instrumentationListener;
 
-        private static readonly Validator emptyValidator = new AndCompositeValidator();
+        private readonly ValidationSettings validationSettings;
+        private IValidationInstrumentationProvider instrumentationProvider;
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="configurationSource"></param>
-        public ConfigurationValidatorBuilder(IConfigurationSource configurationSource)
-            : base()
+
+        private static readonly Validator EmptyValidator = new AndCompositeValidator();
+
+        ///<summary>
+        ///</summary>
+        ///<param name="configurationSource"></param>
+        ///<param name="memberAccessValidatorBuilderFactory"></param>
+        ///<returns></returns>
+        public static ConfigurationValidatorBuilder FromConfiguration(
+            IConfigurationSource configurationSource, 
+            MemberAccessValidatorBuilderFactory memberAccessValidatorBuilderFactory)
         {
-            this.configurationSource = configurationSource;
-            InitializeInstrumentationListener();
+            var instrumentationProvider = ValidationInstrumentationProvider.FromConfigurationSource(configurationSource);
+            var settings = ValidationSettings.TryGet(configurationSource, instrumentationProvider);
+            
+            return new ConfigurationValidatorBuilder(settings, instrumentationProvider,
+                                                     memberAccessValidatorBuilderFactory);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="configurationSource"></param>
-        /// <param name="memberAccessValidatorFactory"></param>
-        public ConfigurationValidatorBuilder(IConfigurationSource configurationSource,
-            MemberAccessValidatorBuilderFactory memberAccessValidatorFactory)
-            : base(memberAccessValidatorFactory)
+        ///<summary>
+        ///</summary>
+        ///<param name="validationSettings"></param>
+        ///<param name="instrumentationProvider"></param>
+        ///<param name="memberAccessValidatorFactory"></param>
+        public ConfigurationValidatorBuilder(
+                ValidationSettings validationSettings, 
+                IValidationInstrumentationProvider instrumentationProvider,
+                MemberAccessValidatorBuilderFactory memberAccessValidatorFactory
+            ) : base(memberAccessValidatorFactory)
         {
-            this.configurationSource = configurationSource;
-            InitializeInstrumentationListener();
+            this.validationSettings = validationSettings;
+            this.instrumentationProvider = instrumentationProvider;
         }
 
-        private void InitializeInstrumentationListener()
+        ///<summary>
+        ///</summary>
+        ///<param name="validationSettings"></param>
+        ///<param name="instrumentationProvider"></param>
+        public ConfigurationValidatorBuilder(
+                    ValidationSettings validationSettings, 
+                    IValidationInstrumentationProvider instrumentationProvider)
         {
-            ValidationInstrumentationListenerCustomFactory instrumentationListenerFactory = new ValidationInstrumentationListenerCustomFactory();
-            instrumentationListener = (ValidationInstrumentationListener)instrumentationListenerFactory.CreateObject(null, null, configurationSource, null);
+            this.validationSettings = validationSettings;
+            this.instrumentationProvider = instrumentationProvider;
         }
+
 
         /// <summary>
         /// 
@@ -70,7 +86,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
 
             ValidatedTypeReference typeReference = GetTypeReference(type);
             if (null == typeReference)
-                return emptyValidator;
+                return EmptyValidator;
 
             return CreateValidator(type, typeReference, ruleset);
         }
@@ -79,8 +95,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         {
             try
             {
-                ValidationSettings validationSettings
-                    = this.configurationSource.GetSection(ValidationSettings.SectionName) as ValidationSettings;
                 if (null == validationSettings)
                     return null;
 
@@ -89,7 +103,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
             }
             catch (ConfigurationErrorsException configurationErrors)
             {
-                instrumentationListener.ConfigurationFailure(this, new ValidationConfigurationFailureEventArgs(configurationErrors));
+                instrumentationProvider.FireConfigurationFailure(configurationErrors);
                 throw;
             }
         }
@@ -111,14 +125,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
             ValidationRulesetData ruleData = typeReference.Rulesets.Get(ruleset);
 
             if (null == ruleData)
-                return emptyValidator;
+                return EmptyValidator;
 
             return this.CreateValidator(new ConfigurationValidatedType(ruleData, type));
-        }
-
-        internal IConfigurationSource ConfigurationSource
-        {
-            get { return this.configurationSource; }
         }
 
         #region test only methods

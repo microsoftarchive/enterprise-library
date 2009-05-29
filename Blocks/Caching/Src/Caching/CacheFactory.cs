@@ -13,7 +13,7 @@ using System;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
+using Microsoft.Practices.ServiceLocation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching
 {
@@ -22,8 +22,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
 	/// </summary>
 	public static class CacheFactory
 	{
-		private static CacheManagerFactory factory = new CacheManagerFactory(ConfigurationSourceFactory.Create());
-		private static object lockObject = new object();
+		private static readonly CacheManagerFactory factory = new CacheManagerFactory();
+		private static readonly object lockObject = new object();
 
 
 		/// <summary>
@@ -42,7 +42,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
 					return factory.CreateDefault();
 				}
 			}
-			catch (ConfigurationErrorsException configurationException)
+			catch (ActivationException configurationException)
 			{
 				TryLogConfigurationError(configurationException, "default");
 
@@ -68,7 +68,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
 					return factory.Create(cacheManagerName);
 				}
 			}
-			catch (ConfigurationErrorsException configurationException)
+			catch (ActivationException configurationException)
 			{
 				TryLogConfigurationError(configurationException, cacheManagerName);
 
@@ -76,11 +76,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
 			}
 		}
 
-		private static void TryLogConfigurationError(ConfigurationErrorsException configurationException, string instanceName)
+		private static void TryLogConfigurationError(ActivationException configurationException, string instanceName)
 		{
 			try
 			{
-				DefaultCachingEventLogger eventLogger = EnterpriseLibraryFactory.BuildUp<DefaultCachingEventLogger>();
+				DefaultCachingEventLogger eventLogger = EnterpriseLibraryContainer.Current.GetInstance<DefaultCachingEventLogger>();
 				if (eventLogger != null)
 				{
 					eventLogger.LogConfigurationError(instanceName, configurationException);

@@ -12,7 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation;
+using Microsoft.Practices.EnterpriseLibrary.Common.Utility;
 using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration.Manageability.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Instrumentation;
 
@@ -21,13 +21,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography
     /// <summary>
     /// Non-static entry point to the cryptography functionality.
     /// </summary>
-    public class CryptographyManagerImpl : CryptographyManager, IInstrumentationEventProvider
+    public class CryptographyManagerImpl : CryptographyManager
     {
         private const string HashProvider = "IHashProvider";
         private const string SymmetricCryptoProvider = "ISymmetricCryptoProvider";
         private readonly IDictionary<string, IHashProvider> hashProviders;
         private readonly IDictionary<string, ISymmetricCryptoProvider> symmetricCryptoProviders;
-        private readonly DefaultCryptographyInstrumentationProvider instrumentationProvider;
+        private readonly IDefaultCryptographyInstrumentationProvider instrumentationProvider;
 
         /// <summary>
         /// Initializes a new instance of the class <see cref="CryptographyManagerImpl"/> giving a collection of <see cref="IHashProvider"/> and a collection of
@@ -36,6 +36,21 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography
         /// <param name="hashProviders"></param>
         /// <param name="symmetricCryptoProviders"></param>
         public CryptographyManagerImpl(IDictionary<string, IHashProvider> hashProviders, IDictionary<string, ISymmetricCryptoProvider> symmetricCryptoProviders)
+            :this(hashProviders, symmetricCryptoProviders, new NullDefaultCryptographyInstrumentationProvider())
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the class <see cref="CryptographyManagerImpl"/> giving a collection of <see cref="IHashProvider"/> and a collection of
+        /// <see cref="ISymmetricCryptoProvider"/> and an <see cref="IDefaultCryptographyInstrumentationProvider"/>.
+        /// </summary>
+        /// <param name="hashProviders">Dictionary of named <see cref="IHashProvider"/> objects</param>
+        /// <param name="symmetricCryptoProviders">Dictionary of named <see cref="ISymmetricCryptoProvider"/> objects.</param>
+        /// <param name="instrumentationProvider">Instrumentation provider used to report configuration errors.</param>
+        public CryptographyManagerImpl(
+            IDictionary<string, IHashProvider> hashProviders, 
+            IDictionary<string, ISymmetricCryptoProvider> symmetricCryptoProviders,
+            IDefaultCryptographyInstrumentationProvider instrumentationProvider)
         {
             if (hashProviders == null)
                 throw new ArgumentNullException("hashProviders");
@@ -43,9 +58,30 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography
             if (symmetricCryptoProviders == null)
                 throw new ArgumentNullException("symmetricCryptoProviders");
 
+            if(instrumentationProvider == null)
+                throw new ArgumentNullException("instrumentationProvider");
+
             this.hashProviders = hashProviders;
             this.symmetricCryptoProviders = symmetricCryptoProviders;
-            this.instrumentationProvider = new DefaultCryptographyInstrumentationProvider();
+            this.instrumentationProvider = instrumentationProvider;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the class <see cref="CryptographyManagerImpl"/> given a collection of <see cref="IHashProvider"/> and a
+        /// collection of <see cref="ISymmetricCryptoProvider"/>.
+        /// </summary>
+        /// <param name="hashProviderNames">Sequence of names of the hash providers as defined in configuration.</param>
+        /// <param name="hashProviders">The hash providers corresponding to the names in <paramref name="hashProviderNames"/> at the same index.</param>
+        /// <param name="cryptoProviderNames">Sequence of names of the crypto providers as defined in configuration.</param>
+        /// <param name="symmetricCryptoProviders">The symmetric crypto providers corresponding to the names give in <paramref name="cryptoProviderNames"/>
+        /// <param name="instrumentationProvider">The instrumentation provider used to report errors.</param>
+        /// at the same index.</param>
+        public CryptographyManagerImpl(IEnumerable<string> hashProviderNames, IEnumerable<IHashProvider> hashProviders,
+            IEnumerable<string> cryptoProviderNames, IEnumerable<ISymmetricCryptoProvider> symmetricCryptoProviders,
+            IDefaultCryptographyInstrumentationProvider instrumentationProvider)
+            : this(hashProviderNames.ToDictionary(hashProviders), cryptoProviderNames.ToDictionary(symmetricCryptoProviders), instrumentationProvider)
+        {
+            
         }
 
         /// <overrides>
@@ -196,15 +232,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography
             }
 
             return symmetricProvider;
-        }
-
-        /// <summary>
-        /// Get the <see cref="DefaultCryptographyInstrumentationProvider"/> instance.
-        /// </summary>
-        /// <returns>The <see cref="DefaultCryptographyInstrumentationProvider"/>.</returns>
-        object IInstrumentationEventProvider.GetInstrumentationEventProvider()
-        {
-            return this.instrumentationProvider;
         }
     }
 }

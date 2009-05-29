@@ -14,19 +14,14 @@ using System.Collections.Specialized;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Unity;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.Configuration.Unity;
-using Microsoft.Practices.ObjectBuilder2;
+using System.Collections.Generic;
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.Configuration
 {
 	/// <summary>
 	/// Configuration data for the <see cref="FaultContractExceptionHandler"/> class.
 	/// </summary>
-	[Assembler(typeof(FaultContractHandlerAssembler))]
-	[ContainerPolicyCreator(typeof(FaultContractExceptionHandlerPolicyCreator))]
 	public class FaultContractExceptionHandlerData : ExceptionHandlerData
 	{
 		/// <summary>
@@ -123,45 +118,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.Configurat
         /// </summary>
         /// <param name="namePrefix"></param>
         /// <returns></returns>
-        public override TypeRegistration GetContainerConfigurationModel(string namePrefix)
+        public override IEnumerable<TypeRegistration> GetRegistrations(string namePrefix)
         {
-            return new TypeRegistration<IExceptionHandler>(
+            yield return new TypeRegistration<IExceptionHandler>(
                 () => new FaultContractExceptionHandler(Type.GetType(this.FaultContractType), ExceptionMessage, this.Attributes)
                 )
                        {
                            Name = BuildName(namePrefix)
                        };
         }
-	}
-
-	/// <summary>
-	/// FaultContractHandlerAssembler class.
-	/// </summary>
-	public class FaultContractHandlerAssembler : IAssembler<IExceptionHandler, ExceptionHandlerData>
-	{
-		/// <summary>
-		/// Assembles the specified context.
-		/// </summary>
-		/// <param name="context">The context.</param>
-		/// <param name="objectConfiguration">The object configuration.</param>
-		/// <param name="configurationSource">The configuration source.</param>
-		/// <param name="reflectionCache">The reflection cache.</param>
-		/// <returns></returns>
-		public IExceptionHandler Assemble(IBuilderContext context,
-										  ExceptionHandlerData objectConfiguration,
-										  IConfigurationSource configurationSource,
-										  ConfigurationReflectionCache reflectionCache)
-		{
-			FaultContractExceptionHandlerData castedObjectConfiguration
-				= (FaultContractExceptionHandlerData)objectConfiguration;
-
-			FaultContractExceptionHandler createdObject
-				= new FaultContractExceptionHandler(
-					Type.GetType(castedObjectConfiguration.FaultContractType),
-					castedObjectConfiguration.ExceptionMessage,
-					castedObjectConfiguration.Attributes);
-
-			return createdObject;
-		}
 	}
 }

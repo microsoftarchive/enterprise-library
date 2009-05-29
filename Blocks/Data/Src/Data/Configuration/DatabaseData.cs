@@ -12,6 +12,7 @@
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using System.Collections.Generic;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration
 {
@@ -65,6 +66,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration
         /// this configuration object.
         /// </summary>
         /// <returns>A <see cref="TypeRegistration"/> instance describing a database.</returns>
-        public abstract TypeRegistration GetContainerConfigurationModel();
+        public abstract IEnumerable<TypeRegistration> GetRegistrations();
     }
 }
