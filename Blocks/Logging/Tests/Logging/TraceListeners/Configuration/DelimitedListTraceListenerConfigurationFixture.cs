@@ -14,6 +14,7 @@ using System.Diagnostics;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport;
+using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Configuration
@@ -38,28 +39,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
 
             var container = EnterpriseLibraryContainer.CreateDefaultContainer(helper.configurationSource);
 
-            TraceListener listener = container.GetInstance<TraceListener>("listener");
+            TraceListener listener = container.GetInstance<TraceListener>("listener\u200cimplementation");
 
             Assert.IsNotNull(listener);
-            Assert.AreEqual("listener", listener.Name);
-            Assert.AreEqual(typeof(DelimitedListTraceListener), listener.GetType());
-        }
-
-        [TestMethod]
-        public void CanCreateInstanceFromGivenConfiguration()
-        {
-            SystemDiagnosticsTraceListenerData listenerData
-                = new SystemDiagnosticsTraceListenerData("listener", typeof(DelimitedListTraceListener), "log.txt");
-
-            MockLogObjectsHelper helper = new MockLogObjectsHelper();
-            helper.loggingSettings.TraceListeners.Add(listenerData);
-
-            var container = EnterpriseLibraryContainer.CreateDefaultContainer(helper.configurationSource);
-
-            TraceListener listener = container.GetInstance<TraceListener>("listener");
-
-            Assert.IsNotNull(listener);
-            Assert.AreEqual("listener", listener.Name);
+            Assert.AreEqual("listener\u200cimplementation", listener.Name);
             Assert.AreEqual(typeof(DelimitedListTraceListener), listener.GetType());
         }
 
@@ -75,14 +58,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
 
             var container = EnterpriseLibraryContainer.CreateDefaultContainer(helper.configurationSource);
 
-            TraceListener listener = container.GetInstance<TraceListener>("listener");
+            TraceListener listener = container.GetInstance<TraceListener>("listener\u200cimplementation");
 
             Assert.IsNotNull(listener);
-            Assert.AreEqual("listener", listener.Name);
-            Assert.IsInstanceOfType(listener, typeof (AttributeSettingTraceListenerWrapper));
+            Assert.AreEqual("listener\u200cimplementation", listener.Name);
+            Assert.IsInstanceOfType(listener, typeof(AttributeSettingTraceListenerWrapper));
 
             var innerListener =
-                (DelimitedListTraceListener) ((AttributeSettingTraceListenerWrapper) listener).InnerTraceListener;
+                (DelimitedListTraceListener)((AttributeSettingTraceListenerWrapper)listener).InnerTraceListener;
             Assert.AreEqual("||", innerListener.Delimiter);
         }
 
@@ -97,14 +80,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
 
             var container = EnterpriseLibraryContainer.CreateDefaultContainer(CommonUtil.SaveSectionsAndGetConfigurationSource(loggingSettings));
 
-            TraceListener listener = container.GetInstance<TraceListener>("listener");
+            TraceListener listener = container.GetInstance<TraceListener>("listener\u200cimplementation");
 
             Assert.IsNotNull(listener);
-            Assert.AreEqual("listener", listener.Name);
-            Assert.IsInstanceOfType(listener, typeof (AttributeSettingTraceListenerWrapper));
+            Assert.AreEqual("listener\u200cimplementation", listener.Name);
+            Assert.IsInstanceOfType(listener, typeof(AttributeSettingTraceListenerWrapper));
 
             var innerListener =
-                (DelimitedListTraceListener) ((AttributeSettingTraceListenerWrapper) listener).InnerTraceListener;
+                (DelimitedListTraceListener)((AttributeSettingTraceListenerWrapper)listener).InnerTraceListener;
 
             Assert.AreEqual("||", innerListener.Delimiter);
         }

@@ -22,7 +22,6 @@ using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using RuleDrivenPolicy = Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration.PolicyData.RuleDrivenPolicy;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tests
 {
@@ -38,7 +37,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
             new UnityContainerConfigurator(container)
                 .RegisterAll(new DictionaryConfigurationSource(), new ValidationTypeRegistrationProvider());
 
-            RuleDrivenPolicy policy = CreatePolicySetContainingCallHandler(validationCallHandler, container);
+            InjectionFriendlyRuleDrivenPolicy policy = CreatePolicySetContainingCallHandler(validationCallHandler, container);
 
             ICallHandler runtimeHandler
                 = (policy.GetHandlersFor(new MethodImplementationInfo(null, (MethodInfo)MethodBase.GetCurrentMethod()), container)).ElementAt(0);
@@ -147,7 +146,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
             target.GetValueByKey("key");
         }
 
-        static RuleDrivenPolicy CreatePolicySetContainingCallHandler(
+        static InjectionFriendlyRuleDrivenPolicy CreatePolicySetContainingCallHandler(
             ValidationCallHandlerData validationCallHandler,
             IUnityContainer container)
         {
@@ -162,7 +161,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
 
             settings.ConfigureContainer(container, dictionaryConfigurationSource);
 
-            return container.Resolve<RuleDrivenPolicy>("policy");
+            return container.Resolve<InjectionFriendlyRuleDrivenPolicy>("policy");
         }
 
         void AddValidationPolicy(IUnityContainer factory,

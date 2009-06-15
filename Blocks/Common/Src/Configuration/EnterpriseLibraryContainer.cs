@@ -54,7 +54,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         /// <param name="configSource">Configuration information.</param>
         public static void ConfigureContainer(IContainerConfigurator configurator, IConfigurationSource configSource)
         {
-            ConfigureContainer(TypeRegistrationsProvider.CreateDefaultProvider(configSource), configurator, configSource);
+            var reconfiguringEventSource = configurator as IContainerReconfiguringEventSource ??
+                                           new NullContainerReconfiguringEventSource();
+
+
+            ConfigureContainer(
+                TypeRegistrationsProvider.CreateDefaultProvider(configSource, reconfiguringEventSource),
+                configurator, 
+                configSource);
         }
 
         /// <summary>

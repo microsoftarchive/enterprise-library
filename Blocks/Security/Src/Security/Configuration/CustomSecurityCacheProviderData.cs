@@ -183,7 +183,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration
 
             yield return new TypeRegistration(
                 RegistrationExpressionBuilder.BuildExpression(this.Type, Attributes),
-                typeof(ISecurityCacheProvider)) { Name = this.Name };
+                typeof(ISecurityCacheProvider)) 
+                { 
+                    Name = this.Name,
+                    Lifetime = TypeRegistrationLifetime.Transient
+                };
         }
 	}
 }

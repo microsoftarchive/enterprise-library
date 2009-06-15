@@ -33,7 +33,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerMo
         /// <param name="typeName">type to construct as a provider. This type must have a single argument
         /// constructor that takes an <see cref="IConfigurationSource"/> parameter.</param>
         public TypeLoadingLocator(string typeName)
-            : base(typeName)
+            : this(typeName, new NullContainerReconfiguringEventSource())
         {
         }
 
@@ -45,7 +45,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerMo
         /// constructor that takes an <see cref="IConfigurationSource"/> parameter.</param>
         /// <param name="reconfiguringEventSource">The event source containing events raised when the configuration source is changed.</param>
         public TypeLoadingLocator(string typeName, IContainerReconfiguringEventSource reconfiguringEventSource)
-            : this(typeName)
+            : base(typeName)
         {
             if (reconfiguringEventSource == null) throw new ArgumentNullException("reconfiguringEventSource");
 

@@ -78,26 +78,5 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests
             Assert.AreEqual(typeof(TypeMatchingAssignmentRule), deserializedMatchingRule.Type);
             Assert.AreEqual("customMatchingRuleAttributeValue", (string)deserializedMatchingRule.ElementInformation.Properties["customMatchingRuleAttribute"].Value);
         }
-
-        [TestMethod]
-        public void ConfiguresRuleDrivenPoliciesAsSingletons()
-        {
-            PolicyInjectionSettings settings = new PolicyInjectionSettings();
-
-            PolicyData policy1Data = new PolicyData(policy1Name);
-            PolicyData policy2Data = new PolicyData(policy2Name);
-            settings.Policies.Add(policy1Data);
-            settings.Policies.Add(policy2Data);
-
-            IUnityContainer container = new UnityContainer().AddNewExtension<Interception>();
-            settings.ConfigureContainer(container, new DictionaryConfigurationSource());
-
-            InjectionPolicy policy1 = container.Resolve<InjectionPolicy>(policy1Name);
-            InjectionPolicy policy2 = container.Resolve<InjectionPolicy>(policy2Name);
-
-            Assert.AreNotSame(policy1, policy2);
-            Assert.AreSame(policy1, container.Resolve<InjectionPolicy>(policy1Name));
-            Assert.AreSame(policy2, container.Resolve<InjectionPolicy>(policy2Name));
-        }
     }
 }

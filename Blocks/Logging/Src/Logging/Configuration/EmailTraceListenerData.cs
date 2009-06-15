@@ -15,8 +15,8 @@ using System.Diagnostics;
 using System.Linq.Expressions;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
-using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
+using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 {
@@ -217,9 +217,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         }
 
         /// <summary>
-        /// 
+        /// Returns a lambda expression that represents the creation of the trace listener described by this
+        /// configuration object.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A lambda expression to create a trace listener.</returns>
         protected override Expression<Func<TraceListener>> GetCreationExpression()
         {
             return () =>

@@ -23,6 +23,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Unit Tests", "Unit Tests", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E28F554C-5F8B-454B-A622-68F9CC81C7DA}"
 	ProjectSection(SolutionItems) = preProject
+		..\codecoverage.testrunconfig = ..\codecoverage.testrunconfig
 		..\EnterpriseLibrary.testrunconfig = ..\EnterpriseLibrary.testrunconfig
 	EndProjectSection
 	ProjectSection(FolderStartupServices) = postProject

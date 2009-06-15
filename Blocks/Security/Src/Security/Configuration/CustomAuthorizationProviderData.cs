@@ -192,7 +192,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration
 
             yield return new TypeRegistration(
                 RegistrationExpressionBuilder.BuildExpression(this.Type, Attributes),
-                typeof(IAuthorizationProvider)) { Name = this.Name };
+                typeof(IAuthorizationProvider)) 
+                { 
+                    Name = this.Name,
+                    Lifetime = TypeRegistrationLifetime.Transient
+                };
 
             
         }

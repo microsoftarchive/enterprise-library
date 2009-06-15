@@ -110,7 +110,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
         /// <returns>The sequence of <see cref="TypeRegistration"/> objects.</returns>
         public IEnumerable<TypeRegistration> GetUpdatedRegistrations(IConfigurationSource configurationSource)
         {
-            return Enumerable.Empty<TypeRegistration>();
+            return GetRegistrations(configurationSource);
         }
 
         private IEnumerable<TypeRegistration> SetDefaultCacheManagerRegistration(IEnumerable<TypeRegistration> cacheManagerRegistrations)
@@ -138,6 +138,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
                                () =>
                                new DefaultCachingEventLogger(instrumentationSection.EventLoggingEnabled,
                                                              instrumentationSection.WmiEnabled))
+                                                             {
+                                                                 IsDefault = true
+                                                             }
                        };
         }
     }

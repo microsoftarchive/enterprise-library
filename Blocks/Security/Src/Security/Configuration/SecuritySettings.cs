@@ -143,7 +143,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration
         /// <returns>The sequence of <see cref="TypeRegistration"/> objects.</returns>
         public IEnumerable<TypeRegistration> GetUpdatedRegistrations(IConfigurationSource configurationSource)
         {
-            return Enumerable.Empty<TypeRegistration>();
+            return GetRegistrations(configurationSource);
         }
 
         private IEnumerable<TypeRegistration> GetDefaultSecurityEventLoggerRegistrations(IConfigurationSource configurationSource)

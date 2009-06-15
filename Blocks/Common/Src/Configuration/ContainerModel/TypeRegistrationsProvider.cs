@@ -82,10 +82,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerMo
         /// </summary>
         /// <param name="configurationSource">Configuration source containing any customizations
         /// to the locator list.</param>
+        /// <param name="reconfiguringEventSource">Event source notifying of container reconfiguration events.</param>
         /// <returns>The locator.</returns>
-        public static ITypeRegistrationsProvider CreateDefaultProvider(IConfigurationSource configurationSource)
+        public static ITypeRegistrationsProvider CreateDefaultProvider(IConfigurationSource configurationSource, IContainerReconfiguringEventSource reconfiguringEventSource)
         {
-            return ConfigurationBasedTypeRegistrationsProviderFactory.CreateProvider(configurationSource);
+            return ConfigurationBasedTypeRegistrationsProviderFactory.CreateProvider(configurationSource, reconfiguringEventSource);
         }
     }
 

@@ -47,7 +47,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         {
             Type typeBeingValidated = typeof(T);
 
-            instrumentationProvider.FireConfigurationCalled(typeBeingValidated);
+            instrumentationProvider.NotifyConfigurationCalled(typeBeingValidated);
 
             try
             {
@@ -55,21 +55,21 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
 
                 if (validationResults.IsValid)
                 {
-                    instrumentationProvider.FireValidationSucceeded(typeBeingValidated);
+                    instrumentationProvider.NotifyValidationSucceeded(typeBeingValidated);
                 }
                 else
                 {
-                    instrumentationProvider.FireValidationFailed(typeBeingValidated, validationResults);
+                    instrumentationProvider.NotifyValidationFailed(typeBeingValidated, validationResults);
                 }
             }
             catch (ConfigurationErrorsException configurationErrors)
             {
-                instrumentationProvider.FireConfigurationFailure(configurationErrors);
+                instrumentationProvider.NotifyConfigurationFailure(configurationErrors);
                 throw;
             }
             catch (Exception ex)
             {
-                instrumentationProvider.FireValidationException(typeBeingValidated, ex.Message, ex);
+                instrumentationProvider.NotifyValidationException(typeBeingValidated, ex.Message, ex);
                 throw;
             }
         }

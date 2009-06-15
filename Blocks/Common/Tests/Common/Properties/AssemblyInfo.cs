@@ -9,6 +9,7 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using System;
 using System.Management.Instrumentation;
 using System.Reflection;
 using System.Security;
@@ -21,3 +22,4 @@ using System.Security;
 [assembly: Instrumented(@"root\EnterpriseLibrary")]
 [assembly: WmiConfiguration(@"root\EnterpriseLibrary", HostingModel = ManagementHostingModel.Decoupled, IdentifyLevel = false)]
 [assembly: AllowPartiallyTrustedCallers]
+[assembly: CLSCompliant(false)]

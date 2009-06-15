@@ -71,6 +71,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// register the policy represented by this config element and its associated objects.
         /// </summary>
         /// <returns>The set of <see cref="TypeRegistration"/> objects.</returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
         public IEnumerable<TypeRegistration> GetRegistrations()
         {
             List<TypeRegistration> registrations = new List<TypeRegistration>();
@@ -100,28 +101,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
             registrations.Add(
                 new TypeRegistration<InjectionPolicy>(
                     () =>
-                        new RuleDrivenPolicy(
+                        new InjectionFriendlyRuleDrivenPolicy(
                             this.Name,
                             Container.ResolvedEnumerable<IMatchingRule>(matchingRuleNames),
                             callHandlerNames.ToArray()))
                 {
-                    Name = this.Name
+                    Name = this.Name,
+                    Lifetime = TypeRegistrationLifetime.Transient
                 });
 
             return registrations;
-        }
-
-        /// <summary>
-        /// Injection-friendlier subclass of <see cref="Microsoft.Practices.Unity.InterceptionExtension.RuleDrivenPolicy"/>.
-        /// </summary>
-        public class RuleDrivenPolicy : Microsoft.Practices.Unity.InterceptionExtension.RuleDrivenPolicy
-        {
-            /// <summary>
-            /// Initializes a new instance of the <see cref="RuleDrivenPolicy"/> class.
-            /// </summary>
-            public RuleDrivenPolicy(string name, IEnumerable<IMatchingRule> matchingRules, string[] callHandlerNames)
-                : base(name, matchingRules.ToArray(), callHandlerNames)
-            { }
         }
     }
 }

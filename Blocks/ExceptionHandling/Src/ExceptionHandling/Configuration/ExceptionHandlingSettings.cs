@@ -105,7 +105,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
         /// <returns>The sequence of <see cref="TypeRegistration"/> objects.</returns>
         public IEnumerable<TypeRegistration> GetUpdatedRegistrations(IConfigurationSource configurationSource)
         {
-            return Enumerable.Empty<TypeRegistration>();
+            return GetRegistrations(configurationSource);
         }
 
         private static IEnumerable<TypeRegistration> GetDefaultInstrumentationRegistrations(IConfigurationSource configurationSource)
@@ -117,7 +117,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
                     instrumentationSection.EventLoggingEnabled, 
                     instrumentationSection.WmiEnabled))
                 {
-                    Lifetime = TypeRegistrationLifetime.Transient
+                    Lifetime = TypeRegistrationLifetime.Transient,
+                    IsDefault = true
+
                 };
 
             yield return new TypeRegistration<IDefaultExceptionHandlingInstrumentationProvider>(
@@ -127,7 +129,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
                     instrumentationSection.WmiEnabled,
                     instrumentationSection.ApplicationInstanceName))
                 {
-                    Lifetime = TypeRegistrationLifetime.Transient
+                    Lifetime = TypeRegistrationLifetime.Transient,
+                    IsDefault = true
                 };
         }
 
@@ -136,7 +139,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
             return new TypeRegistration<ExceptionManager>(
                 () => new ExceptionManagerImpl(Container.ResolvedEnumerable<ExceptionPolicyImpl>(policyNames),
                     Container.Resolved<IDefaultExceptionHandlingInstrumentationProvider>())
-                );
+                ) { IsDefault = true };
         }
     }
 }

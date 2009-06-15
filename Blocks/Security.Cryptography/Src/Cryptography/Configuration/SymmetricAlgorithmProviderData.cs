@@ -115,7 +115,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
                             ProtectedKeyProtectionScope,
                             Container.Resolved<ISymmetricAlgorithmInstrumentationProvider>(Name)))
                 {
-                    Name = Name
+                    Name = Name,
+                    Lifetime = TypeRegistrationLifetime.Transient
                 };
         }
     }

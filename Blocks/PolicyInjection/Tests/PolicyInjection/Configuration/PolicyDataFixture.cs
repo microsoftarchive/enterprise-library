@@ -15,6 +15,7 @@ using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration.Con
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
 using Microsoft.Practices.Unity.InterceptionExtension;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configuration
 {
@@ -45,7 +46,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
             registrations.ElementAt(0)
                 .AssertForServiceType(typeof(InjectionPolicy))
                 .ForName("policy")
-                .ForImplementationType(typeof(PolicyData.RuleDrivenPolicy));
+                .ForImplementationType(typeof(InjectionFriendlyRuleDrivenPolicy));
         }
 
         [TestMethod]
@@ -110,7 +111,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
             registrations.Where(tr => tr.ServiceType == typeof(InjectionPolicy)).ElementAt(0)
                 .AssertForServiceType(typeof(InjectionPolicy))
                 .ForName("policy")
-                .ForImplementationType(typeof(PolicyData.RuleDrivenPolicy));
+                .ForImplementationType(typeof(InjectionFriendlyRuleDrivenPolicy));
         }
 
         [TestMethod]
@@ -158,6 +159,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
 
             Assert.AreEqual(1, matches.Count());
             Assert.AreEqual(typeof(object).AssemblyQualifiedName, matches.ElementAt(0).Match);
+        }
+
+        [TestMethod]
+        public void WhenCreatesRegistrations_ThenPolicyRegistrationHasTransientLifetime()
+        {
+            var registrations = policyData.GetRegistrations();
+            var registration = registrations.Where(tr => tr.ServiceType == typeof(InjectionPolicy)).First();
+
+            Assert.AreEqual(TypeRegistrationLifetime.Transient, registration.Lifetime);
         }
     }
 }

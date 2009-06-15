@@ -35,15 +35,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerMo
         public UnityContainerConfigurator(IUnityContainer container)
         {
             this.container = container;
-            if (this.container.Configure<Interception>() == null)
-            {
-                this.container.AddNewExtension<Interception>();
-            }
 
-            if (this.container.Configure<TransientPolicyBuildUpExtension>() == null)
-            {
-                this.container.AddNewExtension<TransientPolicyBuildUpExtension>();
-            }
+            this.container.AddNewExtensionIfNotPresent<Interception>();
+            this.container.AddNewExtensionIfNotPresent<TransientPolicyBuildUpExtension>();
+            this.container.AddNewExtensionIfNotPresent<ReaderWriterLockExtension>();
+            this.container.AddNewExtensionIfNotPresent<LifetimeInspector>();
+            this.container.AddNewExtensionIfNotPresent<PolicyListAccessor>();
 
             container.RegisterInstance(ChangeEventSource);
         }
@@ -57,9 +54,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerMo
         /// read the <paramref name="configurationSource"/> and return all relevant type registrations.</param>
         protected override void RegisterAllCore(IConfigurationSource configurationSource, ITypeRegistrationsProvider rootProvider)
         {
-            foreach(var registration in rootProvider.GetRegistrations(configurationSource))
+            EnterWriteLock();
+            try
             {
-                Register(registration);
+                foreach (var registration in rootProvider.GetRegistrations(configurationSource))
+                {
+                    Register(registration);
+                }
+            }
+            finally
+            {
+                ExitWriteLock();
             }
         }
 
@@ -70,7 +75,45 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerMo
         /// <param name="updatedRegistrations">The new type registrations to apply to the container.</param>
         protected override void RegisterUpdates(IEnumerable<TypeRegistration> updatedRegistrations)
         {
-            // Noop for now
+            EnterWriteLock();
+            try
+            {
+                foreach (TypeRegistration updatedRegistration in updatedRegistrations)
+                {
+                    PolicyListAccessor policyListAccessor = this.container.Configure<PolicyListAccessor>();
+                    policyListAccessor.ResetRegistration(updatedRegistration.ServiceType, updatedRegistration.ImplementationType, updatedRegistration.Name);
+
+                    if (ShouldReRegister(updatedRegistration))
+                    {
+                        Register(updatedRegistration);
+                    }
+                    else if (updatedRegistration.IsDefault)
+                    {
+                        FixupDefaultRegistration(updatedRegistration);
+                    }
+                }
+            }
+            finally
+            {
+                ExitWriteLock();
+            }
+        }
+
+        private void FixupDefaultRegistration(TypeRegistration updatedRegistration)
+        {
+            var policyListAccessor = this.container.Configure<PolicyListAccessor>();
+            policyListAccessor.AddDefaultRegistration(updatedRegistration.ServiceType,
+                                                      updatedRegistration.ImplementationType,
+                                                      updatedRegistration.Name);
+        }
+
+        private bool ShouldReRegister(TypeRegistration updatedRegistration)
+        {
+            LifetimeInspector lifetimeInspector = container.Configure<LifetimeInspector>();
+            return !lifetimeInspector.HasResolvedLifetime(
+                        updatedRegistration.ImplementationType,
+                        updatedRegistration.Name);
+
         }
 
         /// <summary>
@@ -88,7 +131,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerMo
         /// Registers the <see cref="TypeRegistration"/> entry with the container.
         /// </summary>
         /// <param name="registrationEntry">The type registration entry to add to the container.</param>
-        public void Register(TypeRegistration registrationEntry)
+        private void Register(TypeRegistration registrationEntry)
+        {
+            container.RegisterType(
+                registrationEntry.ServiceType,
+                registrationEntry.ImplementationType,
+                registrationEntry.Name,
+                CreateLifetimeManager(registrationEntry),
+                GetInjectionMembers(registrationEntry));
+        }
+
+        private static InjectionMember[] GetInjectionMembers(TypeRegistration registrationEntry)
         {
             List<InjectionMember> injectionMembers =
                 new List<InjectionMember>
@@ -112,12 +165,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerMo
                 injectionMembers.Add(new DefaultInjectionMember { ServiceType = registrationEntry.ServiceType });
             }
 
-            container.RegisterType(
-                registrationEntry.ServiceType,
-                registrationEntry.ImplementationType,
-                registrationEntry.Name,
-                CreateLifetimeManager(registrationEntry),
-                injectionMembers.ToArray());
+            return injectionMembers.ToArray();
+        }
+
+        private void EnterWriteLock()
+        {
+            container.Configure<ReaderWriterLockExtension>().EnterWriteLock();
+        }
+
+        private void ExitWriteLock()
+        {
+            container.Configure<ReaderWriterLockExtension>().ExitWriteLock();
         }
 
         private static InjectionParameterValue GetInjectionParameterValue(ParameterValue dependencyParameter)
@@ -169,9 +227,73 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerMo
 
             public override void AddPolicies(Type typeToCreate, string name, IPolicyList policies)
             {
+                PolicyListAccessor.AddDefaultPolicy(ServiceType, typeToCreate, name, policies);
+            }
+        }
+
+        private class LifetimeInspector : UnityContainerExtension
+        {
+            protected override void Initialize()
+            {
+            }
+
+            public bool HasResolvedLifetime(Type type, string name)
+            {
+                NamedTypeBuildKey key = new NamedTypeBuildKey(type, name);
+                ILifetimePolicy lifetimePolicy = Context.Policies.Get<ILifetimePolicy>(key);
+
+                if (lifetimePolicy != null)
+                {
+                    return (lifetimePolicy.GetValue() != null);
+                }
+                return false;
+            }
+        }
+
+
+        private class PolicyListAccessor : UnityContainerExtension
+        {
+            protected override void Initialize()
+            {
+            }
+
+            public void ResetRegistration(Type serviceType, Type implementationType, string name)
+            {
+                NamedTypeBuildKey key = new NamedTypeBuildKey(implementationType, name);
+                Context.Policies.Clear(typeof(IPropertySelectorPolicy), key);
+
+                RemoveIsDefault(serviceType, implementationType, name);
+            }
+
+            public void RemoveIsDefault(Type serviceType, Type implementationType, string name)
+            {
+                NamedTypeBuildKey key = new NamedTypeBuildKey(serviceType);
+
+                IBuildKeyMappingPolicy mappingPolicy = Context.Policies.Get<IBuildKeyMappingPolicy>(key);
+                if (mappingPolicy != null)
+                {
+                    object mappedKeyObject = mappingPolicy.Map(key);
+                    if (mappedKeyObject is NamedTypeBuildKey)
+                    {
+                        NamedTypeBuildKey mappedKey = (NamedTypeBuildKey)mappedKeyObject;
+                        if (string.Equals(mappedKey.Name, name))
+                        {
+                            Context.Policies.Clear<IBuildKeyMappingPolicy>(key);
+                        }
+                    }
+                }
+            }
+
+            internal static void AddDefaultPolicy(Type serviceType, Type implementationType, string name, IPolicyList policies)
+            {
                 policies.Set<IBuildKeyMappingPolicy>(
-                    new BuildKeyMappingPolicy(new NamedTypeBuildKey(typeToCreate, name)),
-                    new NamedTypeBuildKey(ServiceType));
+                  new BuildKeyMappingPolicy(new NamedTypeBuildKey(implementationType, name)),
+                  new NamedTypeBuildKey(serviceType));
+            }
+
+            public void AddDefaultRegistration(Type serviceType, Type implementationType, string name)
+            {
+                AddDefaultPolicy(serviceType, implementationType, name, Context.Policies);
             }
         }
     }

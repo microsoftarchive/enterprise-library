@@ -41,27 +41,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
 
             MockLogObjectsHelper helper = new MockLogObjectsHelper();
             helper.loggingSettings.TraceListeners.Add(listenerData);
-            TraceListener listener = GetListener("listener", helper.configurationSource);
+            TraceListener listener = GetListener("listener\u200cimplementation", helper.configurationSource);
 
             Assert.IsNotNull(listener);
-            Assert.AreEqual("listener", listener.Name);
-            Assert.AreEqual(listener.GetType(), typeof(EventLogTraceListener));
-            Assert.AreEqual("Entlib Tests", ((EventLogTraceListener)listener).EventLog.Source);
-        }
-
-        [TestMethod]
-        public void CanCreateInstanceFromGivenConfiguration()
-        {
-            SystemDiagnosticsTraceListenerData listenerData
-                = new SystemDiagnosticsTraceListenerData("listener", typeof(EventLogTraceListener), "Entlib Tests");
-
-            MockLogObjectsHelper helper = new MockLogObjectsHelper();
-            helper.loggingSettings.TraceListeners.Add(listenerData);
-
-            TraceListener listener = GetListener("listener", helper.configurationSource);
-
-            Assert.IsNotNull(listener);
-            Assert.AreEqual("listener", listener.Name);
+            Assert.AreEqual("listener\u200cimplementation", listener.Name);
             Assert.AreEqual(listener.GetType(), typeof(EventLogTraceListener));
             Assert.AreEqual("Entlib Tests", ((EventLogTraceListener)listener).EventLog.Source);
         }
@@ -72,7 +55,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
             LoggingSettings loggingSettings = new LoggingSettings();
             loggingSettings.TraceListeners.Add(new SystemDiagnosticsTraceListenerData("listener", typeof(EventLogTraceListener), "Entlib Tests"));
 
-            TraceListener listener = GetListener("listener", CommonUtil.SaveSectionsAndGetConfigurationSource(loggingSettings));
+            TraceListener listener =
+                GetListener("listener\u200cimplementation", CommonUtil.SaveSectionsAndGetConfigurationSource(loggingSettings));
 
             Assert.IsNotNull(listener);
             Assert.AreEqual(listener.GetType(), typeof(EventLogTraceListener));

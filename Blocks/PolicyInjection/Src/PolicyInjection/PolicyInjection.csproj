@@ -96,6 +96,7 @@
     </Compile>
     <Compile Include="Configuration\PropertyMatchingRuleData.cs" />
     <Compile Include="Configuration\ReturnTypeMatchingRuleData.cs" />
+    <Compile Include="Configuration\InjectionFriendlyRuleDrivenPolicy.cs" />
     <Compile Include="Configuration\StringBasedMatchingRuleData.cs" />
     <Compile Include="Configuration\TagAttributeMatchingRuleData.cs" />
     <Compile Include="Configuration\TypeMatchingRuleData.cs" />

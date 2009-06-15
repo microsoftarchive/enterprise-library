@@ -17,11 +17,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.TestSupport.BackingStore
 	[ConfigurationElementType(typeof(MockStorageEncryptionProviderData))]
 	public class MockStorageEncryptionProvider : IStorageEncryptionProvider
 	{
+        public static bool Instantiated;
 		public static bool Encrypted;
 		public static bool Decrypted;
 
 		public MockStorageEncryptionProvider()
 		{
+            Instantiated = true;
 		}
 
 		public byte[] Encrypt(byte[] plaintext)

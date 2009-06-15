@@ -98,7 +98,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
         {
             var config = new FileConfigurationSource(
                 AppDomain.CurrentDomain.SetupInformation.ConfigurationFile);
-            var loggingSettings = ((LoggingSettings) config.GetSection(LoggingSettings.SectionName));
+            var loggingSettings = ((LoggingSettings)config.GetSection(LoggingSettings.SectionName));
             loggingSettings.TracingEnabled = tracingEnabled;
             Logger.Reset();
 
@@ -377,7 +377,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
         {
             Guid currentActivityId = Guid.Empty;
 
-            using(new ContainerSwitcher(GetContainerWithTracingFlag(false), true))
+            using (new ContainerSwitcher(GetContainerWithTracingFlag(false), true))
             {
                 MockTraceListener.Reset();
 
@@ -388,7 +388,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
                 }
 
                 Assert.AreEqual(0, MockTraceListener.Entries.Count);
-                
+
             }
 
             // TODO: Take this line out once the change notification stuff is working again
@@ -520,7 +520,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
                 {
                     int i = new Random().Next();
                 }
-                
+
             }
             Logger.Reset();
 
@@ -667,5 +667,5 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
         }
     }
 
-   
+
 }

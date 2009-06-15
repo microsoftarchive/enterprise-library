@@ -17,7 +17,6 @@ using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.TestSupport.ObjectsU
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using RuleDrivenPolicy = Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration.PolicyData.RuleDrivenPolicy;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests
 {
@@ -43,7 +42,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests
 
             settings.ConfigureContainer(container, dictSource);
 
-            RuleDrivenPolicy policy = container.Resolve<RuleDrivenPolicy>("Policy");
+            InjectionFriendlyRuleDrivenPolicy policy = container.Resolve<InjectionFriendlyRuleDrivenPolicy>("Policy");
             List<IMatchingRule> rules = GetRules(policy);
 
             Assert.IsNotNull(policy);
@@ -63,7 +62,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests
 
             settings.ConfigureContainer(container, dictSource);
 
-            RuleDrivenPolicy policy = container.Resolve<RuleDrivenPolicy>("Policy");
+            InjectionFriendlyRuleDrivenPolicy policy = container.Resolve<InjectionFriendlyRuleDrivenPolicy>("Policy");
             List<IMatchingRule> rules = GetRules(policy);
 
             Assert.IsNotNull(policy);
@@ -83,7 +82,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests
 
             settings.ConfigureContainer(container, dictSource);
 
-            RuleDrivenPolicy policy = container.Resolve<RuleDrivenPolicy>("Policy");
+            InjectionFriendlyRuleDrivenPolicy policy = container.Resolve<InjectionFriendlyRuleDrivenPolicy>("Policy");
             List<IMatchingRule> rules = GetRules(policy);
 
             Assert.IsNotNull(policy);
@@ -103,7 +102,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests
 
             settings.ConfigureContainer(container, dictSource);
 
-            RuleDrivenPolicy policy = container.Resolve<RuleDrivenPolicy>("Policy");
+            InjectionFriendlyRuleDrivenPolicy policy = container.Resolve<InjectionFriendlyRuleDrivenPolicy>("Policy");
             List<IMatchingRule> rules = GetRules(policy);
 
             Assert.IsNotNull(policy);
@@ -123,7 +122,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests
 
             settings.ConfigureContainer(container, dictSource);
 
-            RuleDrivenPolicy policy = container.Resolve<RuleDrivenPolicy>("Policy");
+            InjectionFriendlyRuleDrivenPolicy policy = container.Resolve<InjectionFriendlyRuleDrivenPolicy>("Policy");
             List<IMatchingRule> rules = GetRules(policy);
 
             Assert.IsNotNull(policy);
@@ -143,7 +142,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests
 
             settings.ConfigureContainer(container, dictSource);
 
-            RuleDrivenPolicy policy = container.Resolve<RuleDrivenPolicy>("Policy");
+            InjectionFriendlyRuleDrivenPolicy policy = container.Resolve<InjectionFriendlyRuleDrivenPolicy>("Policy");
             List<IMatchingRule> rules = GetRules(policy);
 
             Assert.IsNotNull(policy);
@@ -163,7 +162,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests
 
             settings.ConfigureContainer(container, dictSource);
 
-            RuleDrivenPolicy policy = container.Resolve<RuleDrivenPolicy>("Policy");
+            InjectionFriendlyRuleDrivenPolicy policy = container.Resolve<InjectionFriendlyRuleDrivenPolicy>("Policy");
             List<IMatchingRule> rules = GetRules(policy);
 
             Assert.IsNotNull(policy);
@@ -183,7 +182,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests
 
             settings.ConfigureContainer(container, dictSource);
 
-            RuleDrivenPolicy policy = container.Resolve<RuleDrivenPolicy>("Policy");
+            InjectionFriendlyRuleDrivenPolicy policy = container.Resolve<InjectionFriendlyRuleDrivenPolicy>("Policy");
             List<IMatchingRule> rules = GetRules(policy);
 
             Assert.IsNotNull(policy);
@@ -203,7 +202,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests
 
             settings.ConfigureContainer(container, dictSource);
 
-            RuleDrivenPolicy policy = container.Resolve<RuleDrivenPolicy>("Policy");
+            InjectionFriendlyRuleDrivenPolicy policy = container.Resolve<InjectionFriendlyRuleDrivenPolicy>("Policy");
             List<IMatchingRule> rules = GetRules(policy);
 
             Assert.IsNotNull(policy);
@@ -224,7 +223,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests
 
             settings.ConfigureContainer(container, dictSource);
 
-            RuleDrivenPolicy policy = container.Resolve<RuleDrivenPolicy>("Policy");
+            InjectionFriendlyRuleDrivenPolicy policy = container.Resolve<InjectionFriendlyRuleDrivenPolicy>("Policy");
             List<IMatchingRule> rules = GetRules(policy);
 
             Assert.IsNotNull(policy);
@@ -245,7 +244,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests
 
             settings.ConfigureContainer(container, dictSource);
 
-            RuleDrivenPolicy policy = container.Resolve<RuleDrivenPolicy>("Policy");
+            InjectionFriendlyRuleDrivenPolicy policy = container.Resolve<InjectionFriendlyRuleDrivenPolicy>("Policy");
             List<ICallHandler> handlers
                 = new List<ICallHandler>(policy.GetHandlersFor(MakeMethodImplementationInfo(MethodBase.GetCurrentMethod()), container));
 
@@ -267,7 +266,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests
 
             settings.ConfigureContainer(container, dictSource);
 
-            RuleDrivenPolicy policy = container.Resolve<RuleDrivenPolicy>("Policy");
+            InjectionFriendlyRuleDrivenPolicy policy = container.Resolve<InjectionFriendlyRuleDrivenPolicy>("Policy");
             List<ICallHandler> handlers1
                 = new List<ICallHandler>(policy.GetHandlersFor(MakeMethodImplementationInfo(MethodBase.GetCurrentMethod()), container));
             List<ICallHandler> handlers2

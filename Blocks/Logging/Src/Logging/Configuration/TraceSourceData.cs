@@ -85,10 +85,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
             get { return (NamedElementCollection<TraceListenerReferenceData>)base[traceListenersProperty]; }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
+        ///<summary>
+        /// Returns the type <see cref="TypeRegistration"/> entries describing the <see cref="TraceSource"/> represented
+        /// by this configuration object.
+        ///</summary>
+        ///<returns>A set of registry entries.</returns>        
         public TypeRegistration GetRegistrations()
         {
             return
@@ -101,6 +102,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
                             this.AutoFlush))
                 {
                     Name = this.Name,
+                    Lifetime = TypeRegistrationLifetime.Transient
                 };
         }
     }

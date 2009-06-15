@@ -114,7 +114,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
                 new TypeRegistration<IMatchingRule>(
                     () => new CustomAttributeMatchingRule(this.AttributeType, this.SearchInheritanceChain))
                 {
-                    Name = this.Name + nameSuffix
+                    Name = this.Name + nameSuffix,
+                    Lifetime = TypeRegistrationLifetime.Transient
                 };
         }
     }

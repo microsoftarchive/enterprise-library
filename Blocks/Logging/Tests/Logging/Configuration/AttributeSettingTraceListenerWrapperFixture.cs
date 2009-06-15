@@ -10,14 +10,9 @@
 //===============================================================================
 
 using System;
-using System.Collections;
 using System.Collections.Specialized;
 using System.Diagnostics;
-using System.Reflection;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel.Unity;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
-using Microsoft.Practices.Unity;
+using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
@@ -42,7 +37,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
             wrapper
                 = new AttributeSettingTraceListenerWrapper(
                     mockListener,
-                    new NameValueCollection(){{"foo","bar"}});
+                    new NameValueCollection() { { "foo", "bar" } });
         }
 
 
@@ -77,7 +72,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         }
     }
 
-    public class MockEventListener : TraceListener 
+    public class MockEventListener : TraceListener
     {
 
         public override void Write(string message)

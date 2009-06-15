@@ -222,7 +222,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
                         Categories = categories
                     })
                 {
-                    Name = this.Name + nameSuffix
+                    Name = this.Name + nameSuffix,
+                    Lifetime = TypeRegistrationLifetime.Transient
                 };
         }
     }

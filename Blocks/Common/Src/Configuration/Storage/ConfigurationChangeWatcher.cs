@@ -188,7 +188,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Storage
 			try
 			{
 				EventLog.WriteEntry(GetEventSourceName(), Resources.ExceptionEventRaisingFailed + GetType().FullName + " :" + e.Message, EventLogEntryType.Error);
-
 			}
 			catch
 			{

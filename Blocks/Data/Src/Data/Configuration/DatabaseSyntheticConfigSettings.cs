@@ -289,14 +289,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration
             var instrumentationConfigurationSection = InstrumentationConfigurationSection.GetSection(configurationSource);
             return new TypeRegistration<DefaultDataEventLogger>(
                 () => new DefaultDataEventLogger(
-                    instrumentationConfigurationSection.EventLoggingEnabled, 
-                    instrumentationConfigurationSection.WmiEnabled));
+                    instrumentationConfigurationSection.EventLoggingEnabled,
+                    instrumentationConfigurationSection.WmiEnabled))
+                {
+                    IsDefault = true
+                };
+
         }
 
         /// <summary>
         /// Creates <see cref="TypeRegistration"/> entries based on <see cref="DatabaseSyntheticConfigSettings"/>
         /// </summary>
-        /// <returns>An set of <see cref="TypeRegistration"/> entries.</returns>
+        /// <returns>A set of <see cref="TypeRegistration"/> entries.</returns>
         public IEnumerable<TypeRegistration> GetRegistrations(IConfigurationSource configurationSource)
         {
             if(configurationSource == null) throw new ArgumentNullException("configurationSource");
@@ -333,7 +337,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration
         /// <returns>The sequence of <see cref="TypeRegistration"/> objects.</returns>
         public IEnumerable<TypeRegistration> GetUpdatedRegistrations(IConfigurationSource configurationSource)
         {
-            return Enumerable.Empty<TypeRegistration>();
+            return GetRegistrations(configurationSource);
         }
     }
 }

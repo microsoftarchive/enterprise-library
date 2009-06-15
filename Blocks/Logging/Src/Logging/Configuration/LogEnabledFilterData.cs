@@ -9,10 +9,10 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using System.Collections.Generic;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Filters;
-using System.Collections.Generic;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 {
@@ -62,15 +62,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         }
 
         /// <summary>
-        /// 
+        /// Creates an enumeration of <see cref="TypeRegistration"/> instances describing the filter represented by 
+        /// this configuration object.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A an enumeration of <see cref="TypeRegistration"/> instance describing a filter.</returns>
         public override IEnumerable<TypeRegistration> GetRegistrations()
         {
             yield return
                 new TypeRegistration<ILogFilter>(() => new LogEnabledFilter(this.Name, this.Enabled))
                 {
-                    Name = this.Name
+                    Name = this.Name,
+                    Lifetime = TypeRegistrationLifetime.Transient
                 };
         }
     }

@@ -21,81 +21,84 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Tests.Configuration.Unity
 {
-	[TestClass]
-	public class FormattedDatabaseTraceListenerPolicyCreatorFixture
-	{
-		private LoggingSettings loggingSettings;
-		private ConnectionStringsSection connectionStringsSection;
-		private DictionaryConfigurationSource configurationSource;
+    [TestClass]
+    public class FormattedDatabaseTraceListenerPolicyCreatorFixture
+    {
+        private LoggingSettings loggingSettings;
+        private ConnectionStringsSection connectionStringsSection;
+        private DictionaryConfigurationSource configurationSource;
 
-		[TestInitialize]
-		public void SetUp()
-		{
-			loggingSettings = new LoggingSettings();
-			connectionStringsSection = new ConnectionStringsSection();
-			configurationSource = new DictionaryConfigurationSource();
-			configurationSource.Add(LoggingSettings.SectionName, loggingSettings);
-			configurationSource.Add("connectionStrings", connectionStringsSection);
-		}
+        [TestInitialize]
+        public void SetUp()
+        {
+            loggingSettings = new LoggingSettings();
+            connectionStringsSection = new ConnectionStringsSection();
+            configurationSource = new DictionaryConfigurationSource();
+            configurationSource.Add(LoggingSettings.SectionName, loggingSettings);
+            configurationSource.Add("connectionStrings", connectionStringsSection);
+        }
 
         private IUnityContainer CreateContainer()
         {
             return new UnityContainer()
                 .AddExtension(new EnterpriseLibraryCoreExtension(configurationSource));
         }
-		[TestMethod]
-		public void CanCreatePoliciesForProvider()
-		{
-			FormattedDatabaseTraceListenerData listenerData
-				= new FormattedDatabaseTraceListenerData("listener", "write", "add", "database", "");
-			listenerData.TraceOutputOptions = TraceOptions.Callstack | TraceOptions.ProcessId;
-			listenerData.Filter = SourceLevels.Error;
-			loggingSettings.TraceListeners.Add(listenerData);
 
-			connectionStringsSection.ConnectionStrings.Add(
-				new ConnectionStringSettings("database", "foo=bar;", "System.Data.SqlClient"));
+        [TestMethod]
+        public void CanCreatePoliciesForProvider()
+        {
+            FormattedDatabaseTraceListenerData listenerData
+                = new FormattedDatabaseTraceListenerData("listener", "write", "add", "database", "");
+            listenerData.TraceOutputOptions = TraceOptions.Callstack | TraceOptions.ProcessId;
+            listenerData.Filter = SourceLevels.Error;
+            loggingSettings.TraceListeners.Add(listenerData);
 
-		    using (var container = CreateContainer())
-		    {
-		        FormattedDatabaseTraceListener createdObject = (FormattedDatabaseTraceListener)container.Resolve<TraceListener>("listener");
+            connectionStringsSection.ConnectionStrings.Add(
+                new ConnectionStringSettings("database", "foo=bar;", "System.Data.SqlClient"));
 
-		        Assert.IsNotNull(createdObject);
-		        Assert.AreEqual(listenerData.TraceOutputOptions, createdObject.TraceOutputOptions);
-		        Assert.IsNotNull(createdObject.Filter);
-		        Assert.IsInstanceOfType(createdObject.Filter, typeof(EventTypeFilter));
-		        Assert.AreEqual(listenerData.Filter, ((EventTypeFilter)createdObject.Filter).EventType);
-		        Assert.IsNull(createdObject.Formatter);
-		    }
-		}
+            using (var container = CreateContainer())
+            {
+                FormattedDatabaseTraceListener createdObject =
+                    (FormattedDatabaseTraceListener)container.Resolve<TraceListener>("listener\u200cimplementation");
 
-		[TestMethod]
-		public void CanCreatePoliciesForProviderWithFormatter()
-		{
-			FormattedDatabaseTraceListenerData listenerData
-				= new FormattedDatabaseTraceListenerData("listener", "write", "add", "database", "formatter");
-			listenerData.TraceOutputOptions = TraceOptions.Callstack | TraceOptions.ProcessId;
-			listenerData.Filter = SourceLevels.Error;
-			loggingSettings.TraceListeners.Add(listenerData);
+                Assert.IsNotNull(createdObject);
+                Assert.AreEqual(listenerData.TraceOutputOptions, createdObject.TraceOutputOptions);
+                Assert.IsNotNull(createdObject.Filter);
+                Assert.IsInstanceOfType(createdObject.Filter, typeof(EventTypeFilter));
+                Assert.AreEqual(listenerData.Filter, ((EventTypeFilter)createdObject.Filter).EventType);
+                Assert.IsNull(createdObject.Formatter);
+            }
+        }
 
-			FormatterData formatterData = new TextFormatterData("formatter", "template");
-			loggingSettings.Formatters.Add(formatterData);
+        [TestMethod]
+        public void CanCreatePoliciesForProviderWithFormatter()
+        {
+            FormattedDatabaseTraceListenerData listenerData
+                = new FormattedDatabaseTraceListenerData("listener", "write", "add", "database", "formatter");
+            listenerData.TraceOutputOptions = TraceOptions.Callstack | TraceOptions.ProcessId;
+            listenerData.Filter = SourceLevels.Error;
+            loggingSettings.TraceListeners.Add(listenerData);
 
-			connectionStringsSection.ConnectionStrings.Add(
-				new ConnectionStringSettings("database", "foo=bar;", "System.Data.SqlClient"));
+            FormatterData formatterData = new TextFormatterData("formatter", "template");
+            loggingSettings.Formatters.Add(formatterData);
 
-		    using (var container = CreateContainer())
-		    {
-		        FormattedDatabaseTraceListener createdObject = (FormattedDatabaseTraceListener)container.Resolve<TraceListener>("listener");
+            connectionStringsSection.ConnectionStrings.Add(
+                new ConnectionStringSettings("database", "foo=bar;", "System.Data.SqlClient"));
 
-		        Assert.IsNotNull(createdObject);
-		        Assert.AreEqual(listenerData.TraceOutputOptions, createdObject.TraceOutputOptions);
-		        Assert.IsNotNull(createdObject.Filter);
-		        Assert.IsInstanceOfType(createdObject.Filter, typeof(EventTypeFilter));
-		        Assert.AreEqual(listenerData.Filter, ((EventTypeFilter)createdObject.Filter).EventType);
-		        Assert.IsNotNull(createdObject.Formatter);
-		        Assert.AreSame(typeof(TextFormatter), createdObject.Formatter.GetType());
-		        Assert.AreEqual("template", ((TextFormatter)createdObject.Formatter).Template);
-		    }
-		}
-	}
+            using (var container = CreateContainer())
+            {
+                FormattedDatabaseTraceListener createdObject =
+                    (FormattedDatabaseTraceListener)container.Resolve<TraceListener>("listener\u200cimplementation");
+
+                Assert.IsNotNull(createdObject);
+                Assert.AreEqual(listenerData.TraceOutputOptions, createdObject.TraceOutputOptions);
+                Assert.IsNotNull(createdObject.Filter);
+                Assert.IsInstanceOfType(createdObject.Filter, typeof(EventTypeFilter));
+                Assert.AreEqual(listenerData.Filter, ((EventTypeFilter)createdObject.Filter).EventType);
+                Assert.IsNotNull(createdObject.Formatter);
+                Assert.AreSame(typeof(TextFormatter), createdObject.Formatter.GetType());
+                Assert.AreEqual("template", ((TextFormatter)createdObject.Formatter).Template);
+            }
+        }
+    }
 }

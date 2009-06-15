@@ -9,11 +9,15 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using Common.ContainerInfrastructure.Tests.VSTS.TestSupport;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel.Unity;
+using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
 using Microsoft.Practices.EnterpriseLibrary.Data;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography;
@@ -24,118 +28,117 @@ using Moq;
 
 namespace Common.ContainerInfrastructure.Tests.VSTS
 {
-    public abstract class ContainerConfigurationContext
+    public abstract class Context_ContainerConfigurator : ArrangeActAssert
     {
-        protected IConfigurationSource Config { get; set; }
-        protected CompositeTypeRegistrationsProviderLocator Locator { get; set; }
-        protected abstract IContainerConfigurator Configurator { get; }
+        protected List<TypeRegistration> registrations;
+        protected IConfigurationSource configSource;
 
-        [TestInitialize]
-        public void SetupContext()
+        protected override void Arrange()
         {
-            Config = CreateConfig();
-
-            Locator = new CompositeTypeRegistrationsProviderLocator(TypeRegistrationsProvider.CreateDefaultProvider(Config));
-
-            Given();
-
-            EnterpriseLibraryContainer.ConfigureContainer(Locator, Configurator, Config);
+            configSource = GetConfig();
+            registrations = null;
         }
 
-        protected virtual IConfigurationSource CreateConfig()
+        protected override void Act()
         {
-            IConfigurationSource source = new DictionaryConfigurationSource();
-            var registrationSettings = new TypeRegistrationProvidersConfigurationSection();
-
-            // Remove data strategy, it looks at machine.config and can screw up our tests
-            registrationSettings.TypeRegistrationProviders.Remove(TypeRegistrationProvidersConfigurationSection.DataAccessTypeRegistrationProviderName);
-            source.Add(null, TypeRegistrationProvidersConfigurationSection.SectionName, registrationSettings);
-
-            return source;
+            EnterpriseLibraryContainer.ConfigureContainer(GetLocator(configSource), GetConfigurator(), configSource);
         }
 
-        protected virtual void Given()
+        protected virtual IConfigurationSource GetConfig()
         {
+            var configSource = new DictionaryConfigurationSource();
+            // Rip out the default data provider - it pulls in from machine.config
+            // and interferes with the test.
+            new SectionBuilder().LocatorSection()
+                .RemoveProviderNamed(
+                TypeRegistrationProvidersConfigurationSection.DataAccessTypeRegistrationProviderName)
+                .AddTo(configSource);
+
+            return configSource;
+        }
+
+        protected abstract IContainerConfigurator GetConfigurator();
+
+        private ITypeRegistrationsProvider GetLocator(IConfigurationSource configSource)
+        {
+            return TypeRegistrationsProvider.CreateDefaultProvider(configSource,
+                new NullContainerReconfiguringEventSource());
         }
     }
 
-    public abstract class MockContainerConfigurationContext : ContainerConfigurationContext
+    public abstract class Context_MockedContainerConfigurator : Context_ContainerConfigurator
     {
-        protected Mock<IContainerConfigurator> MockConfigurator { get; set; }
-        protected List<TypeRegistration> Registrations { get; private set; }
+        protected Mock<IContainerConfigurator> mockConfigurator;
 
-        protected override IContainerConfigurator Configurator
+        protected override IContainerConfigurator GetConfigurator()
         {
-            get { return MockConfigurator.Object; }
-        }
+            mockConfigurator = new Mock<IContainerConfigurator>();
+            mockConfigurator.Setup(c => c.RegisterAll(
+                It.IsAny<IConfigurationSource>(),
+                It.IsAny<ITypeRegistrationsProvider>()))
+            .Callback<IConfigurationSource, ITypeRegistrationsProvider>(
+                (cs, p) => registrations = p.GetRegistrations(cs).ToList())
+            .AtMostOnce().Verifiable();
 
-        protected override void Given()
-        {
-            MockConfigurator = new Mock<IContainerConfigurator>(MockBehavior.Strict);
-            MockConfigurator
-                .Setup(c => c.RegisterAll(
-                    It.IsAny<IConfigurationSource>(),
-                    It.IsAny<ITypeRegistrationsProvider>()))
-                .Callback<IConfigurationSource, ITypeRegistrationsProvider>(
-                    (cs, p) => Registrations = p.GetRegistrations(cs).ToList())
-                .AtMostOnce().Verifiable();
+
+            return mockConfigurator.Object;
         }
     }
 
-    public abstract class UnityContainerConfigurationContext : ContainerConfigurationContext
+    public abstract class Context_UnityContainerConfigurator : Context_ContainerConfigurator
     {
-        protected IUnityContainer Container;
+        protected IUnityContainer container;
 
-        protected override IContainerConfigurator Configurator
+        protected override void Arrange()
         {
-            get { return new UnityContainerConfigurator(Container); }
+            base.Arrange();
+            container = new UnityContainer();
         }
 
-        protected override void Given()
+        protected override IContainerConfigurator GetConfigurator()
         {
-            Container = new UnityContainer();
+            return new UnityContainerConfigurator(container);
         }
     }
 
     [TestClass]
-    public class GivenAnEmptyConfigSource : MockContainerConfigurationContext
+    public class When_ConfiguringAContainerFromAnEmptyConfigSource : Context_MockedContainerConfigurator
     {
         [TestMethod]
-        public void WhenConfiguringAContainer_ThenRegisterAllIsPassedAnEmptySequence()
+        public void Then_RegisterAllIsPassedAnEmptySequence()
         {
-            MockConfigurator.Verify();
-            Assert.AreEqual(0, Registrations.Count);
+            mockConfigurator.Verify();
+            Assert.AreEqual(0, registrations.Count);
         }
     }
 
     [TestClass]
-    public class GivenAConfigSourceWithCryptoData : MockContainerConfigurationContext
+    public class When_ConfiguringContainerWithCryptoData : Context_MockedContainerConfigurator
     {
-        protected override IConfigurationSource CreateConfig()
+        protected override IConfigurationSource GetConfig()
         {
             return new ConfigSourceBuilder().AddCryptoSettings().ConfigSource;
         }
 
         [TestMethod]
-        public void WhenConfiguringContainer_ThenRegisterAllIsCalledExactlyOnce()
+        public void Then_RegisterAllIsCalledExactlyOnce()
         {
-            MockConfigurator.Verify();
+            mockConfigurator.Verify();
         }
 
         [TestMethod]
-        public void WhenConfiguringContainer_ThenRegisterAllIsPassedTypeRegistrations()
+        public void Then_RegisterAllIsPassedTypeRegistrations()
         {
-            MockConfigurator.Verify();
-
-            Assert.IsNotNull(Registrations);
-            Assert.IsTrue(Registrations.Count > 0);
+            Assert.IsNotNull(registrations);
+            Assert.IsTrue(registrations.Count > 0);
         }
     }
 
+
     [TestClass]
-    public class GivenAConfigSourceWithCryptoDataAndExceptionData : MockContainerConfigurationContext
+    public class When_ConfiguringContainerWithCryptoAndExceptionData : Context_MockedContainerConfigurator
     {
-        protected override IConfigurationSource CreateConfig()
+        protected override IConfigurationSource GetConfig()
         {
             return new ConfigSourceBuilder()
                 .AddCryptoSettings()
@@ -145,31 +148,22 @@ namespace Common.ContainerInfrastructure.Tests.VSTS
         }
 
         [TestMethod]
-        public void WhenConfiguringContainer_ThenRegisterAllIsCalledExactlyOnce()
+        public void Then_RegisterAllIsCalledExactlyOnce()
         {
-            MockConfigurator.Verify();
+            mockConfigurator.Verify();
         }
 
         [TestMethod]
-        public void WhenConfiguringContainer_ThenRegistrationsArePresent()
+        public void Then_RegistrationsArePresent()
         {
-            Assert.IsTrue(Registrations.Count > 0);
+            Assert.IsTrue(registrations.Count > 0);
         }
     }
 
     [TestClass]
-    public class GivenAConfigSourceAndARealContainer : UnityContainerConfigurationContext
+    public class When_ConfiguringUnityContainer : Context_UnityContainerConfigurator
     {
-        protected override void Given()
-        {
-            base.Given();
-            // Add data back in for this one
-            Locator = new CompositeTypeRegistrationsProviderLocator(Locator,
-                new TypeLoadingLocator(
-                    BlockSectionNames.DataRegistrationProviderLocatorType));
-        }
-
-        protected override IConfigurationSource CreateConfig()
+        protected override IConfigurationSource GetConfig()
         {
             return new ConfigSourceBuilder()
                 .AddCryptoSettings()
@@ -178,50 +172,46 @@ namespace Common.ContainerInfrastructure.Tests.VSTS
                 .ConfigSource;
         }
 
+
         [TestMethod]
-        public void WhenContainerIsConfigured_ThenCanResolveHashProvider()
+        public void Then_CanResolveHashProvider()
         {
-            var provider = Container.Resolve<IHashProvider>("md5");
-            Assert.IsInstanceOfType(provider, typeof (HashAlgorithmProvider));
+            var provider = container.Resolve<IHashProvider>("md5");
+            Assert.IsInstanceOfType(provider, typeof(HashAlgorithmProvider));
         }
 
         [TestMethod]
-        public void WhenContainerIsConfigured_ThenCanResolveOtherHashProvider()
+        public void Then_CanResolveOtherHashProvider()
         {
-            var provider = Container.Resolve<IHashProvider>("sha512");
-            Assert.IsInstanceOfType(provider, typeof (HashAlgorithmProvider));
+            var provider = container.Resolve<IHashProvider>("sha512");
+            Assert.IsInstanceOfType(provider, typeof(HashAlgorithmProvider));
         }
 
         [TestMethod]
-        public void WhenContainerIsConfigured_ThenNonConfiguredHashProvidersAreNotResolved()
+        [ExpectedException(typeof(ResolutionFailedException))]
+        public void Then_NonConfiguredHashProvidersAreNotResolved()
         {
-            try
-            {
-                Container.Resolve<IHashProvider>("sha128");
-                Assert.Fail("Should have thrown ResolutionFailedException");
-            }
-            catch (ResolutionFailedException)
-            {
-                // ok if we get this.
-            }
+            container.Resolve<IHashProvider>("sha128");
+            Assert.Fail("Should have thrown ResolutionFailedException");
         }
 
         [TestMethod]
-        public void WhenContainerIsConfigured_ThenCanResolveDatabase()
+        public void Then_CanResolveDatabase()
         {
-            var db = Container.Resolve<Database>("northwind");
+            var db = container.Resolve<Database>("northwind");
             Assert.AreEqual(ConfigSourceBuilder.NorthwindConnectionString, db.ConnectionString);
         }
 
         [TestMethod]
-        public void WhenContainerIsConfigured_ThenCanResolveExceptionPolicy()
+        public void Then_CanResolveExceptionPolicy()
         {
-            var policy = Container.Resolve<ExceptionPolicyImpl>("default");
+            var policy = container.Resolve<ExceptionPolicyImpl>("default");
 
             Assert.AreEqual(ConfigSourceBuilder.DefaultExceptionPolicyName, policy.PolicyName);
         }
     }
 
+    // TODO: Fix this to actually reset the Current property between tests.
     [TestClass]
     public class GivenDefaultEnterpriseLibraryContainer
     {
@@ -243,9 +233,9 @@ namespace Common.ContainerInfrastructure.Tests.VSTS
     }
 
     [TestClass]
-    public class GivenAConfigSourceWithPolicyInjectionData : MockContainerConfigurationContext
+    public class When_ConfiguratingContainerWithPolicyInjectionData : Context_MockedContainerConfigurator
     {
-        protected override IConfigurationSource CreateConfig()
+        protected override IConfigurationSource GetConfig()
         {
             return new ConfigSourceBuilder()
                 .AddPolicyInjectionSettings()
@@ -255,13 +245,121 @@ namespace Common.ContainerInfrastructure.Tests.VSTS
         [TestMethod]
         public void WhenConfiguringContainer_ThenRegisterAllIsCalledExactlyOnce()
         {
-            MockConfigurator.Verify();
+            mockConfigurator.Verify();
         }
 
         [TestMethod]
         public void WhenConfiguringContainer_ThenRegistrationsArePresent()
         {
-            Assert.IsTrue(Registrations.Count > 0);
+            Assert.IsTrue(registrations.Count > 0);
         }
     }
+
+
+    /// <summary>
+    /// This is a bit of an integration test to validate that, through the EnterpriseLibraryContainer,
+    /// configuration change notifications can make it entirely through type registration and
+    /// for objects subscribing to the configuration change notification events.
+    /// </summary>
+    [TestClass]
+    public class WhenChangingConfigurationDataOnConfiguredEnterpriseLibraryContainer : ArrangeActAssert
+    {
+        ConfigurationSourceUpdatable updatableConfigSource = new ConfigurationSourceUpdatable();
+        private StaticFu staticFu;
+
+        protected IConfigurationSource GetConfig()
+        {
+            SectionBuilder builder = new SectionBuilder();
+            builder.LocatorSection()
+                .AddProvider<MockRegistrationProvider>()
+                .WithProviderName("MockRegistrationProvider")
+                .AddTo(updatableConfigSource);
+
+            return updatableConfigSource;
+        }
+
+        protected override void Act()
+        {
+            IServiceLocator locator = EnterpriseLibraryContainer.CreateDefaultContainer(GetConfig());
+            EnterpriseLibraryContainer.Current = locator;
+            staticFu = EnterpriseLibraryContainer.Current.GetInstance<StaticFu>();
+            Assert.IsInstanceOfType(staticFu.MyInnerFoo, typeof(Foo));
+
+            updatableConfigSource.DoSourceChanged(new[] { "MockRegistrationProvider" });
+        }
+
+        protected override void Teardown()
+        {
+            EnterpriseLibraryContainer.Current = null;
+        }
+
+        [TestMethod]
+        public void ThenShouldBeAbleToResolveNewElements()
+        {
+            IFoo resolvedItem = EnterpriseLibraryContainer.Current.GetInstance<IFoo>();
+            Assert.IsInstanceOfType(resolvedItem, typeof(Tofu));
+        }
+
+        [TestMethod]
+        public void ThenShouldBeAbleToResolveDependenciesThroughConfigurationChangeEvent()
+        {
+            StaticFu resolvedStaticFu = EnterpriseLibraryContainer.Current.GetInstance<StaticFu>();
+            Assert.AreSame(staticFu, resolvedStaticFu);
+            Assert.IsInstanceOfType(resolvedStaticFu.MyInnerFoo, typeof(Tofu));
+        }
+
+        class MockRegistrationProvider : ITypeRegistrationsProvider
+        {
+            public MockRegistrationProvider()
+            {
+            }
+
+            #region ITypeRegistrationsProvider Members
+
+            public IEnumerable<TypeRegistration> GetRegistrations(IConfigurationSource configurationSource)
+            {
+
+                yield return new TypeRegistration<IFoo>(() => new Foo())
+                {
+                    Lifetime = TypeRegistrationLifetime.Transient,
+                    IsDefault = true
+                };
+                yield return new TypeRegistration<StaticFu>(
+                    () => new StaticFu(Container.Resolved<ConfigurationChangeEventSource>())
+                              {
+                                  MyInnerFoo = Container.Resolved<IFoo>()
+                              }) { IsDefault = true };
+
+            }
+
+            public IEnumerable<TypeRegistration> GetUpdatedRegistrations(IConfigurationSource configurationSource)
+            {
+                yield return new TypeRegistration<IFoo>(
+                    () => new Tofu()) { Lifetime = TypeRegistrationLifetime.Transient, IsDefault = true };
+            }
+
+            #endregion
+        }
+
+        public interface IFoo { }
+        public class Foo : IFoo { }
+        public class Tofu : IFoo { }
+        public class StaticFu
+        {
+            public StaticFu(ConfigurationChangeEventSource configurationChangeEventSource)
+            {
+                configurationChangeEventSource.SourceChanged += OnConfigurationChanged;
+            }
+
+            public IFoo MyInnerFoo { get; set; }
+
+            private void OnConfigurationChanged(object sender, ConfigurationSourceChangedEventArgs e)
+            {
+                MyInnerFoo = e.Container.GetInstance<IFoo>();
+            }
+        }
+    }
+
+
+
 }

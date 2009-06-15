@@ -17,6 +17,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 {
@@ -32,6 +33,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
     public class TraceListenerData : NameTypeConfigurationElement
     {
         private AssemblyQualifiedTypeNameConverter typeConverter = new AssemblyQualifiedTypeNameConverter();
+
+        internal const string TraceListenerNameSuffix = "\u200Cimplementation";
 
         /// <summary>
         /// Name of the property that holds the type for a <see cref="TraceListenerData"/>.
@@ -141,18 +144,21 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
             set { this[filterProperty] = value; }
         }
 
-        ///<summary>
-        ///</summary>
-        ///<returns></returns>
+        /// <summary>
+        /// Returns the type <see cref="TypeRegistration"/> entries for this configuration object.
+        /// </summary>
+        /// <returns>A set of registry entries.</returns>        
         public virtual IEnumerable<TypeRegistration> GetRegistrations()
         {
-            return new TypeRegistration[] { GetTraceListenerTypeRegistration() };
+            yield return GetTraceListenerTypeRegistration();
+            yield return GetTraceListenerWrapperTypeRegistration();
         }
 
         /// <summary>
-        /// 
+        /// Returns the <see cref="TypeRegistration"/> entry for the actual trace listener represented by this 
+        /// configuration object.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A registry entry.</returns>
         protected TypeRegistration GetTraceListenerTypeRegistration()
         {
             IEnumerable<MemberBinding> extraBindings;
@@ -182,8 +188,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
                 LambdaExpression.MemberInit(newExpression, GetSharedBindings().Concat(extraBindings));
 
             TypeRegistration registration =
-                new TypeRegistration<TraceListener>(
-                    LambdaExpression.Lambda<Func<TraceListener>>(memberInit)) { Name = this.Name };
+                new TypeRegistration<TraceListener>(LambdaExpression.Lambda<Func<TraceListener>>(memberInit))
+                {
+                    Name = this.WrappedTraceListenerName,
+                    Lifetime = TypeRegistrationLifetime.Transient
+                };
 
             return registration;
         }
@@ -225,7 +234,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
             bindings.Add(
                 Expression.Bind(
                     Type.GetMember("Name")[0],
-                    Expression.Constant(this.Name)
+                    Expression.Constant(this.WrappedTraceListenerName)
                     )
                 );
         }
@@ -241,6 +250,35 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         protected virtual Expression<Func<TraceListener>> GetCreationExpression()
         {
             throw new NotImplementedException(Logging.Properties.Resources.ExceptionMethodMustBeImplementedBySubclasses);
+        }
+
+        /// <summary>
+        /// Returns the <see cref="TypeRegistration"/> entry for trace listener wrapper used to support configuration 
+        /// updates.
+        /// </summary>
+        /// <returns>A registry entry.</returns>
+        protected TypeRegistration GetTraceListenerWrapperTypeRegistration()
+        {
+            return
+                new TypeRegistration<TraceListener>(() =>
+                    new ReconfigurableTraceListenerWrapper(
+                        Container.Resolved<TraceListener>(this.WrappedTraceListenerName),
+                        Container.Resolved<ILoggingUpdateCoordinator>())
+                    {
+                        Name = this.Name
+                    })
+                {
+                    Name = this.Name,
+                    Lifetime = TypeRegistrationLifetime.Singleton
+                };
+        }
+
+        /// <summary>
+        /// Gets the name to use for the actual trace listener represented by this configuration object.
+        /// </summary>
+        protected string WrappedTraceListenerName
+        {
+            get { return this.Name + TraceListenerNameSuffix; }
         }
     }
 }

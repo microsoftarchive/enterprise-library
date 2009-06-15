@@ -16,26 +16,54 @@ using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration.Con
 using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Instrumentation;
+using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
+using System.Collections.Generic;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests.Configuration
 {
     [TestClass]
-    public class GivenConfigurationSectionWithNoProviderData
+    public class WhenGettingCryptoRegistations_GivenEmptyCryptoSettings : ArrangeActAssert
     {
         private CryptographySettings cryptographySettings;
+        private IEnumerable<TypeRegistration> registrations;
+        private TypeRegistration cryptoManagerRegistration;
+        private TypeRegistration instrumentationRegistration;
 
-        [TestInitialize]
-        public void Given()
+        protected override void Arrange()
         {
             cryptographySettings = new CryptographySettings();
         }
 
+        protected override void  Act()
+        {
+            registrations = cryptographySettings.GetRegistrations(null);
+            cryptoManagerRegistration = registrations.Where(r => r.ServiceType == typeof(CryptographyManager)).First();
+            instrumentationRegistration = registrations.Where(r => r.ServiceType == typeof(IDefaultCryptographyInstrumentationProvider)).First();
+        }
+
         [TestMethod]
-        public void WhenCreatingRegistrations_ThenCreatesOneRegistrationForCryptographyManager()
+        public void ThenCreatesOneRegistrationForCryptographyManager()
         {
             var typeRegistrations = cryptographySettings.GetRegistrations(null).Where(r => r.ServiceType == typeof(CryptographyManager));
 
             Assert.AreEqual(1, typeRegistrations.Count());
+        }
+
+        [TestMethod]
+        public void ThenCryptographyManagerRegistrationIsDefault()
+        {
+            cryptoManagerRegistration.AssertForServiceType(typeof(CryptographyManager))
+                .IsDefault()
+                .ForImplementationType(typeof(CryptographyManagerImpl));
+        }
+
+        [TestMethod]
+        public void ThenDefaultInstrumentationProviderRegistrationIsDefault()
+        {
+            instrumentationRegistration
+                .AssertForServiceType(typeof(IDefaultCryptographyInstrumentationProvider))
+                .ForImplementationType(typeof(DefaultCryptographyEventLogger))
+                .IsDefault();
         }
     }
 
@@ -61,6 +89,24 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests.Conf
             var hashAlgorithmRegistrations = cryptographySettings.GetRegistrations(null).Where(x => x.ServiceType == typeof(IHashProvider));
             Assert.AreEqual(1, hashAlgorithmRegistrations.Count());
             Assert.AreEqual("name", hashAlgorithmRegistrations.ElementAt(0).Name);
+        }
+
+        [TestMethod]
+        public void WhenCreatingRegistrations_ThenHashAlgorithmProviderHasTransientLifetime()
+        {
+            var hashAlgorithmRegistrations = cryptographySettings.GetRegistrations(null).Where(x => x.ServiceType == typeof(IHashProvider));
+            Assert.AreEqual(1, hashAlgorithmRegistrations.Count());
+            Assert.AreEqual(TypeRegistrationLifetime.Transient, hashAlgorithmRegistrations.ElementAt(0).Lifetime);
+        }
+
+        [TestMethod]
+        public void WhenCreatingRegistrations_ThenHashAlgorithmInstrumentationProviderHasTransientLifetime()
+        {
+            var registration = cryptographySettings.GetRegistrations(null)
+                .Where(x => x.ServiceType == typeof(IHashAlgorithmInstrumentationProvider))
+                .First();
+
+            Assert.AreEqual(TypeRegistrationLifetime.Transient, registration.Lifetime);
         }
 
         [TestMethod]
@@ -134,6 +180,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests.Conf
                 .VerifyConstructorParameters();
                 
         }
+
+        [TestMethod]
+        public void WhenCreatingRegistrations_ThenCreatedTypeRegistrationHasTransientLifetime()
+        {
+            var typeRegistrations = cryptographySettings.GetRegistrations(null);
+            TypeRegistration registration = typeRegistrations.Where(x => x.ServiceType == typeof(IHashProvider)).ElementAt(0);
+
+            Assert.AreEqual(TypeRegistrationLifetime.Transient, registration.Lifetime);
+        }
     }
 
     [TestClass]
@@ -160,6 +215,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests.Conf
             var hashAlgorithmRegistrations = cryptographySettings.GetRegistrations(null).Where(x => x.ServiceType == typeof(IHashProvider));
             Assert.AreEqual(1, hashAlgorithmRegistrations.Count());
             Assert.AreEqual("custom", hashAlgorithmRegistrations.ElementAt(0).Name);
+        }
+
+        [TestMethod]
+        public void WhenCreatingRegistrations_ThenCustomHashProviderShouldbeTransient()
+        {
+            var typeRegistrations = cryptographySettings.GetRegistrations(null);
+
+            TypeRegistration registration = typeRegistrations.ElementAt(0);
+
+            Assert.AreEqual(TypeRegistrationLifetime.Transient, registration.Lifetime);
         }
 
         [TestMethod]
@@ -249,7 +314,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests.Conf
         [TestMethod]
         public void WhenCreatingRegistrations_ThenCreatesSingleTypeRegistrationForTheSuppliedName()
         {
-
             var mangerRegistrations = cryptographySettings.GetRegistrations(null).Where(x => x.ServiceType == typeof(CryptographyManager));
             Assert.AreEqual(1, mangerRegistrations.Count());
 
@@ -277,8 +341,28 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests.Conf
                 .WithValueConstructorParameter("protected key")
                 .WithValueConstructorParameter(DataProtectionScope.LocalMachine)
                 .WithContainerResolvedParameter<ISymmetricAlgorithmInstrumentationProvider>("symmetric algorithm")
-                .VerifyConstructorParameters();
-                
+                .VerifyConstructorParameters();                
+        }
+
+
+        [TestMethod]
+        public void WhenCreatingRegistrations_ThenSymmetricCryptoProviderHasTransientLifetime()
+        {
+            var registration = cryptographySettings.GetRegistrations(null)
+                .Where(x => x.ServiceType == typeof(ISymmetricCryptoProvider))
+                .First();
+
+            Assert.AreEqual(TypeRegistrationLifetime.Transient, registration.Lifetime);
+        }
+
+        [TestMethod]
+        public void WhenCreatingRegistrations_ThenSymmetricCryptoInstrumentationProviderHasTransientLifetime()
+        {
+            var registration = cryptographySettings.GetRegistrations(null)
+                .Where(x => x.ServiceType == typeof(ISymmetricAlgorithmInstrumentationProvider))
+                .First();
+
+            Assert.AreEqual(TypeRegistrationLifetime.Transient, registration.Lifetime);
         }
     }
 
@@ -323,6 +407,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests.Conf
                 .VerifyConstructorParameters();
                 
         }
+
+        [TestMethod]
+        public void WhenCreatingRegistrations_ThenDpapiCryptoProviderHasTransientLifetime()
+        {
+            var typeRegistrations = cryptographySettings.GetRegistrations(null).Where(x => x.ServiceType == typeof(ISymmetricCryptoProvider));
+
+            TypeRegistration registration = typeRegistrations.ElementAt(0);
+            Assert.AreEqual(typeof(ISymmetricCryptoProvider), registration.ServiceType);
+            Assert.AreEqual(TypeRegistrationLifetime.Transient, registration.Lifetime);
+        }
     }
 
     [TestClass]
@@ -366,8 +460,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests.Conf
 
             registration.AssertConstructor()
                 .WithValueConstructorParameter(customSymmetricCryptoProviderData.Attributes)
-                .VerifyConstructorParameters();
-                
+                .VerifyConstructorParameters();           
+        }
+
+        [TestMethod]
+        public void WhenCreatingRegistrations_ThenCustomCryptoProviderHasTransientLifetime()
+        {
+            var typeRegistrations = cryptographySettings.GetRegistrations(null).Where(x => x.ServiceType == typeof(ISymmetricCryptoProvider));
+
+            TypeRegistration registration = typeRegistrations.ElementAt(0);
+            Assert.AreEqual(typeof(ISymmetricCryptoProvider), registration.ServiceType);
+            Assert.AreEqual(TypeRegistrationLifetime.Transient, registration.Lifetime);
         }
     }
 

@@ -9,11 +9,11 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using System.Collections.Generic;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Data.Configuration;
-using System.Collections.Generic;
 using Microsoft.Practices.EnterpriseLibrary.Data.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Configuration

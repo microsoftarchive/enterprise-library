@@ -48,6 +48,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cache.CachingStore.Test
             Assert.AreEqual(typeof(ISecurityCacheProvider), typeRegistration.ServiceType);
         }
 
+        [TestMethod]
+        public void ThenRegistrationForCacheProviderHasTransientLifetime()
+        {
+            var securityCacheProviderRegistrations = registrations.Where(x => x.ServiceType == typeof(ISecurityCacheProvider));
+            TypeRegistration typeRegistration = securityCacheProviderRegistrations.First();
+            
+            Assert.AreEqual(TypeRegistrationLifetime.Transient, typeRegistration.Lifetime);
+        }
+
 
         [TestMethod]
         public void ThenHasRegistrationForCorrespondingInstrumentationProvider()
@@ -57,6 +66,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cache.CachingStore.Test
 
             TypeRegistration typeRegistration = securityCacheProviderRegistrations.First();
             Assert.AreEqual("Caching Store Provider", typeRegistration.Name);
+        }
+
+        [TestMethod]
+        public void ThenRegistrationForCorrespondingInstrumentationProviderHasTransientLifetime()
+        {
+            var securityCacheProviderRegistrations = registrations.Where(x => x.ServiceType == typeof(ISecurityCacheProviderInstrumentationProvider));
+            TypeRegistration typeRegistration = securityCacheProviderRegistrations.First();
+            
+            Assert.AreEqual(TypeRegistrationLifetime.Transient, typeRegistration.Lifetime);
         }
 
         [TestMethod]

@@ -20,6 +20,7 @@ using Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation;
 using System.Collections.Specialized;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Caching.TestSupport.BackingStoreImplementations;
+using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration.ContainerModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests.Configuration
 {
@@ -140,6 +141,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests.Configuration
             Assert.AreEqual("Default Cache Manager", instrumentationProviderRegistration.Name);
         }
 
+        [TestMethod]
+        public void ThenRegistrationForDefaultEventLoggerIsDefault()
+        {
+            var registration = registrations.Where(r => r.ServiceType == typeof(DefaultCachingEventLogger)).First();
+
+            registration.AssertForServiceType(typeof(DefaultCachingEventLogger))
+                .IsDefault();
+        }
     }
 
     [TestClass]

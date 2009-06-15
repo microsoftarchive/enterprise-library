@@ -10,12 +10,12 @@
 //===============================================================================
 
 using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Filters;
-using System.Collections.Generic;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 {
@@ -169,9 +169,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         }
 
         /// <summary>
-        /// 
+        /// Creates an enumeration of <see cref="TypeRegistration"/> instances describing the filter represented by 
+        /// this configuration object.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A an enumeration of <see cref="TypeRegistration"/> instance describing a filter.</returns>
         public override IEnumerable<TypeRegistration> GetRegistrations()
         {
             yield return
@@ -179,7 +180,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
                        RegistrationExpressionBuilder.BuildExpression(this.Type, Attributes),
                         typeof(ILogFilter))
                    {
-                       Name = Name
+                       Name = Name,
+                       Lifetime = TypeRegistrationLifetime.Transient
                    };
         }
     }

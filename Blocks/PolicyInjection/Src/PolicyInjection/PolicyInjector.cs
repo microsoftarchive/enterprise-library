@@ -50,7 +50,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection
         {
             if (configurationSource == null)
             {
-                throw new ArgumentNullException();
+                throw new ArgumentNullException("configurationSource");
             }
 
             this.ownsContainer = true;
@@ -70,19 +70,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection
         {
             if (serviceLocator == null)
             {
-                throw new ArgumentNullException();
+                throw new ArgumentNullException("serviceLocator");
             }
 
-            this.ownsContainer = false;
             Initialize(serviceLocator);
         }
 
-        private void Initialize(IServiceLocator serviceLocator)
+        private void Initialize(IServiceLocator providedServiceLocator)
         {
-            this.serviceLocator = serviceLocator;
+            this.serviceLocator = providedServiceLocator;
             try
             {
-                this.container = serviceLocator.GetInstance<IUnityContainer>();
+                this.container = providedServiceLocator.GetInstance<IUnityContainer>();
             }
             catch (ActivationException e)
             {
@@ -216,12 +215,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection
             {
                 if (this.serviceLocator != null)
                 {
-                    IServiceLocator serviceLocator = this.serviceLocator;
+                    IServiceLocator serviceLocatorForDisposal = this.serviceLocator;
                     this.serviceLocator = null;
                     this.container = null;
                     if (this.ownsContainer)
                     {
-                        serviceLocator.Dispose();
+                        serviceLocatorForDisposal.Dispose();
                     }
                 }
             }

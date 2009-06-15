@@ -63,7 +63,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration
                     instrumentationSection.WmiEnabled,
                     instrumentationSection.ApplicationInstanceName))
             {
-                Name = Name
+                Name = Name,
+                Lifetime = TypeRegistrationLifetime.Transient
             };
         }
 
@@ -77,7 +78,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration
 
             yield return new TypeRegistration<ISecurityCacheProvider>(creationExpression)
             {
-                Name = this.Name
+                Name = this.Name,
+                Lifetime = TypeRegistrationLifetime.Transient
             };
         }
 

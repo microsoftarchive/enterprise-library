@@ -9,8 +9,10 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.TestSupport
 {
@@ -22,6 +24,22 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.TestSupport
             {
                 yield return log.Entries[index];
             }
+        }
+
+        public static IEnumerable<EventLogEntry> GetEntriesSince(this EventLog log, DateTime startTime)
+        {
+            var entries = log.Entries;
+            int i = entries.Count;
+
+            do
+            {
+                var entry = entries[--i];
+                if(entry.TimeGenerated < startTime)
+                {
+                    break;
+                }
+                yield return entry;
+            } while (i >= 0);
         }
     }
 }

@@ -27,14 +27,14 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
 {
     [TestClass]
-    public class GivenConfigurationChangeSource
+    public class GivenLoggingUpdateCoordinator
     {
-        private MockConfigurationChangeEventSource changeSource;
+        private MockLoggingUpdateCoordinator coordinator;
 
         [TestInitialize]
         public void Setup()
         {
-            changeSource = new MockConfigurationChangeEventSource();
+            coordinator = new MockLoggingUpdateCoordinator();
         }
 
         [TestMethod]
@@ -53,27 +53,27 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
                         false,
                         false),
                     new LoggingInstrumentationProvider(false, false, false, null),
-                    changeSource);
+                    coordinator);
 
-            Assert.IsTrue(changeSource.handlers.ContainsKey(typeof(LoggingSettings)));
+            Assert.AreSame(logWriter, coordinator.AddedLoggingUpdateHandler);
         }
     }
 
     [TestClass]
-    public class GivenANullConfigurationChangeSource
+    public class GivenANullLoggingUpdateCoordinator
     {
-        private ConfigurationChangeEventSource changeSource;
+        private ILoggingUpdateCoordinator coordinator;
 
         [TestInitialize]
         public void Setup()
         {
-            changeSource = null;
+            coordinator = null;
         }
 
         [TestMethod]
-        public void WhenChangeSourceIsInjectedOnLogWriter_ThenNoExceptionIsThrown()
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void WhenUpdateCoordinateIsInjectedOnLogWriter_ThenArgumentNullExceptionIsThrown()
         {
-            var logWriter =
                 new LogWriter(
                     new LogWriterStructureHolder(
                         new ILogFilter[0],
@@ -86,20 +86,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
                         false,
                         false),
                     new LoggingInstrumentationProvider(false, false, false, null),
-                    changeSource);
+                    coordinator);
         }
     }
 
     [TestClass]
     public class GivenALogWriterInjectedWithAConfigurationChangeEventSource
     {
-        private MockConfigurationChangeEventSource changeSource;
+        private MockLoggingUpdateCoordinator coordinator;
         private LogWriter logWriter;
 
         [TestInitialize]
         public void Setup()
         {
-            changeSource = new MockConfigurationChangeEventSource();
+            coordinator = new MockLoggingUpdateCoordinator();
             logWriter =
                 new LogWriter(
                     new LogWriterStructureHolder(
@@ -113,31 +113,29 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
                         false,
                         false),
                     new LoggingInstrumentationProvider(false, false, false, null),
-                    changeSource);
+                    coordinator);
         }
 
         [TestMethod]
-        public void WhenLogWriterIsDisposed_ThenSourceChangHandlerIsRemoved()
+        public void WhenLogWriterIsDisposed_ThenRegisteredHandlerIsRemoved()
         {
             this.logWriter.Dispose();
-
-            Assert.IsFalse(changeSource.handlers.ContainsKey(typeof(LoggingSettings)));
+            Assert.AreSame(coordinator.RemovedLoggingUpdateHandler, this.logWriter);
         }
     }
 
     [TestClass]
     public class GivenLogWriterInjectedWithLoggingStack
     {
-        private MockConfigurationChangeEventSource changeSource;
+        private MockLoggingUpdateCoordinator coordinator;
         private MockTraceListener traceListener;
-        private MockTraceListener errorTraceListener;
         private LogWriter logWriter;
         private MockLoggingInstrumentationProvider instrumentationProvider;
 
         [TestInitialize]
         public void Setup()
         {
-            this.changeSource = new MockConfigurationChangeEventSource();
+            this.coordinator = new MockLoggingUpdateCoordinator();
             this.traceListener = new MockTraceListener("original");
             this.instrumentationProvider = new MockLoggingInstrumentationProvider();
             this.logWriter =
@@ -153,7 +151,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
                         false,
                         false),
                     this.instrumentationProvider,
-                    changeSource);
+                    coordinator);
         }
 
         [TestMethod]
@@ -191,80 +189,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
             var container = new UnityContainer();
             container.RegisterInstance(newStack);
 
-            changeSource.OnSectionChanged(
-                new SectionChangedEventArgs<LoggingSettings>(null, new UnityServiceLocator(container)));
+            this.coordinator.RaiseLoggingUpdate(new UnityServiceLocator(container));
 
             var logEntry = new LogEntry() { Message = "message" };
             this.logWriter.Write(logEntry);
 
             Assert.AreSame(logEntry, newTraceListener.tracedData);
-        }
-
-        [TestMethod]
-        public void WhenSourceChangedEventIsFired_ThenOldStackIsDisposed()
-        {
-            var newTraceListener = new MockTraceListener("new");
-            var newStack =
-                new LogWriterStructureHolder(
-                    new ILogFilter[0],
-                    new Dictionary<string, LogSource>(),
-                    new LogSource("all", new[] { newTraceListener }, SourceLevels.All),
-                    new LogSource("not processed"),
-                    new LogSource("error"),
-                    "default",
-                    false,
-                    false,
-                    false);
-            var container = new UnityContainer();
-            container.RegisterInstance(newStack);
-
-            this.changeSource.OnSectionChanged(
-                new SectionChangedEventArgs<LoggingSettings>(null, new UnityServiceLocator(container)));
-
-            Assert.IsTrue(this.traceListener.wasDisposed);
-        }
-
-        [TestMethod]
-        public void WhenSourceChangedEventIsFiredAndTheNewStackFailsToBeResolved_ThenAnErrorIsLogged()
-        {
-            this.changeSource.OnSectionChanged(
-                new SectionChangedEventArgs<LoggingSettings>(null, new ExceptionThrowingServiceLocator()));
-
-            Assert.AreEqual(1, this.instrumentationProvider.ConfigurationFailureEventCalls);
-        }
-    }
-
-    public class MockConfigurationChangeEventSource : ConfigurationChangeEventSource
-    {
-        public Dictionary<Type, Delegate> handlers = new Dictionary<Type, Delegate>();
-
-        public override ConfigurationChangeEventSource.ISourceChangeEventSource<TSection> GetSection<TSection>()
-        {
-            return new SourceChangeEventSource<TSection>(this);
-        }
-
-        private class SourceChangeEventSource<T> : ConfigurationChangeEventSource.ISourceChangeEventSource<T>
-            where T : ConfigurationSection
-        {
-            private MockConfigurationChangeEventSource owner;
-
-            public SourceChangeEventSource(MockConfigurationChangeEventSource owner)
-            {
-                this.owner = owner;
-            }
-
-            public event EventHandler<SectionChangedEventArgs<T>> SectionChanged
-            {
-                add { this.owner.handlers[typeof(T)] = value; }
-                remove { this.owner.handlers.Remove(typeof(T)); }
-            }
-        }
-
-        public void OnSectionChanged<T>(SectionChangedEventArgs<T> sectionChangedEventArgs)
-            where T : ConfigurationSection
-        {
-            Delegate handler = this.handlers[typeof(T)];
-            handler.DynamicInvoke(this, sectionChangedEventArgs);
         }
     }
 
@@ -328,6 +258,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
         }
 
         public void FireTraceListenerEntryWrittenEvent()
+        {
+        }
+
+        public void FireReconfigurationErrorEvent(Exception exception)
         {
         }
     }

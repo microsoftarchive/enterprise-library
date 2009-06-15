@@ -30,5 +30,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation
 
         /// <summary/>
         void FireTraceListenerEntryWrittenEvent();
+
+        /// <summary/>
+        void FireReconfigurationErrorEvent(Exception exception);
     }
 }

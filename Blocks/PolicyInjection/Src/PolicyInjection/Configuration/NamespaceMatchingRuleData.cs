@@ -94,7 +94,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
                     new NamespaceMatchingRule(
                         this.Matches.Select(match => new MatchingInfo(match.Match, match.IgnoreCase)).ToArray()))
                 {
-                    Name = this.Name + nameSuffix
+                    Name = this.Name + nameSuffix,
+                    Lifetime = TypeRegistrationLifetime.Transient
                 };
         }
     }

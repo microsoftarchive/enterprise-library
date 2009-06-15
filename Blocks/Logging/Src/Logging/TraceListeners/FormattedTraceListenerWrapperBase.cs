@@ -21,7 +21,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
     /// </summary>
     public abstract class FormattedTraceListenerWrapperBase : FormattedTraceListenerBase
     {
-        private readonly TraceListener slaveListener;
+        private readonly TraceListener innerListener;
 
         /// <summary>
         /// Initializes a <see cref="FormattedTraceListenerWrapperBase"/>.
@@ -31,48 +31,48 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         }
 
         /// <summary>
-        /// Initializes a <see cref="FormattedTraceListenerWrapperBase"/> with a slave <see cref="TraceListener"/>.
+        /// Initializes a <see cref="FormattedTraceListenerWrapperBase"/> with an inner <see cref="TraceListener"/>.
         /// </summary>
-        /// <param name="slaveListener">The wrapped listener.</param>
-        protected FormattedTraceListenerWrapperBase(TraceListener slaveListener)
-            :this(slaveListener, new NullLoggingInstrumentationProvider())
+        /// <param name="innerListener">The wrapped listener.</param>
+        protected FormattedTraceListenerWrapperBase(TraceListener innerListener)
+            :this(innerListener, new NullLoggingInstrumentationProvider())
         {
         }
 
         /// <summary>
-        /// Initializes a <see cref="FormattedTraceListenerWrapperBase"/> with a slave <see cref="TraceListener"/>.
+        /// Initializes a <see cref="FormattedTraceListenerWrapperBase"/> with an inner <see cref="TraceListener"/>.
         /// </summary>
-        /// <param name="slaveListener">The wrapped listener.</param>
+        /// <param name="innerListener">The wrapped listener.</param>
         /// <param name="instrumentationProvider">The instrumentation provider to use.</param>
-        protected FormattedTraceListenerWrapperBase(TraceListener slaveListener, ILoggingInstrumentationProvider instrumentationProvider)
+        protected FormattedTraceListenerWrapperBase(TraceListener innerListener, ILoggingInstrumentationProvider instrumentationProvider)
             :base(instrumentationProvider)
         {
-            this.slaveListener = slaveListener;
+            this.innerListener = innerListener;
         }
 
         /// <summary>
-        /// Initializes a <see cref="FormattedTraceListenerWrapperBase"/> with a slave <see cref="TraceListener"/> 
+        /// Initializes a <see cref="FormattedTraceListenerWrapperBase"/> with an inner <see cref="TraceListener"/> 
         /// and a <see cref="ILogFormatter"/>.
         /// </summary>
-        /// <param name="slaveListener">The wrapped listener.</param>
+        /// <param name="innerListener">The wrapped listener.</param>
         /// <param name="formater">The formatter.</param>
-        protected FormattedTraceListenerWrapperBase(TraceListener slaveListener, ILogFormatter formater)
-            : this(slaveListener, formater, new NullLoggingInstrumentationProvider())
+        protected FormattedTraceListenerWrapperBase(TraceListener innerListener, ILogFormatter formater)
+            : this(innerListener, formater, new NullLoggingInstrumentationProvider())
         {
-            this.slaveListener = slaveListener;
+            this.innerListener = innerListener;
         }
 
         /// <summary>
-        /// Initializes a <see cref="FormattedTraceListenerWrapperBase"/> with a slave <see cref="TraceListener"/> 
+        /// Initializes a <see cref="FormattedTraceListenerWrapperBase"/> with an inner <see cref="TraceListener"/> 
         /// and a <see cref="ILogFormatter"/>.
         /// </summary>
-        /// <param name="slaveListener">The wrapped listener.</param>
+        /// <param name="innerListener">The wrapped listener.</param>
         /// <param name="formater">The formatter.</param>
         /// <param name="instrumentationProvider">The instrumentation provider to use.</param>
-        protected FormattedTraceListenerWrapperBase(TraceListener slaveListener, ILogFormatter formater, ILoggingInstrumentationProvider instrumentationProvider)
+        protected FormattedTraceListenerWrapperBase(TraceListener innerListener, ILogFormatter formater, ILoggingInstrumentationProvider instrumentationProvider)
             : base(formater, instrumentationProvider)
         {
-            this.slaveListener = slaveListener;
+            this.innerListener = innerListener;
         }
 
         /// <summary>
@@ -87,7 +87,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         {
             if ((this.Filter == null) || this.Filter.ShouldTrace(eventCache, source, severity, id, null, null, null, data))
             {
-                this.slaveListener.TraceData(eventCache, source, severity, id, data);
+                this.innerListener.TraceData(eventCache, source, severity, id, data);
             }
         }
 
@@ -110,18 +110,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
                 {
                     if (this.Formatter != null)
                     {
-                        this.slaveListener.TraceData(eventCache, source, severity, id, this.Formatter.Format(data as LogEntry));
+                        this.innerListener.TraceData(eventCache, source, severity, id, this.Formatter.Format(data as LogEntry));
                     }
                     else
                     {
-                        this.slaveListener.TraceData(eventCache, source, severity, id, data);
+                        this.innerListener.TraceData(eventCache, source, severity, id, data);
                     }
 
                     InstrumentationProvider.FireTraceListenerEntryWrittenEvent();
                 }
                 else
                 {
-                    this.slaveListener.TraceData(eventCache, source, severity, id, data);
+                    this.innerListener.TraceData(eventCache, source, severity, id, data);
                 }
             }
         }
@@ -138,7 +138,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         {
             if ((this.Filter == null) || this.Filter.ShouldTrace(eventCache, source, severity, id, message, null, null, null))
             {
-                this.slaveListener.TraceEvent(eventCache, source, severity, id, message);
+                this.innerListener.TraceEvent(eventCache, source, severity, id, message);
             }
         }
 
@@ -155,7 +155,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         {
             if ((this.Filter == null) || this.Filter.ShouldTrace(eventCache, source, severity, id, format, args, null, null))
             {
-                this.slaveListener.TraceEvent(eventCache, source, severity, id, format, args);
+                this.innerListener.TraceEvent(eventCache, source, severity, id, format, args);
             }
         }
 
@@ -165,7 +165,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         /// <param name="message">The message to trace.</param>
         public override void Write(string message)
         {
-            this.slaveListener.Write(message);
+            this.innerListener.Write(message);
         }
 
         /// <summary>
@@ -174,7 +174,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         /// <param name="message">The message to trace.</param>
         public override void WriteLine(string message)
         {
-            this.slaveListener.WriteLine(message);
+            this.innerListener.WriteLine(message);
         }
 
         /// <summary>
@@ -183,9 +183,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         /// <value>
         /// The <see cref="TraceListener"/> wrapped.
         /// </value>
-        public TraceListener SlaveListener
+        public TraceListener InnerListener
         {
-            get { return this.slaveListener; }
+            get { return this.innerListener; }
         }
 
         /// <summary>
@@ -196,7 +196,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         {
             if (disposing)
             {
-                this.slaveListener.Dispose();
+                this.innerListener.Dispose();
             }
         }
     }

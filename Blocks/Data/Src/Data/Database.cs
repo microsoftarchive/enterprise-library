@@ -1137,15 +1137,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
             return adapter;
         }
 
-        /// <summary>
-        /// Returns the object to which the instrumentation events have been delegated.
-        /// </summary>
-        /// <returns>Object to which the instrumentation events have been delegated.</returns>
-        public IDataInstrumentationProvider GetInstrumentationEventProvider()
-        {
-            return instrumentationProvider;
-        }
-
         internal DbConnection GetNewOpenConnection()
         {
             DbConnection connection = null;

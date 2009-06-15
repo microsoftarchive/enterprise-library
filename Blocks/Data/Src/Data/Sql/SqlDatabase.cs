@@ -20,6 +20,7 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Data.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Data.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Data.Sql.Configuration;
+using System.Threading;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql
 {
@@ -120,6 +121,91 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql
 
             PrepareCommand(sqlCommand, transaction);
             return DoExecuteXmlReader(sqlCommand);
+        }
+
+        /// <summary>
+        /// <para>Initiates the asynchronous execution of the <see cref="SqlCommand"/> which will result in a <see cref="XmlReader"/>.</para>
+        /// </summary>
+        /// <param name="command">
+        /// <para>The <see cref="SqlCommand"/> to execute.</para>
+        /// </param>
+        /// <seealso cref="ExecuteXmlReader(DbCommand)"/>
+        /// <seealso cref="EndExecuteXmlReader"/>
+        /// <returns>
+        /// <para>An <see cref="IAsyncResult"/> that can be used to poll or wait for results, or both; 
+        /// this value is also needed when invoking <see cref="EndExecuteXmlReader"/>, 
+        /// which returns the <see cref="XmlReader"/> object.</para>
+        /// </returns>
+        public IAsyncResult BeginExecuteXmlReader(DbCommand command)
+        {
+            SqlCommand sqlCommand = CheckIfSqlCommand(command);
+
+            ConnectionWrapper wrapper = GetOpenConnection(false);
+            PrepareCommand(command, wrapper.Connection);
+            return DoBeginExecuteXmlReader(sqlCommand, false);
+        }
+
+        /// <summary>
+        /// <para>Initiates the asynchronous execution of the <see cref="SqlCommand"/> inside a transaction which will result in a <see cref="XmlReader"/>.</para>
+        /// </summary>
+        /// <param name="command">
+        /// <para>The <see cref="SqlCommand"/> to execute.</para>
+        /// </param>
+        /// <param name="transaction">
+        /// <para>The <see cref="IDbTransaction"/> to execute the command within.</para>
+        /// </param>
+        /// <seealso cref="ExecuteXmlReader(DbCommand, DbTransaction)"/>
+        /// <seealso cref="EndExecuteXmlReader"/>
+        /// <returns>
+        /// <para>An <see cref="IAsyncResult"/> that can be used to poll or wait for results, or both; 
+        /// this value is also needed when invoking <see cref="EndExecuteXmlReader"/>, 
+        /// which returns the <see cref="XmlReader"/> object.</para>
+        /// </returns>
+        public IAsyncResult BeginExecuteXmlReader(DbCommand command, DbTransaction transaction)
+        {
+            SqlCommand sqlCommand = CheckIfSqlCommand(command);
+
+            PrepareCommand(sqlCommand, transaction);
+            return DoBeginExecuteXmlReader(sqlCommand, false);
+        }
+
+        /// <summary>
+        /// Finishes asynchronous execution of a Transact-SQL statement, returning the requested data as XML.
+        /// </summary>
+        /// <param name="asyncResult">
+        /// <para>The <see cref="IAsyncResult"/> returned by a call to any overload of <see cref="BeginExecuteXmlReader(DbCommand)"/>.</para>
+        /// </param>
+        /// <seealso cref="ExecuteXmlReader(DbCommand)"/>
+        /// <seealso cref="BeginExecuteXmlReader(DbCommand)"/>
+        /// <seealso cref="BeginExecuteXmlReader(DbCommand, DbTransaction)"/>
+        /// <returns>
+        /// <para>An <see cref="XmlReader"/> object that can be used to fetch the resulting XML data.</para>
+        /// </returns>
+        public XmlReader EndExecuteXmlReader(IAsyncResult asyncResult)
+        {
+            DaabAsyncResult daabAsyncResult = asyncResult as DaabAsyncResult;
+            SqlCommand command = daabAsyncResult.Command;
+            try
+            {
+                XmlReader reader = command.EndExecuteXmlReader(daabAsyncResult.InnerAsyncResult);
+                instrumentationProvider.FireCommandExecutedEvent(daabAsyncResult.StartTime);
+                return reader;
+            }
+            catch (Exception e)
+            {
+                instrumentationProvider.FireCommandFailedEvent(command.CommandText, ConnectionStringNoCredentials, e);
+                throw;
+            }
+            finally
+            {
+                CleanupConnectionFromAsyncOperation(daabAsyncResult);
+            }
+        }
+
+        private IAsyncResult DoBeginExecuteXmlReader(SqlCommand sqlCommand, bool closeConnection)
+        {
+            IAsyncResult innerResult = sqlCommand.BeginExecuteXmlReader();
+            return new DaabAsyncResult(innerResult, sqlCommand, closeConnection, DateTime.Now);
         }
 
         /// <devdoc>
@@ -348,6 +434,565 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql
             param.IsNullable = nullable;
             param.SourceColumn = sourceColumn;
             param.SourceVersion = sourceVersion;
+        }
+
+        private SqlCommand CreateSqlCommandByCommandType(CommandType commandType, string commandText)
+        {
+            return new SqlCommand(commandText)
+            {
+                CommandType = commandType
+            };
+        }
+
+        private IAsyncResult DoBeginExecuteNonQuery(SqlCommand command, bool closeConnection)
+        {
+            IAsyncResult innerAsyncResult = command.BeginExecuteNonQuery();
+
+            return new DaabAsyncResult(innerAsyncResult, command, closeConnection, DateTime.Now);
+        }
+
+        /// <summary>
+        /// <para>Initiates the asynchronous execution of the <see cref="SqlCommand"/> which will return the number of affected records.</para>
+        /// </summary>
+        /// <param name="command">
+        /// <para>The <see cref="SqlCommand"/> to execute.</para>
+        /// </param>
+        /// <seealso cref="Database.ExecuteNonQuery(DbCommand)"/>
+        /// <seealso cref="EndExecuteNonQuery(IAsyncResult)"/>
+        /// <returns>
+        /// <para>An <see cref="IAsyncResult"/> that can be used to poll or wait for results, or both; 
+        /// this value is also needed when invoking <see cref="EndExecuteXmlReader"/>, 
+        /// which returns the number of affected records.</para>
+        /// </returns>
+        public IAsyncResult BeginExecuteNonQuery(DbCommand command)
+        {
+            SqlCommand sqlCommand = CheckIfSqlCommand(command);
+
+            return DoBeginExecuteNonQuery(sqlCommand, false);
+        }
+
+        /// <summary>
+        /// <para>Initiates the asynchronous execution of the <see cref="DbCommand"/> inside a transaction which will return the number of affected records.</para>
+        /// </summary>
+        /// <param name="command">
+        /// <para>The <see cref="SqlCommand"/> to execute.</para>
+        /// </param>
+        /// <param name="transaction">
+        /// <para>The <see cref="DbTransaction"/> to execute the command within.</para>
+        /// </param>
+        /// <seealso cref="Database.ExecuteNonQuery(DbCommand)"/>
+        /// <seealso cref="EndExecuteNonQuery(IAsyncResult)"/>
+        /// <returns>
+        /// <para>An <see cref="IAsyncResult"/> that can be used to poll or wait for results, or both; 
+        /// this value is also needed when invoking <see cref="EndExecuteNonQuery"/>, 
+        /// which returns the number of affected records.</para>
+        /// </returns>
+        public IAsyncResult BeginExecuteNonQuery(DbCommand command, DbTransaction transaction)
+        {
+            PrepareCommand(command, transaction);
+
+            return BeginExecuteNonQuery(command);
+        }
+
+        /// <summary>
+        /// <para>Initiates the asynchronous execution of the <paramref name="storedProcedureName"/> using the given <paramref name="parameterValues" /> which will return the number of rows affected.</para>
+        /// </summary>
+        /// <param name="storedProcedureName">
+        /// <para>The name of the stored procedure to execute.</para>
+        /// </param>
+        /// <param name="parameterValues">
+        /// <para>An array of paramters to pass to the stored procedure. The parameter values must be in call order as they appear in the stored procedure.</para>
+        /// </param>
+        /// <returns>
+        /// <para>An <see cref="IAsyncResult"/> that can be used to poll or wait for results, or both; 
+        /// this value is also needed when invoking <see cref="EndExecuteNonQuery"/>, 
+        /// which returns the number of affected records.</para>
+        /// </returns>
+        /// <seealso cref="Database.ExecuteNonQuery(string,object[])"/>
+        /// <seealso cref="EndExecuteNonQuery(IAsyncResult)"/>
+        public IAsyncResult BeginExecuteNonQuery(string storedProcedureName, params object[] parameterValues)
+        {
+            if (string.IsNullOrEmpty(storedProcedureName)) throw new ArgumentException("storedProcedureName", Resources.ExceptionNullOrEmptyString);
+
+            using (DbCommand command = GetStoredProcCommand(storedProcedureName, parameterValues))
+            {
+                PrepareCommand(command, GetNewOpenConnection());
+                return DoBeginExecuteNonQuery((SqlCommand)command, true);
+            }
+        }
+
+        /// <summary>
+        /// <para>Initiates the asynchronous execution of the <paramref name="storedProcedureName"/> using the given <paramref name="parameterValues" /> inside a transaction which will return the number of rows affected.</para>
+        /// </summary>
+        /// <param name="storedProcedureName">
+        /// <para>The name of the stored procedure to execute.</para>
+        /// </param>
+        /// <param name="transaction">
+        /// <para>The <see cref="DbTransaction"/> to execute the command within.</para>
+        /// </param>
+        /// <param name="parameterValues">
+        /// <para>An array of paramters to pass to the stored procedure. The parameter values must be in call order as they appear in the stored procedure.</para>
+        /// </param>
+        /// <returns>
+        /// <para>An <see cref="IAsyncResult"/> that can be used to poll or wait for results, or both; 
+        /// this value is also needed when invoking <see cref="EndExecuteNonQuery"/>, 
+        /// which returns the number of affected records.</para>
+        /// </returns>
+        /// <seealso cref="Database.ExecuteNonQuery(string,object[])"/>
+        /// <seealso cref="EndExecuteNonQuery(IAsyncResult)"/>
+        public IAsyncResult BeginExecuteNonQuery(DbTransaction transaction, string storedProcedureName, params object[] parameterValues)
+        {
+            using (DbCommand command = GetStoredProcCommand(storedProcedureName, parameterValues))
+            {
+                return BeginExecuteNonQuery(command, transaction);
+            }
+        }
+
+        /// <summary>
+        /// <para>Initiates the asynchronous execution of the <paramref name="commandText"/> interpreted as specified by the <paramref name="commandType" /> which will return the number of rows affected.</para>
+        /// </summary>
+        /// <param name="commandType">
+        /// <para>One of the <see cref="CommandType"/> values.</para>
+        /// </param>
+        /// <param name="commandText">
+        /// <para>The command text to execute.</para>
+        /// </param>
+        /// <returns>
+        /// <para>An <see cref="IAsyncResult"/> that can be used to poll or wait for results, or both; 
+        /// this value is also needed when invoking <see cref="EndExecuteNonQuery"/>, 
+        /// which returns the number of affected records.</para>
+        /// </returns>
+        /// <seealso cref="Database.ExecuteNonQuery(CommandType,string)"/>
+        /// <seealso cref="EndExecuteNonQuery(IAsyncResult)"/>
+        public IAsyncResult BeginExecuteNonQuery(CommandType commandType, string commandText)
+        {
+            using (SqlCommand command = CreateSqlCommandByCommandType(commandType, commandText))
+            {
+                PrepareCommand(command, GetNewOpenConnection());
+                return DoBeginExecuteNonQuery(command, true);
+            }
+        }
+
+        /// <summary>
+        /// <para>Initiates the asynchronous execution of the the <paramref name="commandText"/> interpreted as specified by the <paramref name="commandType" /> inside a tranasaction which will return the number of rows affected.</para>
+        /// </summary>
+        /// <param name="commandType">
+        /// <para>One of the <see cref="CommandType"/> values.</para>
+        /// </param>
+        /// <param name="commandText">
+        /// <para>The command text to execute.</para>
+        /// </param>
+        /// <param name="transaction">
+        /// <para>The <see cref="DbTransaction"/> to execute the command within.</para>
+        /// </param>
+        /// <returns>
+        /// <para>An <see cref="IAsyncResult"/> that can be used to poll or wait for results, or both; 
+        /// this value is also needed when invoking <see cref="EndExecuteNonQuery"/>, 
+        /// which returns the number of affected records.</para>
+        /// </returns>
+        /// <seealso cref="Database.ExecuteNonQuery(CommandType,string)"/>
+        /// <seealso cref="EndExecuteNonQuery(IAsyncResult)"/>
+        public IAsyncResult BeginExecuteNonQuery(DbTransaction transaction, CommandType commandType, string commandText)
+        {
+            using (SqlCommand command = CreateSqlCommandByCommandType(commandType, commandText))
+            {
+                return BeginExecuteNonQuery(command, transaction);
+            }
+        }
+
+        /// <summary>
+        /// Finishes asynchronous execution of a Transact-SQL statement, returning the number of affected records.
+        /// </summary>
+        /// <param name="asyncResult">
+        /// <para>The <see cref="IAsyncResult"/> returned by a call to any overload of <see cref="BeginExecuteNonQuery(DbCommand)"/>.</para>
+        /// </param>
+        /// <seealso cref="Database.ExecuteNonQuery(DbCommand)"/>
+        /// <seealso cref="BeginExecuteNonQuery(DbCommand)"/>
+        /// <seealso cref="BeginExecuteNonQuery(DbCommand, DbTransaction)"/>
+        /// <returns>
+        /// <para>The number of affected records.</para>
+        /// </returns>
+        public int EndExecuteNonQuery(IAsyncResult asyncResult)
+        {
+            DaabAsyncResult daabAsyncResult = asyncResult as DaabAsyncResult;
+            SqlCommand command = daabAsyncResult.Command;
+            try
+            {
+                int affected = command.EndExecuteNonQuery(daabAsyncResult.InnerAsyncResult);
+                instrumentationProvider.FireCommandExecutedEvent(daabAsyncResult.StartTime);
+
+                return affected;
+            }
+            catch (Exception e)
+            {
+                instrumentationProvider.FireCommandFailedEvent(command.CommandText, ConnectionStringNoCredentials, e);
+                throw;
+            }
+            finally
+            {
+                CleanupConnectionFromAsyncOperation(daabAsyncResult);
+            }
+        }
+
+        private static IAsyncResult DoBeginExecuteReader(SqlCommand command, CommandBehavior commandBehavior)
+        {
+            IAsyncResult innerAsyncResult = command.BeginExecuteReader(commandBehavior);
+            
+            return new DaabAsyncResult(innerAsyncResult, command, false, DateTime.Now);
+        }
+
+        private static IAsyncResult DoBeginExecuteReader(SqlCommand command, CommandBehavior commandBehavior, AsyncCallback callback, object state)
+        {
+            // Implmentation here is a little complex, so a few comments are in order.
+            // We have our custom DaabAsyncResult object, which needs to be passed to
+            // the callback. However, when we call SqlCommand.BeginExecuteReader, what
+            // it passes to the callback is it's own IAsyncResult object, not ours.
+            // We work around the issue by wrapping the user supplied callback in
+            // another lambda function that has access to the DaabAsyncResult we want
+            // passed in.
+            // HOWEVER, there's a gotcha here. We can't create the DaabAsyncResult instance
+            // until we have the inner IAsyncResult object. But we don't get that inner
+            // object until BeginExecuteReader completes, so it's too late to pass it in
+            // to the new callback. This is why we're using a closure here. The lock is
+            // needed to assure we don't call the user callback until after the DaabAsyncResult
+            // object has been properly created.
+            // And ONE MORE GOTCHA: It's (theoretically) possible that BeginExecuteReader
+            // may complete synchronously, and call the callback on the same thread before
+            // returning the Async result. In that case, the lock won't help because we're
+            // already on the right thread and recursive acquires are fine. So we also check
+            // the CompletedSynchronously flag and handle the callback separately.
+
+            object padlock = new object();
+            DaabAsyncResult result = null;
+
+            AsyncCallback wrapperCallback = ar => {
+                lock (padlock) // Wait until we know the result variable has been filled in
+                {
+                    // If completed synchronously, we know that the result variable has not been filled in
+                    if(!ar.CompletedSynchronously)
+                    {
+                        callback(result);
+                    }
+                }
+            };
+
+            lock(padlock)
+            {
+                IAsyncResult innerAsyncResult = command.BeginExecuteReader(wrapperCallback, state, commandBehavior);
+                result = new DaabAsyncResult(innerAsyncResult, command, false, DateTime.Now);
+                if(result.CompletedSynchronously)
+                {
+                    callback(result);
+                }
+            }
+
+            return result;
+        }
+
+        private IAsyncResult BeginExecuteReader(DbCommand command, CommandBehavior commandBehavior)
+        {
+            SqlCommand sqlCommand = CheckIfSqlCommand(command);
+
+            ConnectionWrapper wrapper = GetOpenConnection();
+            PrepareCommand(sqlCommand, wrapper.Connection);
+
+            return DoBeginExecuteReader(sqlCommand, commandBehavior);
+        }
+
+        private IAsyncResult BeginExecuteReader(DbCommand command, CommandBehavior commandBehavior, AsyncCallback callback, object state)
+        {
+            SqlCommand sqlCommand = CheckIfSqlCommand(command);
+
+            ConnectionWrapper wrapper = GetOpenConnection();
+            PrepareCommand(sqlCommand, wrapper.Connection);
+
+            return DoBeginExecuteReader(sqlCommand, commandBehavior, callback, state);
+        }
+
+
+        /// <summary>
+        /// <para>Initiates the asynchronous execution of a <paramref name="SqlCommand"/> which will return a <see cref="IDataReader"/>.</para>
+        /// </summary>
+        /// <param name="command">
+        /// <para>The <see cref="SqlCommand"/> to execute.</para>
+        /// </param>
+        /// <returns>
+        /// <para>An <see cref="IAsyncResult"/> that can be used to poll or wait for results, or both; 
+        /// this value is also needed when invoking <see cref="EndExecuteReader"/>, 
+        /// which returns the <see cref="IDataReader"/>.</para>
+        /// </returns>
+        /// <seealso cref="Database.ExecuteReader(DbCommand)"/>
+        /// <seealso cref="EndExecuteReader(IAsyncResult)"/>
+        public IAsyncResult BeginExecuteReader(DbCommand command)
+        {
+            return BeginExecuteReader(command, CommandBehavior.Default);
+        }
+
+        /// <summary>
+        /// <para>Initiates the asynchronous execution of a <paramref name="SqlCommand"/> inside a transaction which will return a <see cref="IDataReader"/>.</para>
+        /// </summary>
+        /// <param name="command">
+        /// <para>The <see cref="SqlCommand"/> to execute.</para>
+        /// </param>
+        /// <param name="transaction">
+        /// <para>The <see cref="DbTransaction"/> to execute the command within.</para>
+        /// </param>
+        /// <returns>
+        /// <para>An <see cref="IAsyncResult"/> that can be used to poll or wait for results, or both; 
+        /// this value is also needed when invoking <see cref="EndExecuteReader"/>, 
+        /// which returns the <see cref="IDataReader"/>.</para>
+        /// </returns>
+        /// <seealso cref="Database.ExecuteReader(DbCommand)"/>
+        /// <seealso cref="EndExecuteReader(IAsyncResult)"/>
+        public IAsyncResult BeginExecuteReader(DbCommand command, DbTransaction transaction)
+        {
+            SqlCommand sqlCommand = CheckIfSqlCommand(command);
+
+            PrepareCommand(sqlCommand, transaction);
+
+            return DoBeginExecuteReader(sqlCommand, CommandBehavior.Default);
+        }
+
+        /// <summary>
+        /// <para>Initiates the asynchronous execution of <paramref name="storedProcedureName"/> using the given <paramref name="parameterValues" /> which will return a <see cref="IDataReader"/>.</para>
+        /// </summary>
+        /// <param name="storedProcedureName">
+        /// <para>The name of the stored procedure to execute.</para>
+        /// </param>
+        /// <param name="parameterValues">
+        /// <para>An array of parameters to pass to the stored procedure. The parameter values must be in call order as they appear in the stored procedure.</para>
+        /// </param>
+        /// <returns>
+        /// <para>An <see cref="IAsyncResult"/> that can be used to poll or wait for results, or both; 
+        /// this value is also needed when invoking <see cref="EndExecuteReader"/>, 
+        /// which returns the <see cref="IDataReader"/>.</para>
+        /// </returns>
+        /// <seealso cref="Database.ExecuteReader(string, object[])"/>
+        /// <seealso cref="EndExecuteReader(IAsyncResult)"/>
+        public IAsyncResult BeginExecuteReader(string storedProcedureName, params object[] parameterValues)
+        {
+            if (string.IsNullOrEmpty(storedProcedureName)) throw new ArgumentException("storedProcedureName", Resources.ExceptionNullOrEmptyString);
+
+            using (DbCommand command = GetStoredProcCommand(storedProcedureName, parameterValues))
+            {
+                return BeginExecuteReader(command, CommandBehavior.CloseConnection);
+            }
+        }
+
+
+        /// <summary>
+        /// <para>Initiates the asynchronous execution of <paramref name="storedProcedureName"/> using the given <paramref name="parameterValues" /> inside a transaction which will return a <see cref="IDataReader"/>.</para>
+        /// </summary>
+        /// <param name="transaction">
+        /// <para>The <see cref="DbTransaction"/> to execute the command within.</para>
+        /// </param>
+        /// <param name="storedProcedureName">
+        /// <para>The name of the stored procedure to execute.</para>
+        /// </param>
+        /// <param name="parameterValues">
+        /// <para>An array of parameters to pass to the stored procedure. The parameter values must be in call order as they appear in the stored procedure.</para>
+        /// </param>
+        /// <returns>
+        /// <para>An <see cref="IAsyncResult"/> that can be used to poll or wait for results, or both; 
+        /// this value is also needed when invoking <see cref="EndExecuteReader"/>, 
+        /// which returns the <see cref="IDataReader"/>.</para>
+        /// </returns>
+        /// <seealso cref="Database.ExecuteReader(DbTransaction, string, object[])"/>
+        /// <seealso cref="EndExecuteReader(IAsyncResult)"/>
+        public IAsyncResult BeginExecuteReader(DbTransaction transaction, string storedProcedureName, params object[] parameterValues)
+        {
+            using (DbCommand command = GetStoredProcCommand(storedProcedureName, parameterValues))
+            {
+                return BeginExecuteReader(command, transaction);
+            }
+        }
+
+        /// <summary>
+        /// <para>Initiates the asynchronous execution of the <paramref name="commandText"/> interpreted as specified by the <paramref name="commandType" /> which will return a <see cref="IDataReader"/>.</para>
+        /// </summary>
+        /// <param name="commandType">
+        /// <para>One of the <see cref="CommandType"/> values.</para>
+        /// </param>
+        /// <param name="commandText">
+        /// <para>The command text to execute.</para>
+        /// </param>
+        /// <returns>
+        /// <para>An <see cref="IAsyncResult"/> that can be used to poll or wait for results, or both; 
+        /// this value is also needed when invoking <see cref="EndExecuteReader"/>, 
+        /// which returns the <see cref="IDataReader"/>.</para>
+        /// </returns>
+        /// <seealso cref="Database.ExecuteReader(CommandType, string)"/>
+        /// <seealso cref="EndExecuteReader(IAsyncResult)"/>
+        public IAsyncResult BeginExecuteReader(CommandType commandType, string commandText)
+        {
+            using (SqlCommand command = CreateSqlCommandByCommandType(commandType, commandText))
+            {
+                return BeginExecuteReader(command, CommandBehavior.CloseConnection);
+            }
+        }
+
+        /// <summary>
+        /// <para>Initiates the asynchronous execution of the <paramref name="commandText"/> 
+        /// interpreted as specified by the <paramref name="commandType" /> which will return 
+        /// a <see cref="IDataReader"/>. When the async operation completes, the
+        /// <paramref name="callback"/> will be invoked on another thread to process the
+        /// result.</para>
+        /// </summary>
+        /// <param name="commandType">
+        /// <para>One of the <see cref="CommandType"/> values.</para>
+        /// </param>
+        /// <param name="commandText">
+        /// <para>The command text to execute.</para>
+        /// </param>
+        /// <param name="callback"><see cref="AsyncCallback"/> to execute when the async operation
+        /// completes.</param>
+        /// <param name="state">State object passed to the callback.</param>
+        /// <returns>
+        /// <para>An <see cref="IAsyncResult"/> that can be used to poll or wait for results, or both; 
+        /// this value is also needed when invoking <see cref="EndExecuteReader"/>, 
+        /// which returns the <see cref="IDataReader"/>.</para>
+        /// </returns>
+        /// <seealso cref="Database.ExecuteReader(CommandType, string)"/>
+        /// <seealso cref="EndExecuteReader(IAsyncResult)"/>
+        public IAsyncResult BeginExecuteReader(CommandType commandType, string commandText, AsyncCallback callback, object state)
+        {
+            using (var command = CreateSqlCommandByCommandType(commandType, commandText))
+            {
+                return BeginExecuteReader(command, CommandBehavior.Default, callback, state);
+            }
+        }
+
+        /// <summary>
+        /// <para>Initiates the asynchronous execution of the <paramref name="commandText"/> interpreted as specified by the <paramref name="commandType" /> inside an transaction which will return a <see cref="IDataReader"/>.</para>
+        /// </summary>
+        /// <param name="commandType">
+        /// <para>One of the <see cref="CommandType"/> values.</para>
+        /// </param>
+        /// <param name="commandText">
+        /// <para>The command text to execute.</para>
+        /// </param>
+        /// <param name="transaction">
+        /// <para>The <see cref="DbTransaction"/> to execute the command within.</para>
+        /// </param>
+        /// <returns>
+        /// <para>An <see cref="IAsyncResult"/> that can be used to poll or wait for results, or both; 
+        /// this value is also needed when invoking <see cref="EndExecuteReader"/>, 
+        /// which returns the <see cref="IDataReader"/>.</para>
+        /// </returns>
+        /// <seealso cref="Database.ExecuteReader(CommandType, string)"/>
+        /// <seealso cref="EndExecuteReader(IAsyncResult)"/>
+        public IAsyncResult BeginExecuteReader(DbTransaction transaction, CommandType commandType, string commandText)
+        {
+            using (SqlCommand command = CreateSqlCommandByCommandType(commandType, commandText))
+            {
+                return BeginExecuteReader(command, transaction);
+            }
+        }
+
+        /// <summary>
+        /// Finishes asynchronous execution of a Transact-SQL statement, returning an <see cref="IDataReader"/>.
+        /// </summary>
+        /// <param name="asyncResult">
+        /// <para>The <see cref="IAsyncResult"/> returned by a call to any overload of <see cref="BeginExecuteReader(DbCommand)"/>.</para>
+        /// </param>
+        /// <seealso cref="Database.ExecuteReader(DbCommand)"/>
+        /// <seealso cref="BeginExecuteReader(DbCommand)"/>
+        /// <seealso cref="BeginExecuteReader(DbCommand, DbTransaction)"/>
+        /// <returns>
+        /// <para>An <see cref="IDataReader"/> object that can be used to consume the queried information.</para>
+        /// </returns>     
+        public IDataReader EndExecuteReader(IAsyncResult asyncResult)
+        {
+            DaabAsyncResult daabAsyncResult = asyncResult as DaabAsyncResult;
+            SqlCommand command = daabAsyncResult.Command;
+            try
+            {
+                IDataReader reader = command.EndExecuteReader(daabAsyncResult.InnerAsyncResult);
+                instrumentationProvider.FireCommandExecutedEvent(daabAsyncResult.StartTime);
+
+                return reader;
+            }
+            catch (Exception e)
+            {
+                instrumentationProvider.FireCommandFailedEvent(command.CommandText, ConnectionStringNoCredentials, e);
+                throw;
+            }
+            finally
+            {
+                CleanupConnectionFromAsyncOperation(daabAsyncResult);
+            }
+        }
+
+        private static void CleanupConnectionFromAsyncOperation(DaabAsyncResult daabAsyncResult)
+        {
+            if (daabAsyncResult.CloseConnection)
+            {
+                if (daabAsyncResult.Connection != null)
+                {
+                    daabAsyncResult.Connection.Close();
+                }
+            }
+        }
+
+        private class DaabAsyncResult : IAsyncResult
+        {
+            IAsyncResult innerAsyncResult;
+            SqlCommand command;
+            bool closeConnection;
+            DateTime startTime;
+
+            public DaabAsyncResult(IAsyncResult innerAsyncResult, SqlCommand command, bool closeConnection, DateTime startTime)
+            {
+                this.innerAsyncResult = innerAsyncResult;
+                this.command = command;
+                this.closeConnection = closeConnection;
+                this.startTime = startTime;
+            }
+
+            public object AsyncState
+            {
+                get { return innerAsyncResult.AsyncState; }
+            }
+
+            public WaitHandle AsyncWaitHandle
+            {
+                get { return innerAsyncResult.AsyncWaitHandle; }
+            }
+
+            public bool CompletedSynchronously
+            {
+                get { return innerAsyncResult.CompletedSynchronously; }
+            }
+
+            public bool IsCompleted
+            {
+                get { return innerAsyncResult.IsCompleted; }
+            }
+
+            public IAsyncResult InnerAsyncResult
+            {
+                get { return innerAsyncResult; }
+            }
+
+            public SqlCommand Command
+            {
+                get { return command; }
+            }
+
+            public bool CloseConnection
+            {
+                get { return closeConnection; }
+            }
+
+            public SqlConnection Connection
+            {
+                get { return command.Connection; }
+            }
+
+            public DateTime StartTime
+            {
+                get { return startTime; }
+            }
         }
     }
 }

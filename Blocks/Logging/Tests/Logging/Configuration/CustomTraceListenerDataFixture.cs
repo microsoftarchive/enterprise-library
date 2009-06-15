@@ -41,19 +41,54 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         }
 
         [TestMethod]
+        public void ThenCreatesTwoTypeRegistrations()
+        {
+            Assert.AreEqual(2, listenerData.GetRegistrations().Count());
+        }
+
+        [TestMethod]
+        public void ThenCreatesATypeRegistrationForTheWrapperWithTheOriginalName()
+        {
+            listenerData.GetRegistrations().Where(tr => tr.Name == "custom trace listener").First()
+                .AssertForServiceType(typeof(TraceListener))
+                .ForName("custom trace listener")
+                .ForImplementationType(typeof(ReconfigurableTraceListenerWrapper));
+        }
+
+        [TestMethod]
+        public void ThenWrapperRegistrationIsSingleton()
+        {
+            Assert.AreEqual(
+                TypeRegistrationLifetime.Singleton,
+                listenerData.GetRegistrations().Where(tr => tr.Name == "custom trace listener").First().Lifetime);
+        }
+
+        [TestMethod]
+        public void ThenWrapperRegistrationIsInjectedWithTheWrappedTraceListenerAndTheLoggingUpdateCoordinator()
+        {
+            listenerData.GetRegistrations().Where(tr => tr.Name == "custom trace listener").First()
+                .AssertConstructor()
+                .WithContainerResolvedParameter<TraceListener>("custom trace listener\u200Cimplementation")
+                .WithContainerResolvedParameter<ILoggingUpdateCoordinator>(null)
+                .VerifyConstructorParameters();
+        }
+
+        [TestMethod]
         public void ThenRegistrationIsForCorrectServiceAndType()
         {
-            TypeRegistration registry = listenerData.GetRegistrations().ElementAt(0);
+            TypeRegistration registry =
+                listenerData.GetRegistrations().Where(tr => tr.Name == "custom trace listener\u200Cimplementation").First();
 
             registry.AssertForServiceType(typeof(TraceListener))
-                .ForName("custom trace listener")
+                .ForName("custom trace listener\u200Cimplementation")
                 .ForImplementationType(typeof(System.Diagnostics.TextWriterTraceListener));
         }
 
         [TestMethod]
         public void ThenRegistrationTargetsConstructorWithInitialData()
         {
-            TypeRegistration registry = listenerData.GetRegistrations().ElementAt(0);
+            TypeRegistration registry =
+                listenerData.GetRegistrations().Where(tr => tr.Name == "custom trace listener\u200Cimplementation").First();
 
             registry.AssertConstructor()
                 .WithValueConstructorParameter<string>("someInitData")
@@ -63,12 +98,21 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         [TestMethod]
         public void ThenRegistryEntryIncludesPropertyForTraceOptions()
         {
-            TypeRegistration registry = listenerData.GetRegistrations().ElementAt(0);
+            TypeRegistration registry =
+                listenerData.GetRegistrations().Where(tr => tr.Name == "custom trace listener\u200Cimplementation").First();
 
             registry.AssertProperties()
                 .WithValueProperty("TraceOutputOptions", TraceOptions.None)
-                .WithValueProperty("Name", "custom trace listener")
+                .WithValueProperty("Name", "custom trace listener\u200Cimplementation")
                 .VerifyProperties();
+        }
+
+        [TestMethod]
+        public void WhenCreatesRegistrations_ThenCreatedRegistrationsAreSingleton()
+        {
+            Assert.AreEqual(
+                TypeRegistrationLifetime.Transient,
+                listenerData.GetRegistrations().Where(tr => tr.Name == "custom trace listener\u200Cimplementation").First().Lifetime);
         }
     }
 
@@ -93,17 +137,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         [TestMethod]
         public void ThenRegistrationIsForCorrectServiceAndType()
         {
-            TypeRegistration registry = listenerData.GetRegistrations().ElementAt(0);
+            TypeRegistration registry =
+                listenerData.GetRegistrations().First(tr => tr.Name == "custom trace listener\u200Cimplementation");
 
             registry.AssertForServiceType(typeof(TraceListener))
-                .ForName("custom trace listener")
+                .ForName("custom trace listener\u200Cimplementation")
                 .ForImplementationType(typeof(MockCustomTraceListener));
         }
 
         [TestMethod]
         public void ThenRegistrationTargetsConstructorWithInitialData()
         {
-            TypeRegistration registry = listenerData.GetRegistrations().ElementAt(0);
+            TypeRegistration registry =
+                listenerData.GetRegistrations().First(tr => tr.Name == "custom trace listener\u200Cimplementation");
 
             registry.AssertConstructor()
                 .WithValueConstructorParameter<string>("someInitData")
@@ -113,13 +159,22 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         [TestMethod]
         public void ThenRegistryEntryIncludesPropertyForTraceOptions()
         {
-            TypeRegistration registry = listenerData.GetRegistrations().ElementAt(0);
+            TypeRegistration registry =
+                listenerData.GetRegistrations().First(tr => tr.Name == "custom trace listener\u200Cimplementation");
 
             registry.AssertProperties()
                 .WithValueProperty("TraceOutputOptions", TraceOptions.None)
-                .WithValueProperty("Name", "custom trace listener")
+                .WithValueProperty("Name", "custom trace listener\u200Cimplementation")
                 .WithContainerResolvedProperty<ILogFormatter>("Formatter", "formatter")
                 .VerifyProperties();
+        }
+
+        [TestMethod]
+        public void WhenCreatesRegistration_ThenWrappedRegistrationIsTransient()
+        {
+            Assert.AreEqual(
+                TypeRegistrationLifetime.Transient,
+                listenerData.GetRegistrations().First(tr => tr.Name == "custom trace listener\u200Cimplementation").Lifetime);
         }
     }
 
@@ -144,17 +199,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         [TestMethod]
         public void ThenRegistrationIsForCorrectServiceAndType()
         {
-            TypeRegistration registry = listenerData.GetRegistrations().ElementAt(0);
+            TypeRegistration registry =
+                listenerData.GetRegistrations().First(tr => tr.Name == "custom trace listener\u200Cimplementation");
 
             registry.AssertForServiceType(typeof(TraceListener))
-                .ForName("custom trace listener")
+                .ForName("custom trace listener\u200Cimplementation")
                 .ForImplementationType(typeof(MockCustomTraceListener));
         }
 
         [TestMethod]
         public void ThenRegistrationTargetsConstructorWithInitialData()
         {
-            TypeRegistration registry = listenerData.GetRegistrations().ElementAt(0);
+            TypeRegistration registry =
+                listenerData.GetRegistrations().First(tr => tr.Name == "custom trace listener\u200Cimplementation");
 
             registry.AssertConstructor()
                 .WithValueConstructorParameter<string>("someInitData")
@@ -164,12 +221,21 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         [TestMethod]
         public void ThenRegistryEntryIncludesPropertyForTraceOptions()
         {
-            TypeRegistration registry = listenerData.GetRegistrations().ElementAt(0);
+            TypeRegistration registry =
+                listenerData.GetRegistrations().First(tr => tr.Name == "custom trace listener\u200Cimplementation");
 
             registry.AssertProperties()
                 .WithValueProperty("TraceOutputOptions", TraceOptions.None)
-                .WithValueProperty("Name", "custom trace listener")
+                .WithValueProperty("Name", "custom trace listener\u200Cimplementation")
                 .VerifyProperties();
+        }
+
+        [TestMethod]
+        public void WhenCreatesRegistration_ThenWrappedRegistrationIsTransient()
+        {
+            Assert.AreEqual(
+                TypeRegistrationLifetime.Transient,
+                listenerData.GetRegistrations().First(tr => tr.Name == "custom trace listener\u200Cimplementation").Lifetime);
         }
     }
 
@@ -182,7 +248,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         public void Given()
         {
             listenerData = new CustomTraceListenerData("someName",
-                                                       typeof (MockCustomTraceListenerWithoutExpectedConstructor),
+                                                       typeof(MockCustomTraceListenerWithoutExpectedConstructor),
                                                        "initData");
         }
 
@@ -190,7 +256,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         [ExpectedException(typeof(ArgumentException))]
         public void WhenRegistrationsRetrieved_ThenThrowsException()
         {
-            var registrations = listenerData.GetRegistrations();
+            var registrations = listenerData.GetRegistrations().ToArray();
         }
     }
 

@@ -45,7 +45,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
                 registrations.Single(r => r.ServiceType == typeof(IValidationInstrumentationProvider));
             instrumentationProviderRegistration
                 .AssertForServiceType(typeof(IValidationInstrumentationProvider))
-                .ForName(null)
+                .IsDefault()
                 .ForImplementationType(typeof(ValidationInstrumentationProvider));
         }
 
@@ -72,7 +72,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
 
             attributeFactoryRegistration
                 .AssertForServiceType(typeof (AttributeValidatorFactory))
-                .ForName(null)
+                .IsDefault()
                 .ForImplementationType(typeof (AttributeValidatorFactory));
         }
 
@@ -96,7 +96,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
 
             configurationFactoryRegistration
                 .AssertForServiceType(typeof(ConfigurationValidatorFactory))
-                .ForName(null)
+                .IsDefault()
                 .ForImplementationType(typeof(ConfigurationValidatorFactory));
         }
 
@@ -120,7 +120,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             var factoryRegistration = registrations.Single(r => r.ImplementationType == typeof(CompositeValidatorFactory));
             factoryRegistration
                 .AssertForServiceType(typeof(ValidatorFactory))
-                .ForName(null)
+                .IsDefault()
                 .ForImplementationType(typeof(CompositeValidatorFactory));
         }
 
@@ -137,7 +137,120 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
                 .VerifyConstructorParameters();
         }
     }
+    
+    [TestClass]
+    public class GivenUpdatedTypeRegistrationsBasedOnEmptyConfigurationSource
+    {
+        private IEnumerable<TypeRegistration> registrations;
+        private IConfigurationSource configurationSource;
 
+        [TestInitialize]
+        public void Given()
+        {
+            var typeRegistrationProvider = new ValidationTypeRegistrationProvider();
+            configurationSource = new DictionaryConfigurationSource();
+            registrations = typeRegistrationProvider.GetUpdatedRegistrations(configurationSource);
+        }
+
+        [TestMethod]
+        public void ThenContainsRegistrationForValidationInstrumentationProvider()
+        {
+            var instrumentationProviderRegistration =
+                registrations.Single(r => r.ServiceType == typeof(IValidationInstrumentationProvider));
+            instrumentationProviderRegistration
+                .AssertForServiceType(typeof(IValidationInstrumentationProvider))
+                .IsDefault()
+                .ForImplementationType(typeof(ValidationInstrumentationProvider));
+        }
+
+        [TestMethod]
+        public void ThenValidationInstrumentationProviderUsesDefaultInstrumentationSettings()
+        {
+            var instrumentationProviderRegistration =
+                registrations.Single(r => r.ServiceType == typeof(IValidationInstrumentationProvider));
+
+            instrumentationProviderRegistration
+                .AssertConstructor()
+                .WithValueConstructorParameter(false)
+                .WithValueConstructorParameter(false)
+                .WithValueConstructorParameter(false)
+                .WithValueConstructorParameter(string.Empty)
+                .VerifyConstructorParameters();
+        }
+
+        [TestMethod]
+        public void ThenContainsRegistrationForDefaultNamedAttributeValidatorFactory()
+        {
+            var attributeFactoryRegistration =
+               registrations.Single(r => r.ServiceType == typeof(AttributeValidatorFactory));
+
+            attributeFactoryRegistration
+                .AssertForServiceType(typeof(AttributeValidatorFactory))
+                .IsDefault()
+                .ForImplementationType(typeof(AttributeValidatorFactory));
+        }
+
+        [TestMethod]
+        public void ThenAttributeRegistrationTargetsConstructorWithConfigurationSource()
+        {
+            var attributeFactoryRegistration =
+               registrations.Single(r => r.ServiceType == typeof(AttributeValidatorFactory));
+
+            attributeFactoryRegistration
+                .AssertConstructor()
+                .WithContainerResolvedParameter<IValidationInstrumentationProvider>(null)
+                .VerifyConstructorParameters();
+        }
+
+        [TestMethod]
+        public void ThenContainsRegistrationForDefaultNamedConfigurationValidatorFactory()
+        {
+            var configurationFactoryRegistration =
+               registrations.Single(r => r.ServiceType == typeof(ConfigurationValidatorFactory));
+
+            configurationFactoryRegistration
+                .AssertForServiceType(typeof(ConfigurationValidatorFactory))
+                .IsDefault()
+                .ForImplementationType(typeof(ConfigurationValidatorFactory));
+        }
+
+
+        [TestMethod]
+        public void ThenConfigurationRegistrationTargetsConstructorWithConfigurationSource()
+        {
+            var configurationFactoryRegistration =
+               registrations.Single(r => r.ServiceType == typeof(ConfigurationValidatorFactory));
+
+            configurationFactoryRegistration
+                .AssertConstructor()
+                .WithValueConstructorParameter(configurationSource)
+                .WithContainerResolvedParameter<IValidationInstrumentationProvider>(null)
+                .VerifyConstructorParameters();
+        }
+
+        [TestMethod]
+        public void ThenContainsRegistrationForFactoryInstance()
+        {
+            var factoryRegistration = registrations.Single(r => r.ImplementationType == typeof(CompositeValidatorFactory));
+            factoryRegistration
+                .AssertForServiceType(typeof(ValidatorFactory))
+                .IsDefault()
+                .ForImplementationType(typeof(CompositeValidatorFactory));
+        }
+
+        [TestMethod]
+        public void ThenCompositeRegistrationTargetsConstructorWithConfigurationSource()
+        {
+            var factoryRegistration = registrations.Single(r => r.ImplementationType == typeof(CompositeValidatorFactory));
+
+            factoryRegistration
+                .AssertConstructor()
+                .WithContainerResolvedParameter<IValidationInstrumentationProvider>(null)
+                .WithContainerResolvedParameter<AttributeValidatorFactory>(null)
+                .WithContainerResolvedParameter<ConfigurationValidatorFactory>(null)
+                .VerifyConstructorParameters();
+        }
+    }
     [TestClass]
     public class GivenContainerConfiguredForValidationWithNoConfigurationSourceSpecified
     {

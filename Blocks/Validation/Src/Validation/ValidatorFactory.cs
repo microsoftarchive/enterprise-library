@@ -43,7 +43,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         }
 
         ///<summary>
-        /// The <see cref="IInstrumentationEventProvider"/> to attach to validators.
+        /// The <see cref="IValidationInstrumentationProvider"/> to attach to validators.
         ///</summary>
         protected IValidationInstrumentationProvider InstrumentationProvider
         {

@@ -39,7 +39,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners.Tests
             LogSource source = new LogSource("notfromconfig", SourceLevels.All);
             source.Listeners.Add(listener);
             source.TraceData(TraceEventType.Error, 0, new LogEntry("message", "cat1", 0, 0, TraceEventType.Error, "title", null));
-            source.Dispose();
+            listener.Dispose();
 
             string strFileContents = GetFileContents("trace.log");
 
@@ -57,7 +57,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners.Tests
             LogSource source = new LogSource("notfromconfig", SourceLevels.All);
             source.Listeners.Add(listener);
             source.TraceData(TraceEventType.Error, 0, new LogEntry("message", "cat1", 0, 0, TraceEventType.Error, "title", null));
-            source.Dispose();
+            listener.Dispose();
 
             string strFileContents = GetFileContents("tracewithheaderandfooter.log");
 
@@ -75,7 +75,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners.Tests
             LogSource source = new LogSource("notfromconfig", SourceLevels.All);
             source.Listeners.Add(listener);
             source.TraceData(TraceEventType.Error, 0, testLogEntry);
-            source.Dispose();
+            listener.Dispose();
 
             string strFileContents = GetFileContents("trace.log");
 
@@ -105,7 +105,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners.Tests
                 LogSource source = new LogSource("notfromconfig", SourceLevels.All);
                 source.Listeners.Add(listener);
                 source.TraceData(TraceEventType.Error, 0, new LogEntry("message", "cat1", 0, 0, TraceEventType.Error, "title", null));
-                source.Dispose();
+                listener.Dispose();
             }
             catch (SecurityException)
             {
@@ -241,7 +241,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners.Tests
             source.Listeners.Add(listener);
             for (int writeLoop = 0; writeLoop < numberOfWrites; writeLoop++)
                 source.TraceData(TraceEventType.Error, 0, new LogEntry("message", "cat1", 0, 0, TraceEventType.Error, "title", null));
-            source.Dispose();
+            listener.Dispose();
 
             StreamReader reader = new StreamReader("tracewithheaderandfootermultiplewrites.log");
             int headersFound = NumberOfItems("tracewithheaderandfootermultiplewrites.log", header);

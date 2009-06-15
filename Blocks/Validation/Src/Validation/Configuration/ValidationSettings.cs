@@ -44,7 +44,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
             }
             catch(ConfigurationErrorsException e)
             {
-                instrumentationProvider.FireConfigurationFailure(e);
+                instrumentationProvider.NotifyConfigurationFailure(e);
                 throw;
             }
         }

@@ -111,7 +111,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
             yield return
                 new TypeRegistration<ICallHandler>(registrationExpression)
                 {
-                    Name = this.Name + nameSuffix
+                    Name = this.Name + nameSuffix,
+                    Lifetime = TypeRegistrationLifetime.Transient
                 };
         }
     }

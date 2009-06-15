@@ -47,6 +47,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         {
             registration.AssertConstructor().VerifyConstructorParameters();
         }
+
+        [TestMethod]
+        public void ThenRegistrationIsTransient()
+        {
+            Assert.AreEqual(TypeRegistrationLifetime.Transient, registration.Lifetime);
+        }
     }
 
 }

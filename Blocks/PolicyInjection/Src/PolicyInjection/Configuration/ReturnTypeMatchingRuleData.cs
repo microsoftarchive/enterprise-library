@@ -53,7 +53,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
             yield return
                 new TypeRegistration<IMatchingRule>(() => new ReturnTypeMatchingRule(this.Match, this.IgnoreCase))
                 {
-                    Name = this.Name + nameSuffix
+                    Name = this.Name + nameSuffix,
+                    Lifetime = TypeRegistrationLifetime.Transient
                 };
         }
     }

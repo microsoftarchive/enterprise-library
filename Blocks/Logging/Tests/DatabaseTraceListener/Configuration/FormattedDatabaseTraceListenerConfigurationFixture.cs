@@ -122,7 +122,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Tests.Configura
             helper.loggingSettings.Formatters.Add(new TextFormatterData("formatter", "foobar template"));
             helper.loggingSettings.TraceListeners.Add(listenerData);
 
-            TraceListener listener = GetListener("listener", helper.configurationSource);
+            TraceListener listener = GetListener("listener\u200cimplementation", helper.configurationSource);
 
             Assert.IsNotNull(listener);
             Assert.AreEqual(listener.GetType(), typeof(FormattedDatabaseTraceListener));
@@ -139,7 +139,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Tests.Configura
             loggingSettings.TraceListeners.Add(
                 new FormattedDatabaseTraceListenerData("listener", "WriteLog", "AddCategory", "LoggingDb", "formatter"));
 
-            TraceListener listener = GetListener("listener", CommonUtil.SaveSectionsAndGetConfigurationSource(loggingSettings));
+            TraceListener listener = GetListener("listener\u200cimplementation", CommonUtil.SaveSectionsAndGetConfigurationSource(loggingSettings));
 
             Assert.IsNotNull(listener);
             Assert.AreEqual(listener.GetType(), typeof(FormattedDatabaseTraceListener));
@@ -155,7 +155,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Tests.Configura
             loggingSettings.TraceListeners.Add(
                 new FormattedDatabaseTraceListenerData("listener", "WriteLog", "AddCategory", "LoggingDb", null));
 
-            TraceListener listener = GetListener("listener",
+            TraceListener listener = GetListener("listener\u200cimplementation",
                                                  CommonUtil.SaveSectionsAndGetConfigurationSource(loggingSettings));
             Assert.IsNotNull(listener);
             Assert.AreEqual(listener.GetType(), typeof(FormattedDatabaseTraceListener));

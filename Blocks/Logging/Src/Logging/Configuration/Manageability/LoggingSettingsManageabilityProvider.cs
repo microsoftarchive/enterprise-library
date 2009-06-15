@@ -325,10 +325,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         }
 
         /// <summary>
-        /// 
+        /// Creates the <see cref="ConfigurationSetting"/> instances that describe the <paramref name="configurationSection"/>.
         /// </summary>
-        /// <param name="configurationSection"></param>
-        /// <param name="wmiSettings"></param>
+        /// <param name="configurationSection">The configuration section that must be managed.</param>
+        /// <param name="wmiSettings">A collection to where the generated WMI objects are to be added.</param>
         protected override void GenerateWmiObjectsForConfigurationSection(
             LoggingSettings configurationSection,
             ICollection<ConfigurationSetting> wmiSettings)

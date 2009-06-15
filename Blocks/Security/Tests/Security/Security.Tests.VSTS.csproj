@@ -70,6 +70,7 @@
     <Compile Include="AuthorizationRuleProviderFixture.cs" />
     <Compile Include="ComplexExpressionFixture.cs" />
     <Compile Include="Configuration\AuthorizationConfigurationSerializationFixture.cs" />
+    <Compile Include="Configuration\SecuritySettingsReconfigurableRegistrationsFixture.cs" />
     <Compile Include="Configuration\SecurityCacheConfigurationSerializationFixture.cs" />
     <Compile Include="Configuration\SecuritySettingsGetRegistrationsFixture.cs" />
     <Compile Include="Configuration\Unity\SecurityBlockInstantiationFixture.cs" />

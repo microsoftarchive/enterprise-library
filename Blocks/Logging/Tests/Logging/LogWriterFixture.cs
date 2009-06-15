@@ -247,7 +247,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
             Dictionary<string, LogSource> logSources = new Dictionary<string, LogSource>();
             logSources.Add("foo", badSource);
 
-            ILoggingInstrumentationProvider instrumentationProvider =  new LoggingInstrumentationProvider(false, true, false, "applicationInstanceName");
+            ILoggingInstrumentationProvider instrumentationProvider = new LoggingInstrumentationProvider(false, true, false, "applicationInstanceName");
             LogWriter writer = new LogWriter(new List<ILogFilter>(), logSources, badSource, "foo", instrumentationProvider);
 
             writer.Write(CommonUtil.GetDefaultLogEntry());
@@ -279,6 +279,89 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
             Assert.AreEqual(typeof(CategoryFilter), categoryFilter.GetType());
             Assert.IsNotNull(priorityFilter);
             Assert.AreEqual(typeof(PriorityFilter), priorityFilter.GetType());
+        }
+    }
+
+    [TestClass]
+    public class GivenALogWriter
+    {
+        private MockTraceListenerAndCoordinator traceListener;
+        private LogWriter logWriter;
+        private MockLoggingInstrumentationProvider instrumentationProvider;
+
+        [TestInitialize]
+        public void Setup()
+        {
+            this.traceListener = new MockTraceListenerAndCoordinator();
+            this.instrumentationProvider = new MockLoggingInstrumentationProvider();
+            this.logWriter =
+                new LogWriter(
+                    new LogWriterStructureHolder(
+                        new ILogFilter[0],
+                        new Dictionary<string, LogSource>(),
+                        new LogSource("all", new[] { this.traceListener }, SourceLevels.All),
+                        new LogSource("not processed"),
+                        new LogSource("error"),
+                        "default",
+                        false,
+                        false,
+                        false),
+                    this.instrumentationProvider,
+                    this.traceListener);
+        }
+
+        [TestMethod]
+        public void WhenLogging_ThenLogsWithinCoordinatorsReadLock()
+        {
+            var logEntry = new LogEntry() { Message = "message" };
+
+            this.logWriter.Write(logEntry);
+
+            Assert.IsTrue(this.traceListener.loggedWithingReadLock);
+        }
+
+        private class MockTraceListenerAndCoordinator : TraceListener, ILoggingUpdateCoordinator
+        {
+            public bool insideReadAction;
+            public bool loggedWithingReadLock;
+
+            public override void Write(string message)
+            {
+                this.loggedWithingReadLock = this.insideReadAction;
+            }
+
+            public override void WriteLine(string message)
+            {
+                this.loggedWithingReadLock = this.insideReadAction;
+            }
+
+            public void RegisterLoggingUpdateHandler(ILoggingUpdateHandler loggingUpdateHandler)
+            {
+                
+            }
+
+            public void UnregisterLoggingUpdateHandler(ILoggingUpdateHandler loggingUpdateHandler)
+            {
+                throw new NotImplementedException();
+            }
+
+            public void ExecuteWriteOperation(Action action)
+            {
+                throw new NotImplementedException();
+            }
+
+            public void ExecuteReadOperation(Action action)
+            {
+                try
+                {
+                    this.insideReadAction = true;
+                    action();
+                }
+                finally
+                {
+                    this.insideReadAction = false;
+                }
+            }
         }
     }
 }

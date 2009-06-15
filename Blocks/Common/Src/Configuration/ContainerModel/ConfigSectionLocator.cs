@@ -29,7 +29,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerMo
         /// </summary>
         /// <param name="sectionName">Section name in configuration to look for.</param>
         public ConfigSectionLocator(string sectionName)
-            : base(sectionName)
+            : this(sectionName, new NullContainerReconfiguringEventSource())
         {
         }
 
@@ -43,7 +43,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerMo
         /// <param name="sectionName">Section name in configuration to look for.</param>
         /// <param name="reconfiguringEventSource">Event source to signal when reconfiguration is needed.</param>
         public ConfigSectionLocator(string sectionName, IContainerReconfiguringEventSource reconfiguringEventSource)
-            : this(sectionName)
+            : base(sectionName)
         {
             if(reconfiguringEventSource == null) throw new ArgumentNullException("reconfiguringEventSource");
 
@@ -93,8 +93,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerMo
 
         private void OnContainerReconfiguring(object sender, ContainerReconfiguringEventArgs e)
         {
-            if(!e.ChangedSectionNames.Contains(Name)) return;
-
             e.AddTypeRegistrations(GetUpdatedRegistrations(e.ConfigurationSource));
         } 
     }

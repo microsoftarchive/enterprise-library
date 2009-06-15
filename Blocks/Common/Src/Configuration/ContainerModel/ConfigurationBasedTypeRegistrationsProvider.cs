@@ -29,18 +29,29 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerMo
         /// <returns>The <see cref="ITypeRegistrationsProvider"/> that will return all registrations.</returns>
         public static ITypeRegistrationsProvider CreateProvider()
         {
-            var locators = CreateTypeRegistrationsProviderLocators(new DictionaryConfigurationSource());
-            return new CompositeTypeRegistrationsProviderLocator(locators);
+            return CreateProvider(new DictionaryConfigurationSource(), new NullContainerReconfiguringEventSource());
         }
+
+        ///// <summary>
+        ///// Create a <see cref="ITypeRegistrationsProvider"/> that contains all the default registration
+        ///// providers, honoring any configuration overrides of locators.
+        ///// </summary>
+        ///// <returns>The <see cref="ITypeRegistrationsProvider"/> that will return all registrations.</returns>
+        //public static ITypeRegistrationsProvider CreateProvider(IConfigurationSource configurationSource)
+        //{
+        //    return CreateProvider(configurationSource, new NullContainerReconfiguringEventSource());
+        //}
 
         /// <summary>
         /// Create a <see cref="ITypeRegistrationsProvider"/> that contains all the default registration
         /// providers, honoring any configuration overrides of locators.
         /// </summary>
+        /// <param name="configurationSource">The configuration source to use when creating <see cref="TypeRegistrationsProvider"/>s</param>
+        /// <param name="reconfiguringEventSource">The <see cref="IContainerReconfiguringEventSource"/> responsible for raising container reconfiguration events.</param>
         /// <returns>The <see cref="ITypeRegistrationsProvider"/> that will return all registrations.</returns>
-        public static ITypeRegistrationsProvider CreateProvider(IConfigurationSource configurationSource)
+        public static ITypeRegistrationsProvider CreateProvider(IConfigurationSource configurationSource, IContainerReconfiguringEventSource reconfiguringEventSource)
         {
-            var locators = CreateTypeRegistrationsProviderLocators(configurationSource);
+            var locators = CreateTypeRegistrationsProviderLocators(configurationSource, reconfiguringEventSource);
             return new CompositeTypeRegistrationsProviderLocator(locators);
         }
 
@@ -48,8 +59,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerMo
         /// public for unittesting purposes.
         /// </summary>
         /// <param name="configurationSource"></param>
+        /// <param name="reconfiguringEventSource"></param>
         /// <returns></returns>
-        public static IEnumerable<ITypeRegistrationsProvider> CreateTypeRegistrationsProviderLocators(IConfigurationSource configurationSource)
+        public static IEnumerable<ITypeRegistrationsProvider> CreateTypeRegistrationsProviderLocators(IConfigurationSource configurationSource, IContainerReconfiguringEventSource reconfiguringEventSource)
         {
             TypeRegistrationProvidersConfigurationSection section = configurationSource.GetSection(TypeRegistrationProvidersConfigurationSection.SectionName) as TypeRegistrationProvidersConfigurationSection;
             if (section == null)
@@ -68,11 +80,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerMo
                 }
                 if (!string.IsNullOrEmpty(typeRegistrationProviderSettings.SectionName))
                 {
-                    yield return new ConfigSectionLocator(typeRegistrationProviderSettings.SectionName);
+                    yield return new ConfigSectionLocator(typeRegistrationProviderSettings.SectionName, reconfiguringEventSource);
                 }
                 else if (!string.IsNullOrEmpty(typeRegistrationProviderSettings.ProviderTypeName))
                 {
-                    yield return new TypeLoadingLocator(typeRegistrationProviderSettings.ProviderTypeName);
+                    yield return new TypeLoadingLocator(typeRegistrationProviderSettings.ProviderTypeName, reconfiguringEventSource);
                 }
             }
         }

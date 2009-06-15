@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration.ContainerModel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -159,6 +160,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Tests
                 .WithValueConstructorParameter(SourceLevels.Error)
                 .WithValueConstructorParameter(true)
                 .VerifyConstructorParameters();
+        }
+
+        [TestMethod]
+        public void WhenCreatesRegistration_ThenCreatedRegistrationIsATransient()
+        {
+            Assert.AreEqual(TypeRegistrationLifetime.Transient, data.GetRegistrations().Lifetime);
         }
     }
 }

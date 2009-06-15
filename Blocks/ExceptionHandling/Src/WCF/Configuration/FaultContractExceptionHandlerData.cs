@@ -124,7 +124,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.Configurat
                 () => new FaultContractExceptionHandler(Type.GetType(this.FaultContractType), ExceptionMessage, this.Attributes)
                 )
                        {
-                           Name = BuildName(namePrefix)
+                           Name = BuildName(namePrefix),
+                           Lifetime = TypeRegistrationLifetime.Transient
                        };
         }
 	}

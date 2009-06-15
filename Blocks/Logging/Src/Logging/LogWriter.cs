@@ -14,17 +14,15 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
+using System.Linq;
 using System.Security;
 using System.Security.Principal;
-using System.Threading;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Filters;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Properties;
 using Microsoft.Practices.ServiceLocation;
+using Microsoft.Practices.Unity.Utility;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging
 {
@@ -50,22 +48,23 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
     /// is set to true, then the logEntry is logged to the "logging errors and warnings" special log source.
     /// </para>
     /// </remarks>
-    public class LogWriter : ILogFilterErrorHandler, IDisposable
+    public class LogWriter : ILogFilterErrorHandler, IDisposable, ILoggingUpdateHandler
     {
-        const int defaultTimeout = 2500;
-
         /// <summary>
         /// EventID used on LogEntries that occur when internal LogWriter mechanisms fail.
         /// </summary>
         public const int LogWriterFailureEventID = 6352;
 
-        static int readerLockAcquireTimeout = defaultTimeout;
-        static int writerLockAcquireTimeout = defaultTimeout;
+        private const int DefaultPriority = -1;
+        private const TraceEventType DefaultSeverity = TraceEventType.Information;
+        private const int DefaultEventId = 1;
+        private const string DefaultTitle = "";
+        private static readonly ICollection<string> emptyCategoriesList = new string[0];
 
-        LogFilterHelper filter;
-        readonly ILoggingInstrumentationProvider instrumentationProvider;
+        private readonly ILoggingUpdateCoordinator updateCoordinator;
+        private readonly ILoggingInstrumentationProvider instrumentationProvider;
         LogWriterStructureHolder structureHolder;
-        readonly ReaderWriterLock structureHolderLock = new ReaderWriterLock();
+        LogFilterHelper filter;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LogWriter"/> class.
@@ -96,7 +95,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
                          ILoggingInstrumentationProvider instrumentationProvider)
             : this(filters, traceSources, null, null, errorsTraceSource, defaultCategory, false, false, true, instrumentationProvider)
         { }
-
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LogWriter"/> class.
@@ -164,7 +162,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
                     logWarningsWhenNoCategoriesMatch,
                     revertImpersonation),
                 new NullLoggingInstrumentationProvider(),
-                null)
+                new LoggingUpdateCoordinator(null))
         { }
 
         /// <summary>
@@ -203,7 +201,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
                     logWarningsWhenNoCategoriesMatch,
                     revertImpersonation),
                 instrumentationProvider,
-                null)
+                new LoggingUpdateCoordinator(null))
         { }
 
         /// <summary>
@@ -217,7 +215,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
                          IEnumerable<LogSource> traceSources,
                          LogSource errorsTraceSource,
                          string defaultCategory)
-            : this(filters, CreateTraceSourcesDictionary(traceSources), errorsTraceSource, defaultCategory) { }
+            : this(filters, CreateTraceSourcesDictionary(traceSources), errorsTraceSource, defaultCategory)
+        { }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LogWriter"/> class.
@@ -245,7 +244,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
                    errorsTraceSource,
                    defaultCategory,
                    tracingEnabled,
-                   logWarningsWhenNoCategoriesMatch) { }
+                   logWarningsWhenNoCategoriesMatch)
+        { }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LogWriter"/> class.
@@ -277,55 +277,46 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
                    tracingEnabled,
                    logWarningsWhenNoCategoriesMatch,
                    true,
-                   instrumentationProvider) { }
+                   instrumentationProvider)
+        { }
 
         /// <summary>
-        /// 
+        /// Initializes a new instance of the <see cref="LogWriter"/> class.
         /// </summary>
-        /// <param name="structureHolder"></param>
-        /// <param name="instrumentationProvider"></param>
-        /// <param name="configurationChangeEventSource"></param>
+        /// <param name="structureHolder">The initial implementation of the logging stack</param>
+        /// <param name="instrumentationProvider">The instrumentation provider to use.</param>
+        /// <param name="updateCoordinator">The coordinator for logging operations.</param>
         public LogWriter(
             LogWriterStructureHolder structureHolder,
             ILoggingInstrumentationProvider instrumentationProvider,
-            ConfigurationChangeEventSource configurationChangeEventSource)
+            ILoggingUpdateCoordinator updateCoordinator)
         {
+            Guard.ArgumentNotNull(structureHolder, "structureHolder");
+            Guard.ArgumentNotNull(instrumentationProvider, "instrumentationProvider");
+            Guard.ArgumentNotNull(updateCoordinator, "updateCoordinator");
+
             this.instrumentationProvider = instrumentationProvider;
             this.ReplaceStructureHolder(structureHolder);
 
-            this.configurationChangeEventSource = configurationChangeEventSource;
-            if (this.configurationChangeEventSource != null)
-            {
-                this.configurationChangeEventSource.GetSection<LoggingSettings>().SectionChanged
-                    += this.OnSectionChanged;
-            }
+            this.updateCoordinator = updateCoordinator;
+            this.updateCoordinator.RegisterLoggingUpdateHandler(this);
         }
 
-        private ConfigurationChangeEventSource configurationChangeEventSource;
-
-        private void OnSectionChanged(object sender, SectionChangedEventArgs<LoggingSettings> args)
+        ///<summary>
+        /// Prepares to update it's internal state, but does not commit this until <see cref="ILoggingUpdateHandler.CommitUpdate"/>
+        ///</summary>
+        object ILoggingUpdateHandler.PrepareForUpdate(IServiceLocator serviceLocator)
         {
-            try
-            {
-                LogWriterStructureHolder newStructureHolder = null;
+            var newStructureHolder = serviceLocator.GetInstance<LogWriterStructureHolder>();
+            return newStructureHolder;
+        }
 
-                structureHolderLock.AcquireWriterLock(writerLockAcquireTimeout);
-                try
-                {
-                    newStructureHolder = args.Container.GetInstance<LogWriterStructureHolder>();
-                }
-                catch (ActivationException activationException)
-                {
-                    this.ReportConfigurationFailure(activationException);
-                    return;
-                }
-
-                this.ReplaceStructureHolder(newStructureHolder);
-            }
-            finally
-            {
-                structureHolderLock.ReleaseWriterLock();
-            }
+        ///<summary>
+        /// Commits the update of internal state.
+        ///</summary>
+        void ILoggingUpdateHandler.CommitUpdate(object context)
+        {
+            this.ReplaceStructureHolder((LogWriterStructureHolder)context);
         }
 
         /// <summary>
@@ -336,8 +327,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
             get { return structureHolder.TraceSources; }
         }
 
-        static void AddTracingCategories(LogEntry log,
-                                         bool replacementDone)
+        static void AddTracingCategories(LogEntry log, bool replacementDone)
         {
             Stack logicalOperationStack;
 
@@ -418,14 +408,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// </summary>
         public void Dispose()
         {
-            structureHolder.Dispose();
-
-            if (this.configurationChangeEventSource != null)
-            {
-                this.configurationChangeEventSource.GetSection<LoggingSettings>().SectionChanged -=
-                    this.OnSectionChanged;
-                this.configurationChangeEventSource = null;
-            }
+            this.structureHolder.Dispose();
+            this.updateCoordinator.UnregisterLoggingUpdateHandler(this);
         }
 
         /// <summary>
@@ -646,28 +630,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
 
         internal void ReplaceStructureHolder(LogWriterStructureHolder newStructureHolder)
         {
-            try
-            {
-                // Switch old and new structures.
-                LogWriterStructureHolder oldStructureHolder = structureHolder;
-                structureHolder = newStructureHolder;
-                filter = new LogFilterHelper(structureHolder.Filters, this);
-
-                // Dispose has to be fully performed before allowing the new structure to be used.
-                if (oldStructureHolder != null)
-                {
-                    oldStructureHolder.Dispose();
-                }
-            }
-            catch (ApplicationException)
-            {
-                TryLogLockAcquisitionFailure(Resources.ExceptionFailedToAcquireLockToUpdate);
-            }
-        }
-
-        internal void ReportConfigurationFailure(Exception configurationException)
-        {
-            instrumentationProvider.FireConfigurationFailureEvent(configurationException);
+            structureHolder = newStructureHolder;
+            filter = new LogFilterHelper(structureHolder.Filters, this);
         }
 
         void ReportExceptionCheckingFilters(Exception exception,
@@ -772,8 +736,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// </summary>
         public static void ResetLockTimeouts()
         {
-            readerLockAcquireTimeout = defaultTimeout;
-            writerLockAcquireTimeout = defaultTimeout;
         }
 
         /// <summary>
@@ -801,18 +763,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         }
 
         /// <summary>
-        /// Sets the lock timeouts for the writer.
-        /// </summary>
-        /// <param name="readerTimeout">The reader timeout.</param>
-        /// <param name="writerTimeout">The writer timeout.</param>
-        public static void SetLockTimeouts(int readerTimeout,
-                                           int writerTimeout)
-        {
-            readerLockAcquireTimeout = readerTimeout;
-            writerLockAcquireTimeout = writerTimeout;
-        }
-
-        /// <summary>
         /// Queries whether a <see cref="LogEntry"/> shold be logged.
         /// </summary>
         /// <param name="log">The log entry to check.</param>
@@ -827,51 +777,337 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
             instrumentationProvider.FireLockAcquisitionError(message);
         }
 
+        /// <overloads>
+        /// Write a new log entry to the default category.
+        /// </overloads>
+        /// <summary>
+        /// Write a new log entry to the default category.
+        /// </summary>
+        /// <param name="message">Message body to log.  Value from ToString() method from message object.</param>
+        public void Write(object message)
+        {
+            this.Write(
+                message,
+                emptyCategoriesList,
+                DefaultPriority,
+                DefaultEventId,
+                DefaultSeverity,
+                DefaultTitle,
+                null);
+        }
+
+        /// <summary>
+        /// Write a new log entry to a specific category.
+        /// </summary>
+        /// <param name="message">Message body to log.  Value from ToString() method from message object.</param>
+        /// <param name="category">Category name used to route the log entry to a one or more trace listeners.</param>
+        public void Write(object message, string category)
+        {
+            this.Write(message, category, DefaultPriority, DefaultEventId, DefaultSeverity, DefaultTitle, null);
+        }
+
+        /// <summary>
+        /// Write a new log entry with a specific category and priority.
+        /// </summary>
+        /// <param name="message">Message body to log.  Value from ToString() method from message object.</param>
+        /// <param name="category">Category name used to route the log entry to a one or more trace listeners.</param>
+        /// <param name="priority">Only messages must be above the minimum priority are processed.</param>
+        public void Write(object message, string category, int priority)
+        {
+            this.Write(message, category, priority, DefaultEventId, DefaultSeverity, DefaultTitle, null);
+        }
+
+        /// <summary>
+        /// Write a new log entry with a specific category, priority and event id.
+        /// </summary>
+        /// <param name="message">Message body to log.  Value from ToString() method from message object.</param>
+        /// <param name="category">Category name used to route the log entry to a one or more trace listeners.</param>
+        /// <param name="priority">Only messages must be above the minimum priority are processed.</param>
+        /// <param name="eventId">Event number or identifier.</param>
+        public void Write(object message, string category, int priority, int eventId)
+        {
+            this.Write(message, category, priority, eventId, DefaultSeverity, DefaultTitle, null);
+        }
+
+        /// <summary>
+        /// Write a new log entry with a specific category, priority, event id and severity.
+        /// </summary>
+        /// <param name="message">Message body to log.  Value from ToString() method from message object.</param>
+        /// <param name="category">Category name used to route the log entry to a one or more trace listeners.</param>
+        /// <param name="priority">Only messages must be above the minimum priority are processed.</param>
+        /// <param name="eventId">Event number or identifier.</param>
+        /// <param name="severity">Log entry severity as a <see cref="TraceEventType"/> enumeration. (Unspecified, Information, Warning or Error).</param>
+        public void Write(object message, string category, int priority, int eventId, TraceEventType severity)
+        {
+            this.Write(message, category, priority, eventId, severity, DefaultTitle, null);
+        }
+
+        /// <summary>
+        /// Write a new log entry with a specific category, priority, event id, severity
+        /// and title.
+        /// </summary>
+        /// <param name="message">Message body to log.  Value from ToString() method from message object.</param>
+        /// <param name="category">Category name used to route the log entry to a one or more trace listeners.</param>
+        /// <param name="priority">Only messages must be above the minimum priority are processed.</param>
+        /// <param name="eventId">Event number or identifier.</param>
+        /// <param name="severity">Log message severity as a <see cref="TraceEventType"/> enumeration. (Unspecified, Information, Warning or Error).</param>
+        /// <param name="title">Additional description of the log entry message</param>
+        public void Write(
+            object message,
+            string category,
+            int priority,
+            int eventId,
+            TraceEventType severity,
+            string title)
+        {
+            this.Write(message, category, priority, eventId, severity, title, null);
+        }
+
+        /// <summary>
+        /// Write a new log entry and a dictionary of extended properties.
+        /// </summary>
+        /// <param name="message">Message body to log.  Value from ToString() method from message object.</param>
+        /// <param name="properties">Dictionary of key/value pairs to log.</param>
+        public void Write(object message, IDictionary<string, object> properties)
+        {
+            this.Write(
+                message,
+                emptyCategoriesList,
+                DefaultPriority,
+                DefaultEventId,
+                DefaultSeverity,
+                DefaultTitle,
+                properties);
+        }
+
+        /// <summary>
+        /// Write a new log entry to a specific category with a dictionary 
+        /// of extended properties.
+        /// </summary>
+        /// <param name="message">Message body to log.  Value from ToString() method from message object.</param>
+        /// <param name="category">Category name used to route the log entry to a one or more trace listeners.</param>
+        /// <param name="properties">Dictionary of key/value pairs to log.</param>
+        public void Write(object message, string category, IDictionary<string, object> properties)
+        {
+            this.Write(
+                message,
+                category,
+                DefaultPriority,
+                DefaultEventId,
+                DefaultSeverity,
+                DefaultTitle,
+                properties);
+        }
+
+        /// <summary>
+        /// Write a new log entry to with a specific category, priority and a dictionary 
+        /// of extended properties.
+        /// </summary>
+        /// <param name="message">Message body to log.  Value from ToString() method from message object.</param>
+        /// <param name="category">Category name used to route the log entry to a one or more trace listeners.</param>
+        /// <param name="priority">Only messages must be above the minimum priority are processed.</param>
+        /// <param name="properties">Dictionary of key/value pairs to log.</param>
+        public void Write(object message, string category, int priority, IDictionary<string, object> properties)
+        {
+            this.Write(message, category, priority, DefaultEventId, DefaultSeverity, DefaultTitle, properties);
+        }
+
+        /// <summary>
+        /// Write a new log entry with a specific category, priority, event Id, severity
+        /// title and dictionary of extended properties.
+        /// </summary>
+        /// <example>The following example demonstrates use of the Write method with
+        /// a full set of parameters.
+        /// <code></code></example>
+        /// <param name="message">Message body to log.  Value from ToString() method from message object.</param>
+        /// <param name="category">Category name used to route the log entry to a one or more trace listeners.</param>
+        /// <param name="priority">Only messages must be above the minimum priority are processed.</param>
+        /// <param name="eventId">Event number or identifier.</param>
+        /// <param name="severity">Log message severity as a <see cref="TraceEventType"/> enumeration. (Unspecified, Information, Warning or Error).</param>
+        /// <param name="title">Additional description of the log entry message.</param>
+        /// <param name="properties">Dictionary of key/value pairs to log.</param>
+        public void Write(
+            object message,
+            string category,
+            int priority,
+            int eventId,
+            TraceEventType severity,
+            string title,
+            IDictionary<string, object> properties)
+        {
+            this.Write(message, new string[] { category }, priority, eventId, severity, title, properties);
+        }
+
+        /// <summary>
+        /// Write a new log entry to a specific collection of categories.
+        /// </summary>
+        /// <param name="message">Message body to log.  Value from ToString() method from message object.</param>
+        /// <param name="categories">Category names used to route the log entry to a one or more trace listeners.</param>
+        public void Write(object message, IEnumerable<string> categories)
+        {
+            this.Write(message, categories, DefaultPriority, DefaultEventId, DefaultSeverity, DefaultTitle, null);
+        }
+
+        /// <summary>
+        /// Write a new log entry with a specific collection of categories and priority.
+        /// </summary>
+        /// <param name="message">Message body to log.  Value from ToString() method from message object.</param>
+        /// <param name="categories">Category names used to route the log entry to a one or more trace listeners.</param>
+        /// <param name="priority">Only messages must be above the minimum priority are processed.</param>
+        public void Write(object message, IEnumerable<string> categories, int priority)
+        {
+            this.Write(message, categories, priority, DefaultEventId, DefaultSeverity, DefaultTitle, null);
+        }
+
+        /// <summary>
+        /// Write a new log entry with a specific collection of categories, priority and event id.
+        /// </summary>
+        /// <param name="message">Message body to log.  Value from ToString() method from message object.</param>
+        /// <param name="categories">Category names used to route the log entry to a one or more trace listeners.</param>
+        /// <param name="priority">Only messages must be above the minimum priority are processed.</param>
+        /// <param name="eventId">Event number or identifier.</param>
+        public void Write(object message, IEnumerable<string> categories, int priority, int eventId)
+        {
+            this.Write(message, categories, priority, eventId, DefaultSeverity, DefaultTitle, null);
+        }
+
+        /// <summary>
+        /// Write a new log entry with a specific collection of categories, priority, event id and severity.
+        /// </summary>
+        /// <param name="message">Message body to log.  Value from ToString() method from message object.</param>
+        /// <param name="categories">Category names used to route the log entry to a one or more trace listeners.</param>
+        /// <param name="priority">Only messages must be above the minimum priority are processed.</param>
+        /// <param name="eventId">Event number or identifier.</param>
+        /// <param name="severity">Log entry severity as a <see cref="TraceEventType"/> enumeration. 
+        /// (Unspecified, Information, Warning or Error).</param>
+        public void Write(
+            object message,
+            IEnumerable<string> categories,
+            int priority,
+            int eventId,
+            TraceEventType severity)
+        {
+            this.Write(message, categories, priority, eventId, severity, DefaultTitle, null);
+        }
+
+        /// <summary>
+        /// Write a new log entry with a specific collection of categories, priority, event id, severity
+        /// and title.
+        /// </summary>
+        /// <param name="message">Message body to log.  Value from ToString() method from message object.</param>
+        /// <param name="categories">Category names used to route the log entry to a one or more trace listeners.</param>
+        /// <param name="priority">Only messages must be above the minimum priority are processed.</param>
+        /// <param name="eventId">Event number or identifier.</param>
+        /// <param name="severity">Log message severity as a <see cref="TraceEventType"/> enumeration. (Unspecified, Information, Warning or Error).</param>
+        /// <param name="title">Additional description of the log entry message</param>
+        public void Write(
+            object message,
+            IEnumerable<string> categories,
+            int priority,
+            int eventId,
+            TraceEventType severity,
+            string title)
+        {
+            this.Write(message, categories, priority, eventId, severity, title, null);
+        }
+
+        /// <summary>
+        /// Write a new log entry to a specific collection of categories with a dictionary of extended properties.
+        /// </summary>
+        /// <param name="message">Message body to log.  Value from ToString() method from message object.</param>
+        /// <param name="categories">Category names used to route the log entry to a one or more trace listeners.</param>
+        /// <param name="properties">Dictionary of key/value pairs to log.</param>
+        public void Write(object message, IEnumerable<string> categories, IDictionary<string, object> properties)
+        {
+            this.Write(message, categories, DefaultPriority, DefaultEventId, DefaultSeverity, DefaultTitle, properties);
+        }
+
+        /// <summary>
+        /// Write a new log entry to with a specific collection of categories, priority and a dictionary 
+        /// of extended properties.
+        /// </summary>
+        /// <param name="message">Message body to log.  Value from ToString() method from message object.</param>
+        /// <param name="categories">Category names used to route the log entry to a one or more trace listeners.</param>
+        /// <param name="priority">Only messages must be above the minimum priority are processed.</param>
+        /// <param name="properties">Dictionary of key/value pairs to log.</param>
+        public void Write(
+            object message,
+            IEnumerable<string> categories,
+            int priority,
+            IDictionary<string,
+            object> properties)
+        {
+            this.Write(message, categories, priority, DefaultEventId, DefaultSeverity, DefaultTitle, properties);
+        }
+
+        /// <summary>
+        /// Write a new log entry with a specific category, priority, event Id, severity
+        /// title and dictionary of extended properties.
+        /// </summary>
+        /// <param name="message">Message body to log.  Value from ToString() method from message object.</param>
+        /// <param name="categories">Category names used to route the log entry to a one or more trace listeners.</param>
+        /// <param name="priority">Only messages must be above the minimum priority are processed.</param>
+        /// <param name="eventId">Event number or identifier.</param>
+        /// <param name="severity">Log message severity as a <see cref="TraceEventType"/> enumeration. (Unspecified, Information, Warning or Error).</param>
+        /// <param name="title">Additional description of the log entry message.</param>
+        /// <param name="properties">Dictionary of key/value pairs to log.</param>
+        public void Write(
+            object message,
+            IEnumerable<string> categories,
+            int priority,
+            int eventId,
+            TraceEventType severity,
+            string title,
+            IDictionary<string, object> properties)
+        {
+            LogEntry log = new LogEntry();
+            log.Message = message.ToString();
+            log.Categories = categories.ToArray();
+            log.Priority = priority;
+            log.EventId = eventId;
+            log.Severity = severity;
+            log.Title = title;
+            log.ExtendedProperties = properties;
+
+            this.Write(log);
+        }
+
         /// <summary>
         /// Writes a new log entry as defined in the <see cref="LogEntry"/> parameter.
         /// </summary>
         /// <param name="log">Log entry object to write.</param>
         public void Write(LogEntry log)
         {
-            try
-            {
-                structureHolderLock.AcquireReaderLock(readerLockAcquireTimeout);
-                try
+            this.updateCoordinator.ExecuteReadOperation(() =>
                 {
-                    bool replacementDone = false;
-
-                    // set default category if necessary
-                    if (log.Categories.Count == 0)
+                    try
                     {
-                        log.Categories = new List<string>(1);
-                        log.Categories.Add(structureHolder.DefaultCategory);
-                        replacementDone = true;
-                    }
+                        bool replacementDone = false;
 
-                    if (structureHolder.TracingEnabled)
-                    {
-                        AddTracingCategories(log, replacementDone);
-                    }
+                        // set default category if necessary
+                        if (log.Categories.Count == 0)
+                        {
+                            log.Categories = new List<string>(1);
+                            log.Categories.Add(structureHolder.DefaultCategory);
+                            replacementDone = true;
+                        }
 
-                    if (ShouldLog(log))
-                    {
-                        ProcessLog(log);
-                        instrumentationProvider.FireLogEventRaised();
+                        if (structureHolder.TracingEnabled)
+                        {
+                            AddTracingCategories(log, replacementDone);
+                        }
+
+                        if (ShouldLog(log))
+                        {
+                            ProcessLog(log);
+                            instrumentationProvider.FireLogEventRaised();
+                        }
                     }
-                }
-                catch (Exception ex)
-                {
-                    ReportUnknownException(ex, log);
-                }
-                finally
-                {
-                    structureHolderLock.ReleaseReaderLock();
-                }
-            }
-            catch (ApplicationException)
-            {
-                TryLogLockAcquisitionFailure(Resources.ExceptionFailedToAcquireLockToWriteLog);
-            }
+                    catch (Exception ex)
+                    {
+                        ReportUnknownException(ex, log);
+                    }
+                });
         }
     }
 }

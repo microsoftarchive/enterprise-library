@@ -123,7 +123,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Instrumentation
         ///<summary>
         ///</summary>
         ///<param name="typeBeingValidated"></param>
-        public void FireValidationSucceeded(Type typeBeingValidated)
+        public void NotifyValidationSucceeded(Type typeBeingValidated)
         {
             if (PerformanceCountersEnabled)
             {
@@ -148,7 +148,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Instrumentation
         ///</summary>
         ///<param name="typeBeingValidated"></param>
         ///<param name="validationResult"></param>
-        public void FireValidationFailed(Type typeBeingValidated, ValidationResults validationResult)
+        public void NotifyValidationFailed(Type typeBeingValidated, ValidationResults validationResult)
         {
             if (PerformanceCountersEnabled)
             {
@@ -171,7 +171,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Instrumentation
         ///<summary>
         ///</summary>
         ///<param name="configurationException"></param>
-        public void FireConfigurationFailure(ConfigurationErrorsException configurationException)
+        public void NotifyConfigurationFailure(ConfigurationErrorsException configurationException)
         {
             if (WmiEnabled)
             {
@@ -188,7 +188,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Instrumentation
         ///<summary>
         ///</summary>
         ///<param name="typeBeingValidated"></param>
-        public void FireConfigurationCalled(Type typeBeingValidated)
+        public void NotifyConfigurationCalled(Type typeBeingValidated)
         {
             if (PerformanceCountersEnabled)
             {
@@ -211,7 +211,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Instrumentation
         ///<param name="typeBeingValidated"></param>
         ///<param name="errorMessage"></param>
         ///<param name="exception"></param>
-        public void FireValidationException(Type typeBeingValidated, string errorMessage, Exception exception)
+        public void NotifyValidationException(Type typeBeingValidated, string errorMessage, Exception exception)
         {
             if (WmiEnabled)
             {
@@ -219,7 +219,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Instrumentation
                                                                            exception.ToString()));
             }
 
-            FireConfigurationCalled(typeBeingValidated);
+            NotifyConfigurationCalled(typeBeingValidated);
         }
     }
 

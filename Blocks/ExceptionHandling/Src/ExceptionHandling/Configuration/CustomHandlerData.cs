@@ -176,7 +176,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
         {
             yield return new TypeRegistration(
                 RegistrationExpressionBuilder.BuildExpression(this.Type, Attributes),
-                typeof(IExceptionHandler)) { Name = BuildName(namePrefix) };
+                typeof(IExceptionHandler)) 
+                { 
+                    Name = BuildName(namePrefix),
+                    Lifetime = TypeRegistrationLifetime.Transient
+                };
         }
     }
 }

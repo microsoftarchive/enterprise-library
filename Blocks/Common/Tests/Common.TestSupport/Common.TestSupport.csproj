@@ -60,7 +60,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Barrier.cs" />
     <Compile Include="Configuration\ConfigurationFileHelper.cs" />
+    <Compile Include="Configuration\ConfigurationSourceUpdatable.cs" />
     <Compile Include="Configuration\ConfigurationTestHelper.cs" />
     <Compile Include="Configuration\ContainerModel\ContainerSwitcher.cs" />
     <Compile Include="Configuration\ContainerModel\TypeRegistrationExtension.cs" />
@@ -76,8 +78,11 @@
     <Compile Include="Configuration\Manageability\Mocks\TestConfigurationSection.cs" />
     <Compile Include="Configuration\Manageability\Mocks\TestConfigurationSettings.cs" />
     <Compile Include="Configuration\MockCustomProviderBase.cs" />
+    <Compile Include="Configuration\SectionBuilder.cs" />
+    <Compile Include="ContextBase\ArrangeActAssert.cs" />
     <Compile Include="CrossThreadTestRunner.cs" />
     <Compile Include="EventLogExtensions.cs" />
+    <Compile Include="EventLogTracker.cs" />
     <Compile Include="Instrumentation\WmiEventWatcher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

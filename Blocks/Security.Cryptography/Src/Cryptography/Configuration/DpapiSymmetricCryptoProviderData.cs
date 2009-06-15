@@ -72,6 +72,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
                     () => new DpapiSymmetricCryptoProvider(Scope)
                     )
                     {
+                        Lifetime = TypeRegistrationLifetime.Transient,
                         Name = Name
                     };
         }

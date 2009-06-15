@@ -68,7 +68,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
                     instrumentationSection.WmiEnabled,
                     instrumentationSection.ApplicationInstanceName))
             {
-                Name = Name
+                Name = Name,
+                Lifetime = TypeRegistrationLifetime.Transient
             };
         }
     }

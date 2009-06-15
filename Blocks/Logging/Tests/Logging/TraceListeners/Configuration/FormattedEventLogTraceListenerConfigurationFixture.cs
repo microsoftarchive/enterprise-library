@@ -150,39 +150,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
             helper.loggingSettings.Formatters.Add(new TextFormatterData("formatter", "foobar template"));
             helper.loggingSettings.TraceListeners.Add(listenerData);
 
-            TraceListener listener = GetListener("listener", helper.configurationSource);
+            TraceListener listener = GetListener("listener\u200cimplementation", helper.configurationSource);
 
             Assert.IsNotNull(listener);
-            Assert.AreEqual("listener", listener.Name);
+            Assert.AreEqual("listener\u200cimplementation", listener.Name);
             Assert.AreEqual(listener.GetType(), typeof(FormattedEventLogTraceListener));
             FormattedEventLogTraceListener castedListener = (FormattedEventLogTraceListener)listener;
             Assert.IsNotNull(castedListener.Formatter);
-            Assert.AreEqual("unknown source", ((EventLogTraceListener)castedListener.SlaveListener).EventLog.Source);
-            Assert.AreEqual(FormattedEventLogTraceListener.DefaultLogName, ((EventLogTraceListener)castedListener.SlaveListener).EventLog.Log);
-            Assert.AreEqual(FormattedEventLogTraceListener.DefaultMachineName, ((EventLogTraceListener)castedListener.SlaveListener).EventLog.MachineName);
-            Assert.AreEqual(castedListener.Formatter.GetType(), typeof(TextFormatter));
-            Assert.AreEqual("foobar template", ((TextFormatter)castedListener.Formatter).Template);
-        }
-
-        [TestMethod]
-        public void CanCreateInstanceFromGivenConfiguration()
-        {
-            FormattedEventLogTraceListenerData listenerData = new FormattedEventLogTraceListenerData("listener", "unknown source", "formatter");
-
-            MockLogObjectsHelper helper = new MockLogObjectsHelper();
-            helper.loggingSettings.Formatters.Add(new TextFormatterData("formatter", "foobar template"));
-            helper.loggingSettings.TraceListeners.Add(listenerData);
-
-            TraceListener listener = GetListener(listenerData.Name, helper.configurationSource);
-
-            Assert.IsNotNull(listener);
-            Assert.AreEqual("listener", listener.Name);
-            Assert.AreEqual(listener.GetType(), typeof(FormattedEventLogTraceListener));
-            FormattedEventLogTraceListener castedListener = (FormattedEventLogTraceListener)listener;
-            Assert.IsNotNull(castedListener.Formatter);
-            Assert.AreEqual("unknown source", ((EventLogTraceListener)castedListener.SlaveListener).EventLog.Source);
-            Assert.AreEqual(FormattedEventLogTraceListener.DefaultLogName, ((EventLogTraceListener)castedListener.SlaveListener).EventLog.Log);
-            Assert.AreEqual(FormattedEventLogTraceListener.DefaultMachineName, ((EventLogTraceListener)castedListener.SlaveListener).EventLog.MachineName);
+            Assert.AreEqual("unknown source", ((EventLogTraceListener)castedListener.InnerListener).EventLog.Source);
+            Assert.AreEqual(FormattedEventLogTraceListener.DefaultLogName, ((EventLogTraceListener)castedListener.InnerListener).EventLog.Log);
+            Assert.AreEqual(FormattedEventLogTraceListener.DefaultMachineName, ((EventLogTraceListener)castedListener.InnerListener).EventLog.MachineName);
             Assert.AreEqual(castedListener.Formatter.GetType(), typeof(TextFormatter));
             Assert.AreEqual("foobar template", ((TextFormatter)castedListener.Formatter).Template);
         }
@@ -194,15 +171,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
             loggingSettings.Formatters.Add(new TextFormatterData("formatter", "foobar template"));
             loggingSettings.TraceListeners.Add(new FormattedEventLogTraceListenerData("listener", "unknown source", "log", "machine", "formatter"));
 
-            TraceListener listener = GetListener("listener", CommonUtil.SaveSectionsAndGetConfigurationSource(loggingSettings));
+            TraceListener listener =
+                GetListener("listener\u200cimplementation", CommonUtil.SaveSectionsAndGetConfigurationSource(loggingSettings));
 
             Assert.IsNotNull(listener);
             Assert.AreEqual(listener.GetType(), typeof(FormattedEventLogTraceListener));
             FormattedEventLogTraceListener castedListener = (FormattedEventLogTraceListener)listener;
             Assert.IsNotNull(castedListener.Formatter);
-            Assert.AreEqual("unknown source", ((EventLogTraceListener)castedListener.SlaveListener).EventLog.Source);
-            Assert.AreEqual("log", ((EventLogTraceListener)castedListener.SlaveListener).EventLog.Log);
-            Assert.AreEqual("machine", ((EventLogTraceListener)castedListener.SlaveListener).EventLog.MachineName);
+            Assert.AreEqual("unknown source", ((EventLogTraceListener)castedListener.InnerListener).EventLog.Source);
+            Assert.AreEqual("log", ((EventLogTraceListener)castedListener.InnerListener).EventLog.Log);
+            Assert.AreEqual("machine", ((EventLogTraceListener)castedListener.InnerListener).EventLog.MachineName);
             Assert.AreEqual(castedListener.Formatter.GetType(), typeof(TextFormatter));
             Assert.AreEqual("foobar template", ((TextFormatter)castedListener.Formatter).Template);
         }
@@ -220,15 +198,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
             listenerData.Formatter = "formatter";
             loggingSettings.TraceListeners.Add(listenerData);
 
-            TraceListener listener = GetListener("listener", CommonUtil.SaveSectionsAndGetConfigurationSource(loggingSettings));
+            TraceListener listener = 
+                GetListener("listener\u200cimplementation", CommonUtil.SaveSectionsAndGetConfigurationSource(loggingSettings));
 
             Assert.IsNotNull(listener);
             Assert.AreEqual(listener.GetType(), typeof(FormattedEventLogTraceListener));
             FormattedEventLogTraceListener castedListener = (FormattedEventLogTraceListener)listener;
             Assert.IsNotNull(castedListener.Formatter);
-            Assert.AreEqual("unknown source", ((EventLogTraceListener)castedListener.SlaveListener).EventLog.Source);
-            Assert.AreEqual(FormattedEventLogTraceListener.DefaultLogName, ((EventLogTraceListener)castedListener.SlaveListener).EventLog.Log);
-            Assert.AreEqual(FormattedEventLogTraceListener.DefaultMachineName, ((EventLogTraceListener)castedListener.SlaveListener).EventLog.MachineName);
+            Assert.AreEqual("unknown source", ((EventLogTraceListener)castedListener.InnerListener).EventLog.Source);
+            Assert.AreEqual(FormattedEventLogTraceListener.DefaultLogName, ((EventLogTraceListener)castedListener.InnerListener).EventLog.Log);
+            Assert.AreEqual(FormattedEventLogTraceListener.DefaultMachineName, ((EventLogTraceListener)castedListener.InnerListener).EventLog.MachineName);
             Assert.AreEqual(castedListener.Formatter.GetType(), typeof(TextFormatter));
             Assert.AreEqual("foobar template", ((TextFormatter)castedListener.Formatter).Template);
         }

@@ -18,9 +18,9 @@ using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Filters;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters.Tests;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
 {
@@ -73,22 +73,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         }
 
         [TestMethod]
-        public void TheRegistrationForLogWriterIsForNullName()
+        public void TheRegistrationForLogWriterIsDefaultAndSingleton()
         {
             TypeRegistration registration = registrations.First(tr => tr.ServiceType == typeof(LogWriter));
 
             registration
                 .AssertForServiceType(typeof(LogWriter))
-                .ForName(null)
+                .IsDefault()
+                .IsSingleton()
                 .ForImplementationType(typeof(LogWriter));
-        }
-
-        [TestMethod]
-        public void TheRegistrationForLogWriterIsForSingleton()
-        {
-            TypeRegistration registration = registrations.First(tr => tr.ServiceType == typeof(LogWriter));
-
-            Assert.AreEqual(TypeRegistrationLifetime.Singleton, registration.Lifetime);
         }
 
         [TestMethod]
@@ -100,7 +93,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
                 .AssertConstructor()
                 .WithContainerResolvedParameter<LogWriterStructureHolder>(null)
                 .WithContainerResolvedParameter<ILoggingInstrumentationProvider>(null)
-                .WithContainerResolvedParameter<ConfigurationChangeEventSource>(null)
+                .WithContainerResolvedParameter<ILoggingUpdateCoordinator>(null)
                 .VerifyConstructorParameters();
         }
 
@@ -123,7 +116,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
 
             registration
                 .AssertForServiceType(typeof(TraceManager))
-                .ForName(null)
+                .IsDefault()
                 .ForImplementationType(typeof(TraceManager));
         }
 
@@ -152,7 +145,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
 
             registration
                 .AssertForServiceType(typeof(LogWriterStructureHolder))
-                .ForName(null)
+                .IsDefault()
                 .ForImplementationType(typeof(LogWriterStructureHolder));
         }
 
@@ -178,6 +171,44 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
 
             Assert.AreEqual(0, traceSourceNames.Count());
         }
+
+        [TestMethod]
+        public void ThenHasRegistrationForLoggingUpdateConfigurator()
+        {
+            Assert.AreEqual(1, registrations.Where(tr => tr.ServiceType == typeof(ILoggingUpdateCoordinator)).Count());
+        }
+
+        [TestMethod]
+        public void TheRegistrationForLoggingUpdateConfiguratorIsForNullName()
+        {
+            TypeRegistration registration = registrations.First(tr => tr.ServiceType == typeof(ILoggingUpdateCoordinator));
+
+            registration
+                .AssertForServiceType(typeof(ILoggingUpdateCoordinator))
+                .IsDefault()
+                .ForImplementationType(typeof(LoggingUpdateCoordinator));
+        }
+
+        [TestMethod]
+        public void TheRegistrationForILoggingUpdateCoordinatorIsForDefaultSingleton()
+        {
+            TypeRegistration registration = registrations.First(tr => tr.ServiceType == typeof(ILoggingUpdateCoordinator));
+
+            Assert.AreEqual(TypeRegistrationLifetime.Singleton, registration.Lifetime);
+            Assert.IsTrue(registration.IsDefault);
+        }
+
+        [TestMethod]
+        public void TheRegistrationForILoggingUpdateCoordinatorHasExpectedConstructorParameters()
+        {
+            TypeRegistration registration = registrations.First(tr => tr.ServiceType == typeof(ILoggingUpdateCoordinator));
+
+            registration
+                .AssertConstructor()
+                .WithContainerResolvedParameter<ConfigurationChangeEventSource>(null)
+                .WithContainerResolvedParameter<ILoggingInstrumentationProvider>(null)
+                .VerifyConstructorParameters();
+        }
     }
 
     [TestClass]
@@ -201,19 +232,29 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
             Assert.IsTrue(
                 registrations.Any(tr =>
                     tr.ServiceType == typeof(TraceListener)
-                    && tr.ImplementationType == typeof(FormattedEventLogTraceListener)
+                    && tr.ImplementationType == typeof(ReconfigurableTraceListenerWrapper)
                     && tr.Name == "event log"));
             Assert.IsTrue(
                 registrations.Any(tr =>
                     tr.ServiceType == typeof(TraceListener)
-                    && tr.ImplementationType == typeof(WmiTraceListener)
+                    && tr.ImplementationType == typeof(FormattedEventLogTraceListener)
+                    && tr.Name == "event log\u200Cimplementation"));
+            Assert.IsTrue(
+                registrations.Any(tr =>
+                    tr.ServiceType == typeof(TraceListener)
+                    && tr.ImplementationType == typeof(ReconfigurableTraceListenerWrapper)
                     && tr.Name == "wmi"));
+            Assert.IsTrue(
+                registrations.Any(tr =>
+                    tr.ServiceType == typeof(TraceListener)
+                    && tr.ImplementationType == typeof(WmiTraceListener)
+                    && tr.Name == "wmi\u200Cimplementation"));
         }
 
         [TestMethod]
         public void ThenHasNoRegistrationsForOtherTraceListeners()
         {
-            Assert.AreEqual(2, registrations.Where(tr => tr.ServiceType == typeof(TraceListener)).Count());
+            Assert.AreEqual(4, registrations.Where(tr => tr.ServiceType == typeof(TraceListener)).Count());
         }
     }
 

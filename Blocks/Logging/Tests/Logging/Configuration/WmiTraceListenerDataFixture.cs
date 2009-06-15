@@ -9,11 +9,8 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
@@ -22,7 +19,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
 {
-
     [TestClass]
     public class GivenWmiTraceListenerDataWithNoFilterData
     {
@@ -35,24 +31,60 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         }
 
         [TestMethod]
-        public void ThenCreatesSingleTypeRegistration()
+        public void ThenCreatesTwoTypeRegistrations()
         {
-            Assert.AreEqual(1, listenerData.GetRegistrations().Count());
+            Assert.AreEqual(2, listenerData.GetRegistrations().Count());
+        }
+
+        [TestMethod]
+        public void WhenCreatesRegistration_ThenCreatesATypeRegistrationForTheWrapperWithTheOriginalName()
+        {
+            listenerData.GetRegistrations().Where(tr => tr.Name == "listener").First()
+                .AssertForServiceType(typeof(TraceListener))
+                .ForName("listener")
+                .ForImplementationType(typeof(ReconfigurableTraceListenerWrapper));
+        }
+
+        [TestMethod]
+        public void WhenCreatesRegistration_ThenWrapperRegistrationIsSingleton()
+        {
+            Assert.AreEqual(
+                TypeRegistrationLifetime.Singleton,
+                listenerData.GetRegistrations().Where(tr => tr.Name == "listener").First().Lifetime);
+        }
+
+        [TestMethod]
+        public void WhenCreatesRegistration_ThenWrapperRegistrationIsInjectedWithTheWrappedTraceListenerAndTheLoggingUpdateCoordinator()
+        {
+            listenerData.GetRegistrations().Where(tr => tr.Name == "listener").First()
+                .AssertConstructor()
+                .WithContainerResolvedParameter<TraceListener>("listener\u200Cimplementation")
+                .WithContainerResolvedParameter<ILoggingUpdateCoordinator>(null)
+                .VerifyConstructorParameters();
+        }
+
+        [TestMethod]
+        public void WhenCreatesRegistration_ThenWrapperRegistrationIsInjectedWithTheNameProperty()
+        {
+            listenerData.GetRegistrations().Where(tr => tr.Name == "listener").First()
+                .AssertProperties()
+                .WithValueProperty("Name", "listener")
+                .VerifyProperties();
         }
 
         [TestMethod]
         public void WhenCreatesRegistration_ThenCreatedRegistrationMapsTraceListenerToWmiTraceListenerForTheSuppliedName()
         {
-            listenerData.GetRegistrations().ElementAt(0)
+            listenerData.GetRegistrations().Where(tr => tr.Name == "listener\u200Cimplementation").First()
                 .AssertForServiceType(typeof(TraceListener))
-                .ForName("listener")
+                .ForName("listener\u200Cimplementation")
                 .ForImplementationType(typeof(WmiTraceListener));
         }
 
         [TestMethod]
         public void WhenCreatesRegistration_ThenCreatedRegistrationHasNoConstructorParameters()
         {
-            listenerData.GetRegistrations().ElementAt(0)
+            listenerData.GetRegistrations().Where(tr => tr.Name == "listener\u200Cimplementation").First()
                 .AssertConstructor()
                 .VerifyConstructorParameters();
         }
@@ -60,14 +92,21 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         [TestMethod]
         public void WhenCreatesRegistration_ThenCreatedRegistrationInjectsNameAndTraceOutputOptionsProperties()
         {
-            listenerData.GetRegistrations().ElementAt(0)
+            listenerData.GetRegistrations().Where(tr => tr.Name == "listener\u200Cimplementation").First()
                 .AssertProperties()
-                .WithValueProperty("Name", "listener")
+                .WithValueProperty("Name", "listener\u200Cimplementation")
                 .WithValueProperty("TraceOutputOptions", TraceOptions.None)
                 .VerifyProperties();
         }
-    }
 
+        [TestMethod]
+        public void ThenWrappedRegistrationIsTransient()
+        {
+            Assert.AreEqual(
+                TypeRegistrationLifetime.Transient,
+                listenerData.GetRegistrations().Where(tr => tr.Name == "listener\u200Cimplementation").First().Lifetime);
+        }
+    }
 
     [TestClass]
     public class GivenWmiTraceListenerWithTraceOptions
@@ -83,11 +122,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         [TestMethod]
         public void ThenRegistrationIncludesInitializationsForTraceOutputOptions()
         {
-            TypeRegistration registration = listenerData.GetRegistrations().ElementAt(0);
+            TypeRegistration registration = 
+                listenerData.GetRegistrations().Where(tr => tr.Name == "listener\u200Cimplementation").First();
 
             registration
                 .AssertProperties()
-                .WithValueProperty("Name", "listener")
+                .WithValueProperty("Name", "listener\u200Cimplementation")
                 .WithValueProperty("TraceOutputOptions", listenerData.TraceOutputOptions)
                 .VerifyProperties();
         }
@@ -105,24 +145,24 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         }
 
         [TestMethod]
-        public void ThenCreatesSingleTypeRegistration()
+        public void ThenCreatesTwoTypeRegistrations()
         {
-            Assert.AreEqual(1, listenerData.GetRegistrations().Count());
+            Assert.AreEqual(2, listenerData.GetRegistrations().Count());
         }
 
         [TestMethod]
         public void WhenCreatesRegistration_ThenCreatedRegistrationMapsTraceListenerToWmiTraceListenerForTheSuppliedName()
         {
-            listenerData.GetRegistrations().ElementAt(0)
+            listenerData.GetRegistrations().Where(tr => tr.Name == "listener\u200Cimplementation").First()
                 .AssertForServiceType(typeof(TraceListener))
-                .ForName("listener")
+                .ForName("listener\u200Cimplementation")
                 .ForImplementationType(typeof(WmiTraceListener));
         }
 
         [TestMethod]
         public void WhenCreatesRegistration_ThenCreatedRegistrationHasNoConstructorParameters()
         {
-            listenerData.GetRegistrations().ElementAt(0)
+            listenerData.GetRegistrations().Where(tr => tr.Name == "listener\u200Cimplementation").First()
                 .AssertConstructor()
                 .VerifyConstructorParameters();
         }
@@ -132,9 +172,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         {
             TraceFilter filter;
 
-            listenerData.GetRegistrations().ElementAt(0)
+            listenerData.GetRegistrations().Where(tr => tr.Name == "listener\u200Cimplementation").First()
                 .AssertProperties()
-                .WithValueProperty("Name", "listener")
+                .WithValueProperty("Name", "listener\u200Cimplementation")
                 .WithValueProperty("TraceOutputOptions", TraceOptions.None)
                 .WithValueProperty("Filter", out filter)
                 .VerifyProperties();
@@ -142,5 +182,4 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
             Assert.AreEqual(SourceLevels.Warning, ((EventTypeFilter)filter).EventType);
         }
     }
-
 }

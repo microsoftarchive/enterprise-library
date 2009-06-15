@@ -60,6 +60,7 @@
   <ItemGroup>
     <Compile Include="APTCAFixture.cs" />
     <Compile Include="Configuration\ConfigurationSerializationFixture.cs" />
+    <Compile Include="Configuration\ExceptionHandlingReconfigurableTypeRegistrationFixture.cs" />
     <Compile Include="Configuration\ExceptionHandlingTypeRegistrationFixture.cs" />
     <Compile Include="Configuration\Unity\ExceptionHandlingBlockExtensionFixture.cs" />
     <Compile Include="DefaultExceptionHandlingInstrumentationProviderFixture.cs" />

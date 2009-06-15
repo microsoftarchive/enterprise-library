@@ -20,7 +20,6 @@ using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.TestSupport.ObjectsU
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using RuleDrivenPolicy = Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration.PolicyData.RuleDrivenPolicy;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tests
 {
@@ -275,40 +274,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
             IUnityContainer container = new UnityContainer().AddNewExtension<Interception>();
             settings.ConfigureContainer(container, dictConfigurationSource);
 
-            RuleDrivenPolicy policy = container.Resolve<RuleDrivenPolicy>("policy");
+            InjectionFriendlyRuleDrivenPolicy policy = container.Resolve<InjectionFriendlyRuleDrivenPolicy>("policy");
 
             ICallHandler handler
                 = (policy.GetHandlersFor(GetMethodImpl(MethodBase.GetCurrentMethod()), container)).ElementAt(0);
 
             Assert.IsNotNull(handler);
             Assert.AreEqual(handler.Order, data.Order);
-        }
-
-        [TestMethod]
-        public void ConfiguresCallHandlerAsSingleton()
-        {
-            PolicyInjectionSettings settings = new PolicyInjectionSettings();
-
-            PolicyData policyData = new PolicyData("policy");
-            PerformanceCounterCallHandlerData data = new PerformanceCounterCallHandlerData("FooCallHandler", 2);
-            policyData.MatchingRules.Add(new CustomMatchingRuleData("match everything", typeof(AlwaysMatchingRule)));
-            policyData.Handlers.Add(data);
-            settings.Policies.Add(policyData);
-
-            DictionaryConfigurationSource dictConfigurationSource = new DictionaryConfigurationSource();
-            dictConfigurationSource.Add(PolicyInjectionSettings.SectionName, settings);
-
-            IUnityContainer container = new UnityContainer().AddNewExtension<Interception>();
-            settings.ConfigureContainer(container, dictConfigurationSource);
-
-            RuleDrivenPolicy policy = container.Resolve<RuleDrivenPolicy>("policy");
-
-            ICallHandler handler1
-                = (policy.GetHandlersFor(GetMethodImpl(MethodBase.GetCurrentMethod()), container)).ElementAt(0);
-            ICallHandler handler2
-                = (policy.GetHandlersFor(GetMethodImpl(MethodBase.GetCurrentMethod()), container)).ElementAt(0);
-
-            Assert.AreSame(handler1, handler2);
         }
 
         [TestMethod]

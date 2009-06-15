@@ -9,8 +9,10 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configuration
 {
@@ -39,6 +41,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
                                      deserializedRule.Matches[0],
                                      "Match item {0} is incorrect", i);
             }
+        }
+
+        [TestMethod]
+        public void MatchingRuleHasTransientLifetime()
+        {
+            MemberNameMatchingRuleData memberNameMatchingRule = new MemberNameMatchingRuleData("MatchThis");
+            TypeRegistration registration = memberNameMatchingRule.GetRegistrations("").First();
+
+            Assert.AreEqual(TypeRegistrationLifetime.Transient, registration.Lifetime);
         }
     }
 }

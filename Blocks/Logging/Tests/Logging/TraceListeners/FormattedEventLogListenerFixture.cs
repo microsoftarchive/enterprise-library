@@ -88,11 +88,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners.Tests
             FormattedEventLogTraceListener listener = new FormattedEventLogTraceListener("unknown source", new TextFormatter("TEST"));
 
             Assert.IsNotNull(listener.Formatter);
-            Assert.IsNotNull(listener.SlaveListener);
-            Assert.AreEqual(typeof(EventLogTraceListener), listener.SlaveListener.GetType());
-            Assert.AreEqual("unknown source", ((EventLogTraceListener)listener.SlaveListener).EventLog.Source);
-            Assert.AreEqual("", ((EventLogTraceListener)listener.SlaveListener).EventLog.Log);
-            Assert.AreEqual(".", ((EventLogTraceListener)listener.SlaveListener).EventLog.MachineName);
+            Assert.IsNotNull(listener.InnerListener);
+            Assert.AreEqual(typeof(EventLogTraceListener), listener.InnerListener.GetType());
+            Assert.AreEqual("unknown source", ((EventLogTraceListener)listener.InnerListener).EventLog.Source);
+            Assert.AreEqual("", ((EventLogTraceListener)listener.InnerListener).EventLog.Log);
+            Assert.AreEqual(".", ((EventLogTraceListener)listener.InnerListener).EventLog.MachineName);
         }
 
         [TestMethod]
@@ -101,11 +101,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners.Tests
             FormattedEventLogTraceListener listener = new FormattedEventLogTraceListener("unknown source", "log", new TextFormatter("TEST"));
 
             Assert.IsNotNull(listener.Formatter);
-            Assert.IsNotNull(listener.SlaveListener);
-            Assert.AreEqual(typeof(EventLogTraceListener), listener.SlaveListener.GetType());
-            Assert.AreEqual("unknown source", ((EventLogTraceListener)listener.SlaveListener).EventLog.Source);
-            Assert.AreEqual("log", ((EventLogTraceListener)listener.SlaveListener).EventLog.Log);
-            Assert.AreEqual(".", ((EventLogTraceListener)listener.SlaveListener).EventLog.MachineName);
+            Assert.IsNotNull(listener.InnerListener);
+            Assert.AreEqual(typeof(EventLogTraceListener), listener.InnerListener.GetType());
+            Assert.AreEqual("unknown source", ((EventLogTraceListener)listener.InnerListener).EventLog.Source);
+            Assert.AreEqual("log", ((EventLogTraceListener)listener.InnerListener).EventLog.Log);
+            Assert.AreEqual(".", ((EventLogTraceListener)listener.InnerListener).EventLog.MachineName);
         }
 
         [TestMethod]
@@ -114,11 +114,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners.Tests
             FormattedEventLogTraceListener listener = new FormattedEventLogTraceListener("unknown source", "", ".", new TextFormatter("TEST"));
 
             Assert.IsNotNull(listener.Formatter);
-            Assert.IsNotNull(listener.SlaveListener);
-            Assert.AreEqual(typeof(EventLogTraceListener), listener.SlaveListener.GetType());
-            Assert.AreEqual("unknown source", ((EventLogTraceListener)listener.SlaveListener).EventLog.Source);
-            Assert.AreEqual("", ((EventLogTraceListener)listener.SlaveListener).EventLog.Log);
-            Assert.AreEqual(".", ((EventLogTraceListener)listener.SlaveListener).EventLog.MachineName);
+            Assert.IsNotNull(listener.InnerListener);
+            Assert.AreEqual(typeof(EventLogTraceListener), listener.InnerListener.GetType());
+            Assert.AreEqual("unknown source", ((EventLogTraceListener)listener.InnerListener).EventLog.Source);
+            Assert.AreEqual("", ((EventLogTraceListener)listener.InnerListener).EventLog.Log);
+            Assert.AreEqual(".", ((EventLogTraceListener)listener.InnerListener).EventLog.MachineName);
         }
 
         [TestMethod]
@@ -127,11 +127,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners.Tests
             FormattedEventLogTraceListener listener = new FormattedEventLogTraceListener("unknown source", "log", "machine", new TextFormatter("TEST"));
 
             Assert.IsNotNull(listener.Formatter);
-            Assert.IsNotNull(listener.SlaveListener);
-            Assert.AreEqual(typeof(EventLogTraceListener), listener.SlaveListener.GetType());
-            Assert.AreEqual("unknown source", ((EventLogTraceListener)listener.SlaveListener).EventLog.Source);
-            Assert.AreEqual("log", ((EventLogTraceListener)listener.SlaveListener).EventLog.Log);
-            Assert.AreEqual("machine", ((EventLogTraceListener)listener.SlaveListener).EventLog.MachineName);
+            Assert.IsNotNull(listener.InnerListener);
+            Assert.AreEqual(typeof(EventLogTraceListener), listener.InnerListener.GetType());
+            Assert.AreEqual("unknown source", ((EventLogTraceListener)listener.InnerListener).EventLog.Source);
+            Assert.AreEqual("log", ((EventLogTraceListener)listener.InnerListener).EventLog.Log);
+            Assert.AreEqual("machine", ((EventLogTraceListener)listener.InnerListener).EventLog.MachineName);
         }
 
         [TestMethod]
@@ -140,11 +140,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners.Tests
             FormattedEventLogTraceListener listener = new FormattedEventLogTraceListener("unknown source", "log", "", new TextFormatter("TEST"));
 
             Assert.IsNotNull(listener.Formatter);
-            Assert.IsNotNull(listener.SlaveListener);
-            Assert.AreEqual(typeof(EventLogTraceListener), listener.SlaveListener.GetType());
-            Assert.AreEqual("unknown source", ((EventLogTraceListener)listener.SlaveListener).EventLog.Source);
-            Assert.AreEqual("log", ((EventLogTraceListener)listener.SlaveListener).EventLog.Log);
-            Assert.AreEqual(".", ((EventLogTraceListener)listener.SlaveListener).EventLog.MachineName);
+            Assert.IsNotNull(listener.InnerListener);
+            Assert.AreEqual(typeof(EventLogTraceListener), listener.InnerListener.GetType());
+            Assert.AreEqual("unknown source", ((EventLogTraceListener)listener.InnerListener).EventLog.Source);
+            Assert.AreEqual("log", ((EventLogTraceListener)listener.InnerListener).EventLog.Log);
+            Assert.AreEqual(".", ((EventLogTraceListener)listener.InnerListener).EventLog.MachineName);
         }
 
         [TestMethod]

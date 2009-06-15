@@ -167,7 +167,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography
 
             try
             {
-                SymmetricCryptoProviderFactory factory = new SymmetricCryptoProviderFactory(ConfigurationSourceFactory.Create());
+                SymmetricCryptoProviderFactory factory = new SymmetricCryptoProviderFactory();
                 ISymmetricCryptoProvider symmetricProvider = factory.Create(symmetricInstance);
 
                 return symmetricProvider;
@@ -188,7 +188,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography
         {
             try
             {
-                HashProviderFactory factory = new HashProviderFactory(ConfigurationSourceFactory.Create());
+                HashProviderFactory factory = new HashProviderFactory();
                 IHashProvider hashProvider = factory.Create(hashInstance);
 
                 return hashProvider;

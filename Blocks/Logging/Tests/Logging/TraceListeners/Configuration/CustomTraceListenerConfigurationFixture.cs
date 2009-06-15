@@ -18,6 +18,7 @@ using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport;
+using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners.Tests;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -49,27 +50,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
 
             MockLogObjectsHelper helper = new MockLogObjectsHelper();
             helper.loggingSettings.TraceListeners.Add(listenerData);
-            TraceListener listener = GetListener("listener", helper.configurationSource);
+            TraceListener listener = GetListener("listener\u200cimplementation", helper.configurationSource);
 
             Assert.IsNotNull(listener);
-            Assert.AreEqual("listener", listener.Name);
-            Assert.AreEqual(typeof(MockCustomTraceListener), listener.GetType());
-            Assert.AreEqual(initializationData, ((MockCustomTraceListener)listener).initData);
-        }
-
-        [TestMethod]
-        public void CanCreateInstanceFromGivenConfiguration()
-        {
-            CustomTraceListenerData listenerData
-                = new CustomTraceListenerData("listener", typeof(MockCustomTraceListener), initializationData);
-
-            MockLogObjectsHelper helper = new MockLogObjectsHelper();
-            helper.loggingSettings.TraceListeners.Add(listenerData);
-
-            TraceListener listener = GetListener(listenerData.Name, helper.configurationSource);
-
-            Assert.IsNotNull(listener);
-            Assert.AreEqual("listener", listener.Name);
+            Assert.AreEqual("listener\u200cimplementation", listener.Name);
             Assert.AreEqual(typeof(MockCustomTraceListener), listener.GetType());
             Assert.AreEqual(initializationData, ((MockCustomTraceListener)listener).initData);
         }
@@ -83,7 +67,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
 
             MockLogObjectsHelper helper = new MockLogObjectsHelper();
             helper.loggingSettings.TraceListeners.Add(listenerData);
-            TraceListener listener = GetListener(listenerData.Name, helper.configurationSource);
+            TraceListener listener = GetListener("listener\u200cimplementation", helper.configurationSource);
         }
 
         [TestMethod]
@@ -96,14 +80,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
             MockLogObjectsHelper helper = new MockLogObjectsHelper();
             helper.loggingSettings.TraceListeners.Add(listenerData);
 
-            TraceListener listener = GetListener(listenerData.Name, helper.configurationSource);
+            TraceListener listener = GetListener("listener\u200cimplementation", helper.configurationSource);
 
             Assert.IsNotNull(listener);
-            Assert.AreEqual("listener", listener.Name);
-            Assert.IsInstanceOfType(listener, typeof (AttributeSettingTraceListenerWrapper));
+            Assert.AreEqual("listener\u200cimplementation", listener.Name);
+            Assert.IsInstanceOfType(listener, typeof(AttributeSettingTraceListenerWrapper));
 
             var innerListener =
-                (MockCustomTraceListener) ((AttributeSettingTraceListenerWrapper) listener).InnerTraceListener;
+                (MockCustomTraceListener)((AttributeSettingTraceListenerWrapper)listener).InnerTraceListener;
 
             Assert.AreEqual(initializationData, innerListener.initData);
             Assert.AreEqual(attributeValue, innerListener.Attribute);
@@ -118,13 +102,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
             LoggingSettings loggingSettings = new LoggingSettings();
             loggingSettings.TraceListeners.Add(listenerData);
 
-            TraceListener listener = GetListener("listener", CommonUtil.SaveSectionsAndGetConfigurationSource(loggingSettings));
+            TraceListener listener = 
+                GetListener("listener\u200cimplementation", CommonUtil.SaveSectionsAndGetConfigurationSource(loggingSettings));
 
             Assert.IsNotNull(listener);
-            Assert.AreEqual("listener", listener.Name);
+            Assert.AreEqual("listener\u200cimplementation", listener.Name);
 
-            var innerListener = (MockCustomTraceListener) (
-                (AttributeSettingTraceListenerWrapper) listener).InnerTraceListener;
+            var innerListener = (MockCustomTraceListener)(
+                (AttributeSettingTraceListenerWrapper)listener).InnerTraceListener;
 
             Assert.AreEqual(initializationData, innerListener.initData);
             Assert.IsNull(innerListener.Formatter);
@@ -142,13 +127,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
             loggingSettings.TraceListeners.Add(listenerData);
             loggingSettings.Formatters.Add(new TextFormatterData("formatter", "template"));
 
-            TraceListener listener = GetListener("listener", CommonUtil.SaveSectionsAndGetConfigurationSource(loggingSettings));
+            TraceListener listener = 
+                GetListener("listener\u200cimplementation", CommonUtil.SaveSectionsAndGetConfigurationSource(loggingSettings));
 
             Assert.IsNotNull(listener);
-            Assert.AreEqual("listener", listener.Name);
+            Assert.AreEqual("listener\u200cimplementation", listener.Name);
 
-            var innerListener = (MockCustomTraceListener) (
-                (AttributeSettingTraceListenerWrapper) listener).InnerTraceListener;
+            var innerListener = (MockCustomTraceListener)(
+                (AttributeSettingTraceListenerWrapper)listener).InnerTraceListener;
 
             Assert.AreEqual(initializationData, innerListener.initData);
             Assert.IsNotNull(innerListener.Formatter);
@@ -168,13 +154,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
             LoggingSettings loggingSettings = new LoggingSettings();
             loggingSettings.TraceListeners.Add(listenerData);
 
-            TraceListener listener = GetListener("listener", CommonUtil.SaveSectionsAndGetConfigurationSource(loggingSettings));
+            TraceListener listener = 
+                GetListener("listener\u200cimplementation", CommonUtil.SaveSectionsAndGetConfigurationSource(loggingSettings));
 
             Assert.IsNotNull(listener);
-            Assert.AreEqual("listener", listener.Name);
+            Assert.AreEqual("listener\u200cimplementation", listener.Name);
 
-            var innerListener = (MockCustomTraceListener) (
-                (AttributeSettingTraceListenerWrapper) listener).InnerTraceListener;
+            var innerListener = (MockCustomTraceListener)(
+                (AttributeSettingTraceListenerWrapper)listener).InnerTraceListener;
 
             Assert.IsNull(innerListener.initData);
             Assert.IsNull(innerListener.Formatter);
@@ -190,14 +177,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
             LoggingSettings loggingSettings = new LoggingSettings();
             loggingSettings.TraceListeners.Add(listenerData);
 
-            TraceListener listener = GetListener("listener", CommonUtil.SaveSectionsAndGetConfigurationSource(loggingSettings));
+            TraceListener listener = GetListener("listener\u200cimplementation", CommonUtil.SaveSectionsAndGetConfigurationSource(loggingSettings));
 
             Assert.IsNotNull(listener);
-            Assert.AreEqual("listener", listener.Name);
+            Assert.AreEqual("listener\u200cimplementation", listener.Name);
             Assert.AreEqual(TraceOptions.Callstack, listener.TraceOutputOptions);
 
-            var innerListener = (MockCustomTraceListener) (
-                (AttributeSettingTraceListenerWrapper) listener).InnerTraceListener;
+            var innerListener = (MockCustomTraceListener)(
+                (AttributeSettingTraceListenerWrapper)listener).InnerTraceListener;
 
             Assert.AreEqual(initializationData, innerListener.initData);
             Assert.AreEqual(attributeValue, innerListener.Attribute);

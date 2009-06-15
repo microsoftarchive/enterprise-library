@@ -44,17 +44,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
                     instrumentationSection.PerformanceCountersEnabled,
                     instrumentationSection.EventLoggingEnabled,
                     instrumentationSection.WmiEnabled,
-                    instrumentationSection.ApplicationInstanceName));
+                    instrumentationSection.ApplicationInstanceName))
+                {
+                    IsDefault = true
+                };
 
             yield return new TypeRegistration<AttributeValidatorFactory>(
                 () => new AttributeValidatorFactory(
-                          Container.Resolved<IValidationInstrumentationProvider>()));
+                          Container.Resolved<IValidationInstrumentationProvider>())) { IsDefault = true };
 
             yield return new TypeRegistration<ConfigurationValidatorFactory>(
                 () =>
                 new ConfigurationValidatorFactory(
                     availableConfigurationSource,
-                    Container.Resolved<IValidationInstrumentationProvider>()));
+                    Container.Resolved<IValidationInstrumentationProvider>())) { IsDefault = true };
 
             yield return new TypeRegistration<ValidatorFactory>(
                 () =>
@@ -63,7 +66,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
                     Container.Resolved<AttributeValidatorFactory>(),
                     Container.Resolved<ConfigurationValidatorFactory>()
                     )
-                );
+                )
+                { IsDefault = true };
         }
 
         /// <summary>
@@ -76,7 +80,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
         /// <returns>The sequence of <see cref="TypeRegistration"/> objects.</returns>
         public IEnumerable<TypeRegistration> GetUpdatedRegistrations(IConfigurationSource configurationSource)
         {
-            return Enumerable.Empty<TypeRegistration>();
+            return GetRegistrations(configurationSource);
         }
     }
 }

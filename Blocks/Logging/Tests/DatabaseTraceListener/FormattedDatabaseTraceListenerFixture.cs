@@ -240,6 +240,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Tests
             {
                 TraceListenerEntryWrittenEventCalls++;
             }
+
+            public void FireReconfigurationErrorEvent(Exception exception)
+            {
+                
+            }
         }
 
         public class TestCustomObject

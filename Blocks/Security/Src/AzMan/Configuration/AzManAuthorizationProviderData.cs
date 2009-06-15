@@ -137,7 +137,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.AzMan.Configuration
                                                         Scope,
                                                         Container.Resolved<IAuthorizationProviderInstrumentationProvider>(Name)))
             {
-                Name = this.Name
+                Name = this.Name,
+                Lifetime = TypeRegistrationLifetime.Transient
             };
         }
     }

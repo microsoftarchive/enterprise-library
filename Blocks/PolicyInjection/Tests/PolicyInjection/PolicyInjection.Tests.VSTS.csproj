@@ -74,6 +74,7 @@
     <Compile Include="Configuration\ParameterTypeMatchingRuleDataFixture.cs" />
     <Compile Include="Configuration\PolicyDataFixture.cs" />
     <Compile Include="Configuration\PolicyInjectionSettingsFixture.cs" />
+    <Compile Include="Configuration\PolicyInjectionUpdateableSettingsFixture.cs" />
     <Compile Include="Configuration\PropertyMatchingRuleDataFixture.cs" />
     <Compile Include="Configuration\ReturnTypeMatchingRuleDataFixture.cs" />
     <Compile Include="Configuration\TagAttributeMatchingRuleFixture.cs" />

@@ -76,9 +76,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\..\GlobalAssemblyInfo.cs">
-      <Link>GlobalAssemblyInfo.cs</Link>
-    </Compile>
     <Compile Include="APTCAFixture.cs" />
     <Compile Include="Configuration\ConfigurationModel\ChangeTrackingConfiguratorFixture.cs" />
     <Compile Include="Configuration\ConfigurationModel\ConfigurationBasedTypeRegistrationsProviderFixture.cs" />

@@ -92,7 +92,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
             registrations.ElementAt(0)
                 .AssertForServiceType(typeof(InjectionPolicy))
                 .ForName("policy 1")
-                .ForImplementationType(typeof(PolicyData.RuleDrivenPolicy));
+                .ForImplementationType(typeof(InjectionFriendlyRuleDrivenPolicy));
         }
 
         [TestMethod]
@@ -145,7 +145,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
             registrations.Where(tr => tr.ServiceType == typeof(InjectionPolicy)).ElementAt(0)
                 .AssertForServiceType(typeof(InjectionPolicy))
                 .ForName("policy 1")
-                .ForImplementationType(typeof(PolicyData.RuleDrivenPolicy));
+                .ForImplementationType(typeof(InjectionFriendlyRuleDrivenPolicy));
         }
 
         [TestMethod]
@@ -221,7 +221,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
             registrations.Where(tr => tr.ServiceType == typeof(InjectionPolicy)).ElementAt(0)
                 .AssertForServiceType(typeof(InjectionPolicy))
                 .ForName("policy 1")
-                .ForImplementationType(typeof(PolicyData.RuleDrivenPolicy));
+                .ForImplementationType(typeof(InjectionFriendlyRuleDrivenPolicy));
         }
 
         [TestMethod]

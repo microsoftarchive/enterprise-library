@@ -86,7 +86,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration
 
             yield return new TypeRegistration<IAuthorizationProvider>(() => new AuthorizationRuleProvider(authorizationRules, Container.Resolved<IAuthorizationProviderInstrumentationProvider>(Name)))
                 {
-                    Name = this.Name
+                    Name = this.Name,
+                    Lifetime = TypeRegistrationLifetime.Transient
                 };
         }
     }

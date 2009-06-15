@@ -90,7 +90,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
                             ProtectedKeyProtectionScope,
                             Container.Resolved<IHashAlgorithmInstrumentationProvider>(Name)))
                 {
-                    Name = Name
+                    Name = Name,
+                    Lifetime = TypeRegistrationLifetime.Transient
                 };
         }
     }

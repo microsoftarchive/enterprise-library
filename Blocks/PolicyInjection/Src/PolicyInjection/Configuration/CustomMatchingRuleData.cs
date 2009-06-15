@@ -206,7 +206,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
                     RegistrationExpressionBuilder.BuildExpression(this.Type, this.Attributes),
                      typeof(IMatchingRule))
                 {
-                    Name = this.Name + nameSuffix
+                    Name = this.Name + nameSuffix,
+                    Lifetime = TypeRegistrationLifetime.Transient
                 };
         }
     }

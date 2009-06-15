@@ -9,10 +9,12 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.MatchingRules;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Practices.Unity.InterceptionExtension;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configuration
 {
@@ -42,6 +44,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
                 AssertPropertyMatchEqual(original.Matches[i], rehydrated.Matches[i],
                                          "Match at index {0} is incorrect", i);
             }
+        }
+
+        [TestMethod]
+        public void MatchingRuleHasTransientLifetime()
+        {
+            PropertyMatchingRuleData ruleData = new PropertyMatchingRuleData("Foo");
+            TypeRegistration registration = ruleData.GetRegistrations("").First();
+
+            Assert.AreEqual(TypeRegistrationLifetime.Transient, registration.Lifetime);
         }
 
         void AssertPropertyMatchEqual(PropertyMatchData expected,

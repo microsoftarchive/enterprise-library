@@ -189,7 +189,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
                     RegistrationExpressionBuilder.BuildExpression(Type, Attributes),
                     typeof (ISymmetricCryptoProvider))
                     {
-                        Name = Name
+                        Name = Name,
+                        Lifetime = TypeRegistrationLifetime.Transient
                     };
         }
     }

@@ -17,27 +17,27 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.TestSupport.TestClass
 {
     public class MockValidationInstrumentationProvider : IValidationInstrumentationProvider
     {
-        public void FireValidationSucceeded(Type typeBeingValidated)
+        public void NotifyValidationSucceeded(Type typeBeingValidated)
         {
             // Intentional no-op
         }
 
-        public void FireValidationFailed(Type typeBeingValidated, ValidationResults validationResult)
+        public void NotifyValidationFailed(Type typeBeingValidated, ValidationResults validationResult)
         {
             // Intentional no-op
         }
 
-        public void FireConfigurationFailure(ConfigurationErrorsException configurationException)
+        public void NotifyConfigurationFailure(ConfigurationErrorsException configurationException)
         {
             // Intentional no-op
         }
 
-        public void FireConfigurationCalled(Type typeBeingValidated)
+        public void NotifyConfigurationCalled(Type typeBeingValidated)
         {
             // Intentional no-op
         }
 
-        public void FireValidationException(Type typeBeingValidated, string errorMessage, Exception exception)
+        public void NotifyValidationException(Type typeBeingValidated, string errorMessage, Exception exception)
         {
             // Intentional no-op
         }

@@ -103,7 +103,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
             }
             catch (ConfigurationErrorsException configurationErrors)
             {
-                instrumentationProvider.FireConfigurationFailure(configurationErrors);
+                instrumentationProvider.NotifyConfigurationFailure(configurationErrors);
                 throw;
             }
         }

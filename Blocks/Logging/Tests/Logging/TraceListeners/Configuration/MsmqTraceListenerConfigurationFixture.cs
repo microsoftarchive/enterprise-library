@@ -209,34 +209,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
             helper.loggingSettings.TraceListeners.Add(listenerData);
             helper.loggingSettings.Formatters.Add(new BinaryLogFormatterData(formatterName));
 
-            TraceListener listener = GetListener("listener", helper.configurationSource);
+            TraceListener listener = GetListener("listener\u200cimplementation", helper.configurationSource);
 
             Assert.IsNotNull(listener);
             Assert.AreEqual(listener.GetType(), typeof(MsmqTraceListener));
 
             MsmqTraceListener msmqTraceListener = listener as MsmqTraceListener;
-            Assert.AreEqual("listener", listener.Name);
-            Assert.IsNotNull(msmqTraceListener.Formatter);
-            Assert.AreEqual(msmqTraceListener.Formatter.GetType(), typeof(BinaryLogFormatter));
-            Assert.AreEqual(CommonUtil.MessageQueuePath, msmqTraceListener.QueuePath);
-        }
-
-        [TestMethod]
-        public void CanCreateInstanceFromGivenConfiguration()
-        {
-            TraceListenerData listenerData = new MsmqTraceListenerData("listener", CommonUtil.MessageQueuePath, formatterName);
-
-            MockLogObjectsHelper helper = new MockLogObjectsHelper();
-            helper.loggingSettings.Formatters.Add(new BinaryLogFormatterData(formatterName));
-            helper.loggingSettings.TraceListeners.Add(listenerData);
-
-            TraceListener listener = GetListener(listenerData.Name, helper.configurationSource);
-
-            Assert.IsNotNull(listener);
-            Assert.AreEqual(listener.GetType(), typeof(MsmqTraceListener));
-
-            MsmqTraceListener msmqTraceListener = listener as MsmqTraceListener;
-            Assert.AreEqual("listener", listener.Name);
+            Assert.AreEqual("listener\u200cimplementation", listener.Name);
             Assert.IsNotNull(msmqTraceListener.Formatter);
             Assert.AreEqual(msmqTraceListener.Formatter.GetType(), typeof(BinaryLogFormatter));
             Assert.AreEqual(CommonUtil.MessageQueuePath, msmqTraceListener.QueuePath);
@@ -249,7 +228,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
             loggingSettings.Formatters.Add(new FormatterData(formatterName, typeof(BinaryLogFormatter)));
             loggingSettings.TraceListeners.Add(new MsmqTraceListenerData("listener", CommonUtil.MessageQueuePath, formatterName));
 
-            TraceListener listener = GetListener("listener", CommonUtil.SaveSectionsAndGetConfigurationSource(loggingSettings));
+            TraceListener listener = 
+                GetListener("listener\u200cimplementation", CommonUtil.SaveSectionsAndGetConfigurationSource(loggingSettings));
 
             Assert.IsNotNull(listener);
             Assert.AreEqual(listener.GetType(), typeof(MsmqTraceListener));

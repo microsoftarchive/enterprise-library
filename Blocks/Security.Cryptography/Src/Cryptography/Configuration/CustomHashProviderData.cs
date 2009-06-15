@@ -187,7 +187,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
                     RegistrationExpressionBuilder.BuildExpression(Type, Attributes),
                     typeof (IHashProvider))
                     {
-                        Name = Name
+                        Name = Name,
+                        Lifetime = TypeRegistrationLifetime.Transient
                     };
         }
     }

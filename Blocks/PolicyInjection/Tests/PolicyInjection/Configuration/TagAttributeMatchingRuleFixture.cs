@@ -9,8 +9,10 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configuration
 {
@@ -29,6 +31,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
             Assert.AreEqual(tagAttributeMatchingRule.Name, deserializedRule.Name);
             Assert.AreEqual(tagAttributeMatchingRule.IgnoreCase, deserializedRule.IgnoreCase);
             Assert.AreEqual(tagAttributeMatchingRule.Match, deserializedRule.Match);
+        }
+
+
+        [TestMethod]
+        public void MatchingRuleHasTransientLifetime()
+        {
+            TagAttributeMatchingRuleData ruleData = new TagAttributeMatchingRuleData("RuleName", "TAg");
+            TypeRegistration registration = ruleData.GetRegistrations("").First();
+
+            Assert.AreEqual(TypeRegistrationLifetime.Transient, registration.Lifetime);
         }
     }
 }

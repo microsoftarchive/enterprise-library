@@ -122,7 +122,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
                 new TypeRegistration<IExceptionHandler>(
                     () => new ReplaceHandler(resolver, ReplaceExceptionType))
                 {
-                        Name = BuildName(namePrefix)
+                        Name = BuildName(namePrefix),
+                        Lifetime = TypeRegistrationLifetime.Transient
                 };
         }
     }

@@ -38,7 +38,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation.Tests
                 =
                 EnterpriseLibraryContainer.CreateDefaultContainer(configurationSource).GetInstance
                     <DefaultCachingEventLogger>();
-                //= EnterpriseLibraryFactory.BuildUp<DefaultCachingEventLogger>(configurationSource);
 
             Assert.IsNotNull(logger);
         }

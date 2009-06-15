@@ -729,7 +729,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
 
         public class TestClass
         {
+#pragma warning disable 414
             String NonPublicField = null;
+#pragma warning restore 414
+
             public String PublicField = null;
 
             public String SecondPublicField = null;

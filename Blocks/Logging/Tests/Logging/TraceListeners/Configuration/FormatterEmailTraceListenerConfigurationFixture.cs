@@ -90,53 +90,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
             helper.loggingSettings.TraceListeners.Add(listenerData);
             helper.loggingSettings.Formatters.Add(new TextFormatterData("formatter", "foobar template"));
 
-            TraceListener listener = GetListener("listener", helper.configurationSource);
+            TraceListener listener = GetListener("listener\u200cimplementation", helper.configurationSource);
 
             Assert.IsNotNull(listener);
-            Assert.AreEqual("listener", listener.Name);
+            Assert.AreEqual("listener\u200cimplementation", listener.Name);
             Assert.AreEqual(listener.GetType(), typeof(EmailTraceListener));
             Assert.IsNotNull(((EmailTraceListener)listener).Formatter);
             Assert.AreEqual(((EmailTraceListener)listener).Formatter.GetType(), typeof(TextFormatter));
             Assert.AreEqual("foobar template", ((TextFormatter)((EmailTraceListener)listener).Formatter).Template);
-        }
-
-        [TestMethod]
-        public void CanCreateInstanceFromGivenConfiguration()
-        {
-            var listenerData =
-                new EmailTraceListenerData("listener", "obviously.bad.email.address@127.0.0.1", "logging@entlib.com", "EntLib-Logging:",
-                                           "has occurred", "smtphost", 25, "formatter");
-
-            var helper = new MockLogObjectsHelper();
-            helper.loggingSettings.Formatters.Add(new TextFormatterData("formatter", "foobar template"));
-            helper.loggingSettings.TraceListeners.Add(listenerData);
-
-            TraceListener listener = GetListener(listenerData.Name, helper.configurationSource);
-
-            Assert.IsNotNull(listener);
-            Assert.AreEqual("listener", listener.Name);
-            Assert.AreEqual(listener.GetType(), typeof(EmailTraceListener));
-            Assert.IsNotNull(((EmailTraceListener)listener).Formatter);
-            Assert.AreEqual(((EmailTraceListener)listener).Formatter.GetType(), typeof(TextFormatter));
-            Assert.AreEqual("foobar template", ((TextFormatter)((EmailTraceListener)listener).Formatter).Template);
-        }
-
-        [TestMethod]
-        public void CanCreateInstanceFromGivenConfigurationWithoutFormatter()
-        {
-            var listenerData =
-                new EmailTraceListenerData("listener", "obviously.bad.email.address@127.0.0.1", "logging@entlib.com", "EntLib-Logging:",
-                                           "has occurred", "smtphost", 25, null);
-
-            var helper = new MockLogObjectsHelper();
-            helper.loggingSettings.TraceListeners.Add(listenerData);
-
-            TraceListener listener = GetListener(listenerData.Name, helper.configurationSource);
-
-            Assert.IsNotNull(listener);
-            Assert.AreEqual("listener", listener.Name);
-            Assert.AreEqual(listener.GetType(), typeof(EmailTraceListener));
-            Assert.IsNull(((EmailTraceListener)listener).Formatter);
         }
 
         [TestMethod]
@@ -148,7 +109,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
                 new EmailTraceListenerData("listener", "obviously.bad.email.address@127.0.0.1", "logging@entlib.com", "EntLib-Logging:",
                                            "has occurred", "smtphost", 25, "formatter"));
 
-            TraceListener listener = GetListener("listener", CommonUtil.SaveSectionsAndGetConfigurationSource(loggingSettings));
+            TraceListener listener = 
+                GetListener("listener\u200cimplementation", CommonUtil.SaveSectionsAndGetConfigurationSource(loggingSettings));
 
             Assert.IsNotNull(listener);
             Assert.AreEqual(listener.GetType(), typeof(EmailTraceListener));

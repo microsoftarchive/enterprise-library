@@ -25,9 +25,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerMo
         private IUnityContainer container;
 
         /// <summary>
-        /// 
+        /// Initializes a new instance of the <see cref="UnityServiceLocator"/> class for a container.
         /// </summary>
-        /// <param name="container"></param>
+        /// <param name="container">The <see cref="IUnityContainer"/> to wrap with the <see cref="IServiceLocator"/>
+        /// interface implementation.</param>
         public UnityServiceLocator(IUnityContainer container)
         {
             this.container = container;
@@ -57,7 +58,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerMo
         /// </returns>
         protected override object DoGetInstance(Type serviceType, string key)
         {
-            if(container == null) throw new ObjectDisposedException("container");
+            if (container == null) throw new ObjectDisposedException("container");
             return container.Resolve(serviceType, key);
         }
 
@@ -71,7 +72,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerMo
         /// </returns>
         protected override IEnumerable<object> DoGetAllInstances(Type serviceType)
         {
-            if(container == null) throw new ObjectDisposedException("container");
+            if (container == null) throw new ObjectDisposedException("container");
             return container.ResolveAll(serviceType);
         }
     }

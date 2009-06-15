@@ -57,12 +57,10 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\..\GlobalAssemblyInfo.cs">
-      <Link>GlobalAssemblyInfo.cs</Link>
-    </Compile>
     <Compile Include="APTCAFixture.cs" />
     <Compile Include="ConfigurationFixture.cs" />
     <Compile Include="Configuration\ConfigurationSerializationFixture.cs" />
+    <Compile Include="Configuration\LoggingExceptionHandlerDataFixture.cs" />
     <Compile Include="Configuration\Unity\LoggingExceptionHandlerPolicyCreatorFixture.cs" />
     <Compile Include="LoggingExceptionHandlerFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

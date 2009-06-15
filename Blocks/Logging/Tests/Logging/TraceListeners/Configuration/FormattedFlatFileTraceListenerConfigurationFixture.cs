@@ -114,29 +114,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
             helper.loggingSettings.TraceListeners.Add(listenerData);
             helper.loggingSettings.Formatters.Add(new TextFormatterData("formatter", "foobar template"));
 
-            TraceListener listener = GetListener("listener", helper.configurationSource);
+            TraceListener listener = GetListener("listener\u200cimplementation", helper.configurationSource);
 
             Assert.IsNotNull(listener);
-            Assert.AreEqual("listener", listener.Name);
-            Assert.AreEqual(listener.GetType(), typeof(FlatFileTraceListener));
-            Assert.IsNotNull(((FlatFileTraceListener)listener).Formatter);
-            Assert.AreEqual(((FlatFileTraceListener)listener).Formatter.GetType(), typeof(TextFormatter));
-            Assert.AreEqual("foobar template", ((TextFormatter)((FlatFileTraceListener)listener).Formatter).Template);
-        }
-
-        [TestMethod]
-        public void CanCreateInstanceFromGivenConfiguration()
-        {
-            FlatFileTraceListenerData listenerData = new FlatFileTraceListenerData("listener", "log.txt", "---header---", "+++footer+++", "formatter");
-
-            MockLogObjectsHelper helper = new MockLogObjectsHelper();
-            helper.loggingSettings.Formatters.Add(new TextFormatterData("formatter", "foobar template"));
-            helper.loggingSettings.TraceListeners.Add(listenerData);
-            
-            TraceListener listener = GetListener(listenerData.Name, helper.configurationSource);
-
-            Assert.IsNotNull(listener);
-            Assert.AreEqual("listener", listener.Name);
+            Assert.AreEqual("listener\u200cimplementation", listener.Name);
             Assert.AreEqual(listener.GetType(), typeof(FlatFileTraceListener));
             Assert.IsNotNull(((FlatFileTraceListener)listener).Formatter);
             Assert.AreEqual(((FlatFileTraceListener)listener).Formatter.GetType(), typeof(TextFormatter));
@@ -150,7 +131,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
             loggingSettings.Formatters.Add(new TextFormatterData("formatter", "foobar template"));
             loggingSettings.TraceListeners.Add(new FlatFileTraceListenerData("listener", "log.txt", "---header---", "+++footer+++", "formatter"));
 
-            TraceListener listener = GetListener("listener", CommonUtil.SaveSectionsAndGetConfigurationSource(loggingSettings));
+            TraceListener listener = GetListener("listener\u200cimplementation", CommonUtil.SaveSectionsAndGetConfigurationSource(loggingSettings));
 
             Assert.IsNotNull(listener);
             Assert.AreEqual(listener.GetType(), typeof(FlatFileTraceListener));

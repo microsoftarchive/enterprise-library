@@ -304,22 +304,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests.Configur
             }
         }
 
-        [TestMethod]
-        public void ExceptionPolicyLifetimeIsSingleton()
-        {
-            ExceptionPolicyData exceptionPolicyData = new ExceptionPolicyData("policy");
-            settings.ExceptionPolicies.Add(exceptionPolicyData);
-
-            using (var container = new UnityContainer().AddExtension(new EnterpriseLibraryCoreExtension(configurationSource)))
-            {
-                ExceptionPolicyImpl policy = container.Resolve<ExceptionPolicyImpl>("policy");
-                ExceptionPolicyImpl policy2 = container.Resolve<ExceptionPolicyImpl>("policy");
-
-                Assert.AreSame(policy, policy2);
-            }
-        }
-
-
         public class TestCustomExceptionHandler : MockCustomProviderBase, IExceptionHandler
         {
             public TestCustomExceptionHandler(NameValueCollection attributes)

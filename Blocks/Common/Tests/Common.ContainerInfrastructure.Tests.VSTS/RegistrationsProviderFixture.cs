@@ -9,10 +9,14 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Configuration;
 using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -68,6 +72,87 @@ namespace Common.ContainerInfrastructure.Tests.VSTS
         }
     }
 
+
+
+   [TestClass]
+    public class GivenATypeRegisteringConfigurationSectionAndContainerChangingEvent
+    {
+        private const string SectionName = "MockSection";
+
+        [TestInitialize]
+        public void Given()
+        {
+            var configSource = new DictionaryConfigurationSource();
+            var mockEventSourceProvider = new Mock<IContainerReconfiguringEventSource>();
+
+            var section = new MockSection();
+            configSource.Add(SectionName, section);
+
+            var builder = new SectionBuilder();
+            builder.LocatorSection()
+                .AddConfigSection(SectionName).WithProviderName("MockSectionProvider")
+                .AddTo(configSource);
+          
+            var eventArgs = new Mock<ContainerReconfiguringEventArgs>(configSource, new[] { SectionName });
+            var provider = TypeRegistrationsProvider.CreateDefaultProvider(configSource, mockEventSourceProvider.Object);
+
+            MockSection.UpdatedRegistrationsWasCalled = false;
+            mockEventSourceProvider.Raise(e => e.ContainerReconfiguring += null, eventArgs.Object);
+        }
+
+        [TestMethod]
+        public void WhenReconfiguringEventRaised_ConfigurationSectionsAreNotifiedOfChange()
+        {
+            Assert.IsTrue(MockSection.UpdatedRegistrationsWasCalled);
+        }
+    }
+
+
+    [TestClass]
+    public class GivenTypeRegisteringProviderAndConfigurationChangingEvent
+    {
+        [TestInitialize]
+        public void Given()
+        {
+            var configSource = new DictionaryConfigurationSource();
+            var mockEventSourceProvider = new Mock<IContainerReconfiguringEventSource>();
+
+            var builder = new SectionBuilder();
+            builder.LocatorSection()
+                .AddProvider<MockSection>().WithProviderName("SomeName")
+                .AddTo(configSource);
+
+            var eventArgs = new Mock<ContainerReconfiguringEventArgs>(configSource, new[] { "NotUsed" });
+            var provider = TypeRegistrationsProvider.CreateDefaultProvider(configSource, mockEventSourceProvider.Object);
+
+            MockSection.UpdatedRegistrationsWasCalled = false;
+            mockEventSourceProvider.Raise(e => e.ContainerReconfiguring += null, eventArgs.Object);
+        }
+
+        [TestMethod]
+        public void WhenReconfiguringEventRaised_ConfigurationSectionsAreNotifiedOfChange()
+        {
+            Assert.IsTrue(MockSection.UpdatedRegistrationsWasCalled);
+        }
+    }
+
+ 
+    class MockSection : ConfigurationSection, ITypeRegistrationsProvider
+    {
+        public static bool UpdatedRegistrationsWasCalled { get; set; }
+
+        public IEnumerable<TypeRegistration> GetRegistrations(IConfigurationSource configurationSource)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<TypeRegistration> GetUpdatedRegistrations(IConfigurationSource configurationSource)
+        {
+            UpdatedRegistrationsWasCalled = true;
+            return Enumerable.Empty<TypeRegistration>();
+        }
+    }
+
     class MockLocatorBuilder
     {
         private readonly List<ITypeRegistrationsProvider> locators = new List<ITypeRegistrationsProvider>();
@@ -75,7 +160,7 @@ namespace Common.ContainerInfrastructure.Tests.VSTS
 
         public MockLocatorBuilder(int numProviders)
         {
-            for(int i = 0; i < numProviders; ++i)
+            for (int i = 0; i < numProviders; ++i)
             {
                 AddProvider();
             }
@@ -96,4 +181,7 @@ namespace Common.ContainerInfrastructure.Tests.VSTS
             locators.Add(mockProvider.Object);
         }
     }
+
+   
 }
+

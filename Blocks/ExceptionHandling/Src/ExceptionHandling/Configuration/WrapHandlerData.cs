@@ -123,7 +123,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
                 new TypeRegistration<IExceptionHandler>(
                     () => new WrapHandler(exceptionMessageResolver, WrapExceptionType))
                     {
-                        Name = BuildName(namePrefix)
+                        Name = BuildName(namePrefix),
+                        Lifetime = TypeRegistrationLifetime.Transient
                     };
         }
     }

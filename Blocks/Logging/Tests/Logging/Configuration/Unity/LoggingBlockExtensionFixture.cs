@@ -121,10 +121,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration.Unit
 
             InitializeContainer();
 
-            FlatFileTraceListener createdObject = (FlatFileTraceListener)container.Resolve<TraceListener>("name");
+            FlatFileTraceListener createdObject =
+                (FlatFileTraceListener)container.Resolve<TraceListener>("name\u200cimplementation");
 
             Assert.IsNotNull(createdObject);
-            Assert.AreEqual("name", createdObject.Name);
+            Assert.AreEqual("name\u200cimplementation", createdObject.Name);
             Assert.AreEqual(SourceLevels.Critical, ((EventTypeFilter)createdObject.Filter).EventType);
             Assert.AreEqual(TraceOptions.ProcessId, createdObject.TraceOutputOptions);
             Assert.IsNotNull(createdObject.Formatter);
@@ -141,8 +142,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration.Unit
 
             InitializeContainer();
 
-            FlatFileTraceListener createdObject1 = (FlatFileTraceListener)container.Resolve<TraceListener>("name");
-            FlatFileTraceListener createdObject2 = (FlatFileTraceListener)container.Resolve<TraceListener>("name");
+            TraceListener createdObject1 = container.Resolve<TraceListener>("name");
+            TraceListener createdObject2 = container.Resolve<TraceListener>("name");
 
             Assert.AreSame(createdObject1, createdObject2);
         }
@@ -166,9 +167,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration.Unit
             Assert.AreEqual("name", createdObject.Name);
             Assert.AreEqual(SourceLevels.All, createdObject.Level);
             Assert.AreEqual(2, createdObject.Listeners.Count);
-            Assert.AreSame(typeof(MockTraceListener), createdObject.Listeners[0].GetType());
+            Assert.AreSame(typeof(ReconfigurableTraceListenerWrapper), createdObject.Listeners[0].GetType());
             Assert.AreEqual("mock1", createdObject.Listeners[0].Name);
-            Assert.AreSame(typeof(MockTraceListener), createdObject.Listeners[1].GetType());
+            Assert.AreSame(typeof(ReconfigurableTraceListenerWrapper), createdObject.Listeners[1].GetType());
             Assert.AreEqual("mock2", createdObject.Listeners[1].Name);
         }
 

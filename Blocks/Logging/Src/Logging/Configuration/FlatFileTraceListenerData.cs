@@ -17,6 +17,7 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
+using System.Linq.Expressions;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 {
@@ -157,28 +158,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         }
 
         /// <summary>
-        /// 
+        /// Returns a lambda expression that represents the creation of the trace listener described by this
+        /// configuration object.
         /// </summary>
-        /// <returns></returns>
-        public override IEnumerable<TypeRegistration> GetRegistrations()
+        /// <returns>A lambda expression to create a trace listener.</returns>
+        protected override Expression<Func<TraceListener>> GetCreationExpression()
         {
-            return new[] 
-            { 
-                new TypeRegistration<TraceListener>(
-                    () => 
-                        new FlatFileTraceListener(
-                            this.FileName, 
-                            this.Header, 
-                            this.Footer, 
-                            Container.ResolvedIfNotNull<ILogFormatter>(this.Formatter),
-                            Container.Resolved<ILoggingInstrumentationProvider>())
-                        { 
-                            Name = this.Name, 
-                            TraceOutputOptions = this.TraceOutputOptions,
-                            Filter = new EventTypeFilter(this.Filter)
-                        }) 
-                { Name = this.Name }
-            };
+            return () =>
+                new FlatFileTraceListener(
+                    this.FileName,
+                    this.Header,
+                    this.Footer,
+                    Container.ResolvedIfNotNull<ILogFormatter>(this.Formatter),
+                    Container.Resolved<ILoggingInstrumentationProvider>());
         }
     }
 }

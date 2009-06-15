@@ -186,7 +186,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
                         Order = this.Order
                     })
                 {
-                    Name = this.Name + nameSuffix
+                    Name = this.Name + nameSuffix,
+                    Lifetime = TypeRegistrationLifetime.Transient
                 };
         }
     }

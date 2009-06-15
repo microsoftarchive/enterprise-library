@@ -73,7 +73,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
                             select BuildChildName(data.Name)
                     
                     )))
-                    {Name = Name};
+                    {
+                        Name = Name,
+                        Lifetime = TypeRegistrationLifetime.Transient
+                    };
 
             yield return GetInstrumentationRegistration(configurationSource);
         }
@@ -94,7 +97,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
                                                                       instrumentationSection.WmiEnabled,
                                                                       instrumentationSection.ApplicationInstanceName))
                        {
-                           Name = Name
+                           Name = Name,
+                           Lifetime = TypeRegistrationLifetime.Transient
                        };
         }
     }

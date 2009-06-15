@@ -43,29 +43,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
             MockLogObjectsHelper helper = new MockLogObjectsHelper();
             helper.loggingSettings.TraceListeners.Add(listenerData);
 
-            TraceListener listener = GetListener("listener", helper.configurationSource);
+            TraceListener listener = GetListener("listener\u200cimplementation", helper.configurationSource);
 
             Assert.IsNotNull(listener);
             Assert.AreEqual(listener.GetType(), typeof(TextWriterTraceListener));
-            Assert.AreEqual("listener", listener.Name);
-            Assert.AreEqual(TraceOptions.Callstack, listener.TraceOutputOptions);
-        }
-
-        [TestMethod]
-        public void CanCreateInstanceFromGivenConfiguration()
-        {
-            SystemDiagnosticsTraceListenerData listenerData
-                = new SystemDiagnosticsTraceListenerData("listener", typeof(TextWriterTraceListener), "log.txt");
-            listenerData.TraceOutputOptions = TraceOptions.Callstack;
-
-            MockLogObjectsHelper helper = new MockLogObjectsHelper();
-            helper.loggingSettings.TraceListeners.Add(listenerData);
-
-            TraceListener listener = GetListener(listenerData.Name, helper.configurationSource);
-
-            Assert.IsNotNull(listener);
-            Assert.AreEqual(listener.GetType(), typeof(TextWriterTraceListener));
-            Assert.AreEqual("listener", listener.Name);
+            Assert.AreEqual("listener\u200cimplementation", listener.Name);
             Assert.AreEqual(TraceOptions.Callstack, listener.TraceOutputOptions);
         }
 
@@ -80,7 +62,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
             loggingSettings.TraceListeners.Add(listenerData);
 
             TraceListener listener
-                = GetListener("listener", CommonUtil.SaveSectionsAndGetConfigurationSource(loggingSettings));
+                = GetListener("listener\u200cimplementation", CommonUtil.SaveSectionsAndGetConfigurationSource(loggingSettings));
 
             Assert.IsNotNull(listener);
             Assert.AreEqual(listener.GetType(), typeof(TextWriterTraceListener));

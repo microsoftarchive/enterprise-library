@@ -11,6 +11,7 @@
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Formatters.Tests
 {
+#pragma warning disable 618
     public class CustomToken : TokenFunction
     {
         public CustomToken() : base("[[AcmeDBLookup{", "}]]")
@@ -22,5 +23,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Formatters.Tests
             return "1234";
         }
     }
+#pragma warning restore 618
 }
 

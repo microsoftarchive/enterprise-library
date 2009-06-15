@@ -215,7 +215,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Config
                 new LoggingExceptionHandler(LogCategory, EventId, Severity, Title, Priority, FormatterType,
                                             Container.Resolved<LogWriter>()))
                        {
-                           Name = BuildName(namePrefix)
+                           Name = BuildName(namePrefix),
+                           Lifetime = TypeRegistrationLifetime.Transient
                        };
         }
     }

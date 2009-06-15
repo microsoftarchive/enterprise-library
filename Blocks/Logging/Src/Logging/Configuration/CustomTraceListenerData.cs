@@ -78,9 +78,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         }
 
         /// <summary>
-        /// 
+        /// Returns a lambda expression that represents the creation of the trace listener described by this
+        /// configuration object.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A lambda expression to create a trace listener.</returns>
         protected override Expression<Func<TraceListener>> GetCreationExpression()
         {
             Expression<Func<TraceListener>> baseLambdaExpression = base.GetCreationExpression();

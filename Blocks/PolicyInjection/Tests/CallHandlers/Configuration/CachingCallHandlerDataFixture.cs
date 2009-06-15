@@ -16,6 +16,7 @@ using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Configu
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
 using Microsoft.Practices.Unity.InterceptionExtension;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tests.Configuration
 {
@@ -52,6 +53,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
                 .AssertForServiceType(typeof(ICallHandler))
                 .ForName("caching-suffix")
                 .ForImplementationType(typeof(CachingCallHandler));
+        }
+
+        [TestMethod]
+        public void WhenCreatesTypeRegistration_ThenRegistrationHasTransientLifetime()
+        {
+            var registrations = callHandlerData.GetRegistrations("-suffix").First();
+
+            Assert.AreEqual(TypeRegistrationLifetime.Transient, registrations.Lifetime);
         }
 
         [TestMethod]

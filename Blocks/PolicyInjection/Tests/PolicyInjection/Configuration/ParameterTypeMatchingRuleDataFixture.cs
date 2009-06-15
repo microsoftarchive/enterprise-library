@@ -17,7 +17,7 @@ using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using RuleDrivenPolicy = Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration.PolicyData.RuleDrivenPolicy;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configuration
 {
@@ -58,7 +58,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
             IUnityContainer container = new UnityContainer().AddNewExtension<Interception>();
             settings.ConfigureContainer(container, configSource);
 
-            RuleDrivenPolicy policy = container.Resolve<RuleDrivenPolicy>("Validate Parameters");
+            InjectionFriendlyRuleDrivenPolicy policy = container.Resolve<InjectionFriendlyRuleDrivenPolicy>("Validate Parameters");
             List<IMatchingRule> rules = RuleCreationFixture.GetRules(policy);
 
             Assert.IsNotNull(policy);
@@ -73,6 +73,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
                     "Mismatch at element {0}", 
                     i);
             }
+        }
+
+        [TestMethod]
+        public void MatchingRuleHasTransientLifetime()
+        {
+            ParameterTypeMatchingRuleData ruleData = GetParameterTypeMatchingRuleData();
+            TypeRegistration registration = ruleData.GetRegistrations("").First();
+
+            Assert.AreEqual(TypeRegistrationLifetime.Transient, registration.Lifetime);
         }
 
         ParameterTypeMatchingRuleData GetParameterTypeMatchingRuleData()

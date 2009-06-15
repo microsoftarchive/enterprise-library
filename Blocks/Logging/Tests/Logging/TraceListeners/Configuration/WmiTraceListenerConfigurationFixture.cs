@@ -103,25 +103,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
 
             MockLogObjectsHelper helper = new MockLogObjectsHelper();
             helper.loggingSettings.TraceListeners.Add(listenerData);
-            TraceListener listener = GetListener("listener", helper.configurationSource);
+            TraceListener listener = 
+                GetListener("listener\u200cimplementation", helper.configurationSource);
 
             Assert.IsNotNull(listener);
-            Assert.AreEqual("listener", listener.Name);
-            Assert.AreEqual(listener.GetType(), typeof(WmiTraceListener));
-        }
-
-        [TestMethod]
-        public void CanCreateInstanceFromGivenConfiguration()
-        {
-            WmiTraceListenerData listenerData =
-                new WmiTraceListenerData("listener");
-
-            MockLogObjectsHelper helper = new MockLogObjectsHelper();
-            helper.loggingSettings.TraceListeners.Add(listenerData);
-            TraceListener listener = GetListener(listenerData.Name, helper.configurationSource);
-
-            Assert.IsNotNull(listener);
-            Assert.AreEqual("listener", listener.Name);
+            Assert.AreEqual("listener\u200cimplementation", listener.Name);
             Assert.AreEqual(listener.GetType(), typeof(WmiTraceListener));
         }
 
@@ -132,7 +118,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
             loggingSettings.TraceListeners.Add(
                 new WmiTraceListenerData("listener"));
 
-            TraceListener listener = GetListener("listener", CommonUtil.SaveSectionsAndGetConfigurationSource(loggingSettings));
+            TraceListener listener = 
+                GetListener("listener\u200cimplementation", CommonUtil.SaveSectionsAndGetConfigurationSource(loggingSettings));
 
             Assert.IsNotNull(listener);
             Assert.AreEqual(listener.GetType(), typeof(WmiTraceListener));

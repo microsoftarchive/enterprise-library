@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Instrumentation;
@@ -79,18 +80,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
         public void FailureHandlingExceptionWritesToEventLog()
         {
             var exception = new ArgumentException(exceptionMessage);
+            DateTime testStartTime = DateTime.Now;
+            Thread.Sleep(1500); // Log granularity is to the second, force us to the next second
 
             using (var eventLog = GetEventLog())
             {
-                int eventCount = eventLog.Entries.Count;
-
                 try
                 {
                     exceptionPolicy.HandleException(exception);
                 }
                 catch (ExceptionHandlingException) {}
 
-                var entries = eventLog.GetNewEntries(eventCount)
+                var entries = eventLog.GetEntriesSince(testStartTime)
                     .Where(entry => entry.Message.IndexOf(exceptionMessage) > -1);
 
                 Assert.AreEqual(1, entries.Count());

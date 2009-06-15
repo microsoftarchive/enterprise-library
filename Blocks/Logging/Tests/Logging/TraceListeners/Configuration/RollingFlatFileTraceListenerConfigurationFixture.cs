@@ -133,10 +133,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
             helper.loggingSettings.Formatters.Add(new TextFormatterData("SimpleTextFormat", "foobar template"));
             helper.loggingSettings.TraceListeners.Add(listenerData);
 
-            TraceListener listener = GetListener(listenerData.Name, helper.configurationSource);
+            TraceListener listener = GetListener("listener\u200cimplementation", helper.configurationSource);
 
             Assert.IsNotNull(listener);
-            Assert.AreEqual("listener", listener.Name);
+            Assert.AreEqual("listener\u200cimplementation", listener.Name);
             Assert.AreEqual(listener.GetType(), typeof(RollingFlatFileTraceListener));
         }
 
@@ -148,7 +148,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
             loggingSettings.TraceListeners.Add(new RollingFlatFileTraceListenerData("listener", "log.txt", "header", "footer", 10, "yyyy-MM-dd", RollFileExistsBehavior.Increment,
                                                                                     RollInterval.Minute, TraceOptions.DateTime, "SimpleTextFormat"));
 
-            TraceListener listener = GetListener("listener", CommonUtil.SaveSectionsAndGetConfigurationSource(loggingSettings));
+            TraceListener listener = 
+                GetListener("listener\u200cimplementation", CommonUtil.SaveSectionsAndGetConfigurationSource(loggingSettings));
 
             Assert.IsNotNull(listener);
             Assert.AreEqual(listener.GetType(), typeof(RollingFlatFileTraceListener));

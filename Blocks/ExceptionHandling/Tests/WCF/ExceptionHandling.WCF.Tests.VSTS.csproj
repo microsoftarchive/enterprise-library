@@ -58,6 +58,7 @@
     <Compile Include="Common\MockService.cs" />
     <Compile Include="ConfigurationFixture.cs" />
     <Compile Include="APTCAFixture.cs" />
+    <Compile Include="Configuration\FaultContractExceptionHandlerDataFixture.cs" />
     <Compile Include="ExceptionShieldingAttributeFixture.cs" />
     <Compile Include="ExceptionShieldingBehaviorFixture.cs" />
     <Compile Include="ExceptionShieldingElementFixture.cs" />

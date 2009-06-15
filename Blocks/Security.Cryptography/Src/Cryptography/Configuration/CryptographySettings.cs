@@ -122,7 +122,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         /// <returns>The sequence of <see cref="TypeRegistration"/> objects.</returns>
         public IEnumerable<TypeRegistration> GetUpdatedRegistrations(IConfigurationSource configurationSource)
         {
-            return Enumerable.Empty<TypeRegistration>();
+            return GetRegistrations(configurationSource);
         }
 
         private IEnumerable<TypeRegistration> SetDefaultHashProviderRegistration(IEnumerable<TypeRegistration> hashProviderRegisrations)
@@ -169,15 +169,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
                                                          instrumentationSection.WmiEnabled,
                                                          instrumentationSection.ApplicationInstanceName))
                              {
-                                 Lifetime = TypeRegistrationLifetime.Transient
+                                 Lifetime = TypeRegistrationLifetime.Transient,
+                                 IsDefault = true
                              };
 
             yield return new TypeRegistration<CryptographyManager>(() =>
-                new CryptographyManagerImpl(hashProviderNames,
-                Container.ResolvedEnumerable<IHashProvider>(hashProviderNames),
-                algorithmProviderNames,
-                Container.ResolvedEnumerable<ISymmetricCryptoProvider>(algorithmProviderNames),
-                Container.Resolved<IDefaultCryptographyInstrumentationProvider>()));
+                new CryptographyManagerImpl(
+                    hashProviderNames,
+                    Container.ResolvedEnumerable<IHashProvider>(hashProviderNames),
+                    algorithmProviderNames,
+                    Container.ResolvedEnumerable<ISymmetricCryptoProvider>(algorithmProviderNames),
+                    Container.Resolved<IDefaultCryptographyInstrumentationProvider>()))
+                {
+                    IsDefault = true
+                };
         }
     }
 }

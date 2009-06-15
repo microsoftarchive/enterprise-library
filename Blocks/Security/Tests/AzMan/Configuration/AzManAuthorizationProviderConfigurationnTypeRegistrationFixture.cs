@@ -62,6 +62,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.AzMan.Tests.Configurati
         }
 
         [TestMethod]
+        public void ThenLifetimeIsTransient()
+        {
+            TypeRegistration typeRegistration = registrations.Where(x => x.ServiceType == typeof(IAuthorizationProvider)).First();
+            Assert.AreEqual(TypeRegistrationLifetime.Transient, typeRegistration.Lifetime);
+        }
+
+
+        [TestMethod]
         public void ThenRegistrationHasCorrespondingName()
         {
             TypeRegistration typeRegistration = registrations.Where(x=>x.ServiceType == typeof(IAuthorizationProvider)).First();

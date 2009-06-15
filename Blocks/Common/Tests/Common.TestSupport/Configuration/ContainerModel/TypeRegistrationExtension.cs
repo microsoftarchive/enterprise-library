@@ -20,7 +20,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration
 {
     public static class TypeRegistrationExtension
     {
-        public static IAssertName AssertForServiceType(this TypeRegistration typeRegistration, Type serviceType)
+        public static IAssertRegistrationProperties AssertForServiceType(this TypeRegistration typeRegistration, Type serviceType)
         {
             Assert.AreEqual(serviceType, typeRegistration.ServiceType);
 
@@ -37,7 +37,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration
             return new TypeRegistrationAssertion(typeRegistration);
         }
 
-        private class TypeRegistrationAssertion : IAssertName, IAssertConstructor, IAssertProperties
+        private class TypeRegistrationAssertion : IAssertRegistrationProperties, IAssertConstructor, IAssertProperties
         {
             private readonly TypeRegistration _registration;
             private int _currentParameterIndex;
@@ -45,14 +45,40 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration
 
             public TypeRegistrationAssertion(TypeRegistration registration)
             {
+                Assert.IsFalse(string.IsNullOrEmpty(registration.Name));
+
                 _registration = registration;
                 _verifiedProperties = new HashSet<string>();
             }
 
-            public IAssertName ForName(string name)
+            public IAssertRegistrationProperties ForName(string name)
             {
                 Assert.AreEqual(name, _registration.Name);
 
+                return this;
+            }
+
+            public IAssertRegistrationProperties IsDefault()
+            {
+                Assert.IsTrue(_registration.IsDefault);
+                return this;
+            }
+
+            public IAssertRegistrationProperties IsNotDefault()
+            {
+                Assert.IsFalse(_registration.IsDefault);
+                return this;
+            }
+
+            public IAssertRegistrationProperties IsSingleton()
+            {
+                Assert.AreEqual(TypeRegistrationLifetime.Singleton, _registration.Lifetime);
+                return this;
+            }
+
+            public IAssertRegistrationProperties IsTransient()
+            {
+                Assert.AreEqual(TypeRegistrationLifetime.Transient, _registration.Lifetime);
                 return this;
             }
 
@@ -106,7 +132,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration
                 return this;
             }
 
-            public IAssertName ForImplementationType(Type implementationType)
+            public IAssertRegistrationProperties ForImplementationType(Type implementationType)
             {
                 Assert.AreEqual(implementationType, _registration.ImplementationType);
 
@@ -240,10 +266,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration
             }
         }
 
-        public interface IAssertName : IHideObjectMembers
+        public interface IAssertRegistrationProperties : IHideObjectMembers
         {
-            IAssertName ForName(string name);
-            IAssertName ForImplementationType(Type implementationType);
+            IAssertRegistrationProperties ForName(string name);
+            IAssertRegistrationProperties IsDefault();
+            IAssertRegistrationProperties IsNotDefault();
+            IAssertRegistrationProperties IsSingleton();
+            IAssertRegistrationProperties IsTransient();
+            IAssertRegistrationProperties ForImplementationType(Type implementationType);
         }
 
         public interface IAssertConstructor : IHideObjectMembers

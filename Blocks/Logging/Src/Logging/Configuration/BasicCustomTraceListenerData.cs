@@ -19,6 +19,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 {
@@ -29,6 +30,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         : TraceListenerData, IHelperAssistedCustomConfigurationData<BasicCustomTraceListenerData>
     {
         internal const string initDataProperty = "initializeData";
+        private const string AttributeWrappedPrefix = "\u200Cwrapped";
 
         private readonly CustomProviderDataHelper<BasicCustomTraceListenerData> helper;
 
@@ -234,14 +236,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         public override IEnumerable<TypeRegistration> GetRegistrations()
         {
             var mainListenerRegistration = GetTraceListenerTypeRegistration();
-            if (this.Attributes.Count == 0)
+            if (this.Attributes.Count > 0)
             {
-                return new[] { mainListenerRegistration };
+                mainListenerRegistration.Name = WrappedTraceListenerName + AttributeWrappedPrefix;
+
+                yield return GetWrappingRegistration(mainListenerRegistration.Name);
             }
 
-            mainListenerRegistration.Name = Name + Guid.NewGuid();
-
-            return new[] { mainListenerRegistration, GetWrappingRegistration(mainListenerRegistration.Name) };
+            yield return mainListenerRegistration;
+            yield return GetTraceListenerWrapperTypeRegistration();
         }
 
         private TypeRegistration GetWrappingRegistration(string mainListenerRegistrationName)
@@ -253,7 +256,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
                             )
                   )
             {
-                Name = Name
+                Name = this.WrappedTraceListenerName,
+                Lifetime = TypeRegistrationLifetime.Transient
             };
         }
 
@@ -298,8 +302,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
             if (constructor == null)
             {
                 throw new ArgumentException(string.Format(CultureInfo.CurrentCulture,
-                                                          Logging.Properties.Resources.ExceptionCannotFindAppropriateConstructor, 
-                                                          Type.Name, 
+                                                          Logging.Properties.Resources.ExceptionCannotFindAppropriateConstructor,
+                                                          Type.Name,
                                                           constructorParameters.Length));
             }
             return constructor;

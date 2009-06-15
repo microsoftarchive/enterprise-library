@@ -74,6 +74,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Tests.Configuration
             Assert.IsNotNull(registration);
         }
 
+        [TestMethod]
+        public void ThenRegistrationForAuthorizationProviderIsTransient()
+        {
+            TypeRegistration registration = registrations.Where(x => x.ServiceType == typeof(IAuthorizationProvider)).FirstOrDefault();
+            Assert.AreEqual(TypeRegistrationLifetime.Transient, registration.Lifetime);
+        }
 
         [TestMethod]
         public void ThenHasRegistrationForInstrumentationProvider()
@@ -81,6 +87,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Tests.Configuration
             TypeRegistration registration = registrations.Where(x => x.ServiceType == typeof(IAuthorizationProviderInstrumentationProvider)).FirstOrDefault();
             Assert.IsNotNull(registration);
             Assert.AreEqual("Rule Provider", registration.Name);
+        }
+
+        [TestMethod]
+        public void ThenRegistrationForInstrumentationProviderIsTransient()
+        {
+            TypeRegistration registration = registrations.Where(x => x.ServiceType == typeof(IAuthorizationProviderInstrumentationProvider)).FirstOrDefault();
+            Assert.AreEqual(TypeRegistrationLifetime.Transient, registration.Lifetime);
         }
 
         [TestMethod]
@@ -191,6 +204,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Tests.Configuration
             Assert.IsNotNull(authProviderRegistration);
             Assert.AreEqual(typeof(MockCustomAuthorizationProvider), authProviderRegistration.ImplementationType);
         }
+        [TestMethod]
+        public void ThenRegistrationForCustomProviderHasTransientLifetime()
+        {
+            TypeRegistration authProviderRegistration = registrations.Where(tr => tr.ServiceType == typeof(IAuthorizationProvider)).FirstOrDefault();
+
+            Assert.AreEqual(TypeRegistrationLifetime.Transient, authProviderRegistration.Lifetime);
+        }
     }
 
     [TestClass]
@@ -218,6 +238,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Tests.Configuration
 
             Assert.IsNotNull(securityCacheProvider);
             Assert.AreEqual(typeof(MockCustomSecurityCacheProvider), securityCacheProvider.ImplementationType);
+        }
+
+        [TestMethod]
+        public void ThenRegistrationForCustomProviderHasTransientLifetime()
+        {
+            TypeRegistration securityCacheProvider = registrations.Where(tr => tr.ServiceType == typeof(ISecurityCacheProvider)).FirstOrDefault();
+
+            Assert.AreEqual(TypeRegistrationLifetime.Transient, securityCacheProvider.Lifetime);
         }
     }
 

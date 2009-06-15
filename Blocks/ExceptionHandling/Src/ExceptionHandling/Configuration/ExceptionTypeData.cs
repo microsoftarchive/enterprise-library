@@ -131,7 +131,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
                         Container.ResolvedEnumerable<IExceptionHandler>(from hd in ExceptionHandlers select BuildChildName(registrationName, hd.Name)),
                         Container.Resolved<IExceptionHandlingInstrumentationProvider>(namePrefix)))
                {
-                   Name = registrationName
+                   Name = registrationName,
+                   Lifetime = TypeRegistrationLifetime.Transient
                };
         }
 

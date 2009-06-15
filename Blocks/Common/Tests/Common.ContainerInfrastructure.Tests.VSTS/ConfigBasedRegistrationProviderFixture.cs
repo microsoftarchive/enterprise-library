@@ -10,6 +10,7 @@
 //===============================================================================
 
 using System.Linq;
+using Common.ContainerInfrastructure.Tests.VSTS.TestSupport;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Data;

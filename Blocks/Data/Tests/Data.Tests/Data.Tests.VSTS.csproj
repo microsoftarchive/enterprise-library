@@ -63,11 +63,9 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\..\GlobalAssemblyInfo.cs">
-      <Link>GlobalAssemblyInfo.cs</Link>
-    </Compile>
     <Compile Include="APTCAFixture.cs" />
     <Compile Include="Configuration\ConfigurationSerializationFixture.cs" />
+    <Compile Include="Configuration\DataAccessReconfigurableTypeRegistrationFixture.cs" />
     <Compile Include="Configuration\DataAccessTypeRegistrationFixture.cs" />
     <Compile Include="Configuration\DatabaseSyntheticConfigurationSettingsFixture.cs" />
     <Compile Include="Configuration\DatabaseWithContainerFixture.cs" />
@@ -82,6 +80,7 @@
     <Compile Include="Instrumentation\DataInstrumentationProviderWmiFixture.cs" />
     <Compile Include="Instrumentation\InstrumentationEventBroadcastFixture.cs" />
     <Compile Include="Instrumentation\InstrumentationNoListenerEventBroadcastFixture.cs" />
+    <Compile Include="MapBuilderFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -91,6 +90,10 @@
     <Compile Include="ProviderMappingFixture.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ReflectionRowMapperFixture.cs" />
+    <Compile Include="SprocAccessorFixture.cs" />
+    <Compile Include="SqlStringAccessorFixture.cs" />
+    <Compile Include="Sql\AsynchronousExecutionFixture.cs" />
     <Compile Include="Sql\ExecuteXmlReaderFixture.cs" />
     <Compile Include="Sql\SqlDataSetHelper.cs" />
     <Compile Include="Sql\SqlDataAccessTestsFixture.cs" />

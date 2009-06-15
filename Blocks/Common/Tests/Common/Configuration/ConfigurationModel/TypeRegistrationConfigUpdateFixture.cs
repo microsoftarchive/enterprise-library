@@ -46,28 +46,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
     }
 
     [TestClass]
-    public class GivenAConfigSectionChangeOnADifferentSection : ConfigSectionTypeRegistrationContext
-    {
-        [TestInitialize]
-        public void Given()
-        {
-            Context("NotMySection");
-            RaiseChangeEvent("MockSection");
-        }
-        [TestMethod]
-        public void WhenTheConfiguratorChanges_ThenUpdatedRegistrationsAreNotRetrieved()
-        {
-            Assert.IsFalse(section.UpdatedRegistrationsWasCalled);
-        }
-
-        [TestMethod]
-        public void WhenTheConfiguratorChanges_ThenUpdatedRegistrationsAreNotReturnedInEventArgs()
-        {
-            Assert.AreEqual(0, registrations.Count);
-        }
-    }
-
-    [TestClass]
     public class GivenTypeLoadingLocator
     {
         private List<TypeRegistration> registrations;

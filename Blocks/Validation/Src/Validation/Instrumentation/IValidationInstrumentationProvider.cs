@@ -10,43 +10,46 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
 using System.Configuration;
-using System.Text;
-using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Instrumentation
 {
-    ///<summary>    
+    ///<summary>
+    /// Describes the logical notifications raised by various validation classes to which providers will respond.
     ///</summary>
     public interface IValidationInstrumentationProvider
     {
         ///<summary>
+        /// Notifies provider that a validation has succeeded.
         ///</summary>
         ///<param name="typeBeingValidated"></param>
-        void FireValidationSucceeded(Type typeBeingValidated);
+        void NotifyValidationSucceeded(Type typeBeingValidated);
 
         ///<summary>
+        /// Notifies provider that validation has failed.
         ///</summary>
         ///<param name="typeBeingValidated"></param>
         ///<param name="validationResult"></param>
-        void FireValidationFailed(Type typeBeingValidated, ValidationResults validationResult);
+        void NotifyValidationFailed(Type typeBeingValidated, ValidationResults validationResult);
 
         ///<summary>
+        /// Notifies provider that configuration for validation has failed.
         ///</summary>
         ///<param name="configurationException"></param>
-        void FireConfigurationFailure(ConfigurationErrorsException configurationException);
+        void NotifyConfigurationFailure(ConfigurationErrorsException configurationException);
 
         ///<summary>
+        /// Notifies provider that a configuration based validation has been called.
         ///</summary>
         ///<param name="typeBeingValidated"></param>
-        void FireConfigurationCalled(Type typeBeingValidated);
+        void NotifyConfigurationCalled(Type typeBeingValidated);
 
         ///<summary>
+        /// Notifies provider of a validation exception.
         ///</summary>
         ///<param name="typeBeingValidated"></param>
         ///<param name="errorMessage"></param>
         ///<param name="exception"></param>
-        void FireValidationException(Type typeBeingValidated, string errorMessage, Exception exception);
+        void NotifyValidationException(Type typeBeingValidated, string errorMessage, Exception exception);
     }
 }

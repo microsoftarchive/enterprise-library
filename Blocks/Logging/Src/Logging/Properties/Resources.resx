@@ -514,4 +514,7 @@ Message:
   <data name="ExceptionCreationLinqExpressionMustBeNew" xml:space="preserve">
     <value>The creation expression for this type registration must be a Linq New or MemberInit Expression.</value>
   </data>
+  <data name="ReconfigurationFailure" xml:space="preserve">
+    <value>An unknown error occurred reconfiguring the logging block. Reconfiguration will not take place.</value>
+  </data>
 </root>

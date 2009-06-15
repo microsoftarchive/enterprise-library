@@ -10,8 +10,10 @@
 //===============================================================================
 
 using System;
+using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configuration
 {
@@ -34,6 +36,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
             Assert.IsNotNull(deserializedRule);
             Assert.AreEqual(asmMatchingRule.Name, deserializedRule.Name);
             Assert.AreEqual(asmMatchingRule.Match, deserializedRule.Match);
+        }
+
+        [TestMethod]
+        public void MatchingRuleHasTransientLifetime()
+        {
+            AssemblyMatchingRuleData asmMatchingRule = new AssemblyMatchingRuleData("RuleName", "mscorlib");
+            TypeRegistration registration = asmMatchingRule.GetRegistrations("").First();
+
+            Assert.AreEqual(TypeRegistrationLifetime.Transient, registration.Lifetime);
         }
     }
 }

@@ -29,7 +29,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
         public void WhenConfigurationDoesntContainSection_ThenDefaultRegistrationsAreReturned()
         {
 
-            var locators = ConfigurationBasedTypeRegistrationsProviderFactory.CreateTypeRegistrationsProviderLocators(configurationSource);
+            var locators = ConfigurationBasedTypeRegistrationsProviderFactory.CreateTypeRegistrationsProviderLocators(configurationSource, new NullContainerReconfiguringEventSource());
             Assert.AreEqual(9, locators.Count());
         }
 
@@ -41,7 +41,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
             section.TypeRegistrationProviders.Add(new TypeRegistrationProviderSettings { Name = "test", SectionName = "Section Name" });
             configurationSource.Add(TypeRegistrationProvidersConfigurationSection.SectionName, section);
 
-            var locators = ConfigurationBasedTypeRegistrationsProviderFactory.CreateTypeRegistrationsProviderLocators(configurationSource);
+            var locators = ConfigurationBasedTypeRegistrationsProviderFactory.CreateTypeRegistrationsProviderLocators(configurationSource, new NullContainerReconfiguringEventSource());
             Assert.AreEqual(1, locators.Count());
             Assert.IsInstanceOfType(locators.First(), typeof(ConfigSectionLocator));
         }
@@ -55,7 +55,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
             configurationSource.Add(TypeRegistrationProvidersConfigurationSection.SectionName, section);
 
 
-            var locators = ConfigurationBasedTypeRegistrationsProviderFactory.CreateTypeRegistrationsProviderLocators(configurationSource);
+            var locators = ConfigurationBasedTypeRegistrationsProviderFactory.CreateTypeRegistrationsProviderLocators(configurationSource, new NullContainerReconfiguringEventSource());
             Assert.AreEqual(1, locators.Count());
             Assert.IsInstanceOfType(locators.First(), typeof(TypeLoadingLocator));
         }
@@ -70,7 +70,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
             configurationSource.Add(TypeRegistrationProvidersConfigurationSection.SectionName, section);
 
 
-            ConfigurationBasedTypeRegistrationsProviderFactory.CreateProvider(configurationSource).GetRegistrations(configurationSource);
+            ConfigurationBasedTypeRegistrationsProviderFactory.CreateProvider(configurationSource, new NullContainerReconfiguringEventSource()).GetRegistrations(configurationSource);
         }
     }
 }

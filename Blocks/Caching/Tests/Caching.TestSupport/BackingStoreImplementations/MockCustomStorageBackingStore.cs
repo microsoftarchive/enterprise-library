@@ -21,9 +21,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.TestSupport.BackingStore
 	[ConfigurationElementType(typeof(CustomCacheStorageData))]
 	public class MockCustomStorageBackingStore : MockCustomProviderBase, IBackingStore
 	{
+        public static bool Instantiated = false;
+
 		public MockCustomStorageBackingStore(NameValueCollection attributes)
 			: base(attributes)
 		{
+            Instantiated = true;
 		}
 
 		public int Count
@@ -53,7 +56,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.TestSupport.BackingStore
 
 		public Hashtable Load()
 		{
-			throw new Exception("The method or operation is not implemented.");
+            return new Hashtable();
 		}
 
 		public void Dispose()

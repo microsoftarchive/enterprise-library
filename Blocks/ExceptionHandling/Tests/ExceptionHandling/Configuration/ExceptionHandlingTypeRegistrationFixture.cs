@@ -37,7 +37,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
             settings = new ExceptionHandlingSettings();
         }
 
-
         [TestMethod]
         public void WhenRegistrationsRequested_ResultsInExceptionManagerImplementationRegistration()
         {
@@ -48,7 +47,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
             var registration = registrations.ElementAt(0);
 
             registration.AssertForServiceType(typeof(ExceptionManager))
-                .ForName(null)
+                .IsDefault()
                 .ForImplementationType(typeof(ExceptionManagerImpl));
         }
 
@@ -62,7 +61,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
 
             var registration = registrations.ElementAt(0);
             registration.AssertForServiceType(typeof (DefaultExceptionHandlingEventLogger))
-                .ForName(null)
+                .IsDefault()
                 .ForImplementationType(typeof (DefaultExceptionHandlingEventLogger));
         }
 	}
@@ -99,6 +98,25 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
         }
 
         [TestMethod]
+        public void WhenRegistrationsAreRequested_ThenExcpetionPolicyImplHasTransientLifetime()
+        {
+            var registrations = settings.GetRegistrations(null);
+            TypeRegistration registration = registrations.First(r => r.ImplementationType == typeof(ExceptionPolicyImpl));
+
+            Assert.AreEqual(TypeRegistrationLifetime.Transient, registration.Lifetime);
+        }
+
+
+        [TestMethod]
+        public void WhenRegistrationsAreRequested_ThenExcpetionInstrumentationProviderHasTransientLifetime()
+        {
+            var registrations = settings.GetRegistrations(null);
+            TypeRegistration registration = registrations.First(r => r.ImplementationType == typeof(ExceptionHandlingInstrumentationProvider));
+
+            Assert.AreEqual(TypeRegistrationLifetime.Transient, registration.Lifetime);
+        }
+
+        [TestMethod]
         public void WhenRegistrationsAreRequested_ThenReturnsExceptionTypeRegistrationEntryWithCorrectName()
         {
             var registrations = settings.GetRegistrations(null);
@@ -108,7 +126,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
             registration.AssertForServiceType(typeof(ExceptionPolicyEntry))
                 .ForName("aPolicy.ExceptionType")
                 .ForImplementationType(typeof(ExceptionPolicyEntry));
+        }
 
+        [TestMethod]
+        public void WhenRegistrationsAreRequested_ThenReturnsExceptionTypeRegistrationEntryWithTransientLifetime()
+        {
+            var registrations = settings.GetRegistrations(null);
+
+            TypeRegistration registration = registrations.First(r => r.ImplementationType == typeof(ExceptionPolicyEntry));
+            Assert.AreEqual(TypeRegistrationLifetime.Transient, registration.Lifetime);
         }
 
         [TestMethod]
@@ -121,8 +147,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
             registration.AssertForServiceType(typeof(IExceptionHandler))
                 .ForName("aPolicy.ExceptionType.aWrapHandler")
                 .ForImplementationType(typeof(WrapHandler));
-
         }
+
+        [TestMethod]
+        public void WhenRegistrationsAreRequested_ThenReturnsWrapHandlerWithTransientLifetime()
+        {
+            var registrations = settings.GetRegistrations(null);
+
+            TypeRegistration registration = registrations.First(r => r.ImplementationType == typeof(WrapHandler));
+            Assert.AreEqual(TypeRegistrationLifetime.Transient, registration.Lifetime);
+        }
+
 
     }
 
@@ -161,6 +196,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
 
             registrations.First(r => r.Name == "aPolicy.ExceptionType.aHandler");
             registrations.First(r => r.Name == "aPolicy.AnotherExceptionType.aHandler");
+        }
+
+        [TestMethod]
+        public void WhenRegistrationTypesRequested_ThenReturnsReplaceHandlerWithTransientLifetime()
+        {
+            IEnumerable<TypeRegistration> registrations = settings.GetRegistrations(null);
+            TypeRegistration registration = registrations.First(r => r.ImplementationType == typeof(ReplaceHandler));
+
+            Assert.AreEqual(TypeRegistrationLifetime.Transient, registration.Lifetime);
         }
     }
 
@@ -435,6 +479,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
                 .WithValueConstructorParameter(handlerData.Attributes)
                 .VerifyConstructorParameters();
 
+        }
+
+        
+        [TestMethod]
+        public void WhenRegistrationTypesRequested_ThenReturnsCustomHandlerWithTransientLifetime()
+        {
+            TypeRegistration registration = handlerData.GetRegistrations("prefix").First();
+
+            Assert.AreEqual(TypeRegistrationLifetime.Transient, registration.Lifetime);
         }
     }
 

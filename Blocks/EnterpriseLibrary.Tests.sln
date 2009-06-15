@@ -181,7 +181,7 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "Web", "Validation\Tests\Int
 		Release.AspNetCompiler.ForceOverwrite = "true"
 		Release.AspNetCompiler.FixedNames = "false"
 		Release.AspNetCompiler.Debug = "False"
-		VWDPort = "32190"
+		VWDPort = "24357"
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Security.Cryptography", "Security.Cryptography\Src\Cryptography\Security.Cryptography.csproj", "{6A4E6A8A-A39F-4643-BA9B-87AED00BB03E}"

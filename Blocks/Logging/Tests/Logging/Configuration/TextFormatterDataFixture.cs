@@ -9,10 +9,7 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
@@ -33,15 +30,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         {
             formatter = new TextFormatterData("formatterName", "someTemplate");
 
-             registration = formatter.GetRegistrations().First();
+            registration = formatter.GetRegistrations().First();
         }
 
         [TestMethod]
         public void ThenShouldProvideProperRegistrationEntry()
         {
-            registration.AssertForServiceType(typeof (ILogFormatter))
+            registration.AssertForServiceType(typeof(ILogFormatter))
                 .ForName(formatter.Name)
-                .ForImplementationType(typeof (TextFormatter));
+                .ForImplementationType(typeof(TextFormatter));
         }
 
         [TestMethod]
@@ -51,5 +48,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
                 .WithValueConstructorParameter<string>(formatter.Template);
         }
 
+        [TestMethod]
+        public void ThenShouldHaveATransientLifetime()
+        {
+            Assert.AreEqual(TypeRegistrationLifetime.Transient, registration.Lifetime);
+        }
     }
 }

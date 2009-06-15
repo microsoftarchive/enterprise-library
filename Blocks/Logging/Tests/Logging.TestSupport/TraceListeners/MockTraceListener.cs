@@ -19,7 +19,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport.TraceListene
     {
         public object tracedData = null;
         public string tracedSource = null;
-        public TraceEventType tracedEventType = TraceEventType.Information;
+        public TraceEventType? tracedEventType = null;
         public bool wasDisposed = false;
 
         private static object traceRequestMonitor = new object();

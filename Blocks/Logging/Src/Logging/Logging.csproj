@@ -260,13 +260,18 @@
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Configuration\AttributeSettingTraceListenerWrapper.cs" />
+    <Compile Include="ILoggingUpdateCoordinator.cs" />
+    <Compile Include="Instrumentation\LoggingReconfigurationFailureEvent.cs" />
+    <Compile Include="LoggingUpdateCoordinator.cs" />
+    <Compile Include="TraceListeners\AttributeSettingTraceListenerWrapper.cs" />
     <Compile Include="Formatters\GenericTextFormatter.cs" />
     <Compile Include="Instrumentation\ILoggingInstrumentationProvider.cs" />
     <Compile Include="Instrumentation\ITracerInstrumentationProvider.cs" />
     <Compile Include="Instrumentation\NullLoggingInstrumentationProvider.cs" />
     <Compile Include="Instrumentation\NullTracerInstrumentationProvider.cs" />
     <Compile Include="Instrumentation\TracerInstrumentationProvider.cs" />
+    <Compile Include="TraceListeners\ReconfigurableTraceListenerWrapper.cs" />
+    <Compile Include="TraceListeners\TraceListenerWrapper.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

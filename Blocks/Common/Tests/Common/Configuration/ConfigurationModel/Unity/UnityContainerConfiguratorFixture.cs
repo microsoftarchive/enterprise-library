@@ -13,138 +13,128 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel.Unity;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Unity;
+using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Practices.ServiceLocation;
+using Moq;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.ConfigurationModel.Unity
 {
-    [TestClass]
-    public class GivenATypeRegistrationWithANonmappedType
+    public abstract class ConfiguredContainerContext : ArrangeActAssert
     {
-        private MockContainer mockContainer;
-        private UnityContainerConfigurator containerConfigurator;
-        private TypeRegistration TypeRegistration;
+        protected UnityContainer container;
+        internal TestableUnityConfigurator containerConfigurator;
 
-        [TestInitialize]
-        public void Setup()
-        {
-            mockContainer = new MockContainer();
-            containerConfigurator = new UnityContainerConfigurator(mockContainer);
-            TypeRegistration = new TypeRegistration<Foo>(() => new Foo());
-        }
-
-        [TestMethod]
-        public void WhenContainerIsConfigured_TheSuppliedTypeIsRegistered()
-        {
-            containerConfigurator.Register(TypeRegistration);
-
-            Assert.AreEqual(typeof(Foo), mockContainer.LastRegisteredFromType);
-            Assert.AreEqual(typeof(Foo), mockContainer.LastRegisteredToType);
-        }
-
-        [TestMethod]
-        public void WhenContainerIsConfigured_TheInstanceIsRegisteredAsSingleton()
-        {
-            containerConfigurator.Register(TypeRegistration);
-
-            Assert.IsInstanceOfType(mockContainer.LastLifetimeManager, typeof(ContainerControlledLifetimeManager));
-        }
-    }
-
-    [TestClass]
-    public class GivenATypeRegistrationWithNonmappedNamed
-    {
-        MockContainer mockContainer;
-        UnityContainerConfigurator containerConfigurator;
-        TypeRegistration TypeRegistration;
-
-        [TestInitialize]
-        public void Setup()
-        {
-            mockContainer = new MockContainer();
-            containerConfigurator = new UnityContainerConfigurator(mockContainer);
-            TypeRegistration = new TypeRegistration<Foo>(() => new Foo()) { Name = "bar" };
-        }
-
-        [TestMethod]
-        public void WhenContainerIsConfigured_ThenSuppliedTypeIsRegisteredWithTheName()
-        {
-            containerConfigurator.Register(TypeRegistration);
-
-            Assert.AreEqual("bar", mockContainer.LastRegisteredName);
-            Assert.AreEqual(typeof(Foo), mockContainer.LastRegisteredFromType);
-            Assert.AreEqual(typeof(Foo), mockContainer.LastRegisteredToType);
-        }
-    }
-
-    [TestClass]
-    public class GivenATypeRegistrationWithMappedTypes
-    {
-        UnityContainer container;
-        TypeRegistration TypeRegistration;
-        private UnityContainerConfigurator containerConfigurator;
-
-        public GivenATypeRegistrationWithMappedTypes()
-        {
-        }
-
-        [TestInitialize]
-        public void Setup()
+        protected override void Arrange()
         {
             container = new UnityContainer();
-            TypeRegistration = new TypeRegistration<IFoo>(() => new Foo());
-            containerConfigurator = new UnityContainerConfigurator(container);
+            containerConfigurator = new TestableUnityConfigurator(container);
+        }
+
+        protected override void Act()
+        {
+            var mockProvider = new Mock<ITypeRegistrationsProvider>();
+            mockProvider.Setup(x => x.GetRegistrations(It.IsAny<IConfigurationSource>())).Returns(GetTypeRegistrations);
+
+            containerConfigurator.RegisterAll(new DictionaryConfigurationSource(), mockProvider.Object);
+        }
+
+        private IEnumerable<TypeRegistration> GetTypeRegistrations()
+        {
+            return new[] { GetTypeRegistration() };
+        }
+
+        protected abstract TypeRegistration GetTypeRegistration();
+
+        protected T ResolveDefault<T>()
+        {
+            return container.Resolve<T>(TypeRegistration.DefaultName);
+        }
+
+    }
+
+    [TestClass]
+    public class WhenTypeRegistrationsSpecifyNonMappedType : ConfiguredContainerContext
+    {
+
+        protected override TypeRegistration GetTypeRegistration()
+        {
+            return new TypeRegistration<FooWithoutDefaultConstructor>(() => new FooWithoutDefaultConstructor("someString"));
         }
 
         [TestMethod]
-        public void WhenContainerIsConfigured_ThenMappedInstanceIsAvailable()
+        public void ThenTheSuppliedTypeIsRegistered()
         {
-            containerConfigurator.Register(TypeRegistration);
-
-            Assert.IsInstanceOfType(container.Resolve<IFoo>(), typeof(Foo));
+            var foo = ResolveDefault<FooWithoutDefaultConstructor>();
+            Assert.IsNotNull(foo);
         }
 
         [TestMethod]
-        public void WhenContainerIsConfigured_TheInstanceIsRegisteredAsSingleton()
+        public void ThenTheInstanceIsRegisteredAsSingleton()
         {
-            containerConfigurator.Register(TypeRegistration);
+            var fooFirst = ResolveDefault<FooWithoutDefaultConstructor>();
+            var fooSecond = ResolveDefault<FooWithoutDefaultConstructor>();
+            Assert.AreSame(fooFirst, fooSecond);
+        }
+    }
 
-            IFoo aFoo = container.Resolve<IFoo>();
-            IFoo anotherfoo = container.Resolve<IFoo>();
+    [TestClass]
+    public class WhenTypeRegistrationsSepecifyNamedNonMappedType : ConfiguredContainerContext
+    {
+        protected override TypeRegistration GetTypeRegistration()
+        {
+            return new TypeRegistration<Foo>(() => new Foo()) { Name = "bar" };
+        }
+
+        [TestMethod]
+        public void ThenSuppliedTypeIsRegisteredWithTheName()
+        {
+            var foo = container.Resolve<Foo>("bar");
+            Assert.IsNotNull(foo);
+        }
+    }
+
+    [TestClass]
+    public class WhenTypeRegistrationsSpecifyMappedTypes : ConfiguredContainerContext
+    {
+        protected override TypeRegistration GetTypeRegistration()
+        {
+            return new TypeRegistration<IFoo>(() => new Foo());
+        }
+
+        [TestMethod]
+        public void ThenMappedInstanceIsAvailable()
+        {
+            Assert.IsInstanceOfType(ResolveDefault<IFoo>(), typeof(Foo));
+        }
+
+        [TestMethod]
+        public void TheInstanceIsRegisteredAsSingleton()
+        {
+            IFoo aFoo = ResolveDefault<IFoo>();
+            IFoo anotherfoo = ResolveDefault<IFoo>();
 
             Assert.AreSame(aFoo, anotherfoo);
         }
     }
 
     [TestClass]
-    public class GivenATypeRegistrationWithANamedMappedRegistration
+    public class WhenTypeRegistrationsSpecifyANamedMappedRegistration : ConfiguredContainerContext
     {
-        UnityContainer container;
-        private UnityContainerConfigurator containerConfigurator;
-        TypeRegistration TypeRegistration;
-
-        public GivenATypeRegistrationWithANamedMappedRegistration()
+        protected override TypeRegistration GetTypeRegistration()
         {
-
-        }
-
-        [TestInitialize]
-        public void Setup()
-        {
-            TypeRegistration = new TypeRegistration<IFoo>(() => new Foo()) { Name = "bar" };
-            container = new UnityContainer();
-            containerConfigurator = new UnityContainerConfigurator(container);
+            return new TypeRegistration<IFoo>(() => new Foo()) { Name = "bar" };
         }
 
         [TestMethod]
-        public void WhenContainerConfigured_ThenTheRegisteredTypeIsRegisteredWithTheName()
+        public void ThenTheRegisteredTypeIsRegisteredWithTheName()
         {
-            containerConfigurator.Register(TypeRegistration);
-
             IFoo item = container.Resolve<IFoo>("bar");
             Assert.IsNotNull(item);
             Assert.IsInstanceOfType(item, typeof(Foo));
@@ -153,198 +143,117 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
 
         [TestMethod]
         [ExpectedException(typeof(ResolutionFailedException))]
-        public void WhenContainerIsConfigured_CannotResolveServiceTypeWithoutAName()
+        public void CannotResolveServiceTypeWithoutAName()
         {
-            containerConfigurator.Register(TypeRegistration);
-
-            container.Resolve<IFoo>();
+            ResolveDefault<IFoo>();
         }
     }
 
     [TestClass]
-    public class GivenATypeRegistrationWithValueConstructorParameters
+    public class WhenTypeRegistrationSpecifiesSomethingWithConstructorParameters : ConfiguredContainerContext
     {
-        UnityContainer container;
-        UnityContainerConfigurator containerConfigurator;
-        TypeRegistration TypeRegistration;
 
-        public GivenATypeRegistrationWithValueConstructorParameters()
+        protected override TypeRegistration GetTypeRegistration()
         {
-
-        }
-
-        [TestInitialize]
-        public void Setup()
-        {
-            container = new UnityContainer();
-            containerConfigurator = new UnityContainerConfigurator(container);
-            TypeRegistration =
-                new TypeRegistration<TypeWithOneArgumentConstructor>(() => new TypeWithOneArgumentConstructor("foo bar"));
+            return new TypeRegistration<TypeWithOneArgumentConstructor>(() => new TypeWithOneArgumentConstructor("foo bar"));
         }
 
         [TestMethod]
-        public void WhenContainerIsConfigured_ThenTheContainerInjectsTheParameters()
+        public void ThenTheContainerInjectsTheParameters()
         {
-            containerConfigurator.Register(TypeRegistration);
-
-            var resolvedObject = container.Resolve<TypeWithOneArgumentConstructor>();
+            var resolvedObject = ResolveDefault<TypeWithOneArgumentConstructor>();
             Assert.AreEqual("foo bar", resolvedObject.ConstructorParameter);
         }
     }
 
     [TestClass]
-    public class GivenATypeRegistrationWithMappedConstructorParameterValues
+    public class WhenTypeRegistriedSpecifiesAMappedConstructorParameterValues : ConfiguredContainerContext
     {
-        UnityContainer container;
-        UnityContainerConfigurator containerConfigurator;
-        TypeRegistration TypeRegistration;
-
-        public GivenATypeRegistrationWithMappedConstructorParameterValues()
+        protected override TypeRegistration GetTypeRegistration()
         {
-
-        }
-
-        [TestInitialize]
-        public void Setup()
-        {
-            container = new UnityContainer();
-            containerConfigurator = new UnityContainerConfigurator(container);
-            TypeRegistration =
-                new TypeRegistration<IFoo>(
-                    () => new TypeWithOneArgumentConstructor("foo bar"));
+            return new TypeRegistration<IFoo>(() => new TypeWithOneArgumentConstructor("foo bar"));
         }
 
         [TestMethod]
-        public void WhenContainerIsConfigured_ThenContainerSuppliesValueParameterToConstructedObject()
+        public void ThenContainerSuppliesValueParameterToConstructedObject()
         {
-            containerConfigurator.Register(TypeRegistration);
-
-            var resolvedObject = (TypeWithOneArgumentConstructor)container.Resolve<IFoo>();
+            var resolvedObject = (TypeWithOneArgumentConstructor)ResolveDefault<IFoo>();
             Assert.AreEqual("foo bar", resolvedObject.ConstructorParameter);
         }
     }
 
     [TestClass]
-    public class GivenATypeRegistrationWithNullValueConstructorParameters
+    public class WhenTypeRegistrationSpecifiesNullValueConstructorParameters : ConfiguredContainerContext
     {
-        UnityContainer container;
-        UnityContainerConfigurator containerConfigurator;
-        TypeRegistration TypeRegistration;
-
-        public GivenATypeRegistrationWithNullValueConstructorParameters()
+        protected override TypeRegistration GetTypeRegistration()
         {
-        }
-
-        [TestInitialize]
-        public void Setup()
-        {
-            container = new UnityContainer();
-            containerConfigurator = new UnityContainerConfigurator(container);
-            TypeRegistration =
-                new TypeRegistration<TypeWithOneArgumentConstructor>(() => new TypeWithOneArgumentConstructor(null));
+            return new TypeRegistration<TypeWithOneArgumentConstructor>(() => new TypeWithOneArgumentConstructor(null));
         }
 
         [TestMethod]
-        public void WhenContainerIsConfigured_TheContainerProvidesANullValueForConstructedObject()
+        public void ThenTheContainerProvidesANullValueForConstructedObject()
         {
-            containerConfigurator.Register(TypeRegistration);
-
-            var resolvedObject = container.Resolve<TypeWithOneArgumentConstructor>();
+            var resolvedObject = ResolveDefault<TypeWithOneArgumentConstructor>();
             Assert.IsNull(resolvedObject.ConstructorParameter);
         }
     }
 
     [TestClass]
-    public class GivenATypeRegistrationWithNonConstantExpressionConstructorParameters
+    public class WhenATypeRegistrationSpecifiesANonConstantExpressionConstructorParameters: ConfiguredContainerContext
     {
-        UnityContainer container;
-        UnityContainerConfigurator containerConfigurator;
-        TypeRegistration TypeRegistration;
-
         static string Property { get { return "foo bar"; } }
-
-        public GivenATypeRegistrationWithNonConstantExpressionConstructorParameters()
+        protected override TypeRegistration GetTypeRegistration()
         {
-        }
-
-        [TestInitialize]
-        public void Setup()
-        {
-            container = new UnityContainer();
-            containerConfigurator = new UnityContainerConfigurator(container);
-            TypeRegistration =
+            return
                 new TypeRegistration<TypeWithOneArgumentConstructor>(() => new TypeWithOneArgumentConstructor(Property));
         }
-
+        
         [TestMethod]
-        public void WhenContainerIsConfigured_TheContainerProvidesANullValueForConstructedObject()
+        public void ThenTheContainerProvidesTheExpressionForConstructedObject()
         {
-            containerConfigurator.Register(TypeRegistration);
-
-            var resolvedObject = container.Resolve<TypeWithOneArgumentConstructor>();
+            var resolvedObject = ResolveDefault<TypeWithOneArgumentConstructor>();
             Assert.AreEqual(Property, resolvedObject.ConstructorParameter);
         }
     }
 
-    /// <summary>
-    /// Summary description for UnityContainerConfiguratorFixture
-    /// </summary>
     [TestClass]
-    public class GivenATypeRegistrationWithAnUnamedContainerResolvedParameter
+    public class WhenATypeRegistrationSpecifiesAnUnamedContainerResolvedParameter : ConfiguredContainerContext
     {
-        UnityContainer container;
-        UnityContainerConfigurator containerConfigurator;
-        Foo theFoo;
-        TypeRegistration TypeRegistration;
+        private readonly Foo theFoo = new Foo();
 
-        [TestInitialize]
-        public void Setup()
+        protected override void Arrange()
         {
-            container = new UnityContainer();
-            containerConfigurator = new UnityContainerConfigurator(container);
-            theFoo = new Foo();
-            container.RegisterInstance(theFoo);
+            base.Arrange();
+            container.RegisterInstance<Foo>(theFoo);
+        }
 
-            TypeRegistration = new TypeRegistration<TypeWithOneReferenceArgumentConstructor>(() => new TypeWithOneReferenceArgumentConstructor(Container.Resolved<Foo>()));
+        protected override TypeRegistration GetTypeRegistration()
+        {
+            return new TypeRegistration<TypeWithOneReferenceArgumentConstructor>(() => new TypeWithOneReferenceArgumentConstructor(Container.Resolved<Foo>()));
         }
 
         [TestMethod]
-        public void WhenContainerIsConfigured_ThenResultParameterIsResolved()
+        public void ThenResultParameterIsResolved()
         {
-            containerConfigurator.Register(TypeRegistration);
-
-            var resolvedObject = container.Resolve<TypeWithOneReferenceArgumentConstructor>();
+            var resolvedObject = ResolveDefault<TypeWithOneReferenceArgumentConstructor>();
             Assert.AreSame(theFoo, resolvedObject.ConstructorParameter);
         }
-
-
     }
 
-    /// <summary>
-    /// Summary description for UnityContainerConfiguratorFixture
-    /// </summary>
     [TestClass]
-    public class GivenATypeRegistrationWithAStaticCallConstructorParameter
+    public class WhenATypeRegistrationSpecifiesAStaticCallConstructorParameter : ConfiguredContainerContext
     {
-        UnityContainer container;
-        UnityContainerConfigurator containerConfigurator;
         Foo theFoo;
-        TypeRegistration TypeRegistration;
 
-        public GivenATypeRegistrationWithAStaticCallConstructorParameter()
+        protected override void Arrange()
         {
-
+            base.Arrange();
+            theFoo = new Foo();
         }
 
-        [TestInitialize]
-        public void Setup()
+        protected override TypeRegistration GetTypeRegistration()
         {
-            container = new UnityContainer();
-            containerConfigurator = new UnityContainerConfigurator(container);
-            theFoo = new Foo();
-
-            TypeRegistration =
-                new TypeRegistration<TypeWithOneReferenceArgumentConstructor>(
+            return new TypeRegistration<TypeWithOneReferenceArgumentConstructor>(
                     () => new TypeWithOneReferenceArgumentConstructor(GetFoo()));
         }
 
@@ -354,404 +263,312 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
         }
 
         [TestMethod]
-        public void WhenContainerIsConfigured_ThenResultParameterIsResolved()
+        public void ThenResultParameterIsEvaluated()
         {
-            containerConfigurator.Register(TypeRegistration);
-
-            var resolvedObject = container.Resolve<TypeWithOneReferenceArgumentConstructor>();
+            var resolvedObject = ResolveDefault<TypeWithOneReferenceArgumentConstructor>();
             Assert.AreSame(theFoo, resolvedObject.ConstructorParameter);
         }
     }
 
     [TestClass]
-    public class GivenATypeRegistrationWithANamedContainerResolvedParameter
+    public class WhenATypeRegistrationSpecifiesANamedContainerResolvedParameter : ConfiguredContainerContext
     {
-        UnityContainer container;
-        UnityContainerConfigurator containerConfigurator;
         Foo theFoo;
         Foo theOtherFoo;
-        TypeRegistration TypeRegistration;
 
-        public GivenATypeRegistrationWithANamedContainerResolvedParameter()
+        protected override void Arrange()
         {
-
-        }
-
-        [TestInitialize]
-        public void Setup()
-        {
-            container = new UnityContainer();
-            containerConfigurator = new UnityContainerConfigurator(container);
+            base.Arrange();
             theFoo = new Foo();
             container.RegisterInstance("foo bar", theFoo);
 
             // default instance
             theOtherFoo = new Foo();
             container.RegisterInstance(theOtherFoo);
+        }
 
-            TypeRegistration = new TypeRegistration<TypeWithOneReferenceArgumentConstructor>(
+        protected override TypeRegistration GetTypeRegistration()
+        {
+            return new TypeRegistration<TypeWithOneReferenceArgumentConstructor>(
                 () => new TypeWithOneReferenceArgumentConstructor((Container.Resolved<Foo>("foo bar"))));
         }
 
         [TestMethod]
-        public void WhenTheContainerIsConfigured_TheNamedInstanceIsInjectedToCreatedObject()
+        public void ThenTheNamedInstanceIsInjectedToCreatedObject()
         {
-            containerConfigurator.Register(TypeRegistration);
-
-            var resolvedObject = container.Resolve<TypeWithOneReferenceArgumentConstructor>();
+            var resolvedObject = ResolveDefault<TypeWithOneReferenceArgumentConstructor>();
             Assert.AreSame(theFoo, resolvedObject.ConstructorParameter);
         }
     }
 
     [TestClass]
-    public class GivenATypeRegistrationWithAContainerResolvedParameterUsingAPropertySuppliedName
+    public class WhenATypeRegistrationSpecifiesAContainerResolvedParameterUsingAPropertySuppliedName : ConfiguredContainerContext
     {
-        UnityContainer container;
-        UnityContainerConfigurator containerConfigurator;
         Foo theFoo;
         Foo theOtherFoo;
-        TypeRegistration TypeRegistration;
+        static string FooName { get { return "name of foo"; } }
 
-        public GivenATypeRegistrationWithAContainerResolvedParameterUsingAPropertySuppliedName()
+        protected override void Arrange()
         {
-
-        }
-
-        [TestInitialize]
-        public void Setup()
-        {
-            container = new UnityContainer();
-            containerConfigurator = new UnityContainerConfigurator(container);
+            base.Arrange();
             theFoo = new Foo();
             container.RegisterInstance(FooName, theFoo);
 
             // default instance
             theOtherFoo = new Foo();
             container.RegisterInstance(theOtherFoo);
+        }
 
-            TypeRegistration = new TypeRegistration<TypeWithOneReferenceArgumentConstructor>(
+        protected override TypeRegistration GetTypeRegistration()
+        {
+            return new TypeRegistration<TypeWithOneReferenceArgumentConstructor>(
                 () => new TypeWithOneReferenceArgumentConstructor((Container.Resolved<Foo>(FooName))));
         }
 
-        static string FooName { get { return "foo bar"; } }
-
         [TestMethod]
-        public void WhenTheContainerIsConfigured_TheNamedInstanceIsInjectedToCreatedObject()
+        public void ThenTheNamedInstanceIsInjectedToCreatedObject()
         {
-            containerConfigurator.Register(TypeRegistration);
-
-            var resolvedObject = container.Resolve<TypeWithOneReferenceArgumentConstructor>();
+            var resolvedObject = ResolveDefault<TypeWithOneReferenceArgumentConstructor>();
             Assert.AreSame(theFoo, resolvedObject.ConstructorParameter);
         }
     }
 
     [TestClass]
-    public class GivenANonGenericRegistryInitializedWithAHandCraftedLambdaExpression
+    public class WhenANonGenericTypeRegistrationIsSpecifiedWithAHandCraftedLambdaExpression : ConfiguredContainerContext
     {
-        UnityContainer container;
-        UnityContainerConfigurator containerConfigurator;
-        TypeRegistration TypeRegistration;
-
-        [TestInitialize]
-        public void Setup()
+        private const string constantExpression = "constant expression";
+        protected override TypeRegistration GetTypeRegistration()
         {
-            container = new UnityContainer();
-            containerConfigurator = new UnityContainerConfigurator(container);
-
             Type targetType = typeof(TypeWithOneArgumentConstructor);
-            TypeRegistration =
+            return 
                 new TypeRegistration(
                     Expression.Lambda(
                         Expression.New(
                             targetType.GetConstructor(new Type[] { typeof(string) }),
                             new Expression[]
                                 {
-                                    Expression.Constant("foo bar")
+                                    Expression.Constant(constantExpression )
                                 })));
         }
 
         [TestMethod]
-        public void WhenContainerIsConfigured_TheContainerProvidesTheValueSuppliedToTheLambdaExpressionForConstructedObject()
+        public void ThenTheContainerProvidesTheValueSuppliedToTheLambdaExpressionForConstructedObject()
         {
-            containerConfigurator.Register(TypeRegistration);
-
-            var resolvedObject = container.Resolve<TypeWithOneArgumentConstructor>();
-            Assert.AreEqual("foo bar", resolvedObject.ConstructorParameter);
+            var resolvedObject = ResolveDefault<TypeWithOneArgumentConstructor>();
+            Assert.AreEqual(constantExpression, resolvedObject.ConstructorParameter);
         }
     }
 
     [TestClass]
-    public class GivenATypeRegistrationWithAnEmptyContainerResolvedEnumerableParameter
+    public class WhenATypeRegistrationSpecifiesAnEmptyContainerResolvedEnumerableParameter : ConfiguredContainerContext
     {
-        UnityContainer container;
-        UnityContainerConfigurator containerConfigurator;
-        TypeRegistration typeRegistration;
-
-        [TestInitialize]
-        public void Setup()
+        protected override TypeRegistration GetTypeRegistration()
         {
-            container = new UnityContainer();
-            containerConfigurator = new UnityContainerConfigurator(container);
-
-            typeRegistration =
-                new TypeRegistration<TypeWithOneEnumerableArgumentConstructor>(
+            return new TypeRegistration<TypeWithOneEnumerableArgumentConstructor>(
                     () => new TypeWithOneEnumerableArgumentConstructor(Container.ResolvedEnumerable<IFoo>(new string[0])));
         }
 
         [TestMethod]
-        public void WhenContainerIsConfigured_ThenTheContainerInjectsAnEmptyEnumerableToCreatedObject()
+        public void ThenTheContainerInjectsAnEmptyEnumerableToCreatedObject()
         {
-            containerConfigurator.Register(typeRegistration);
-
-            var resolvedObject = container.Resolve<TypeWithOneEnumerableArgumentConstructor>();
+            var resolvedObject = ResolveDefault<TypeWithOneEnumerableArgumentConstructor>();
             Assert.AreEqual(0, resolvedObject.ConstructorParameter.Count());
         }
     }
 
     [TestClass]
-    public class GivenATypeRegistrationWithASingleNameContainerResolvedEnumerableParameter
+    public class WhenATypeRegistrationSpeciesASingleNameContainerResolvedEnumerableParameter : ConfiguredContainerContext
     {
-        UnityContainer container;
-        UnityContainerConfigurator containerConfigurator;
-        TypeRegistration typeRegistration;
         private IFoo theFoo;
 
-        [TestInitialize]
-        public void Setup()
+        protected override void Arrange()
         {
-            container = new UnityContainer();
-            containerConfigurator = new UnityContainerConfigurator(container);
-
+            base.Arrange();
             theFoo = new Foo();
             container.RegisterInstance("foo1", theFoo);
 
-            typeRegistration =
-                new TypeRegistration<TypeWithOneEnumerableArgumentConstructor>(
+        }
+
+        protected override TypeRegistration GetTypeRegistration()
+        {
+            return new TypeRegistration<TypeWithOneEnumerableArgumentConstructor>(
                     () => new TypeWithOneEnumerableArgumentConstructor(Container.ResolvedEnumerable<IFoo>(new string[] { "foo1" })));
         }
 
         [TestMethod]
-        public void WhenContainerIsConfigured_ThenTheContainerInjectsAnSingleElementEnumerableToCreatedObject()
+        public void ThenTheContainerInjectsAnSingleElementEnumerableToCreatedObject()
         {
-            containerConfigurator.Register(typeRegistration);
-
-            var resolvedObject = container.Resolve<TypeWithOneEnumerableArgumentConstructor>();
+            var resolvedObject = ResolveDefault<TypeWithOneEnumerableArgumentConstructor>();
             CollectionAssert.AreEquivalent(new[] { theFoo }, new List<IFoo>(resolvedObject.ConstructorParameter));
         }
     }
 
     [TestClass]
-    public class GivenATypeRegistrationWithMultipleNamesContainerResolvedEnumerableParameter
+    public class WhenATypeRegistrationSpecifiesMultipleNamesContainerResolvedEnumerableParameter : ConfiguredContainerContext
     {
-        UnityContainer container;
-        UnityContainerConfigurator containerConfigurator;
-        TypeRegistration typeRegistration;
+
         private IFoo theFoo1;
         private IFoo theFoo2;
         private IFoo theFoo3;
 
-        [TestInitialize]
-        public void Setup()
+        protected override void Arrange()
         {
-            container = new UnityContainer();
-            containerConfigurator = new UnityContainerConfigurator(container);
-
+            base.Arrange();
             theFoo1 = new Foo();
             container.RegisterInstance("foo1", theFoo1);
             theFoo2 = new Foo();
             container.RegisterInstance("foo2", theFoo2);
             theFoo3 = new Foo();
             container.RegisterInstance("foo3", theFoo3);
+        }
 
-            typeRegistration =
+        protected override TypeRegistration GetTypeRegistration()
+        {
+            return 
                 new TypeRegistration<TypeWithOneEnumerableArgumentConstructor>(
                     () => new TypeWithOneEnumerableArgumentConstructor(Container.ResolvedEnumerable<IFoo>(new[] { "foo2", "foo1" })));
         }
 
         [TestMethod]
-        public void WhenContainerIsConfigured_ThenTheContainerInjectsTwoElementEnumerableToCreatedObject()
+        public void ThenTheContainerInjectsTwoElementEnumerableToCreatedObject()
         {
-            containerConfigurator.Register(typeRegistration);
-
-            var resolvedObject = container.Resolve<TypeWithOneEnumerableArgumentConstructor>();
+            var resolvedObject = ResolveDefault<TypeWithOneEnumerableArgumentConstructor>();
             CollectionAssert.AreEqual(new[] { theFoo2, theFoo1, }, new List<IFoo>(resolvedObject.ConstructorParameter));
         }
     }
 
     [TestClass]
-    public class GivenATypeRegistrationWithOptionalContainerResolvedParameterForNull
+    public class WhenATypeRegistrationSpecifiesOptionalContainerResolvedParameterForNull : ConfiguredContainerContext
     {
-        UnityContainer container;
-        UnityContainerConfigurator containerConfigurator;
-        TypeRegistration typeRegistration;
-
-        [TestInitialize]
-        public void Setup()
+        protected override TypeRegistration GetTypeRegistration()
         {
-            container = new UnityContainer();
-            containerConfigurator = new UnityContainerConfigurator(container);
-
-            typeRegistration =
+            return
                 new TypeRegistration<TypeWithOneReferenceArgumentConstructor>(
                     () => new TypeWithOneReferenceArgumentConstructor(Container.ResolvedIfNotNull<Foo>(null)));
         }
 
         [TestMethod]
-        public void WhenContainerIsConfigured_ThenTheContainerInjectsNull()
+        public void ThenTheContainerInjectsNull()
         {
-            containerConfigurator.Register(typeRegistration);
-
-            var resolvedObject = container.Resolve<TypeWithOneReferenceArgumentConstructor>();
+            var resolvedObject = ResolveDefault<TypeWithOneReferenceArgumentConstructor>();
             Assert.IsNull(resolvedObject.ConstructorParameter);
         }
     }
 
     [TestClass]
-    public class GivenATypeRegistrationWithOptionalContainerResolvedParameterForEmptyString
+    public class WhenATypeRegistrationSpecifiesOptionalContainerResolvedParameterForEmptyString : ConfiguredContainerContext
     {
-        UnityContainer container;
-        UnityContainerConfigurator containerConfigurator;
-        TypeRegistration typeRegistration;
 
-        [TestInitialize]
-        public void Setup()
+        protected override TypeRegistration GetTypeRegistration()
         {
-            container = new UnityContainer();
-            containerConfigurator = new UnityContainerConfigurator(container);
-
-            typeRegistration =
+            return 
                 new TypeRegistration<TypeWithOneReferenceArgumentConstructor>(
                     () => new TypeWithOneReferenceArgumentConstructor(Container.ResolvedIfNotNull<Foo>(string.Empty)));
         }
 
         [TestMethod]
-        public void WhenContainerIsConfigured_ThenTheContainerInjectsNull()
+        public void ThenTheContainerInjectsNull()
         {
-            containerConfigurator.Register(typeRegistration);
-
-            var resolvedObject = container.Resolve<TypeWithOneReferenceArgumentConstructor>();
+            var resolvedObject = ResolveDefault<TypeWithOneReferenceArgumentConstructor>();
             Assert.IsNull(resolvedObject.ConstructorParameter);
         }
     }
 
     [TestClass]
-    public class GivenATypeRegistrationWithOptionalContainerResolvedParameterForNonEmptyString
+    public class WhenATypeRegistrationSpecifiesOptionalContainerResolvedParameterForNonEmptyString : ConfiguredContainerContext
     {
-        UnityContainer container;
-        UnityContainerConfigurator containerConfigurator;
-        TypeRegistration typeRegistration;
         private Foo namedFoo;
 
-        [TestInitialize]
-        public void Setup()
+        protected override void Arrange()
         {
-            container = new UnityContainer();
-            containerConfigurator = new UnityContainerConfigurator(container);
-
+            base.Arrange();
             container.RegisterInstance(new Foo());
             namedFoo = new Foo();
             container.RegisterInstance("name", namedFoo);
+        }
 
-            typeRegistration =
+        protected override TypeRegistration GetTypeRegistration()
+        {
+            return 
                 new TypeRegistration<TypeWithOneReferenceArgumentConstructor>(
                     () => new TypeWithOneReferenceArgumentConstructor(Container.ResolvedIfNotNull<Foo>("name")));
         }
 
         [TestMethod]
-        public void WhenContainerIsConfigured_ThenTheContainerInjectsNull()
+        public void ThenTheContainerInjectsNull()
         {
-            containerConfigurator.Register(typeRegistration);
-
-            var resolvedObject = container.Resolve<TypeWithOneReferenceArgumentConstructor>();
+            var resolvedObject = ResolveDefault<TypeWithOneReferenceArgumentConstructor>();
             Assert.AreSame(namedFoo, resolvedObject.ConstructorParameter);
         }
     }
 
     [TestClass]
-    public class GivenConfiguredContainerIncludingATypeRegistrationWithInjectedProperties
+    public class WhenATypeRegistrationSpecifiesInjectedProperties : ConfiguredContainerContext
     {
-        private TypeRegistration<TypeWithProperties> registration;
-        private IUnityContainer container;
         private IFoo foo = new Foo();
 
-        [TestInitialize]
-        public void Given()
+        protected override void Arrange()
         {
-            container = new UnityContainer();
+            base.Arrange();
             container.RegisterInstance<IFoo>(foo);
+        }
 
-            UnityContainerConfigurator containerConfigurator = new UnityContainerConfigurator(container);
-
-            registration = new TypeRegistration<TypeWithProperties>(
+        protected override TypeRegistration GetTypeRegistration()
+        {
+            return new TypeRegistration<TypeWithProperties>(
                 () => new TypeWithProperties()
                           {
                               IntValueProperty = 5,
                               FooProperty = Container.Resolved<IFoo>()
                           }
                     );
-            containerConfigurator.Register(registration);
         }
 
         [TestMethod]
-        public void WhenTypeIsCreated_ThenConstantPropertyValuesAreInjected()
+        public void ThenConstantPropertyValuesAreInjected()
         {
-            var resolvedObject = container.Resolve<TypeWithProperties>();
+            var resolvedObject = ResolveDefault<TypeWithProperties>();
             Assert.AreEqual(5, resolvedObject.IntValueProperty);
         }
 
         [TestMethod]
-        public void WhenTypeIsCreated_ThenContainerResolvedValuesAreInjected()
+        public void ThenContainerResolvedValuesAreInjected()
         {
-            var resolvedObject = container.Resolve<TypeWithProperties>();
+            var resolvedObject = ResolveDefault<TypeWithProperties>();
             Assert.AreEqual(foo, resolvedObject.FooProperty);
         }
     }
 
     [TestClass]
-    public class GivenANonDefaultTypeRegistrationWithNoTypeMapping
+    public class WhenATypeRegistrationSpecifiesANonDefaultWithNoTypeMapping : ConfiguredContainerContext
     {
-        private TypeRegistration typeRegistration;
 
-        [TestInitialize]
-        public void Setup()
+        protected override TypeRegistration GetTypeRegistration()
         {
-            typeRegistration = new TypeRegistration<Foo>(() => new Foo()) { Name = "foo" };
+            return new TypeRegistration<Tofu>(() => new Tofu()) { Name = "foo" };
         }
 
         [TestMethod]
-        public void WhenConfiguratorConfiguresContainer_ThenResolvingDefaultReturnsDifferentInstance()
+        public void ThenResolvingDefaultReturnsDifferentInstance()
         {
-            var container = new UnityContainer();
-            var configurator = new UnityContainerConfigurator(container);
-
-            configurator.Register(typeRegistration);
-
-            var foo = container.Resolve<Foo>("foo");
-            var defaultFoo = container.Resolve<Foo>();
+            var foo = container.Resolve<Tofu>("foo");
+            var defaultFoo = ResolveDefault<Tofu>();
 
             Assert.AreNotSame(foo, defaultFoo);
         }
     }
 
     [TestClass]
-    public class GivenADefaultTypeRegistrationWithNoTypeMapping
+    public class WhenATypeRegistrationSpecifiesADefaultWithNoTypeMapping : ConfiguredContainerContext
     {
-        private TypeRegistration typeRegistration;
-
-        [TestInitialize]
-        public void Setup()
+        protected override TypeRegistration GetTypeRegistration()
         {
-            typeRegistration = new TypeRegistration<Foo>(() => new Foo()) { Name = "foo", IsDefault = true };
+            return new TypeRegistration<Foo>(() => new Foo()) { Name = "foo", IsDefault = true };
         }
 
         [TestMethod]
-        public void WhenConfiguratorConfiguresContainer_ThenResolvingDefaultImplementationReturnsSameInstance()
+        public void ThenResolvingDefaultImplementationReturnsSameInstance()
         {
-            var container = new UnityContainer();
-            var configurator = new UnityContainerConfigurator(container);
-
-            configurator.Register(typeRegistration);
-
             var foo = container.Resolve<Foo>("foo");
             var defaultFoo = container.Resolve<Foo>();
 
@@ -760,27 +577,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
     }
 
     [TestClass]
-    public class GivenANonDefaultTypeRegistrationWithTypeMapping
+    public class WhenATypeRegistrationSpecifiesANonDefaultWithTypeMapping : ConfiguredContainerContext
     {
-        private TypeRegistration typeRegistration;
-
-        [TestInitialize]
-        public void Setup()
+        protected override TypeRegistration GetTypeRegistration()
         {
-            typeRegistration = new TypeRegistration<IFoo>(() => new Foo()) { Name = "foo" };
+            return new TypeRegistration<IFoo>(() => new Foo()) { Name = "foo" };
         }
 
         [TestMethod]
-        public void WhenConfiguratorConfiguresContainer_ThenResolvingDefaultForServiceInterfaceTypeThrows()
+        public void ThenResolvingDefaultForServiceInterfaceTypeThrows()
         {
-            var container = new UnityContainer();
-            var configurator = new UnityContainerConfigurator(container);
-
-            configurator.Register(typeRegistration);
-
             try
             {
-                container.Resolve<IFoo>();
+                ResolveDefault<IFoo>();
                 Assert.Fail("Should have failed");
             }
             catch (ResolutionFailedException)
@@ -791,24 +600,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
     }
 
     [TestClass]
-    public class GivenADefaultTypeRegistrationWithTypeMapping
+    public class WhenATypeRegistrationSpecifiesADefaultWithTypeMapping : ConfiguredContainerContext
     {
-        private TypeRegistration typeRegistration;
-
-        [TestInitialize]
-        public void Setup()
+        protected override TypeRegistration GetTypeRegistration()
         {
-            typeRegistration = new TypeRegistration<IFoo>(() => new Foo()) { Name = "foo", IsDefault = true };
+            return new TypeRegistration<IFoo>(() => new Foo()) { Name = "foo", IsDefault = true };
         }
 
         [TestMethod]
-        public void WhenConfiguratorConfiguresContainer_ThenResolvingDefaultServiceInterfaceTypeReturnsSameInstance()
+        public void ThenResolvingDefaultServiceInterfaceTypeReturnsSameInstance()
         {
-            var container = new UnityContainer();
-            var configurator = new UnityContainerConfigurator(container);
-
-            configurator.Register(typeRegistration);
-
             var foo = container.Resolve<Foo>("foo");
             var defaultIFoo = container.Resolve<IFoo>();
 
@@ -817,25 +618,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
     }
 
     [TestClass]
-    public class GivenADefaultTypeRegistrationWithTypeMappingAndTransientLifetime
+    public class WhenATypeRegistrationSpecifiesADefaultWithTypeMappingAndTransientLifetime : ConfiguredContainerContext
     {
-        private TypeRegistration typeRegistration;
-
-        [TestInitialize]
-        public void Setup()
+        protected override TypeRegistration GetTypeRegistration()
         {
-            typeRegistration =
-                new TypeRegistration<IFoo>(() => new Foo()) { Name = "foo", IsDefault = true, Lifetime = TypeRegistrationLifetime.Transient };
+            return new TypeRegistration<IFoo>(() => new Foo()) { Name = "foo", IsDefault = true, Lifetime = TypeRegistrationLifetime.Transient };
         }
 
         [TestMethod]
-        public void WhenConfiguratorConfiguresContainer_ThenResolvingServiceInterfaceTypeReturnsDifferentInstances()
+        public void ThenResolvingServiceInterfaceTypeReturnsDifferentInstances()
         {
-            var container = new UnityContainer();
-            var configurator = new UnityContainerConfigurator(container);
-
-            configurator.Register(typeRegistration);
-
             var foo1 = container.Resolve<IFoo>("foo");
             var foo2 = container.Resolve<IFoo>("foo");
 
@@ -844,29 +636,533 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
     }
 
     [TestClass]
-    public class GivenAUnityContainer
+    public class WhenTheConfiguratorInitializesAUnityContainer : ArrangeActAssert
     {
         private IUnityContainer container;
 
-        [TestInitialize]
-        public void Setup()
+        protected override void Arrange()
         {
             this.container = new UnityContainer();
         }
 
-        [TestMethod]
-        public void WhenCreatingAUnityContainerConfiguratorForTheContainer_ThenTheContainerGetsTheInterceptionExtension()
+        protected override void Act()
         {
             var configurator = new UnityContainerConfigurator(this.container);
+        }
+
+
+        [TestMethod]
+        public void ThenTheContainerGetsTheInterceptionExtension()
+        {
+            
 
             Assert.IsNotNull(this.container.Configure<Interception>());
         }
 
         [TestMethod]
-        public void WhenCreatingAUnityContainerConfiguatorForTheContainer_ThenTheContainerGetsTheTransientPolicyBuildUpExtension()
+        public void ThenTheContainerGetsTheTransientPolicyBuildUpExtension()
         {
-            var configurator = new UnityContainerConfigurator(this.container);
             Assert.IsNotNull(this.container.Configure<TransientPolicyBuildUpExtension>());
+        }
+
+        [TestMethod]
+        public void ThenTheContainerGetsTheReaderWriterLockExtension()
+        {
+            Assert.IsNotNull(this.container.Configure<ReaderWriterLockExtension>());
+        }
+
+    }
+
+
+    public abstract class ReconfigurableConfiguredContainerContext : ConfiguredContainerContext
+    {
+        protected abstract TypeRegistration GetUpdatedRegistration();
+
+        protected override void Act()
+        {
+            base.Act();
+
+            ActBeforeReconfigured();
+
+            containerConfigurator.Reconfigure(
+                new TypeRegistration[]{
+                    GetUpdatedRegistration()
+                });
+
+        }
+
+        protected virtual void ActBeforeReconfigured()
+        {
+        }
+    }
+
+    [TestClass]
+    public class WhenATransientTypeRegistrationChanges : ReconfigurableConfiguredContainerContext
+    {
+        protected override TypeRegistration GetTypeRegistration()
+        {
+            return new TypeRegistration<TypeWithOneArgumentConstructor>(() =>
+                    new TypeWithOneArgumentConstructor("original value"))
+                {
+                    Lifetime = TypeRegistrationLifetime.Transient
+                };
+        }
+
+        protected override TypeRegistration GetUpdatedRegistration()
+        {
+            return new TypeRegistration<TypeWithOneArgumentConstructor>(
+                        () => new TypeWithOneArgumentConstructor("modified value"))
+                    {
+                        Lifetime = TypeRegistrationLifetime.Transient
+                    };
+        }
+
+        [TestMethod]
+        public void ThenTheContainerResolvesTheUpdatedRegistrations()
+        {
+            var instance = ResolveDefault<TypeWithOneArgumentConstructor>();
+            Assert.AreEqual("modified value", instance.ConstructorParameter);
+        }
+
+        [TestMethod]
+        public void ThenTheUpdatedRegistrationStillHasTransientLifetime()
+        {
+            var instance = ResolveDefault<TypeWithOneArgumentConstructor>();
+            var secondInstance = ResolveDefault<TypeWithOneArgumentConstructor>();
+
+            Assert.AreNotSame(instance, secondInstance);
+        }
+    }
+
+    [TestClass]
+    public class WhenASingletonTypeRegistrationChanges : ReconfigurableConfiguredContainerContext
+    {
+        protected override TypeRegistration GetTypeRegistration()
+        {
+            return new TypeRegistration<TypeWithOneArgumentConstructor>(() =>
+                new TypeWithOneArgumentConstructor("original value"))
+                {
+                    Lifetime = TypeRegistrationLifetime.Singleton
+                };
+        }
+
+        protected override TypeRegistration GetUpdatedRegistration()
+        {
+            return new TypeRegistration<TypeWithOneArgumentConstructor>(
+                        () => new TypeWithOneArgumentConstructor("modified value")
+                    )
+                    {
+                        Lifetime = TypeRegistrationLifetime.Singleton
+                    };
+        }
+
+        [TestMethod]
+        public void ThenTheContainerResolvesTheUpdatedRegistrations()
+        {
+            var instance = ResolveDefault<TypeWithOneArgumentConstructor>();
+            Assert.AreEqual("modified value", instance.ConstructorParameter);
+        }
+
+        [TestMethod]
+        public void ThenTheUpdatedRegistrationStillHasSingletonLifetime()
+        {
+            var instance = ResolveDefault<TypeWithOneArgumentConstructor>();
+            var secondInstance = ResolveDefault<TypeWithOneArgumentConstructor>();
+
+            Assert.AreSame(instance, secondInstance);
+        }
+    }
+
+    [TestClass]
+    public class WhenASingletonTypeRegistrationChangesAfterResolving : ReconfigurableConfiguredContainerContext
+    {
+        private TypeWithOneArgumentConstructor originalInstance;
+
+        protected override TypeRegistration GetTypeRegistration()
+        {
+            return new TypeRegistration<TypeWithOneArgumentConstructor>(() =>
+                new TypeWithOneArgumentConstructor("original value"))
+            {
+                Lifetime = TypeRegistrationLifetime.Singleton
+            };
+        }
+
+        protected override TypeRegistration GetUpdatedRegistration()
+        {
+            return new TypeRegistration<TypeWithOneArgumentConstructor>(
+                        () => new TypeWithOneArgumentConstructor("modified value")
+                    )
+            {
+                Lifetime = TypeRegistrationLifetime.Singleton
+            };
+        }
+
+        protected override void ActBeforeReconfigured()
+        {
+            originalInstance = ResolveDefault<TypeWithOneArgumentConstructor>();
+        }
+
+        [TestMethod]
+        public void ThenTheContainerResolvestheOriginalInstance()
+        {
+            var instance = ResolveDefault<TypeWithOneArgumentConstructor>();
+            Assert.AreSame(originalInstance, instance);
+        }
+    }
+
+    [TestClass]
+    public class WhenAMappedSingletonTypeRegistrationChangesAfterResolving : ReconfigurableConfiguredContainerContext
+    {
+        private IFoo originalInstance;
+
+        protected override TypeRegistration GetTypeRegistration()
+        {
+            return new TypeRegistration<IFoo>(() =>
+                                              new TypeWithOneArgumentConstructor("original value"))
+                       {
+                           Lifetime = TypeRegistrationLifetime.Singleton,
+                           IsDefault = true
+                        };
+
+        }
+
+        protected override TypeRegistration GetUpdatedRegistration()
+        {
+            return new TypeRegistration<IFoo>(
+                      () => new TypeWithOneArgumentConstructor("modified value"))
+            {
+                Lifetime = TypeRegistrationLifetime.Singleton,
+                IsDefault = true
+            };
+        }
+
+        protected override void ActBeforeReconfigured()
+        {
+            originalInstance = ResolveDefault<TypeWithOneArgumentConstructor>();
+        }
+
+        [TestMethod]
+        public void ThenTheContainerResolvestheOriginalInstance()
+        {
+            var instance = ResolveDefault<IFoo>();
+            Assert.AreSame(originalInstance, instance);
+        }
+
+    }
+
+    [TestClass]
+    public class WhenASingletonConcreteTypeOnMappedTypeRegistrationChanges : ReconfigurableConfiguredContainerContext
+    {
+        protected override TypeRegistration GetTypeRegistration()
+        {
+            return new TypeRegistration<IFoo>(() =>
+                new Foo())
+            {
+                Lifetime = TypeRegistrationLifetime.Singleton
+            };
+        }
+
+        protected override TypeRegistration GetUpdatedRegistration()
+        {
+            return new TypeRegistration<IFoo>(() =>
+                new Tofu())
+            {
+                Lifetime = TypeRegistrationLifetime.Singleton
+            };
+        }
+
+        [TestMethod]
+        public void ThenTheLifetimeShoudlStillBeSingleton()
+        {
+            var instance = ResolveDefault<IFoo>();
+            var secondInstance = ResolveDefault<IFoo>();
+            Assert.AreSame(instance, secondInstance);
+        }
+    }
+
+
+    [TestClass]
+    public class WhenADefaultTypeRegistrationChanges : ReconfigurableConfiguredContainerContext
+    {
+        protected override TypeRegistration GetTypeRegistration()
+        {
+            return new TypeRegistration<IFoo>(() =>
+                new Foo())
+            {
+                Name = "test instance",
+                IsDefault = true,
+                Lifetime = TypeRegistrationLifetime.Transient
+            };
+        }
+
+        protected override void ActBeforeReconfigured()
+        {
+            Assert.IsNotNull(container.Resolve<IFoo>());
+        }
+
+        protected override TypeRegistration GetUpdatedRegistration()
+        {
+            return new TypeRegistration<IFoo>(() =>
+                new Foo())
+            {
+                Name = "test instance",
+                IsDefault = false,
+                Lifetime = TypeRegistrationLifetime.Transient
+            };
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ResolutionFailedException))]
+        public void ThenResolveDefaultShouldThrow()
+        {
+            container.Resolve<IFoo>();
+        }
+    }
+
+    [TestClass]
+    public class WhenImplementationTypeForTypeRegistrationChanges : ReconfigurableConfiguredContainerContext
+    {
+        private IFoo instancePriorToReconfigure;
+
+        protected override TypeRegistration GetTypeRegistration()
+        {
+            return new TypeRegistration<IFoo>(() =>
+                new Foo()
+                {
+                    Name = "Foo"
+                })
+            {
+                Name = "test instance",
+                IsDefault = true,
+                Lifetime = TypeRegistrationLifetime.Transient
+            };
+        }
+
+        protected override void ActBeforeReconfigured()
+        {
+            instancePriorToReconfigure = container.Resolve<IFoo>();
+        }
+
+        protected override TypeRegistration GetUpdatedRegistration()
+        {
+            return new TypeRegistration<IFoo>(() =>
+                new Tofu())
+            {
+                Name = "test instance",
+                IsDefault = true,
+                Lifetime = TypeRegistrationLifetime.Transient
+            };
+        }
+
+
+        [TestMethod]
+        public void ThenResolveReturnsInstanceOfNewImplementationType()
+        {
+            IFoo instanceOfTfoe = container.Resolve<IFoo>();
+
+            Assert.IsInstanceOfType(instanceOfTfoe, typeof(Tofu));
+        }
+    }
+
+
+    [TestClass]
+    public class WhenPropertySetsOnTypeRegistrationChanges : ReconfigurableConfiguredContainerContext
+    {
+        private IFoo instancePriorToReconfigure;
+
+        protected override TypeRegistration GetTypeRegistration()
+        {
+            return new TypeRegistration<IFoo>(() =>
+                new Foo()
+                {
+                    Name = "Foo"
+                })
+            {
+                Name = "test instance",
+                IsDefault = true,
+                Lifetime = TypeRegistrationLifetime.Transient
+            };
+        }
+
+        protected override void ActBeforeReconfigured()
+        {
+            instancePriorToReconfigure = container.Resolve<IFoo>();
+        }
+
+        protected override TypeRegistration GetUpdatedRegistration()
+        {
+            return new TypeRegistration<IFoo>(() =>
+                new Foo())
+            {
+                Name = "test instance",
+                IsDefault = true,
+                Lifetime = TypeRegistrationLifetime.Transient
+            };
+        }
+
+
+        [TestMethod]
+        public void ThenPreviouslyRegisteredPropertiesAreNotSet()
+        {
+            Foo reconfiguredInstance = container.Resolve<IFoo>() as Foo;
+            Assert.IsNotNull(reconfiguredInstance);
+            Assert.IsNull(reconfiguredInstance.Name);
+            
+        }
+    }
+
+    [TestClass]
+    public class WhenConstructorOnTypeRegistrationChanges : ReconfigurableConfiguredContainerContext
+    {
+        private Foo instancePriorToReconfigure;
+
+        protected override TypeRegistration GetTypeRegistration()
+        {
+            return new TypeRegistration<IFoo>(() =>
+                new Foo("string ctor"))
+            {
+                IsDefault = true,
+                Lifetime = TypeRegistrationLifetime.Transient
+            };
+        }
+
+        protected override void ActBeforeReconfigured()
+        {
+            instancePriorToReconfigure = ResolveDefault<IFoo>() as Foo;
+        }
+
+        protected override TypeRegistration GetUpdatedRegistration()
+        {
+            return new TypeRegistration<IFoo>(() =>
+                new Foo(42))
+            {
+                IsDefault = true,
+                Lifetime = TypeRegistrationLifetime.Transient
+            };
+        }
+
+
+        [TestMethod]
+        public void ThenNewlyConfiguredConstrutorIsSet()
+        {
+            Assert.IsNotNull(instancePriorToReconfigure);
+            Assert.AreEqual("string ctor", instancePriorToReconfigure.Name);
+
+            Foo reconfiguredInstance = ResolveDefault<IFoo>() as Foo;
+            Assert.IsNotNull(reconfiguredInstance);
+            Assert.AreEqual(42.ToString(), reconfiguredInstance.Name);
+
+        }
+    }
+
+    [TestClass]
+    public class WhenConstructorOnTypeRegistrationChangesToParameterless : ReconfigurableConfiguredContainerContext
+    {
+        private Foo instancePriorToReconfigure;
+
+        protected override TypeRegistration GetTypeRegistration()
+        {
+            return new TypeRegistration<IFoo>(() =>
+                new Foo("string ctor"))
+            {
+                IsDefault = true,
+                Lifetime = TypeRegistrationLifetime.Transient
+            };
+        }
+
+        protected override void ActBeforeReconfigured()
+        {
+            instancePriorToReconfigure = ResolveDefault<IFoo>() as Foo;
+        }
+
+        protected override TypeRegistration GetUpdatedRegistration()
+        {
+            return new TypeRegistration<IFoo>(() =>
+                new Foo())
+            {
+                IsDefault = true,
+                Lifetime = TypeRegistrationLifetime.Transient
+            };
+        }
+
+
+        [TestMethod]
+        public void ThenNewlyConfiguredConstrutorIsSet()
+        {
+            Assert.IsNotNull(instancePriorToReconfigure);
+            Assert.AreEqual("string ctor", instancePriorToReconfigure.Name);
+
+            Foo reconfiguredInstance = ResolveDefault<IFoo>() as Foo;
+            Assert.IsNotNull(reconfiguredInstance);
+            Assert.IsNull(reconfiguredInstance.Name);
+        }
+    }
+
+    [TestClass]
+    public class WhenNumberOfPropretiesOnTypeRegistrationChangesToFewer : ReconfigurableConfiguredContainerContext
+    {
+        private Foo instancePriorToReconfigure;
+
+        protected override TypeRegistration GetTypeRegistration()
+        {
+            return new TypeRegistration<IFoo>(() =>
+                new Foo()
+                {
+                    Name = "Name",
+                    LastName = "LastName",
+                    Initials = "Initials"
+                })
+            {
+                IsDefault = true,
+                Lifetime = TypeRegistrationLifetime.Transient
+            };
+        }
+
+        protected override void ActBeforeReconfigured()
+        {
+            instancePriorToReconfigure = ResolveDefault<IFoo>() as Foo;
+        }
+
+        protected override TypeRegistration GetUpdatedRegistration()
+        {
+            return new TypeRegistration<IFoo>(() =>
+                new Foo()
+                {
+                    LastName = "different"
+                })
+            {
+                IsDefault = true,
+                Lifetime = TypeRegistrationLifetime.Transient
+            };
+        }
+
+
+        [TestMethod]
+        public void ThenNewlyConfiguredConstrutorIsSet()
+        {
+            Assert.IsNotNull(instancePriorToReconfigure);
+            Assert.AreEqual("Name", instancePriorToReconfigure.Name);
+            Assert.AreEqual("LastName", instancePriorToReconfigure.LastName);
+            Assert.AreEqual("Initials", instancePriorToReconfigure.Initials);
+
+            Foo reconfiguredInstance = ResolveDefault<IFoo>() as Foo;
+            Assert.IsNotNull(reconfiguredInstance);
+            Assert.IsNull(reconfiguredInstance.Name);
+            Assert.AreEqual("different", reconfiguredInstance.LastName);
+            Assert.IsNull(reconfiguredInstance.Initials);
+        }
+    }
+
+
+    internal class TestableUnityConfigurator : UnityContainerConfigurator
+    {
+        public TestableUnityConfigurator(IUnityContainer container)
+            :base(container)
+        { }
+
+        public void Reconfigure(IEnumerable<TypeRegistration> updatedRegistrations)
+        {
+            base.RegisterUpdates(updatedRegistrations);
         }
     }
 
@@ -911,93 +1207,38 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
 
     internal class Foo : IFoo
     {
-        public Foo()
+        public Foo() { }
+
+        public Foo(int i)
         {
+            Name = i.ToString();
         }
+
+        public Foo(string c)
+        {
+            Name = c;
+        }
+
+        public string Name { get; set; }
+        public string LastName { get; set; }
+        public string Initials { get; set; }
+    }
+
+    internal class Tofu : IFoo
+    {
+
     }
 
     internal interface IFoo
     {
     }
 
-    internal class MockContainer : UnityContainerBase
+    internal class FooWithoutDefaultConstructor
     {
-        public override IUnityContainer RegisterType(Type from, Type to, string name, LifetimeManager lifetimeManager, params InjectionMember[] injectionMembers)
+        public FooWithoutDefaultConstructor(string constructorParam)
         {
-            LastRegisteredName = name;
-            LastRegisteredFromType = from;
-            LastRegisteredToType = to;
-            LastLifetimeManager = lifetimeManager;
-            return this;
-        }
-
-        public LifetimeManager LastLifetimeManager
-        {
-            get;
-            set;
-        }
-
-        public override IUnityContainer RegisterInstance(Type t, string name, object instance, LifetimeManager lifetime)
-        {
-            // Configurator may now register an instance, so just noop it for
-            // current purposes.
-            return this;
-        }
-
-        public override object Resolve(Type t, string name)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public override IEnumerable<object> ResolveAll(Type t)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public override object BuildUp(Type t, object existing, string name)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public override void Teardown(object o)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public override IUnityContainer AddExtension(UnityContainerExtension extension)
-        {
-            return this;
-        }
-
-        public override object Configure(Type configurationInterface)
-        {
-            return null;
-        }
-
-        public override IUnityContainer RemoveAllExtensions()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public override IUnityContainer CreateChildContainer()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public override IUnityContainer Parent
-        {
-            get { throw new System.NotImplementedException(); }
-        }
-
-        public Type LastRegisteredFromType { get; set; }
-
-        public Type LastRegisteredToType { get; set; }
-
-        public string LastRegisteredName { get; set; }
-
-        public override void Dispose()
-        {
-            throw new System.NotImplementedException();
-        }
+        }   
     }
+
+   
 }

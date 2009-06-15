@@ -13,6 +13,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Filters;
@@ -50,6 +51,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
                 .WithValueConstructorParameter(100)
                 .WithValueConstructorParameter(200)
                 .VerifyConstructorParameters();
+        }
+
+        [TestMethod]
+        public void WhenCreatesRegistrations_ThenCreatedRegistrationsAreTransient()
+        {
+            Assert.AreEqual(
+                0,
+                filterData.GetRegistrations().Where(tr => tr.Lifetime != TypeRegistrationLifetime.Transient).Count());
         }
     }
 
@@ -93,6 +102,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
 
             CollectionAssert.AreEqual(new[] { "category 1", "category 2" }, (ICollection)categories);
         }
+
+        [TestMethod]
+        public void WhenCreatesRegistrations_ThenCreatedRegistrationsAreTransient()
+        {
+            Assert.AreEqual(
+                0,
+                filterData.GetRegistrations().Where(tr => tr.Lifetime != TypeRegistrationLifetime.Transient).Count());
+        }
     }
 
     [TestClass]
@@ -123,6 +140,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
                 .WithValueConstructorParameter("filter")
                 .WithValueConstructorParameter(true)
                 .VerifyConstructorParameters();
+        }
+
+        [TestMethod]
+        public void WhenCreatesRegistrations_ThenCreatedRegistrationsAreTransient()
+        {
+            Assert.AreEqual(
+                0,
+                filterData.GetRegistrations().Where(tr => tr.Lifetime != TypeRegistrationLifetime.Transient).Count());
         }
     }
 
@@ -157,6 +182,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
                 .AssertConstructor()
                 .WithValueConstructorParameter(((CustomLogFilterData)filterData).Attributes)
                 .VerifyConstructorParameters();
+        }
+
+        [TestMethod]
+        public void WhenCreatesRegistrations_ThenCreatedRegistrationsAreTransient()
+        {
+            Assert.AreEqual(
+                0,
+                filterData.GetRegistrations().Where(tr => tr.Lifetime != TypeRegistrationLifetime.Transient).Count());
         }
     }
 }

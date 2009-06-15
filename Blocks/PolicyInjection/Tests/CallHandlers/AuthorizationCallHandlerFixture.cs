@@ -25,7 +25,6 @@ using Microsoft.Practices.EnterpriseLibrary.Security.Configuration;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using RuleDrivenPolicy = Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration.PolicyData.RuleDrivenPolicy;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tests
 {
@@ -176,7 +175,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
             new UnityContainerConfigurator(container)
                 .RegisterAll(configSource, (ITypeRegistrationsProvider)configSource.GetSection(SecuritySettings.SectionName));
 
-            RuleDrivenPolicy policy = container.Resolve<RuleDrivenPolicy>("policy");
+            InjectionFriendlyRuleDrivenPolicy policy = container.Resolve<InjectionFriendlyRuleDrivenPolicy>("policy");
 
             ICallHandler handler =
                 (policy.GetHandlersFor(new MethodImplementationInfo(null, (MethodInfo)MethodBase.GetCurrentMethod()), container)).ElementAt(0);

@@ -9,11 +9,15 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using System;
 using System.Diagnostics;
+using System.Linq;
+using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport;
 using Microsoft.Practices.EnterpriseLibrary.Data.TestSupport;
 using Microsoft.Practices.ServiceLocation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SysConfig=System.Configuration;
+using System.Threading;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
 {
@@ -83,6 +87,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
         [TestMethod]
         public void CreatingDatabaseWithUnknownInstanceNameWritesToEventLog()
         {
+            var startTime = DateTime.Now;
+            Thread.Sleep(1000);
             try
             {
                 Database db = DatabaseFactory.CreateDatabase("ThisIsAnUnknownKey");
@@ -91,10 +97,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
             {
                 using (EventLog applicationLog = new EventLog("Application"))
                 {
-                    EventLogEntry lastEntry = applicationLog.Entries[applicationLog.Entries.Count - 1];
+                    var entries = applicationLog.GetEntriesSince(startTime)
+                        .Where(e => e.Source == "Enterprise Library Data" &&
+                            e.Message.Contains("ThisIsAnUnknownKey"));
 
-                    Assert.AreEqual("Enterprise Library Data", lastEntry.Source);
-                    Assert.IsTrue(lastEntry.Message.Contains("ThisIsAnUnknownKey"));
+                    Assert.AreEqual(1, entries.Count());
                 }
                 return;
             }

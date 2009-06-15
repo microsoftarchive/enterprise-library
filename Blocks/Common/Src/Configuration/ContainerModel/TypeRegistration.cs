@@ -23,6 +23,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerMo
     public class TypeRegistration
     {
         /// <summary>
+        /// The name that will be returned for a <see cref="TypeRegistration"/>
+        /// if no name is otherwise specified.
+        /// </summary>
+        public static readonly string DefaultName = "__default__";
+
+        private string name;
+
+        /// <summary>
         /// Initialize a new instance of the <see cref="TypeRegistration"/> class with a <see cref="LambdaExpression"/>
         /// as the model for injection.
         /// </summary>
@@ -97,7 +105,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerMo
         /// <summary>
         /// Gets the name under which the entry should be registered to the container.
         /// </summary>
-        public string Name { get; set; }
+        public string Name 
+        {
+            get
+            {
+                return name ?? DefaultName;
+            }
+
+            set
+            {
+                name = value;
+            }
+        }
 
         /// <summary>
         /// Gets <see cref="LambdaExpression"/> representing the injection.

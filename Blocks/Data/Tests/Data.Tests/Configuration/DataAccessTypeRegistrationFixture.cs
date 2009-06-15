@@ -23,29 +23,52 @@ using Microsoft.Practices.EnterpriseLibrary.Data.Oracle.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Data.Sql;
 using Microsoft.Practices.EnterpriseLibrary.Data.Sql.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration
 {
     [TestClass]
-    public class GivenNoConnectionStrings
+    public class WhenCreatingRegistrations_GivenNoConnectionStrings : ArrangeActAssert
     {
         private DatabaseSyntheticConfigSettings settings;
         private DictionaryConfigurationSource configurationSource;
+        private IEnumerable<TypeRegistration> registrations;
 
-        [TestInitialize]
-        public void Given()
+        protected override void Arrange()
         {
             configurationSource = new DictionaryConfigurationSource();
             configurationSource.Add("connectionStrings", new ConnectionStringsSection());
             settings = new DatabaseSyntheticConfigSettings();
         }
 
-        [TestMethod]
-        public void WhenCreatingRegistrations_ThenCreatesNoRegistrationsForDatabases()
+        protected override void Act()
         {
-            var typeRegistrations = settings.GetRegistrations(configurationSource).Where(r => r.ServiceType == typeof(Database));
+            registrations = settings.GetRegistrations(configurationSource);
+        }
 
-            Assert.AreEqual(0, typeRegistrations.Count());
+        [TestMethod]
+        public void ThenCreatesNoRegistrationsForDatabases()
+        {
+            var dbRegistrations = registrations.Where(r => r.ServiceType == typeof(Database));
+
+            Assert.AreEqual(0, dbRegistrations.Count());
+        }
+
+        [TestMethod]
+        public void ThenCreatesOneRegistrationForDefaultEventLogger()
+        {
+            var loggerRegistrations = registrations.Where(r => r.ServiceType == typeof(DefaultDataEventLogger));
+
+            Assert.AreEqual(1, loggerRegistrations.Count());
+        }
+
+        [TestMethod]
+        public void ThenEventLoggerRegisteredAsDefault()
+        {
+            var registration = registrations.Where(r => r.ServiceType == typeof(DefaultDataEventLogger)).First();
+
+            registration.AssertForServiceType(typeof(DefaultDataEventLogger))
+                .IsDefault();
         }
     }
 

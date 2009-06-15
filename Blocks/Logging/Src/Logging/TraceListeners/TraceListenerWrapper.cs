@@ -10,46 +10,21 @@
 //===============================================================================
 
 using System;
-using System.Collections.Specialized;
 using System.Diagnostics;
 
-namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
+namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
 {
     /// <summary>
-    /// Wraps a <see cref="TraceListener"/> to allow the attribute properties to
-    /// be injected.  This is primarily used with custom trace listeners that
-    /// provide attributes in their configuration.
+    /// Wraps a <see cref="TraceListener"/> and forwards all trace requests to it.
     /// </summary>
-    public class AttributeSettingTraceListenerWrapper : TraceListener
+    public abstract class TraceListenerWrapper : TraceListener
     {
-        ///<summary>
-        /// Initializes an instance of <see cref="AttributeSettingTraceListenerWrapper"/>.
-        ///</summary>
-        ///<param name="listener">The <see cref="TraceListener"/> to wrap.</param>
-        ///<param name="attributes">The attributes to set on the trace listener.</param>
-        public AttributeSettingTraceListenerWrapper(
-            TraceListener listener,
-            NameValueCollection attributes)
-        {
-            this.InnerTraceListener = listener;
-            foreach(string key in attributes)
-            {
-                InnerTraceListener.Attributes.Add(key, attributes[key]);
-            }
-
-            this.TraceOutputOptions = InnerTraceListener.TraceOutputOptions;
-            this.IndentLevel = InnerTraceListener.IndentLevel;
-            this.IndentSize = InnerTraceListener.IndentSize;
-            this.Filter = InnerTraceListener.Filter;
-        }
-
-
         ///<summary>
         /// The wrapped <see cref="TraceListener"/>.
         ///</summary>
-        public TraceListener InnerTraceListener { get; private set; }
+        public abstract TraceListener InnerTraceListener { get; }
 
-        #region InnerTraceListener overrides
+        #region TraceListener overrides
 
         /// <summary>
         /// When overridden in a derived class, closes the output stream so it no longer receives tracing or debugging output.
@@ -64,7 +39,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// Releases the unmanaged resources used by the <see cref="T:System.Diagnostics.TraceListener"/> and optionally releases the managed resources.
         /// </summary>
         /// <param name="disposing">true to release both managed and unmanaged resources; false to release only unmanaged resources. 
-        ///                 </param>
+        /// </param>
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -282,25 +257,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
             get
             {
                 return this.InnerTraceListener.IsThreadSafe;
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets a name for this <see cref="T:System.Diagnostics.TraceListener"/>.
-        /// </summary>
-        /// <returns>
-        /// A name for this <see cref="T:System.Diagnostics.TraceListener"/>. The default is an empty string ("").
-        /// </returns>
-        /// <filterpriority>2</filterpriority>
-        public override string Name
-        {
-            get
-            {
-                return this.InnerTraceListener.Name;
-            }
-            set
-            {
-                this.InnerTraceListener.Name = value;
             }
         }
 

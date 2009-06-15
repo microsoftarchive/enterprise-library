@@ -106,7 +106,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
                 new TypeRegistration<IHashProvider>(
                     () => new HashAlgorithmProvider(AlgorithmType, SaltEnabled, Container.Resolved<IHashAlgorithmInstrumentationProvider>(Name)))
                         {
-                            Name = Name
+                            Name = Name,
+                            Lifetime = TypeRegistrationLifetime.Transient
                         };
 
 

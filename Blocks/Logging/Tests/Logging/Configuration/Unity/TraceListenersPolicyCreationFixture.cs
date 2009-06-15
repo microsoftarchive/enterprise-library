@@ -57,7 +57,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration.Unit
 
             using (var container = CreateContainer())
             {
-                WmiTraceListener createdObject = (WmiTraceListener)container.Resolve<TraceListener>("listener");
+                WmiTraceListener createdObject = (WmiTraceListener)container.Resolve<TraceListener>("listener\u200cimplementation");
 
                 Assert.IsNotNull(createdObject);
                 Assert.AreEqual(listenerData.TraceOutputOptions, createdObject.TraceOutputOptions);
@@ -77,7 +77,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration.Unit
 
             using (var container = CreateContainer())
             {
-                XmlTraceListener createdObject = (XmlTraceListener)container.Resolve<TraceListener>("listener");
+                var wrapper = (ReconfigurableTraceListenerWrapper)container.Resolve<TraceListener>("listener");
+                XmlTraceListener createdObject = (XmlTraceListener) wrapper.InnerTraceListener;
 
                 Assert.IsNotNull(createdObject);
                 Assert.AreEqual(listenerData.TraceOutputOptions, createdObject.TraceOutputOptions);
@@ -98,7 +99,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration.Unit
 
             using (var container = CreateContainer())
             {
-                EmailTraceListener createdObject = (EmailTraceListener)container.Resolve<TraceListener>("listener");
+                EmailTraceListener createdObject = (EmailTraceListener)container.Resolve<TraceListener>("listener\u200cimplementation");
 
                 Assert.IsNotNull(createdObject);
                 Assert.AreEqual(listenerData.TraceOutputOptions, createdObject.TraceOutputOptions);
@@ -123,7 +124,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration.Unit
 
             using (var container = CreateContainer())
             {
-                EmailTraceListener createdObject = (EmailTraceListener)container.Resolve<TraceListener>("listener");
+                EmailTraceListener createdObject =
+                    (EmailTraceListener)container.Resolve<TraceListener>("listener\u200cimplementation");
 
                 Assert.IsNotNull(createdObject);
                 Assert.AreEqual(listenerData.TraceOutputOptions, createdObject.TraceOutputOptions);
@@ -147,7 +149,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration.Unit
 
             using (var container = CreateContainer())
             {
-                FormattedEventLogTraceListener createdObject = (FormattedEventLogTraceListener)container.Resolve<TraceListener>("listener");
+                FormattedEventLogTraceListener createdObject =
+                    (FormattedEventLogTraceListener)container.Resolve<TraceListener>("listener\u200cimplementation");
 
                 Assert.IsNotNull(createdObject);
                 Assert.AreEqual(listenerData.TraceOutputOptions, createdObject.TraceOutputOptions);
@@ -155,9 +158,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration.Unit
                 Assert.IsInstanceOfType(createdObject.Filter, typeof(EventTypeFilter));
                 Assert.AreEqual(listenerData.Filter, ((EventTypeFilter)createdObject.Filter).EventType);
                 Assert.IsNull(createdObject.Formatter);
-                Assert.AreEqual(CommonUtil.EventLogSourceName, ((EventLogTraceListener)createdObject.SlaveListener).EventLog.Source);
-                Assert.AreEqual(CommonUtil.EventLogName, ((EventLogTraceListener)createdObject.SlaveListener).EventLog.Log);
-                Assert.AreEqual("machine", ((EventLogTraceListener)createdObject.SlaveListener).EventLog.MachineName);
+                Assert.AreEqual(CommonUtil.EventLogSourceName, ((EventLogTraceListener)createdObject.InnerListener).EventLog.Source);
+                Assert.AreEqual(CommonUtil.EventLogName, ((EventLogTraceListener)createdObject.InnerListener).EventLog.Log);
+                Assert.AreEqual("machine", ((EventLogTraceListener)createdObject.InnerListener).EventLog.MachineName);
             }
         }
 
@@ -175,7 +178,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration.Unit
 
             using (var container = CreateContainer())
             {
-                FormattedEventLogTraceListener createdObject = (FormattedEventLogTraceListener)container.Resolve<TraceListener>("listener");
+                FormattedEventLogTraceListener createdObject =
+                    (FormattedEventLogTraceListener)container.Resolve<TraceListener>("listener\u200cimplementation");
 
                 Assert.IsNotNull(createdObject);
                 Assert.AreEqual(listenerData.TraceOutputOptions, createdObject.TraceOutputOptions);
@@ -185,9 +189,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration.Unit
                 Assert.IsNotNull(createdObject.Formatter);
                 Assert.AreSame(typeof(TextFormatter), createdObject.Formatter.GetType());
                 Assert.AreEqual("template", ((TextFormatter)createdObject.Formatter).Template);
-                Assert.AreEqual(CommonUtil.EventLogSourceName, ((EventLogTraceListener)createdObject.SlaveListener).EventLog.Source);
-                Assert.AreEqual(CommonUtil.EventLogName, ((EventLogTraceListener)createdObject.SlaveListener).EventLog.Log);
-                Assert.AreEqual("machine", ((EventLogTraceListener)createdObject.SlaveListener).EventLog.MachineName);
+                Assert.AreEqual(CommonUtil.EventLogSourceName, ((EventLogTraceListener)createdObject.InnerListener).EventLog.Source);
+                Assert.AreEqual(CommonUtil.EventLogName, ((EventLogTraceListener)createdObject.InnerListener).EventLog.Log);
+                Assert.AreEqual("machine", ((EventLogTraceListener)createdObject.InnerListener).EventLog.MachineName);
             }
         }
 
@@ -203,7 +207,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration.Unit
 
             using (var container = CreateContainer())
             {
-                MsmqTraceListener createdObject = (MsmqTraceListener)container.Resolve<TraceListener>("listener");
+                MsmqTraceListener createdObject = 
+                    (MsmqTraceListener)container.Resolve<TraceListener>("listener\u200cimplementation");
 
                 Assert.IsNotNull(createdObject);
                 Assert.AreEqual(listenerData.TraceOutputOptions, createdObject.TraceOutputOptions);
@@ -237,7 +242,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration.Unit
 
             using (var container = CreateContainer())
             {
-                RollingFlatFileTraceListener createdObject = (RollingFlatFileTraceListener)container.Resolve<TraceListener>("listener");
+                RollingFlatFileTraceListener createdObject =
+                    (RollingFlatFileTraceListener)((ReconfigurableTraceListenerWrapper)container.Resolve<TraceListener>("listener")).InnerTraceListener;
 
                 Assert.IsNotNull(createdObject);
                 Assert.AreEqual(listenerData.TraceOutputOptions, createdObject.TraceOutputOptions);
@@ -272,10 +278,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration.Unit
 
             using (var container = CreateContainer())
             {
-                RollingFlatFileTraceListener createdObject = (RollingFlatFileTraceListener)container.Resolve<TraceListener>("listener");
+                RollingFlatFileTraceListener createdObject =
+                    (RollingFlatFileTraceListener)((ReconfigurableTraceListenerWrapper)container.Resolve<TraceListener>("listener")).InnerTraceListener;
 
                 Assert.IsNotNull(createdObject);
-                Assert.AreEqual("listener", createdObject.Name);
+                Assert.AreEqual("listener\u200cimplementation", createdObject.Name);
                 Assert.AreEqual(listenerData.TraceOutputOptions, createdObject.TraceOutputOptions);
                 Assert.IsNotNull(createdObject.Filter);
                 Assert.IsInstanceOfType(createdObject.Filter, typeof(EventTypeFilter));
@@ -301,10 +308,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration.Unit
             using (var container = CreateContainer())
             {
                 AttributeSettingTraceListenerWrapper createdObject =
-                    container.Resolve<TraceListener>("listener") as AttributeSettingTraceListenerWrapper;
+                    container.Resolve<TraceListener>("listener\u200cimplementation") as AttributeSettingTraceListenerWrapper;
 
                 Assert.IsNotNull(createdObject);
-                Assert.AreEqual("listener", createdObject.Name);
+                Assert.AreEqual("listener\u200cimplementation", createdObject.Name);
                 Assert.AreEqual(TraceOptions.Callstack, createdObject.TraceOutputOptions);
                 Assert.AreEqual(typeof(MockCustomTraceListener), createdObject.InnerTraceListener.GetType());
                 Assert.AreEqual(initializationData, ((MockCustomTraceListener)createdObject.InnerTraceListener).initData);
@@ -322,10 +329,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration.Unit
 
             using (var container = CreateContainer())
             {
-                AttributeSettingTraceListenerWrapper createdObject = container.Resolve<TraceListener>("listener") as AttributeSettingTraceListenerWrapper;
+                AttributeSettingTraceListenerWrapper createdObject =
+                    container.Resolve<TraceListener>("listener\u200cimplementation") as AttributeSettingTraceListenerWrapper;
 
                 Assert.IsNotNull(createdObject);
-                Assert.AreEqual("listener", createdObject.Name);
+                Assert.AreEqual("listener\u200cimplementation", createdObject.Name);
                 Assert.AreEqual(TraceOptions.Callstack, createdObject.TraceOutputOptions);
                 Assert.AreEqual(typeof(MockCustomTraceListener), createdObject.InnerTraceListener.GetType());
                 Assert.AreEqual(null, ((MockCustomTraceListener)createdObject.InnerTraceListener).initData);	// configured with "", but set to null
@@ -343,10 +351,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration.Unit
 
             using (var container = CreateContainer())
             {
-                var createdObject = container.Resolve<TraceListener>("listener") as AttributeSettingTraceListenerWrapper;
+                var createdObject =
+                    container.Resolve<TraceListener>("listener\u200cimplementation") as AttributeSettingTraceListenerWrapper;
 
                 Assert.IsNotNull(createdObject);
-                Assert.AreEqual("listener", createdObject.Name);
+                Assert.AreEqual("listener\u200cimplementation", createdObject.Name);
                 Assert.AreEqual(TraceOptions.Callstack, createdObject.TraceOutputOptions);
                 Assert.AreEqual(typeof(MockCustomTraceListener), createdObject.InnerTraceListener.GetType());
                 Assert.AreEqual(null, ((MockCustomTraceListener)createdObject.InnerTraceListener).initData);	// configured with "", but set to null
@@ -370,10 +379,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration.Unit
             using (var container = CreateContainer())
             {
                 var createdObject =
-                    container.Resolve<TraceListener>("listener") as AttributeSettingTraceListenerWrapper;
+                    container.Resolve<TraceListener>("listener\u200cimplementation") as AttributeSettingTraceListenerWrapper;
 
                 Assert.IsNotNull(createdObject);
-                Assert.AreEqual("listener", createdObject.Name);
+                Assert.AreEqual("listener\u200cimplementation", createdObject.Name);
                 Assert.AreEqual(TraceOptions.Callstack, createdObject.TraceOutputOptions);
                 Assert.AreEqual(typeof(MockCustomTraceListener), createdObject.InnerTraceListener.GetType());
                 Assert.AreEqual(null, ((MockCustomTraceListener)createdObject.InnerTraceListener).initData);	// configured with "", but set to null
@@ -396,10 +405,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration.Unit
             {
                 newContainer.AddExtension(new EnterpriseLibraryCoreExtension(configurationSource));
 
-                listener = (MockTraceListener)newContainer.Resolve<TraceListener>("listener");
+                listener = 
+                    (MockTraceListener)((ReconfigurableTraceListenerWrapper)newContainer.Resolve<TraceListener>("listener")).InnerTraceListener;
 
                 Assert.IsNotNull(listener);
-                Assert.AreSame(listener, newContainer.Resolve<TraceListener>("listener"));	// lifetime managed?
+                Assert.AreSame(
+                    listener,
+                    ((ReconfigurableTraceListenerWrapper)newContainer.Resolve<TraceListener>("listener")).InnerTraceListener);	// lifetime managed?
 
                 Assert.IsFalse(listener.wasDisposed);
             }

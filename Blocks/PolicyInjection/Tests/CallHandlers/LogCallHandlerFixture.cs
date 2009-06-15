@@ -29,7 +29,6 @@ using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.TestSupport.ObjectsU
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using RuleDrivenPolicy = Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration.PolicyData.RuleDrivenPolicy;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tests
 {
@@ -399,7 +398,7 @@ Call Stack: @@BEGIN CALL STACK@@{{property(CallStack)}}@@END CALL STACK@@{{newli
                 .RegisterAll(configSource,
                 (ITypeRegistrationsProvider)configSource.GetSection(LoggingSettings.SectionName));
 
-            RuleDrivenPolicy policy = container.Resolve<RuleDrivenPolicy>("policy");
+            InjectionFriendlyRuleDrivenPolicy policy = container.Resolve<InjectionFriendlyRuleDrivenPolicy>("policy");
 
             LogCallHandler handler
                 = (LogCallHandler)(policy.GetHandlersFor(GetMethodImpl(MethodBase.GetCurrentMethod()), container)).ElementAt(0);
@@ -412,43 +411,6 @@ Call Stack: @@BEGIN CALL STACK@@{{property(CallStack)}}@@END CALL STACK@@{{newli
             Assert.AreEqual(2, handler.Categories.Count);
             CollectionAssert.Contains(handler.Categories, "category1");
             CollectionAssert.Contains(handler.Categories, "category2");
-        }
-
-        [TestMethod]
-        [DeploymentItem("LogCallHandler.config")]
-        public void ConfiguresCallHandlerAsSingleton()
-        {
-            FileConfigurationSource configSource =
-                new FileConfigurationSource("LogCallHandler.config");
-
-            PolicyInjectionSettings settings = new PolicyInjectionSettings();
-
-            PolicyData policyData = new PolicyData("policy");
-            LogCallHandlerData data = new LogCallHandlerData("fooHandler", 66);
-            data.BeforeMessage = "before";
-            data.AfterMessage = "after";
-            data.IncludeCallTime = true;
-            data.EventId = 100;
-            data.Categories.Add(new LogCallHandlerCategoryEntry("category1"));
-            data.Categories.Add(new LogCallHandlerCategoryEntry("category2"));
-            policyData.MatchingRules.Add(new CustomMatchingRuleData("matchesEverything", typeof(AlwaysMatchingRule)));
-            policyData.Handlers.Add(data);
-            settings.Policies.Add(policyData);
-
-            IUnityContainer container = new UnityContainer().AddNewExtension<Interception>();
-            settings.ConfigureContainer(container, configSource);
-            new UnityContainerConfigurator(container)
-                .RegisterAll(configSource,
-                    (ITypeRegistrationsProvider) configSource.GetSection(LoggingSettings.SectionName));
-
-            RuleDrivenPolicy policy = container.Resolve<RuleDrivenPolicy>("policy");
-
-            LogCallHandler handler1
-                = (LogCallHandler)(policy.GetHandlersFor(GetMethodImpl(MethodBase.GetCurrentMethod()), container)).ElementAt(0);
-            LogCallHandler handler2
-                = (LogCallHandler)(policy.GetHandlersFor(GetMethodImpl(MethodBase.GetCurrentMethod()), container)).ElementAt(0);
-
-            Assert.AreSame(handler1, handler2);
         }
 
         [TestMethod]

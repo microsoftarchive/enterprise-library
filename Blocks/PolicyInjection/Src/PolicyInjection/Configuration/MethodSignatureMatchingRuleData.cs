@@ -75,7 +75,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
                 new TypeRegistration<IMatchingRule>(
                     () => new MethodSignatureMatchingRule(this.Match, parameterTypes, this.IgnoreCase))
                 {
-                    Name = this.Name + nameSuffix
+                    Name = this.Name + nameSuffix,
+                    Lifetime = TypeRegistrationLifetime.Transient
                 };
         }
     }

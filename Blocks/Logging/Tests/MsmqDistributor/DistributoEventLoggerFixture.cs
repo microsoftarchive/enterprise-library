@@ -11,6 +11,8 @@
 
 using System;
 using System.Diagnostics;
+using System.Linq;
+using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Instrumentation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -27,21 +29,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Tests
         [TestMethod]
         public void CanCreateDistributorEventLogger()
         {
-            DistributorEventLogger logger = new DistributorEventLogger(TestApplicationName);
+            DistributorEventLogger logger = new DistributorEventLogger();
         }
 
         [TestMethod]
         public void ServiceStartedWritesToEventLog()
         {
-            DistributorEventLogger logger = new DistributorEventLogger(TestApplicationName);
+            DistributorEventLogger logger = new DistributorEventLogger();
 
-            using (EventLog eventLog = GetEventLog())
+            using(var eventLog = new EventLogTracker(GetEventLog()))
             {
-                int eventCount = eventLog.Entries.Count;
-
                 logger.LogServiceStarted();
 
-                Assert.AreEqual(eventCount + 1, eventLog.Entries.Count);
+                Assert.AreEqual(1,
+                    eventLog.NewEntries().Count(ev => EventIsFromLogger(ev, logger)));
             }
         }
 
@@ -64,15 +65,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Tests
         [TestMethod]
         public void ServiceStoppedWritesToEventLog()
         {
-            DistributorEventLogger logger = new DistributorEventLogger(TestApplicationName);
-
-            using (EventLog eventLog = GetEventLog())
+            DistributorEventLogger logger = new DistributorEventLogger();
+            using(var eventLog = new EventLogTracker(GetEventLog()))
             {
-                int eventCount = eventLog.Entries.Count;
-
                 logger.LogServiceStopped();
 
-                Assert.AreEqual(eventCount + 1, eventLog.Entries.Count);
+                Assert.AreEqual(1, eventLog.NewEntries().Count(ev => EventIsFromLogger(ev, logger)));
             }
         }
 
@@ -95,7 +93,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Tests
         [TestMethod]
         public void ServicePausedWritesToEventLog()
         {
-            DistributorEventLogger logger = new DistributorEventLogger(TestApplicationName);
+            DistributorEventLogger logger = new DistributorEventLogger();
+
+            using(var eventLog = new EventLogTracker(GetEventLog()))
+            {
+                logger.LogServicePaused();
+
+                Assert.AreEqual(1, eventLog.NewEntries().Count(ev => EventIsFromLogger(ev, logger)));
+            }
 
             using (EventLog eventLog = GetEventLog())
             {
@@ -128,13 +133,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Tests
         {
             DistributorEventLogger logger = new DistributorEventLogger(TestApplicationName);
 
-            using (EventLog eventLog = GetEventLog())
+            using(var eventLog = new EventLogTracker(GetEventLog()))
             {
-                int eventCount = eventLog.Entries.Count;
-
                 logger.LogServiceResumed();
 
-                Assert.AreEqual(eventCount + 1, eventLog.Entries.Count);
+                Assert.AreEqual(1, eventLog.NewEntries().Count(ev => EventIsFromLogger(ev, logger)));
             }
         }
 
@@ -159,14 +162,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Tests
         public void ServiceFailureWithoutExceptionWritesToEventLog()
         {
             DistributorEventLogger logger = new DistributorEventLogger(TestApplicationName);
-
-            using (EventLog eventLog = GetEventLog())
+            using(var eventLog = new EventLogTracker(GetEventLog()))
             {
-                int eventCount = eventLog.Entries.Count;
-
                 logger.LogServiceFailure(message, null, TraceEventType.Error);
 
-                Assert.AreEqual(eventCount + 1, eventLog.Entries.Count);
+                Assert.AreEqual(1,
+                    eventLog.NewEntries().Count(ev => EventIsFromLogger(ev, logger)));
+                
             }
         }
 
@@ -175,13 +177,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Tests
         {
             DistributorEventLogger logger = new DistributorEventLogger(TestApplicationName);
 
-            using (EventLog eventLog = GetEventLog())
+            using(var eventLog = new EventLogTracker(GetEventLog()))
             {
-                int eventCount = eventLog.Entries.Count;
-
                 logger.LogServiceFailure(message, GetException(), TraceEventType.Error);
 
-                Assert.AreEqual(eventCount + 1, eventLog.Entries.Count);
+                Assert.AreEqual(1,
+                    eventLog.NewEntries().Count(ev => EventIsFromLogger(ev, logger)));
             }
         }
 
@@ -242,6 +243,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Tests
                 exception = e;
             }
             return exception;
+        }
+
+        private static bool EventIsFromLogger(EventLogEntry entry, DistributorEventLogger logger)
+        {
+            return entry.Source == logger.ApplicationName;
         }
     }
 }

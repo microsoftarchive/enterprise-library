@@ -52,7 +52,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// <param name="categoryFilterMode">The mode of filtering.</param>
         public CategoryFilterData(string name, NamedElementCollection<CategoryFilterEntry> categoryFilters,
                                   CategoryFilterMode categoryFilterMode)
-            : base(name, typeof (CategoryFilter))
+            : base(name, typeof(CategoryFilter))
         {
             CategoryFilters = categoryFilters;
             CategoryFilterMode = categoryFilterMode;
@@ -64,7 +64,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         [ConfigurationProperty(categoryFilterModeProperty)]
         public CategoryFilterMode CategoryFilterMode
         {
-            get { return (CategoryFilterMode) this[categoryFilterModeProperty]; }
+            get { return (CategoryFilterMode)this[categoryFilterModeProperty]; }
             set { this[categoryFilterModeProperty] = value; }
         }
 
@@ -74,15 +74,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         [ConfigurationProperty(categoryFiltersProperty)]
         public NamedElementCollection<CategoryFilterEntry> CategoryFilters
         {
-            get { return (NamedElementCollection<CategoryFilterEntry>) base[categoryFiltersProperty]; }
+            get { return (NamedElementCollection<CategoryFilterEntry>)base[categoryFiltersProperty]; }
 
             private set { base[categoryFiltersProperty] = value; }
         }
 
         /// <summary>
-        /// 
+        /// Creates an enumeration of <see cref="TypeRegistration"/> instances describing the filter represented by 
+        /// this configuration object.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A an enumeration of <see cref="TypeRegistration"/> instance describing a filter.</returns>
         public override IEnumerable<TypeRegistration> GetRegistrations()
         {
             yield return
@@ -93,7 +94,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
                         CategoryFilters.Select(cfe => cfe.Name).ToArray(),
                         CategoryFilterMode))
                     {
-                        Name = Name
+                        Name = Name,
+                        Lifetime = TypeRegistrationLifetime.Transient
                     };
         }
     }

@@ -18,12 +18,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
     /// <summary>
     /// Platform Invocation methods used to support Tracer.
     /// </summary>
-    internal sealed class NativeMethods
+    internal static class NativeMethods
     {
-        private NativeMethods()
-        {
-        }
-
         // Constants for use with GetSecurityInfo
         internal const uint OWNER_SECURITY_INFORMATION = 0x00000001;
         internal const uint GROUP_SECURITY_INFORMATION = 0x00000002;

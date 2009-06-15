@@ -82,8 +82,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// Get the set of <see cref="TypeRegistration"/> objects needed to
         /// register the Policy Injection settings represented by this config section.
         /// </summary>
+        /// <param name="configurationSource">This is currently ignored by this routine.</param>
         /// <returns>The set of <see cref="TypeRegistration"/> objects.</returns>
-        public IEnumerable<TypeRegistration> GetRegistrations(IConfigurationSource ignored)
+        public IEnumerable<TypeRegistration> GetRegistrations(IConfigurationSource configurationSource)
         {
             List<TypeRegistration> registrations = new List<TypeRegistration>();
 
@@ -105,7 +106,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// <returns>The sequence of <see cref="TypeRegistration"/> objects.</returns>
         public IEnumerable<TypeRegistration> GetUpdatedRegistrations(IConfigurationSource configurationSource)
         {
-            return Enumerable.Empty<TypeRegistration>();
+            return GetRegistrations(configurationSource);
         }
     }
 }

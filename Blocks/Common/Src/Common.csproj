@@ -284,7 +284,9 @@
     <Compile Include="Configuration\Unity\EnterpriseLibraryBlockExtension.cs" />
     <Compile Include="Configuration\Unity\EnterpriseLibraryCoreExtension.cs" />
     <Compile Include="Configuration\EnterpriseLibraryContainer.cs" />
+    <Compile Include="Configuration\Unity\ReaderWriterLockExtension.cs" />
     <Compile Include="Configuration\Unity\TransientPolicyBuildUpExtension.cs" />
+    <Compile Include="Configuration\Unity\UnityContainerExtensions.cs" />
     <Compile Include="Instrumentation\CommonWmiInstaller.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -298,7 +300,6 @@
     <Compile Include="Instrumentation\EventLogEntryFormatter.cs" />
     <Compile Include="Instrumentation\EventLogInstallerBuilder.cs" />
     <Compile Include="Instrumentation\IEventLogEntryFormatter.cs" />
-    <Compile Include="Instrumentation\IInstrumentationEventProvider.cs" />
     <Compile Include="Instrumentation\IExplicitInstrumentationBinder.cs" />
     <Compile Include="Instrumentation\InstrumentationListener.cs" />
     <Compile Include="Instrumentation\PerformanceCounterInstallerBuilder.cs" />

@@ -9,8 +9,10 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configuration
 {
@@ -28,6 +30,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
             Assert.AreEqual(customAttributeMatchingRule.Name, deserializedRule.Name);
             Assert.AreEqual(customAttributeMatchingRule.TypeName, deserializedRule.TypeName);
             Assert.AreEqual(customAttributeMatchingRule.SearchInheritanceChain, deserializedRule.SearchInheritanceChain);
+        }
+
+        [TestMethod]
+        public void MatchingRuleHasTransientLifetime()
+        {
+            CustomAttributeMatchingRuleData customAttributeMatchingRule = new CustomAttributeMatchingRuleData("MatchesMyAttribure", "Namespace.MyAttribute, Assembly", true);
+            TypeRegistration registration = customAttributeMatchingRule.GetRegistrations("").First();
+
+            Assert.AreEqual(TypeRegistrationLifetime.Transient, registration.Lifetime);
         }
     }
 }

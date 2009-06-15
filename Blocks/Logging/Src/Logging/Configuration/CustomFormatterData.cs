@@ -174,9 +174,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// <returns>The type registration for this data section</returns>
         public override IEnumerable<TypeRegistration> GetRegistrations()
         {
-            yield return new TypeRegistration(
-                RegistrationExpressionBuilder.BuildExpression(this.Type, Attributes),
-                typeof(ILogFormatter)) { Name = this.Name };
+            yield return 
+                new TypeRegistration(
+                    RegistrationExpressionBuilder.BuildExpression(this.Type, Attributes), 
+                    typeof(ILogFormatter)) 
+                { Name = this.Name, Lifetime = TypeRegistrationLifetime.Transient };
         }
     }
 }

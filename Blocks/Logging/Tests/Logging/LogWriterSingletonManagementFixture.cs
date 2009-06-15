@@ -69,37 +69,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
         }
 
         [TestMethod]
-        [Ignore] // Ignored until we get to the change update story // no longer appropriate - tested elsewhere
-        public void LogWriterCreatedThroughFactoryRegistersHandler()
-        {
-            Assert.AreEqual(0, configurationSource.GetNotificationDelegates(LoggingSettings.SectionName).Length);
-
-            LogWriter logWriter = new LogWriterFactory(configurationSource).Create();
-            Assert.IsNotNull(logWriter);
-            Assert.AreEqual(2, logWriter.TraceSources.Count);
-
-            Assert.AreEqual(1, configurationSource.GetNotificationDelegates(LoggingSettings.SectionName).Length);
-        }
-
-        [TestMethod]
-        [Ignore] // Ignored until we get to the change update story// no longer appropriate - tested elsewhere
-        public void DisposedLogWriterCreatedThroughFactoryUnregistersHandler()
-        {
-            Assert.AreEqual(0, configurationSource.GetNotificationDelegates(LoggingSettings.SectionName).Length);
-
-            LogWriter logWriter = new LogWriterFactory(configurationSource).Create();
-            Assert.IsNotNull(logWriter);
-            Assert.AreEqual(2, logWriter.TraceSources.Count);
-
-            Assert.AreEqual(1, configurationSource.GetNotificationDelegates(LoggingSettings.SectionName).Length);
-
-            logWriter.Dispose();
-
-            Assert.AreEqual(0, configurationSource.GetNotificationDelegates(LoggingSettings.SectionName).Length);
-        }
-
-        [TestMethod]
-        [Ignore] // ignored until we get to the change notification story
         public void ConfigurationChangeNotificationTriggersLogWriterStructureHolderUpdate()
         {
             LogWriter logWriter = new LogWriterFactory(configurationSource).Create();
@@ -116,7 +85,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
 
             Thread notificationThread = new Thread(FireConfigurationSourceChangedNotification);
             notificationThread.Start(new string[] { LoggingSettings.SectionName });
-            notificationThread.Join(100);
+            notificationThread.Join(400);
 
             {
                 Assert.AreEqual(2, logWriter.TraceSources.Count);
@@ -143,7 +112,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
 
             Thread notificationThread = new Thread(FireConfigurationSectionChangedNotificationDifferentSection);
             notificationThread.Start();
-            notificationThread.Join(100);
+            notificationThread.Join(400);
 
             {
                 Assert.AreEqual(2, logWriter.TraceSources.Count);
@@ -154,7 +123,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
         }
 
         [TestMethod]
-        [Ignore] // Ignored until we get to the configuration change story
         public void ConfigurationErrorsOnUpdateKeepExistingSetupAndLogError()
         {
             LogWriter logWriter = new LogWriterFactory(configurationSource).Create();
@@ -254,7 +222,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
         }
 
         [TestMethod]
-        [Ignore] // Ignored until we get to the configuration notification story
         // depends on timing
         public void ChangeNotificationDuringTracingDelaysUpdate()
         {
@@ -289,13 +256,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
                 Assert.AreEqual(2, MockBlockingCustomTraceListener.PendingTraceRequests, "the second request should have made it through");
 
                 notificationThread.Start();
-                Thread.Sleep(100);
+                Thread.Sleep(300);
 
                 Assert.AreEqual(0, MockBlockingCustomTraceListener.ProcessedTraceRequests, "there should have been no written entries so far");
                 Assert.AreEqual(2, MockBlockingCustomTraceListener.PendingTraceRequests, "the two requests should still be waiting");
 
                 blockingLogThread3.Start();
-                Thread.Sleep(100);
+                Thread.Sleep(300);
 
                 Assert.AreEqual(0, MockBlockingCustomTraceListener.ProcessedTraceRequests, "there should have been no written entries so far");
                 Assert.AreEqual(2, MockBlockingCustomTraceListener.PendingTraceRequests, "the third request should have been delayed by the udpate request");
@@ -336,6 +303,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
                 Assert.IsFalse(
                     ReferenceEquals(MockBlockingCustomTraceListener.Instances[0], MockBlockingCustomTraceListener.Instances[2]),
                     "the third request used a new listener instance, after the configuration change");
+
                 Assert.IsTrue(MockBlockingCustomTraceListener.Instances[0].disposeCalled);
                 Assert.IsFalse(MockBlockingCustomTraceListener.Instances[2].disposeCalled);
             }
@@ -365,10 +333,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
         }
 
         [TestMethod]
-        [Ignore] // Ignored until we get to configuration notification story
+        [Ignore] // no timeouts for this locks now
         public void FailureToAcquireReadLockLogsException()
         {
-            LogWriter.SetLockTimeouts(150, 150);
+            //LogWriter.SetLockTimeouts(150, 150);
 
             LogWriter logWriter = new LogWriterFactory(configurationSource).Create();
             Assert.IsNotNull(logWriter);
@@ -436,7 +404,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
         [Ignore] // Ignored until we get to configuration notification story
         public void FailureToAcquireWriteLockLogsException()
         {
-            LogWriter.SetLockTimeouts(150, 150);
+            //LogWriter.SetLockTimeouts(150, 150);
 
             LogWriter logWriter = new LogWriterFactory(configurationSource).Create();
             Assert.IsNotNull(logWriter);
@@ -549,6 +517,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
 
         internal void FireConfigurationSectionChangedNotification(string sectionName)
         {
+            this.OnSourceChangedEvent(new ConfigurationSourceChangedEventArgs(this, new[] { sectionName }));
+
             ConfigurationChangedEventHandler callbacks = (ConfigurationChangedEventHandler)eventHandlers[sectionName];
             if (callbacks != null)
             {

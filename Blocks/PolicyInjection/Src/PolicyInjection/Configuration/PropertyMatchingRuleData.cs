@@ -86,7 +86,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
                         this.Matches.Select(
                             match => new PropertyMatchingInfo(match.Match, match.MatchOption, match.IgnoreCase)).ToArray()))
                 {
-                    Name = this.Name + nameSuffix
+                    Name = this.Name + nameSuffix,
+                    Lifetime = TypeRegistrationLifetime.Transient
                 };
         }
     }

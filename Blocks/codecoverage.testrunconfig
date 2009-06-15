@@ -51,11 +51,12 @@
   </CodeCoverage>
   <Timeouts runTimeout="0" testTimeout="300000" agentNotRespondingTimeout="300000" deploymentTimeout="300000" />
   <Deployment>
-    <DeploymentItem filename="UnitTests\Data\Northwind.mdb" />
-    <DeploymentItem filename="UnitTests\Logging\test-tracelistenermissingtype.exe.config" />
+    <DeploymentItem filename="Logging\Tests\Logging\test-tracelistenerinvalidtype.exe.config" />
     <DeploymentItem filename="test.exe.config" />
-    <DeploymentItem filename="UnitTests\Logging\test-tracelistenerinvalidtype.exe.config" />
-    <DeploymentItem filename="UnitTests\Security\AzMan\testAzStore.xml" />
+    <DeploymentItem filename="Data\Tests\SqlCe.Tests\TestDb.sdf" />
+    <DeploymentItem filename="Data\Tests\Data.Tests\Northwind.mdb" />
+    <DeploymentItem filename="Logging\Tests\Logging\test-tracelistenermissingtype.exe.config" />
+    <DeploymentItem filename="Security\Tests\AzMan\testAzStore.xml" />
   </Deployment>
   <NamingScheme />
   <Hosts />

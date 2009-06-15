@@ -9,13 +9,15 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
+using System.Linq.Expressions;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
-using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
+using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 {
@@ -133,31 +135,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         }
 
         /// <summary>
-        /// 
+        /// Returns a lambda expression that represents the creation of the trace listener described by this
+        /// configuration object.
         /// </summary>
-        /// <returns></returns>
-        public override IEnumerable<TypeRegistration> GetRegistrations()
+        /// <returns>A lambda expression to create a trace listener.</returns>
+        protected override Expression<Func<TraceListener>> GetCreationExpression()
         {
-            return new[]
-            {
-                new TypeRegistration<TraceListener>(
-                    () => 
-                        new FormattedEventLogTraceListener(
-                            this.Source, 
-                            this.Log, 
-                            this.MachineName, 
-                            Container.ResolvedIfNotNull<ILogFormatter>(this.Formatter),
-                            Container.Resolved<ILoggingInstrumentationProvider>())
-                        { 
-                            Name = this.Name, 
-                            TraceOutputOptions = this.TraceOutputOptions,
-                            Filter = new EventTypeFilter(this.Filter)
-                        }) 
-
-                {
-                    Name = this.Name
-                }
-            };
+            return () =>
+                new FormattedEventLogTraceListener(
+                    this.Source,
+                    this.Log,
+                    this.MachineName,
+                    Container.ResolvedIfNotNull<ILogFormatter>(this.Formatter),
+                    Container.Resolved<ILoggingInstrumentationProvider>());
         }
     }
 }
