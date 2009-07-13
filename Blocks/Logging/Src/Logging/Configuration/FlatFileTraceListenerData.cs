@@ -169,8 +169,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
                     this.FileName,
                     this.Header,
                     this.Footer,
-                    Container.ResolvedIfNotNull<ILogFormatter>(this.Formatter),
-                    Container.Resolved<ILoggingInstrumentationProvider>());
+                    Container.ResolvedIfNotNull<ILogFormatter>(this.Formatter));
         }
     }
 }

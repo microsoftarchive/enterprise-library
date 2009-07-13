@@ -17,7 +17,6 @@ using System.Messaging;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 {
@@ -402,8 +401,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
                         this.UseAuthentication,
                         this.UseDeadLetterQueue,
                         this.UseEncryption,
-                        this.TransactionType,
-                        Container.Resolved<ILoggingInstrumentationProvider>());
+                        this.TransactionType);
         }
     }
 }

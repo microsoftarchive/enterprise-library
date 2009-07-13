@@ -20,10 +20,10 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Tests
 {
     [TestClass]
-    public class DistributoEventLoggerFixture
+    public class DistributorEventLoggerFixture
     {
         public const string TestEventLogName = "Application"; //"Test Event Log";
-        public const string TestApplicationName = "Test Log Distributor";
+        public const string TestEventSource = "Test Log Distributor";
         public const string message = "message";
 
         [TestMethod]
@@ -49,7 +49,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Tests
         [TestMethod]
         public void ServiceStartedFiresWmiEvent()
         {
-            DistributorEventLogger logger = new DistributorEventLogger(TestApplicationName);
+            DistributorEventLogger logger = new DistributorEventLogger(TestEventSource);
 
             using (WmiEventWatcher eventListener = new WmiEventWatcher(1))
             {
@@ -77,7 +77,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Tests
         [TestMethod]
         public void ServiceStoppedFiresWmiEvent()
         {
-            DistributorEventLogger logger = new DistributorEventLogger(TestApplicationName);
+            DistributorEventLogger logger = new DistributorEventLogger(TestEventSource);
 
             using (WmiEventWatcher eventListener = new WmiEventWatcher(1))
             {
@@ -115,7 +115,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Tests
         [TestMethod]
         public void ServicePausedFiresWmiEvent()
         {
-            DistributorEventLogger logger = new DistributorEventLogger(TestApplicationName);
+            DistributorEventLogger logger = new DistributorEventLogger(TestEventSource);
 
             using (WmiEventWatcher eventListener = new WmiEventWatcher(1))
             {
@@ -131,7 +131,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Tests
         [TestMethod]
         public void ServiceResumedWritesToEventLog()
         {
-            DistributorEventLogger logger = new DistributorEventLogger(TestApplicationName);
+            DistributorEventLogger logger = new DistributorEventLogger(TestEventSource);
 
             using(var eventLog = new EventLogTracker(GetEventLog()))
             {
@@ -145,7 +145,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Tests
         [Ignore]    // review in build server
         public void ServiceResumedFiresWmiEvent()
         {
-            DistributorEventLogger logger = new DistributorEventLogger(TestApplicationName);
+            DistributorEventLogger logger = new DistributorEventLogger(TestEventSource);
 
             using (WmiEventWatcher eventListener = new WmiEventWatcher(1))
             {
@@ -161,7 +161,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Tests
         [TestMethod]
         public void ServiceFailureWithoutExceptionWritesToEventLog()
         {
-            DistributorEventLogger logger = new DistributorEventLogger(TestApplicationName);
+            DistributorEventLogger logger = new DistributorEventLogger(TestEventSource);
             using(var eventLog = new EventLogTracker(GetEventLog()))
             {
                 logger.LogServiceFailure(message, null, TraceEventType.Error);
@@ -175,7 +175,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Tests
         [TestMethod]
         public void ServiceFailureWithExceptionWritesToEventLog()
         {
-            DistributorEventLogger logger = new DistributorEventLogger(TestApplicationName);
+            DistributorEventLogger logger = new DistributorEventLogger(TestEventSource);
 
             using(var eventLog = new EventLogTracker(GetEventLog()))
             {
@@ -190,7 +190,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Tests
         [Ignore]    // review in build server
         public void ServiceFailureWithoutExceptionFiresWmiEvent()
         {
-            DistributorEventLogger logger = new DistributorEventLogger(TestApplicationName);
+            DistributorEventLogger logger = new DistributorEventLogger(TestEventSource);
 
             using (WmiEventWatcher eventListener = new WmiEventWatcher(1))
             {
@@ -206,7 +206,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Tests
         [TestMethod]
         public void ServiceFailureWithExceptionFiresWmiEvent()
         {
-            DistributorEventLogger logger = new DistributorEventLogger(TestApplicationName);
+            DistributorEventLogger logger = new DistributorEventLogger(TestEventSource);
 
             using (WmiEventWatcher eventListener = new WmiEventWatcher(1))
             {
@@ -223,7 +223,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Tests
         {
             if (!EventLog.Exists(TestEventLogName))
             {
-                using (EventLog log = new EventLog(TestEventLogName, ".", TestApplicationName))
+                using (EventLog log = new EventLog(TestEventLogName, ".", TestEventSource))
                 {
                     log.WriteEntry("Event Log Created");
                 }
@@ -247,7 +247,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Tests
 
         private static bool EventIsFromLogger(EventLogEntry entry, DistributorEventLogger logger)
         {
-            return entry.Source == logger.ApplicationName;
+            return entry.Source == logger.EventSource;
         }
     }
 }

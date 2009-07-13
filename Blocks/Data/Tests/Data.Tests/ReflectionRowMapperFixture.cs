@@ -20,14 +20,26 @@ using Microsoft.Practices.EnterpriseLibrary.Data.Sql;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
 {
+
+    [TestClass]
+    public class WhenCreatingReflectionRowMapper: ArrangeActAssert
+    {
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void ThenPassingNullMappingsThrows()
+        {
+            new ReflectionRowMapper<int>(null);
+        }
+    }
+
     public abstract class ReflectionRowMapperContext<T> : ArrangeActAssert
         where T : new() 
     {
-        protected MapBuilder<T> mapBuilder;
+        protected IMapBuilderContext<T> mapBuilder;
 
         protected override void Arrange()
         {
-            mapBuilder = new MapBuilder<T>();
+            mapBuilder = MapBuilder<T>.MapNoProperties();
         }
     }
 
@@ -54,7 +66,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
 
         protected virtual IRowMapper<T> BuildMapper()
         {
-            return new MapBuilder<T>().CreateDefault().BuildMapper();
+            return MapBuilder<T>.BuildAllProperties();
         }
     }
 
@@ -68,7 +80,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
         {
             base.Arrange();
 
-            defaultMapper = (ReflectionRowMapper<Order>)mapBuilder.CreateDefault().BuildMapper();
+            defaultMapper = (ReflectionRowMapper<Order>)MapBuilder<Order>.BuildAllProperties();
             propertyMappings = defaultMapper.GetPropertyMappings();
         }
 
@@ -104,10 +116,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
     {
         protected override IRowMapper<Order> BuildMapper()
         {
-            return new MapBuilder<Order>().MapByName(x => x.CustomerID)
+            return MapBuilder<Order>.MapNoProperties().MapByName(x => x.CustomerID)
                                           .Map(x => x.Freight).ToColumn("SqlNull")
                                           .Map(x => x.ShipAddress).ToColumn("SqlNull")
-                                          .DoNotMap(x => x.NotInSource).BuildMapper();
+                                          .DoNotMap(x => x.NotInSource).Build();
         }
 
         [TestMethod]
@@ -150,7 +162,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
     {
         protected override IRowMapper<Order> BuildMapper()
         {
-            return new MapBuilder<Order>().Map(x => x.CustomerID).ToColumn("NonExistingColumn").BuildMapper();
+            return MapBuilder<Order>.MapNoProperties().Map(x => x.CustomerID).ToColumn("NonExistingColumn").Build();
         }
 
         [ExpectedException(typeof(InvalidOperationException))]
@@ -178,14 +190,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
 
         protected override IRowMapper<ValueTypeTest> BuildMapper()
         {
-            return new MapBuilder<ValueTypeTest>().CreateDefault()
+            return MapBuilder<ValueTypeTest>.MapAllProperties()
                                    .DoNotMap(x => x.NullableDateTime)
                                    .DoNotMap(x => x.NullableDouble)
                                    .DoNotMap(x => x.NullableGuid)
                                    .DoNotMap(x => x.NullableInt)
                                    .DoNotMap(x => x.NullableLong)
                                    .DoNotMap(x => x.NullableShort)
-                                   .BuildMapper();
+                                   .Build();
         }
 
         [TestMethod]
@@ -222,14 +234,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
 
         protected override IRowMapper<ValueTypeTest> BuildMapper()
         {
-            return new MapBuilder<ValueTypeTest>().CreateDefault()
+            return MapBuilder<ValueTypeTest>.MapAllProperties()
                                    .DoNotMap(x => x.DateTime)
                                    .DoNotMap(x => x.Double)
                                    .DoNotMap(x => x.Guid)
                                    .DoNotMap(x => x.Int)
                                    .DoNotMap(x => x.Long)
                                    .DoNotMap(x => x.Short)
-                                   .BuildMapper() ;
+                                   .Build() ;
         }
 
         [TestMethod]
@@ -260,7 +272,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
 
         protected override IRowMapper<ValueTypeTest> BuildMapper()
         {
-            return new MapBuilder<ValueTypeTest>().MapByName(x=>x.Guid).BuildMapper();
+            return MapBuilder<ValueTypeTest>.MapNoProperties().MapByName(x => x.Guid).Build();
         }
 
         [TestMethod]
@@ -282,9 +294,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
 
         protected override IRowMapper<ValueTypeTest> BuildMapper()
         {
-            return new MapBuilder<ValueTypeTest>()
+            return MapBuilder<ValueTypeTest>.MapNoProperties()
                 .Map(x => x.Guid).ToColumn("gUiD")
-                .BuildMapper();
+                .Build();
         }
 
         [TestMethod]
@@ -293,6 +305,72 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
             ValueTypeTest typeTest = defaultMapper.MapRow(reader);
             Assert.AreNotEqual(default(Guid), typeTest.Guid);
         }
+    }
+    
+    [TestClass]
+    public class WhenReflectionMapperFailsToConvertType : ReflectionRowMapperWithReaderContext<ValueTypeTest>
+    {
+        protected override void Arrange()
+        {
+            CommandText = "SELECT newid() as [GUID]";
+            base.Arrange();
+        }
+
+        protected override IRowMapper<ValueTypeTest> BuildMapper()
+        {
+            return MapBuilder<ValueTypeTest>.MapNoProperties()
+                .Map(x => x.Int).ToColumn("GUID")
+                .Build();
+        }
+
+        [TestMethod]
+        public void ThenExceptionHasMeaningfullException()
+        {
+            try
+            {
+                defaultMapper.MapRow(reader);
+                Assert.Fail();
+            }
+            catch (InvalidCastException ice)
+            {
+                Assert.IsTrue(ice.Message.Contains("Int"));
+                Assert.IsTrue(ice.Message.Contains("GUID"));
+                int a = 2;
+            }
+        }
+    }
+
+    [TestClass]
+    public class WhenReflectionMapperFailsToConvertTypeAndThrowsFormatException : ReflectionRowMapperWithReaderContext<ValueTypeTest>
+    {
+        protected override void Arrange()
+        {
+            CommandText = "SELECT 'a' as Int";
+            base.Arrange();
+        }
+
+        protected override IRowMapper<ValueTypeTest> BuildMapper()
+        {
+            return MapBuilder<ValueTypeTest>.MapNoProperties()
+                .Map(x => x.Int).ToColumn("Int")
+                .Build();
+        }
+
+        [TestMethod]
+        public void ThenExceptionHasMeaningfullException()
+        {
+            try
+            {
+                defaultMapper.MapRow(reader);
+                Assert.Fail();
+            }
+            catch (InvalidCastException ice)
+            {
+                Assert.IsTrue(ice.Message.Contains("Int"));
+                int a = 2;
+            }
+        }
+
     }
 
     public class Order

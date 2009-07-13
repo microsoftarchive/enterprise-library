@@ -22,6 +22,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
     /// </summary>
     public class TextFormatterData : FormatterData
     {
+        private const string defaultTemplate = "Timestamp: {timestamp}{newline}Message: {message}{newline}Category: {category}{newline}Priority: {priority}{newline}EventId: {eventid}{newline}Severity: {severity}{newline}Title:{title}{newline}Machine: {localMachine}{newline}App Domain: {localAppDomain}{newline}ProcessId: {localProcessId}{newline}Process Name: {localProcessName}{newline}Thread Name: {threadName}{newline}Win32 ThreadId:{win32ThreadId}{newline}Extended Properties: {dictionary({key} - {value}{newline})}";
         private const string templateProperty = "template";
 
         /// <summary>
@@ -78,7 +79,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// <summary>
         /// Gets or sets the template containing tokens to replace.
         /// </summary>
-        [ConfigurationProperty(templateProperty, IsRequired = true)]
+        [ConfigurationProperty(templateProperty, IsRequired = true, DefaultValue = defaultTemplate)]
         public string Template
         {
             get

@@ -400,8 +400,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         {
             LoggingSettings settings = new LoggingSettings();
             settings.SpecialTraceSources.AllEventsTraceSource.DefaultLevel = SourceLevels.Critical;
+            settings.SpecialTraceSources.AllEventsTraceSource.AutoFlush = false;
             settings.SpecialTraceSources.NotProcessedTraceSource.DefaultLevel = SourceLevels.Error;
+            settings.SpecialTraceSources.NotProcessedTraceSource.AutoFlush = true;
             settings.SpecialTraceSources.ErrorsTraceSource.DefaultLevel = SourceLevels.Verbose;
+            settings.SpecialTraceSources.ErrorsTraceSource.AutoFlush = false;
 
             registrations = settings.GetRegistrations(null);
         }
@@ -414,7 +417,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
                 .AssertConstructor()
                 .WithValueConstructorParameter("Name")
                 .WithContainerResolvedEnumerableConstructorParameter<TraceListener>(new string[0])
-                .WithValueConstructorParameter(SourceLevels.Critical);
+                .WithValueConstructorParameter(SourceLevels.Critical)
+                .WithValueConstructorParameter(false)
+                .WithContainerResolvedParameter<ILoggingInstrumentationProvider>(null)
+                .VerifyConstructorParameters();
         }
 
         [TestMethod]
@@ -425,7 +431,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
                 .AssertConstructor()
                 .WithValueConstructorParameter("Name")
                 .WithContainerResolvedEnumerableConstructorParameter<TraceListener>(new string[0])
-                .WithValueConstructorParameter(SourceLevels.Error);
+                .WithValueConstructorParameter(SourceLevels.Error)
+                .WithValueConstructorParameter(true)
+                .WithContainerResolvedParameter<ILoggingInstrumentationProvider>(null)
+                .VerifyConstructorParameters();
         }
 
         [TestMethod]
@@ -436,7 +445,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
                 .AssertConstructor()
                 .WithValueConstructorParameter("Name")
                 .WithContainerResolvedEnumerableConstructorParameter<TraceListener>(new string[0])
-                .WithValueConstructorParameter(SourceLevels.Verbose);
+                .WithValueConstructorParameter(SourceLevels.Verbose)
+                .WithValueConstructorParameter(false)
+                .WithContainerResolvedParameter<ILoggingInstrumentationProvider>(null)
+                .VerifyConstructorParameters();
         }
 
         [TestMethod]

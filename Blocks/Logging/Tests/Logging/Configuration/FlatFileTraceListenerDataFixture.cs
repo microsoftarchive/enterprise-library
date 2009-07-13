@@ -96,7 +96,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Tests
                 .WithValueConstructorParameter("header")
                 .WithValueConstructorParameter("footer")
                 .WithContainerResolvedParameter<ILogFormatter>("formatter")
-                .WithContainerResolvedParameter<ILoggingInstrumentationProvider>(null)
                 .VerifyConstructorParameters();
         }
 
@@ -149,7 +148,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Tests
                 .WithValueConstructorParameter("header")
                 .WithValueConstructorParameter("footer")
                 .WithValueConstructorParameter<ILogFormatter>(null)
-                .WithContainerResolvedParameter<ILoggingInstrumentationProvider>(null)
                 .VerifyConstructorParameters();
         }
 

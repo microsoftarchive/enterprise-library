@@ -14,7 +14,6 @@ using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -96,7 +95,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Tests
                 .WithValueConstructorParameter("log")
                 .WithValueConstructorParameter("machine")
                 .WithContainerResolvedParameter<ILogFormatter>("formatter")
-                .WithContainerResolvedParameter<ILoggingInstrumentationProvider>(null)
                 .VerifyConstructorParameters();
         }
 

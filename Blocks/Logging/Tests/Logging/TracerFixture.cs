@@ -27,6 +27,7 @@ using Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport.TraceListeners;
 using Microsoft.Practices.ServiceLocation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
 {
@@ -267,7 +268,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
             List<LogSource> traceSources = new List<LogSource>(new LogSource[] { source });
             LogWriter logWriter = new LogWriter(new List<ILogFilter>(), new List<LogSource>(), source, null, new LogSource("errors"), "default", true, false);
 
-            using (Tracer tracer = new Tracer("testoperation", logWriter, null))
+            using (Tracer tracer = new Tracer("testoperation", logWriter, (IConfigurationSource)null))
             {
                 Assert.AreEqual(1, MockTraceListener.Entries.Count);
             }
@@ -286,13 +287,64 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
             List<LogSource> traceSources = new List<LogSource>(new LogSource[] { source });
             LogWriter logWriter = new LogWriter(new List<ILogFilter>(), new List<LogSource>(), source, null, new LogSource("errors"), "default", false, false);
 
-            using (Tracer tracer = new Tracer("testoperation", logWriter, null))
+            using (Tracer tracer = new Tracer("testoperation", logWriter, (IConfigurationSource)null))
             {
                 Assert.AreEqual(0, MockTraceListener.Entries.Count);
             }
 
             Assert.AreEqual(0, MockTraceListener.Entries.Count);
         }
+
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void CreatingTracerWithNullIServiceLocatorForInstrumentationThrows()
+        {
+            LogSource source = new LogSource("tracesource", SourceLevels.All);
+            LogWriter logWriter = new LogWriter(new List<ILogFilter>(), new List<LogSource>(), source, null, new LogSource("errors"), "default", false, false);
+            new Tracer("testoperation", logWriter, (IServiceLocator)null).Dispose();
+        }
+
+
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void CreatingTracerWithActivityIDAndNullIServiceLocatorForInstrumentationThrows()
+        {
+            LogSource source = new LogSource("tracesource", SourceLevels.All);
+            LogWriter logWriter = new LogWriter(new List<ILogFilter>(), new List<LogSource>(), source, null, new LogSource("errors"), "default", false, false);
+            new Tracer("testoperation", Guid.NewGuid(), logWriter, (IServiceLocator)null).Dispose();
+        }
+
+
+
+        [TestMethod]
+        public void PassingServiceLocatorForInstrumentationProviderRequestsInstrumentationProviderInstance()
+        {
+            MockServiceLocator serviceLocator = new MockServiceLocator();
+
+            LogSource source = new LogSource("tracesource", SourceLevels.All);
+            LogWriter logWriter = new LogWriter(new List<ILogFilter>(), new List<LogSource>(), source, null, new LogSource("errors"), "default", false, false);
+            new Tracer("testoperation", logWriter, serviceLocator).Dispose();
+
+            Assert.AreEqual(1, serviceLocator.ServicesRequested.Count);
+            Assert.AreEqual(typeof(ITracerInstrumentationProvider), serviceLocator.ServicesRequested[0]);
+        }
+
+
+        [TestMethod]
+        public void PassingServiceLocatorForInstrumentationAndActivityIDProviderRequestsInstrumentationProviderInstance()
+        {
+            MockServiceLocator serviceLocator = new MockServiceLocator();
+
+            LogSource source = new LogSource("tracesource", SourceLevels.All);
+            LogWriter logWriter = new LogWriter(new List<ILogFilter>(), new List<LogSource>(), source, null, new LogSource("errors"), "default", false, false);
+            new Tracer("testoperation", Guid.NewGuid(), logWriter, serviceLocator).Dispose();
+
+            Assert.AreEqual(1, serviceLocator.ServicesRequested.Count);
+            Assert.AreEqual(typeof(ITracerInstrumentationProvider), serviceLocator.ServicesRequested[0]);
+        }
+
 
         [TestMethod]
         public void LoggedMessagesDuringTracerAddsCategoryIds()
@@ -499,7 +551,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
 
             LogWriter logWriter = EnterpriseLibraryContainer.Current.GetInstance<LogWriter>();
 
-            using (Tracer tracer = new Tracer(operation, logWriter, null))
+            using (Tracer tracer = new Tracer(operation, logWriter, (IConfigurationSource)null))
             {
                 int i = new Random().Next();
             }
@@ -664,6 +716,54 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
             pattern = pattern.Replace(")", @"\)");
             pattern = Regex.Replace(pattern, @"\{[0-9]\}", "(.*?)");
             return pattern;
+        }
+
+        private class MockServiceLocator : IServiceLocator
+        {
+            public List<Type> ServicesRequested = new List<Type>();
+            #region IServiceLocator Members
+
+            public IEnumerable<TService> GetAllInstances<TService>()
+            {
+                throw new NotImplementedException();
+            }
+
+            public IEnumerable<object> GetAllInstances(Type serviceType)
+            {
+                throw new NotImplementedException();
+            }
+
+            public TService GetInstance<TService>(string key)
+            {
+                throw new NotImplementedException();
+            }
+
+            public TService GetInstance<TService>()
+            {
+                ServicesRequested.Add(typeof(TService));
+                return default(TService);
+            }
+
+            public object GetInstance(Type serviceType, string key)
+            {
+                throw new NotImplementedException();
+            }
+
+            public object GetInstance(Type serviceType)
+            {
+                throw new NotImplementedException();
+            }
+
+            #endregion
+
+            #region IServiceProvider Members
+
+            public object GetService(Type serviceType)
+            {
+                throw new NotImplementedException();
+            }
+
+            #endregion
         }
     }
 

@@ -16,7 +16,6 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
 {
@@ -37,37 +36,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
     /// </remarks>
     public class RollingFlatFileTraceListener : FlatFileTraceListener
     {
-        RollFileExistsBehavior rollFileExistsBehavior;
-        StreamWriterRollingHelper rollingHelper;
+        private readonly StreamWriterRollingHelper rollingHelper;
 
-        RollInterval rollInterval;
-        int rollSizeInBytes;
-        string timeStampPattern;
-
-        /// <summary>
-        /// Initializes a new instance of <see cref="RollingFlatFileTraceListener"/> 
-        /// </summary>
-        /// <param name="fileName">The filename where the entries will be logged.</param>
-        /// <param name="header">The header to add before logging an entry.</param>
-        /// <param name="footer">The footer to add after logging an entry.</param>
-        /// <param name="formatter">The formatter.</param>
-        /// <param name="rollSizeKB">The maxium file size (KB) before rolling.</param>
-        /// <param name="timeStampPattern">The date format that will be appended to the new roll file.</param>
-        /// <param name="rollFileExistsBehavior">Expected behavior that will be used when the rool file has to be created.</param>
-        /// <param name="rollInterval">The time interval that makes the file rolles.</param>
-        public RollingFlatFileTraceListener(string fileName,
-                                            string header,
-                                            string footer,
-                                            ILogFormatter formatter,
-                                            int rollSizeKB,
-                                            string timeStampPattern,
-                                            RollFileExistsBehavior rollFileExistsBehavior,
-                                            RollInterval rollInterval)
-            : this(fileName, header, footer, formatter, rollSizeKB,
-                   timeStampPattern, rollFileExistsBehavior, rollInterval,
-                   new NullLoggingInstrumentationProvider())
-        {
-        }
+        private readonly RollFileExistsBehavior rollFileExistsBehavior;
+        private readonly RollInterval rollInterval;
+        private readonly int rollSizeInBytes;
+        private readonly string timeStampPattern;
+        private readonly int maxArchivedFiles;
 
         /// <summary>
         /// Initializes a new instance of <see cref="RollingFlatFileTraceListener"/> 
@@ -80,24 +55,58 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         /// <param name="timeStampPattern">The date format that will be appended to the new roll file.</param>
         /// <param name="rollFileExistsBehavior">Expected behavior that will be used when the rool file has to be created.</param>
         /// <param name="rollInterval">The time interval that makes the file rolles.</param>
-        /// <param name="instrumentationProvider">The instrumentation provider to use.</param>
-        public RollingFlatFileTraceListener(string fileName,
-                                            string header,
-                                            string footer,
-                                            ILogFormatter formatter,
-                                            int rollSizeKB,
-                                            string timeStampPattern,
-                                            RollFileExistsBehavior rollFileExistsBehavior,
-                                            RollInterval rollInterval,
-                                            ILoggingInstrumentationProvider instrumentationProvider)
-            : base(fileName, header, footer, formatter, instrumentationProvider)
+        public RollingFlatFileTraceListener(
+            string fileName,
+            string header,
+            string footer,
+            ILogFormatter formatter,
+            int rollSizeKB,
+            string timeStampPattern,
+            RollFileExistsBehavior rollFileExistsBehavior,
+            RollInterval rollInterval)
+            : this(
+                fileName,
+                header,
+                footer,
+                formatter,
+                rollSizeKB,
+                timeStampPattern,
+                rollFileExistsBehavior,
+                rollInterval,
+                0)
+        { }
+
+        /// <summary>
+        /// Initializes a new instance of <see cref="RollingFlatFileTraceListener"/> 
+        /// </summary>
+        /// <param name="fileName">The filename where the entries will be logged.</param>
+        /// <param name="header">The header to add before logging an entry.</param>
+        /// <param name="footer">The footer to add after logging an entry.</param>
+        /// <param name="formatter">The formatter.</param>
+        /// <param name="rollSizeKB">The maxium file size (KB) before rolling.</param>
+        /// <param name="timeStampPattern">The date format that will be appended to the new roll file.</param>
+        /// <param name="rollFileExistsBehavior">Expected behavior that will be used when the rool file has to be created.</param>
+        /// <param name="rollInterval">The time interval that makes the file rolles.</param>
+        /// <param name="maxArchivedFiles">The maximum number of archived files to keep.</param>
+        public RollingFlatFileTraceListener(
+            string fileName,
+            string header,
+            string footer,
+            ILogFormatter formatter,
+            int rollSizeKB,
+            string timeStampPattern,
+            RollFileExistsBehavior rollFileExistsBehavior,
+            RollInterval rollInterval,
+            int maxArchivedFiles)
+            : base(fileName, header, footer, formatter)
         {
-            rollSizeInBytes = rollSizeKB * 1024;
+            this.rollSizeInBytes = rollSizeKB * 1024;
             this.timeStampPattern = timeStampPattern;
             this.rollFileExistsBehavior = rollFileExistsBehavior;
             this.rollInterval = rollInterval;
+            this.maxArchivedFiles = maxArchivedFiles;
 
-            rollingHelper = new StreamWriterRollingHelper(this);
+            this.rollingHelper = new StreamWriterRollingHelper(this);
         }
 
         /// <summary>
@@ -372,6 +381,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
                     owner.Writer.Close();
                     // move file
                     SafeMove(actualFileName, archiveFileName, rollDateTime);
+                    // purge if necessary
+                    PurgeArchivedFiles(actualFileName);
                 }
 
                 // update writer - let TWTL open the file as needed to keep consistency
@@ -432,6 +443,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
                 }
             }
 
+            private void PurgeArchivedFiles(string actualFileName)
+            {
+                if (this.owner.maxArchivedFiles > 0)
+                {
+                    var directoryName = Path.GetDirectoryName(actualFileName);
+                    var fileName = Path.GetFileName(actualFileName);
+
+                    new RollingFlatFilePurger(directoryName, fileName, this.owner.maxArchivedFiles).Purge();
+                }
+            }
+
             /// <summary>
             /// Updates bookeeping information necessary for rolling, as required by the specified
             /// rolling configuration.
@@ -459,13 +481,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
                     {
                         fileStream = File.Open(actualFileName, FileMode.Append, FileAccess.Write, FileShare.Read);
                         managedWriter = new TallyKeepingFileStreamWriter(fileStream, GetEncodingWithFallback());
-                        owner.Writer = managedWriter;
                     }
                     catch (Exception)
                     {
                         // there's a slight chance of error here - abort if this occurs and just let TWTL handle it without attempting to roll
                         return false;
                     }
+
+                    owner.Writer = managedWriter;
                 }
 
                 // compute the next roll date if necessary

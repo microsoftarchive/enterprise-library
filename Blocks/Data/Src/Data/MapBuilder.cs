@@ -17,162 +17,242 @@ using System.ComponentModel;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Data;
+using Microsoft.Practices.EnterpriseLibrary.Data.Properties;
+using Microsoft.Practices.EnterpriseLibrary.Common;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Data
 {
     /// <summary>
-    /// 
+    /// Static entry point for the <see cref="IMapBuilderContext&lt;TResult&gt;"/> interface, which allows to build reflection-based <see cref="IRowMapper&lt;TResult&gt;"/>s.
     /// </summary>
-    public class MapBuilder<TResult> : IMapBuilderContext<TResult>
+    /// <typeparam name="TResult">The type for which a <see cref="IRowMapper&lt;TResult&gt;"/> should be build.</typeparam>
+    /// <seealso cref="IMapBuilderContext&lt;TResult&gt;"/>
+    /// <seealso cref="IRowMapper&lt;TResult&gt;"/>
+    public static class MapBuilder<TResult>
         where TResult : new()
     {
-        private Dictionary<PropertyInfo, PropertyMapping> mappings;
-
-        /// <summary/>
-        public MapBuilder()
+        /// <summary>
+        /// Returns a <see cref="IRowMapper&lt;TResult&gt;"/> that maps all properties for <typeparamref name="TResult"/> based on name.
+        /// </summary>
+        /// <returns>A new instance of <see cref="IRowMapper&lt;TResult&gt;"/>.</returns>
+        public static IRowMapper<TResult> BuildAllProperties()
         {
-            mappings = new Dictionary<PropertyInfo, PropertyMapping>();
+            return MapAllProperties().Build();
         }
 
-        /// <summary/>
-        public IMapBuilderContext<TResult> CreateDefault()
+        /// <summary>
+        /// Returns a <see cref="IMapBuilderContext&lt;TResult&gt;"/> that can be used to build a <see cref="IRowMapper&lt;TResult&gt;"/>.
+        /// The <see cref="IMapBuilderContext&lt;TResult&gt;"/> has a mapping set up for all properties of <typeparamref name="TResult"/> based on name.
+        /// </summary>
+        /// <seealso cref="IMapBuilderContext&lt;TResult&gt;"/>
+        /// <seealso cref="IRowMapper&lt;TResult&gt;"/>
+        /// <returns>A new instance of <see cref="IMapBuilderContext&lt;TResult&gt;"/>.</returns>
+        public static IMapBuilderContext<TResult> MapAllProperties()
         {
-            IMapBuilderContext<TResult> context = this;
+            IMapBuilderContext<TResult> context = new MapBuilderContext();
 
             foreach (PropertyInfo property in new List<PropertyInfo>(typeof(TResult)
                 .GetProperties(BindingFlags.Instance | BindingFlags.Public)
-                .Where(x => x.CanWrite)))
+                .Where(x => x.CanWrite && x.GetIndexParameters().Length == 0)))
             {
-                context = MapByName(property);
+                context = context.MapByName(property);
             }
             return context;
         }
 
-        /// <summary/>
-        public IMapBuilderContextMap<TResult, TMember> Map<TMember>(Expression<Func<TResult, TMember>> propertySelector)
+        /// <summary>
+        /// Returns a <see cref="IMapBuilderContext&lt;TResult&gt;"/> that can be used to build a <see cref="IRowMapper&lt;TResult&gt;"/>.
+        /// The <see cref="IMapBuilderContext&lt;TResult&gt;"/> has no mappings to start out with.
+        /// </summary>
+        /// <seealso cref="IMapBuilderContext&lt;TResult&gt;"/>
+        /// <seealso cref="IRowMapper&lt;TResult&gt;"/>
+        /// <returns>A new instance of <see cref="IMapBuilderContext&lt;TResult&gt;"/>.</returns>
+        public static IMapBuilderContext<TResult> MapNoProperties()
         {
-            PropertyInfo property = ExtractPropertyInfo<TMember>(propertySelector);
-
-            return new MapBuilderContextMap<TMember>(this, property);
+            return new MapBuilderContext();
         }
 
-        /// <summary/>
-        public IMapBuilderContextMap<TResult, object> Map(PropertyInfo property)
+
+        private class MapBuilderContext : IMapBuilderContext<TResult>
         {
-            return new MapBuilderContextMap<object>(this, property);
-        }
+            private Dictionary<PropertyInfo, PropertyMapping> mappings;
 
-        /// <summary/>
-        public IMapBuilderContext<TResult> MapByName<TMember>(Expression<Func<TResult, TMember>> propertySelector)
-        {
-            PropertyInfo property = ExtractPropertyInfo<TMember>(propertySelector);
-
-            return MapByName(property);
-        }
-
-        /// <summary/>
-        public IMapBuilderContext<TResult> MapByName(PropertyInfo property)
-        {
-            return this.Map(property).ToColumn(property.Name);
-        }
-
-        /// <summary/>
-        public IMapBuilderContext<TResult> DoNotMap<TMember>(Expression<Func<TResult, TMember>> propertySelector)
-        {
-            PropertyInfo property = ExtractPropertyInfo<TMember>(propertySelector);
-
-            return DoNotMap(property);
-        }
-
-        /// <summary/>
-        public IMapBuilderContext<TResult> DoNotMap(PropertyInfo property)
-        {
-            mappings[property] = new IgnoreMapping(property);
-
-            return this;
-        }
-
-        /// <summary/>
-        public IRowMapper<TResult> BuildMapper()
-        {
-            return new ReflectionRowMapper<TResult>(mappings);
-        }
-
-        private static PropertyInfo ExtractPropertyInfo<TMember>(Expression<Func<TResult, TMember>> propertySelector)
-        {
-            MemberExpression memberExpression = propertySelector.Body as MemberExpression;
-            if (memberExpression == null) throw new InvalidOperationException();
-
-            PropertyInfo property = (PropertyInfo)memberExpression.Member;
-            return property;
-        }
-
-        private class MapBuilderContextMap<TMember> : IMapBuilderContextMap<TResult, TMember>
-        {
-            PropertyInfo property;
-            MapBuilder<TResult> builder;
-
-            public MapBuilderContextMap(MapBuilder<TResult> builder, PropertyInfo property)
+            
+            public MapBuilderContext()
             {
-                this.property = property;
-                this.builder = builder;
+                mappings = new Dictionary<PropertyInfo, PropertyMapping>();
             }
 
-            public IMapBuilderContext<TResult> ToColumn(string columnName)
+            public IMapBuilderContextMap<TResult, TMember> Map<TMember>(Expression<Func<TResult, TMember>> propertySelector)
             {
-                builder.mappings[property] = new ColumnNameMapping(property, columnName);
+                PropertyInfo property = ExtractPropertyInfo<TMember>(propertySelector);
 
-                return builder;
+                return new MapBuilderContextMap<TMember>(this, property);
             }
 
-            public IMapBuilderContext<TResult> WithFunc(Func<IDataRecord, TMember> f)
+            public IMapBuilderContextMap<TResult, object> Map(PropertyInfo property)
             {
-                builder.mappings[property] = new FuncMapping(property, row => f(row));
+                PropertyInfo normalizedPropertyInfo = NormalizePropertyInfo(property);
 
-                return builder;
+                return new MapBuilderContextMap<object>(this, normalizedPropertyInfo);
+            }
+
+            public IMapBuilderContext<TResult> MapByName<TMember>(Expression<Func<TResult, TMember>> propertySelector)
+            {
+                PropertyInfo property = ExtractPropertyInfo<TMember>(propertySelector);
+
+                return MapByName(property);
+            }
+
+            public IMapBuilderContext<TResult> MapByName(PropertyInfo property)
+            {
+                PropertyInfo normalizedPropertyInfo = NormalizePropertyInfo(property);
+
+                return this.Map(normalizedPropertyInfo).ToColumn(normalizedPropertyInfo.Name);
+            }
+
+            public IMapBuilderContext<TResult> DoNotMap<TMember>(Expression<Func<TResult, TMember>> propertySelector)
+            {
+                PropertyInfo property = ExtractPropertyInfo<TMember>(propertySelector);
+
+                return DoNotMap(property);
+            }
+
+            public IMapBuilderContext<TResult> DoNotMap(PropertyInfo property)
+            {
+                PropertyInfo normalizedPropertyInfo = NormalizePropertyInfo(property);
+
+                mappings[normalizedPropertyInfo] = new IgnoreMapping(normalizedPropertyInfo);
+
+                return this;
+            }
+
+            public IRowMapper<TResult> Build()
+            {
+                return new ReflectionRowMapper<TResult>(mappings);
+            }
+
+            private static PropertyInfo ExtractPropertyInfo<TMember>(Expression<Func<TResult, TMember>> propertySelector)
+            {
+                MemberExpression memberExpression = propertySelector.Body as MemberExpression;
+                if (memberExpression == null) throw new ArgumentException(Resources.ExceptionArgumentMustBePropertyExpression, "propertySelector");
+
+                PropertyInfo property = memberExpression.Member as PropertyInfo;
+                if (property == null) throw new ArgumentException(Resources.ExceptionArgumentMustBePropertyExpression, "propertySelector");
+
+                return NormalizePropertyInfo(property);
+            }
+
+            private static PropertyInfo NormalizePropertyInfo(PropertyInfo property)
+            {
+                if (property == null) throw new ArgumentNullException("property");
+                return typeof(TResult).GetProperty(property.Name);
+            }
+
+            private class MapBuilderContextMap<TMember> : IMapBuilderContextMap<TResult, TMember>
+            {
+                PropertyInfo property;
+                MapBuilderContext builderContext;
+
+                public MapBuilderContextMap(MapBuilderContext builderContext, PropertyInfo property)
+                {
+                    this.property = property;
+                    this.builderContext = builderContext;
+                }
+
+                public IMapBuilderContext<TResult> ToColumn(string columnName)
+                {
+                    builderContext.mappings[property] = new ColumnNameMapping(property, columnName);
+
+                    return builderContext;
+                }
+
+                public IMapBuilderContext<TResult> WithFunc(Func<IDataRecord, TMember> f)
+                {
+                    builderContext.mappings[property] = new FuncMapping(property, row => f(row));
+
+                    return builderContext;
+                }
             }
         }
-
     }
 
     /// <summary>
-    /// 
+    /// A fluent interface that can be used to construct a <see cref="IRowMapper&lt;TResult&gt;"/>.
     /// </summary>
-    /// <typeparam name="TResult"></typeparam>
+    /// <typeparam name="TResult">The type for which a <see cref="IRowMapper&lt;TResult&gt;"/> should be build.</typeparam>
     public interface IMapBuilderContext<TResult> : IFluentInterface
     {
-        /// <summary />
+        /// <summary>
+        /// Adds a property mapping to the context for <paramref name="property"/> that specifies this property will be mapped to a column with a matching name.
+        /// </summary>
+        /// <param name="property">The property of <typeparamref name="TResult"/> that should be mapped.</param>
+        /// <returns>The fluent interface that can be used further specify mappings.</returns>
         IMapBuilderContext<TResult> MapByName(PropertyInfo property);
 
-        /// <summary />
+        /// <summary>
+        /// Adds a property mapping to the context for <paramref name="property"/> that specifies this property will be mapped to a column with a matching name.
+        /// </summary>
+        /// <param name="propertySelector">A lambda function that returns the property that should be mapped.</param>
+        /// <returns>The fluent interface that can be used further specify mappings.</returns>
         IMapBuilderContext<TResult> MapByName<TMember>(Expression<Func<TResult, TMember>> propertySelector);
 
-        /// <summary />
+        /// <summary>
+        /// Adds a property mapping to the context for <paramref name="property"/> that specifies this property will be ignored while mapping.
+        /// </summary>
+        /// <param name="property">The property of <typeparamref name="TResult"/> that should be mapped.</param>
+        /// <returns>The fluent interface that can be used further specify mappings.</returns>
         IMapBuilderContext<TResult> DoNotMap(PropertyInfo property);
 
-        /// <summary />
+        /// <summary>
+        /// Adds a property mapping to the context for <paramref name="property"/> that specifies this property will be ignored while mapping.
+        /// </summary>
+        /// <param name="propertySelector">A lambda function that returns the property that should be mapped.</param>
+        /// <returns>The fluent interface that can be used further specify mappings.</returns>
         IMapBuilderContext<TResult> DoNotMap<TMember>(Expression<Func<TResult, TMember>> propertySelector);
 
-        /// <summary />
+        /// <summary>
+        /// Adds a property mapping to the context for <paramref name="property"/>.
+        /// </summary>
+        /// <param name="propertySelector">A lambda function that returns the property that should be mapped.</param>
+        /// <returns>The fluent interface that can be used to specify how to map this property.</returns>
         IMapBuilderContextMap<TResult, TMember> Map<TMember>(Expression<Func<TResult, TMember>> propertySelector);
 
-        /// <summary />
+        /// <summary>
+        /// Adds a property mapping to the context for <paramref name="property"/>.
+        /// </summary>
+        /// <param name="property">The property of <typeparamref name="TResult"/> that should be mapped.</param>
+        /// <returns>The fluent interface that can be used to specify how to map this property.</returns>
         IMapBuilderContextMap<TResult, object> Map(PropertyInfo property);
 
-        /// <summary />
-        IRowMapper<TResult> BuildMapper();
+        /// <summary>
+        /// Builds the <see cref="IRowMapper&lt;TResult&gt;"/> that can be used to map data structures to clr types.
+        /// </summary>
+        /// <returns>An instance of <see cref="IRowMapper&lt;TResult&gt;"/>.</returns>
+        IRowMapper<TResult> Build();
     }
 
-    /// <summary />
+    /// <summary>
+    /// A fluent interface that can be used to construct a <see cref="IRowMapper&lt;TResult&gt;"/>.
+    /// </summary>
+    /// <typeparam name="TResult">The type for which a <see cref="IRowMapper&lt;TResult&gt;"/> should be build.</typeparam>
+    /// <typeparam name="TMember">The type of the member for which a mapping needs to specified.</typeparam>
+    /// <seealso cref="IMapBuilderContext&lt;TResult&gt;"/>
     public interface IMapBuilderContextMap<TResult, TMember> : IFluentInterface
     {
-        /// <summary />
+        /// <summary>
+        /// Maps the current property to a column with the given name.
+        /// </summary>
+        /// <param name="columnName">The name of the column the current property should be mapped to.</param>
+        /// <returns>The fluent interface that can be used further specify mappings.</returns>
         IMapBuilderContext<TResult> ToColumn(string columnName);
 
-        /// <summary />
+        /// <summary>
+        /// Maps the current property to a user specified function.
+        /// </summary>
+        /// <param name="f">The user specified function that will map the current property.</param>
+        /// <returns>The fluent interface that can be used further specify mappings.</returns>
         IMapBuilderContext<TResult> WithFunc(Func<IDataRecord, TMember> f);
 
     }
-
-
 }

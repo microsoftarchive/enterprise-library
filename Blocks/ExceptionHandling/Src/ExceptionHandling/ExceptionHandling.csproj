@@ -103,6 +103,7 @@
       <Link>GlobalAssemblyInfo.cs</Link>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Configuration\ConfigurationSourceBuilderExtensions.cs" />
     <Compile Include="Configuration\CustomHandlerData.cs" />
     <Compile Include="Configuration\ExceptionHandlerData.cs">
       <SubType>Code</SubType>

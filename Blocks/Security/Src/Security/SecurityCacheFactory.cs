@@ -23,8 +23,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security
 	/// </summary>
 	public static class SecurityCacheFactory
 	{
-		private static SecurityCacheProviderFactory factory = new SecurityCacheProviderFactory();
-
 		/// <summary>
 		/// Returns the default ISecurityCacheProvider instance. 
 		/// Guaranteed to return an intialized ISecurityCacheProvider if no exception thrown
@@ -33,16 +31,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security
         /// <exception cref="ConfigurationException">Unable to create default <see cref="ISecurityCacheProvider"/></exception>
 		public static ISecurityCacheProvider GetSecurityCacheProvider()
 		{
-			try
-			{
-				return factory.CreateDefault();
-			}
-			catch (ActivationException configurationException)
-			{
-				TryLogConfigurationError(configurationException, "default");
-
-				throw;
-			}
+		    return InnerGetSecurityCacheProvider(null);
 		}
 
 		/// <summary>
@@ -56,17 +45,24 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security
 		/// <exception cref="InvalidOperationException">Error processing configuration information defined in application configuration file.</exception>
 		public static ISecurityCacheProvider GetSecurityCacheProvider(string securityCacheProviderName)
 		{
-			try
-			{
-				return factory.Create(securityCacheProviderName);
-			}
-			catch (ActivationException configurationException)
-			{
-				TryLogConfigurationError(configurationException, "default");
+            if (string.IsNullOrEmpty(securityCacheProviderName)) throw new ArgumentException(Common.Properties.Resources.ExceptionStringNullOrEmpty, "securityCacheProviderName");
 
-				throw;
-			}
+            return InnerGetSecurityCacheProvider(securityCacheProviderName);
 		}
+
+        private static ISecurityCacheProvider InnerGetSecurityCacheProvider(string securityCacheProviderName)
+        {
+            try
+            {
+                return EnterpriseLibraryContainer.Current.GetInstance<ISecurityCacheProvider>(securityCacheProviderName);
+            }
+            catch (ActivationException configurationException)
+            {
+                TryLogConfigurationError(configurationException, securityCacheProviderName??"default");
+
+                throw;
+            }
+        }
 
 		private static void TryLogConfigurationError(ActivationException configurationException, string instanceName)
 		{

@@ -18,6 +18,7 @@ using Microsoft.Practices.EnterpriseLibrary.Data.Sql;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Data.Common;
 using System.Data;
+using System.Data.SqlClient;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
 {
@@ -30,7 +31,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
 
         protected override void Arrange()
         {
-            ConnectionString = @"server=(local)\SQLEXPRESS;database=Northwind;Integrated Security=true";
+            ConnectionString = @"server=(local)\SQLEXPRESS;database=Northwind;Integrated Security=true; Async=True";
             Database = new TestableSqlDatabase(ConnectionString, this);
         }
 
@@ -61,7 +62,225 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
     }
 
     [TestClass]
-    public class WhenDatabaseIsInitialized : SprocAccessorContext
+    public class WhenExecutingSproc : SprocAccessorContext
+    {
+        [TestMethod]
+        public void ThenConvertsResultInObjects()
+        {
+            var x = Database.ExecuteSprocAccessor<Product>("Ten Most Expensive Products");
+            Assert.AreEqual(10, x.Count());
+            Assert.IsNotNull(x.First().TenMostExpensiveProducts);
+            Assert.AreNotEqual(0, x.First().UnitPrice);
+        }
+    }
+
+    [TestClass]
+    public class WhenExecutingSprocPassingRowMapper : SprocAccessorContext
+    {
+        IRowMapper<Product> rowMapper;
+
+        protected override void Arrange()
+        {
+            base.Arrange();
+
+            rowMapper = new RowMapper();
+        }
+
+        [TestMethod]
+        public void ThenConvertsResultInObjectsUsingRowMapper()
+        {
+            var x = Database.ExecuteSprocAccessor<Product>("Ten Most Expensive Products", rowMapper);
+            Assert.AreEqual(10, x.Count());
+            Assert.AreEqual("pname", x.First().TenMostExpensiveProducts);
+            Assert.AreEqual(23, x.First().UnitPrice);
+        }
+
+        private class RowMapper : IRowMapper<Product>
+        {
+            public Product MapRow(IDataRecord row)
+            {
+                return new Product
+                {
+                    TenMostExpensiveProducts = "pname",
+                    UnitPrice = 23
+                };
+            }
+        }
+    }
+
+    [TestClass]
+    public class WhenExecutingSprocPassingResultSetMapper : SprocAccessorContext
+    {
+        IResultSetMapper<Product> resultSetMapper;
+
+        protected override void Arrange()
+        {
+            base.Arrange();
+
+            resultSetMapper = new ResultSetMapper();
+        }
+
+        [TestMethod]
+        public void ThenConvertsResultInObjectsUsingRowMapper()
+        {
+            var x = Database.ExecuteSprocAccessor<Product>("Ten Most Expensive Products", resultSetMapper);
+            Assert.AreEqual(1, x.Count());
+            Assert.AreEqual("pname", x.First().TenMostExpensiveProducts);
+            Assert.AreEqual(23, x.First().UnitPrice);
+        }
+
+        private class ResultSetMapper : IResultSetMapper<Product>
+        {
+            public IEnumerable<Product> MapSet(IDataReader reader)
+            {
+                yield return new Product
+                {
+                    TenMostExpensiveProducts = "pname",
+                    UnitPrice = 23
+                };
+            }
+        }
+    }
+
+    [TestClass]
+    public class WhenExecutingSprocPassingParameterMapper : SprocAccessorContext
+    {
+        IParameterMapper parameterMapper;
+
+        protected override void Arrange()
+        {
+            base.Arrange();
+
+            parameterMapper = new ParameterMapper();
+        }
+
+        [TestMethod]
+        public void ThenConvertsResultInObjectsUsingRowMapper()
+        {
+            var x = Database.ExecuteSprocAccessor<ProductSales>("SalesByCategory", parameterMapper);
+            Assert.IsNotNull(x);
+            Assert.AreEqual("Chai", x.First().ProductName);
+        }
+
+        private class ParameterMapper : IParameterMapper
+        {
+            public void AssignParameters(DbCommand command, object[] parameterValues)
+            {
+                command.Parameters.Add( new SqlParameter("@CategoryName", "Beverages"));
+            }
+        }
+
+        private class ProductSales
+        {
+            public string ProductName { get; set; }
+            public double TotalPurchase { get; set; }
+        }
+    }
+
+    [TestClass]
+    public class WhenExecutingSprocPassingParameterMapperAndRowMapper : SprocAccessorContext
+    {
+
+        IParameterMapper parameterMapper;
+        IRowMapper<ProductSales> rowMapper;
+
+        protected override void Arrange()
+        {
+            base.Arrange();
+
+            parameterMapper = new ParameterMapper();
+            rowMapper = new RowMapper();
+        }
+
+        [TestMethod]
+        public void ThenConvertsResultInObjectsUsingRowMapper()
+        {
+            var x = Database.ExecuteSprocAccessor<ProductSales>("SalesByCategory", parameterMapper, rowMapper);
+            Assert.IsNotNull(x);
+            Assert.AreEqual("pname", x.First().ProductName);
+            Assert.AreEqual(12, x.First().TotalPurchase);
+        }
+
+        private class ParameterMapper : IParameterMapper
+        {
+            public void AssignParameters(DbCommand command, object[] parameterValues)
+            {
+                command.Parameters.Add(new SqlParameter("@CategoryName", "Beverages"));
+            }
+        }
+
+        private class ProductSales
+        {
+            public string ProductName { get; set; }
+            public double TotalPurchase { get; set; }
+        }
+
+        private class RowMapper : IRowMapper<ProductSales>
+        {
+            public ProductSales MapRow(IDataRecord row)
+            {
+                return new ProductSales
+                {
+                    ProductName =  "pname",
+                    TotalPurchase = 12
+                };
+            }
+        }
+    }
+
+    [TestClass]
+    public class WhenExecutingSprocPassingParameterMapperAndResultSetMapper : SprocAccessorContext
+    {
+        IParameterMapper parameterMapper;
+        IResultSetMapper<ProductSales> resultSetMapper;
+
+        protected override void Arrange()
+        {
+            base.Arrange();
+
+            parameterMapper = new ParameterMapper();
+            resultSetMapper = new ResultSetMapper();
+        }
+
+        [TestMethod]
+        public void ThenConvertsResultInObjectsUsingRowMapper()
+        {
+            var x = Database.ExecuteSprocAccessor<ProductSales>("SalesByCategory", parameterMapper, resultSetMapper);
+            Assert.IsNotNull(x);
+            Assert.AreEqual(1, x.Count());
+            Assert.AreEqual("pname", x.First().ProductName);
+            Assert.AreEqual(12, x.First().TotalPurchase);
+        }
+
+        private class ParameterMapper : IParameterMapper
+        {
+            public void AssignParameters(DbCommand command, object[] parameterValues)
+            {
+                command.Parameters.Add(new SqlParameter("@CategoryName", "Beverages"));
+            }
+        }
+
+        private class ProductSales
+        {
+            public string ProductName { get; set; }
+            public double TotalPurchase { get; set; }
+        }
+
+        private class ResultSetMapper : IResultSetMapper<ProductSales>
+        {
+            public IEnumerable<ProductSales> MapSet(IDataReader reader)
+            {
+                yield return new ProductSales
+                {
+                    ProductName = "pname",
+                    TotalPurchase = 12
+                };
+            }
+        }
+    }
+
+    [TestClass]
+    public class WhenCreatingSprocAccessor : SprocAccessorContext
     {
         [TestMethod]
         public void ThenCanCreateSprocAccessor()
@@ -73,7 +292,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
         [TestMethod]
         public void ThenCanCreateSprocAccessorWithRowMapper()
         {
-            var sprocAccessor = Database.CreateSprocAccessor<Product>("Ten Most Expensive Products", new MapBuilder<Product>().BuildMapper());
+            var sprocAccessor = Database.CreateSprocAccessor<Product>("Ten Most Expensive Products", MapBuilder<Product>.MapNoProperties().Build());
             Assert.IsNotNull(sprocAccessor);
         }
 
@@ -93,9 +312,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
+        public void ThenCreateSprocAccessorWithNullParameterMapperThrows()
+        {
+            Database.CreateSprocAccessor<Product>("prodedure name", null, MapBuilder<Product>.BuildAllProperties());
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void ThenCreateSprocAccessorWithNullDatabaseThrows()
         {
-            new SprocAccessor<Product>(null, "procedure name", new MapBuilder<Product>().BuildMapper());
+            new SprocAccessor<Product>(null, "procedure name", MapBuilder<Product>.BuildAllProperties());
         }
 
 
@@ -108,9 +334,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
     }
 
     [TestClass]
-    public class WhenSprocAccessorIsCreated : SprocAccessorContext
+    public class WhenExecutingSprocAccessor : SprocAccessorContext
     {
-        private SprocAccessor<Product> accessor;
+        private IDataAccessor<Product> accessor;
 
         protected override void Arrange()
         {
@@ -120,13 +346,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
         }
 
         [TestMethod]
-        public void ThenExecuteReturnsEnumerable()
+        public void ThenReturnsResultsAsEnumerable()
         {
             Assert.IsNotNull(accessor.Execute());
         }
 
         [TestMethod]
-        public void ThenExecuteReturnsSprocResults()
+        public void ThenClosesConnectionAfterResultsAreEnumerated()
         {
             var result = accessor.Execute();
             Assert.AreEqual(10, result.Count());
@@ -135,18 +361,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
         }
 
         [TestMethod]
-        public void ThenConnectionIsClosedEvenThoughEnumerationIsntFinished()
+        public void ThenClosesConnectionEvenThoughEnumerationIsntFinished()
         {
             var result = accessor.Execute();
-
-            Assert.AreEqual(ConnectionState.Open, base.ConnectionState);
             var foo = result.First();
 
             Assert.AreEqual(ConnectionState.Closed, base.ConnectionState);
         }
 
         [TestMethod]
-        public void ThenConnectionIsClosedAfterIteratingPartially()
+        public void ThenClosesConnectionAfterIteratingPartially()
         {
             var resultSet = accessor.Execute();
 
@@ -168,7 +392,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
         }
 
         [TestMethod]
-        public void ThenExecuteSetsPropertiesBasedOnPropertyName()
+        public void ThenSetsPropertiesBasedOnPropertyName()
         {
             var result = accessor.Execute();
             Product firstProduct = result.First();
@@ -178,15 +402,98 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
     }
 
     [TestClass]
-    public class WhenParameterizedSprocAccessorIsCreated : SprocAccessorContext
+    public class WhenExecutingSprocAccessorAsynchronously : SprocAccessorContext
     {
-        private SprocAccessor<Product> accessor;
+        private IDataAccessor<Product> accessor;
+        private IAsyncResult asyncResult;
 
         protected override void Arrange()
         {
             base.Arrange();
 
-            accessor = Database.CreateSprocAccessor<Product>("SalesByCategory");
+            accessor = Database.CreateSprocAccessor<Product>("Ten Most Expensive Products");
+            asyncResult = accessor.BeginExecute(null, null);
+        }
+
+        [TestMethod]
+        public void ThenEndExecuteReturnsResultsAsEnumerable()
+        {
+            Assert.IsNotNull(accessor.EndExecute(asyncResult));
+        }
+
+        [TestMethod]
+        public void ThenClosesConnectionAfterResultsAreEnumerated()
+        {
+            var result = accessor.EndExecute(asyncResult);
+            Assert.AreEqual(10, result.Count());
+
+            Assert.AreEqual(ConnectionState.Closed, base.ConnectionState);
+        }
+
+        [TestMethod]
+        public void ThenClosesConnectionEvenThoughEnumerationIsntFinished()
+        {
+            var result = accessor.EndExecute(asyncResult);
+            var foo = result.First();
+
+            Assert.AreEqual(ConnectionState.Closed, base.ConnectionState);
+        }
+
+        [TestMethod]
+        public void ThenClosesConnectionAfterIteratingPartially()
+        {
+            var resultSet = accessor.EndExecute(asyncResult);
+
+            int i = 0;
+            foreach (var result in resultSet)
+            {
+                i++;
+                if (i == 3) break;
+            }
+
+            Assert.AreEqual(ConnectionState.Closed, base.ConnectionState);
+        }
+
+        [TestMethod]
+        public void ThenConnectionIsClosedAfterExecuting()
+        {
+            var result = accessor.EndExecute(asyncResult).ToList();
+            Assert.AreEqual(ConnectionState.Closed, base.ConnectionState);
+        }
+
+
+        //TODO: should we throw our own exception?
+        //now it says: Invalid attempt to call Read when reader is closed.
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void CannotReExecuteCommandByReiterating()
+        {
+            var results = accessor.EndExecute(asyncResult);
+            int itCount1 = results.Count();
+            int itCount2 = results.Count();
+        }
+
+
+        [TestMethod]
+        public void ThenSetsPropertiesBasedOnPropertyName()
+        {
+            var result = accessor.EndExecute(asyncResult);
+            Product firstProduct = result.First();
+            Assert.IsNotNull(firstProduct.TenMostExpensiveProducts);
+            Assert.AreNotEqual(0d, firstProduct.UnitPrice);
+        }
+    }
+
+    [TestClass]
+    public class WhenParameterizedSprocAccessorIsCreated : SprocAccessorContext
+    {
+        private IDataAccessor<ProductSales> accessor;
+
+        protected override void Arrange()
+        {
+            base.Arrange();
+
+            accessor = Database.CreateSprocAccessor<ProductSales>("SalesByCategory");
         }
 
         [TestMethod]
@@ -194,21 +501,21 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
         {
             var result = accessor.Execute("Beverages", "1998");
             Assert.IsNotNull(result);
+            var enumerared = result.ToList();
         }
 
-        [TestMethod]
-        [Ignore]
-        public void ThenCanOmitOptionalParameters()
+
+        private class ProductSales
         {
-            var result = accessor.Execute("Beverages");
-            Assert.IsNotNull(result);
+            public string ProductName { get; set; }
+            public double TotalPurchase { get; set; }
         }
     }
 
     [TestClass]
     public class WhenSprocAccessorIsCreatedPassingCustomRowMapper : SprocAccessorContext
     {
-        private SprocAccessor<Product> accessor;
+        private IDataAccessor<Product> accessor;
         private CustomMapper mapper;
 
         protected override void Arrange()
@@ -241,7 +548,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
     [TestClass]
     public class WhenSprocAccessorIsCreatedPassingCustomResultSetMapper : SprocAccessorContext
     {
-        private SprocAccessor<Product> accessor;
+        private IDataAccessor<Product> accessor;
         private CustomMapper mapper;
 
         protected override void Arrange()
@@ -252,11 +559,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
             accessor = Database.CreateSprocAccessor<Product>("Ten Most Expensive Products", mapper);
         }
 
-
         [TestMethod]
         public void ThenMapperIsCalledOncePerExecute()
         {
-            accessor.Execute();
+            accessor.Execute().ToList();
             Assert.AreEqual(1, mapper.MapSetCallCount);
         }
 
@@ -271,4 +577,88 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
             }
         }
     }
+
+    [TestClass]
+    public class WhenSprocAccessorIsCreatedPassingParameterMapper : SprocAccessorContext
+    {
+        private IDataAccessor<ProductSales> accessor;
+        private SqlParameterMapper parameterMapper;
+
+        protected override void Arrange()
+        {
+            base.Arrange();
+            parameterMapper = new SqlParameterMapper();
+
+            accessor = Database.CreateSprocAccessor<ProductSales>("SalesByCategory", parameterMapper);
+        }
+
+        [TestMethod]
+        public void ThenParameterMapperIsCalledOnceOnExecute()
+        {
+            var result = accessor.Execute("Beverages").ToList();
+            Assert.AreEqual(1, parameterMapper.AssignParametersCallCount);
+        }
+
+        [TestMethod]
+        public void ThenParameterMapperOutputIsUsedToExecuteSproc()
+        {
+            var result = accessor.Execute("Beverages");
+            Assert.IsNotNull(result);
+            Assert.AreEqual("Chai", result.First().ProductName);
+        }
+
+        private class SqlParameterMapper : IParameterMapper
+        {
+            public int AssignParametersCallCount = 0;
+
+            public void AssignParameters(DbCommand command, object[] parameterValues)
+            {
+                AssignParametersCallCount++;
+
+                DbParameter parameter = command.CreateParameter();
+                parameter.ParameterName = "@CategoryName";
+                parameter.Value = parameterValues.First();
+
+                command.Parameters.Add(parameter);
+            }
+        }
+
+        private class ProductSales
+        {
+            public string ProductName { get; set; }
+            public double TotalPurchase { get; set; }
+        }
+    }
+
+
+    [TestClass]
+    public class When_UsingSprocAccessorAgainstGenericDatabase : Given_GenericDatabaseInstance
+    {
+        [TestMethod]
+        public void Then_CanCallNonParameterizedSproc()
+        {
+            var accessor = Database.CreateSprocAccessor<object>("Ten Most Expensive Products");
+            var result = accessor.Execute();
+
+            Assert.AreEqual(10, result.Count());
+        }
+
+        [TestMethod]
+        public void Then_CallingParemeterizedSpocThrowsException()
+        {
+            var accessor = Database.CreateSprocAccessor<object>("SalesByCategory");
+           
+            try
+            { 
+                var result = accessor.Execute("Chai");
+                Assert.Fail();
+            }
+            catch (InvalidOperationException ioe)
+            {
+                Assert.IsTrue(ioe.Message.Contains("IParameterMapper"));
+            }
+        }
+    }
+
+
 }

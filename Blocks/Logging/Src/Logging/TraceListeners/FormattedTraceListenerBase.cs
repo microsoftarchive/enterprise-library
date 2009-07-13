@@ -9,67 +9,32 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
 using System.Diagnostics;
-using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
 {
-	/// <summary>
-	/// Base class for <see cref="TraceListener"/>s that deal with formatters.
-	/// </summary>
-	public abstract class FormattedTraceListenerBase : TraceListener
-	{
-		private ILogFormatter formatter;
-		private readonly ILoggingInstrumentationProvider instrumentationProvider;
-
-		/// <summary>
-		/// Gets the object that provides instrumentation services for the trace listener.
-		/// </summary>
-		protected ILoggingInstrumentationProvider InstrumentationProvider
-		{
-			get { return instrumentationProvider; }
-		}
-
-		/// <summary>
-		/// Initalizes a new instance of <see cref="FormattedTraceListenerBase"/>.
-		/// </summary>
-        protected FormattedTraceListenerBase()
-            : this(new NullLoggingInstrumentationProvider())
-		{
-        }
+    /// <summary>
+    /// Base class for <see cref="TraceListener"/>s that deal with formatters.
+    /// </summary>
+    public abstract class FormattedTraceListenerBase : TraceListener
+    {
+        private ILogFormatter formatter;
 
         /// <summary>
         /// Initalizes a new instance of <see cref="FormattedTraceListenerBase"/>.
         /// </summary>
-        /// <param name="instrumentationProvider">The instrumentation provider to use.</param>
-        protected FormattedTraceListenerBase(ILoggingInstrumentationProvider instrumentationProvider)
+        protected FormattedTraceListenerBase()
         {
-            this.instrumentationProvider = instrumentationProvider;
         }
-
-		/// <summary>
-		/// Initalizes a new instance of <see cref="FormattedTraceListenerBase"/> with a <see cref="ILogFormatter"/>.
-		/// </summary>
-		/// <param name="formatter">The <see cref="ILogFormatter"/> to use when tracing a <see cref="LogEntry"/>.</param>
-        protected FormattedTraceListenerBase(ILogFormatter formatter)
-            :this(formatter, new NullLoggingInstrumentationProvider())
-		{
-		}
 
         /// <summary>
         /// Initalizes a new instance of <see cref="FormattedTraceListenerBase"/> with a <see cref="ILogFormatter"/>.
         /// </summary>
         /// <param name="formatter">The <see cref="ILogFormatter"/> to use when tracing a <see cref="LogEntry"/>.</param>
-        /// <param name="instrumentationProvider">The instrumentation provider to use.</param>
-        protected FormattedTraceListenerBase(ILogFormatter formatter, ILoggingInstrumentationProvider instrumentationProvider)
+        protected FormattedTraceListenerBase(ILogFormatter formatter)
         {
-            if (instrumentationProvider == null) throw new ArgumentNullException("instrumentationProvider");
-
             this.Formatter = formatter;
-            this.instrumentationProvider = instrumentationProvider;
         }
 
 
@@ -83,22 +48,22 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
                 return true;
             }
         }
-	    
-	    /// <summary>
-		/// The <see cref="ILogFormatter"/> used to format the trace messages.
-		/// </summary>
-		public ILogFormatter Formatter
-		{
-			get
-			{
-				return this.formatter;
-			}
 
-			set
-			{
-				this.formatter = value;
-			}
-		}
+        /// <summary>
+        /// The <see cref="ILogFormatter"/> used to format the trace messages.
+        /// </summary>
+        public ILogFormatter Formatter
+        {
+            get
+            {
+                return this.formatter;
+            }
+
+            set
+            {
+                this.formatter = value;
+            }
+        }
 
         /// <summary>
         /// Overriding TraceData method for the base TraceListener class because it calls the 
@@ -123,5 +88,5 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
                 }
             }
         }
-	}
+    }
 }

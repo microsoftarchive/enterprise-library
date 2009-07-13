@@ -207,4 +207,22 @@
   <data name="ExceptionDatabaseDataTypeDoesNotInheritFromDatabaseData" xml:space="preserve">
     <value>The configuration element type {0} does not inherit from the DatabaseData class.</value>
   </data>
+  <data name="ExceptionArgumentMustBePropertyExpression" xml:space="preserve">
+    <value>The expression must contain a MemberAccessExpression to a property ( t =&gt;t.Property).</value>
+  </data>
+  <data name="ExceptionColumnNotFoundWhileMapping" xml:space="preserve">
+    <value>The column {0} was not found on the IDataRecord being evaluated. This might indicate that the accessor was created with the wrong mappings.</value>
+  </data>
+  <data name="ExceptionSqlStringAccessorCannotDiscoverParameters" xml:space="preserve">
+    <value>Sql String Accessor cannot be used to discover parameters. Use an IParameterMapper instead.</value>
+  </data>
+  <data name="AsyncOperationsNotSupported" xml:space="preserve">
+    <value>The database type "{0}" does not support asynchronous operations.</value>
+  </data>
+  <data name="ExceptionConvertionFailedWhenMappingPropertyToColumn" xml:space="preserve">
+    <value>The value from column '{0}' cannot be converted to property '{1}' of type '{2}'.</value>
+  </data>
+  <data name="ExceptionParameterDiscoveryNotSupported" xml:space="preserve">
+    <value>The database type "{0}" does not support automatic parameter discovery. Use an IParameterMapper instead.</value>
+  </data>
 </root>

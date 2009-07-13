@@ -14,12 +14,10 @@ using System.Data.Common;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Data;
 using Microsoft.Practices.EnterpriseLibrary.Data.Sql;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Tests
 {
@@ -66,13 +64,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Tests
         public void Teardown()
         {
             ClearLogs();
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void ConstructWithNullInstrumentationProviderThrows()
-        {
-            FormattedDatabaseTraceListener listener = new FormattedDatabaseTraceListener(new SqlDatabase(connectionString), "WriteLog", "AddCategory", new TextFormatter("TEST{newline}TEST"), null);
         }
 
         [TestMethod]
@@ -167,30 +158,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Tests
         }
 
         [TestMethod]
-        public void FormatterListenerFiresInstrumentation()
-        {
-            MockLoggingInstrumentationProvider instrumentationProvider = new MockLoggingInstrumentationProvider();
-            FormattedDatabaseTraceListener listener = new FormattedDatabaseTraceListener(new SqlDatabase(connectionString), "WriteLog", "AddCategory", new TextFormatter("TEST{newline}TEST"), instrumentationProvider);
-
-            TraceEventCache eventCache = new TraceEventCache();
-            listener.TraceData(eventCache, "", TraceEventType.Error, 0, new LogEntry("message", "category", 0, 0, TraceEventType.Error, "title", null));
-
-            Assert.AreEqual(1, instrumentationProvider.TraceListenerEntryWrittenEventCalls);
-        }
-
-        [TestMethod]
-        public void FormatterListenerDoesNotFireInstrumentationWhenTracingString()
-        {
-            MockLoggingInstrumentationProvider instrumentationProvider = new MockLoggingInstrumentationProvider();
-            FormattedDatabaseTraceListener listener = new FormattedDatabaseTraceListener(new SqlDatabase(connectionString), "WriteLog", "AddCategory", new TextFormatter("TEST{newline}TEST"), instrumentationProvider);
-
-            TraceEventCache eventCache = new TraceEventCache();
-            listener.TraceData(eventCache, "", TraceEventType.Error, 0, "message");
-
-            Assert.AreEqual(0, instrumentationProvider.TraceListenerEntryWrittenEventCalls);
-        }
-
-        [TestMethod]
         public void FormatterListenerAsString()
         {
             FormattedDatabaseTraceListener listener = new FormattedDatabaseTraceListener(new SqlDatabase(connectionString), "WriteLog", "AddCategory", new TextFormatter("TEST{newline}TEST"));
@@ -214,37 +181,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Tests
             int newNumMessages = GetNumberOfLogMessage("LoggingDb");
 
             Assert.AreEqual(numMessages, newNumMessages - 1);
-        }
-
-        public class MockLoggingInstrumentationProvider : ILoggingInstrumentationProvider
-        {
-            public int TraceListenerEntryWrittenEventCalls = 0;
-
-            public void FireLockAcquisitionError(string message)
-            {
-            }
-
-            public void FireConfigurationFailureEvent(Exception configurationException)
-            {
-            }
-
-            public void FireFailureLoggingErrorEvent(string message, Exception exception)
-            {
-            }
-
-            public void FireLogEventRaised()
-            {
-            }
-
-            public void FireTraceListenerEntryWrittenEvent()
-            {
-                TraceListenerEntryWrittenEventCalls++;
-            }
-
-            public void FireReconfigurationErrorEvent(Exception exception)
-            {
-                
-            }
         }
 
         public class TestCustomObject

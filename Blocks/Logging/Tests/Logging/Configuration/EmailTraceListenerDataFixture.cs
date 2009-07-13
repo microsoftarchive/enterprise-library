@@ -99,7 +99,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Tests
                 .WithValueConstructorParameter("smtp")
                 .WithValueConstructorParameter(25)
                 .WithContainerResolvedParameter<ILogFormatter>("formatter")
-                .WithContainerResolvedParameter<ILoggingInstrumentationProvider>(null)
                 .VerifyConstructorParameters();
         }
 

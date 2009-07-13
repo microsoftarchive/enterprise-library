@@ -14,7 +14,6 @@ using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -55,7 +54,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         public void WhenCreatesRegistration_ThenWrapperRegistrationIsSingleton()
         {
             Assert.AreEqual(
-                TypeRegistrationLifetime.Singleton, 
+                TypeRegistrationLifetime.Singleton,
                 listenerData.GetRegistrations().Where(tr => tr.Name == "listener").First().Lifetime);
         }
 
@@ -93,7 +92,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
             listenerData.GetRegistrations().Where(tr => tr.Name == "listener\u200Cimplementation").First()
                 .AssertConstructor()
                 .WithValueConstructorParameter("file name")
-                .WithContainerResolvedParameter<ILoggingInstrumentationProvider>(null)
                 .VerifyConstructorParameters();
         }
 

@@ -17,6 +17,7 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration.ContainerModel;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Tests
@@ -118,6 +119,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Tests
                 .WithContainerResolvedEnumerableConstructorParameter<TraceListener>(new string[0])
                 .WithValueConstructorParameter(SourceLevels.Error)
                 .WithValueConstructorParameter(true)
+                .WithContainerResolvedParameter<ILoggingInstrumentationProvider>(null)
                 .VerifyConstructorParameters();
         }
     }
@@ -159,6 +161,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Tests
                 .WithContainerResolvedEnumerableConstructorParameter<TraceListener>(new[] { "listener1", "listener2" })
                 .WithValueConstructorParameter(SourceLevels.Error)
                 .WithValueConstructorParameter(true)
+                .WithContainerResolvedParameter<ILoggingInstrumentationProvider>(null)
                 .VerifyConstructorParameters();
         }
 

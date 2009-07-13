@@ -75,6 +75,7 @@
     </Compile>
     <Compile Include="DatabaseFactoryOldFixture.cs" />
     <Compile Include="DatabaseFixture.cs" />
+    <Compile Include="GenericAsyncFixture.cs" />
     <Compile Include="GenericDatabaseFixture.cs" />
     <Compile Include="Instrumentation\DataInstrumentationProviderPerfCounterFixture.cs" />
     <Compile Include="Instrumentation\DataInstrumentationProviderWmiFixture.cs" />

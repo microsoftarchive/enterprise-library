@@ -26,8 +26,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         private static object sync = new object();
         private static volatile LogWriter writer;
 
-        private static LogWriterFactory factory = new LogWriterFactory();
-
         /// <summary>
         /// Add a key/value pair to the <see cref="System.Runtime.Remoting.Messaging.CallContext"/> dictionary.  
         /// Context items will be recorded with every log entry.
@@ -401,7 +399,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
                         {
                             try
                             {
-                                writer = new LogWriterFactory().Create();
+                                writer = EnterpriseLibraryContainer.Current.GetInstance<LogWriter>();
                             }
                             catch (ActivationException configurationException)
                             {

@@ -12,7 +12,6 @@
 using System;
 using System.Data;
 using System.Data.Common;
-using System.Data.Odbc;
 using System.Data.SqlClient;
 using System.Xml;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport;
@@ -24,6 +23,17 @@ using System.Collections.Generic;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
 {
+    [TestClass]
+    public class WhenUsingASqlDatabase
+    {
+        [TestMethod]
+        public void ThenSupportsAsyncIsTrue()
+        {
+            var db = new SqlDatabase(@"server=(local)\SQLEXPRESS;database=Northwind;Integrated Security=true");
+            Assert.IsTrue(db.SupportsAsync);
+        }
+    }
+
     [TestClass]
     public class WhenConnectionStringDoesntContainAsyncTrue : ArrangeActAssert
     {
@@ -38,7 +48,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
         [ExpectedException(typeof(InvalidOperationException))]
         public void ThenAsynchronousExecuteReaderThrows()
         {
-            database.BeginExecuteReader(CommandType.Text, "SELECT 'hello world'");
+            database.BeginExecuteReader(CommandType.Text, "SELECT 'hello world'", null, null);
         }
     }
 
@@ -57,14 +67,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
         [ExpectedException(typeof(ArgumentException))]
         public void ThenCallingBeginExecuteNonQueryWithEmptySprocameThrowsArgException()
         {
-            database.BeginExecuteNonQuery(String.Empty);
+            database.BeginExecuteNonQuery(String.Empty, null, null);
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
         public void ThenCallingBeginExecuteReaderWithEmptySprocameThrowsArgException()
         {
-            database.BeginExecuteReader(String.Empty);
+            database.BeginExecuteReader(String.Empty, null, null);
         }
 
     }
@@ -186,7 +196,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
 
         protected override void Act()
         {
-            asyncResult = database.BeginExecuteReader(CommandType.Text, "waitfor delay '00:00:02'; SELECT 'hello async world'");
+            asyncResult = database.BeginExecuteReader(CommandType.Text, "waitfor delay '00:00:02'; SELECT 'hello async world'", null, null);
         }
 
         [TestMethod]
@@ -212,7 +222,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
     [TestClass]
     public class WhenAsyncronousCommandExecutes : AsynchronousConnectionContext
     {
-        private Barrier asyncComplete = new Barrier(2);
+        private readonly Barrier asyncComplete = new Barrier(2);
+        private bool callbackHasRun;
+        private bool canReadOneRecord;
+        private bool canReadSecondRecord;
         private string result;
 
         protected override void Act()
@@ -221,13 +234,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
                 "SELECT 'hello async world'",
                 ar =>
                     {
+                        callbackHasRun = true;
                         try
                         {
                             using (IDataReader reader = database.EndExecuteReader(ar))
                             {
-                                Assert.IsTrue(reader.Read());
+                                canReadOneRecord = reader.Read();
                                 result = reader.GetString(0);
-                                Assert.IsFalse(reader.Read());
+                                canReadSecondRecord = reader.Read();
                             }
                         }
                         finally
@@ -242,7 +256,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
         {
             // Wait for async operation to complete
             asyncComplete.Await(4000);
+            Assert.IsTrue(callbackHasRun);
+            Assert.IsTrue(canReadOneRecord);
             Assert.AreEqual("hello async world", result);
+            Assert.IsFalse(canReadSecondRecord);
         }
     }
 
@@ -250,8 +267,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
     public class WhenAsynchronouslyInvokingBeginExecuteNonQueryWithTransaction : TransactionalAsynchronousConnectionWithRollback
     {
         int numberOforderDetailsInDatabase;
-        IAsyncResult asyncResult;
-
+        private readonly Barrier barrier = new Barrier(2);
+        private int numberOfAffectedRecords = 0;
         protected override void  Arrange()
         {
  	        base.Arrange();
@@ -262,27 +279,31 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
             numberOfConnectionsCreated = 0;
             commandExecutedEvents.Clear();
 
-            asyncResult = database.BeginExecuteNonQuery(transaction, CommandType.Text, "DELETE FROM [Order Details]");
+            database.BeginExecuteNonQuery(transaction, CommandType.Text, "DELETE FROM [Order Details]",
+                ar => { 
+                    numberOfAffectedRecords = database.EndExecuteNonQuery(ar);
+                    barrier.Await();
+                }, null);
         }
-
 
         [TestMethod]
         public void ThenEndExecuteNonQueryReturnsNumberOfAffectedRecords()
         {
-            int numberOfAffectedRecords = database.EndExecuteNonQuery(asyncResult);
+            barrier.Await(4000);
             Assert.AreEqual(numberOforderDetailsInDatabase, numberOfAffectedRecords);
         }
 
         [TestMethod]
         public void ThenConnectionIsNotClosedAfterEndExecuteNonQuery()
         {
-            int numberOfAffectedRecords = database.EndExecuteNonQuery(asyncResult);
+            barrier.Await(4000);
             Assert.AreEqual(ConnectionState.Open, transaction.Connection.State);
         }
 
         [TestMethod]
         public void ThenNoNewConnectionIsCreated()
         {
+            barrier.Await(4000);
             Assert.AreEqual(0, numberOfConnectionsCreated);
         }
 
@@ -290,7 +311,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
         public void ThenCommandExecutedEventWasFiredOnEndExecute()
         {
             Assert.AreEqual(0, commandExecutedEvents.Count);
-            int numberOfAffectedRecords = database.EndExecuteNonQuery(asyncResult);
+            barrier.Await(4000);
             Assert.AreEqual(1, commandExecutedEvents.Count);
         }
     }
@@ -304,7 +325,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
         {
             base.Arrange();
 
-            asyncResult = database.BeginExecuteNonQuery(CommandType.Text, "BAD sql");
+            asyncResult = database.BeginExecuteNonQuery(CommandType.Text, "BAD sql", null, null);
 
         }
 
@@ -362,13 +383,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
         {
             base.Arrange();
 
-            asyncResult = database.BeginExecuteNonQuery("Ten Most Expensive Products");
+            asyncResult = database.BeginExecuteNonQuery("Ten Most Expensive Products", null, null);
         }
 
         [TestMethod]
         public void CanCallEndExecute()
         {
-            int affectedRecords = database.EndExecuteNonQuery(asyncResult);
+            database.EndExecuteNonQuery(asyncResult);
         }
 
         [TestMethod]
@@ -383,7 +404,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
         public void ThenCommandExecutedEventWasFiredOnEndExecute()
         {
             Assert.AreEqual(0, commandExecutedEvents.Count);
-            int numberOfAffectedRecords = database.EndExecuteNonQuery(asyncResult);
+            database.EndExecuteNonQuery(asyncResult);
             Assert.AreEqual(1, commandExecutedEvents.Count);
         }
     }
@@ -397,13 +418,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
         {
             base.Arrange();
 
-            asyncResult = database.BeginExecuteNonQuery(transaction, "Ten Most Expensive Products");
+            asyncResult = database.BeginExecuteNonQuery(transaction, "Ten Most Expensive Products", null, null);
         }
 
         [TestMethod]
         public void CanCallEndExecute()
         {
-            int affectedRecords = database.EndExecuteNonQuery(asyncResult);
+            database.EndExecuteNonQuery(asyncResult);
         }
 
         [TestMethod]
@@ -417,7 +438,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
         public void ThenCommandExecutedEventWasFiredOnEndExecute()
         {
             Assert.AreEqual(0, commandExecutedEvents.Count);
-            int numberOfAffectedRecords = database.EndExecuteNonQuery(asyncResult);
+            database.EndExecuteNonQuery(asyncResult);
             Assert.AreEqual(1, commandExecutedEvents.Count);
         }
     }
@@ -431,7 +452,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
         {
             base.Arrange();
 
-            asyncResult = database.BeginExecuteReader(CommandType.Text, "SELECT 'hello there'");
+            asyncResult = database.BeginExecuteReader(CommandType.Text, "SELECT 'hello there'", null, null);
         }
 
 
@@ -457,7 +478,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
     [TestClass]
     public class WhenAsynchronouslyInvokingExecuteXmlReader : AsynchronousConnectionContext
     {
-        IAsyncResult asyncResult;
+        private readonly Barrier barrier = new Barrier(2);
+        private XmlReader reader;
 
         protected override void Arrange()
         {
@@ -465,14 +487,22 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
 
             string queryString = "Select * from Region for xml auto, xmldata";
             SqlCommand sqlCommand = database.GetSqlStringCommand(queryString) as SqlCommand;
-            asyncResult = database.BeginExecuteXmlReader(sqlCommand);
+            database.BeginExecuteXmlReader(sqlCommand, 
+                ar =>
+                    {
+                        barrier.Await();
+                        reader = database.EndExecuteXmlReader(ar);
+                        barrier.Await();
+                    }, null);
         }
 
 
         [TestMethod]
         public void ThenEndExecuteXmlReaderReturnsXml()
         {
-            using (XmlReader reader = database.EndExecuteXmlReader(asyncResult))
+            barrier.Await(4000);
+            barrier.Await(4000);
+            using (reader)
             {
                 Assert.IsNotNull(reader);
                 Assert.IsNotNull(reader.MoveToContent());
@@ -484,7 +514,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
         public void ThenCommandExecutedEventWasFiredOnEndExecute()
         {
             Assert.AreEqual(0, commandExecutedEvents.Count);
-            database.EndExecuteXmlReader(asyncResult).Close();
+            barrier.Await(4000);
+            barrier.Await(4000);
+            reader.Close();
             Assert.AreEqual(1, commandExecutedEvents.Count);
         }
     }
@@ -500,7 +532,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
 
             string queryString = "Select * from Region for xml auto, xmldata";
             SqlCommand sqlCommand = database.GetSqlStringCommand(queryString) as SqlCommand;
-            asyncResult = database.BeginExecuteXmlReader(sqlCommand, transaction);
+            asyncResult = database.BeginExecuteXmlReader(sqlCommand, transaction, null, null);
         }
 
 
@@ -542,7 +574,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
 
             string queryString = "Select * from Region for LMX auto, xmldata";
             SqlCommand sqlCommand = database.GetSqlStringCommand(queryString) as SqlCommand;
-            asyncResult = database.BeginExecuteXmlReader(sqlCommand);
+            asyncResult = database.BeginExecuteXmlReader(sqlCommand, null, null);
         }
 
 
@@ -588,7 +620,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
         {
             base.Arrange();
 
-            asyncResult = database.BeginExecuteReader(transaction, CommandType.Text, "SELECT 'hello there'");
+            asyncResult = database.BeginExecuteReader(transaction, CommandType.Text, "SELECT 'hello there'", null, null);
         }
 
         [TestMethod]
@@ -624,7 +656,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
         {
             base.Arrange();
             
-            asyncResult = database.BeginExecuteReader(CommandType.Text, "bad sql");
+            asyncResult = database.BeginExecuteReader(CommandType.Text, "bad sql", null, null);
         }
 
 
@@ -632,7 +664,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
         [ExpectedException(typeof(SqlException))]
         public void ThenEndExecuteReaderThrows()
         {
-            var reader = database.EndExecuteReader(asyncResult);
+            database.EndExecuteReader(asyncResult);
         }
 
         [TestMethod]
@@ -682,7 +714,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
         {
             base.Arrange();
 
-            asyncResult = database.BeginExecuteReader(transaction, CommandType.Text, "Bad SQL");
+            asyncResult = database.BeginExecuteReader(transaction, CommandType.Text, "Bad SQL", null, null);
         }
 
         [TestMethod]
@@ -743,7 +775,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
         {
             base.Arrange();
 
-            asyncResult = database.BeginExecuteReader("Ten Most Expensive Products");
+            asyncResult = database.BeginExecuteReader("Ten Most Expensive Products", null, null);
         }
 
         [TestMethod]
@@ -777,7 +809,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
         {
             base.Arrange();
 
-            asyncResult = database.BeginExecuteReader(transaction, "Ten Most Expensive Products");
+            asyncResult = database.BeginExecuteReader(transaction, "Ten Most Expensive Products", null, null);
         }
 
         [TestMethod]
@@ -808,6 +840,295 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
     }
 
     [TestClass]
+    public class WhenAsynchronouslyInvokingExecuteScalar : AsynchronousConnectionContext
+    {
+        IAsyncResult asyncResult;
+
+        protected override void Arrange()
+        {
+            base.Arrange();
+
+            asyncResult = database.BeginExecuteScalar(CommandType.Text, "SELECT 'hello there'", null, null);
+        }
+
+
+        [TestMethod]
+        public void ThenConnectionIsClosedOnceScalarExecuted()
+        {
+            var scalar = database.EndExecuteScalar(asyncResult);
+            Assert.AreEqual(ConnectionState.Closed, lastConnectionStateChange);
+
+            Assert.AreEqual("hello there", scalar);
+        }
+
+        [TestMethod]
+        public void ThenCommandExecutedEventWasFiredOnEndExecute()
+        {
+            Assert.AreEqual(0, commandExecutedEvents.Count);
+            var result = database.EndExecuteScalar(asyncResult);
+            Assert.AreEqual(1, commandExecutedEvents.Count);
+        }
+    }
+
+    [TestClass]
+    public class WhenAsynchronouslyInvokingExecuteScalarWithoutAnyResults : AsynchronousConnectionContext
+    {
+        IAsyncResult asyncResult;
+
+        protected override void Arrange()
+        {
+            base.Arrange();
+
+            asyncResult = database.BeginExecuteScalar(CommandType.Text, "waitfor delay '00:00:02';", null, null);
+        }
+
+        [TestMethod]
+        public void ThenEndResultReturnsNull()
+        {
+            var result = database.EndExecuteScalar(asyncResult);
+            Assert.IsNull(result);
+        }
+    }
+
+    [TestClass]
+    public class WhenAsynchronouslyInvokingExecuteScalarWithoutAnyRecords : AsynchronousConnectionContext
+    {
+        IAsyncResult asyncResult;
+
+        protected override void Arrange()
+        {
+            base.Arrange();
+
+            asyncResult = database.BeginExecuteScalar(CommandType.Text, "SELECT 'Hello World' WHERE 1=0", null, null);
+        }
+
+
+        [TestMethod]
+        public void ThenEndResultReturnsNull()
+        {
+            var result = database.EndExecuteScalar(asyncResult);
+            Assert.IsNull(result);
+        }
+    }
+
+    [TestClass]
+    public class WhenAsynchronouslyInvokingExecuteScalarWithTransaction : TransactionalAsynchronousConnectionWithRollback
+    {
+        IAsyncResult asyncResult;
+
+        protected override void Arrange()
+        {
+            base.Arrange();
+
+            asyncResult = database.BeginExecuteScalar(transaction, CommandType.Text, "SELECT 'hello there'", null, null);
+        }
+
+        [TestMethod]
+        public void ThenConnectionIsNotClosedAfterScalarIsClosed()
+        {
+            var Scalar = database.EndExecuteScalar(asyncResult);
+            Assert.AreEqual(ConnectionState.Open, transaction.Connection.State);
+        }
+
+        [TestMethod]
+        public void ThenNoNewConnectionIsCreated()
+        {
+            Assert.AreEqual(0, numberOfConnectionsCreated);
+        }
+
+        [TestMethod]
+        public void ThenCommandExecutedEventWasFiredOnEndExecute()
+        {
+            Assert.AreEqual(0, commandExecutedEvents.Count);
+            database.EndExecuteScalar(asyncResult);
+            Assert.AreEqual(1, commandExecutedEvents.Count);
+        }
+    }
+
+    [TestClass]
+    public class WhenAsynchronouslyInvokingExecuteScalarWithBadSQL : AsynchronousConnectionContext
+    {
+        IAsyncResult asyncResult;
+
+        protected override void Arrange()
+        {
+            base.Arrange();
+
+            asyncResult = database.BeginExecuteScalar(CommandType.Text, "bad sql", null, null);
+        }
+
+
+        [TestMethod]
+        [ExpectedException(typeof(SqlException))]
+        public void ThenEndExecuteScalarThrows()
+        {
+            database.EndExecuteScalar(asyncResult);
+        }
+
+        [TestMethod]
+        public void ThenConnectionIsClosed()
+        {
+            try
+            {
+                database.EndExecuteScalar(asyncResult);
+            }
+            catch (SqlException) { }
+
+            Assert.AreEqual(ConnectionState.Closed, lastConnectionStateChange);
+        }
+
+        [TestMethod]
+        public void ThenNoCommandExecutedEventWasFired()
+        {
+            try
+            {
+                database.EndExecuteScalar(asyncResult);
+            }
+            catch (SqlException) { }
+
+            Assert.AreEqual(0, commandExecutedEvents.Count);
+        }
+
+
+        [TestMethod]
+        public void ThenCommandFailedEventWasFired()
+        {
+            try
+            {
+                database.EndExecuteScalar(asyncResult);
+            }
+            catch (SqlException) { }
+
+            Assert.AreEqual(1, commandFailedEvents.Count);
+        }
+    }
+
+    [TestClass]
+    public class WhenAsynchronouslyInvokingExecuteScalarWithBadSQLWithinTransaction : TransactionalAsynchronousConnectionWithRollback
+    {
+        IAsyncResult asyncResult;
+
+        protected override void Arrange()
+        {
+            base.Arrange();
+
+            asyncResult = database.BeginExecuteScalar(transaction, CommandType.Text, "Bad SQL", null, null);
+        }
+
+        [TestMethod]
+        public void ThenConnectionStaysOpen()
+        {
+            try
+            {
+                database.EndExecuteScalar(asyncResult);
+            }
+            catch (SqlException) { }
+
+            Assert.AreEqual(ConnectionState.Open, transaction.Connection.State);
+        }
+
+        [TestMethod]
+        public void ThenNoNewConnectionIsCreated()
+        {
+            try
+            {
+                database.EndExecuteScalar(asyncResult);
+            }
+            catch (SqlException) { }
+            Assert.AreEqual(0, numberOfConnectionsCreated);
+        }
+
+        [TestMethod]
+        public void ThenNoCommandExecutedEventWasFired()
+        {
+            try
+            {
+                database.EndExecuteScalar(asyncResult);
+            }
+            catch (SqlException) { }
+
+            Assert.AreEqual(0, commandExecutedEvents.Count);
+        }
+
+
+        [TestMethod]
+        public void ThenCommandFailedEventWasFired()
+        {
+            try
+            {
+                database.EndExecuteScalar(asyncResult);
+            }
+            catch (SqlException) { }
+
+            Assert.AreEqual(1, commandFailedEvents.Count);
+        }
+    }
+
+    [TestClass]
+    public class WhenAsynchronouslyInvokingExecuteScalarOnSproc : AsynchronousConnectionContext
+    {
+        IAsyncResult asyncResult;
+
+        protected override void Arrange()
+        {
+            base.Arrange();
+
+            asyncResult = database.BeginExecuteScalar("Ten Most Expensive Products", null, null);
+        }
+
+        [TestMethod]
+        public void ThenEndExecuteScalarReturnsScalarValue()
+        {
+            var result = database.EndExecuteScalar(asyncResult);
+            Assert.IsNotNull(result);
+            Assert.AreEqual("Côte de Blaye", result);
+        }
+
+
+        [TestMethod]
+        public void ThenConnectionIsClosedOnceScalarIsClosed()
+        {
+            var result = database.EndExecuteScalar(asyncResult);
+            Assert.AreEqual(ConnectionState.Closed, lastConnectionStateChange);
+        }
+    }
+
+    [TestClass]
+    public class WhenAsynchronouslyInvokingExecuteScalarOnSprocWithinTransaction : TransactionalAsynchronousConnectionWithRollback
+    {
+        IAsyncResult asyncResult;
+
+        protected override void Arrange()
+        {
+            base.Arrange();
+
+            asyncResult = database.BeginExecuteScalar(transaction, "Ten Most Expensive Products", null, null);
+        }
+
+        [TestMethod]
+        public void ThenEndExecuteScalarReturnsScalarResult()
+        {
+            object result = database.EndExecuteScalar(asyncResult);
+            Assert.IsNotNull(result);
+            Assert.AreEqual("Côte de Blaye", result);
+        }
+
+        [TestMethod]
+        public void ThenConnectionStaysOpen()
+        {
+            object result = database.EndExecuteScalar(asyncResult);
+
+            Assert.AreEqual(ConnectionState.Open, transaction.Connection.State);
+        }
+
+        [TestMethod]
+        public void ThenNoNewConnectionIsCreated()
+        {
+            Assert.AreEqual(0, numberOfConnectionsCreated);
+        }
+    }
+
+    [TestClass]
     public class WhenCreatingMultipleAsyncReaders : AsynchronousConnectionContext
     {
         IAsyncResult asyncResult1;
@@ -818,15 +1139,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
         {
             base.Arrange();
 
-            asyncResult1 = database.BeginExecuteReader("Ten Most Expensive Products");
-            asyncResult2 = database.BeginExecuteReader("Ten Most Expensive Products");
-            asyncResult3 = database.BeginExecuteReader("Ten Most Expensive Products");
+            asyncResult1 = database.BeginExecuteReader("Ten Most Expensive Products", null, null);
+            asyncResult2 = database.BeginExecuteReader("Ten Most Expensive Products", null, null);
+            asyncResult3 = database.BeginExecuteReader("Ten Most Expensive Products", null, null);
         }
 
         [TestMethod]
         public void ThenMultipleConnectionsAreCreated()
         {
-            Assert.AreEqual(3, base.numberOfConnectionsCreated);
+            Assert.AreEqual(3, numberOfConnectionsCreated);
 
             database.EndExecuteReader(asyncResult1).Dispose();
             database.EndExecuteReader(asyncResult2).Dispose();
@@ -864,7 +1185,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
 
             asyncResult = database.BeginExecuteNonQuery(CommandType.Text, 
                 @"CREATE TABLE [test] (c2 int);
-                 INSERT INTO test (c2) VALUES (12)");
+                 INSERT INTO test (c2) VALUES (12)",
+                null, null);
         }
 
         [TestMethod]
@@ -872,8 +1194,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
         {
             database.EndExecuteNonQuery(asyncResult);
 
-            var doenstThrow = database.ExecuteReader(CommandType.Text, "Select * from test");
-            doenstThrow.Dispose();
+            var doesntThrow = database.ExecuteReader(CommandType.Text, "Select * from test");
+            doesntThrow.Dispose();
 
             //roll back tx
             transactionScope.Dispose();
@@ -894,7 +1216,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
         {
             database.EndExecuteNonQuery(asyncResult);
 
-            IAsyncResult execReader = database.BeginExecuteReader(CommandType.Text, "Select * from test");
+            IAsyncResult execReader = database.BeginExecuteReader(CommandType.Text, "Select * from test", null, null);
             IDataReader reader = database.EndExecuteReader(execReader);
 
             Assert.IsTrue(reader.Read());

@@ -132,7 +132,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Config
         /// <summary>
         /// Gets or sets the default event ID.
         /// </summary>
-        [ConfigurationProperty(eventId, IsRequired = true)]
+        [ConfigurationProperty(eventId, IsRequired = true, DefaultValue=100)]
         public int EventId
         {
             get { return (int)this[eventId]; }
@@ -142,7 +142,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Config
         /// <summary>
         /// Gets or sets the default severity.
         /// </summary>
-        [ConfigurationProperty(severity, IsRequired = true)]
+        [ConfigurationProperty(severity, IsRequired = true, DefaultValue = TraceEventType.Error)]
         public TraceEventType Severity
         {
             get { return (TraceEventType)this[severity]; }
@@ -152,7 +152,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Config
         /// <summary>
         ///  Gets or sets the default title.
         /// </summary>
-        [ConfigurationProperty(title, IsRequired = true)]
+        [ConfigurationProperty(title, IsRequired = true, DefaultValue="Enterprise Library Exception Handling")]
         public string Title
         {
             get { return (string)this[title]; }

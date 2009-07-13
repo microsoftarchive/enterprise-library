@@ -352,29 +352,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Design.Pro
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Timestamp: {timestamp}
-        ///Message: {message}
-        ///Category: {category}
-        ///Priority: {priority}
-        ///EventId: {eventid}
-        ///Severity: {severity}
-        ///Title:{title}
-        ///Machine: {machine}
-        ///Application Domain: {appDomain}
-        ///Process Id: {processId}
-        ///Process Name: {processName}
-        ///Win32 Thread Id: {win32ThreadId}
-        ///Thread Name: {threadName}
-        ///Extended Properties: {dictionary({key} - {value}
-        ///)}.
-        /// </summary>
-        internal static string DefaultTextFormat {
-            get {
-                return ResourceManager.GetString("DefaultTextFormat", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to From email address.
         /// </summary>
         internal static string EmailTraceListenerFromAddressDescription {
@@ -686,6 +663,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Design.Pro
         internal static string LogSettingsNode {
             get {
                 return ResourceManager.GetString("LogSettingsNode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The maximum number of archive files to keep. Zero for no limit..
+        /// </summary>
+        internal static string MaxArchivedFilesDescription {
+            get {
+                return ResourceManager.GetString("MaxArchivedFilesDescription", resourceCulture);
             }
         }
         

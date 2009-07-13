@@ -34,10 +34,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Instrumentation
         {
             FileConfigurationSource configurationSourceWithInvalidConfiguration = new FileConfigurationSource("errornous.config");
 
-            using (EventLog eventLog = GetEventLog())
+            using (EventLogTracker eventLog = new EventLogTracker(GetEventLog()))
             {
-                int originalEventCount = eventLog.Entries.Count;
-
                 try
                 {
                     ValidationFactory.CreateValidator<EventLogFixture>(configurationSourceWithInvalidConfiguration);
@@ -45,12 +43,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Instrumentation
                 }
                 catch (ConfigurationErrorsException e)
                 {
-                    Assert.IsTrue(eventLog.Entries.Count > originalEventCount);
-                    var newValidationEntries =
-                        (from entry in eventLog.GetNewEntries(originalEventCount)
-                         where entry.Source == "Enterprise Library Validation" &&
-                               entry.Message.IndexOf(e.Message) > -1
-                         select entry).ToList();
+                    var newValidationEntries = (
+                        from entry in eventLog.NewEntries()
+                        where entry.Source == "Enterprise Library Validation" &&
+                            entry.Message.IndexOf(e.Message) > -1
+                        select entry
+                        ).ToList();
 
                     Assert.AreEqual(1, newValidationEntries.Count);
                 }

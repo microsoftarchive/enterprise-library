@@ -14,8 +14,6 @@ using System.Configuration;
 using System.Diagnostics;
 using System.Linq.Expressions;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 {
@@ -61,8 +59,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// <returns>A lambda expression to create a trace listener.</returns>
         protected override Expression<Func<TraceListener>> GetCreationExpression()
         {
-            return () => new XmlTraceListener(this.FileName,
-                                              Container.Resolved<ILoggingInstrumentationProvider>());
+            return () => new XmlTraceListener(this.FileName);
         }
     }
 }

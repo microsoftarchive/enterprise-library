@@ -393,6 +393,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Oracle
         }
 
         /// <summary>
+        /// Does this <see cref='Database'/> object support parameter discovery?
+        /// </summary>
+        /// <value>true.</value>
+        public override bool SupportsParemeterDiscovery
+        {
+            get { return true; }
+        }
+
+        /// <summary>
         /// Retrieves parameter information from the stored procedure specified in the <see cref="DbCommand"/> and populates the Parameters collection of the specified <see cref="DbCommand"/> object. 
         /// </summary>
         /// <param name="discoveryCommand">The <see cref="DbCommand"/> to do the discovery.</param>
@@ -421,6 +430,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Oracle
             return command;
         }
 
+        /// <summary>
+        /// <para>Discovers parameters on the <paramref name="command"/> and assigns the values from <paramref name="parameterValues"/> to the <paramref name="command"/>s Parameters list.</para>
+        /// </summary>
+        /// <param name="command">The command the parameeter values will be assigned to</param>
+        /// <param name="parameterValues">The parameter values that will be assigned to the command.</param>
+        public override void AssignParameters(DbCommand command, object[] parameterValues)
+        {
+            // need to do this before of eventual parameter discovery
+            string updatedStoredProcedureName = TranslatePackageSchema(command.CommandText);
+
+            base.AssignParameters(command, parameterValues);
+        }
         /// <summary>
         /// <para>Creates a <see cref="DbCommand"/> for a stored procedure.</para>
         /// </summary>

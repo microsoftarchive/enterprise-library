@@ -11,7 +11,6 @@
 
 using System.Diagnostics;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
 {
@@ -35,17 +34,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         /// </summary>
         /// <param name="innerListener">The wrapped listener.</param>
         protected FormattedTraceListenerWrapperBase(TraceListener innerListener)
-            :this(innerListener, new NullLoggingInstrumentationProvider())
-        {
-        }
-
-        /// <summary>
-        /// Initializes a <see cref="FormattedTraceListenerWrapperBase"/> with an inner <see cref="TraceListener"/>.
-        /// </summary>
-        /// <param name="innerListener">The wrapped listener.</param>
-        /// <param name="instrumentationProvider">The instrumentation provider to use.</param>
-        protected FormattedTraceListenerWrapperBase(TraceListener innerListener, ILoggingInstrumentationProvider instrumentationProvider)
-            :base(instrumentationProvider)
         {
             this.innerListener = innerListener;
         }
@@ -57,20 +45,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         /// <param name="innerListener">The wrapped listener.</param>
         /// <param name="formater">The formatter.</param>
         protected FormattedTraceListenerWrapperBase(TraceListener innerListener, ILogFormatter formater)
-            : this(innerListener, formater, new NullLoggingInstrumentationProvider())
-        {
-            this.innerListener = innerListener;
-        }
-
-        /// <summary>
-        /// Initializes a <see cref="FormattedTraceListenerWrapperBase"/> with an inner <see cref="TraceListener"/> 
-        /// and a <see cref="ILogFormatter"/>.
-        /// </summary>
-        /// <param name="innerListener">The wrapped listener.</param>
-        /// <param name="formater">The formatter.</param>
-        /// <param name="instrumentationProvider">The instrumentation provider to use.</param>
-        protected FormattedTraceListenerWrapperBase(TraceListener innerListener, ILogFormatter formater, ILoggingInstrumentationProvider instrumentationProvider)
-            : base(formater, instrumentationProvider)
+            : base(formater)
         {
             this.innerListener = innerListener;
         }
@@ -116,8 +91,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
                     {
                         this.innerListener.TraceData(eventCache, source, severity, id, data);
                     }
-
-                    InstrumentationProvider.FireTraceListenerEntryWrittenEvent();
                 }
                 else
                 {

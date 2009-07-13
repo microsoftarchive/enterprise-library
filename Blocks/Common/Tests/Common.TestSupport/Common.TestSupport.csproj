@@ -62,6 +62,7 @@
   <ItemGroup>
     <Compile Include="Barrier.cs" />
     <Compile Include="Configuration\ConfigurationFileHelper.cs" />
+    <Compile Include="Configuration\ConfigurationSourceBuilderFixture.cs" />
     <Compile Include="Configuration\ConfigurationSourceUpdatable.cs" />
     <Compile Include="Configuration\ConfigurationTestHelper.cs" />
     <Compile Include="Configuration\ContainerModel\ContainerSwitcher.cs" />

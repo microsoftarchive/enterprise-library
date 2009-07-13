@@ -10,8 +10,6 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Reflection;
 using System.Resources;
 
@@ -48,13 +46,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common
 
             string value = null;
 
-            if (null != asm) value = SearchForResource(asm, baseName, resourceName);
+            if (null != asm) value = SearchForResource(asm, resourceName);
             if (null == value) value = LoadAssemblyString(Assembly.GetExecutingAssembly(), baseName, resourceName);
             if (null == value) return string.Empty;
             return value;
         }
 
-        private static string SearchForResource(Assembly asm, string baseName, string resourceName)
+        private static string SearchForResource(Assembly asm, string resourceName)
         {
             string[] resources = asm.GetManifestResourceNames();
 
@@ -62,7 +60,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common
             {
                 // Remove additional .resource token
                 const string token = ".resources";
-                string resourceToUse = (string)resource.Clone();
+                string resourceToUse = resource;
                 if (resource.EndsWith(token))
                 {
                     resourceToUse = resource.Replace(token, string.Empty);

@@ -61,6 +61,7 @@
     <Compile Include="..\..\..\GlobalAssemblyInfo.cs">
       <Link>GlobalAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Configuration\ConfigurationSourceBuilderExtensions.cs" />
     <Compile Include="Configuration\FaultContractExceptionHandlerMappingData.cs" />
     <Compile Include="Configuration\Manageability\FaultContractExceptionHandlerDataWmiMapper.cs" />
     <Compile Include="Configuration\Manageability\Installer.cs">

@@ -40,8 +40,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
         [TestMethod]
         public void ListenerDataIsCreatedCorrectly()
         {
-            RollingFlatFileTraceListenerData listenerData = new RollingFlatFileTraceListenerData("listener", "log.txt", "header", "footer", 10, "yyyy-MM-dd", RollFileExistsBehavior.Increment,
-                                                                                                 RollInterval.Minute, TraceOptions.DateTime, "SimpleTextFormat");
+            RollingFlatFileTraceListenerData listenerData =
+                new RollingFlatFileTraceListenerData(
+                    "listener",
+                    "log.txt",
+                    "header",
+                    "footer",
+                    10,
+                    "yyyy-MM-dd",
+                    RollFileExistsBehavior.Increment,
+                    RollInterval.Minute,
+                    TraceOptions.DateTime,
+                    "SimpleTextFormat");
 
             Assert.AreSame(typeof(RollingFlatFileTraceListener), listenerData.Type);
             Assert.AreSame(typeof(RollingFlatFileTraceListenerData), listenerData.ListenerDataType);
@@ -70,10 +80,22 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
             string SimpleTextFormat = "SimpleTextFormat";
             string header = "header";
             string footer = "footer";
+            int maxArchivedFiles = 10;
 
-            RollingFlatFileTraceListenerData data = new RollingFlatFileTraceListenerData(name, fileName, header, footer, rollSizeKB, timesTampPattern,
-                                                                                         rollFileExistsBehavior, rollInterval, traceOptions, SimpleTextFormat, SourceLevels.Critical);
+            RollingFlatFileTraceListenerData data =
+                new RollingFlatFileTraceListenerData(
+                    name, fileName,
+                    header,
+                    footer,
+                    rollSizeKB,
+                    timesTampPattern,
+                    rollFileExistsBehavior,
+                    rollInterval,
+                    traceOptions,
+                    SimpleTextFormat,
+                    SourceLevels.Critical);
             data.TraceOutputOptions = traceOptions;
+            data.MaxArchivedFiles = maxArchivedFiles;
 
             LoggingSettings settings = new LoggingSettings();
             settings.TraceListeners.Add(data);
@@ -100,16 +122,21 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
             Assert.AreEqual("SimpleTextFormat", ((RollingFlatFileTraceListenerData)roSettigs.TraceListeners.Get(name)).Formatter);
             Assert.AreEqual(header, ((RollingFlatFileTraceListenerData)roSettigs.TraceListeners.Get(name)).Header);
             Assert.AreEqual(footer, ((RollingFlatFileTraceListenerData)roSettigs.TraceListeners.Get(name)).Footer);
+            Assert.AreEqual(maxArchivedFiles, ((RollingFlatFileTraceListenerData)roSettigs.TraceListeners.Get(name)).MaxArchivedFiles);
         }
 
         [TestMethod]
         public void CanDeserializeSerializedConfigurationWithDefaults()
         {
             LoggingSettings rwLoggingSettings = new LoggingSettings();
-            rwLoggingSettings.TraceListeners.Add(new RollingFlatFileTraceListenerData("listener1", "log1.txt", "header", "footer", 10, "yyyy-MM-dd", RollFileExistsBehavior.Increment,
-                                                                                      RollInterval.Minute, TraceOptions.DateTime, "SimpleTextFormat1"));
-            rwLoggingSettings.TraceListeners.Add(new RollingFlatFileTraceListenerData("listener2", "log2.txt", "header", "footer", 10, "yyyy-MM-dd", RollFileExistsBehavior.Increment,
-                                                                                      RollInterval.Minute, TraceOptions.DateTime, "SimpleTextFormat1"));
+            rwLoggingSettings.TraceListeners.Add(
+                new RollingFlatFileTraceListenerData(
+                    "listener1", "log1.txt", "header", "footer", 10, "yyyy-MM-dd", RollFileExistsBehavior.Increment,
+                    RollInterval.Minute, TraceOptions.DateTime, "SimpleTextFormat1"));
+            rwLoggingSettings.TraceListeners.Add(
+                new RollingFlatFileTraceListenerData(
+                    "listener2", "log2.txt", "header", "footer", 10, "yyyy-MM-dd", RollFileExistsBehavior.Increment,
+                    RollInterval.Minute, TraceOptions.DateTime, "SimpleTextFormat1"));
 
             IDictionary<string, ConfigurationSection> sections = new Dictionary<string, ConfigurationSection>();
             sections[LoggingSettings.SectionName] = rwLoggingSettings;
@@ -148,7 +175,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Con
             loggingSettings.TraceListeners.Add(new RollingFlatFileTraceListenerData("listener", "log.txt", "header", "footer", 10, "yyyy-MM-dd", RollFileExistsBehavior.Increment,
                                                                                     RollInterval.Minute, TraceOptions.DateTime, "SimpleTextFormat"));
 
-            TraceListener listener = 
+            TraceListener listener =
                 GetListener("listener\u200cimplementation", CommonUtil.SaveSectionsAndGetConfigurationSource(loggingSettings));
 
             Assert.IsNotNull(listener);

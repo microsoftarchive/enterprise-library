@@ -19,7 +19,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Tests
         public DistributorServiceTestFacade()
         {
             this.ServiceName = MockServiceName;
-			//this.EventLogger.ApplicationName = ServiceName;
+			//this.EventLogger.EventSource = ServiceName;
         }
 
         private ServiceStatus status;

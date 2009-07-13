@@ -12,7 +12,6 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
 
@@ -24,32 +23,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
     public class FormattedTextWriterTraceListener : TextWriterTraceListener
     {
         private ILogFormatter formatter;
-        private ILoggingInstrumentationProvider instrumentationProvider;
-
-        /// <summary>
-        /// Gets the object that provides instrumentation services for the trace listener.
-        /// </summary>
-        protected ILoggingInstrumentationProvider InstrumentationProvider
-        {
-            get { return instrumentationProvider; }
-        }
 
         /// <summary>
         /// Initializes a new instance of <see cref="FormattedTextWriterTraceListener"/>.
         /// </summary>
         public FormattedTextWriterTraceListener()
-            : this(new NullLoggingInstrumentationProvider())
         {
-        }
-
-
-        /// <summary>
-        /// Initializes a new instance of <see cref="FormattedTextWriterTraceListener"/>.
-        /// </summary>
-        /// <param name="instrumentationProvider">The instrumentation provider to use.</param>
-        public FormattedTextWriterTraceListener(ILoggingInstrumentationProvider instrumentationProvider)
-        {
-            this.instrumentationProvider = instrumentationProvider;
         }
 
         /// <summary>
@@ -57,18 +36,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         /// </summary>
         /// <param name="formatter">The formatter to format the messages.</param>
         public FormattedTextWriterTraceListener(ILogFormatter formatter)
-            : this()
-        {
-            this.Formatter = formatter;
-        }
-
-        /// <summary>
-        /// Initializes a new instance of <see cref="FormattedTextWriterTraceListener"/> with a <see cref="ILogFormatter"/>.
-        /// </summary>
-        /// <param name="formatter">The formatter to format the messages.</param>
-        /// <param name="instrumentationProvider">The instrumentation provider to use.</param>
-        public FormattedTextWriterTraceListener(ILogFormatter formatter, ILoggingInstrumentationProvider instrumentationProvider)
-            : this(instrumentationProvider)
         {
             this.Formatter = formatter;
         }
@@ -84,18 +51,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         {
             this.Formatter = formatter;
         }
-        /// <summary>
-        /// Initializes a new instance of <see cref="FormattedTextWriterTraceListener"/> with a 
-        /// <see cref="ILogFormatter"/> and a <see cref="Stream"/>.
-        /// </summary>
-        /// <param name="stream">The stream to write to.</param>
-        /// <param name="formatter">The formatter to format the messages.</param>
-        /// <param name="instrumentationProvider">The instrumentation provider to use.</param>
-        public FormattedTextWriterTraceListener(Stream stream, ILogFormatter formatter, ILoggingInstrumentationProvider instrumentationProvider)
-            : this(stream, instrumentationProvider)
-        {
-            this.Formatter = formatter;
-        }
 
         /// <summary>
         /// Initializes a new instance of <see cref="FormattedTextWriterTraceListener"/> with a <see cref="Stream"/>.
@@ -103,20 +58,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         /// <param name="stream">The stream to write to.</param>
         public FormattedTextWriterTraceListener(Stream stream)
             : base(stream)
-        {
-            this.instrumentationProvider = new NullLoggingInstrumentationProvider();
-        }
-
-        /// <summary>
-        /// Initializes a new instance of <see cref="FormattedTextWriterTraceListener"/> with a <see cref="Stream"/>.
-        /// </summary>
-        /// <param name="stream">The stream to write to.</param>
-        /// <param name="instrumentationProvider">The instrumentation provider to use.</param>
-        public FormattedTextWriterTraceListener(Stream stream, ILoggingInstrumentationProvider instrumentationProvider)
-            : base(stream)
-        {
-            this.instrumentationProvider = instrumentationProvider;
-        }
+        { }
 
         /// <summary>
         /// Initializes a new instance of <see cref="FormattedTextWriterTraceListener"/> with a 
@@ -135,33 +77,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         /// </summary>
         /// <param name="writer">The writer to write to.</param>
         public FormattedTextWriterTraceListener(TextWriter writer)
-            : this(writer, new NullLoggingInstrumentationProvider())
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of <see cref="FormattedTextWriterTraceListener"/> with a 
-        /// <see cref="ILogFormatter"/> and a <see cref="TextWriter"/>.
-        /// </summary>
-        /// <param name="writer">The writer to write to.</param>
-        /// <param name="formatter">The formatter to format the messages.</param>
-        /// <param name="instrumentationProvider">The instrumentation provider to use.</param>
-        public FormattedTextWriterTraceListener(TextWriter writer, ILogFormatter formatter, ILoggingInstrumentationProvider instrumentationProvider)
-            : this(writer, instrumentationProvider)
-        {
-            this.Formatter = formatter;
-        }
-
-        /// <summary>
-        /// Initializes a new instance of <see cref="FormattedTextWriterTraceListener"/> with a <see cref="TextWriter"/>.
-        /// </summary>
-        /// <param name="writer">The writer to write to.</param>
-        /// <param name="instrumentationProvider">The instrumentation provider to use.</param>
-        public FormattedTextWriterTraceListener(TextWriter writer, ILoggingInstrumentationProvider instrumentationProvider)
             : base(writer)
-        {
-            this.instrumentationProvider = instrumentationProvider;
-        }
+        { }
 
         /// <summary>
         /// Initializes a new instance of <see cref="FormattedTextWriterTraceListener"/> with a 
@@ -170,29 +87,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         /// <param name="fileName">The file name to write to.</param>
         /// <param name="formatter">The formatter to format the messages.</param>
         public FormattedTextWriterTraceListener(string fileName, ILogFormatter formatter)
-            : this(fileName, formatter, new NullLoggingInstrumentationProvider())
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of <see cref="FormattedTextWriterTraceListener"/> with a file name.
-        /// </summary>
-        /// <param name="fileName">The file name to write to.</param>
-        public FormattedTextWriterTraceListener(string fileName)
-            : this(fileName, new NullLoggingInstrumentationProvider())
-        {
-        }
-
-
-        /// <summary>
-        /// Initializes a new instance of <see cref="FormattedTextWriterTraceListener"/> with a 
-        /// <see cref="ILogFormatter"/> and a file name.
-        /// </summary>
-        /// <param name="fileName">The file name to write to.</param>
-        /// <param name="formatter">The formatter to format the messages.</param>
-        /// <param name="instrumentationProvider">The instrumentation provider to use.</param>
-        public FormattedTextWriterTraceListener(string fileName, ILogFormatter formatter, ILoggingInstrumentationProvider instrumentationProvider)
-            : this(fileName, instrumentationProvider)
+            : this(fileName)
         {
             this.Formatter = formatter;
         }
@@ -201,11 +96,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         /// Initializes a new instance of <see cref="FormattedTextWriterTraceListener"/> with a file name.
         /// </summary>
         /// <param name="fileName">The file name to write to.</param>
-        /// <param name="instrumentationProvider">The instrumentation provider to use.</param>
-        public FormattedTextWriterTraceListener(string fileName, ILoggingInstrumentationProvider instrumentationProvider)
+        public FormattedTextWriterTraceListener(string fileName)
             : base(RootFileNameAndEnsureTargetFolderExists(fileName))
         {
-            this.instrumentationProvider = instrumentationProvider;
         }
 
         /// <summary>
@@ -222,42 +115,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         }
 
         /// <summary>
-        /// Initializes a new named instance of <see cref="FormattedTextWriterTraceListener"/> with a 
-        /// <see cref="ILogFormatter"/> and a <see cref="Stream"/>.
-        /// </summary>
-        /// <param name="stream">The stream to write to.</param>
-        /// <param name="name">The name.</param>
-        /// <param name="formatter">The formatter to format the messages.</param>
-        /// <param name="instrumentationProvider">The instrumentation provider to use.</param>
-        public FormattedTextWriterTraceListener(Stream stream, string name, ILogFormatter formatter, ILoggingInstrumentationProvider instrumentationProvider)
-            : this(stream, name)
-        {
-            this.Formatter = formatter;
-        }
-
-
-        /// <summary>
         /// Initializes a new named instance of <see cref="FormattedTextWriterTraceListener"/> with a <see cref="Stream"/>.
         /// </summary>
         /// <param name="stream">The stream to write to.</param>
         /// <param name="name">The name.</param>
         public FormattedTextWriterTraceListener(Stream stream, string name)
-            : this(stream, name,  new NullLoggingInstrumentationProvider())
-        {
-        }
-
-
-        /// <summary>
-        /// Initializes a new named instance of <see cref="FormattedTextWriterTraceListener"/> with a <see cref="Stream"/>.
-        /// </summary>
-        /// <param name="stream">The stream to write to.</param>
-        /// <param name="name">The name.</param>
-        /// <param name="instrumentationProvider">The instrumentation provider to use.</param>
-        public FormattedTextWriterTraceListener(Stream stream, string name, ILoggingInstrumentationProvider instrumentationProvider)
             : base(stream, name)
-        {
-            this.instrumentationProvider = instrumentationProvider;
-        }
+        { }
 
         /// <summary>
         /// Initializes a new named instance of <see cref="FormattedTextWriterTraceListener"/> with a 
@@ -274,41 +138,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
 
         /// <summary>
         /// Initializes a new named instance of <see cref="FormattedTextWriterTraceListener"/> with a 
-        /// <see cref="ILogFormatter"/> and a <see cref="TextWriter"/>.
-        /// </summary>
-        /// <param name="writer">The writer to write to.</param>
-        /// <param name="name">The name.</param>
-        /// <param name="formatter">The formatter to format the messages.</param>
-        /// <param name="instrumentationProvider">The instrumentation provider to use.</param>
-        public FormattedTextWriterTraceListener(TextWriter writer, string name, ILogFormatter formatter, ILoggingInstrumentationProvider instrumentationProvider)
-            : this(writer, name, instrumentationProvider)
-        {
-            this.Formatter = formatter;
-        }
-
-        /// <summary>
-        /// Initializes a new named instance of <see cref="FormattedTextWriterTraceListener"/> with a 
         /// <see cref="TextWriter"/>.
         /// </summary>
         /// <param name="writer">The writer to write to.</param>
         /// <param name="name">The name.</param>
         public FormattedTextWriterTraceListener(TextWriter writer, string name)
-            : this(writer, name, new NullLoggingInstrumentationProvider())
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new named instance of <see cref="FormattedTextWriterTraceListener"/> with a 
-        /// <see cref="TextWriter"/>.
-        /// </summary>
-        /// <param name="writer">The writer to write to.</param>
-        /// <param name="name">The name.</param>
-        /// <param name="instrumentationProvider">The instrumentation provider to use.</param>
-        public FormattedTextWriterTraceListener(TextWriter writer, string name, ILoggingInstrumentationProvider instrumentationProvider)
             : base(writer, name)
-        {
-            this.instrumentationProvider = instrumentationProvider;
-        }
+        { }
 
         /// <summary>
         /// Initializes a new named instance of <see cref="FormattedTextWriterTraceListener"/> with a 
@@ -318,8 +154,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         /// <param name="name">The name.</param>
         /// <param name="formatter">The formatter to format the messages.</param>
         public FormattedTextWriterTraceListener(string fileName, string name, ILogFormatter formatter)
-            : this(fileName, name, formatter, new NullLoggingInstrumentationProvider())
+            : this(fileName, name)
         {
+            this.Formatter = formatter;
         }
 
         /// <summary>
@@ -328,35 +165,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         /// </summary>
         /// <param name="fileName">The file name to write to.</param>
         /// <param name="name">The name.</param>
-        /// <param name="formatter">The formatter to format the messages.</param>
-        /// <param name="instrumentationProvider">The instrumentation provider to use.</param>
-        public FormattedTextWriterTraceListener(string fileName, string name, ILogFormatter formatter, ILoggingInstrumentationProvider instrumentationProvider)
-            : this(fileName, name)
-        {
-            this.Formatter = formatter;
-        }
-
-        /// <summary>
-        /// Initializes a new named instance of <see cref="FormattedTextWriterTraceListener"/> with a file name.
-        /// </summary>
-        /// <param name="fileName">The file name to write to.</param>
-        /// <param name="name">The name.</param>
         public FormattedTextWriterTraceListener(string fileName, string name)
-            : this(fileName, name, new NullLoggingInstrumentationProvider())
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new named instance of <see cref="FormattedTextWriterTraceListener"/> with a file name.
-        /// </summary>
-        /// <param name="fileName">The file name to write to.</param>
-        /// <param name="name">The name.</param>
-        /// <param name="instrumentationProvider">The instrumentation provider to use.</param>
-        public FormattedTextWriterTraceListener(string fileName, string name, ILoggingInstrumentationProvider instrumentationProvider)
             : base(RootFileNameAndEnsureTargetFolderExists(fileName), name)
-        {
-            this.instrumentationProvider = instrumentationProvider;
-        }
+        { }
 
         /// <summary>
         /// Intercepts the tracing request to format the object to trace.
@@ -383,7 +194,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
                     {
                         base.TraceData(eventCache, source, eventType, id, data);
                     }
-                    InstrumentationProvider.FireTraceListenerEntryWrittenEvent();
                 }
                 else
                 {

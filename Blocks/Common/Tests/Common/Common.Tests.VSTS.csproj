@@ -80,6 +80,7 @@
     <Compile Include="Configuration\ConfigurationModel\ChangeTrackingConfiguratorFixture.cs" />
     <Compile Include="Configuration\ConfigurationModel\ConfigurationBasedTypeRegistrationsProviderFixture.cs" />
     <Compile Include="Configuration\ConfigurationModel\TypeRegistrationConfigUpdateFixture.cs" />
+    <Compile Include="Configuration\ConfigurationSourceBuilderFixture.cs" />
     <Compile Include="Configuration\TypeRegistrationProvidersConfigurationSectionFixture.cs" />
     <Compile Include="Configuration\AssemblyQualifiedTypeNameConverterFixture.cs" />
     <Compile Include="Configuration\ByteArrayTypeConverterFixture.cs" />

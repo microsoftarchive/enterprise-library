@@ -13,7 +13,6 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Tests;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -44,18 +43,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners.Tests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void ConstuctingListenerWithNullInstrumentationProviderThrows()
-        {
-            FormattedEventLogTraceListener listener = new FormattedEventLogTraceListener(CommonUtil.EventLogSourceName,CommonUtil.EventLogNameCustom, "127.0.0.1", new TextFormatter("DUMMY{newline}DUMMY"), null);
-        }
-
-
-        [TestMethod]
         public void ListenerWillUseFormatterIfExists()
         {
             StringWriter writer = new StringWriter();
-            FormattedEventLogTraceListener listener = new FormattedEventLogTraceListener(CommonUtil.EventLogSourceName, CommonUtil.EventLogNameCustom, new TextFormatter("DUMMY{newline}DUMMY"));
+            FormattedEventLogTraceListener listener =
+                new FormattedEventLogTraceListener(CommonUtil.EventLogSourceName, CommonUtil.EventLogNameCustom, new TextFormatter("DUMMY{newline}DUMMY"));
 
             // need to go through the source to get a TraceEventCache
             LogSource source = new LogSource("notfromconfig", SourceLevels.All);

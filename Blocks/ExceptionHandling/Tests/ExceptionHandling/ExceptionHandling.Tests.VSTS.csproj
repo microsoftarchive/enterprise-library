@@ -60,6 +60,7 @@
   <ItemGroup>
     <Compile Include="APTCAFixture.cs" />
     <Compile Include="Configuration\ConfigurationSerializationFixture.cs" />
+    <Compile Include="Configuration\ConfigurationSourceBuilderExtensionsFixture.cs" />
     <Compile Include="Configuration\ExceptionHandlingReconfigurableTypeRegistrationFixture.cs" />
     <Compile Include="Configuration\ExceptionHandlingTypeRegistrationFixture.cs" />
     <Compile Include="Configuration\Unity\ExceptionHandlingBlockExtensionFixture.cs" />
@@ -99,10 +100,6 @@
     <ProjectReference Include="..\..\..\Common\Tests\Common.TestSupport\Common.TestSupport.csproj">
       <Project>{C6DE0220-E31B-486B-AB57-107636AEB927}</Project>
       <Name>Common.TestSupport</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Configuration\Tests\Design.TestSupport\Configuration.Design.TestSupport.csproj">
-      <Project>{5F235F22-5C06-41E9-8C24-0F982AB0DDC2}</Project>
-      <Name>Configuration.Design.TestSupport</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Src\ExceptionHandling\ExceptionHandling.csproj">
       <Project>{2DB0AD6D-BF59-4EBB-9F99-49ABD8539FD2}</Project>

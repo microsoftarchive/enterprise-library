@@ -42,7 +42,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
                     TraceOptions.DateTime | TraceOptions.Callstack,
                     "formatter")
                 {
-                    Filter = SourceLevels.Warning
+                    Filter = SourceLevels.Warning,
+                    MaxArchivedFiles = 100
                 };
         }
 
@@ -111,7 +112,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
                 .WithValueConstructorParameter("timestamp pattern")
                 .WithValueConstructorParameter(RollFileExistsBehavior.Increment)
                 .WithValueConstructorParameter(RollInterval.Day)
-                .WithContainerResolvedParameter<ILoggingInstrumentationProvider>(null)
+                .WithValueConstructorParameter(100)
                 .VerifyConstructorParameters();
         }
 

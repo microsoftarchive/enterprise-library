@@ -98,7 +98,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Tests.Configura
                 .WithValueConstructorParameter("write")
                 .WithValueConstructorParameter("add")
                 .WithContainerResolvedParameter<ILogFormatter>("formatter")
-                .WithContainerResolvedParameter<ILoggingInstrumentationProvider>(null)
                 .VerifyConstructorParameters();
         }
 

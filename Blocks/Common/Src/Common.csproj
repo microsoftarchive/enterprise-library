@@ -141,6 +141,7 @@
     <Compile Include="..\..\GlobalAssemblyInfo.cs">
       <Link>GlobalAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Configuration\ConfigurationSourceBuilder.cs" />
     <Compile Include="Configuration\ContainerModel\ChangeTrackingContainerConfigurator.cs" />
     <Compile Include="Configuration\ContainerModel\ConfigurationBasedTypeRegistrationsProvider.cs" />
     <Compile Include="Configuration\ContainerModel\ConfigurationChangeEventSource.cs" />
@@ -287,6 +288,7 @@
     <Compile Include="Configuration\Unity\ReaderWriterLockExtension.cs" />
     <Compile Include="Configuration\Unity\TransientPolicyBuildUpExtension.cs" />
     <Compile Include="Configuration\Unity\UnityContainerExtensions.cs" />
+    <Compile Include="IFluentInterface.cs" />
     <Compile Include="Instrumentation\CommonWmiInstaller.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -295,6 +297,7 @@
     </Compile>
     <Compile Include="Instrumentation\AbstractInstallerBuilder.cs" />
     <Compile Include="Instrumentation\Configuration\InstrumentationConfigurationSection.cs" />
+    <Compile Include="Instrumentation\Configuration\ConfigurationSourceBuilderExtensions.cs" />
     <Compile Include="Instrumentation\EnterpriseLibraryPerformanceCounterFactory.cs" />
     <Compile Include="Instrumentation\EventLogDefinitionAttribute.cs" />
     <Compile Include="Instrumentation\EventLogEntryFormatter.cs" />
@@ -316,6 +319,7 @@
     <Compile Include="Utility\IStringResolver.cs" />
     <Compile Include="Utility\ResourceStringResolver.cs" />
     <Compile Include="Utility\ServiceLocatorExtensions.cs" />
+    <Compile Include="Utility\WrappedAsyncOperation.cs" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />

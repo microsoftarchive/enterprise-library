@@ -24,51 +24,41 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Instrume
 	public class DistributorEventLogger
 	{
 		internal static string Header = ExceptionFormatter.Header;
-
-		private static readonly string DefaultApplicationName = Resources.DistributorEventLoggerDefaultApplicationName;
-		private const string DefaultLogName = "Application";
-		private string logName = null;
-		private string applicationName = null;
-		private NameValueCollection additionalInfo = new NameValueCollection();
+		private static readonly string DefaultEventSource = Resources.DistributorEventLoggerDefaultApplicationName;
+	    private string eventSource = null;
+	    private readonly NameValueCollection additionalInfo = new NameValueCollection();
 
 		/// <summary>
 		/// The Event logger used to back up configured logging sinks in the event of problems.
 		/// Used to write diagnostic messages to the event log.
 		/// </summary>
-		public DistributorEventLogger()
+		public DistributorEventLogger() 
+            : this(DefaultEventSource)
 		{
-			this.ApplicationName = DefaultApplicationName;
 		}
 
-		/// <summary>
-		/// Initialize a new instance of the <see cref="DistributorEventLogger"/>.
-		/// </summary>
-		/// <param name="logName">The name of the Event Log</param>
-		public DistributorEventLogger(string logName)
-		{
-			this.EventLogName = logName;
-			this.ApplicationName = applicationName;
-		}
+	    ///<summary>
+        /// The Event logger used to back up configured logging sinks in the event of problems.
+        /// Used to write diagnostic messages to the event log.
+	    ///</summary>
+        ///<param name="eventSource">The name of the <see cref="EventLog.Source"/> use when logging.</param>
+	    public DistributorEventLogger(string eventSource)
+	    {
+            if (string.IsNullOrEmpty(eventSource)) throw new ArgumentNullException("eventSource");
 
-		/// <summary>
-		/// Name of the windows service.
-		/// </summary>
-		public string ApplicationName
-		{
-			get { return ((null == applicationName) ? DefaultApplicationName : applicationName); }
-			set { applicationName = value; }
-		}
+	        this.EventSource = eventSource;
+	    }
 
-		/// <summary>
-		/// The Event Log name (i.e. the name of the event log to write to; e.g. "Application").
-		/// </summary>
-		public string EventLogName
-		{
-			get { return ((null == logName) ? DefaultLogName : logName); }
-			set { logName = value; }
-		}
+	    /// <summary>
+	    /// Name of the windows service.
+	    /// </summary>
+	    public string EventSource 
+	    {
+	        get { return (eventSource ?? DefaultEventSource); }
+	        set { eventSource = value; }
+	    }
 
-		/// <summary>
+	    /// <summary>
 		/// Add a message to the additional information name value collection.
 		/// </summary>
 		/// <param name="message">The message key</param>
@@ -84,7 +74,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Instrume
 		/// </summary>
 		public void LogServiceStarted()
 		{
-			LogServiceLifecycleEvent(string.Format(Resources.Culture, Resources.ServiceStartComplete, this.ApplicationName), true);
+			LogServiceLifecycleEvent(string.Format(Resources.Culture, Resources.ServiceStartComplete, this.EventSource), true);
 		}
 
 		/// <summary>
@@ -93,7 +83,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Instrume
 		/// </summary>
 		public void LogServiceResumed()
 		{
-			LogServiceLifecycleEvent(string.Format(Resources.Culture, Resources.ServiceResumeComplete, this.ApplicationName), true);
+			LogServiceLifecycleEvent(string.Format(Resources.Culture, Resources.ServiceResumeComplete, this.EventSource), true);
 		}
 
 		/// <summary>
@@ -102,7 +92,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Instrume
 		/// </summary>
 		public void LogServiceStopped()
 		{
-			LogServiceLifecycleEvent(string.Format(Resources.Culture, Resources.ServiceStopComplete, this.ApplicationName), false);
+			LogServiceLifecycleEvent(string.Format(Resources.Culture, Resources.ServiceStopComplete, this.EventSource), false);
 		}
 
 		/// <summary>
@@ -111,7 +101,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Instrume
 		/// </summary>
 		public void LogServicePaused()
 		{
-			LogServiceLifecycleEvent(string.Format(Resources.Culture, Resources.ServicePausedSuccess, this.ApplicationName), false);
+			LogServiceLifecycleEvent(string.Format(Resources.Culture, Resources.ServicePausedSuccess, this.EventSource), false);
 		}
 
 		/// <summary>
@@ -136,7 +126,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Instrume
 
 		private string GetMessage(Exception exception)
 		{
-			ExceptionFormatter exFormatter = new ExceptionFormatter(additionalInfo, this.ApplicationName);
+			ExceptionFormatter exFormatter = new ExceptionFormatter(additionalInfo, this.EventSource);
 			return exFormatter.GetMessage(exception);
 		}
 
@@ -160,7 +150,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Instrume
 			finalMessage = GetMessage(exception);
 			additionalInfo.Clear();
 
-			EventLog.WriteEntry(this.ApplicationName, finalMessage, GetEventLogEntryType(severity));
+			EventLog.WriteEntry(this.EventSource, finalMessage, GetEventLogEntryType(severity));
 		}
 
 		private void LogServiceLifecycleEvent(string message, bool started)

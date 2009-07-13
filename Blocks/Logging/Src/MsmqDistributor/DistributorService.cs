@@ -130,7 +130,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor
 				this.ApplicationName = distributorSettings.ServiceName;
 				this.eventLogger.AddMessage(NameTag, this.ApplicationName);
 
-				this.eventLogger.ApplicationName = this.ApplicationName;
+				this.eventLogger.EventSource = this.ApplicationName;
 				this.eventLogger.AddMessage(Resources.InitializeComponentCompletedMessage, Resources.InitializeComponentCompleted);
 			}
 			catch (LoggingException loggingException)

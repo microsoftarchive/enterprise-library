@@ -116,7 +116,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Tests
                 .WithValueConstructorParameter(true)
                 .WithValueConstructorParameter(false)
                 .WithValueConstructorParameter(MessageQueueTransactionType.Automatic)
-                .WithContainerResolvedParameter<ILoggingInstrumentationProvider>(null)
                 .VerifyConstructorParameters();
         }
 

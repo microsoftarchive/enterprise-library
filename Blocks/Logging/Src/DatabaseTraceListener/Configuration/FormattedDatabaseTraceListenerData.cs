@@ -16,7 +16,6 @@ using System.Linq.Expressions;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Configuration
 {
@@ -80,7 +79,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Configuration
                                                   string formatterName,
                                                   TraceOptions traceOutputOptions,
                                                   SourceLevels filter)
-            : base(name, typeof (FormattedDatabaseTraceListener), traceOutputOptions, filter)
+            : base(name, typeof(FormattedDatabaseTraceListener), traceOutputOptions, filter)
         {
             DatabaseInstanceName = databaseInstanceName;
             WriteLogStoredProcName = writeLogStoredProcName;
@@ -94,7 +93,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Configuration
         [ConfigurationProperty(databaseInstanceNameProperty, IsRequired = false)]
         public string DatabaseInstanceName
         {
-            get { return (string) base[databaseInstanceNameProperty]; }
+            get { return (string)base[databaseInstanceNameProperty]; }
             set { base[databaseInstanceNameProperty] = value; }
         }
 
@@ -104,7 +103,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Configuration
         [ConfigurationProperty(writeLogStoredProcNameProperty, IsRequired = true)]
         public string WriteLogStoredProcName
         {
-            get { return (string) base[writeLogStoredProcNameProperty]; }
+            get { return (string)base[writeLogStoredProcNameProperty]; }
             set { base[writeLogStoredProcNameProperty] = value; }
         }
 
@@ -114,7 +113,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Configuration
         [ConfigurationProperty(addCategoryStoredProcNameProperty, IsRequired = true)]
         public string AddCategoryStoredProcName
         {
-            get { return (string) base[addCategoryStoredProcNameProperty]; }
+            get { return (string)base[addCategoryStoredProcNameProperty]; }
             set { base[addCategoryStoredProcNameProperty] = value; }
         }
 
@@ -124,7 +123,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Configuration
         [ConfigurationProperty(formatterNameProperty, IsRequired = false)]
         public string Formatter
         {
-            get { return (string) base[formatterNameProperty]; }
+            get { return (string)base[formatterNameProperty]; }
             set { base[formatterNameProperty] = value; }
         }
 
@@ -140,8 +139,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Configuration
                        Container.Resolved<Data.Database>(DatabaseInstanceName),
                        WriteLogStoredProcName,
                        AddCategoryStoredProcName,
-                       Container.ResolvedIfNotNull<ILogFormatter>(Formatter),
-                       Container.Resolved<ILoggingInstrumentationProvider>());
+                       Container.ResolvedIfNotNull<ILogFormatter>(Formatter));
         }
     }
 }

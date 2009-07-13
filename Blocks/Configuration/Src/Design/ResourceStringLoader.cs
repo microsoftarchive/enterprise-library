@@ -10,8 +10,6 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Properties;
 using System.Reflection;
 using System.Resources;
@@ -46,8 +44,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design
 		{
 			if (string.IsNullOrEmpty(baseName)) throw new ArgumentException(Resources.ExceptionStringNullOrEmpty, "baseName");
 			if (string.IsNullOrEmpty(resourceName)) throw new ArgumentException(Resources.ExceptionStringNullOrEmpty, "resourceName");
-            
-            
+
+
 			string value = null;
             if (null != asm) value = LoadAssemblyString(asm, baseName, resourceName);
 			if (null == value) value = LoadAssemblyString(Assembly.GetExecutingAssembly(), baseName, resourceName);

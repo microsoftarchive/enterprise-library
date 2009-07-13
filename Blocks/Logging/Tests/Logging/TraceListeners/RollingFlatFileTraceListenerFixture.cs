@@ -206,6 +206,48 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners
         }
 
         [TestMethod]
+        public void RolledFileWithOverwriteAndCapWillCreateArchiveFileIfDateTemplateDoesNotMatchAndKeepTheNewest()
+        {
+            using (RollingFlatFileTraceListener traceListener
+                = new RollingFlatFileTraceListener(
+                    fileName,
+                    "header",
+                    "footer",
+                    null,
+                    0,
+                    "yyyy",
+                    RollFileExistsBehavior.Overwrite,
+                    RollInterval.Day,
+                    1))
+            {
+                traceListener.RollingHelper.DateTimeProvider = dateTimeProvider;
+                traceListener.Write("1234567890");
+
+                Assert.IsTrue(traceListener.RollingHelper.UpdateRollingInformationIfNecessary());
+
+                traceListener.RollingHelper.PerformRoll(new DateTime(2007, 01, 01));
+                traceListener.Write("12345");
+
+                Assert.IsTrue(traceListener.RollingHelper.UpdateRollingInformationIfNecessary());
+
+                traceListener.RollingHelper.PerformRoll(new DateTime(2008, 01, 01));
+                traceListener.Write("abcde");
+
+                Assert.IsTrue(traceListener.RollingHelper.UpdateRollingInformationIfNecessary());
+
+                traceListener.RollingHelper.PerformRoll(new DateTime(2009, 01, 01));
+                traceListener.Write("edcbe");
+            }
+
+            Assert.IsTrue(File.Exists(fileName));
+            Assert.AreEqual("edcbe", File.ReadAllText(fileName));
+            Assert.IsTrue(File.Exists(fileNameWithoutExtension + ".2009" + extension));
+            Assert.AreEqual("abcde", File.ReadAllText(fileNameWithoutExtension + ".2009" + extension));
+            Assert.IsFalse(File.Exists(fileNameWithoutExtension + ".2008" + extension));
+            Assert.IsFalse(File.Exists(fileNameWithoutExtension + ".2007" + extension));
+        }
+
+        [TestMethod]
         public void RolledFileWithOverwriteWillFallBackToUniqueNameIfDateTemplateMatchesButArchiveFileIsInUse()
         {
             string targetArchiveFile = fileNameWithoutExtension + ".2007" + extension;
@@ -306,6 +348,45 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners
 
             string[] archiveFiles = Directory.GetFiles(".", fileNameWithoutExtension + ".2007*" + extension + "*");
             Assert.AreEqual(2, archiveFiles.Length);
+        }
+
+        [TestMethod]
+        public void RolledFileWithIncrementAndCapWillCreateArchiveFileWithMaxSequenceIfDateTemplateDoesMatchAndKeepTheNewest()
+        {
+            using (RollingFlatFileTraceListener traceListener
+                = new RollingFlatFileTraceListener(
+                    fileName,
+                    "header",
+                    "footer",
+                    null,
+                    0,
+                    "yyyy",
+                    RollFileExistsBehavior.Increment,
+                    RollInterval.Day,
+                    1))
+            {
+                traceListener.RollingHelper.DateTimeProvider = dateTimeProvider;
+                traceListener.Write("1234567890");
+
+                Assert.IsTrue(traceListener.RollingHelper.UpdateRollingInformationIfNecessary());
+
+                traceListener.RollingHelper.PerformRoll(new DateTime(2007, 01, 01));
+                traceListener.Write("12345");
+
+                Assert.IsTrue(traceListener.RollingHelper.UpdateRollingInformationIfNecessary());
+
+                traceListener.RollingHelper.PerformRoll(new DateTime(2007, 01, 02));
+                traceListener.Write("abcde");
+            }
+
+            Assert.IsTrue(File.Exists(fileName));
+            Assert.AreEqual("abcde", File.ReadAllText(fileName));
+            Assert.IsTrue(File.Exists(fileNameWithoutExtension + ".2007.2" + extension));
+            Assert.AreEqual("12345", File.ReadAllText(fileNameWithoutExtension + ".2007.2" + extension));
+            Assert.IsFalse(File.Exists(fileNameWithoutExtension + ".2007.1" + extension));
+
+            string[] archiveFiles = Directory.GetFiles(".", fileNameWithoutExtension + ".2007*" + extension + "*");
+            Assert.AreEqual(1, archiveFiles.Length);
         }
 
         [TestMethod]

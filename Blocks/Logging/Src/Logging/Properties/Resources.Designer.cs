@@ -261,7 +261,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Timestamp: {timestamp}{newline}Message: {message}{newline}Category: {category}{newline}Priority: {priority}{newline}EventId: {eventid}{newline}Severity: {severity}{newline}Title:{title}{newline}Machine: {machine}{newline}App Domain: {appDomain}{newline}ProcessId: {processId}{newline}Process Name: {processName}{newline}Thread Name: {threadName}{newline}Win32 ThreadId:{win32ThreadId}{newline}Extended Properties: {dictionary({key} - {value}{newline})}.
+        ///   Looks up a localized string similar to Timestamp: {timestamp}{newline}Message: {message}{newline}Category: {category}{newline}Priority: {priority}{newline}EventId: {eventid}{newline}Severity: {severity}{newline}Title:{title}{newline}Machine: {localMachine}{newline}App Domain: {localAppDomain}{newline}ProcessId: {localProcessId}{newline}Process Name: {localProcessName}{newline}Thread Name: {threadName}{newline}Win32 ThreadId:{win32ThreadId}{newline}Extended Properties: {dictionary({key} - {value}{newline})}.
         /// </summary>
         internal static string DefaultTextFormat {
             get {

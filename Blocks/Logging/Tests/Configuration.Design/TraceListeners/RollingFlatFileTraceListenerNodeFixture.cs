@@ -41,6 +41,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Design.Tes
             SourceLevels filter = SourceLevels.Critical;
             string header = "header";
             string footer = "footer";
+            int maxArchivedFiles = 10;
 
             RollingTraceListenerNode rollingFlatFileTraceListenerNode = new RollingTraceListenerNode();
             rollingFlatFileTraceListenerNode.Name = name;
@@ -53,6 +54,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Design.Tes
             rollingFlatFileTraceListenerNode.Filter = filter;
             rollingFlatFileTraceListenerNode.Header = header;
             rollingFlatFileTraceListenerNode.Footer = footer;
+            rollingFlatFileTraceListenerNode.MaxArchivedFiles = maxArchivedFiles;
 
             ApplicationNode.AddNode(rollingFlatFileTraceListenerNode);
 
@@ -68,6 +70,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Design.Tes
             Assert.AreEqual(filter, nodeData.Filter);
             Assert.AreEqual(header, nodeData.Header);
             Assert.AreEqual(footer, nodeData.Footer);
+            Assert.AreEqual(maxArchivedFiles, nodeData.MaxArchivedFiles);
         }
 
         [TestMethod]
@@ -83,6 +86,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Design.Tes
             SourceLevels filter = SourceLevels.Critical;
             string header = "header";
             string footer = "footer";
+            int maxArchivedFiles = 5;
 
             RollingFlatFileTraceListenerData rollingFlatFileTraceListenerData = new RollingFlatFileTraceListenerData();
             rollingFlatFileTraceListenerData.Name = name;
@@ -95,6 +99,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Design.Tes
             rollingFlatFileTraceListenerData.Filter = filter;
             rollingFlatFileTraceListenerData.Header = header;
             rollingFlatFileTraceListenerData.Footer = footer;
+            rollingFlatFileTraceListenerData.MaxArchivedFiles = maxArchivedFiles;
 
             RollingTraceListenerNode rollingFlatFileTraceListenerNode = new RollingTraceListenerNode(rollingFlatFileTraceListenerData);
             ApplicationNode.AddNode(rollingFlatFileTraceListenerNode);
@@ -109,6 +114,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Design.Tes
             Assert.AreEqual(filter, rollingFlatFileTraceListenerNode.Filter);
             Assert.AreEqual(header, rollingFlatFileTraceListenerNode.Header);
             Assert.AreEqual(footer, rollingFlatFileTraceListenerNode.Footer);
+            Assert.AreEqual(maxArchivedFiles, rollingFlatFileTraceListenerNode.MaxArchivedFiles);
         }
     }
 }

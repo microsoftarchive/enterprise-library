@@ -9,6 +9,16 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+//===============================================================================
+// Microsoft patterns & practices Enterprise Library
+// Logging Application Block
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
 using System;
 using System.Diagnostics;
 using System.Reflection;
@@ -20,8 +30,11 @@ using System.Collections.Generic;
 using System.Security.Permissions;
 using Microsoft.Practices.ServiceLocation;
 
+
 namespace Microsoft.Practices.EnterpriseLibrary.Logging
 {
+
+
     /// <summary>
     /// Represents a performance tracing class to log method entry/exit and duration.
     /// </summary>
@@ -79,18 +92,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// </remarks>
         /// <param name="operation">The operation for the <see cref="Tracer"/></param>
         public Tracer(string operation)
+            : this(operation, Logger.Writer, GetTracerInstrumentationProvider())
         {
-            instrumentationProvider = GetTracerInstrumentationProvider();
-
-            if (CheckTracingAvailable())
-            {
-                if (GetActivityId().Equals(Guid.Empty))
-                {
-                    SetActivityId(Guid.NewGuid());
-                }
-
-                Initialize(operation);
-            }
         }
 
 
@@ -103,15 +106,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// <param name="operation">The operation for the <see cref="Tracer"/></param>
         /// <param name="activityId">The activity id</param>
         public Tracer(string operation, Guid activityId)
+            :this(operation, activityId, Logger.Writer, GetTracerInstrumentationProvider())
         {
-            instrumentationProvider = GetTracerInstrumentationProvider();
-
-            if (CheckTracingAvailable())
-            {
-                SetActivityId(activityId);
-
-                Initialize(operation);
-            }
         }
 
         /// <summary>
@@ -122,9 +118,23 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// </remarks>
         /// <param name="operation">The operation for the <see cref="Tracer"/></param>
         /// <param name="writer">The <see cref="LogWriter"/> that is used to write trace messages</param>
-        /// <param name="instrumentationConfiguration">configuration source that is used to determine instrumentation should be enabled</param>
+        /// <param name="instrumentationConfiguration">The configuration source that is used to determine instrumentation should be enabled.</param>
         public Tracer(string operation, LogWriter writer, IConfigurationSource instrumentationConfiguration) :
             this(operation, writer, GetTracerInstrumentationProvider(instrumentationConfiguration))
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Tracer"/> class with the given logical operation name.
+        /// </summary>
+        /// <remarks>
+        /// If an existing activity id is already set, it will be kept. Otherwise, a new activity id will be created.
+        /// </remarks>
+        /// <param name="operation">The operation for the <see cref="Tracer"/></param>
+        /// <param name="writer">The <see cref="LogWriter"/> that is used to write trace messages</param>
+        /// <param name="serviceLocator"><see cref="IServiceLocator"/> used to retrieve the instrumentation provider for this tracer.</param>
+        public Tracer(string operation, LogWriter writer, IServiceLocator serviceLocator) :
+            this(operation, writer, GetTracerInstrumentationProvider(serviceLocator))
         {
         }
 
@@ -141,6 +151,36 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
             : this(operation, container.GetInstance<LogWriter>(), container.GetInstance<ITracerInstrumentationProvider>())
         {
             
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Tracer"/> class with the given logical operation name and activity id.
+        /// </summary>
+        /// <remarks>
+        /// The activity id will override a previous activity id
+        /// </remarks>
+        /// <param name="operation">The operation for the <see cref="Tracer"/></param>
+        /// <param name="activityId">The activity id</param>
+        /// <param name="writer">The <see cref="LogWriter"/> that is used to write trace messages</param>
+        /// <param name="instrumentationConfiguration">configuration source that is used to determine instrumentation should be enabled</param>
+		public Tracer(string operation, Guid activityId, LogWriter writer, IConfigurationSource instrumentationConfiguration) :
+            this(operation, activityId, writer, GetTracerInstrumentationProvider(instrumentationConfiguration))
+		{
+		}
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Tracer"/> class with the given logical operation name and activity id.
+        /// </summary>
+        /// <remarks>
+        /// The activity id will override a previous activity id
+        /// </remarks>
+        /// <param name="operation">The operation for the <see cref="Tracer"/></param>
+        /// <param name="activityId">The activity id</param>
+        /// <param name="writer">The <see cref="LogWriter"/> that is used to write trace messages</param>
+        /// <param name="serviceLocator"><see cref="IServiceLocator"/> used to retrieve the instrumentation provider for this tracer.</param>
+        public Tracer(string operation, Guid activityId, LogWriter writer, IServiceLocator serviceLocator) :
+            this(operation, activityId, writer, GetTracerInstrumentationProvider(serviceLocator))
+        {
         }
 
         /// <summary>
@@ -264,6 +304,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
             return EnterpriseLibraryContainer.Current.GetInstance<ITracerInstrumentationProvider>();
         }
 
+        private static ITracerInstrumentationProvider GetTracerInstrumentationProvider(IServiceLocator serviceLocator)
+        {
+            if (serviceLocator == null) throw new ArgumentNullException("serviceLocator");
+            return serviceLocator.GetInstance<ITracerInstrumentationProvider>();
+        }
+
         private static ITracerInstrumentationProvider GetTracerInstrumentationProvider(IConfigurationSource configuration)
         {
             if (configuration == null) return new NullTracerInstrumentationProvider();
@@ -342,6 +388,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         private LogWriter GetWriter()
         {
             return writer ?? Logger.Writer;
+        }
+
+        private static Guid GetOrCreateActivityId()
+        {
+            return (Trace.CorrelationManager.ActivityId == Guid.Empty) ? Guid.NewGuid() : Trace.CorrelationManager.ActivityId;
         }
 
         private static Guid GetActivityId()

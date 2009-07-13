@@ -210,23 +210,6 @@
   <data name="DefaultLevelDescription" xml:space="preserve">
     <value>The default SourceLevels for this TraceSource</value>
   </data>
-  <data name="DefaultTextFormat" xml:space="preserve">
-    <value>Timestamp: {timestamp}
-Message: {message}
-Category: {category}
-Priority: {priority}
-EventId: {eventid}
-Severity: {severity}
-Title:{title}
-Machine: {machine}
-Application Domain: {appDomain}
-Process Id: {processId}
-Process Name: {processName}
-Win32 Thread Id: {win32ThreadId}
-Thread Name: {threadName}
-Extended Properties: {dictionary({key} - {value}
-)}</value>
-  </data>
   <data name="EmailTraceListenerFromAddressDescription" xml:space="preserve">
     <value>From email address</value>
   </data>
@@ -493,5 +476,8 @@ Extended Properties: {dictionary({key} - {value}
   </data>
   <data name="RevertImpersonationDescription" xml:space="preserve">
     <value>Revert impersonation temporarily while logging.</value>
+  </data>
+  <data name="MaxArchivedFilesDescription" xml:space="preserve">
+    <value>The maximum number of archive files to keep. Zero for no limit.</value>
   </data>
 </root>

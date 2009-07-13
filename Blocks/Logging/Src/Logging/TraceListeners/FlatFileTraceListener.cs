@@ -19,61 +19,28 @@ using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
 {
-	/// <summary>
-	/// A <see cref="TraceListener"/> that writes to a flat file, formatting the output with an <see cref="ILogFormatter"/>.
-	/// </summary>
-	[ConfigurationElementType(typeof(FlatFileTraceListenerData))]
-	public class FlatFileTraceListener : FormattedTextWriterTraceListener
-	{
-		string header = String.Empty;
-		string footer = String.Empty;
-
-		/// <summary>
-		/// Initializes a new instance of <see cref="FlatFileTraceListener"/>.
-		/// </summary>
-		public FlatFileTraceListener()
-			: this(new NullLoggingInstrumentationProvider())
-		{
-        }
+    /// <summary>
+    /// A <see cref="TraceListener"/> that writes to a flat file, formatting the output with an <see cref="ILogFormatter"/>.
+    /// </summary>
+    [ConfigurationElementType(typeof(FlatFileTraceListenerData))]
+    public class FlatFileTraceListener : FormattedTextWriterTraceListener
+    {
+        string header = String.Empty;
+        string footer = String.Empty;
 
         /// <summary>
         /// Initializes a new instance of <see cref="FlatFileTraceListener"/>.
         /// </summary>
-        /// <param name="instrumentationProvider">The instrumentation provider to use.</param>
-        public FlatFileTraceListener(ILoggingInstrumentationProvider instrumentationProvider)
-            : base(instrumentationProvider)
-        {
-        }
-
-		/// <summary>
-		/// Initializes a new instance of <see cref="FlatFileTraceListener"/> with a <see cref="ILogFormatter"/>.
-		/// </summary>
-		/// <param name="formatter">The formatter.</param>
-		public FlatFileTraceListener(ILogFormatter formatter)
-			: this(formatter, new NullLoggingInstrumentationProvider())
-		{
-        }
+        public FlatFileTraceListener()
+        { }
 
         /// <summary>
         /// Initializes a new instance of <see cref="FlatFileTraceListener"/> with a <see cref="ILogFormatter"/>.
         /// </summary>
         /// <param name="formatter">The formatter.</param>
-        /// <param name="instrumentationProvider">The instrumentation provider to use.</param>
-        public FlatFileTraceListener(ILogFormatter formatter, ILoggingInstrumentationProvider instrumentationProvider)
-            : base(formatter, instrumentationProvider)
-        {
-        }
-
-		/// <summary>
-		/// Initializes a new instance of <see cref="FlatFileTraceListener"/> with a <see cref="FileStream"/> and 
-		/// a <see cref="ILogFormatter"/>.
-		/// </summary>
-		/// <param name="stream">The file stream writen to.</param>
-		/// <param name="formatter">The formatter.</param>
-		public FlatFileTraceListener(FileStream stream, ILogFormatter formatter)
-			: this(stream, formatter, new NullLoggingInstrumentationProvider())
-		{
-		}
+        public FlatFileTraceListener(ILogFormatter formatter)
+            : base(formatter)
+        { }
 
         /// <summary>
         /// Initializes a new instance of <see cref="FlatFileTraceListener"/> with a <see cref="FileStream"/> and 
@@ -81,41 +48,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         /// </summary>
         /// <param name="stream">The file stream writen to.</param>
         /// <param name="formatter">The formatter.</param>
-        /// <param name="instrumentationProvider">The instrumentation provider to use.</param>
-        public FlatFileTraceListener(FileStream stream, ILogFormatter formatter, ILoggingInstrumentationProvider instrumentationProvider)
-            : base(stream, formatter, instrumentationProvider)
-        {
-        }
-
-		/// <summary>
-		/// Initializes a new instance of <see cref="FlatFileTraceListener"/> with a <see cref="FileStream"/>.
-		/// </summary>
-		/// <param name="stream">The file stream.</param>
-		public FlatFileTraceListener(FileStream stream)
-			: this(stream, new NullLoggingInstrumentationProvider())
-		{
-		}
+        public FlatFileTraceListener(FileStream stream, ILogFormatter formatter)
+            : base(stream, formatter)
+        { }
 
         /// <summary>
         /// Initializes a new instance of <see cref="FlatFileTraceListener"/> with a <see cref="FileStream"/>.
         /// </summary>
         /// <param name="stream">The file stream.</param>
-        /// <param name="instrumentationProvider">The instrumentation provider to use.</param>
-        public FlatFileTraceListener(FileStream stream, ILoggingInstrumentationProvider instrumentationProvider)
-            : base(stream, instrumentationProvider)
-        {
-        }
-
-		/// <summary>
-		/// Initializes a new instance of <see cref="FlatFileTraceListener"/> with a <see cref="StreamWriter"/> and 
-		/// a <see cref="ILogFormatter"/>.
-		/// </summary>
-		/// <param name="writer">The stream writer.</param>
-		/// <param name="formatter">The formatter.</param>
-		public FlatFileTraceListener(StreamWriter writer, ILogFormatter formatter)
-			: this(writer, formatter, new NullLoggingInstrumentationProvider())
-		{
-        }
+        public FlatFileTraceListener(FileStream stream)
+            : base(stream)
+        { }
 
         /// <summary>
         /// Initializes a new instance of <see cref="FlatFileTraceListener"/> with a <see cref="StreamWriter"/> and 
@@ -123,42 +66,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         /// </summary>
         /// <param name="writer">The stream writer.</param>
         /// <param name="formatter">The formatter.</param>
-        /// <param name="instrumentationProvider">The instrumentation provider to use.</param>
-        public FlatFileTraceListener(StreamWriter writer, ILogFormatter formatter, ILoggingInstrumentationProvider instrumentationProvider)
-            : base(writer, formatter, instrumentationProvider)
-        {
-        }
-
-
-		/// <summary>
-		/// Initializes a new instance of <see cref="FlatFileTraceListener"/> with a <see cref="StreamWriter"/>.
-		/// </summary>
-		/// <param name="writer">The stream writer.</param>
-		public FlatFileTraceListener(StreamWriter writer)
-			: this(writer, new NullLoggingInstrumentationProvider())
-		{
-		}
+        public FlatFileTraceListener(StreamWriter writer, ILogFormatter formatter)
+            : base(writer, formatter)
+        { }
 
         /// <summary>
         /// Initializes a new instance of <see cref="FlatFileTraceListener"/> with a <see cref="StreamWriter"/>.
         /// </summary>
         /// <param name="writer">The stream writer.</param>
-        /// <param name="instrumentationProvider">The instrumentation provider to use.</param>
-        public FlatFileTraceListener(StreamWriter writer, ILoggingInstrumentationProvider instrumentationProvider)
-            : base(writer, instrumentationProvider)
-        {
-        }
-
-		/// <summary>
-		/// Initializes a new instance of <see cref="FlatFileTraceListener"/> with a file name and 
-		/// a <see cref="ILogFormatter"/>.
-		/// </summary>
-		/// <param name="fileName">The file name.</param>
-		/// <param name="formatter">The formatter.</param>
-		public FlatFileTraceListener(string fileName, ILogFormatter formatter)
-            :this(fileName, formatter, new NullLoggingInstrumentationProvider())
-		{
-		}
+        public FlatFileTraceListener(StreamWriter writer)
+            : base(writer)
+        { }
 
         /// <summary>
         /// Initializes a new instance of <see cref="FlatFileTraceListener"/> with a file name and 
@@ -166,44 +84,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         /// </summary>
         /// <param name="fileName">The file name.</param>
         /// <param name="formatter">The formatter.</param>
-        /// <param name="instrumentationProvider">The instrumentation provider to use.</param>
-        public FlatFileTraceListener(string fileName, ILogFormatter formatter, ILoggingInstrumentationProvider instrumentationProvider)
-            : base(EnvironmentHelper.ReplaceEnvironmentVariables(fileName), formatter, instrumentationProvider)
-        {
-        }
-
-		/// <summary>
-		/// Initializes a new instance of <see cref="FlatFileTraceListener"/> with a file name.
-		/// </summary>
-		/// <param name="fileName">The file name.</param>
-        public FlatFileTraceListener(string fileName)
-            :this(fileName, new NullLoggingInstrumentationProvider())
-        {
-        }
+        public FlatFileTraceListener(string fileName, ILogFormatter formatter)
+            : base(EnvironmentHelper.ReplaceEnvironmentVariables(fileName), formatter)
+        { }
 
         /// <summary>
         /// Initializes a new instance of <see cref="FlatFileTraceListener"/> with a file name.
         /// </summary>
         /// <param name="fileName">The file name.</param>
-        /// <param name="instrumentationProvider">The instrumentation provider to use.</param>
-        public FlatFileTraceListener(string fileName, ILoggingInstrumentationProvider instrumentationProvider)
-            : base(EnvironmentHelper.ReplaceEnvironmentVariables(fileName), instrumentationProvider)
-        {
-        }
-
-
-		/// <summary>
-		/// Initializes a new instance of <see cref="FlatFileTraceListener"/> with a file name, a header, a footer and 
-		/// a <see cref="ILogFormatter"/>.
-		/// </summary>
-		/// <param name="fileName">The file stream.</param>
-		/// <param name="header">The header.</param>
-		/// <param name="footer">The footer.</param>
-		/// <param name="formatter">The formatter.</param>
-		public FlatFileTraceListener(string fileName, string header, string footer, ILogFormatter formatter)
-            : this(fileName, header, footer, formatter, new NullLoggingInstrumentationProvider())
-		{
-		}
+        public FlatFileTraceListener(string fileName)
+            : base(EnvironmentHelper.ReplaceEnvironmentVariables(fileName))
+        { }
 
         /// <summary>
         /// Initializes a new instance of <see cref="FlatFileTraceListener"/> with a file name, a header, a footer and 
@@ -213,24 +104,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         /// <param name="header">The header.</param>
         /// <param name="footer">The footer.</param>
         /// <param name="formatter">The formatter.</param>
-        /// <param name="instrumentationProvider">The instrumentation provider to use.</param>
-        public FlatFileTraceListener(string fileName, string header, string footer, ILogFormatter formatter, ILoggingInstrumentationProvider instrumentationProvider)
-            : base(EnvironmentHelper.ReplaceEnvironmentVariables(fileName), formatter, instrumentationProvider)
+        public FlatFileTraceListener(string fileName, string header, string footer, ILogFormatter formatter)
+            : base(EnvironmentHelper.ReplaceEnvironmentVariables(fileName), formatter)
         {
             this.header = header;
             this.footer = footer;
         }
-
-		/// <summary>
-		/// Initializes a new instance of <see cref="FlatFileTraceListener"/> with a file name, a header, and a footer.
-		/// </summary>
-		/// <param name="fileName">The file stream.</param>
-		/// <param name="header">The header.</param>
-		/// <param name="footer">The footer.</param>
-		public FlatFileTraceListener(string fileName, string header, string footer)
-            : this(fileName, header, footer, new NullLoggingInstrumentationProvider())
-		{
-		}
 
         /// <summary>
         /// Initializes a new instance of <see cref="FlatFileTraceListener"/> with a file name, a header, and a footer.
@@ -238,25 +117,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         /// <param name="fileName">The file stream.</param>
         /// <param name="header">The header.</param>
         /// <param name="footer">The footer.</param>
-        /// <param name="instrumentationProvider">The instrumentation provider to use.</param>
-        public FlatFileTraceListener(string fileName, string header, string footer, ILoggingInstrumentationProvider instrumentationProvider)
-            : base(EnvironmentHelper.ReplaceEnvironmentVariables(fileName), instrumentationProvider)
+        public FlatFileTraceListener(string fileName, string header, string footer)
+            : base(EnvironmentHelper.ReplaceEnvironmentVariables(fileName))
         {
             this.header = header;
             this.footer = footer;
         }
-
-		/// <summary>
-		/// Initializes a new named instance of <see cref="FlatFileTraceListener"/> with a <see cref="FileStream"/> and 
-		/// a <see cref="ILogFormatter"/>.
-		/// </summary>
-		/// <param name="stream">The file stream.</param>
-		/// <param name="name">The name.</param>
-		/// <param name="formatter">The formatter.</param>
-		public FlatFileTraceListener(FileStream stream, string name, ILogFormatter formatter)
-			: this(stream, name, formatter, new NullLoggingInstrumentationProvider())
-		{
-		}
 
         /// <summary>
         /// Initializes a new named instance of <see cref="FlatFileTraceListener"/> with a <see cref="FileStream"/> and 
@@ -265,44 +131,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         /// <param name="stream">The file stream.</param>
         /// <param name="name">The name.</param>
         /// <param name="formatter">The formatter.</param>
-        /// <param name="instrumentationProvider">The instrumentation provider to use.</param>
-        public FlatFileTraceListener(FileStream stream, string name, ILogFormatter formatter, ILoggingInstrumentationProvider instrumentationProvider)
-            : base(stream, name, formatter, instrumentationProvider)
-        {
-        }
-
-		/// <summary>
-		/// Initializes a new name instance of <see cref="FlatFileTraceListener"/> with a <see cref="FileStream"/>.
-		/// </summary>
-		/// <param name="stream">The file stream.</param>
-		/// <param name="name">The name.</param>
-		public FlatFileTraceListener(FileStream stream, string name)
-			: this(stream, name, new NullLoggingInstrumentationProvider())
-		{
-        }
+        public FlatFileTraceListener(FileStream stream, string name, ILogFormatter formatter)
+            : base(stream, name, formatter)
+        { }
 
         /// <summary>
         /// Initializes a new name instance of <see cref="FlatFileTraceListener"/> with a <see cref="FileStream"/>.
         /// </summary>
         /// <param name="stream">The file stream.</param>
         /// <param name="name">The name.</param>
-        /// <param name="instrumentationProvider">The instrumentation provider to use.</param>
-        public FlatFileTraceListener(FileStream stream, string name, ILoggingInstrumentationProvider instrumentationProvider)
-            : base(stream, name, instrumentationProvider)
-        {
-        }
-
-		/// <summary>
-		/// Initializes a new named instance of <see cref="FlatFileTraceListener"/> with a <see cref="StreamWriter"/> and 
-		/// a <see cref="ILogFormatter"/>.
-		/// </summary>
-		/// <param name="writer">The stream writer.</param>
-		/// <param name="name">The name.</param>
-		/// <param name="formatter">The formatter.</param>
-		public FlatFileTraceListener(StreamWriter writer, string name, ILogFormatter formatter)
-			: this(writer, name, formatter, new NullLoggingInstrumentationProvider())
-		{
-        }
+        public FlatFileTraceListener(FileStream stream, string name)
+            : base(stream, name)
+        { }
 
         /// <summary>
         /// Initializes a new named instance of <see cref="FlatFileTraceListener"/> with a <see cref="StreamWriter"/> and 
@@ -311,44 +151,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         /// <param name="writer">The stream writer.</param>
         /// <param name="name">The name.</param>
         /// <param name="formatter">The formatter.</param>
-        /// <param name="instrumentationProvider">The instrumentation provider to use.</param>
-        public FlatFileTraceListener(StreamWriter writer, string name, ILogFormatter formatter, ILoggingInstrumentationProvider instrumentationProvider)
-            : base(writer, name, formatter, instrumentationProvider)
-        {
-        }
-
-		/// <summary>
-		/// Initializes a new named instance of <see cref="FlatFileTraceListener"/> with a <see cref="StreamWriter"/>.
-		/// </summary>
-		/// <param name="writer">The stream writer.</param>
-		/// <param name="name">The name.</param>
-		public FlatFileTraceListener(StreamWriter writer, string name)
-			: this(writer, name, new NullLoggingInstrumentationProvider())
-		{
-		}
+        public FlatFileTraceListener(StreamWriter writer, string name, ILogFormatter formatter)
+            : base(writer, name, formatter)
+        { }
 
         /// <summary>
         /// Initializes a new named instance of <see cref="FlatFileTraceListener"/> with a <see cref="StreamWriter"/>.
         /// </summary>
         /// <param name="writer">The stream writer.</param>
         /// <param name="name">The name.</param>
-        /// <param name="instrumentationProvider">The instrumentation provider to use.</param>
-        public FlatFileTraceListener(StreamWriter writer, string name, ILoggingInstrumentationProvider instrumentationProvider)
-            : base(writer, name, instrumentationProvider)
-        {
-        }
-
-		/// <summary>
-		/// Initializes a new named instance of <see cref="FlatFileTraceListener"/> with a file name and 
-		/// a <see cref="ILogFormatter"/>.
-		/// </summary>
-		/// <param name="fileName">The file name.</param>
-		/// <param name="name">The name.</param>
-		/// <param name="formatter">The formatter.</param>
-		public FlatFileTraceListener(string fileName, string name, ILogFormatter formatter)
-            : this(fileName, name, formatter, new NullLoggingInstrumentationProvider())
-		{
-		}
+        public FlatFileTraceListener(StreamWriter writer, string name)
+            : base(writer, name)
+        { }
 
         /// <summary>
         /// Initializes a new named instance of <see cref="FlatFileTraceListener"/> with a file name and 
@@ -357,43 +171,29 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         /// <param name="fileName">The file name.</param>
         /// <param name="name">The name.</param>
         /// <param name="formatter">The formatter.</param>
-        /// <param name="instrumentationProvider">The instrumentation provider to use.</param>
-        public FlatFileTraceListener(string fileName, string name, ILogFormatter formatter, ILoggingInstrumentationProvider instrumentationProvider)
-            : base(EnvironmentHelper.ReplaceEnvironmentVariables(fileName), name, formatter, instrumentationProvider)
-        {
-        }
-
-		/// <summary>
-		/// Initializes a new named instance of <see cref="FlatFileTraceListener"/> with a file name.
-		/// </summary>
-		/// <param name="fileName">The file name.</param>
-		/// <param name="name">The name.</param>
-		public FlatFileTraceListener(string fileName, string name)
-            : this(fileName, name, new NullLoggingInstrumentationProvider())
-		{
-        }
+        public FlatFileTraceListener(string fileName, string name, ILogFormatter formatter)
+            : base(EnvironmentHelper.ReplaceEnvironmentVariables(fileName), name, formatter)
+        { }
 
         /// <summary>
         /// Initializes a new named instance of <see cref="FlatFileTraceListener"/> with a file name.
         /// </summary>
         /// <param name="fileName">The file name.</param>
         /// <param name="name">The name.</param>
-        /// <param name="instrumentationProvider">The instrumentation provider to use.</param>
-        public FlatFileTraceListener(string fileName, string name, ILoggingInstrumentationProvider instrumentationProvider)
-            : base(EnvironmentHelper.ReplaceEnvironmentVariables(fileName), name, instrumentationProvider)
-        {
-        }
+        public FlatFileTraceListener(string fileName, string name)
+            : base(EnvironmentHelper.ReplaceEnvironmentVariables(fileName), name)
+        { }
 
-		/// <summary>
-		/// Delivers the trace data to the underlying file.
-		/// </summary>
-		/// <param name="eventCache">The context information provided by <see cref="System.Diagnostics"/>.</param>
-		/// <param name="source">The name of the trace source that delivered the trace data.</param>
-		/// <param name="eventType">The type of event.</param>
-		/// <param name="id">The id of the event.</param>
-		/// <param name="data">The data to trace.</param>
-		public override void TraceData(TraceEventCache eventCache, string source, TraceEventType eventType, int id, object data)
-		{
+        /// <summary>
+        /// Delivers the trace data to the underlying file.
+        /// </summary>
+        /// <param name="eventCache">The context information provided by <see cref="System.Diagnostics"/>.</param>
+        /// <param name="source">The name of the trace source that delivered the trace data.</param>
+        /// <param name="eventType">The type of event.</param>
+        /// <param name="id">The id of the event.</param>
+        /// <param name="data">The data to trace.</param>
+        public override void TraceData(TraceEventCache eventCache, string source, TraceEventType eventType, int id, object data)
+        {
             if (this.Filter == null || this.Filter.ShouldTrace(eventCache, source, eventType, id, null, null, data, null))
             {
                 if (header.Length > 0)
@@ -409,7 +209,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
                     {
                         base.TraceData(eventCache, source, eventType, id, data);
                     }
-                    InstrumentationProvider.FireTraceListenerEntryWrittenEvent();
                 }
                 else
                 {
@@ -419,14 +218,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
                 if (footer.Length > 0)
                     WriteLine(footer);
             }
-		}
+        }
 
-		/// <summary>
-		/// Declare the supported attributes for <see cref="FlatFileTraceListener"/>
-		/// </summary>
-		protected override string[] GetSupportedAttributes()
-		{
-			return new string[4] { "formatter", "FileName", "header", "footer" };
-		}
-	}
+        /// <summary>
+        /// Declare the supported attributes for <see cref="FlatFileTraceListener"/>
+        /// </summary>
+        protected override string[] GetSupportedAttributes()
+        {
+            return new string[4] { "formatter", "FileName", "header", "footer" };
+        }
+    }
 }

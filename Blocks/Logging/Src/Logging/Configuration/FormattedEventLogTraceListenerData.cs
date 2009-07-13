@@ -10,13 +10,11 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
 using System.Linq.Expressions;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
@@ -146,8 +144,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
                     this.Source,
                     this.Log,
                     this.MachineName,
-                    Container.ResolvedIfNotNull<ILogFormatter>(this.Formatter),
-                    Container.Resolved<ILoggingInstrumentationProvider>());
+                    Container.ResolvedIfNotNull<ILogFormatter>(this.Formatter));
         }
     }
 }

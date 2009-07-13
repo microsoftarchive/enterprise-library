@@ -167,10 +167,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography
 
             try
             {
-                SymmetricCryptoProviderFactory factory = new SymmetricCryptoProviderFactory();
-                ISymmetricCryptoProvider symmetricProvider = factory.Create(symmetricInstance);
-
-                return symmetricProvider;
+                return EnterpriseLibraryContainer.Current.GetInstance<ISymmetricCryptoProvider>(symmetricInstance);
             }
             catch (Exception configurationException)
             {
@@ -186,12 +183,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography
         /// <returns>The <see cref="IHashProvider"/>.</returns>
         private static IHashProvider GetHashProvider(string hashInstance)
         {
+            if (string.IsNullOrEmpty(hashInstance))
+                throw new ArgumentException(Resources.ExceptionNullOrEmptyString, hashInstance);
+
             try
             {
-                HashProviderFactory factory = new HashProviderFactory();
-                IHashProvider hashProvider = factory.Create(hashInstance);
-
-                return hashProvider;
+                return EnterpriseLibraryContainer.Current.GetInstance<IHashProvider>(hashInstance);
             }
             catch (Exception configurationException)
             {

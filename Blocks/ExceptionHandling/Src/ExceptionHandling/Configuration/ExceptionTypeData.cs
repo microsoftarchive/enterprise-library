@@ -92,7 +92,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
         /// <value>
         /// One of the <see cref="PostHandlingAction"/> values.
         /// </value>
-        [ConfigurationProperty(postHandlingActionProperty, IsRequired = true)]
+        [ConfigurationProperty(postHandlingActionProperty, IsRequired = true, DefaultValue = PostHandlingAction.NotifyRethrow)]
         public PostHandlingAction PostHandlingAction
         {
             get { return (PostHandlingAction)this[postHandlingActionProperty]; }

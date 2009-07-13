@@ -14,6 +14,7 @@ using System.Diagnostics;
 using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 {
@@ -99,7 +100,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
                             this.Name,
                             Container.ResolvedEnumerable<TraceListener>(this.TraceListeners.Select(tl => tl.Name)),
                             this.DefaultLevel,
-                            this.AutoFlush))
+                            this.AutoFlush,
+                            Container.Resolved<ILoggingInstrumentationProvider>()))
                 {
                     Name = this.Name,
                     Lifetime = TypeRegistrationLifetime.Transient

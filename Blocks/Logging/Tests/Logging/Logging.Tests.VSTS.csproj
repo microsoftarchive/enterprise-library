@@ -74,6 +74,7 @@
     </Compile>
     <Compile Include="APTCAFixture.cs" />
     <Compile Include="Configuration\BinaryLogFormatterDataFixture.cs" />
+    <Compile Include="Configuration\ConfigurationSourceBuilderExtensionsFixture.cs" />
     <Compile Include="Configuration\CustomFormatterDataFixture.cs" />
     <Compile Include="Configuration\CustomTraceListenerDataFixture.cs" />
     <Compile Include="Configuration\FormattedEventLogTraceListenerDataFixture.cs" />
@@ -95,6 +96,8 @@
     <Compile Include="Configuration\WmiTraceListenerDataFixture.cs" />
     <Compile Include="Configuration\XmlTraceListenerDataFixture.cs" />
     <Compile Include="ContextItemsFixture.cs" />
+    <Compile Include="TraceListeners\LoggingInstrumentationFixture.cs" />
+    <Compile Include="TraceListeners\RollingFilePurgingTests.cs" />
     <Compile Include="LogEntrySerializationFixture.cs" />
     <Compile Include="LoggingInstrumentationProviderFixture.cs" />
     <Compile Include="LoggingUpdateCoordinatorFixture.cs" />

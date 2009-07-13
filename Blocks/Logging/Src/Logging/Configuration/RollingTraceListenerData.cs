@@ -16,7 +16,6 @@ using System.Linq.Expressions;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 {
@@ -33,6 +32,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         const string RollIntervalPropertyName = "rollInterval";
         const string RollSizeKBPropertyName = "rollSizeKB";
         const string TimeStampPatternPropertyName = "timeStampPattern";
+        const string MaxArchivedFilesPropertyName = "maxArchivedFiles";
+
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TraceListenerData"/> class.
@@ -192,6 +193,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         }
 
         /// <summary>
+        /// Max rolled files
+        /// </summary>
+        [ConfigurationProperty(MaxArchivedFilesPropertyName)]
+        public int MaxArchivedFiles
+        {
+            get { return (int)this[MaxArchivedFilesPropertyName]; }
+            set { this[MaxArchivedFilesPropertyName] = value; }
+        }
+
+        /// <summary>
         /// Returns a lambda expression that represents the creation of the trace listener described by this
         /// configuration object.
         /// </summary>
@@ -209,7 +220,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
                         this.TimeStampPattern,
                         this.RollFileExistsBehavior,
                         this.RollInterval,
-                        Container.Resolved<ILoggingInstrumentationProvider>());
+                        this.MaxArchivedFiles);
         }
     }
 }

@@ -24,7 +24,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
     public class TypeRegistrationProvidersConfigurationSection : ConfigurationSection
     {
         /// <summary>The section name under which this configuration section is expected to be found.</summary>
-        public const string SectionName = "typeRegistrationProvidersConfguration";
+        public const string SectionName = "typeRegistrationProvidersConfiguration";
         
         /// <summary>The Type Registration Provider name for the Caching Application Block</summary>
         public const string CachingTypeRegistrationProviderName = "Caching";

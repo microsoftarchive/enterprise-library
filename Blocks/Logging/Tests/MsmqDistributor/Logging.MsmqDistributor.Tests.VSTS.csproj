@@ -52,7 +52,7 @@
       <Link>GlobalAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Configuration\MsmqDistributorSettingsFixture.cs" />
-    <Compile Include="DistributoEventLoggerFixture.cs" />
+    <Compile Include="DistributorEventLoggerFixture.cs" />
     <Compile Include="MsmqLogDistributorTransactionalBehaviorFixture.cs" />
     <Compile Include="DistributorServiceFixture.cs" />
     <Compile Include="DistributorServiceTestFacade.cs">

@@ -37,17 +37,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
 		/// </exception>
 		public static Database CreateDatabase()
 		{
-            try
-            {
-				DatabaseProviderFactory factory = new DatabaseProviderFactory();
-                return factory.CreateDefault();
-            }
-            catch (Exception configurationException)
-            {
-                TryLogConfigurationError(configurationException, "default");
-
-                throw;
-            }
+            return InnerCreateDatabase(null);
 		}
 
 		/// <summary>
@@ -73,20 +63,27 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
 		/// </exception>
 		public static Database CreateDatabase(string name)
 		{
-            try
-            {
-				DatabaseProviderFactory factory = new DatabaseProviderFactory();
-				return factory.Create(name);
-			}
-            catch (ActivationException configurationException)
-            {
-                TryLogConfigurationError(configurationException, name);
+		    if (String.IsNullOrEmpty(name)) throw new ArgumentException(Common.Properties.Resources.ExceptionStringNullOrEmpty, name);
 
-                throw;
-            }
+		    return InnerCreateDatabase(name);
 		}
 
-        private static void TryLogConfigurationError(Exception configurationException, string instanceName)
+	    
+        private static Database InnerCreateDatabase(string name)
+	    {
+	        try
+	        {
+	            return EnterpriseLibraryContainer.Current.GetInstance<Database>(name);
+	        }
+	        catch (ActivationException configurationException)
+	        {
+	            TryLogConfigurationError(configurationException, name);
+
+	            throw;
+	        }
+	    }
+
+	    private static void TryLogConfigurationError(Exception configurationException, string instanceName)
         {
             try
             {

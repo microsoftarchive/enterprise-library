@@ -10,7 +10,7 @@
 //===============================================================================
 
 using System;
-using System.Configuration;
+
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation
 {
     /// <summary/>

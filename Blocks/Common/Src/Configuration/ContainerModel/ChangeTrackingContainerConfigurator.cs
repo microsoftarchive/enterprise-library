@@ -108,7 +108,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerMo
                 var handler = ContainerReconfiguring;
                 if (handler != null)
                 {
-                    ContainerReconfiguring(this, eventArgs);
+                    handler(this, eventArgs);
                 }
 
                 if (eventArgs.HasRegistrations)

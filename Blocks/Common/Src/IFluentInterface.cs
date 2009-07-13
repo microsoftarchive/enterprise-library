@@ -1,6 +1,6 @@
 ﻿//===============================================================================
 // Microsoft patterns & practices Enterprise Library
-// Data Access Application Block
+// Core
 //===============================================================================
 // Copyright © Microsoft Corporation.  All rights reserved.
 // THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
@@ -9,47 +9,42 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.ComponentModel;
 
-namespace Microsoft.Practices.EnterpriseLibrary.Data
+namespace Microsoft.Practices.EnterpriseLibrary.Common
 {
-
     /// <summary>
-    /// 
+    /// Interface that is used to build fluent interfaces and hides methods declared by <see cref="object"/> from intellisense.
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
     public interface IFluentInterface
     {
         /// <summary>
-        /// 
+        /// Redeclaration that hides the <see cref="object.GetType()"/> method from intellisense.
         /// </summary>
-        /// <returns></returns>
         [EditorBrowsable(EditorBrowsableState.Never)]
         Type GetType();
 
         /// <summary>
-        /// 
+        /// Redeclaration that hides the <see cref="object.GetHashCode()"/> method from intellisense.
         /// </summary>
-        /// <returns></returns>
         [EditorBrowsable(EditorBrowsableState.Never)]
         int GetHashCode();
 
         /// <summary>
-        /// 
+        /// Redeclaration that hides the <see cref="object.ToString()"/> method from intellisense.
         /// </summary>
-        /// <returns></returns>
         [EditorBrowsable(EditorBrowsableState.Never)]
         string ToString();
 
         /// <summary>
-        /// 
+        /// Redeclaration that hides the <see cref="object.Equals(object)"/> method from intellisense.
         /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
         [EditorBrowsable(EditorBrowsableState.Never)]
         bool Equals(object obj);
     }

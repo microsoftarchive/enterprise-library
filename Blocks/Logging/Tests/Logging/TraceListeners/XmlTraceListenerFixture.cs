@@ -12,10 +12,8 @@
 using System.Diagnostics;
 using System.IO;
 using System.Xml.XPath;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Tests;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners.Tests
 {
@@ -42,18 +40,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners.Tests
         public void Teardown()
         {
             xmlTraceListener.Dispose();
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void ConstructWithNullInstrumentationProviderThrows()
-        {
-            new XmlTraceListener("", null);
-        }
-
-        private void XmlTraceListener(string tempFileName)
-        {
-            throw new NotImplementedException();
         }
 
         [TestMethod]

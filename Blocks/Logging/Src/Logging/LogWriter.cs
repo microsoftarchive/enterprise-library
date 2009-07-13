@@ -327,20 +327,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
             get { return structureHolder.TraceSources; }
         }
 
-        static void AddTracingCategories(LogEntry log, bool replacementDone)
+        private static void AddTracingCategories(LogEntry log, Stack logicalOperationStack, bool replacementDone)
         {
-            Stack logicalOperationStack;
-
-            if (!Tracer.IsTracingAvailable())
-            {
-                return;
-            }
-
-            try
-            {
-                logicalOperationStack = GetLogicalOperationStack();
-            }
-            catch (SecurityException)
+            if (logicalOperationStack == null)
             {
                 return;
             }
@@ -364,11 +353,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
                     }
                 }
             }
-
-            return;
         }
 
-        static LogWriterStructureHolder CreateStructureHolder(
+        private static LogWriterStructureHolder CreateStructureHolder(
             IEnumerable<ILogFilter> filters,
             IDictionary<string, LogSource> traceSources,
             LogSource allEventsTraceSource,
@@ -519,9 +506,21 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
             return filter.GetFilter(name);
         }
 
-        static Stack GetLogicalOperationStack()
+        private static Stack GetLogicalOperationStack()
         {
-            return Trace.CorrelationManager.LogicalOperationStack;
+            if (!Tracer.IsTracingAvailable())
+            {
+                return null;
+            }
+
+            try
+            {
+                return (Stack)Trace.CorrelationManager.LogicalOperationStack.Clone();
+            }
+            catch (SecurityException)
+            {
+                return null;
+            }
         }
 
         /// <summary>
@@ -553,27 +552,27 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
             return structureHolder.TracingEnabled;
         }
 
-        static bool IsValidTraceSource(LogSource traceSource)
+        private static bool IsValidTraceSource(LogSource traceSource)
         {
             return traceSource != null && traceSource.Listeners.Count > 0;
         }
 
-        void ProcessLog(LogEntry log)
+        private void ProcessLog(LogEntry log, TraceEventCache traceEventCache)
         {
             // revert any outstanding impersonation
-            using (WindowsImpersonationContext revertImpersonationContext = RevertExistingImpersonation())
+            using (RevertExistingImpersonation())
             {
-                ContextItems items = new ContextItems();
+                var items = new ContextItems();
                 items.ProcessContextItems(log);
 
-                IEnumerable<LogSource> matchingTraceSources = GetMatchingTraceSources(log);
-                TraceListenerFilter traceListenerFilter = new TraceListenerFilter();
+                var matchingTraceSources = GetMatchingTraceSources(log);
+                var traceListenerFilter = new TraceListenerFilter();
 
                 foreach (LogSource traceSource in matchingTraceSources)
                 {
                     try
                     {
-                        traceSource.TraceData(log.Severity, log.EventId, log, traceListenerFilter);
+                        traceSource.TraceData(log.Severity, log.EventId, log, traceListenerFilter, traceEventCache);
                     }
                     catch (Exception ex)
                     {
@@ -1078,6 +1077,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// <param name="log">Log entry object to write.</param>
         public void Write(LogEntry log)
         {
+            var traceEventCache = new TraceEventCache();
+
+            var ignoredActivityId = log.ActivityId;
+            var ignoredManagedThreadName = log.ManagedThreadName;
+
             this.updateCoordinator.ExecuteReadOperation(() =>
                 {
                     try
@@ -1094,12 +1098,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
 
                         if (structureHolder.TracingEnabled)
                         {
-                            AddTracingCategories(log, replacementDone);
+                            var logicalOperationStack = GetLogicalOperationStack();
+                            AddTracingCategories(log, logicalOperationStack, replacementDone);
                         }
 
                         if (ShouldLog(log))
                         {
-                            ProcessLog(log);
+                            ProcessLog(log, traceEventCache);
                             instrumentationProvider.FireLogEventRaised();
                         }
                     }

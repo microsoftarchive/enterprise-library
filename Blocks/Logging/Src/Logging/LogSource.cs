@@ -13,7 +13,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
-using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging
@@ -71,7 +70,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// <param name="level">The <see cref="SourceLevels"/> value.</param>
         /// <param name="autoFlush">If Flush should be called on the Listeners after every write.</param>
         public LogSource(string name, IEnumerable<TraceListener> traceListeners, SourceLevels level, bool autoFlush)
-            :this(name, traceListeners, level, autoFlush, new NullLoggingInstrumentationProvider())
+            : this(name, traceListeners, level, autoFlush, new NullLoggingInstrumentationProvider())
         {
         }
 
@@ -83,7 +82,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// <param name="level">The <see cref="SourceLevels"/> value.</param>
         /// <param name="autoFlush">If Flush should be called on the Listeners after every write.</param>
         /// <param name="instrumentationProvider">The instrumentation provider to use.</param>
-        public LogSource(string name, IEnumerable<TraceListener> traceListeners, SourceLevels level, bool autoFlush, ILoggingInstrumentationProvider instrumentationProvider)
+        public LogSource(
+            string name, 
+            IEnumerable<TraceListener> traceListeners, 
+            SourceLevels level, 
+            bool autoFlush, 
+            ILoggingInstrumentationProvider instrumentationProvider)
         {
             this.name = name;
             this.traceListeners = new List<TraceListener>(traceListeners);
@@ -151,9 +155,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// <param name="traceListenerFilter">The filter for already written to trace listeners.</param>
         public void TraceData(TraceEventType eventType, int id, LogEntry logEntry, TraceListenerFilter traceListenerFilter)
         {
-            if (!ShouldTrace(eventType)) return;
+            this.TraceData(eventType, id, logEntry, traceListenerFilter, new TraceEventCache());
+        }
 
-            TraceEventCache manager = new TraceEventCache();
+        internal void TraceData(
+            TraceEventType eventType,
+            int id,
+            LogEntry logEntry,
+            TraceListenerFilter traceListenerFilter,
+            TraceEventCache traceEventCache)
+        {
+            if (!ShouldTrace(eventType)) return;
 
             bool isTransfer = logEntry.Severity == TraceEventType.Transfer && logEntry.RelatedActivityId != null;
 
@@ -165,11 +177,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
 
                     if (!isTransfer)
                     {
-                        listener.TraceData(manager, Name, eventType, id, logEntry);
+                        listener.TraceData(traceEventCache, Name, eventType, id, logEntry);
                     }
                     else
                     {
-                        listener.TraceTransfer(manager, Name, id, logEntry.Message, logEntry.RelatedActivityId.Value);
+                        listener.TraceTransfer(traceEventCache, Name, id, logEntry.Message, logEntry.RelatedActivityId.Value);
                     }
                     instrumentationProvider.FireTraceListenerEntryWrittenEvent();
 
@@ -184,7 +196,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
                 }
             }
         }
-
 
         /// <summary>
         /// Releases the resources used by the <see cref="LogSource"/>.
