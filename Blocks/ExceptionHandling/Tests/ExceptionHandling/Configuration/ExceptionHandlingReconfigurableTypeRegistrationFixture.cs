@@ -46,7 +46,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests.Configur
             ehabSettings = new ExceptionHandlingSettings();
             ehabSettings.ExceptionPolicies.Add(exceptionPolicy1);
 
-            updatableConfigurationSource.Add(null, ExceptionHandlingSettings.SectionName, ehabSettings);
+            updatableConfigurationSource.Add(ExceptionHandlingSettings.SectionName, ehabSettings);
 
             container = new UnityContainer();
             containerConfigurator = new UnityContainerConfigurator(container);

@@ -28,7 +28,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// Initializes a <see cref="XmlTraceListenerData"/>.
         /// </summary>
         public XmlTraceListenerData()
+            : base(typeof(XmlTraceListener))
         {
+            ListenerDataType = typeof(XmlTraceListenerData);
         }
 
         /// <summary>
@@ -45,7 +47,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// <summary>
         /// Gets and sets the file name.
         /// </summary>
-        [ConfigurationProperty(fileNameProperty, IsRequired = true)]
+        [ConfigurationProperty(fileNameProperty, IsRequired = true, DefaultValue="trace-xml.log")]
         public string FileName
         {
             get { return (string)base[fileNameProperty]; }

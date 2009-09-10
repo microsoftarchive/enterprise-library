@@ -61,10 +61,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Tests
         {
             AddConfigurationSourcesToHierarchy();
             AddInstrumentationToHierarchy();
-            IConfigurationSource source = Hierarchy.BuildConfigurationSource();
-
-            Assert.IsNotNull(source.GetSection(InstrumentationConfigurationSection.SectionName));
-            Assert.IsNotNull(source.GetSection(ConfigurationSourceSection.SectionName));
+            using (var source = Hierarchy.BuildConfigurationSource())
+            {
+                Assert.IsNotNull(source.GetSection(InstrumentationConfigurationSection.SectionName));
+                Assert.IsNotNull(source.GetSection(ConfigurationSourceSection.SectionName));
+            }
         }
 
         void AddConfigurationSourcesToHierarchy()

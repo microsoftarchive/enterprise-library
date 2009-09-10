@@ -246,4 +246,7 @@
   <data name="ExceptionBackingStoresWithNonDefaultConstructorsShouldOverrideGetRegistrations" xml:space="preserve">
     <value>Backing Stores with non-default constructors should override GetRegistrations().</value>
   </data>
+  <data name="ExceptionParameterMustImplement" xml:space="preserve">
+    <value>Parameter must implement type '{0}'.</value>
+  </data>
 </root>

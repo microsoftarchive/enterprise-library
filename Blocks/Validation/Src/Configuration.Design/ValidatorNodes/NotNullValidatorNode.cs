@@ -17,7 +17,7 @@ using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.Design.Prop
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.Design.ValidatorNodes
 {
     /// <summary>
-    /// Respresents the designtime configuration node for a <see cref="NotNullValidatorData"/>.
+    /// Represents the designtime configuration node for a <see cref="NotNullValidatorData"/>.
     /// </summary>
     public class NotNullValidatorNode : ValueValidatorNode
     {

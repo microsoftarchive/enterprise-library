@@ -30,7 +30,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         private const string PoliciesPropertyName = "policies";
 
         /// <summary>
-        /// Section name as it appears in the config file.
+        /// Section name as it appears in the configuration file.
         /// </summary>
         public const string SectionName = BlockSectionNames.PolicyInjection;
 

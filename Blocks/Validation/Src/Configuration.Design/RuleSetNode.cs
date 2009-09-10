@@ -18,7 +18,7 @@ using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.Design.Prop
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.Design
 {
     /// <summary>
-    /// Respresents the designtime configuration node for a <see cref="ValidationRulesetData"/>.
+    /// Represents the designtime configuration node for a <see cref="ValidationRulesetData"/>.
     /// </summary>
     [Image(typeof(RuleSetNode))]
     [SelectedImage(typeof(RuleSetNode))]

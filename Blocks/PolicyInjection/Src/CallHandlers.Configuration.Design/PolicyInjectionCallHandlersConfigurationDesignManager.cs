@@ -18,7 +18,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
 {
     /// <summary>
     /// A <see cref="ConfigurationDesignManager"/> that registers the
-    /// commands and node maps for the Policy Injection Block configuration.
+    /// commands and node maps for the Policy Injection Application Block configuration.
     /// </summary>
     public class PolicyInjectionCallHandlersConfigurationDesignManager : ConfigurationDesignManager
     {

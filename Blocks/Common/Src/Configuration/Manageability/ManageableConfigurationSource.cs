@@ -54,7 +54,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
             bool readGroupPolicies,
             bool generateWmiObjects,
             string applicationName)
-            : this(GetManageableConfigurationSourceImplementation(configurationFilePath, manageabilityProviders, readGroupPolicies, generateWmiObjects, applicationName)) {}
+            : this(GetManageableConfigurationSourceImplementation(configurationFilePath, manageabilityProviders, readGroupPolicies, generateWmiObjects, applicationName)) { }
 
         /// <summary>
         /// Initialize a new instance of the <see cref="ManageableConfigurationSource"/> class with the implementation.
@@ -76,14 +76,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
         }
 
         /// <summary>
-        /// Adds a <see cref="ConfigurationSection"/> to the configuration source location specified by 
-        /// <paramref name="saveParameter"/> and saves the configuration source.
+        /// Adds a <see cref="ConfigurationSection"/> to the configuration and saves the configuration source.
         /// </summary>
         /// <remarks>
         /// This operation is not implemented.
         /// </remarks>
-        public void Add(IConfigurationParameter saveParameter,
-                        string sectionName,
+        public void Add(string sectionName,
                         ConfigurationSection configurationSection)
         {
             throw new NotImplementedException(Resources.ManageableConfigurationSourceUpdateNotAvailable);
@@ -92,7 +90,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
         /// <summary>
         /// Event raised when any section in this configuration source has changed.
         /// </summary>
-#pragma warning disable 67        
+#pragma warning disable 67
         public event EventHandler<ConfigurationSourceChangedEventArgs> SourceChanged;
 #pragma warning restore 67
 
@@ -183,14 +181,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
         }
 
         /// <summary>
-        /// Removes a <see cref="ConfigurationSection"/> from the configuration source location specified by 
-        /// <paramref name="removeParameter"/> and saves the configuration source.
+        /// Removes a <see cref="ConfigurationSection"/> from the configuration and saves the configuration source.
         /// </summary>
         /// <remarks>
         /// This operation is not implemented.
         /// </remarks>
-        public void Remove(IConfigurationParameter removeParameter,
-                           string sectionName)
+        public void Remove(string sectionName)
         {
             throw new NotImplementedException(Resources.ManageableConfigurationSourceUpdateNotAvailable);
         }
@@ -211,14 +207,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
             implementation.RemoveSectionChangeHandler(sectionName, handler);
         }
 
-		/// <summary>
-		/// Public for testing purposes.
-		/// </summary>
+        /// <summary>
+        /// Public for testing purposes.
+        /// </summary>
         public static void ResetAllImplementations()
         {
             ManageableConfigurationSourceSingletonHelper oldSingletonHelper = singletonHelper;
             singletonHelper = new ManageableConfigurationSourceSingletonHelper();
             oldSingletonHelper.Dispose();
         }
+
+        void IDisposable.Dispose()
+        { }
     }
 }

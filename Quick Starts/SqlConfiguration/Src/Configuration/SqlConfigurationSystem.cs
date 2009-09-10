@@ -18,7 +18,6 @@ using System.Configuration.Internal;
 using System.Collections.Generic;
 using System.Xml;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
 using Microsoft.Practices.EnterpriseLibrary.SqlConfigurationSource.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.SqlConfigurationSource.Configuration

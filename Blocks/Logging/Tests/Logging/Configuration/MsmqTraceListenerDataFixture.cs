@@ -48,6 +48,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Tests
                         Filter = SourceLevels.Warning
                     };
         }
+        
+
+        [TestMethod]
+        public void WhenCreatingInstanceUsingDefaultContructor_ThenListenerDataTypeIsSet()
+        {
+            var listener = new MsmqTraceListenerData();
+            Assert.AreEqual(typeof(MsmqTraceListenerData), listener.ListenerDataType);
+        }
 
         [TestMethod]
         public void ThenCreatesTwoTypeRegistrations()

@@ -92,6 +92,7 @@
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
     <Reference Include="System.Management.Instrumentation">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -103,8 +104,10 @@
       <Link>GlobalAssemblyInfo.cs</Link>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Configuration\ConfigurationSourceBuilderExtensions.cs" />
+    <Compile Include="Configuration\Fluent\ConfigurationSourceBuilderExtensions.cs" />
     <Compile Include="Configuration\CustomHandlerData.cs" />
+    <Compile Include="Configuration\Fluent\CustomHandlerLoggingConfigurationBuilderExtensions.cs" />
+    <Compile Include="Configuration\Fluent\ExceptionHandlerConfigurationExtension.cs" />
     <Compile Include="Configuration\ExceptionHandlerData.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -117,6 +120,15 @@
     <Compile Include="Configuration\ExceptionTypeData.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Configuration\Fluent\IExceptionConfigurationAddExceptionHandlers.cs" />
+    <Compile Include="Configuration\Fluent\IExceptionConfigurationForExceptionType.cs" />
+    <Compile Include="Configuration\Fluent\IExceptionConfigurationForExceptionTypeOrPostHandling.cs" />
+    <Compile Include="Configuration\Fluent\IExceptionConfigurationGivenPolicyWithName.cs" />
+    <Compile Include="Configuration\Fluent\IExceptionConfigurationReplaceWithProvider.cs" />
+    <Compile Include="Configuration\Fluent\IExceptionConfigurationThenDoPostHandlingAction.cs" />
+    <Compile Include="Configuration\Fluent\IExceptionConfigurationWithMessage.cs" />
+    <Compile Include="Configuration\Fluent\IExceptionConfigurationWrapWithProvider.cs" />
+    <Compile Include="Configuration\Fluent\IExceptionHandlerExtension.cs" />
     <Compile Include="Configuration\Manageability\CustomExceptionHandlerDataManageabilityProvider.cs" />
     <Compile Include="Configuration\Manageability\CustomExceptionHandlerDataWmiMapper.cs" />
     <Compile Include="Configuration\Manageability\CustomHandlerSetting.cs" />
@@ -140,10 +152,12 @@
     <Compile Include="Configuration\ReplaceHandlerData.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Configuration\Fluent\ReplaceWithHandlerLoggingConfigurationSourceBuilderExtension.cs" />
     <Compile Include="Configuration\Unity\ExceptionHandlingBlockExtension.cs" />
     <Compile Include="Configuration\WrapHandlerData.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Configuration\Fluent\WrapWithHandlerLoggingConfigurationSourceBuilderExtensions.cs" />
     <Compile Include="ExceptionFormatter.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -208,7 +222,7 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>

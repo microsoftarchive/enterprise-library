@@ -10,7 +10,10 @@
 //===============================================================================
 
 using System.Data;
+using System.Data.Common;
+using System.Data.SqlClient;
 using System.Transactions;
+using Microsoft.Practices.EnterpriseLibrary.Data.Sql;
 using Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests;
 using Microsoft.Practices.EnterpriseLibrary.Data.TestSupport;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -33,7 +36,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Sql
             {
                 DeleteStoredProcedures();
             }
-            catch {}
+            catch { }
             CreateStoredProcedures();
 
             baseFixture = new TransactionScopeFixture(db);
@@ -228,6 +231,30 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Sql
         void DeleteStoredProcedures()
         {
             SqlDataSetHelper.DeleteStoredProcedures(db);
+        }
+    }
+
+    [TestClass]
+    public class TransactionScopeBugsFixture
+    {
+        [TestMethod]
+        public void CanExecuteOperationAfterExecuteReaderThrowsExceptionWithAmbientTransaction_Bug2769()
+        {
+            var database = new SqlDatabase(@"server=(local)\SQLEXPRESS;database=Northwind;Integrated Security=true");
+
+            using (var scope = new TransactionScope())
+            {
+                try
+                {
+                    database.ExecuteReader(
+                        new SqlCommand { CommandText = "invalid invalid invalid", CommandType = CommandType.Text });
+                    Assert.Fail("should have thrown");
+                }
+                catch (DbException)
+                {
+                    database.ExecuteNonQuery("Ten Most Expensive Products");
+                }
+            }
         }
     }
 }

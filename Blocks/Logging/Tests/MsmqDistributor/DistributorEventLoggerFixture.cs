@@ -102,13 +102,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Tests
                 Assert.AreEqual(1, eventLog.NewEntries().Count(ev => EventIsFromLogger(ev, logger)));
             }
 
-            using (EventLog eventLog = GetEventLog())
+            using (var eventLog = new EventLogTracker(GetEventLog()))
             {
-                int eventCount = eventLog.Entries.Count;
-
                 logger.LogServicePaused();
 
-                Assert.AreEqual(eventCount + 1, eventLog.Entries.Count);
+                Assert.AreEqual(1, eventLog.NewEntries().Count(ev => EventIsFromLogger(ev, logger)));
             }
         }
 

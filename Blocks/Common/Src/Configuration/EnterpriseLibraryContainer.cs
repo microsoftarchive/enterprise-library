@@ -69,7 +69,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         /// and supply the corresponding type information to the <paramref name="configurator"/>.
         /// </summary>
         /// <param name="locator"><see cref="TypeRegistrationsProvider"/> used to identify what information
-        /// to pull from the config file.</param>
+        /// to pull from the configuration file.</param>
         /// <param name="configurator"><see cref="IContainerConfigurator"/> object used to consume the configuration
         /// information.</param>
         /// <param name="configSource">Configuration information.</param>

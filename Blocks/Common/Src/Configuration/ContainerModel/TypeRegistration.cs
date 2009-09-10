@@ -22,12 +22,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerMo
     /// </summary>
     public class TypeRegistration
     {
-        /// <summary>
-        /// The name that will be returned for a <see cref="TypeRegistration"/>
-        /// if no name is otherwise specified.
-        /// </summary>
-        public static readonly string DefaultName = "__default__";
-
         private string name;
 
         /// <summary>
@@ -109,13 +103,35 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerMo
         {
             get
             {
-                return name ?? DefaultName;
+                return name ?? DefaultName(ServiceType);
             }
 
             set
             {
                 name = value;
             }
+        }
+
+        /// <summary>
+        /// Returns the default name for a type that will be returned if no name
+        /// is otherwise specified.
+        /// </summary>
+        /// <param name="serviceType">Type that was registered.</param>
+        /// <returns>Default name that will be used.</returns>
+        public static string DefaultName(Type serviceType)
+        {
+            return serviceType.Name + "." + "__default__";
+        }
+
+        /// <summary>
+        /// Returns the default name for a type that will be returned if no name
+        /// is otherwise specified.
+        /// </summary>
+        /// <typeparam name="TServiceType">Type that was registered.</typeparam>
+        /// <returns>Default name that will be used.</returns>
+        public static string DefaultName<TServiceType>()
+        {
+            return DefaultName(typeof(TServiceType));
         }
 
         /// <summary>

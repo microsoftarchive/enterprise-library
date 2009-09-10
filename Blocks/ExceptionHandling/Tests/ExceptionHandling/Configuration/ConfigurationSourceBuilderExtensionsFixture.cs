@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
@@ -104,6 +105,40 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests.Configur
         }
     }
 
+
+    [TestClass]
+    public class When_AddingPolicyWithNullNameToConfigurationSourceBuilder : Given_ConfigurationSourceBuilder
+    {
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void Then_GivenPolicyWithName_ThrowsArgumentException()
+        {
+            base.configurationSourceBuilder.ConfigureExceptionHandling().GivenPolicyWithName(null);
+        }
+    }
+
+    [TestClass]
+    public class When_ConfiguringPolicyWithNullExceptionType : Given_ExceptionPolicyInConfigurationSourceBuilder
+    {
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void Then_ForExceptionType_ThrowsArgumentNullException()
+        {
+            base.policy.ForExceptionType(null);
+        }
+    }
+
+    [TestClass]
+    public class When_ConfiguringPolicyWithNonExceptionType : Given_ExceptionPolicyInConfigurationSourceBuilder
+    {
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void Then_ForExceptionType_ThrowsArgumentException()
+        {
+            base.policy.ForExceptionType(typeof(object));
+        }
+    }
+
     [TestClass]
     public class When_AddingExceptionPolicyConfigurationSourceBuilder : Given_ExceptionPolicyInConfigurationSourceBuilder
     {
@@ -112,7 +147,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests.Configur
            base.policy
                 .ForExceptionType(typeof(ArgumentNullException))
                     .ReplaceWith<ApplicationException>()
-                        .UsingMessage("An exception ocurred somewhere")
+                        .UsingMessage("An exception occurred somewhere")
                     .ThenDoNothing();
         }
 
@@ -128,7 +163,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests.Configur
             Assert.AreEqual(PostHandlingAction.None, exceptionData.PostHandlingAction);
             
             ReplaceHandlerData handlerData = exceptionData.ExceptionHandlers.Single() as ReplaceHandlerData;
-            Assert.AreEqual("An exception ocurred somewhere", handlerData.ExceptionMessage);
+            Assert.AreEqual("An exception occurred somewhere", handlerData.ExceptionMessage);
         }
     }
 
@@ -140,8 +175,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests.Configur
             configurationSourceBuilder
                 .ConfigureExceptionHandling()
                     .GivenPolicyWithName("somePolicy")
-                        .ForExceptionType(typeof(ArgumentNullException))
-                            .ReplaceWith(typeof(ApplicationException)).UsingMessage("An exception ocurred somewhere")
+                        .ForExceptionType<ArgumentNullException>()
+                            .ReplaceWith<ApplicationException>().UsingMessage("An exception occurred somewhere")
                             .ThenDoNothing()
                     .GivenPolicyWithName("anotherPolicy")
                         .ForExceptionType(typeof(TimeZoneNotFoundException))
@@ -165,7 +200,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests.Configur
                 .ConfigureExceptionHandling()
                     .GivenPolicyWithName("somePolicy")
                         .ForExceptionType(typeof(ArgumentNullException))
-                            .ReplaceWith(typeof(ApplicationException)).UsingMessage("An exception ocurred somewhere")
+                            .ReplaceWith(typeof(ApplicationException)).UsingMessage("An exception occurred somewhere")
                             .ThenDoNothing()
                     .GivenPolicyWithName("anotherPolicy")
                         .ForExceptionType(typeof(TimeZoneNotFoundException))
@@ -209,6 +244,51 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests.Configur
         public void Then_ExceptionTypeHasHandlingActionNotifyRetrow()
         {
             Assert.AreEqual(PostHandlingAction.NotifyRethrow, GetExceptionTypeData().PostHandlingAction);
+        }
+    }
+
+    [TestClass]
+    public class When_AddingReplaceHandlerWithNullTypeToExceptionTypeInConfigurationSourceBuilder : Given_ExceptionTypeInConfigurationSourceBuilder
+    {
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void Then_ReplaceWith_ThrowsArgumentNullException()
+        {
+            base.exception.ReplaceWith(null);
+        }
+    }
+
+    [TestClass]
+    public class When_AddingReplaceHandlerWithNonExceptionTypeInConfigurationSourceBuilder : Given_ExceptionTypeInConfigurationSourceBuilder
+    {
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void Then_ReplaceWith_ThrowsArgumentException()
+        {
+            base.exception.ReplaceWith(typeof(object));
+        }
+    }
+
+
+    [TestClass]
+    public class When_AddingWrapHandlerWithNullTypeToExceptionTypeInConfigurationSourceBuilder : Given_ExceptionTypeInConfigurationSourceBuilder
+    {
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void Then_WrapWith_ThrowsArgumentNullException()
+        {
+            base.exception.WrapWith(null);
+        }
+    }
+
+    [TestClass]
+    public class When_AddingWrapHandlerWithNonExceptionTypeInConfigurationSourceBuilder : Given_ExceptionTypeInConfigurationSourceBuilder
+    {
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void Then_WrapWith_ThrowsArgumentException()
+        {
+            base.exception.WrapWith(typeof(object));
         }
     }
 
@@ -321,9 +401,44 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests.Configur
     }
 
     [TestClass]
+    public class When_AddingCustomHandlerWithNullTypeToException : Given_ExceptionTypeInConfigurationSourceBuilder
+    {
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void Then_HandleCustomThrowsArgumentNullException()
+        {
+            exception.HandleCustom(null);
+        }
+    }
+
+    [TestClass]
+    public class When_AddingCustomHandlerWithNullAttributesToException : Given_ExceptionTypeInConfigurationSourceBuilder
+    {
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void Then_HandleCustomThrowsArgumentNullException()
+        {
+            exception.HandleCustom(typeof(MockCustomHandler), null);
+        }
+    }
+
+    [TestClass]
+    public class When_AddingCustomHandlerWithNonHandlerTypeToException : Given_ExceptionTypeInConfigurationSourceBuilder
+    {
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void Then_HandleCustom_ThrowsArgumentException()
+        {
+            exception.HandleCustom(typeof(object));
+        }
+    }
+
+
+
+    [TestClass]
     public class When_AddingCustomHandlerToExceptionTypeInConfigurationSourceBuilder : Given_ExceptionTypeInConfigurationSourceBuilder
     {
-        private Type customHandlerType = typeof(object);
+        private Type customHandlerType = typeof(MockCustomHandler);
 
         protected override void Act()
         {
@@ -362,7 +477,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests.Configur
     [TestClass]
     public class When_AddingCustomHandlerWithAttributesToExceptionTypeInConfigurationSourceBuilder : Given_ExceptionTypeInConfigurationSourceBuilder
     {
-        private Type customHandlerType = typeof(object);
+        private Type customHandlerType = typeof(MockCustomHandler);
         private NameValueCollection attributes = new NameValueCollection();
 
         protected override void Act()
@@ -386,6 +501,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests.Configur
             {
                 Assert.AreEqual(attributes[key], customHandler.Attributes[key]);
             }
+        }
+    }
+
+    class MockCustomHandler : IExceptionHandler
+    {
+        public Exception HandleException(Exception exception, Guid handlingInstanceId)
+        {
+            throw new NotImplementedException();
         }
     }
 }

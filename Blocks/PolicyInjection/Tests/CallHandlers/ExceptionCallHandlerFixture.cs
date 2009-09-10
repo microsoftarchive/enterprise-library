@@ -202,7 +202,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
 
         private static void AddExceptionHandlingConfiguration(IUnityContainer factory)
         {
-            var configSource = new SystemConfigurationSource();
+            var configSource = new SystemConfigurationSource(false);
             new UnityContainerConfigurator(factory).RegisterAll(
                 configSource,
                 (ITypeRegistrationsProvider)configSource.GetSection(ExceptionHandlingSettings.SectionName));

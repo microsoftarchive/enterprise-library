@@ -25,6 +25,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 	/// </summary>
 	public class SerializableConfigurationSection : ConfigurationSection, IXmlSerializable
 	{
+        private const string SourceProperty = "source";
+
 		/// <summary>
 		/// Returns the XML schema for the configuration section.
 		/// </summary>

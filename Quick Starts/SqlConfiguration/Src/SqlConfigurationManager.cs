@@ -159,9 +159,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.SqlConfigurationSource
                         SqlConfigurationManager.configSystem = new SqlConfigurationSystem(data);
                         SqlConfigurationManager.initState = SqlConfigurationManager.InitState.Usable;
                     }
-                    catch (Exception exception1)
+                    catch (Exception)// exception1)
                     {
-                        throw new ConfigurationErrorsException(Properties.Resources.ExceptionConfigurationInitialization, exception1);
+                        //throw new ConfigurationErrorsException(Properties.Resources.ExceptionConfigurationInitialization, exception1);
                     }
                 }
                 catch

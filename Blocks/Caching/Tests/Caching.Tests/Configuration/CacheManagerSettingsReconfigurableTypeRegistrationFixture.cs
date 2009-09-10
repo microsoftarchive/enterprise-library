@@ -46,7 +46,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests.Configuration
             configurationSource = new ConfigurationSourceUpdatable();
             cacheSettings = new CacheManagerSettings();
 
-            configurationSource.Add(null, CacheManagerSettings.SectionName, cacheSettings);
+            configurationSource.Add(CacheManagerSettings.SectionName, cacheSettings);
 
             cacheStorageData = new CacheStorageData("Null Storage", typeof(NullBackingStore));
             cacheManagerData = new CacheManagerData("Default Cache Manager", 10, 10, 10, cacheStorageData.Name);

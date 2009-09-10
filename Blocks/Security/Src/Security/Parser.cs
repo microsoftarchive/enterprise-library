@@ -15,7 +15,7 @@ using Microsoft.Practices.EnterpriseLibrary.Security.Properties;
 namespace Microsoft.Practices.EnterpriseLibrary.Security
 {
     /// <summary>
-    /// Represents a parser for identity role rule expresssions.
+    /// Represents a parser for identity role rule expressions.
     /// </summary>
     public class Parser
     {

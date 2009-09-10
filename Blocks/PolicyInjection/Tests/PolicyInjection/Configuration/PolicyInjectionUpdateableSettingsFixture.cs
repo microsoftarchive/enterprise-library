@@ -51,7 +51,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
             settings = new PolicyInjectionSettings();
             settings.Policies.Add(policy1);
 
-            updatableConfigurationSource.Add(null, PolicyInjectionSettings.SectionName, settings);
+            updatableConfigurationSource.Add(PolicyInjectionSettings.SectionName, settings);
 
             container = new UnityContainer();
             containerConfigurator = new UnityContainerConfigurator(container);

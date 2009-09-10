@@ -142,10 +142,10 @@
     <value>The built content is requested but there are outstanding categories being built.</value>
   </data>
   <data name="ExceptionAdmDefaultValueAboveMaxValue" xml:space="preserve">
-    <value>The default value is above the max value for part '{0}' on policy '{1}': {2} vs {3}.</value>
+    <value>The default value is above the max value for part '{0}' on policy '{1}': {2} versus {3}.</value>
   </data>
   <data name="ExceptionAdmDefaultValueBelowMinValue" xml:space="preserve">
-    <value>The default value is below the min value for part '{0}' on policy '{1}': {2} vs {3}.</value>
+    <value>The default value is below the min value for part '{0}' on policy '{1}': {2} versus {3}.</value>
   </data>
   <data name="ExceptionAdmDefaultValueLongerThanMaxlen" xml:space="preserve">
     <value>The default value for part '{0}' on policy '{1}' is longer than the max length {2}.</value>
@@ -166,7 +166,7 @@
     <value>The suggestion is invalid: '{0}'</value>
   </data>
   <data name="ExceptionAdmMinValueLargerThanMaxValue" xml:space="preserve">
-    <value>Min value is larger than max value for part '{0}' on policy '{1}': {2} vs {3}.</value>
+    <value>Min value is larger than max value for part '{0}' on policy '{1}': {2} versus {3}.</value>
   </data>
   <data name="ExceptionAdmNumericConstraintOutsideRange" xml:space="preserve">
     <value>The numeric constraint '{2}' for part '{0}' on policy '{1}' is outside the allowed range. The valued values are 0-999999999. </value>

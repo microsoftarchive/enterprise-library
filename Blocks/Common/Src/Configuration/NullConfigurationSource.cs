@@ -14,49 +14,45 @@ using System.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 {
-	/// <summary>
-	/// Represents a null configuration source that always returns null for a section.
-	/// </summary>
-	public class NullConfigurationSource : IConfigurationSource
-	{
+    /// <summary>
+    /// Represents a null configuration source that always returns null for a section.
+    /// </summary>
+    public class NullConfigurationSource : IConfigurationSource
+    {
         /// <summary>
         /// Event raised when configuration source contents have changed.
         /// </summary>
         /// <remarks>This class never raises this event.</remarks>
 #pragma warning disable 67
-	    public event EventHandler<ConfigurationSourceChangedEventArgs> SourceChanged;
+        public event EventHandler<ConfigurationSourceChangedEventArgs> SourceChanged;
 #pragma warning restore 67
 
-	    /// <summary>
-		/// Returns null for the section.
-		/// </summary>
-		/// <param name="sectionName">The section name to retrieve.</param>
-		/// <returns>Always <see langword="null"/>.</returns>
-		public ConfigurationSection GetSection(string sectionName)
-		{
-			return null;
-		}
-
         /// <summary>
-		/// Null implementation of <see cref="IConfigurationSource.Add(IConfigurationParameter, string, ConfigurationSection)"/> that 
-		/// ignores the request.
+        /// Returns null for the section.
         /// </summary>
-		/// <param name="saveParameter">The <see cref="IConfigurationParameter"/> that represents the location where 
-		/// to save the updated configuration.</param>
-		/// <param name="sectionName">The name by which the <paramref name="configurationSection"/> should be added.</param>
-		/// <param name="configurationSection">The configuration section to add.</param>
-		public void Add(IConfigurationParameter saveParameter, string sectionName, ConfigurationSection configurationSection)
-        {            
+        /// <param name="sectionName">The section name to retrieve.</param>
+        /// <returns>Always <see langword="null"/>.</returns>
+        public ConfigurationSection GetSection(string sectionName)
+        {
+            return null;
         }
 
-		/// <summary>
-		/// Null implementation of <see cref="IConfigurationSource.Remove(IConfigurationParameter, string)"/> that 
-		/// ignores the request.
-		/// </summary>
-		/// <param name="removeParameter">The <see cref="IConfigurationParameter"/> that represents the location where 
-		/// to save the updated configuration.</param>
-		/// <param name="sectionName">The name of the section to remove.</param>
-		public void Remove(IConfigurationParameter removeParameter, string sectionName)
+        /// <summary>
+        /// Null implementation of <see cref="IConfigurationSource.Add(string, ConfigurationSection)"/> that 
+        /// ignores the request.
+        /// </summary>
+        /// <param name="sectionName">The name by which the <paramref name="configurationSection"/> should be added.</param>
+        /// <param name="configurationSection">The configuration section to add.</param>
+        public void Add(string sectionName, ConfigurationSection configurationSection)
+        {
+        }
+
+        /// <summary>
+        /// Null implementation of <see cref="IConfigurationSource.Remove(string)"/> that 
+        /// ignores the request.
+        /// </summary>
+        /// <param name="sectionName">The name of the section to remove.</param>
+        public void Remove(string sectionName)
         {
         }
 
@@ -75,6 +71,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         /// <param name="sectionName">The name of the section to watch for.</param>
         /// <param name="handler">The handler.</param>
         public void RemoveSectionChangeHandler(string sectionName, ConfigurationChangedEventHandler handler)
+        {
+        }
+
+        void IDisposable.Dispose()
         {
         }
     }

@@ -26,6 +26,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
     {
         private const string selectedSourceProperty = "selectedSource";
         private const string sourcesProperty = "sources";
+        private const string parentSourceProperty = "parentSource";
+        private const string redirectSectionsProperty = "redirectSections";
 
         /// <summary>
 		/// This field supports the Enterprise Library infrastructure and is not intended to be used directly from your code.
@@ -57,6 +59,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 			}
         }
 
+        /// <summary/>
+        [ConfigurationProperty(parentSourceProperty)]
+        public string ParentSource
+        {
+            get
+            {
+                return (string)this[parentSourceProperty];
+            }
+            set
+            {
+                this[parentSourceProperty] = value;
+            }
+        }
+
         /// <summary>
         /// Gets the collection of defined configuration sources.
         /// </summary>
@@ -68,6 +84,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
                 return (NameTypeConfigurationElementCollection<ConfigurationSourceElement, ConfigurationSourceElement>)this[sourcesProperty];
             }           
 
+        }
+
+        /// <summary/>
+        [ConfigurationProperty(redirectSectionsProperty)]
+        public NamedElementCollection<RedirectedSectionElement> RedirectedSections
+        {
+            get
+            {
+                return (NamedElementCollection<RedirectedSectionElement>)this[redirectSectionsProperty];
+            }
         }
     }
 }

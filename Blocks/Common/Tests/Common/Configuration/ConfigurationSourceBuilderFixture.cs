@@ -71,6 +71,37 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
     }
 
     [TestClass]
+    public class When_AddingSectionsToSourceBuilder : Given_EmptyConfigurationSourceBuilder
+    {
+        private InstrumentationConfigurationSection section;
+
+        protected override void Act()
+        {
+            section = new InstrumentationConfigurationSection();
+            base.ConfigurationSourceBuilder.AddSection(InstrumentationConfigurationSection.SectionName,
+                                                       section);
+        }
+
+        [TestMethod]
+        public void Then_CanRetrieveAddedSection()
+        {
+            Assert.AreSame(section, ConfigurationSourceBuilder.Get(InstrumentationConfigurationSection.SectionName));
+        }
+
+        [TestMethod]
+        public void Then_ReturnsNullIfCannotFind()
+        {
+            Assert.IsNull(ConfigurationSourceBuilder.Get("unknown section name"));
+        }
+
+        [TestMethod]
+        public void Then_ReturnsNullIfCannotFindViaGeneric()
+        {
+            Assert.IsNull(ConfigurationSourceBuilder.Get<InstrumentationConfigurationSection>("unknown section name"));
+        }
+    }
+
+    [TestClass]
     public class When_AddingInstrumentationSettingsWithApplicationInstanceNameToConfigurationSourceBuilder : Given_EmptyConfigurationSourceBuilder
     {
         protected override void Act()

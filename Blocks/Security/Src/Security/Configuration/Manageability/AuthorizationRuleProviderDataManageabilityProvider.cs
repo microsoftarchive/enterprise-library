@@ -19,7 +19,7 @@ using Microsoft.Practices.EnterpriseLibrary.Security.Configuration.Manageability
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration.Manageability
 {
     /// <summary>
-    /// Representa a manageability provider for authrization rules.
+    /// Represents a manageability provider for authorization rules.
     /// </summary>
     public class AuthorizationRuleProviderDataManageabilityProvider
         : ConfigurationElementManageabilityProviderBase<AuthorizationRuleProviderData>

@@ -42,13 +42,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation.Tests
                 = new CachingInstrumentationProvider(instanceName, false, false, false, formatter);
             Exception exception = new Exception(exceptionMessage);
 
-            using (EventLog eventLog = GetEventLog())
+            using (var eventLog = new EventLogTracker(GetEventLog()))
             {
-                int eventCount = eventLog.Entries.Count;
-
                 provider.FireCacheFailed(errorMessage, exception);
 
-                Assert.AreEqual(eventCount, eventLog.Entries.Count);
+                Assert.AreEqual(0, eventLog.NewEntries().Count());
             }
         }
 
@@ -59,19 +57,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation.Tests
                 = new CachingInstrumentationProvider(instanceName, false, true, false, formatter);
             Exception exception = new Exception(exceptionMessage);
 
-            using (EventLog eventLog = GetEventLog())
+            using (var eventLog = new EventLogTracker(GetEventLog()))
             {
-                int originalEventCount = eventLog.Entries.Count;
-
                 provider.FireCacheFailed(errorMessage, exception);
 
-                int newEventCount = eventLog.Entries.Count;
-                Assert.IsTrue(originalEventCount < newEventCount);
-                var newEntries = from entry in eventLog.GetNewEntries(originalEventCount)
+                var newEntries = from entry in eventLog.NewEntries()
                                  where entry.Message.IndexOf(exceptionMessage) > -1
                                  select entry;
 
-                Assert.AreEqual(1, newEntries.ToList().Count());
+                Assert.AreEqual(1, newEntries.Count());
             }
         }
 
@@ -82,17 +76,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation.Tests
                 = new CachingInstrumentationProvider(instanceName, false, false, false, formatter);
             Exception exception = new Exception(exceptionMessage);
 
-            using (EventLog eventLog = GetEventLog())
+            using (var eventLog = new EventLogTracker(GetEventLog()))
             {
-                int originalEventCount = eventLog.Entries.Count;
-
                 provider.FireCacheCallbackFailed(errorMessage, exception);
 
-                var newEntries = from entry in eventLog.GetNewEntries(originalEventCount)
+                var newEntries = from entry in eventLog.NewEntries()
                                  where entry.Message.IndexOf(exceptionMessage) > -1
                                  select entry;
 
-                Assert.AreEqual(0, newEntries.ToList().Count);
+                Assert.AreEqual(0, newEntries.Count());
             }
         }
 
@@ -103,17 +95,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation.Tests
                 = new CachingInstrumentationProvider(instanceName, false, true, false, formatter);
             Exception exception = new Exception(exceptionMessage);
 
-            using (EventLog eventLog = GetEventLog())
+            using (var eventLog = new EventLogTracker(GetEventLog()))
             {
-                int originalEventCount = eventLog.Entries.Count;
-
                 provider.FireCacheCallbackFailed(key, exception);
 
-                var newEntries = from entry in eventLog.GetNewEntries(originalEventCount)
+                var newEntries = from entry in eventLog.NewEntries()
                                  where entry.Message.IndexOf(exceptionMessage) > -1
                                  select entry;
 
-                Assert.AreEqual(1, newEntries.ToList().Count);
+                Assert.AreEqual(1, newEntries.Count());
             }
         }
 

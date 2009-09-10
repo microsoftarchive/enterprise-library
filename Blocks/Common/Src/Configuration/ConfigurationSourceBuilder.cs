@@ -49,6 +49,27 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         }
 
         /// <summary>
+        /// Returns a configuration section with the given name, if present in the builder.
+        /// </summary>
+        /// <param name="sectionName">Name of section to return.</param>
+        /// <returns>A valid configuration section or null.</returns>
+        public ConfigurationSection Get(string sectionName)
+        {
+            return configurationSource.GetSection(sectionName);
+        }
+
+        ///<summary>
+        /// Returns a configuration section of type <typeparamref name="T"/>, if present in the builder.
+        ///</summary>
+        ///<param name="sectionName">Section name to retrieve</param>
+        ///<typeparam name="T"><see cref="ConfigurationSection"/> type to return.</typeparam>
+        ///<returns></returns>
+        public T Get<T>(string sectionName) where T : ConfigurationSection
+        {
+            return (T)configurationSource.GetSection(sectionName);
+        }
+
+        /// <summary>
         /// Updates a configuration source replacing any existing sections with those 
         /// built up with the builder.
         /// </summary>
@@ -57,9 +78,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         {
             foreach (var section in configurationSource.sections)
             {
-                source.Remove(null, section.Key);
-                source.Add(null, section.Key, section.Value);
+                source.Remove(section.Key);
+                source.Add(section.Key, section.Value);
             }
+        }
+
+        ///<summary/>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public override string ToString()
+        {
+            return base.ToString();
         }
     }
 
@@ -75,6 +103,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         /// <param name="sectionName">Name of section to add.</param>
         /// <param name="section">Configuration section to add.</param>
         /// <returns></returns>
+        [EditorBrowsable(EditorBrowsableState.Never)]
         IConfigurationSourceBuilder AddSection(string sectionName, ConfigurationSection section);
 
         /// <summary>
@@ -82,8 +111,26 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         /// </summary>
         /// <param name="sectionName"></param>
         /// <returns>True if contained in the builder, false otherwise.</returns>
+        [EditorBrowsable(EditorBrowsableState.Never)]
         bool Contains(string sectionName);
-        
+
+        /// <summary>
+        /// Returns a configuration section with the given name, if present in the builder.
+        /// </summary>
+        /// <param name="sectionName">Name of section to return.</param>
+        /// <returns>A valid configuration section or null.</returns>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        ConfigurationSection Get(string sectionName);
+
+        ///<summary>
+        /// Returns a configuration section of type <typeparamref name="T"/>, if present in the builder.
+        ///</summary>
+        ///<param name="sectionName">Section name to retrieve</param>
+        ///<typeparam name="T"><see cref="ConfigurationSection"/> type to return.</typeparam>
+        ///<returns></returns>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        T Get<T>(string sectionName) where T : ConfigurationSection;
+
         /// <summary>
         /// Updates a configuration source replacing any existing sections with those 
         /// built up with the builder.

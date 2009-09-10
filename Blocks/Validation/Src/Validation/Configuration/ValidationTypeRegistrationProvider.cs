@@ -28,7 +28,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
     {
         /// <summary>
         /// Return the <see cref="TypeRegistration"/> objects needed to configure
-        /// the container for the validation block.
+        /// the container for the Validation Application Block.
         /// </summary>
         /// <param name="configurationSource">The <see cref="IConfigurationSource"/> used when creating the <see cref="TypeRegistration{T}"/> entries.</param>
         /// <returns>The sequence of <see cref="TypeRegistration"/> objects.</returns>

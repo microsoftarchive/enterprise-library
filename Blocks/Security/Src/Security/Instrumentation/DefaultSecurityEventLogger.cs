@@ -21,7 +21,7 @@ using System.Diagnostics;
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Instrumentation
 {
     /// <summary>
-    /// The instrumentation gateway for the security block when no instances of the objects are involved.
+    /// The instrumentation gateway for the Security Application Block when no instances of the objects are involved.
     /// </summary>
 	[EventLogDefinition("Application", EventLogSourceName)]
     public class DefaultSecurityEventLogger : InstrumentationListener

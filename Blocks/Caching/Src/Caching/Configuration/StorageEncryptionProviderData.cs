@@ -30,6 +30,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
 		{
 		}
 
+        /// <summary>
+        /// Initialize a new instance of the <see cref="StorageEncryptionProviderData"/> class with a name and the type of the <see cref="IStorageEncryptionProvider"/>.
+        /// </summary>
+        /// <param name="type">
+        /// The type of <see cref="IStorageEncryptionProvider"/>.
+        /// </param>
+        public StorageEncryptionProviderData(Type type)
+            : this(null, type)
+        {
+        }
+
+
 		/// <summary>
 		/// Initialize a new instance of the <see cref="StorageEncryptionProviderData"/> class with a name and the type of the <see cref="IStorageEncryptionProvider"/>.
 		/// </summary>

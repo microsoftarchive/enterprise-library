@@ -10,6 +10,7 @@
 //===============================================================================
 
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
@@ -17,6 +18,8 @@ using System.Text;
 using System.Windows.Forms;
 
 using ExceptionHandlingQuickStart.BusinessLayer;
+using ExceptionHandlingQuickStart.Properties;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 
 namespace ExceptionHandlingQuickStart
@@ -24,27 +27,29 @@ namespace ExceptionHandlingQuickStart
     /// <summary>
     /// Enterprise Library Exception Handling Application Block Quick Start.
     /// </summary>
-    public class QuickStartForm : System.Windows.Forms.Form
+    public class QuickStartForm : Form
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.Container components = null;
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.GroupBox groupBox;
+        private Container components = null;
+        private GroupBox groupBox1;
+        private Label label2;
+        private GroupBox groupBox;
 
         private Process viewerProcess = null;
-        private System.Windows.Forms.Button logExceptionButton;
-        private System.Windows.Forms.Button notifyUserButton;
-        private System.Windows.Forms.Button viewWalkthroughButton;
-        private System.Windows.Forms.Button quitButton;
-        private System.Windows.Forms.PictureBox logoPictureBox;
-        private System.Windows.Forms.TextBox resultsTextBox;
+        private Button logExceptionButton;
+        private Button notifyUserButton;
+        private Button viewWalkthroughButton;
+        private Button quitButton;
+        private PictureBox logoPictureBox;
+        private TextBox resultsTextBox;
+
+        private ExceptionManager exceptionManager;
 
         private const string HelpViewerArguments = @"/helpcol ms-help://MS.VSCC.v90/MS.VSIPCC.v90/ms.practices.entlib.2008oct /LaunchFKeywordTopic ExceptionhandlingQS2";
 
-        public static System.Windows.Forms.Form AppForm;
+        public static Form AppForm;
 
         public QuickStartForm()
         {
@@ -52,6 +57,8 @@ namespace ExceptionHandlingQuickStart
             // Required for Windows Form Designer support
             //
             InitializeComponent();
+
+            exceptionManager = EnterpriseLibraryContainer.Current.GetInstance<ExceptionManager>();
         }
 
         /// <summary>
@@ -281,27 +288,7 @@ namespace ExceptionHandlingQuickStart
             try
             {
                 Cursor = System.Windows.Forms.Cursors.WaitCursor;
-
-                StringBuilder sb = new StringBuilder();
-
-                sb.Append("Scenario: Notify the user when an exception occurs");
-                sb.Append(Environment.NewLine);
-                sb.Append(Environment.NewLine);
-                sb.Append("1. An exception occurs and is detected in the Business layer.");
-                sb.Append(Environment.NewLine);
-                sb.Append(Environment.NewLine);
-                sb.Append("2. The Business layer specifies the \"Notify Policy\" as the exception handling policy.");
-                sb.Append(Environment.NewLine);
-                sb.Append(Environment.NewLine);
-                sb.Append("3. The \"Notify Policy\" is configured to first log the exception, then replace the exception with a new one, and finally return to the application by recommending a rethrow.");
-                sb.Append(Environment.NewLine);
-                sb.Append(Environment.NewLine);
-                sb.Append("4. The exception is propagated to and caught by the UI layer.");
-                sb.Append(Environment.NewLine);
-                sb.Append(Environment.NewLine);
-                sb.Append("5. The UI layer catches the exception and calls the \"Global Policy\", which displays the exception in a message box.");
-                sb.Append(Environment.NewLine);
-                DisplayScenarioStart(sb.ToString());
+                DisplayScenarioStart(Resources.NotifyUserText);
 
                 AppService svc = new AppService();
 
@@ -320,25 +307,7 @@ namespace ExceptionHandlingQuickStart
             try
             {
                 Cursor = System.Windows.Forms.Cursors.WaitCursor;
-
-                StringBuilder sb = new StringBuilder();
-
-                sb.Append("Scenario: Log exception");
-                sb.Append(Environment.NewLine);
-                sb.Append(Environment.NewLine);
-                sb.Append("1. An exception occurs and is detected in the UI layer.");
-                sb.Append(Environment.NewLine);
-                sb.Append(Environment.NewLine);
-                sb.Append("2. The UI layer specifies the \"Log Only Policy\" as the exception handling policy.");
-                sb.Append(Environment.NewLine);
-                sb.Append(Environment.NewLine);
-                sb.Append("3. The \"Log Only Policy\" is configured to log the exception and return to the application without recommending a rethrow.");
-                sb.Append(Environment.NewLine);
-                sb.Append(Environment.NewLine);
-                sb.Append("4. Control is returned to the UI layer.");
-                sb.Append(Environment.NewLine);
-
-                DisplayScenarioStart(sb.ToString());
+                DisplayScenarioStart(Resources.LogExceptionText);
 
                 try
                 {
@@ -346,7 +315,7 @@ namespace ExceptionHandlingQuickStart
                 }
                 catch (Exception ex)
                 {
-                    bool rethrow = ExceptionPolicy.HandleException(ex, "Log Only Policy");
+                    bool rethrow = exceptionManager.HandleException(ex, "Log Only Policy");
 
                     DisplayResults("**Exception has been logged. See the currently configured log destination (default is event log) for exception details.");
 
@@ -440,14 +409,11 @@ namespace ExceptionHandlingQuickStart
             {
                 // Something has gone wrong during HandleException (e.g. incorrect configuration of the block).
                 // Exit the application
-                string errorMsg = "An unexpected exception occured while calling HandleException with policy 'Global Policy'. ";
-                errorMsg += "Please check the event log for details about the exception." + Environment.NewLine + Environment.NewLine;
-
-                MessageBox.Show(errorMsg, "Application Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                MessageBox.Show(Resources.GlobalErrorHandlerText, "Application Error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
 
                 Application.Exit();
             }
-            QuickStartForm.AppForm.Cursor = System.Windows.Forms.Cursors.Default;
+            AppForm.Cursor = Cursors.Default;
         }
     }
 }

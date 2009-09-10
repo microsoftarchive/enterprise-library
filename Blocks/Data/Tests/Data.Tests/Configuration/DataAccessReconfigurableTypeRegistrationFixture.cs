@@ -56,8 +56,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration
 
             databaseSettings = new DatabaseSettings { DefaultDatabase = "default connection" };
 
-            updatableConfigurationSource.Add(null, "connectionStrings", connectionStringsSection);
-            updatableConfigurationSource.Add(null, DatabaseSettings.SectionName, databaseSettings);
+            updatableConfigurationSource.Add("connectionStrings", connectionStringsSection);
+            updatableConfigurationSource.Add(DatabaseSettings.SectionName, databaseSettings);
 
             container = new UnityContainer();
             containerConfigurator = new UnityContainerConfigurator(container);

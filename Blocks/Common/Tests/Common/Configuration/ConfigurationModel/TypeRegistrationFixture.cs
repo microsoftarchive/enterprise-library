@@ -68,7 +68,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
         [TestMethod]
         public void WhenNoNameIsGiven_DefaultNonNullNameIsReturned()
         {
-            Assert.AreEqual(TypeRegistration.DefaultName, registration.Name);
+            Assert.AreEqual(TypeRegistration.DefaultName<Foo>(), registration.Name);
         }
 
         [TestMethod]

@@ -35,6 +35,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
                 };
         }
 
+
+        [TestMethod]
+        public void WhenCreatingInstanceUsingDefaultContructor_ThenListenerDataTypeIsSet()
+        {
+            var listener = new XmlTraceListenerData();
+            Assert.AreEqual(typeof(XmlTraceListenerData), listener.ListenerDataType);
+        }
+
+
         [TestMethod]
         public void WhenCreatesRegistration_ThenCreatesTwoTypeRegistrations()
         {

@@ -31,7 +31,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
         {
             get
             {
-                ExceptionHandlingSettings settings = (ExceptionHandlingSettings) new SystemConfigurationSource().GetSection(ExceptionHandlingSettings.SectionName);
+                ExceptionHandlingSettings settings = (ExceptionHandlingSettings)
+                    new SystemConfigurationSource(false).GetSection(ExceptionHandlingSettings.SectionName);
                 return settings.ExceptionPolicies.Get(wrapPolicy);
             }
         }
@@ -46,7 +47,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
         [TestMethod]
         public void GetPolicyByNameFailTest()
         {
-            ExceptionHandlingSettings settings = (ExceptionHandlingSettings) new SystemConfigurationSource().GetSection(ExceptionHandlingSettings.SectionName);
+            ExceptionHandlingSettings settings = (ExceptionHandlingSettings)
+                new SystemConfigurationSource(false).GetSection(ExceptionHandlingSettings.SectionName);
             settings.ExceptionPolicies.Get(badString);
         }
 

@@ -273,25 +273,7 @@ Public Class QuickStartForm
     Private Sub logExceptionButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles logExceptionButton.Click
         Try
             Cursor = System.Windows.Forms.Cursors.WaitCursor
-
-            Dim sb As StringBuilder = New StringBuilder
-
-            sb.Append("Scenario: Log exception")
-            sb.Append(Environment.NewLine)
-            sb.Append(Environment.NewLine)
-            sb.Append("1. An exception occurs and is detected in the UI layer.")
-            sb.Append(Environment.NewLine)
-            sb.Append(Environment.NewLine)
-            sb.Append("2. The UI layer specifies the ""Log Only Policy"" as the exception handling policy.")
-            sb.Append(Environment.NewLine)
-            sb.Append(Environment.NewLine)
-            sb.Append("3. The ""Log Only Policy"" is configured to log the exception and return to the application without recommending a rethrow.")
-            sb.Append(Environment.NewLine)
-            sb.Append(Environment.NewLine)
-            sb.Append("5. Control is returned to the UI layer.")
-            sb.Append(Environment.NewLine)
-
-            DisplayScenarioStart(sb.ToString())
+            DisplayScenarioStart(My.Resources.LogExceptionText)
 
             Try
                 Process()
@@ -316,27 +298,7 @@ Public Class QuickStartForm
         Try
 
             Cursor = System.Windows.Forms.Cursors.WaitCursor
-
-            Dim sb As New StringBuilder()
-
-            sb.Append("Scenario: Notify the user when an exception occurs")
-            sb.Append(Environment.NewLine)
-            sb.Append(Environment.NewLine)
-            sb.Append("1. An exception occurs and is detected in the Business layer.")
-            sb.Append(Environment.NewLine)
-            sb.Append(Environment.NewLine)
-            sb.Append("2. The Business layer specifies the ""Notify Policy"" as the exception handling policy.")
-            sb.Append(Environment.NewLine)
-            sb.Append(Environment.NewLine)
-            sb.Append("3. The ""Notify Policy"" is configured to first log the exception, then replace the exception with a new one, and finally return to the application by recommending a rethrow.")
-            sb.Append(Environment.NewLine)
-            sb.Append(Environment.NewLine)
-            sb.Append("4. The exception is propagated to and caught by the UI layer.")
-            sb.Append(Environment.NewLine)
-            sb.Append(Environment.NewLine)
-            sb.Append("5. The UI layer catches the exception and calls the ""Global Policy"", which displays the exception in a message box.")
-            sb.Append(Environment.NewLine)
-            DisplayScenarioStart(sb.ToString())
+            DisplayScenarioStart(My.Resources.NotifyUserText)
 
             service.ProcessAndNotify()
 

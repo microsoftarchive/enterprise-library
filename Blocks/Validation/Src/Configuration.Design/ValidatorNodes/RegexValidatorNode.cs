@@ -24,7 +24,7 @@ using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Validation;
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.Design.ValidatorNodes
 {
     /// <summary>
-    /// Respresents the designtime configuration node for an <see cref="RegexValidatorData"/>.
+    /// Represents the designtime configuration node for an <see cref="RegexValidatorData"/>.
     /// </summary>
     public class RegexValidatorNode : SingleValidatorNodeBase
     {

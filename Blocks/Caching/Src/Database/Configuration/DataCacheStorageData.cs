@@ -19,7 +19,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Database.Configuration
 {
 	/// <summary>
 	/// Configuration information for DataCacheStorageData. This class represents the extra information, over and
-	/// above what is defined in <see cref="CacheStorageData" />, needed to connect caching to the Data block.
+    /// above what is defined in <see cref="CacheStorageData" />, needed to connect caching to the Data Access Application Block.
 	/// </summary>
     public class DataCacheStorageData : CacheStorageData
     {
@@ -32,7 +32,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Database.Configuration
         /// <summary>
         /// Initializes an instance of a <see cref="DataCacheStorageData"/> class.
         /// </summary>
-        public DataCacheStorageData()
+        public DataCacheStorageData() : base(typeof(DataBackingStore))
         {
         }
 

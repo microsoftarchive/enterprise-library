@@ -121,12 +121,28 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="CommandAccessor.cs" />
+    <Compile Include="Configuration\Fluent\AnotherDatabaseConfigurationExtensions.cs" />
+    <Compile Include="Configuration\Fluent\DatabaseConfigurationExtension.cs" />
     <Compile Include="Configuration\DatabaseData.cs" />
     <Compile Include="Configuration\DatabaseSettings.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Configuration\DatabaseSyntheticConfigSettings.cs" />
+    <Compile Include="Configuration\Fluent\DatabaseProviderExtensions.cs" />
+    <Compile Include="Configuration\Fluent\DataConfigurationSourceBuilderExtensions.cs" />
     <Compile Include="Configuration\DbProviderMapping.cs" />
+    <Compile Include="Configuration\Fluent\IDatabaseConfiguration.cs" />
+    <Compile Include="Configuration\Fluent\IDatabaseConfigurationProperties.cs" />
+    <Compile Include="Configuration\Fluent\IDatabaseConfigurationProviderEntry.cs" />
+    <Compile Include="Configuration\Fluent\IDatabaseConfigurationProviders.cs" />
+    <Compile Include="Configuration\Fluent\IDatabaseDefaultConnectionString.cs" />
+    <Compile Include="Configuration\Fluent\IDatabaseProviderExtensionContext.cs" />
+    <Compile Include="Configuration\Fluent\IDataConfiguration.cs" />
+    <Compile Include="Configuration\Fluent\OdbcConfigurationExtension.cs" />
+    <Compile Include="Configuration\Fluent\OleDbConfigurationExtension.cs" />
+    <Compile Include="Configuration\Fluent\OracleConfigurationExtension.cs" />
+    <Compile Include="Configuration\Fluent\SqlCeDatabaseConfigurationExtension.cs" />
+    <Compile Include="Configuration\Fluent\SqlDatabaseConfigurationExtension.cs" />
     <Compile Include="Configuration\GenericDatabaseData.cs" />
     <Compile Include="Configuration\Manageability\ConnectionStringSetting.cs" />
     <Compile Include="Configuration\Manageability\ConnectionStringsManageabilityProvider.cs" />
@@ -201,6 +217,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="SqlStringAccessor.cs" />
+    <Compile Include="Sql\ConnectionClosingXmlReaderWrapper.cs" />
     <Compile Include="TransactionScopeConnections.cs" />
     <Compile Include="UpdateBehavior.cs">
       <SubType>Code</SubType>

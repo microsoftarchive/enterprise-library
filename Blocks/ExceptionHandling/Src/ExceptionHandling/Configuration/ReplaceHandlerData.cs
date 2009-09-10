@@ -13,14 +13,20 @@ using System;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Microsoft.Practices.EnterpriseLibrary.Common.Utility;
 using System.Collections.Generic;
+using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Properties;
+using System.ComponentModel;
+using System.Drawing.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
 {
     /// <summary>
     /// Represents the configuration data for a <see cref="ReplaceHandler"/>.
-    /// </summary>		
+    /// </summary>
+    [ResourceDisplayName(typeof(Resources), "AddReplaceHandlerData")]
+    [ResourceDescription(typeof(Resources), "AddReplaceHandlerDataDescription")]
     public class ReplaceHandlerData : ExceptionHandlerData
     {
         private static readonly AssemblyQualifiedTypeNameConverter typeConverter = new AssemblyQualifiedTypeNameConverter();
@@ -32,7 +38,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
         /// <summary>
         /// Initializes a new instance of the <see cref="ReplaceHandlerData"/> class.
         /// </summary>
-        public ReplaceHandlerData()
+        public ReplaceHandlerData() : base(typeof(ReplaceHandler))
         {
         }
 
@@ -59,26 +65,30 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
         /// Gets or sets the message for the replacement exception.
         /// </summary>
         [ConfigurationProperty(exceptionMessageProperty, IsRequired = false)]
+        [ResourceDescription(typeof(Resources), "ExceptionReplaceMessageDescription")]
+        //[SRCategory("CategoryGeneral", typeof(Resources))]
         public string ExceptionMessage
         {
             get { return (string)this[exceptionMessageProperty]; }
             set { this[exceptionMessageProperty] = value; }
         }
 
-        /// <summary>
-        /// !~!
-        /// </summary>
+        /// <summary/>
         [ConfigurationProperty(ExceptionMessageResourceNameProperty)]
+        [ResourceDescription(typeof(Resources), "ExceptionMessageResourceNameDescription")]
+        //[SRCategory("CategoryLocalization", typeof(Resources))]
         public string ExceptionMessageResourceName
         {
             get { return (string)this[ExceptionMessageResourceNameProperty]; }
             set { this[ExceptionMessageResourceNameProperty] = value; }
         }
 
-        /// <summary>
-        /// !~!
-        /// </summary>
+        /// <summary/>
         [ConfigurationProperty(ExceptionMessageResourceTypeNameProperty)]
+        [ResourceDescription(typeof(Resources), "ExceptionMessageTypeNameDescription")]
+        //[SRCategory("CategoryLocalization", typeof(Resources))]
+        [Editor(EditorTypes.TypeSelector, typeof(UITypeEditor))]
+        [BaseType(typeof(Object), TypeSelectorIncludes.None)]
         public string ExceptionMessageResourceType
         {
             get { return (string)this[ExceptionMessageResourceTypeNameProperty]; }
@@ -101,6 +111,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
         /// The fully qualified type name of the replacement exception.
         /// </value>
         [ConfigurationProperty(replaceExceptionTypeProperty, IsRequired = true)]
+        //[Required]
+        [Editor(EditorTypes.TypeSelector, typeof(UITypeEditor))]
+        [BaseType(typeof(Exception), TypeSelectorIncludes.BaseType)]
+        [ResourceDescription(typeof(Resources), "ExceptionReplaceTypeNameDescription")]
+        //[SRCategory("CategoryGeneral", typeof(Resources))]
         public string ReplaceExceptionTypeName
         {
             get { return (string)this[replaceExceptionTypeProperty]; }

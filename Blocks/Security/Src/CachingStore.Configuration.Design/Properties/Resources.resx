@@ -121,7 +121,7 @@
     <value>The number of minutes in which the added object expires and is removed from the cache. </value>
   </data>
   <data name="CacheInstanceDescription" xml:space="preserve">
-    <value>The Caching Block Cache instance name.</value>
+    <value>The Caching Application Block Cache instance name.</value>
   </data>
   <data name="CategoryGeneral" xml:space="preserve">
     <value>General</value>

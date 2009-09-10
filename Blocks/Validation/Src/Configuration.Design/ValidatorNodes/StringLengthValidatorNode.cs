@@ -19,7 +19,7 @@ using ValidationRangeBoundaryType = Microsoft.Practices.EnterpriseLibrary.Valida
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.Design.ValidatorNodes
 {
     /// <summary>
-    /// Respresents the designtime configuration node for a <see cref="StringLengthValidatorData"/>.
+    /// Represents the designtime configuration node for a <see cref="StringLengthValidatorData"/>.
     /// </summary>
     public class StringLengthValidatorNode : ValueValidatorNode
     {

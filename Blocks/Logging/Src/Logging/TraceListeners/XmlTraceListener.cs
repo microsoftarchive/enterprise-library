@@ -13,12 +13,15 @@ using System.Diagnostics;
 using System.IO;
 using System.Xml.XPath;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
 {
     /// <summary>
     /// A <see cref="TraceListener"/> that writes an XML.
     /// </summary>
+    [ConfigurationElementType(typeof(XmlTraceListenerData))]
     public class XmlTraceListener : XmlWriterTraceListener
     {
         /// <summary>

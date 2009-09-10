@@ -22,7 +22,7 @@ using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration.
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration.Design
 {
     /// <summary>
-    /// Visual control that allows an user to select the file wich is used to store an cryptographic key.
+    /// Visual control that allows a user to select the file which is used to store an cryptographic key.
     /// </summary>
     public partial class ChooseKeyFileControl : UserControl, IWizardValidationTarget
     {

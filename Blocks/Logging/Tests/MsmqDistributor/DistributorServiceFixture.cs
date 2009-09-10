@@ -51,15 +51,22 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Tests
             Assert.IsNotNull(distributor);
             Assert.AreEqual(ServiceStatus.OK, distributor.Status);
 
-            MsmqDistributorSettings settings = MsmqDistributorSettings.GetSettings(new SystemConfigurationSource());
+            using (var configurationSource = new SystemConfigurationSource(false))
+            {
+                MsmqDistributorSettings settings = MsmqDistributorSettings.GetSettings(configurationSource);
 
-            Assert.AreEqual(settings.ServiceName, distributor.ApplicationName);
+                Assert.AreEqual(settings.ServiceName, distributor.ApplicationName);
 
-            // force log entry
-            distributor.EventLogger.LogServiceFailure(string.Empty, new Exception("simulated exception - forced event logger flush"), TraceEventType.Error);
+                // force log entry
+                distributor.EventLogger
+                    .LogServiceFailure(
+                        string.Empty,
+                        new Exception("simulated exception - forced event logger flush"),
+                        TraceEventType.Error);
 
-            Assert.IsTrue(CommonUtil.LogEntryExists(Resources.InitializeComponentStarted), "init begin");
-            Assert.IsTrue(CommonUtil.LogEntryExists(Resources.InitializeComponentCompleted), "init end");
+                Assert.IsTrue(CommonUtil.LogEntryExists(Resources.InitializeComponentStarted), "init begin");
+                Assert.IsTrue(CommonUtil.LogEntryExists(Resources.InitializeComponentCompleted), "init end");
+            }
         }
 
         [TestMethod]

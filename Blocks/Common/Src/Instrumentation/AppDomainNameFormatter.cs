@@ -15,7 +15,7 @@ using System.Text.RegularExpressions;
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation
 {
     /// <summary>
-	/// Provides the friendly name of the app domain as the prefix in formatting a 
+	/// Provides the friendly name of the application domain as the prefix in formatting a 
 	/// particular instance of a performance counter.
 	/// </summary>
     public class AppDomainNameFormatter : IPerformanceCounterNameFormatter

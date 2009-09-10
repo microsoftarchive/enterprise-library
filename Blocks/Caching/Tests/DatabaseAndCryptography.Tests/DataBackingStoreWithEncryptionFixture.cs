@@ -14,6 +14,7 @@ using System.Collections;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Security.Cryptography;
+using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Caching.BackingStoreImplementations;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Database;
 using Microsoft.Practices.EnterpriseLibrary.Caching.TestSupport.Expirations;
@@ -69,30 +70,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.DatabaseAndCryptography.
             Assert.AreEqual(CacheItemPriority.Normal, retrievedItem.ScavengingPriority);
             Assert.AreEqual(typeof(MockRefreshAction), retrievedItem.RefreshAction.GetType());
             Assert.AreEqual(typeof(AlwaysExpired), retrievedItem.GetExpirations()[0].GetType());
-        }
-
-        [TestMethod]
-        public void AttemptingToReadEncryptedDataWithoutDecryptingThrowsException()
-        {
-            IStorageEncryptionProvider encryptionProvider = null;
-            encryptionProvider = EnterpriseLibraryContainer.Current.GetInstance<IStorageEncryptionProvider>("Fred");
-
-            DataBackingStore encryptingBackingStore = new DataBackingStore(db, "encryptionTests", encryptionProvider);
-
-            encryptingBackingStore.Add(new CacheItem("key", "value", CacheItemPriority.Normal, new MockRefreshAction(), new AlwaysExpired()));
-            try
-            {
-                Hashtable dataInCache = unencryptedBackingStore.Load();
-                Assert.Fail("Expected either SerializationException or NullReferenceException");
-            }
-            catch(SerializationException)
-            {
-                // We expect this one...
-            }
-            catch(NullReferenceException)
-            {
-                // or this one (despite the docs, BinaryFormatter can throw NullReferenceException on garbage data)
-            }
         }
 
         [TestMethod]

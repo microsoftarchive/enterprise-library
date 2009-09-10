@@ -295,6 +295,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
         [TestMethod]
         public void WriteEntryWithModeOff()
         {
+            MockTraceListener.Reset();
+
             // configuration update
             System.Configuration.Configuration configuration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             LoggingSettings writableSettings = (LoggingSettings)configuration.GetSection(LoggingSettings.SectionName);
@@ -356,19 +358,22 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
         public void EmptyCategoriesRevertToDefaultCategory()
         {
             MockTraceListener.Reset();
-            LoggingSettings settings = LoggingSettings.GetLoggingSettings(new SystemConfigurationSource());
+            using (var configurationSource = new SystemConfigurationSource(false))
+            {
+                LoggingSettings settings = LoggingSettings.GetLoggingSettings(configurationSource);
 
-            LogEntry log = new LogEntry();
-            log.EventId = 1;
-            log.Message = "test";
-            log.Categories = new string[0];
-            log.Severity = TraceEventType.Error;
-            Logger.Write(log);
+                LogEntry log = new LogEntry();
+                log.EventId = 1;
+                log.Message = "test";
+                log.Categories = new string[0];
+                log.Severity = TraceEventType.Error;
+                Logger.Write(log);
 
-            Assert.IsNotNull(MockTraceListener.LastEntry);
-            Assert.AreEqual("test", MockTraceListener.LastEntry.Message);
-            Assert.AreEqual(1, MockTraceListener.LastEntry.Categories.Count);
-            Assert.IsTrue(MockTraceListener.LastEntry.Categories.Contains(settings.DefaultCategory));
+                Assert.IsNotNull(MockTraceListener.LastEntry);
+                Assert.AreEqual("test", MockTraceListener.LastEntry.Message);
+                Assert.AreEqual(1, MockTraceListener.LastEntry.Categories.Count);
+                Assert.IsTrue(MockTraceListener.LastEntry.Categories.Contains(settings.DefaultCategory));
+            }
         }
 
         [TestMethod]

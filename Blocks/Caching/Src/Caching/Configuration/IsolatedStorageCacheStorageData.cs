@@ -27,7 +27,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
         /// <summary>
         /// Initializes a new instance of the <see cref="IsolatedStorageCacheStorageData"/> class.
         /// </summary>
-        public IsolatedStorageCacheStorageData() 
+        public IsolatedStorageCacheStorageData() : base(typeof(IsolatedStorageBackingStore))
         {
         }        
 

@@ -32,8 +32,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Configuration
         /// <summary>
         /// Initializes a <see cref="FormattedDatabaseTraceListenerData"/>.
         /// </summary>
-        public FormattedDatabaseTraceListenerData()
+        public FormattedDatabaseTraceListenerData() : base(typeof(FormattedDatabaseTraceListener))
         {
+            this.ListenerDataType = typeof(FormattedDatabaseTraceListenerData);
         }
 
         /// <summary>
@@ -100,7 +101,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Configuration
         /// <summary>
         /// Gets and sets the stored procedure name for writing the log.
         /// </summary>
-        [ConfigurationProperty(writeLogStoredProcNameProperty, IsRequired = true)]
+        [ConfigurationProperty(writeLogStoredProcNameProperty, IsRequired = true, DefaultValue = "WriteLog")]
         public string WriteLogStoredProcName
         {
             get { return (string)base[writeLogStoredProcNameProperty]; }
@@ -110,7 +111,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Configuration
         /// <summary>
         /// Gets and sets the stored procedure name for adding a category for this log.
         /// </summary>
-        [ConfigurationProperty(addCategoryStoredProcNameProperty, IsRequired = true)]
+        [ConfigurationProperty(addCategoryStoredProcNameProperty, IsRequired = true, DefaultValue="AddCategory")]
         public string AddCategoryStoredProcName
         {
             get { return (string)base[addCategoryStoredProcNameProperty]; }

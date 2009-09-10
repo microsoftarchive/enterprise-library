@@ -45,7 +45,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Oracle.Configuration
         }
 
         ///<summary>
-        /// Gets the oracle package mappings for the represented database.
+        /// Gets the Oracle package mappings for the represented database.
         ///</summary>
         public IEnumerable<OraclePackageData> PackageMappings
         {

@@ -23,27 +23,27 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         public const string Cryptography = "securityCryptographyConfiguration";
 
         /// <summary>
-        /// Data block custom settings
+        /// Data Access Application Block custom settings
         /// </summary>
         public const string Data = "dataConfiguration";
 
         /// <summary>
-        /// Exception handling block section name
+        /// Exception Handling Application Block section name
         /// </summary>
         public const string ExceptionHandling = "exceptionHandling";
 
         /// <summary>
-        /// Caching block section name
+        /// Caching Application Block section name
         /// </summary>
         public const string Caching = "cachingConfiguration";
 
         /// <summary>
-        /// Security block section name
+        /// Security Application Block section name
         /// </summary>
         public const string Security = "securityConfiguration";
 
         /// <summary>
-        /// Logging block section name
+        /// Logging Application Block section name
         /// </summary>
         public const string Logging = "loggingConfiguration";
 
@@ -66,7 +66,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         /// <summary>
         /// Not actually a section name, this is the type name used to get the
         /// TypeRegistrationProviderLocatorStrategy used to retrieve information
-        /// for the Data block.
+        /// for the Data Access Application Block.
         /// </summary>
         public const string DataRegistrationProviderLocatorType =
             "Microsoft.Practices.EnterpriseLibrary.Data.Configuration.DatabaseSyntheticConfigSettings, Microsoft.Practices.EnterpriseLibrary.Data";
@@ -74,7 +74,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         /// <summary>
         /// Not actually a section name, this is the type name used to get the
         /// TypeRegistrationProviderLocatorStrategy used to retrieve information
-        /// for the Validation block.
+        /// for the Validation Application Block.
         /// </summary>
         public const string ValidationRegistrationProviderLocatorType =
             "Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.ValidationTypeRegistrationProvider, Microsoft.Practices.EnterpriseLibrary.Validation";

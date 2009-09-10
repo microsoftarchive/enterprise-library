@@ -10,8 +10,6 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design;
@@ -86,23 +84,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.AppSettings.Configuration.Design
         }
 
         /// <summary>
-        /// Gets a <see cref="FileConfigurationParameter"/> based on the applications configuration file.
-        /// </summary>
-        /// <param name="serviceProvider">The a mechanism for retrieving a service object; that is, an object that provides custom support to other objects.</param>
-        /// <returns>A <see cref="FileConfigurationParameter"/> based on the applications configuration file.</returns>
-        protected override IConfigurationParameter GetConfigurationParameter(IServiceProvider serviceProvider)
-        {
-            return new FileConfigurationParameter(ServiceHelper.GetCurrentRootNode(serviceProvider).ConfigurationFile);
-        }
-
-        /// <summary>
         /// Gets a <see cref="FileConfigurationSource"/> based on the applications configuration file.
         /// </summary>
         /// <param name="serviceProvider">The a mechanism for retrieving a service object; that is, an object that provides custom support to other objects.</param>
         /// <returns>A <see cref="FileConfigurationSource"/> based on the applications configuration file.</returns>
         protected override IConfigurationSource GetConfigurationSource(IServiceProvider serviceProvider)
         {
-            return new FileConfigurationSource(ServiceHelper.GetCurrentRootNode(serviceProvider).ConfigurationFile);
+            return new FileConfigurationSource(ServiceHelper.GetCurrentRootNode(serviceProvider).ConfigurationFile, false);
         }
     }
 }

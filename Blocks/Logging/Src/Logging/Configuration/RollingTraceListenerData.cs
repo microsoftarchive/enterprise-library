@@ -19,8 +19,9 @@ using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 {
+    //TODOC : review missing comments in class
     /// <summary>
-    /// Represents the configuration data for a <see cref="RollingFlatFileTraceListenerData"/>.
+    /// Represents the configuration data for a <see cref="RollingFlatFileTraceListener"/>.
     /// </summary>	
     public class RollingFlatFileTraceListenerData : TraceListenerData
     {
@@ -38,7 +39,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// <summary>
         /// Initializes a new instance of the <see cref="TraceListenerData"/> class.
         /// </summary>
-        public RollingFlatFileTraceListenerData() { }
+        public RollingFlatFileTraceListenerData()
+            : base(typeof(RollingFlatFileTraceListener))
+        {
+            ListenerDataType = typeof(RollingFlatFileTraceListenerData);
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RollingFlatFileTraceListenerData"/> class.
@@ -115,7 +120,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// <summary>
         /// FileName
         /// </summary>
-        [ConfigurationProperty(FileNamePropertyName)]
+        [ConfigurationProperty(FileNamePropertyName, DefaultValue="rolling.log")]
         public string FileName
         {
             get { return (string)this[FileNamePropertyName]; }

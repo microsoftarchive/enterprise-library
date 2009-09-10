@@ -36,7 +36,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// Initializes a <see cref="EmailTraceListenerData"/>.
         /// </summary>
         public EmailTraceListenerData()
+            : base(typeof(EmailTraceListener))
         {
+            ListenerDataType = typeof(EmailTraceListenerData);
         }
 
         /// <summary>
@@ -188,7 +190,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// <summary>
         /// Gets and sets the SMTP server to use to send messages.
         /// </summary>
-        [ConfigurationProperty(smtpServerProperty)]
+        [ConfigurationProperty(smtpServerProperty, DefaultValue="127.0.0.1")]
         public string SmtpServer
         {
             get { return (string)base[smtpServerProperty]; }
@@ -198,7 +200,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// <summary>
         /// Gets and sets the SMTP port.
         /// </summary>
-        [ConfigurationProperty(smtpPortProperty)]
+        [ConfigurationProperty(smtpPortProperty, DefaultValue=25)]
         public int SmtpPort
         {
             get { return (int)base[smtpPortProperty]; }

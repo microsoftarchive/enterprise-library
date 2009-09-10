@@ -32,7 +32,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
         [TestInitialize]
         public void Initialize()
         {
-            ConfigurationSource = new FileConfigurationSource("typeRegistrationProviderSettings.config");
+            ConfigurationSource = new FileConfigurationSource("typeRegistrationProviderSettings.config", false);
 
             TypeRegistrationProvidersSection = Given(ConfigurationSource);
 
@@ -56,7 +56,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
         public void ThenConfigurationDoesntContainProviderForPiab()
         {
             Assert.AreEqual(NumberOfDefaultRegistrations - 1, TypeRegistrationProvidersSection.TypeRegistrationProviders.Count);
-            Assert.IsNull(TypeRegistrationProvidersSection.TypeRegistrationProviders.Cast<TypeRegistrationProviderSettings>().Where(x => x.SectionName == BlockSectionNames.PolicyInjection).FirstOrDefault());
+            Assert.IsNull(TypeRegistrationProvidersSection.TypeRegistrationProviders.Cast<TypeRegistrationProviderElement>().Where(x => x.SectionName == BlockSectionNames.PolicyInjection).FirstOrDefault());
         }
     }
 
@@ -82,7 +82,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
         public void ThenConfigurationContainsOnlyRedeclaredProvider()
         {
             Assert.AreEqual(1, TypeRegistrationProvidersSection.TypeRegistrationProviders.Count);
-            Assert.AreEqual("policyInjection", TypeRegistrationProvidersSection.TypeRegistrationProviders.Cast<TypeRegistrationProviderSettings>().First().SectionName);
+            Assert.AreEqual("policyInjection", TypeRegistrationProvidersSection.TypeRegistrationProviders.Cast<TypeRegistrationProviderElement>().First().SectionName);
         }
     }
 
@@ -98,7 +98,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
         public void ThenConfigurationContainsOnlyRedeclaredProvider()
         {
             Assert.AreEqual(NumberOfDefaultRegistrations + 1, TypeRegistrationProvidersSection.TypeRegistrationProviders.Count);
-            Assert.IsNotNull(TypeRegistrationProvidersSection.TypeRegistrationProviders.Cast<TypeRegistrationProviderSettings>()
+            Assert.IsNotNull(TypeRegistrationProvidersSection.TypeRegistrationProviders.Cast<TypeRegistrationProviderElement>()
                 .Where(x => x.SectionName == "sectionname").FirstOrDefault());
         }
     }
@@ -115,7 +115,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
         public void ThenConfigurationContainsAddedProviderType()
         {
             Assert.AreEqual(NumberOfDefaultRegistrations + 1, TypeRegistrationProvidersSection.TypeRegistrationProviders.Count);
-            Assert.IsNotNull(TypeRegistrationProvidersSection.TypeRegistrationProviders.Cast<TypeRegistrationProviderSettings>()
+            Assert.IsNotNull(TypeRegistrationProvidersSection.TypeRegistrationProviders.Cast<TypeRegistrationProviderElement>()
                 .Where(x => x.ProviderTypeName == "MockTypeRegistrationsProvider").FirstOrDefault());
         }
     }

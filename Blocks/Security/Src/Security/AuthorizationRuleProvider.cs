@@ -20,7 +20,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security
 {
 	/// <summary>
 	/// Represents an authorization provider that evaluates
-	/// boolean expressions to determine whether 
+	/// Boolean expressions to determine whether 
 	/// <see cref="System.Security.Principal.IPrincipal"/> objects
 	/// are authorized.
 	/// </summary>

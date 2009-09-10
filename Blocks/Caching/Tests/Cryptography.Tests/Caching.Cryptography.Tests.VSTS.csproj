@@ -25,7 +25,7 @@
     <DefineConstants>TRACE;DEBUG</DefineConstants>
     <NoWarn>
     </NoWarn>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>false</DebugSymbols>
@@ -59,10 +59,8 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\..\GlobalAssemblyInfo.cs">
-      <Link>GlobalAssemblyInfo.cs</Link>
-    </Compile>
     <Compile Include="APTCAFixture.cs" />
+    <Compile Include="Configuration\Fluent\EncryptItemsWithSharedSymmetricProviderExtensionFixture.cs" />
     <Compile Include="Configuration\SymmetricStorageEncryptionProviderContainerModelFixture.cs" />
     <Compile Include="Configuration\SymmetricStorageEncryptionProviderDataFixture.cs" />
     <Compile Include="Configuration\Unity\SymmetricStorageEncryptionProviderInstatiationFixture.cs" />

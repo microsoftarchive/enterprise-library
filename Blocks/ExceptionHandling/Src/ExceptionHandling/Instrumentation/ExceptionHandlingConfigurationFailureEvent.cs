@@ -16,7 +16,7 @@ using System.Text;
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Instrumentation
 {
     /// <summary>
-    /// Represents the WMI event fired when an error in the configuration for the exception handling block is detected.
+    /// Represents the WMI event fired when an error in the configuration for the Exception Handling Application Block is detected.
     /// </summary>
     public class ExceptionHandlingConfigurationFailureEvent : ExceptionHandlingEvent
     {

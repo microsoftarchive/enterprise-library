@@ -1,0 +1,313 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+					xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+					xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                    xmlns:ViewModel="clr-namespace:Console.Wpf.ViewModel"
+					xmlns:Controls="clr-namespace:Console.Wpf.Controls"
+					mc:Ignorable="d">
+
+	<ResourceDictionary.MergedDictionaries>
+		<ResourceDictionary Source="/Console.Wpf;component/Resources/Converters.xaml" />
+		<ResourceDictionary Source="/Console.Wpf;component/Resources/Brushes.xaml" />
+	</ResourceDictionary.MergedDictionaries>
+
+	<DataTemplate DataType="{x:Type ViewModel:HeaderViewModel}">
+		<TextBlock Text="{Binding Name}"
+				   FontStyle="Italic" />
+	</DataTemplate>
+	
+	<DataTemplate DataType="{x:Type ViewModel:ElementProperty}"
+				  x:Key="ChildPropertyTemplate">
+		<Grid>
+			<Grid.RowDefinitions>
+				<RowDefinition />
+				<RowDefinition Height="Auto" />
+			</Grid.RowDefinitions>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto"
+								  SharedSizeGroup="Column1" />
+				<ColumnDefinition Width="Auto"
+								  SharedSizeGroup="Column2" />
+				<ColumnDefinition Width="*" />
+			</Grid.ColumnDefinitions>
+			<TextBlock Grid.Column="1"
+					   Text="{Binding DisplayName}"
+					   ToolTip="{Binding Description}"
+					   Margin="0,0,5,0"
+					   HorizontalAlignment="Left" />
+			<DockPanel Grid.Column="2">
+				<Button Content="..."
+						DockPanel.Dock="Right"
+						Width="15"
+						Height="20"
+						Command="{Binding LaunchEditor}"
+						CommandParameter="{Binding}"
+						x:Name="propertyPopupButton"
+						HorizontalAlignment="Right"
+						IsEnabled="{Binding HasEditor}"
+						Visibility="Collapsed" />
+				<Grid HorizontalAlignment="Stretch">
+					<Border BorderBrush="Red"
+							BorderThickness="1"
+							Margin="-1"
+							x:Name="ErrorAdorner"
+							Visibility="Collapsed" />
+					<TextBox IsReadOnly="{Binding ReadOnly}"
+							 Validation.ErrorTemplate="{StaticResource NoAdornerErrorTemplate}"
+							 HorizontalAlignment="Stretch"
+							 x:Name="valueTextBox">
+						<TextBox.Text>
+							<Binding Path="Value"
+									 ValidatesOnExceptions="True"
+									 UpdateSourceTrigger="PropertyChanged" />
+						</TextBox.Text>
+					</TextBox>
+					<ComboBox ItemsSource="{Binding SuggestedValues}"
+							  HorizontalAlignment="Left"
+							  SelectedItem="{Binding Value}"
+							  x:Name="propertyDropdown"
+							  Grid.Column="0"
+							  IsEditable="{Binding ReadOnly, Converter={StaticResource BooleanInverseConverter}}"
+							  Visibility="Collapsed" />
+				</Grid>
+			</DockPanel>
+		</Grid>
+		<DataTemplate.Triggers>
+			<Trigger Property="Validation.HasError"
+					 Value="true"
+					 SourceName="valueTextBox">
+				<Setter Property="ToolTip"
+						Value="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=(Validation.Errors)[0].ErrorContent}" />
+				<Setter Property="Visibility"
+						Value="Visible"
+						TargetName="ErrorAdorner" />
+			</Trigger>
+			<Trigger Property="Validation.HasError"
+					 Value="false"
+					 SourceName="valueTextBox">
+				<Setter Property="ToolTip"
+						Value="{Binding Value}" />
+			</Trigger>
+			<DataTrigger Binding="{Binding HasSuggestedValues}"
+						 Value="True">
+				<Setter Property="Visibility"
+						Value="Visible"
+						TargetName="propertyDropdown" />
+				<Setter Property="Visibility"
+						Value="Collapsed"
+						TargetName="valueTextBox" />
+			</DataTrigger>
+
+			<DataTrigger Binding="{Binding EditorBehavior}"
+						 Value="ModalPopup">
+				<Setter Property="Visibility"
+						Value="Visible"
+						TargetName="propertyPopupButton" />
+			</DataTrigger>
+			<DataTrigger Binding="{Binding Hidden}"
+						 Value="True">
+				<Setter Property="Visibility"
+						Value="Collapsed" />
+			</DataTrigger>
+		</DataTemplate.Triggers>
+	</DataTemplate>
+
+	<ControlTemplate x:Key="NoAdornerErrorTemplate">
+		<AdornedElementPlaceholder />		
+	</ControlTemplate>
+	
+	<DataTemplate DataType="{x:Type ViewModel:ElementProperty}">
+		<Grid>
+			<Grid.RowDefinitions>
+				<RowDefinition />
+				<RowDefinition Height="Auto" />
+			</Grid.RowDefinitions>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto"
+								  SharedSizeGroup="Column1" />
+				<ColumnDefinition Width="Auto"
+								  SharedSizeGroup="Column2" />
+				<ColumnDefinition Width="*" />
+				<!--<ColumnDefinition Width="20"
+								  SharedSizeGroup="Column4" />-->
+			</Grid.ColumnDefinitions>
+			<!--Child Properties -->
+			<ToggleButton Visibility="{Binding HasChildProperties, Converter={StaticResource BooleanToVisibilityConverter}}"
+						  Margin="1,2,0,0"
+						  Grid.Column="0"
+						  x:Name="ShowChildProperties"
+						  VerticalAlignment="Top"
+						  Background="{DynamicResource NormalBrush}"
+						  Template="{DynamicResource PropertiesExpandToggleButton}"
+						  HorizontalAlignment="Left" />
+			<ItemsControl ItemsSource="{Binding ChildProperties}"
+						  ItemTemplate="{StaticResource ChildPropertyTemplate}"
+						  Visibility="{Binding IsChecked, Mode=TwoWay, ElementName=ShowChildProperties, Converter={StaticResource BooleanToVisibilityConverter}}"
+						  Grid.Column="0"
+						  Grid.Row="1"
+						  Grid.ColumnSpan="4"
+						  Margin="0,0,10,0" />
+			<!--End Child Properties -->
+			<TextBlock Grid.Column="1"
+					   Text="{Binding DisplayName}"
+					   ToolTip="{Binding Description}"
+					   Margin="0,0,5,0"
+					   HorizontalAlignment="Left" />
+			<DockPanel Grid.Column="2">
+				<Button Content="..."
+						DockPanel.Dock="Right"
+						Width="15"
+						Height="20"
+						Command="{Binding LaunchEditor}"
+						CommandParameter="{Binding}"
+						x:Name="propertyPopupButton"
+						HorizontalAlignment="Right"
+						IsEnabled="{Binding HasEditor}"
+						Visibility="Collapsed" />
+				<Grid HorizontalAlignment="Stretch">
+					<Border BorderBrush="Red"
+							BorderThickness="1"
+							Margin="-1"
+							x:Name="ErrorAdorner"
+							Visibility="Collapsed" />
+					<TextBox IsReadOnly="{Binding ReadOnly}"
+							 Validation.ErrorTemplate="{StaticResource NoAdornerErrorTemplate}"
+							 HorizontalAlignment="Stretch"
+							 x:Name="valueTextBox">
+						<TextBox.Text>
+							<Binding Path="Value"
+									 ValidatesOnExceptions="True"
+									 UpdateSourceTrigger="PropertyChanged" />
+						</TextBox.Text>
+					</TextBox>
+					<ComboBox ItemsSource="{Binding SuggestedValues}"
+							  HorizontalAlignment="Left"
+							  SelectedItem="{Binding Value}"
+							  x:Name="propertyDropdown"
+							  Grid.Column="0"
+							  IsEditable="{Binding ReadOnly, Converter={StaticResource BooleanInverseConverter}}"
+							  Visibility="Collapsed" />
+				</Grid>
+			</DockPanel>
+		</Grid>
+		<DataTemplate.Triggers>
+			<Trigger Property="Validation.HasError"
+					 Value="true"
+					 SourceName="valueTextBox">
+				<Setter Property="ToolTip"
+						Value="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=(Validation.Errors)[0].ErrorContent}" />
+				<Setter Property="Visibility"
+						Value="Visible"
+						TargetName="ErrorAdorner" />
+			</Trigger>
+			<Trigger Property="Validation.HasError"
+					 Value="false"
+					 SourceName="valueTextBox">
+				<Setter Property="ToolTip"
+						Value="{Binding Value}" />
+			</Trigger>
+			<DataTrigger Binding="{Binding HasSuggestedValues}"
+						 Value="True">
+				<Setter Property="Visibility"
+						Value="Visible"
+						TargetName="propertyDropdown" />
+				<Setter Property="Visibility"
+						Value="Collapsed"
+						TargetName="valueTextBox" />
+			</DataTrigger>
+
+			<DataTrigger Binding="{Binding EditorBehavior}"
+						 Value="ModalPopup">
+				<Setter Property="Visibility"
+						Value="Visible"
+						TargetName="propertyPopupButton" />
+			</DataTrigger>
+			<DataTrigger Binding="{Binding Hidden}"
+						 Value="True">
+				<Setter Property="Visibility"
+						Value="Collapsed" />
+			</DataTrigger>
+
+		</DataTemplate.Triggers>
+	</DataTemplate>
+
+	<DataTemplate DataType="{x:Type ViewModel:ElementViewModel}">
+		<TextBlock Text="{Binding Name, Mode=OneWay}"
+				   HorizontalAlignment="Left"
+				   VerticalAlignment="Center"
+				   Background="{x:Null}"
+				   Margin="5,0,0,0" />
+	</DataTemplate>
+
+    <DataTemplate DataType="{x:Type ViewModel:ElementCollectionViewModelAdder}">
+        <Button Content="{Binding DisplayName}"
+				Command="{Binding}"
+				Margin="0,0,10,5">
+			<Button.Template>
+				<ControlTemplate TargetType="{x:Type Button}">
+					<Grid x:Name="grid">
+						<TextBlock HorizontalAlignment="Stretch"
+								   VerticalAlignment="Stretch"
+								   Text="{TemplateBinding Content}"
+								   TextWrapping="Wrap" />
+					</Grid>
+				</ControlTemplate>
+			</Button.Template>
+		</Button>
+	</DataTemplate>
+
+	<DataTemplate DataType="{x:Type ViewModel:CollectionElementViewModel}">
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="*" />
+			</Grid.ColumnDefinitions>
+			<TextBlock Text="{Binding Name, Mode=OneWay}"
+					   HorizontalAlignment="Left"
+					   VerticalAlignment="Center"
+					   Background="{x:Null}"
+					   Margin="5,0,15,0"
+					   Grid.Column="0" />
+			<StackPanel Orientation="Horizontal"
+						HorizontalAlignment="Right"
+						x:Name="reorderButtons"
+						Margin="0,0,3,0"
+						d:LayoutOverrides="HorizontalAlignment"
+						Grid.Column="1">
+				<StackPanel>
+					<Button Content="Up"
+							Command="{Binding MoveUp}"
+							CommandParameter="{Binding}"
+							Template="{DynamicResource ReorderUpButton}"
+							Margin="0,2,0,-2"
+							HorizontalAlignment="Center"
+							Visibility="{Binding IsEnabled, Converter={StaticResource BooleanToVisibilityConverter}, RelativeSource={RelativeSource Self}}" />
+					<Button Content="Down"
+							Command="{Binding MoveDown}"
+							CommandParameter="{Binding}"
+							Template="{DynamicResource ReorderDownButton}"
+							Margin="0,6,0,0"
+							HorizontalAlignment="Center"
+							Visibility="{Binding IsEnabled, Converter={StaticResource BooleanToVisibilityConverter}, RelativeSource={RelativeSource Self}}" />
+				</StackPanel>
+			</StackPanel>
+		</Grid>
+		<DataTemplate.Triggers>
+			<DataTrigger Binding="{Binding ElementChildren.Count, Converter={StaticResource ChildCountToVisibility}, FallbackValue=False}"
+						 Value="True">
+				<Setter Property="Visibility"
+						Value="Visible"
+						TargetName="reorderButtons" />
+			</DataTrigger>
+		</DataTemplate.Triggers>
+
+	</DataTemplate>
+
+	<DataTemplate DataType="{x:Type ViewModel:SectionViewModel}">
+		<Expander Style="{StaticResource ConfigSectionExpander}"
+				  Header="{Binding Name}">
+			<Controls:BlockVisualizer />
+		</Expander>
+	</DataTemplate>
+
+</ResourceDictionary>

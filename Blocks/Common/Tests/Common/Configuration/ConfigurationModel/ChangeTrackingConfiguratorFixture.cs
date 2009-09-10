@@ -196,12 +196,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
             return null;
         }
 
-        public void Add(IConfigurationParameter saveParameter, string sectionName, ConfigurationSection configurationSection)
+        public void Add(string sectionName, ConfigurationSection configurationSection)
         {
             throw new NotImplementedException();
         }
 
-        public void Remove(IConfigurationParameter removeParameter, string sectionName)
+        public void Remove(string sectionName)
         {
             throw new NotImplementedException();
         }
@@ -233,6 +233,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
         }
 
         public void RemoveSectionChangeHandler(string sectionName, ConfigurationChangedEventHandler handler)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Dispose()
         {
             throw new NotImplementedException();
         }

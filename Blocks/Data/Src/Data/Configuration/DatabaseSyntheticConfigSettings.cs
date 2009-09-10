@@ -28,7 +28,7 @@ using Microsoft.Practices.EnterpriseLibrary.Data.Sql;
 namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration
 {
     /// <summary>
-    /// Provides a configuration-like view over the data access block sections
+    /// Provides a configuration-like view over the Data Access Application Block sections
     /// </summary>
     /// <remarks>
     /// As the DataAccessBlock relies on a number of configuraiton sections (such as connectionStrings), this

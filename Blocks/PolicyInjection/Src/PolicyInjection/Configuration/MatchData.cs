@@ -54,7 +54,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// <summary>
         /// Gets or sets the string to match against.
         /// </summary>
-        /// <value>The "match" attribute value out of the config file.</value>
+        /// <value>The "match" attribute value out of the configuration file.</value>
         [ConfigurationProperty(MatchPropertyName, IsRequired = true)]
         public string Match
         {
@@ -65,7 +65,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// <summary>
         /// Gets or sets the case sensitivity flag.
         /// </summary>
-        /// <value>The "ignoreCase" attribute value out of the config file.</value>
+        /// <value>The "ignoreCase" attribute value out of the configuration file.</value>
         [ConfigurationProperty(IgnoreCasePropertyName, DefaultValue = false, IsRequired = false)]
         public bool IgnoreCase
         {

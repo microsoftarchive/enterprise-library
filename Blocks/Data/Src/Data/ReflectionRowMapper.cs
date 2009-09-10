@@ -41,7 +41,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
             this.propertyMappings = propertyMappings;
         }
 
-        /// <summary>Given a record from a data reader, map the contents to a CLR object.</summary>
+        /// <summary>Given a record from a data reader, map the contents to a common language runtime object.</summary>
         /// <param name="row">The input data from the database.</param>
         /// <returns>The mapped object.</returns>
         public TResult MapRow(IDataRecord row) 

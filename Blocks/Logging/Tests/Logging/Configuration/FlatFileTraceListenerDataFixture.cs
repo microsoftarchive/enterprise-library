@@ -36,6 +36,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Tests
                     };
         }
 
+
+        [TestMethod]
+        public void WhenCreatingInstanceUsingDefaultContructor_ThenListenerDataTypeIsSet()
+        {
+            var listener = new FlatFileTraceListenerData();
+            Assert.AreEqual(typeof(FlatFileTraceListenerData), listener.ListenerDataType);
+        }
+
         [TestMethod]
         public void ThenCreatesTwoTypeRegistrations()
         {

@@ -23,7 +23,7 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Design
 {
 	/// <summary>
-	/// Represents the design manager for the oracle connection configuration section.
+	/// Represents the design manager for the Oracle connection configuration section.
 	/// </summary>    
     public sealed class OracleConnectionConfigurationDesignManager : ConfigurationDesignManager
     {
@@ -45,7 +45,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Design
         }
 
 		/// <summary>
-		/// Opens the oracle connection configuration section, builds the design time nodes and adds them to the application node.
+		/// Opens the Oracle connection configuration section, builds the design time nodes and adds them to the application node.
 		/// </summary>
 		/// <param name="serviceProvider">The a mechanism for retrieving a service object; that is, an object that provides custom support to other objects.</param>
 		/// <param name="rootNode">The root node of the application.</param>
@@ -60,10 +60,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Design
 		}
 
 		/// <summary>
-		/// Gets the a <see cref="ConfigurationSectionInfo"/> for the oracle connection configuration section.
+		/// Gets the a <see cref="ConfigurationSectionInfo"/> for the Oracle connection configuration section.
 		/// </summary>
 		/// <param name="serviceProvider">The a mechanism for retrieving a service object; that is, an object that provides custom support to other objects.</param>
-		/// <returns>A <see cref="ConfigurationSectionInfo"/> for the oracle connection configuration section.</returns>
+		/// <returns>A <see cref="ConfigurationSectionInfo"/> for the Oracle connection configuration section.</returns>
 		protected override ConfigurationSectionInfo GetConfigurationSectionInfo(IServiceProvider serviceProvider)
         {
             ConfigurationNode rootNode = ServiceHelper.GetCurrentRootNode(serviceProvider);

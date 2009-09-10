@@ -240,30 +240,7 @@ Public Class QuickStartForm
         Try
 
             Cursor = System.Windows.Forms.Cursors.WaitCursor
-
-            Dim sb As StringBuilder = New StringBuilder
-
-            sb.Append("Scenario: Propagate original exception")
-            sb.Append(Environment.NewLine)
-            sb.Append(Environment.NewLine)
-            sb.Append("1. UI layer calls into business layer.")
-            sb.Append(Environment.NewLine)
-            sb.Append(Environment.NewLine)
-            sb.Append("2. A System.Exception occurs and is detected in the business layer.")
-            sb.Append(Environment.NewLine)
-            sb.Append(Environment.NewLine)
-            sb.Append("3. The business layer specifies the ""Propagate Policy"" as the exception handling policy.")
-            sb.Append(Environment.NewLine)
-            sb.Append(Environment.NewLine)
-            sb.Append("4. The ""Propagate Policy"" is configured to recommend a rethrow upon return from processing the exception handlers.")
-            sb.Append(Environment.NewLine)
-            sb.Append(Environment.NewLine)
-            sb.Append("5. Control is returned to the business layer, which rethrows the original exception.")
-            sb.Append(Environment.NewLine)
-            sb.Append(Environment.NewLine)
-            sb.Append("6. The original exception is caught and displayed.")
-
-            DisplayScenarioStart(sb.ToString())
+            DisplayScenarioStart(My.Resources.PropagateOriginalExceptionText)
 
             Dim svc As AppService = New AppService
 
@@ -279,30 +256,7 @@ Public Class QuickStartForm
         Try
 
             Cursor = System.Windows.Forms.Cursors.WaitCursor
-
-            Dim sb As StringBuilder = New StringBuilder
-
-            sb.Append("Scenario: Wrap the original exception with another before propagating")
-            sb.Append(Environment.NewLine)
-            sb.Append(Environment.NewLine)
-            sb.Append("1. UI layer calls into business layer.")
-            sb.Append(Environment.NewLine)
-            sb.Append(Environment.NewLine)
-            sb.Append("2. A DBConcurrencyException occurs and is detected in the business layer.")
-            sb.Append(Environment.NewLine)
-            sb.Append(Environment.NewLine)
-            sb.Append("3. The business layer specifies the ""Wrap Policy"" as the exception handling policy.")
-            sb.Append(Environment.NewLine)
-            sb.Append(Environment.NewLine)
-            sb.Append("4. The ""Wrap Policy"" is configured to use a wrap handler to wrap the original exception with a BusinessLayerException exception.")
-            sb.Append(Environment.NewLine)
-            sb.Append(Environment.NewLine)
-            sb.Append("5. The rethrowAction is set to ""Throw"", resulting in the BusinessLayerException exception being thrown by the block upon completion of the handler chain execution.")
-            sb.Append(Environment.NewLine)
-            sb.Append(Environment.NewLine)
-            sb.Append("6. The new exception, which wraps the original exception, is caught and displayed.")
-
-            DisplayScenarioStart(sb.ToString())
+            DisplayScenarioStart(My.Resources.WrapExceptionText)
 
             Dim svc As AppService = New AppService
 
@@ -317,30 +271,8 @@ Public Class QuickStartForm
         Try
 
             Cursor = System.Windows.Forms.Cursors.WaitCursor
+            DisplayScenarioStart(My.Resources.ReplaceExceptionText)
 
-            Dim sb As StringBuilder = New StringBuilder
-
-            sb.Append("Scenario: Replace the original exception with another before propagating")
-            sb.Append(Environment.NewLine)
-            sb.Append(Environment.NewLine)
-            sb.Append("1. UI layer calls into business layer.")
-            sb.Append(Environment.NewLine)
-            sb.Append(Environment.NewLine)
-            sb.Append("2. A SecurityException exception occurs and is detected in the business layer.")
-            sb.Append(Environment.NewLine)
-            sb.Append(Environment.NewLine)
-            sb.Append("3. The business layer specifies the ""Replace Policy"" as the exception handling policy.")
-            sb.Append(Environment.NewLine)
-            sb.Append(Environment.NewLine)
-            sb.Append("4. The ""Replace Policy"" is configured to use a replace handler to replace the original exception with an ApplicationException exception.")
-            sb.Append(Environment.NewLine)
-            sb.Append(Environment.NewLine)
-            sb.Append("5. The rethrowAction is set to ""Throw"", resulting in the new exception being thrown by the block upon completion of the handler chain execution.")
-            sb.Append(Environment.NewLine)
-            sb.Append(Environment.NewLine)
-            sb.Append("6. The new exception is caught and displayed.")
-
-            DisplayScenarioStart(sb.ToString())
             Dim svc As AppService = New AppService
 
             svc.ProcessWithReplace()
@@ -353,24 +285,7 @@ Public Class QuickStartForm
     Private Sub suppressExceptionButton_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles suppressExceptionButton.Click
         Try
             Cursor = System.Windows.Forms.Cursors.WaitCursor
-
-            Dim sb As StringBuilder = New StringBuilder
-
-            sb.Append("Scenario: Process and suppress the original exception")
-            sb.Append(Environment.NewLine)
-            sb.Append(Environment.NewLine)
-            sb.Append("1. UI layer calls into business layer.")
-            sb.Append(Environment.NewLine)
-            sb.Append(Environment.NewLine)
-            sb.Append("2. A SecurityException occurs and is detected in the business layer.")
-            sb.Append(Environment.NewLine)
-            sb.Append(Environment.NewLine)
-            sb.Append("3. The business layer specifies the ""Handle and Suppress Policy"" as the exception handling policy.")
-            sb.Append(Environment.NewLine)
-            sb.Append(Environment.NewLine)
-            sb.Append("4. The ""Handle and Suppress Policy"" is configured with a rethrowAction of ""None"", resulting in the exception being suppressed upon completion of the handler chain execution.")
-
-            DisplayScenarioStart(sb.ToString())
+            DisplayScenarioStart(My.Resources.SuppressExceptionText)
 
             Dim svc As AppService = New AppService
 

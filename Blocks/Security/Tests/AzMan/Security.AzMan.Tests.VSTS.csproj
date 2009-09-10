@@ -61,13 +61,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\..\GlobalAssemblyInfo.cs">
-      <Link>GlobalAssemblyInfo.cs</Link>
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="APTCAFixture.cs" />
     <Compile Include="AzManProviderFixture.cs" />
     <Compile Include="Configuration\AzManAuthorizationProviderConfigurationnTypeRegistrationFixture.cs" />
+    <Compile Include="Configuration\Fluent\AuthorizeUsingAzManExtensionFixture.cs" />
     <Compile Include="Configuration\Unity\AzManAuthorizationProviderInstantiationFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

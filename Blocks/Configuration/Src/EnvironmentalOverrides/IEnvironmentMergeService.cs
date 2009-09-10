@@ -24,7 +24,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverr
     public interface IEnvironmentMergeService
     {
         /// <summary>
-        /// Gets a boolean value indicating wether merging of an environment currently is in progress.
+        /// Gets a Boolean value indicating wether merging of an environment currently is in progress.
         /// </summary>
         /// <value>
         /// <see langword="true"/> if merging of an environmental configuration currently is in progress. Otherwise <see langword="false"/>.

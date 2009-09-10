@@ -12,7 +12,7 @@
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
 {
 	/// <summary>
-	/// Defines the behavior when the rool file is created.
+	/// Defines the behavior when the roll file is created.
 	/// </summary>
 	public enum RollFileExistsBehavior
 	{

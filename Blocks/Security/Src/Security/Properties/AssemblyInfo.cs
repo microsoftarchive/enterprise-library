@@ -13,6 +13,8 @@ using System.Management.Instrumentation;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Security;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Security.Configuration;
 
 [assembly : AssemblyTitle("Enterprise Library Security Application Block")]
 [assembly : AssemblyDescription("Enterprise Library Security Application Block")]
@@ -21,3 +23,4 @@ using System.Security;
 [assembly : WmiConfiguration(@"root\EnterpriseLibrary", HostingModel = ManagementHostingModel.Decoupled, IdentifyLevel = false)]
 [assembly : AllowPartiallyTrustedCallers]
 [assembly : SecurityTransparent]
+[assembly: HandlesSectionName(SecuritySettings.SectionName)]

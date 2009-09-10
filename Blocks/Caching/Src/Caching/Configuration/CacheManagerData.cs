@@ -36,6 +36,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
 		/// Initialize a new instance of the <see cref="CacheManagerData"/> class.
 		/// </summary>
 		public CacheManagerData()
+            :base(typeof(CacheManager))
 		{
 		}
 
@@ -70,7 +71,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
 		/// <summary>
 		/// Frequency in seconds of expiration polling cycle
 		/// </summary>
-		[ConfigurationProperty(expirationPollFrequencyInSecondsProperty, IsRequired = true)]
+		[ConfigurationProperty(expirationPollFrequencyInSecondsProperty, IsRequired = true, DefaultValue=60)]
 		public int ExpirationPollFrequencyInSeconds
 		{
 			get { return (int)base[expirationPollFrequencyInSecondsProperty]; }
@@ -80,7 +81,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
 		/// <summary>
 		/// Maximum number of items in cache before an add causes scavenging to take place
 		/// </summary>
-		[ConfigurationProperty(maximumElementsInCacheBeforeScavengingProperty, IsRequired = true)]
+		[ConfigurationProperty(maximumElementsInCacheBeforeScavengingProperty, IsRequired = true, DefaultValue=1000)]
 		public int MaximumElementsInCacheBeforeScavenging
 		{
 			get { return (int)base[maximumElementsInCacheBeforeScavengingProperty]; }
@@ -90,7 +91,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
 		/// <summary>
 		/// Number of items to remove from cache when scavenging
 		/// </summary>
-		[ConfigurationProperty(numberToRemoveWhenScavengingProperty, IsRequired = true)]
+		[ConfigurationProperty(numberToRemoveWhenScavengingProperty, IsRequired = true, DefaultValue=10)]
 		public int NumberToRemoveWhenScavenging
 		{
 			get { return (int)base[numberToRemoveWhenScavengingProperty]; }

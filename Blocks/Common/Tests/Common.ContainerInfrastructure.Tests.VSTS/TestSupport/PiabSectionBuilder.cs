@@ -39,7 +39,7 @@ namespace Common.ContainerInfrastructure.Tests.VSTS.TestSupport
             {
                 builder.AddTo(section);
             }
-            configurationSource.Add(null, BlockSectionNames.PolicyInjection, section);
+            configurationSource.Add(BlockSectionNames.PolicyInjection, section);
         }
 
         private class PolicyBuilder

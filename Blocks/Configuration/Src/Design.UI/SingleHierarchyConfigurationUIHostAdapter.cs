@@ -153,8 +153,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.UI
             loading = true;
             try
             {
-                FileConfigurationSource.ResetImplementation(configurationFile, false);
-
                 IConfigurationUIHierarchyService hierarchyService = (IConfigurationUIHierarchyService)serviceProvider.GetService(typeof(IConfigurationUIHierarchyService));
 
                 foreach (ConfigurationUIHierarchy hierarchy in hierarchyService.GetAllHierarchies())

@@ -9,10 +9,23 @@
 ' FITNESS FOR A PARTICULAR PURPOSE.
 '===============================================================================
 
+'===============================================================================
+' Microsoft patterns & practices Enterprise Library
+' Exception Handling Application Block QuickStart
+'===============================================================================
+' Copyright © Microsoft Corporation.  All rights reserved.
+' THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+' OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+' LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+' FITNESS FOR A PARTICULAR PURPOSE.
+'===============================================================================
+Imports Microsoft.Practices.EnterpriseLibrary.Common.Configuration
+
 Public Class AppService
+    Private _exceptionManager As ExceptionManager
 
     Public Sub New()
-
+        _exceptionManager = EnterpriseLibraryContainer.Current.GetInstance(Of ExceptionManager)()
     End Sub
 
     Public Sub ProcessA()
@@ -66,18 +79,10 @@ Public Class AppService
     ' Demonstrates handling of exceptions coming out of a layer. The policy
     ' demonstrated here will show how original exceptions can be propagated back out.
     Public Function ProcessWithPropagate() As Boolean
-        Try
-            Me.ProcessA()
-        Catch ex As Exception
-            ' Quick Start is configured so that the Propagate Policy will
-            ' log the exception and then recommend a rethrow.
-            Dim rethrow As Boolean = ExceptionPolicy.HandleException(ex, "Propagate Policy")
+        ' Quick Start is configured so that the Propagate Policy will
+        ' log the exception and then recommend a rethrow.
 
-            If (rethrow) Then
-                Throw
-            End If
-        End Try
-
+        _exceptionManager.Process(AddressOf ProcessA, "Propagate Policy")
         Return True
     End Function
 
@@ -85,61 +90,32 @@ Public Class AppService
     ' demonstrated here will show how original exceptions can be wrapped
     ' with a different exception before being propagated back out.
     Public Function ProcessWithWrap() As Boolean
-        Try
-            Me.ProcessB()
-        Catch ex As Exception
-            ' Quick Start is configured so that the Bubble Policy will
-            ' log the exception and then recommend a rethrow.
-            Dim rethrow As Boolean = ExceptionPolicy.HandleException(ex, "Wrap Policy")
+        ' Quick Start is configured so that the Bubble Policy will
+        ' log the exception and then recommend a rethrow.
 
-            If (rethrow) Then
-                Throw
-            End If
-        End Try
-
+        _exceptionManager.Process(AddressOf ProcessB, "Wrap Policy")
         Return True
     End Function
 
     Public Sub ProcessWithReplace()
-        Try
-            ProcessC()
-        Catch ex As Exception
 
-            ' Invoke our policy that is responsible for making sure no secure information
-            ' gets out of our layer.
-            Dim rethrow As Boolean = ExceptionPolicy.HandleException(ex, "Replace Policy")
+        ' Invoke our policy that is responsible for making sure no secure information
+        ' gets out of our layer.
 
-            If (rethrow) Then
-                Throw
-            End If
-        End Try
+        _exceptionManager.Process(AddressOf ProcessC, "Replace Policy")
     End Sub
 
     Public Sub ProcessAndResume()
-        Try
-            ProcessC()
-        Catch ex As Exception
-            ' Invoke our policy that is responsible for making sure no secure information
-            ' gets out of our layer.
-            Dim rethrow As Boolean = ExceptionPolicy.HandleException(ex, "Handle and Resume Policy")
+        ' Invoke our policy that is responsible for making sure no secure information
+        ' gets out of our layer.
 
-            If (rethrow) Then
-                Throw
-            End If
-        End Try
+        _exceptionManager.Process(AddressOf ProcessC, "Handle and Resume Policy")
     End Sub
 
     Public Sub ProcessAndNotify()
-        Try
-            ProcessD()
-        Catch ex As Exception
-            ' Invoke our policy that is responsible for making sure no secure information
-            ' gets out of our layer.
-            Dim rethrow As Boolean = ExceptionPolicy.HandleException(ex, "Notify Policy")
+        ' Invoke our policy that is responsible for making sure no secure information
+        ' gets out of our layer.
 
-            If (rethrow) Then
-                Throw
-            End If
-        End Try
+        _exceptionManager.Process(AddressOf ProcessD, "Notify Policy")
     End Sub
 End Class

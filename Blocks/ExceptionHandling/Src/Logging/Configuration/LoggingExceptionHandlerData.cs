@@ -17,6 +17,8 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging;
 using System.Collections.Generic;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Configuration
 {
@@ -123,6 +125,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Config
         /// Gets or sets the default log category.
         /// </summary>
         [ConfigurationProperty(logCategory, IsRequired = true)]
+        [Reference(typeof(NamedElementCollection<TraceSourceData>), typeof(TraceSourceData))]
         public string LogCategory
         {
             get { return (string)this[logCategory]; }
@@ -196,7 +199,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Config
         /// Gets or sets the default logger to be used.
         /// </summary>
         [ConfigurationProperty(useDefaultLogger, IsRequired = false, DefaultValue = false)]
-        [Obsolete("Behavior is now limited to UseDefaultLogger = true")]
+        [Obsolete("Behavior is limited to UseDefaultLogger = true")]
         public bool UseDefaultLogger
         {
             get { return (bool)this[useDefaultLogger]; }
@@ -204,7 +207,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Config
         }
 
         /// <summary>
-        /// 
+        /// TODOC : review
         /// </summary>
         /// <param name="namePrefix"></param>
         /// <returns></returns>

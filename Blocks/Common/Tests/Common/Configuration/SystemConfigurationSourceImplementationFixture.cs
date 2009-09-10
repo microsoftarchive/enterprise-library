@@ -15,14 +15,15 @@ using System.Security;
 using System.Security.Permissions;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Storage;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
 {
     /// <summary>
-    /// Summary description for SystemConfigurationSourceImplementationFixture
+    /// Summary description for SystemConfigurationSourceFixture
     /// </summary>
     [TestClass]
-    public class SystemConfigurationSourceImplementationFixture
+    public class SystemConfigurationSourceFixture2
     {
         const string nonExistingSection = "dummy.nonexisting";
         const string localSection = "dummy.local";
@@ -40,8 +41,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
         [TestInitialize]
         public void Setup()
         {
-            SystemConfigurationSource.ResetImplementation(false);
-
             System.Configuration.Configuration rwConfiguration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             DummySection rwSection;
 
@@ -69,8 +68,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
             ConfigurationManager.RefreshSection(localSection2);
             ConfigurationManager.RefreshSection(externalSection);
 
-            ConfigurationChangeFileWatcher.ResetDefaultPollDelay();
-
             updatedSectionsTally = new Dictionary<string, int>(0);
             updatedSections = null;
         }
@@ -78,8 +75,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
         [TestMethod]
         public void CanGetExistingSectionInAppConfig()
         {
-            SystemConfigurationSourceImplementation implementation = new SystemConfigurationSourceImplementation(false);
-            object section = implementation.GetSection(localSection);
+            IConfigurationSourceTest source = new SystemConfigurationSource(false);
+            object section = source.GetSection(localSection);
 
             Assert.IsNotNull(section);
         }
@@ -102,8 +99,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
         [TestMethod]
         public void CanGetExistingSectionInExternalFile()
         {
-            SystemConfigurationSourceImplementation implementation = new SystemConfigurationSourceImplementation(false);
-            object section = implementation.GetSection(externalSection);
+            IConfigurationSourceTest source = new SystemConfigurationSource(false);
+            object section = source.GetSection(externalSection);
 
             Assert.IsNotNull(section);
         }
@@ -111,8 +108,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
         [TestMethod]
         public void GetsNullIfSectionDoesNotExist()
         {
-            SystemConfigurationSourceImplementation implementation = new SystemConfigurationSourceImplementation(false);
-            object section = implementation.GetSection(nonExistingSection);
+            IConfigurationSourceTest source = new SystemConfigurationSource(false);
+            object section = source.GetSection(nonExistingSection);
 
             Assert.IsNull(section);
         }
@@ -120,132 +117,132 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
         [TestMethod]
         public void NewInstanceHasNoWatchers()
         {
-            SystemConfigurationSourceImplementation implementation = new SystemConfigurationSourceImplementation(false);
+            IConfigurationSourceTest source = new SystemConfigurationSource(false);
 
-            Assert.AreEqual(0, implementation.WatchedConfigSources.Count);
-            Assert.AreEqual(0, implementation.WatchedSections.Count);
+            Assert.AreEqual(0, source.WatchedConfigSources.Count);
+            Assert.AreEqual(0, source.WatchedSections.Count);
         }
 
         [TestMethod]
         public void RequestForNonexistentSectionCreatesNoWatcher()
         {
-            SystemConfigurationSourceImplementation implementation = new SystemConfigurationSourceImplementation(false);
+            IConfigurationSourceTest source = new SystemConfigurationSource(false);
 
-            object section = implementation.GetSection(nonExistingSection);
+            object section = source.GetSection(nonExistingSection);
 
             Assert.IsNull(section);
-            Assert.AreEqual(0, implementation.WatchedConfigSources.Count);
-            Assert.AreEqual(0, implementation.WatchedSections.Count);
+            Assert.AreEqual(1, source.WatchedConfigSources.Count); //watches only ConfigurationSourceSection.
+            Assert.AreEqual(1, source.WatchedSections.Count);
         }
 
         [TestMethod]
         public void FirstRequestForSectionInAppConfigCreatesWatcherForAppConfig()
         {
-            SystemConfigurationSourceImplementation implementation = new SystemConfigurationSourceImplementation(true);
+            IConfigurationSourceTest source = new SystemConfigurationSource(true);
 
-            object section = implementation.GetSection(localSection);
+            object section = source.GetSection(localSection);
 
             Assert.IsNotNull(section);
-            Assert.AreEqual(1, implementation.WatchedConfigSources.Count);
-            Assert.IsTrue(implementation.WatchedConfigSources.Contains(localSectionSource));
-            Assert.AreEqual(1, implementation.WatchedSections.Count);
-            Assert.IsTrue(implementation.WatchedSections.Contains(localSection));
+            Assert.AreEqual(1, source.WatchedConfigSources.Count);
+            Assert.IsTrue(source.WatchedConfigSources.Contains(localSectionSource));
+            Assert.AreEqual(2, source.WatchedSections.Count); //watches  ConfigurationSourceSection + localSection
+            Assert.IsTrue(source.WatchedSections.Contains(localSection));
 
-            Assert.IsNotNull(implementation.ConfigSourceWatcherMappings[localSectionSource].Watcher);
-            Assert.AreEqual(implementation.ConfigSourceWatcherMappings[localSectionSource].Watcher.GetType(), typeof(ConfigurationChangeFileWatcher));
+            Assert.IsNotNull(source.ConfigSourceWatcherMappings[localSectionSource].Watcher);
+            Assert.AreEqual(source.ConfigSourceWatcherMappings[localSectionSource].Watcher.GetType(), typeof(ConfigurationChangeFileWatcher));
 
-            implementation.Dispose();
+            ((IDisposable)source).Dispose();
         }
 
         [TestMethod]
         public void SecondRequestForSameSectionInAppConfigDoesNotCreateSecondWatcherForAppConfig()
         {
-            SystemConfigurationSourceImplementation implementation = new SystemConfigurationSourceImplementation(false);
+            IConfigurationSourceTest source = new SystemConfigurationSource(false);
 
-            object section1 = implementation.GetSection(localSection);
-            object section2 = implementation.GetSection(localSection);
+            object section1 = source.GetSection(localSection);
+            object section2 = source.GetSection(localSection);
 
             Assert.IsNotNull(section1);
             Assert.IsNotNull(section2);
-            Assert.AreEqual(1, implementation.WatchedConfigSources.Count);
-            Assert.IsTrue(implementation.WatchedConfigSources.Contains(localSectionSource));
-            Assert.AreEqual(1, implementation.WatchedSections.Count);
-            Assert.IsTrue(implementation.WatchedSections.Contains(localSection));
+            Assert.AreEqual(1, source.WatchedConfigSources.Count);
+            Assert.IsTrue(source.WatchedConfigSources.Contains(localSectionSource));
+            Assert.AreEqual(2, source.WatchedSections.Count); //watches  ConfigurationSourceSection + localSection
+            Assert.IsTrue(source.WatchedSections.Contains(localSection));
         }
 
         [TestMethod]
         public void SecondRequestForDifferentSectionInAppConfigDoesNotCreateSecondWatcherForAppConfig()
         {
-            SystemConfigurationSourceImplementation implementation = new SystemConfigurationSourceImplementation(false);
+            IConfigurationSourceTest source = new SystemConfigurationSource(false);
 
-            object section1 = implementation.GetSection(localSection);
-            object section2 = implementation.GetSection(localSection2);
+            object section1 = source.GetSection(localSection);
+            object section2 = source.GetSection(localSection2);
 
             Assert.IsNotNull(section1);
             Assert.IsNotNull(section2);
-            Assert.AreEqual(1, implementation.WatchedConfigSources.Count);
-            Assert.IsTrue(implementation.WatchedConfigSources.Contains(localSectionSource));
-            Assert.AreEqual(2, implementation.WatchedSections.Count);
-            Assert.IsTrue(implementation.WatchedSections.Contains(localSection));
-            Assert.IsTrue(implementation.WatchedSections.Contains(localSection2));
+            Assert.AreEqual(1, source.WatchedConfigSources.Count);
+            Assert.IsTrue(source.WatchedConfigSources.Contains(localSectionSource));
+            Assert.AreEqual(3, source.WatchedSections.Count); //watches  ConfigurationSourceSection. + localSection + localSection2
+            Assert.IsTrue(source.WatchedSections.Contains(localSection));
+            Assert.IsTrue(source.WatchedSections.Contains(localSection2));
         }
 
         [TestMethod]
         public void FirstRequestForSectionInExternalFileCreatesWatchersForExternalFileAndAppConfig()
         {
-            SystemConfigurationSourceImplementation implementation = new SystemConfigurationSourceImplementation(false);
+            IConfigurationSourceTest source = new SystemConfigurationSource(false);
 
-            object section = implementation.GetSection(externalSection);
+            object section = source.GetSection(externalSection);
 
             Assert.IsNotNull(section);
-            Assert.AreEqual(2, implementation.WatchedConfigSources.Count);
-            Assert.IsTrue(implementation.WatchedConfigSources.Contains(localSectionSource));
-            Assert.IsTrue(implementation.WatchedConfigSources.Contains(externalSectionSource));
-            Assert.AreEqual(1, implementation.WatchedSections.Count);
-            Assert.IsTrue(implementation.WatchedSections.Contains(externalSection));
+            Assert.AreEqual(2, source.WatchedConfigSources.Count);
+            Assert.IsTrue(source.WatchedConfigSources.Contains(localSectionSource));
+            Assert.IsTrue(source.WatchedConfigSources.Contains(externalSectionSource));
+            Assert.AreEqual(2, source.WatchedSections.Count); //watches  ConfigurationSourceSection + externalSection
+            Assert.IsTrue(source.WatchedSections.Contains(externalSection));
         }
 
         [TestMethod]
         public void SecondRequestForSameSectionInExternalFileDoesNotCreateWatcherForExternalFile()
         {
-            SystemConfigurationSourceImplementation implementation = new SystemConfigurationSourceImplementation(false);
+            IConfigurationSourceTest source = new SystemConfigurationSource(false);
 
-            object section1 = implementation.GetSection(externalSection);
-            object section2 = implementation.GetSection(externalSection);
+            object section1 = source.GetSection(externalSection);
+            object section2 = source.GetSection(externalSection);
 
             Assert.IsNotNull(section1);
             Assert.IsNotNull(section2);
-            Assert.AreEqual(2, implementation.WatchedConfigSources.Count);
-            Assert.IsTrue(implementation.WatchedConfigSources.Contains(localSectionSource));
-            Assert.IsTrue(implementation.WatchedConfigSources.Contains(externalSectionSource));
-            Assert.AreEqual(1, implementation.WatchedSections.Count);
-            Assert.IsTrue(implementation.WatchedSections.Contains(externalSection));
+            Assert.AreEqual(2, source.WatchedConfigSources.Count);
+            Assert.IsTrue(source.WatchedConfigSources.Contains(localSectionSource));
+            Assert.IsTrue(source.WatchedConfigSources.Contains(externalSectionSource));
+            Assert.AreEqual(2, source.WatchedSections.Count);  //watches  ConfigurationSourceSection + externalSection
+            Assert.IsTrue(source.WatchedSections.Contains(externalSection));
         }
 
         [TestMethod]
         public void RequestsForAppConfigAndExternalFileCreatesWatchersForBoth()
         {
-            SystemConfigurationSourceImplementation implementation = new SystemConfigurationSourceImplementation(false);
+            IConfigurationSourceTest source = new SystemConfigurationSource(false);
 
-            object section1 = implementation.GetSection(localSection);
-            object section2 = implementation.GetSection(externalSection);
+            object section1 = source.GetSection(localSection);
+            object section2 = source.GetSection(externalSection);
 
             Assert.IsNotNull(section1);
             Assert.IsNotNull(section2);
-            Assert.AreEqual(2, implementation.WatchedConfigSources.Count);
-            Assert.IsTrue(implementation.WatchedConfigSources.Contains(localSectionSource));
-            Assert.IsTrue(implementation.WatchedConfigSources.Contains(externalSectionSource));
-            Assert.AreEqual(2, implementation.WatchedSections.Count);
-            Assert.IsTrue(implementation.WatchedSections.Contains(localSection));
-            Assert.IsTrue(implementation.WatchedSections.Contains(externalSection));
+            Assert.AreEqual(2, source.WatchedConfigSources.Count);
+            Assert.IsTrue(source.WatchedConfigSources.Contains(localSectionSource));
+            Assert.IsTrue(source.WatchedConfigSources.Contains(externalSectionSource));
+            Assert.AreEqual(3, source.WatchedSections.Count); //watches  ConfigurationSourceSection + externalSection + localSection
+            Assert.IsTrue(source.WatchedSections.Contains(localSection));
+            Assert.IsTrue(source.WatchedSections.Contains(externalSection));
         }
 
         [TestMethod]
         public void WatchedSectionInAppConfigValuesAreUpdatedIfAppConfigChangesAndNotificationIsFired()
         {
-            SystemConfigurationSourceImplementation implementation = new SystemConfigurationSourceImplementation(false);
+            IConfigurationSourceTest source = new SystemConfigurationSource(false);
 
-            object section1 = implementation.GetSection(localSection);
+            object section1 = source.GetSection(localSection);
             Assert.IsNotNull(section1);
             DummySection dummySection1 = section1 as DummySection;
             Assert.AreEqual(localSection, dummySection1.Name);
@@ -256,9 +253,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
             rwSection.Value = 15;
             rwConfiguration.Save();
 
-            implementation.ConfigSourceChanged(localSectionSource);
+            source.ConfigSourceChanged(localSectionSource);
 
-            section1 = implementation.GetSection(localSection);
+            section1 = source.GetSection(localSection);
             Assert.IsNotNull(section1);
             dummySection1 = section1 as DummySection;
             Assert.AreEqual(localSection, dummySection1.Name);
@@ -268,9 +265,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
         [TestMethod]
         public void WatchedSectionInExternalFileValuesAreUpdatedIfExternalFileChangesAndNotificationIsFired()
         {
-            SystemConfigurationSourceImplementation implementation = new SystemConfigurationSourceImplementation(false);
+            IConfigurationSourceTest source = new SystemConfigurationSource(false);
 
-            object section1 = implementation.GetSection(externalSection);
+            object section1 = source.GetSection(externalSection);
             Assert.IsNotNull(section1);
             DummySection dummySection1 = section1 as DummySection;
             Assert.AreEqual(externalSection, dummySection1.Name);
@@ -281,9 +278,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
             rwSection.Value = 25;
             rwConfiguration.Save();
 
-            implementation.ExternalConfigSourceChanged(externalSectionSource);
+            source.ExternalConfigSourceChanged(externalSectionSource);
 
-            section1 = implementation.GetSection(externalSection);
+            section1 = source.GetSection(externalSection);
             Assert.IsNotNull(section1);
             dummySection1 = section1 as DummySection;
             Assert.AreEqual(externalSection, dummySection1.Name);
@@ -293,66 +290,66 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
         [TestMethod]
         public void WatchedExistingSectionIsNoLongerWatchedIfRemovedFromConfiguration()
         {
-            SystemConfigurationSourceImplementation implementation = new SystemConfigurationSourceImplementation(false);
-            DummySection dummySection1 = implementation.GetSection(localSection) as DummySection;
-            DummySection dummySection2 = implementation.GetSection(localSection2) as DummySection;
+            IConfigurationSourceTest source = new SystemConfigurationSource(false);
+            DummySection dummySection1 = source.GetSection(localSection) as DummySection;
+            DummySection dummySection2 = source.GetSection(localSection2) as DummySection;
             Assert.IsNotNull(dummySection1);
             Assert.IsNotNull(dummySection2);
-            Assert.AreEqual(1, implementation.WatchedConfigSources.Count);
-            Assert.IsTrue(implementation.WatchedConfigSources.Contains(localSectionSource));
-            Assert.AreEqual(2, implementation.WatchedSections.Count);
-            Assert.IsTrue(implementation.WatchedSections.Contains(localSection));
-            Assert.IsTrue(implementation.WatchedSections.Contains(localSection2));
+            Assert.AreEqual(1, source.WatchedConfigSources.Count);
+            Assert.IsTrue(source.WatchedConfigSources.Contains(localSectionSource));
+            Assert.AreEqual(3, source.WatchedSections.Count); //watches  ConfigurationSourceSection + localSection + localSection2
+            Assert.IsTrue(source.WatchedSections.Contains(localSection));
+            Assert.IsTrue(source.WatchedSections.Contains(localSection2));
 
             System.Configuration.Configuration rwConfiguration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             rwConfiguration.Sections.Remove(localSection2);
             rwConfiguration.Save();
 
-            implementation.ConfigSourceChanged(localSectionSource);
+            source.ConfigSourceChanged(localSectionSource);
 
-            Assert.AreEqual(2, implementation.WatchedConfigSources.Count);
-            Assert.IsTrue(implementation.WatchedConfigSources.Contains(localSectionSource));
-            Assert.IsTrue(implementation.WatchedConfigSources.Contains(SystemConfigurationSourceImplementation.NullConfigSource));
-            Assert.AreEqual(2, implementation.WatchedSections.Count);
-            Assert.IsTrue(implementation.WatchedSections.Contains(localSection));
-            Assert.IsTrue(implementation.WatchedSections.Contains(localSection2));
-            Assert.AreEqual(1, implementation.ConfigSourceWatcherMappings[string.Empty].WatchedSections.Count);
-            Assert.IsTrue(implementation.ConfigSourceWatcherMappings[string.Empty].WatchedSections.Contains(localSection));
-            Assert.AreEqual(1, implementation.ConfigSourceWatcherMappings[SystemConfigurationSourceImplementation.NullConfigSource].WatchedSections.Count);
-            Assert.IsTrue(implementation.ConfigSourceWatcherMappings[SystemConfigurationSourceImplementation.NullConfigSource].WatchedSections.Contains(localSection2));
+            Assert.AreEqual(2, source.WatchedConfigSources.Count);
+            Assert.IsTrue(source.WatchedConfigSources.Contains(localSectionSource));
+            Assert.IsTrue(source.WatchedConfigSources.Contains(SystemConfigurationSource.NullConfigSource));
+            Assert.AreEqual(3, source.WatchedSections.Count);
+            Assert.IsTrue(source.WatchedSections.Contains(localSection));
+            Assert.IsTrue(source.WatchedSections.Contains(localSection2));
+            Assert.AreEqual(2, source.ConfigSourceWatcherMappings[string.Empty].WatchedSections.Count);
+            Assert.IsTrue(source.ConfigSourceWatcherMappings[string.Empty].WatchedSections.Contains(localSection));
+            Assert.AreEqual(1, source.ConfigSourceWatcherMappings[SystemConfigurationSource.NullConfigSource].WatchedSections.Count);
+            Assert.IsTrue(source.ConfigSourceWatcherMappings[SystemConfigurationSource.NullConfigSource].WatchedSections.Contains(localSection2));
         }
 
         [TestMethod]
         public void WatchedExistingSectionInExternalFileIsNoLongerWatchedIfRemovedFromConfigurationAndExternalFileWatcherIsRemoved()
         {
-            SystemConfigurationSourceImplementation implementation = new SystemConfigurationSourceImplementation(false);
-            DummySection dummySection1 = implementation.GetSection(localSection) as DummySection;
-            DummySection dummySection2 = implementation.GetSection(externalSection) as DummySection;
+            IConfigurationSourceTest source = new SystemConfigurationSource(false);
+            DummySection dummySection1 = source.GetSection(localSection) as DummySection;
+            DummySection dummySection2 = source.GetSection(externalSection) as DummySection;
             Assert.IsNotNull(dummySection1);
             Assert.IsNotNull(dummySection2);
-            Assert.AreEqual(2, implementation.WatchedConfigSources.Count);
-            Assert.IsTrue(implementation.WatchedConfigSources.Contains(localSectionSource));
-            Assert.IsTrue(implementation.WatchedConfigSources.Contains(externalSectionSource));
-            Assert.AreEqual(2, implementation.WatchedSections.Count);
-            Assert.IsTrue(implementation.WatchedSections.Contains(localSection));
-            Assert.IsTrue(implementation.WatchedSections.Contains(externalSection));
+            Assert.AreEqual(2, source.WatchedConfigSources.Count);
+            Assert.IsTrue(source.WatchedConfigSources.Contains(localSectionSource));
+            Assert.IsTrue(source.WatchedConfigSources.Contains(externalSectionSource));
+            Assert.AreEqual(3, source.WatchedSections.Count); //watches  ConfigurationSourceSection + externalSection + localSection
+            Assert.IsTrue(source.WatchedSections.Contains(localSection));
+            Assert.IsTrue(source.WatchedSections.Contains(externalSection));
 
             System.Configuration.Configuration rwConfiguration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             rwConfiguration.Sections.Remove(externalSection);
             rwConfiguration.Save();
 
-            implementation.ConfigSourceChanged(localSectionSource);
+            source.ConfigSourceChanged(localSectionSource);
 
-            Assert.AreEqual(2, implementation.WatchedConfigSources.Count);
-            Assert.IsTrue(implementation.WatchedConfigSources.Contains(localSectionSource));
-            Assert.IsTrue(implementation.WatchedConfigSources.Contains(SystemConfigurationSourceImplementation.NullConfigSource));
-            Assert.AreEqual(2, implementation.WatchedSections.Count);
-            Assert.IsTrue(implementation.WatchedSections.Contains(localSection));
-            Assert.IsTrue(implementation.WatchedSections.Contains(externalSection));
-            Assert.AreEqual(1, implementation.ConfigSourceWatcherMappings[string.Empty].WatchedSections.Count);
-            Assert.IsTrue(implementation.ConfigSourceWatcherMappings[string.Empty].WatchedSections.Contains(localSection));
-            Assert.AreEqual(1, implementation.ConfigSourceWatcherMappings[SystemConfigurationSourceImplementation.NullConfigSource].WatchedSections.Count);
-            Assert.IsTrue(implementation.ConfigSourceWatcherMappings[SystemConfigurationSourceImplementation.NullConfigSource].WatchedSections.Contains(externalSection));
+            Assert.AreEqual(2, source.WatchedConfigSources.Count);
+            Assert.IsTrue(source.WatchedConfigSources.Contains(localSectionSource));
+            Assert.IsTrue(source.WatchedConfigSources.Contains(SystemConfigurationSource.NullConfigSource));
+            Assert.AreEqual(3, source.WatchedSections.Count); 
+            Assert.IsTrue(source.WatchedSections.Contains(localSection));
+            Assert.IsTrue(source.WatchedSections.Contains(externalSection));
+            Assert.AreEqual(2, source.ConfigSourceWatcherMappings[string.Empty].WatchedSections.Count);
+            Assert.IsTrue(source.ConfigSourceWatcherMappings[string.Empty].WatchedSections.Contains(localSection));
+            Assert.AreEqual(1, source.ConfigSourceWatcherMappings[SystemConfigurationSource.NullConfigSource].WatchedSections.Count);
+            Assert.IsTrue(source.ConfigSourceWatcherMappings[SystemConfigurationSource.NullConfigSource].WatchedSections.Contains(externalSection));
         }
 
         //[Ignore("")]		// System.Configuration won't pick this change up
@@ -361,9 +358,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
         //{
         //    ConfigurationChangeWatcher.SetDefaultPollDelayInMilliseconds(100);
 
-        //    SystemConfigurationSourceImplementation implementation = new SystemConfigurationSourceImplementation(true);
+        //    IConfigurationSourceTest source = new SystemConfigurationSource(true);
 
-        //    object section1 = implementation.GetSection(localSection);
+        //    object section1 = source.GetSection(localSection);
         //    Assert.IsNotNull(section1);
         //    DummySection dummySection1 = section1 as DummySection;
         //    Assert.AreEqual(localSection, dummySection1.Name);
@@ -376,7 +373,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
 
         //    Thread.Sleep(150);
 
-        //    section1 = implementation.GetSection(localSection);
+        //    section1 = source.GetSection(localSection);
         //    Assert.IsNotNull(section1);
         //    dummySection1 = section1 as DummySection;
         //    Assert.AreEqual(localSection, dummySection1.Name);
@@ -389,9 +386,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
         //{
         //    ConfigurationChangeWatcher.SetDefaultPollDelayInMilliseconds(100);
 
-        //    SystemConfigurationSourceImplementation implementation = new SystemConfigurationSourceImplementation(true);
+        //    IConfigurationSourceTest source = new SystemConfigurationSource(true);
 
-        //    object section1 = implementation.GetSection(externalSection);
+        //    object section1 = source.GetSection(externalSection);
         //    Assert.IsNotNull(section1);
         //    DummySection dummySection1 = section1 as DummySection;
         //    Assert.AreEqual(externalSection, dummySection1.Name);
@@ -404,7 +401,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
 
         //    Thread.Sleep(150);
 
-        //    section1 = implementation.GetSection(externalSection);
+        //    section1 = source.GetSection(externalSection);
         //    Assert.IsNotNull(section1);
         //    dummySection1 = section1 as DummySection;
         //    Assert.AreEqual(externalSection, dummySection1.Name);
@@ -421,9 +418,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
         //[TestMethod]
         //public void WatchedSectionChangingFromExternalFileToAppConfigIsAppropriatelyWatched()
         //{
-        //    SystemConfigurationSourceImplementation implementation = new SystemConfigurationSourceImplementation(false);
+        //    IConfigurationSourceTest source = new SystemConfigurationSource(false);
 
-        //    object section1 = implementation.GetSection(externalSection);
+        //    object section1 = source.GetSection(externalSection);
         //    Assert.IsNotNull(section1);
         //    DummySection dummySection1 = section1 as DummySection;
         //    Assert.AreEqual(externalSection, dummySection1.Name);
@@ -437,9 +434,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
         //    rwConfiguration.Save();
 
         //    // what changed is the app.config/web.config file
-        //    implementation.ConfigSourceChanged(localSectionSource);
+        //    source.ConfigSourceChanged(localSectionSource);
 
-        //    section1 = implementation.GetSection(externalSection);
+        //    section1 = source.GetSection(externalSection);
         //    Assert.IsNotNull(section1);
         //    dummySection1 = section1 as DummySection;
         //    Assert.AreEqual(externalSection, dummySection1.Name);
@@ -450,11 +447,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
         [TestMethod]
         public void RegisteredObjectIsNotifiedOfSectionChangesForAppConfig()
         {
-            SystemConfigurationSourceImplementation implementation = new SystemConfigurationSourceImplementation(false);
-            implementation.GetSection(localSection);
-            implementation.AddSectionChangeHandler(localSection, new ConfigurationChangedEventHandler(OnConfigurationChanged));
+            IConfigurationSourceTest source = new SystemConfigurationSource(false);
+            source.GetSection(localSection);
+            source.AddSectionChangeHandler(localSection, new ConfigurationChangedEventHandler(OnConfigurationChanged));
 
-            implementation.ConfigSourceChanged(localSectionSource);
+            source.ConfigSourceChanged(localSectionSource);
 
             Assert.AreEqual(1, updatedSectionsTally[localSection]);
         }
@@ -462,13 +459,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
         [TestMethod]
         public void AllRegisteredObjectsAreNotifiedOfSectionChangesForAppConfig()
         {
-            SystemConfigurationSourceImplementation implementation = new SystemConfigurationSourceImplementation(false);
-            implementation.GetSection(localSection);
-            implementation.AddSectionChangeHandler(localSection, new ConfigurationChangedEventHandler(OnConfigurationChanged));
-            implementation.AddSectionChangeHandler(localSection, new ConfigurationChangedEventHandler(OnConfigurationChanged));
-            implementation.AddSectionChangeHandler(localSection, new ConfigurationChangedEventHandler(OnConfigurationChanged));
+            IConfigurationSourceTest source = new SystemConfigurationSource(false);
+            source.GetSection(localSection);
+            source.AddSectionChangeHandler(localSection, new ConfigurationChangedEventHandler(OnConfigurationChanged));
+            source.AddSectionChangeHandler(localSection, new ConfigurationChangedEventHandler(OnConfigurationChanged));
+            source.AddSectionChangeHandler(localSection, new ConfigurationChangedEventHandler(OnConfigurationChanged));
 
-            implementation.ConfigSourceChanged(localSectionSource);
+            source.ConfigSourceChanged(localSectionSource);
 
             Assert.AreEqual(3, updatedSectionsTally[localSection]);
         }
@@ -476,10 +473,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
         [TestMethod]
         public void RegisteredObjectForNonRequestedSectionIsNotNotified()
         {
-            SystemConfigurationSourceImplementation implementation = new SystemConfigurationSourceImplementation(false);
-            implementation.AddSectionChangeHandler(localSection, new ConfigurationChangedEventHandler(OnConfigurationChanged));
+            IConfigurationSourceTest source = new SystemConfigurationSource(false);
+            source.AddSectionChangeHandler(localSection, new ConfigurationChangedEventHandler(OnConfigurationChanged));
 
-            implementation.ConfigSourceChanged(localSectionSource);
+            source.ConfigSourceChanged(localSectionSource);
 
             Assert.IsFalse(updatedSectionsTally.ContainsKey(localSection));
         }
@@ -487,13 +484,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
         [TestMethod]
         public void AllRegisteredObjectsAreNotifiedOfDifferentSectionsChangesForAppConfig()
         {
-            SystemConfigurationSourceImplementation implementation = new SystemConfigurationSourceImplementation(false);
-            implementation.GetSection(localSection);
-            implementation.GetSection(localSection2);
-            implementation.AddSectionChangeHandler(localSection, new ConfigurationChangedEventHandler(OnConfigurationChanged));
-            implementation.AddSectionChangeHandler(localSection2, new ConfigurationChangedEventHandler(OnConfigurationChanged));
+            IConfigurationSourceTest source = new SystemConfigurationSource(false);
+            source.GetSection(localSection);
+            source.GetSection(localSection2);
+            source.AddSectionChangeHandler(localSection, new ConfigurationChangedEventHandler(OnConfigurationChanged));
+            source.AddSectionChangeHandler(localSection2, new ConfigurationChangedEventHandler(OnConfigurationChanged));
 
-            implementation.ConfigSourceChanged(localSectionSource);
+            source.ConfigSourceChanged(localSectionSource);
 
             Assert.AreEqual(1, updatedSectionsTally[localSection]);
             Assert.AreEqual(1, updatedSectionsTally[localSection2]);
@@ -502,11 +499,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
         [TestMethod]
         public void RegisteredObjectIsNotifiedOfSectionChangesForExternalFile()
         {
-            SystemConfigurationSourceImplementation implementation = new SystemConfigurationSourceImplementation(false);
-            implementation.GetSection(externalSection);
-            implementation.AddSectionChangeHandler(externalSection, new ConfigurationChangedEventHandler(OnConfigurationChanged));
+            IConfigurationSourceTest source = new SystemConfigurationSource(false);
+            source.GetSection(externalSection);
+            source.AddSectionChangeHandler(externalSection, new ConfigurationChangedEventHandler(OnConfigurationChanged));
 
-            implementation.ExternalConfigSourceChanged(externalSectionSource);
+            source.ExternalConfigSourceChanged(externalSectionSource);
 
             Assert.AreEqual(1, updatedSectionsTally[externalSection]);
         }
@@ -514,13 +511,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
         [TestMethod]
         public void AllRegisteredObjectsAreNotifiedOfSectionChangesForExternalFile()
         {
-            SystemConfigurationSourceImplementation implementation = new SystemConfigurationSourceImplementation(false);
-            implementation.GetSection(externalSection);
-            implementation.AddSectionChangeHandler(externalSection, new ConfigurationChangedEventHandler(OnConfigurationChanged));
-            implementation.AddSectionChangeHandler(externalSection, new ConfigurationChangedEventHandler(OnConfigurationChanged));
-            implementation.AddSectionChangeHandler(externalSection, new ConfigurationChangedEventHandler(OnConfigurationChanged));
+            IConfigurationSourceTest source = new SystemConfigurationSource(false);
+            source.GetSection(externalSection);
+            source.AddSectionChangeHandler(externalSection, new ConfigurationChangedEventHandler(OnConfigurationChanged));
+            source.AddSectionChangeHandler(externalSection, new ConfigurationChangedEventHandler(OnConfigurationChanged));
+            source.AddSectionChangeHandler(externalSection, new ConfigurationChangedEventHandler(OnConfigurationChanged));
 
-            implementation.ExternalConfigSourceChanged(externalSectionSource);
+            source.ExternalConfigSourceChanged(externalSectionSource);
 
             Assert.AreEqual(3, updatedSectionsTally[externalSection]);
         }
@@ -528,11 +525,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
         [TestMethod]
         public void RegisteredObjectForExternalFileIsNotNotifiedOfSectionChangesForAppConfigIfConfigSourceForExternalSectionHasNotChanged()
         {
-            SystemConfigurationSourceImplementation implementation = new SystemConfigurationSourceImplementation(false);
-            implementation.GetSection(externalSection);
-            implementation.AddSectionChangeHandler(externalSection, new ConfigurationChangedEventHandler(OnConfigurationChanged));
+            IConfigurationSourceTest source = new SystemConfigurationSource(false);
+            source.GetSection(externalSection);
+            source.AddSectionChangeHandler(externalSection, new ConfigurationChangedEventHandler(OnConfigurationChanged));
 
-            implementation.ConfigSourceChanged(localSectionSource);
+            source.ConfigSourceChanged(localSectionSource);
 
             Assert.IsFalse(updatedSectionsTally.ContainsKey(externalSection));
         }
@@ -540,11 +537,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
         [TestMethod]
         public void RegisteredObjectForExternalFileIsNotifiedOfSectionChangesForAppConfigIfConfigSourceForExternalSectionNotChanged()
         {
-            SystemConfigurationSourceImplementation implementation = new SystemConfigurationSourceImplementation(false);
-            implementation.GetSection(externalSection);
-            implementation.AddSectionChangeHandler(externalSection, new ConfigurationChangedEventHandler(OnConfigurationChanged));
+            IConfigurationSourceTest source = new SystemConfigurationSource(false);
+            source.GetSection(externalSection);
+            source.AddSectionChangeHandler(externalSection, new ConfigurationChangedEventHandler(OnConfigurationChanged));
 
-            implementation.ConfigSourceChanged(localSectionSource);
+            source.ConfigSourceChanged(localSectionSource);
 
             Assert.IsFalse(updatedSectionsTally.ContainsKey(externalSection));
         }
@@ -552,21 +549,21 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
         [TestMethod]
         public void CanAddAndRemoveHandlers()
         {
-            SystemConfigurationSourceImplementation implementation = new SystemConfigurationSourceImplementation(false);
-            object section = implementation.GetSection(externalSection);
+            IConfigurationSourceTest source = new SystemConfigurationSource(false);
+            object section = source.GetSection(externalSection);
             Assert.IsNotNull(section);
 
-            implementation.AddSectionChangeHandler(externalSection, new ConfigurationChangedEventHandler(OnConfigurationChanged));
-            implementation.AddSectionChangeHandler(externalSection, new ConfigurationChangedEventHandler(OnConfigurationChanged));
-            implementation.ExternalConfigSourceChanged(externalSectionSource);
+            source.AddSectionChangeHandler(externalSection, new ConfigurationChangedEventHandler(OnConfigurationChanged));
+            source.AddSectionChangeHandler(externalSection, new ConfigurationChangedEventHandler(OnConfigurationChanged));
+            source.ExternalConfigSourceChanged(externalSectionSource);
             Assert.AreEqual(2, updatedSectionsTally[externalSection]);
 
-            implementation.RemoveSectionChangeHandler(externalSection, new ConfigurationChangedEventHandler(OnConfigurationChanged));
-            implementation.ExternalConfigSourceChanged(externalSectionSource);
+            source.RemoveSectionChangeHandler(externalSection, new ConfigurationChangedEventHandler(OnConfigurationChanged));
+            source.ExternalConfigSourceChanged(externalSectionSource);
             Assert.AreEqual(3, updatedSectionsTally[externalSection]);
 
-            implementation.RemoveSectionChangeHandler(externalSection, new ConfigurationChangedEventHandler(OnConfigurationChanged));
-            implementation.ExternalConfigSourceChanged(externalSectionSource);
+            source.RemoveSectionChangeHandler(externalSection, new ConfigurationChangedEventHandler(OnConfigurationChanged));
+            source.ExternalConfigSourceChanged(externalSectionSource);
             Assert.AreEqual(3, updatedSectionsTally[externalSection]);
         }
 
@@ -596,23 +593,21 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
         [TestMethod]
         public void RemovedSectionGetsNotificationOnRemovalAndDoesNotGetFurtherNotifications()
         {
-            ConfigurationChangeWatcher.SetDefaultPollDelayInMilliseconds(100);
+            IConfigurationSourceTest source = new SystemConfigurationSource(false);
 
-            SystemConfigurationSourceImplementation implementation = new SystemConfigurationSourceImplementation(false);
-
-            object section1 = implementation.GetSection(localSection);
+            object section1 = source.GetSection(localSection);
             Assert.IsNotNull(section1);
-            object section2 = implementation.GetSection(localSection2);
+            object section2 = source.GetSection(localSection2);
             Assert.IsNotNull(section2);
 
-            implementation.AddSectionChangeHandler(localSection, new ConfigurationChangedEventHandler(OnConfigurationChanged));
-            implementation.AddSectionChangeHandler(localSection2, new ConfigurationChangedEventHandler(OnConfigurationChanged));
+            source.AddSectionChangeHandler(localSection, new ConfigurationChangedEventHandler(OnConfigurationChanged));
+            source.AddSectionChangeHandler(localSection2, new ConfigurationChangedEventHandler(OnConfigurationChanged));
 
             // a change in system config notifies both sections
             System.Configuration.Configuration rwConfiguration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             rwConfiguration.Save();
 
-            implementation.ConfigSourceChanged(localSectionSource);
+            source.ConfigSourceChanged(localSectionSource);
             Assert.AreEqual(1, updatedSectionsTally[localSection]);
             Assert.AreEqual(1, updatedSectionsTally[localSection2]);
 
@@ -621,7 +616,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
             rwConfiguration.Sections.Remove(localSection2);
             rwConfiguration.Save();
 
-            implementation.ConfigSourceChanged(localSectionSource);
+            source.ConfigSourceChanged(localSectionSource);
             Assert.AreEqual(2, updatedSectionsTally[localSection]);
             Assert.AreEqual(2, updatedSectionsTally[localSection2]);
 
@@ -629,7 +624,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
             rwConfiguration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             rwConfiguration.Save();
 
-            implementation.ConfigSourceChanged(localSectionSource);
+            source.ConfigSourceChanged(localSectionSource);
             Assert.AreEqual(3, updatedSectionsTally[localSection]);
             Assert.AreEqual(2, updatedSectionsTally[localSection2]);
         }
@@ -637,21 +632,21 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
         [TestMethod]
         public void RestoredSectionGetsNotificationOnRestoreAndGetsFurtherNotifications()
         {
-            SystemConfigurationSourceImplementation implementation = new SystemConfigurationSourceImplementation(false);
+            IConfigurationSourceTest source = new SystemConfigurationSource(false);
 
-            object section1 = implementation.GetSection(localSection);
+            object section1 = source.GetSection(localSection);
             Assert.IsNotNull(section1);
-            object section2 = implementation.GetSection(localSection2);
+            object section2 = source.GetSection(localSection2);
             Assert.IsNotNull(section2);
 
-            implementation.AddSectionChangeHandler(localSection, new ConfigurationChangedEventHandler(OnConfigurationChanged));
-            implementation.AddSectionChangeHandler(localSection2, new ConfigurationChangedEventHandler(OnConfigurationChanged));
+            source.AddSectionChangeHandler(localSection, new ConfigurationChangedEventHandler(OnConfigurationChanged));
+            source.AddSectionChangeHandler(localSection2, new ConfigurationChangedEventHandler(OnConfigurationChanged));
 
             // a change in system config notifies both sections
             System.Configuration.Configuration rwConfiguration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             rwConfiguration.Save();
 
-            implementation.ConfigSourceChanged(localSectionSource);
+            source.ConfigSourceChanged(localSectionSource);
             Assert.AreEqual(1, updatedSectionsTally[localSection]);
             Assert.AreEqual(1, updatedSectionsTally[localSection2]);
 
@@ -660,7 +655,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
             rwConfiguration.Sections.Remove(localSection2);
             rwConfiguration.Save();
 
-            implementation.ConfigSourceChanged(localSectionSource);
+            source.ConfigSourceChanged(localSectionSource);
             Assert.AreEqual(2, updatedSectionsTally[localSection]);
             Assert.AreEqual(2, updatedSectionsTally[localSection2]);
 
@@ -668,7 +663,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
             rwConfiguration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             rwConfiguration.Save();
 
-            implementation.ConfigSourceChanged(localSectionSource);
+            source.ConfigSourceChanged(localSectionSource);
             Assert.AreEqual(3, updatedSectionsTally[localSection]);
             Assert.AreEqual(2, updatedSectionsTally[localSection2]);
 
@@ -680,7 +675,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
             rwConfiguration.Sections.Add(localSection2, rwSection);
             rwConfiguration.Save();
 
-            implementation.ConfigSourceChanged(localSectionSource);
+            source.ConfigSourceChanged(localSectionSource);
             Assert.AreEqual(4, updatedSectionsTally[localSection]);
             Assert.AreEqual(3, updatedSectionsTally[localSection2]);
 
@@ -688,7 +683,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
             rwConfiguration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             rwConfiguration.Save();
 
-            implementation.ConfigSourceChanged(localSectionSource);
+            source.ConfigSourceChanged(localSectionSource);
             Assert.AreEqual(5, updatedSectionsTally[localSection]);
             Assert.AreEqual(4, updatedSectionsTally[localSection2]);
         }
@@ -696,26 +691,26 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
         [TestMethod]
         public void GetsNotifiedOfSingleRetrievedSection()
         {
-            SystemConfigurationSourceImplementation implementation = new SystemConfigurationSourceImplementation(false);
-            implementation.GetSection(localSection);
-            implementation.SourceChanged += this.OnConfigurationSourceChanged;
+            IConfigurationSourceTest source = new SystemConfigurationSource(false);
+            source.GetSection(localSection);
+            source.SourceChanged += this.OnConfigurationSourceChanged;
 
-            implementation.ConfigSourceChanged(localSectionSource);
+            source.ConfigSourceChanged(localSectionSource);
 
-            CollectionAssert.AreEquivalent(new[] { localSection }, new List<string>(updatedSections));
+            CollectionAssert.AreEquivalent(new[] { ConfigurationSourceSection.SectionName, localSection }, new List<string>(updatedSections));
         }
 
         [TestMethod]
         public void GetsNotifiedOfMultipleRetrievedSection()
         {
-            SystemConfigurationSourceImplementation implementation = new SystemConfigurationSourceImplementation(false);
-            implementation.GetSection(localSection);
-            implementation.GetSection(localSection2);
-            implementation.SourceChanged += this.OnConfigurationSourceChanged;
+            IConfigurationSourceTest source = new SystemConfigurationSource(false);
+            source.GetSection(localSection);
+            source.GetSection(localSection2);
+            source.SourceChanged += this.OnConfigurationSourceChanged;
 
-            implementation.ConfigSourceChanged(localSectionSource);
+            source.ConfigSourceChanged(localSectionSource);
 
-            CollectionAssert.AreEquivalent(new[] { localSection, localSection2 }, new List<string>(updatedSections));
+            CollectionAssert.AreEquivalent(new[] { ConfigurationSourceSection.SectionName, localSection, localSection2 }, new List<string>(updatedSections));
         }
 
         void OnConfigurationChanged(object sender, ConfigurationChangedEventArgs args)

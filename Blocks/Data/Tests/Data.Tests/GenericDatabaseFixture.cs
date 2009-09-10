@@ -27,7 +27,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
         [TestMethod]
         public void CanCreateGenericDatabaseFromSysConfiguration()
         {
-            Database database = (new DatabaseProviderFactory(new SystemConfigurationSource())).Create("OdbcDatabase");
+            Database database =
+                new DatabaseProviderFactory(new SystemConfigurationSource(false)).Create("OdbcDatabase");
 
             Assert.IsNotNull(database);
             Assert.AreEqual(database.GetType(), typeof(GenericDatabase));
@@ -46,7 +47,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
 
                 using (DbTransaction transaction = connection.BeginTransaction())
                 {
-                    using (IDataReader dataReader = db.ExecuteReader(transaction, CommandType.Text, "select * from [Order Details]")) {}
+                    using (IDataReader dataReader = db.ExecuteReader(transaction, CommandType.Text, "select * from [Order Details]")) { }
                     transaction.Commit();
                 }
             }
@@ -63,7 +64,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
 
                 using (DbTransaction transaction = connection.BeginTransaction())
                 {
-                    using (IDataReader dataReader = db.ExecuteReader(transaction, CommandType.Text, "select * from [Order Details]")) {}
+                    using (IDataReader dataReader = db.ExecuteReader(transaction, CommandType.Text, "select * from [Order Details]")) { }
                     transaction.Commit();
                 }
             }

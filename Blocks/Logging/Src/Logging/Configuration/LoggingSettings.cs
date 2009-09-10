@@ -58,7 +58,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// </summary>
         /// <param name="name">The name to use for this instance</param>
         public LoggingSettings(string name)
-            : this(name, false, string.Empty)
+            : this(name, true, string.Empty)
         {
         }
 
@@ -88,7 +88,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// <summary>
         /// Enable or disable trace logging.
         /// </summary>
-        [ConfigurationProperty(tracingEnabledProperty)]
+        [ConfigurationProperty(tracingEnabledProperty, DefaultValue=true)]
         public bool TracingEnabled
         {
             get
@@ -207,7 +207,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// Gets or sets the indication that a warning should be logged when a category is not found while 
         /// dispatching a log entry.
         /// </summary>
-        [ConfigurationProperty(logWarningsWhenNoCategoriesMatchProperty)]
+        [ConfigurationProperty(logWarningsWhenNoCategoriesMatchProperty, DefaultValue=true)]
         public bool LogWarningWhenNoCategoriesMatch
         {
             get

@@ -192,4 +192,34 @@
   <data name="ExceptionTypeForCustomCacheProviderMustDeriveFrom" xml:space="preserve">
     <value>The Custom Security Cache Provider '{0}' with Type '{1}' must derive from ISecurityCacheProvider</value>
   </data>
+  <data name="ExceptionParameterMustImplementType" xml:space="preserve">
+    <value>Parameter must implement type '{0}'.</value>
+  </data>
+  <data name="AuthorizationProvidersDisplayName" xml:space="preserve">
+    <value>Authorization</value>
+  </data>
+  <data name="SecurityCacheProvidersDisplayName" xml:space="preserve">
+    <value>Security Cache</value>
+  </data>
+  <data name="SecuritySettingsDisplayName" xml:space="preserve">
+    <value>Security Application Block</value>
+  </data>
+  <data name="AddAuthorizationRuleData" xml:space="preserve">
+    <value>Authorization Rule Expression</value>
+  </data>
+  <data name="AddAuthorizationRuleDataDescription" xml:space="preserve">
+    <value>Add an authorization rule expression that defines when the rule takes effect.</value>
+  </data>
+  <data name="AddAuthorizationRuleProviderData" xml:space="preserve">
+    <value>Authorization Rule</value>
+  </data>
+  <data name="AddAuthorizationRuleProviderDataDescription" xml:space="preserve">
+    <value>Adds a new Authorization Rule provider.</value>
+  </data>
+  <data name="AddCustomAuthorizationProviderData" xml:space="preserve">
+    <value>Custom</value>
+  </data>
+  <data name="AddCustomAuthorizationProviderDataDescription" xml:space="preserve">
+    <value>Add a custom authorization provider by selecting its type.</value>
+  </data>
 </root>

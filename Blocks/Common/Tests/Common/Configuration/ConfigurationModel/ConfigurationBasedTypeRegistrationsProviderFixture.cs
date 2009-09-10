@@ -38,7 +38,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
         {
             TypeRegistrationProvidersConfigurationSection section = new TypeRegistrationProvidersConfigurationSection();
             section.TypeRegistrationProviders.Clear();
-            section.TypeRegistrationProviders.Add(new TypeRegistrationProviderSettings { Name = "test", SectionName = "Section Name" });
+            section.TypeRegistrationProviders.Add(new TypeRegistrationProviderElement { Name = "test", SectionName = "Section Name" });
             configurationSource.Add(TypeRegistrationProvidersConfigurationSection.SectionName, section);
 
             var locators = ConfigurationBasedTypeRegistrationsProviderFactory.CreateTypeRegistrationsProviderLocators(configurationSource, new NullContainerReconfiguringEventSource());
@@ -51,7 +51,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
         {
             TypeRegistrationProvidersConfigurationSection section = new TypeRegistrationProvidersConfigurationSection();
             section.TypeRegistrationProviders.Clear();
-            section.TypeRegistrationProviders.Add(new TypeRegistrationProviderSettings { Name = "test", ProviderTypeName = "ProviderType" });
+            section.TypeRegistrationProviders.Add(new TypeRegistrationProviderElement { Name = "test", ProviderTypeName = "ProviderType" });
             configurationSource.Add(TypeRegistrationProvidersConfigurationSection.SectionName, section);
 
 
@@ -66,7 +66,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
         {
             TypeRegistrationProvidersConfigurationSection section = new TypeRegistrationProvidersConfigurationSection();
             section.TypeRegistrationProviders.Clear();
-            section.TypeRegistrationProviders.Add(new TypeRegistrationProviderSettings { Name = "test", SectionName = "Section Name", ProviderTypeName = "ProviderType" });
+            section.TypeRegistrationProviders.Add(new TypeRegistrationProviderElement { Name = "test", SectionName = "Section Name", ProviderTypeName = "ProviderType" });
             configurationSource.Add(TypeRegistrationProvidersConfigurationSection.SectionName, section);
 
 

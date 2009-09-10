@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
@@ -55,6 +56,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Tests.
         protected ExceptionTypeData GetExceptionTypeData()
         {
             return GetExceptionPolicyData().ExceptionTypes.Where(x => x.Type == exceptionType).First();
+        }
+    }
+
+    [TestClass]
+    public class When_AddingLogExceptionHandlerToExceptionTypePassingNullForCategory : Given_ExceptionTypeInConfigurationSourceBuilder
+    {
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void Then_LogToCategory_ThrowsArgumentException()
+        {
+            exception.LogToCategory(null);
         }
     }
 
@@ -143,7 +155,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Tests.
                         .UsingEventId(12)
                         .WithPriority(23)
                         .WithSeverity(TraceEventType.Stop)
-                        .UsingExceptionFormatter(typeof(XmlExceptionFormatter));
+                        .UsingExceptionFormatter<XmlExceptionFormatter>();
 
             loggingHandlerData = base.GetExceptionTypeData()
                 .ExceptionHandlers
@@ -182,4 +194,30 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Tests.
             Assert.AreEqual("title", loggingHandlerData.Title);
         }
     }
+
+    [TestClass]
+    public class When_SettingTitletoNullForOnLoggingHandler : Given_ExceptionTypeInConfigurationSourceBuilder
+    {
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void Then_UsingTitle_ThrowsArgumentException()
+        {
+            exception.LogToCategory("Category")
+                        .UsingTitle(null);
+        }
+    }
+
+
+    [TestClass]
+    public class When_SettingExceptionFormattertoNullForOnLoggingHandler : Given_ExceptionTypeInConfigurationSourceBuilder
+    {
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void Then_UsingExceptionFormatter_ThrowsArgumentNullException()
+        {
+            exception.LogToCategory("Category")
+                        .UsingExceptionFormatter(null);
+        }
+    }
+
 }

@@ -834,29 +834,37 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
         /// </returns>        
         public virtual IDataReader ExecuteReader(DbCommand command)
         {
-            ConnectionWrapper wrapper = GetOpenConnection(false);
+            DbConnection connection = null;
+            CommandBehavior commandBehavior;
+
+            if (Transaction.Current == null)
+            {
+                commandBehavior = CommandBehavior.CloseConnection;
+                connection = this.GetNewOpenConnection();
+            }
+            else
+            {
+                // If there is a current transaction, we'll be using a shared connection, so we don't
+                // want to close the connection when we're done with the reader.
+                commandBehavior = CommandBehavior.Default;
+                connection = TransactionScopeConnections.GetConnection(this);
+            }
 
             try
             {
-                //
-                // JS-L: I moved the PrepareCommand inside the try because it can fail.
-                //
-                PrepareCommand(command, wrapper.Connection);
-
-                //
-                // If there is a current transaction, we'll be using a shared connection, so we don't
-                // want to close the connection when we're done with the reader.
-                //
-                if (Transaction.Current != null)
-                {
-                    return DoExecuteReader(command, CommandBehavior.Default);
-                }
-                
-                return DoExecuteReader(command, CommandBehavior.CloseConnection);
+                PrepareCommand(command, connection);
+                return DoExecuteReader(command, commandBehavior);
             }
             catch
             {
-                wrapper.Connection.Close();
+                if (commandBehavior == CommandBehavior.CloseConnection)
+                {
+                    // close only if the connection if not shared.
+                    // the connection is closed by SqlCommand in the ocurrence of an exception if the CommandBehavior is
+                    // CloseConnection, but this is not documented so the connection will be closed explicitly unless
+                    // it is shared.
+                    connection.Close();
+                }
                 throw;
             }
         }
@@ -1207,7 +1215,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
             {
                 return new ConnectionWrapper(connection, false);
             }
-            
+
             return new ConnectionWrapper(GetNewOpenConnection(), disposeInnerConnection);
         }
 
@@ -1342,7 +1350,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
                                         DataSet dataSet,
                                         string tableName)
         {
-            LoadDataSet(command, dataSet, new [] { tableName });
+            LoadDataSet(command, dataSet, new[] { tableName });
         }
 
         /// <summary>
@@ -1367,7 +1375,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
                                         string tableName,
                                         DbTransaction transaction)
         {
-            LoadDataSet(command, dataSet, new [] { tableName }, transaction);
+            LoadDataSet(command, dataSet, new[] { tableName }, transaction);
         }
 
         /// <summary>
@@ -1954,28 +1962,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
         }
 
         /// <summary>
-        /// <para>Initiates the asynchronous execution of a <paramref name="command"/> which will return a <see cref="IDataReader"/>.</para>
-        /// </summary>
-        /// <param name="command">
-        /// <para>The <see cref="DbCommand"/> to execute.</para> </param>
-        /// <param name="commandBehavior"><see cref="CommandBehavior"/> to use when the reader is closed.</param>
-        /// <param name="callback">The async callback to execute when the result of the operation is available. Pass <langword>null</langword>
-        /// if you don't want to use a callback.</param>
-        /// <param name="state">Additional state object to pass to the callback.</param>
-        /// <returns>
-        /// <para>An <see cref="IAsyncResult"/> that can be used to poll or wait for results, or both; 
-        /// this value is also needed when invoking <see cref="EndExecuteReader"/>, 
-        /// which returns the <see cref="IDataReader"/>.</para>
-        /// </returns>
-        /// <seealso cref="Database.ExecuteReader(DbCommand)"/>
-        /// <seealso cref="EndExecuteReader(IAsyncResult)"/>
-        public virtual IAsyncResult BeginExecuteReader(DbCommand command, CommandBehavior commandBehavior, AsyncCallback callback, object state)
-        {
-            AsyncNotSupported();
-            return null;
-        }
-
-        /// <summary>
         /// <para>Initiates the asynchronous execution of a <paramref name="command"/> inside a transaction which will return a <see cref="IDataReader"/>.</para>
         /// </summary>
         /// <param name="command">
@@ -2316,7 +2302,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
             throw new InvalidOperationException(
                 string.Format(
                 CultureInfo.CurrentCulture,
-                Resources.AsyncOperationsNotSupported, 
+                Resources.AsyncOperationsNotSupported,
                 GetType().Name));
         }
 

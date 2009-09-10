@@ -29,17 +29,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
         [TestMethod]
         public void CanCreateAConfigurationSourceThatExistsInConfig()
         {
-            IConfigurationSource source = ConfigurationSourceFactory.Create("fileSource");
-
-            Assert.AreEqual(typeof(FileConfigurationSource), source.GetType());
+            using (var source = ConfigurationSourceFactory.Create("fileSource"))
+            {
+                Assert.AreEqual(typeof(FileConfigurationSource), source.GetType());
+            }
         }
 
         [TestMethod]
         public void DefaultConfigurationSourceIsSystemSource()
         {
-            IConfigurationSource defaultSource = ConfigurationSourceFactory.Create();
-
-            Assert.AreEqual(typeof(SystemConfigurationSource), defaultSource.GetType());
+            using (var defaultSource = ConfigurationSourceFactory.Create())
+            {
+                Assert.AreEqual(typeof(SystemConfigurationSource), defaultSource.GetType());
+            }
         }
 
         [TestMethod]

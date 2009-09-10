@@ -20,7 +20,7 @@ using ValidationRangeBoundaryType = Microsoft.Practices.EnterpriseLibrary.Valida
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.Design.ValidatorNodes
 {
     /// <summary>
-    /// Respresents the designtime configuration node for any <see cref="RangeValidatorData{T}"/>.
+    /// Represents the designtime configuration node for any <see cref="RangeValidatorData{T}"/>.
     /// </summary>
     public abstract class RangeValidatorNodeBase<T> : ValueValidatorNode
         where T : IComparable<T>

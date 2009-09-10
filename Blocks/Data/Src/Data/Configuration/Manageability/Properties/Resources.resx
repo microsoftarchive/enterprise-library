@@ -142,7 +142,7 @@
     <value>Package mappings</value>
   </data>
   <data name="OracleConnectionPolicyNameTemplate" xml:space="preserve">
-    <value>Specify settings for oracle connection '{0}'</value>
+    <value>Specify settings for Oracle connection '{0}'</value>
   </data>
   <data name="OracleConnectionsCategoryName" xml:space="preserve">
     <value>Oracle packages</value>

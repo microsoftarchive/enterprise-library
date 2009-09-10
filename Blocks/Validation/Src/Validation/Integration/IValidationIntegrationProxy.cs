@@ -14,7 +14,7 @@ using System;
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration
 {
 	/// <summary>
-	/// Represents the behavior necessary to provide integration with the validation block.
+    /// Represents the behavior necessary to provide integration with the Validation Application Block.
 	/// </summary>
 	public interface IValidationIntegrationProxy
 	{

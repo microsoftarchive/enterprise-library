@@ -22,7 +22,7 @@ using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration.
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration.Design
 {
     /// <summary>
-    /// Visual control that allows an user to select an existing key file within the cryptographic key wizard.
+    /// Visual control that allows a user to select an existing key file within the cryptographic key wizard.
     /// </summary>
     public partial class OpenExistingKeyFileControl : UserControl, IWizardValidationTarget
     {

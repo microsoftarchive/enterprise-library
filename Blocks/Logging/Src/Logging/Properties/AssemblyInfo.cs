@@ -13,6 +13,8 @@ using System.Management.Instrumentation;
 using System.Reflection;
 using System.Security;
 using System.Security.Permissions;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 
 [assembly : SecurityPermission(SecurityAction.RequestMinimum)]
 [assembly : AssemblyTitle("Enterprise Library Logging Application Block")]
@@ -22,3 +24,4 @@ using System.Security.Permissions;
 [assembly : WmiConfiguration(@"root\EnterpriseLibrary", HostingModel = ManagementHostingModel.Decoupled, IdentifyLevel = false)]
 [assembly : AllowPartiallyTrustedCallers]
 [assembly : SecurityTransparent]
+[assembly : HandlesSectionName(LoggingSettings.SectionName)]

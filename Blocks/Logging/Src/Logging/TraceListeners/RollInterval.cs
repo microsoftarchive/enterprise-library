@@ -12,7 +12,7 @@
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
 {
 	/// <summary>
-	/// Defines the frecuency when the file need to be rolled.
+	/// Defines the frequency when the file need to be rolled.
 	/// </summary>
 	public enum RollInterval
 	{

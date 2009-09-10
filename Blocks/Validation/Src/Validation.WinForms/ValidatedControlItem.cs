@@ -20,7 +20,7 @@ using Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WinForms.Prop
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WinForms
 {
     /// <summary>
-    /// Represents the behavior necessary to provide integration with the validation block and a control item.
+    /// Represents the behavior necessary to provide integration with the Validation Application Block and a control item.
     /// </summary>
     public sealed class ValidatedControlItem : IValidationIntegrationProxy
     {

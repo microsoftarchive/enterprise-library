@@ -11,6 +11,8 @@
 
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Security.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration
 {
@@ -19,6 +21,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration
     /// rule that is governed by an 
     /// <see cref="AuthorizationRuleProvider"/>.
     /// </summary>
+    [ResourceDisplayName(typeof(Resources), "AddAuthorizationRuleData")]
+    [ResourceDescription(typeof(Resources), "AddAuthorizationRuleDataDescription")]
     public class AuthorizationRuleData : NamedConfigurationElement, IAuthorizationRule
     {
         private const string expressionProperty = "expression";

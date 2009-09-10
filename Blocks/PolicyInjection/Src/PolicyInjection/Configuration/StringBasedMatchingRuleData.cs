@@ -15,7 +15,7 @@ using System.Configuration;
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
 {
     /// <summary>
-    /// Base class for matching rule config data for those rules that take
+    /// Base class for matching rule configuration data for those rules that take
     /// a single match instance consisting of a string to match and an
     /// ignore case flag.
     /// </summary>

@@ -216,23 +216,27 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
                 PropertyValidatorCacheKey key = new PropertyValidatorCacheKey(type, propertyInfo.Name, ruleset);
                 if (!defaultConfigurationOnlyPropertyValidatorsCache.TryGetValue(key, out validator))
                 {
-                    IConfigurationSource configurationSource = ConfigurationSourceFactory.Create();
-                    ConfigurationValidatorBuilder builder = ConfigurationValidatorBuilder.FromConfiguration(configurationSource, memberAccessValidatorBuilderFactory);
+                    using (var configurationSource = ConfigurationSourceFactory.Create())
+                    {
+                        ConfigurationValidatorBuilder builder =
+                            ConfigurationValidatorBuilder.FromConfiguration(configurationSource, memberAccessValidatorBuilderFactory);
 
-                    ValidatedPropertyReference propertyReference = GetValidatedPropertyReference(type, ruleset, propertyInfo.Name, configurationSource);
-                    if (null == propertyReference)
-                        validator = null;
-                    else
-                        validator = builder.CreateValidatorForProperty(type, propertyReference);
+                        ValidatedPropertyReference propertyReference =
+                            GetValidatedPropertyReference(type, ruleset, propertyInfo.Name, configurationSource);
+                        if (null == propertyReference)
+                            validator = null;
+                        else
+                            validator = builder.CreateValidatorForProperty(type, propertyReference);
 
-                    defaultConfigurationOnlyPropertyValidatorsCache[key] = validator;
+                        defaultConfigurationOnlyPropertyValidatorsCache[key] = validator;
+                    }
                 }
             }
 
             return validator;
         }
 
-     
+
 
         private static ValidatedPropertyReference GetValidatedPropertyReference(Type type,
             string ruleset,

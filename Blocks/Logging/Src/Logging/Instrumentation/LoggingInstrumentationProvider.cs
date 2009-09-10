@@ -17,7 +17,7 @@ using Microsoft.Practices.EnterpriseLibrary.Logging.Properties;
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation
 {
     /// <summary>
-    /// Defines the logical events that can be instrumented for the logging block.
+    /// Defines the logical events that can be instrumented for the Logging Application Block.
     /// </summary>
     [HasInstallableResourcesAttribute]
     [PerformanceCountersDefinition(counterCategoryName, "LoggingCountersHelpResource")]

@@ -19,7 +19,7 @@ using Microsoft.Practices.EnterpriseLibrary.Data.Oracle.Configuration;
 namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Manageability
 {
     /// <summary>
-    /// Representa a mapper for oracle connection settings in configuraiotn to Wmi.
+    /// Represents a mapper for Oracle connection settings in configuration to Wmi.
     /// </summary>
 	public static class OracleConnectionSettingsWmiMapper
 	{

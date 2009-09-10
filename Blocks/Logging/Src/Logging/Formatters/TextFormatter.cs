@@ -63,13 +63,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Formatters
 
             // cached values
             defaultTokenHandlers["localMachine"]
-                = GenericTextFormatter<LogEntry>.CreateSimpleTokenHandler(LogEntry.GetMachineNameSafe());
+                = GenericTextFormatter<LogEntry>.CreateSimpleTokenHandler(LogEntryContext.GetMachineNameSafe());
             defaultTokenHandlers["localProcessName"]
-                            = GenericTextFormatter<LogEntry>.CreateSimpleTokenHandler(LogEntry.GetProcessNameSafe());
+                            = GenericTextFormatter<LogEntry>.CreateSimpleTokenHandler(LogEntryContext.GetProcessNameSafe());
             defaultTokenHandlers["localAppDomain"]
-                            = GenericTextFormatter<LogEntry>.CreateSimpleTokenHandler(LogEntry.GetAppDomainNameSafe());
+                            = GenericTextFormatter<LogEntry>.CreateSimpleTokenHandler(LogEntryContext.GetAppDomainNameSafe());
             defaultTokenHandlers["localProcessId"]
-                            = GenericTextFormatter<LogEntry>.CreateSimpleTokenHandler(LogEntry.GetProcessIdSafe());
+                            = GenericTextFormatter<LogEntry>.CreateSimpleTokenHandler(LogEntryContext.GetProcessIdSafe());
 
             // simple properties on log entry
             defaultTokenHandlers["message"]

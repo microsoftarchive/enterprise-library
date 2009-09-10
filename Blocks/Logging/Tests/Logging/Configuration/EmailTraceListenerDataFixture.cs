@@ -35,6 +35,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Tests
                     Filter = SourceLevels.Warning
                 };
         }
+        
+
+        [TestMethod]
+        public void WhenCreatingInstanceUsingDefaultContructor_ThenListenerDataTypeIsSet()
+        {
+            var listener = new EmailTraceListenerData();
+            Assert.AreEqual(typeof(EmailTraceListenerData), listener.ListenerDataType);
+        }
 
         [TestMethod]
         public void WhenCreatesRegistration_ThenCreatesTwoTypeRegistrations()

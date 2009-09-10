@@ -11,11 +11,8 @@
 
 using System;
 using System.Collections.Specialized;
-using System.IO;
-using System.Text;
 using System.Windows.Forms;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ObjectBuilder;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
 

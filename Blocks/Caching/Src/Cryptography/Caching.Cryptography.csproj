@@ -114,6 +114,8 @@
     <Compile Include="..\..\..\GlobalAssemblyInfo.cs">
       <Link>GlobalAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Configuration\Fluent\EncryptItemsWithSharedSymmetricProviderExtension.cs" />
+    <Compile Include="Configuration\Fluent\IEncryptItemsWithSharedSymmetricProvider.cs" />
     <Compile Include="Configuration\Manageability\Installer.cs">
       <SubType>Component</SubType>
     </Compile>

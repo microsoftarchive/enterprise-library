@@ -169,7 +169,7 @@
     <value>Error opening environment merge file</value>
   </data>
   <data name="ErrorSavingMergedConfigurationCaption" xml:space="preserve">
-    <value>Error ocurred saving a merged configuration file.</value>
+    <value>Error occurred saving a merged configuration file.</value>
   </data>
   <data name="GenericDialogCaption" xml:space="preserve">
     <value>Enterprise Library Configuration</value>

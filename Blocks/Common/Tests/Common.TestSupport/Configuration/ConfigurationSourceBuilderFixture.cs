@@ -37,7 +37,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration
     [TestClass]
     public class When_GivenAnEmptyConfigurationSource : Given_AConfigurationSourceBuilder
     {
-        private IConfigurationSourceBuilder newConfiguration;
         private IConfigurationSource mergedConfiguration;
 
         protected override void Arrange()
@@ -73,7 +72,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration
             base.Arrange();
 
             mergedConfiguration = new DictionaryConfigurationSource();
-            mergedConfiguration.Add(null, 
+            mergedConfiguration.Add(
                            InstrumentationConfigurationSection.SectionName, 
                            new InstrumentationConfigurationSection(false, true, false));
 

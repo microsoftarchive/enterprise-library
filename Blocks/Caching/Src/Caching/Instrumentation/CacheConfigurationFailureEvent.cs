@@ -16,7 +16,7 @@ using System.Text;
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation
 {
 	/// <summary>
-	/// Represents the WMI event fired when an error in the configuration for the caching block is detected.
+    /// Represents the WMI event fired when an error in the configuration for the Caching Application Block is detected.
 	/// </summary>
 	public class CacheConfigurationFailureEvent : CacheEvent
 	{
@@ -25,7 +25,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation
 		/// <summary>
 		/// Initializes a new instance of the <see cref="CacheConfigurationFailureEvent"/> class.
 		/// </summary>
-		/// <param name="instanceName">Name of the <see cref="CacheManager"/> instance the failure ocurred in.</param>
+        /// <param name="instanceName">Name of the <see cref="CacheManager"/> instance the failure occurred in.</param>
 		/// <param name="exceptionMessage">The message that represents the exception thrown when the configuration error was detected.</param>
 		public CacheConfigurationFailureEvent(string instanceName, string exceptionMessage)
 			: base(instanceName)

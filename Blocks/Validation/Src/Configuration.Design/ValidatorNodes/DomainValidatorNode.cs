@@ -22,7 +22,7 @@ using System.Collections.Generic;
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.Design.ValidatorNodes
 {
 	/// <summary>
-	/// Respresents the designtime configuration node for an <see cref="DomainValidatorData"/>.
+    /// Represents the designtime configuration node for an <see cref="DomainValidatorData"/>.
 	/// </summary>
 	public class DomainValidatorNode : ValueValidatorNode
 	{

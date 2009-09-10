@@ -14,7 +14,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation
 	/// <summary>
 	/// Defines the contract to be implemented by explicit binders for individual blocks. 
 	/// Explicit binders are used to define exactly how instrumentation event sources are bound to
-	/// instrumentation event listeners. It is used for those instances when the implementor wishes to
+	/// instrumentation event listeners. It is used for those instances when the implementer wishes to
 	/// explicitly define how this binding happens, rather than allow the binding to occur through reflection.
 	/// </summary>
 	public interface IExplicitInstrumentationBinder

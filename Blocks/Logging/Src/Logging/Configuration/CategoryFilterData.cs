@@ -31,6 +31,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// </summary>
         public CategoryFilterData()
         {
+            Type = typeof(CategoryFilter);
         }
 
         /// <summary>

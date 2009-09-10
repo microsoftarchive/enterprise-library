@@ -70,6 +70,10 @@
     <Compile Include="AuthorizationRuleProviderFixture.cs" />
     <Compile Include="ComplexExpressionFixture.cs" />
     <Compile Include="Configuration\AuthorizationConfigurationSerializationFixture.cs" />
+    <Compile Include="Configuration\Fluent\AuthorizeUsingCustomExtensionFixture.cs" />
+    <Compile Include="Configuration\Fluent\AuthorizeUsingRuleProviderExtensionFixture.cs" />
+    <Compile Include="Configuration\Fluent\CacheAuthenticationInCustomStoreExtensionFixture.cs" />
+    <Compile Include="Configuration\Fluent\SecuritySettingsExtensionFixture.cs" />
     <Compile Include="Configuration\SecuritySettingsReconfigurableRegistrationsFixture.cs" />
     <Compile Include="Configuration\SecurityCacheConfigurationSerializationFixture.cs" />
     <Compile Include="Configuration\SecuritySettingsGetRegistrationsFixture.cs" />

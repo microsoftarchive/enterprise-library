@@ -100,7 +100,7 @@
             <summary>
             Read the contents of the element from the given XmlReader.
             </summary>
-            <param name="reader"></param>
+            <param name="reader">The reader for the configuration file.</param>
         </member>
         <member name="M:Microsoft.Practices.Unity.Configuration.InjectionMemberElement.CreateInjectionMember">
             <summary>
@@ -344,6 +344,30 @@
             </summary>
         </member>
         <member name="P:Microsoft.Practices.Unity.Configuration.DependencyValueElement.TypeName">
+            <summary>
+            Type of the dependency to resolve.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Practices.Unity.Configuration.OptionalValueElement">
+            <summary>
+            A configuration element that marks a dependency as optional;
+            if it cannot be resolved null will be returned.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.Configuration.OptionalValueElement.CreateParameterValue(System.Type)">
+            <summary>
+            Return an instance of <see cref="T:Microsoft.Practices.Unity.InjectionParameterValue"/> based
+            on the contents of this 
+            </summary>
+            <param name="targetType">Type of the parameter we are creating the value for.</param>
+            <returns>The created InjectionParameterValue, ready to pass to the container config API.</returns>
+        </member>
+        <member name="P:Microsoft.Practices.Unity.Configuration.OptionalValueElement.Name">
+            <summary>
+            Name of the dependency to resolve.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Unity.Configuration.OptionalValueElement.TypeName">
             <summary>
             Type of the dependency to resolve.
             </summary>

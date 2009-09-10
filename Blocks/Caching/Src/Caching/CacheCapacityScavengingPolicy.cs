@@ -12,7 +12,7 @@
 namespace Microsoft.Practices.EnterpriseLibrary.Caching
 {
 	/// <summary>
-	/// Cache scavanging policy based on capacity.
+	/// Cache scavenging policy based on capacity.
 	/// </summary>
 	public class CacheCapacityScavengingPolicy
 	{
@@ -39,7 +39,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
 		}
 
 		/// <summary>
-		/// Determines if scavanging is needed.
+        /// Determines if scavenging is needed.
 		/// </summary>
 		/// <param name="currentCacheItemCount">The current number of <see cref="CacheItem"/> objects in the cache.</param>
 		/// <returns>

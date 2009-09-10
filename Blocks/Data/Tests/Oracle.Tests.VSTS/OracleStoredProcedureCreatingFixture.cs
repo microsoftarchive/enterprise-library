@@ -18,7 +18,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Microsoft.Practices.EnterpriseLibrary.Data.Oracle.Tests
 {
     /// <summary>
-    /// Use the Data block to execute a create a stored procedure script using ExecNonQuery.
+    /// Use the Data Access Application Block to execute a create a stored procedure script using ExecNonQuery.
     /// </summary>
     [TestClass]
     public class OracleStoredProcedureCreatingFixture : StoredProcedureCreationBase

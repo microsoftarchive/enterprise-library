@@ -30,6 +30,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
             listenerData = new WmiTraceListenerData("listener");
         }
 
+
+        [TestMethod]
+        public void WhenCreatingInstanceUsingDefaultContructor_ThenListenerDataTypeIsSet()
+        {
+            var listener = new WmiTraceListenerData();
+            Assert.AreEqual(typeof(WmiTraceListenerData), listener.ListenerDataType);
+        }
+
         [TestMethod]
         public void ThenCreatesTwoTypeRegistrations()
         {

@@ -70,7 +70,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests
         {
             public LifetimeManager LifetimeManager { get; set; }
 
-            public override void AddPolicies(Type typeToCreate, string name, IPolicyList policies)
+            public override void AddPolicies(Type serviceType, Type typeToCreate, string name, IPolicyList policies)
             {
                 policies.Set<ILifetimePolicy>(this.LifetimeManager, new NamedTypeBuildKey(typeToCreate, name));
             }

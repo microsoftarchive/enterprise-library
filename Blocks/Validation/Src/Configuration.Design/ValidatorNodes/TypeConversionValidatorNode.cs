@@ -21,7 +21,7 @@ using Microsoft.Practices.EnterpriseLibrary.Configuration.Design;
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.Design.ValidatorNodes
 {
 	/// <summary>
-	/// Respresents the designtime configuration node for an <see cref="TypeConversionValidatorData"/>.
+    /// Represents the designtime configuration node for an <see cref="TypeConversionValidatorData"/>.
 	/// </summary>
 	public class TypeConversionValidatorNode : ValueValidatorNode
 	{

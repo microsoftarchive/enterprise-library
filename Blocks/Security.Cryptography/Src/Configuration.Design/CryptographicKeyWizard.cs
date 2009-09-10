@@ -24,7 +24,7 @@ using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography;
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration.Design
 {
     /// <summary>
-    /// UI wizard that allows an user to manipulate a <see cref="ProtectedKeySettings"/> class, from within the configuration console.
+    /// UI wizard that allows a user to manipulate a <see cref="ProtectedKeySettings"/> class, from within the configuration console.
     /// </summary>
     public partial class CryptographicKeyWizard : Form
     {

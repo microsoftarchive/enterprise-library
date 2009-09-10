@@ -11,8 +11,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 
@@ -30,12 +28,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration
             return section;
         }
 
-        public void Add(IConfigurationParameter saveParameter, string sectionName, ConfigurationSection configurationSection)
+        public void Add(string sectionName, ConfigurationSection configurationSection)
         {
             configurationsections[sectionName] = configurationSection;
         }
 
-        public void Remove(IConfigurationParameter removeParameter, string sectionName)
+        public void Remove(string sectionName)
         {
             configurationsections[sectionName] = null;
         }
@@ -61,5 +59,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration
         }
 
         #endregion
+
+        void IDisposable.Dispose()
+        { }
     }
 }

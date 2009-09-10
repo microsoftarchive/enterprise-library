@@ -18,7 +18,7 @@ using System.Globalization;
 namespace Microsoft.Practices.EnterpriseLibrary.Data.Oracle
 {
     /// <summary>
-    /// A wrapper to convert data for oracle for the reader.
+    /// A wrapper to convert data for Oracle for the reader.
     /// </summary>
     /// <remarks>
     /// The wrapper performs type conversions to enable retrieving values for types not supported natively by the

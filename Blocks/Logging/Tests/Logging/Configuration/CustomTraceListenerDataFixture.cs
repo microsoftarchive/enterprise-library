@@ -39,6 +39,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
                     Formatter = "formatter"
                 };
         }
+        
+        [TestMethod]
+        public void WhenCreatingInstanceUsingDefaultContructor_ThenListenerDataTypeIsSet()
+        {
+            var listener = new CustomTraceListenerData();
+            Assert.AreEqual(typeof(CustomTraceListenerData), listener.ListenerDataType);
+        }
 
         [TestMethod]
         public void ThenCreatesTwoTypeRegistrations()

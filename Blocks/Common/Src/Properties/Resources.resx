@@ -289,9 +289,25 @@
     <value>The initialization expression for property {0} is not supported: only simple bindings are supported.</value>
   </data>
   <data name="ExceptionTypeDoesNotProvideCorrectConstructor" xml:space="preserve">
-    <value>Type does not provide a construtor taking a single parameter type of NameValueCollection</value>
+    <value>Type does not provide a constructor taking a single parameter type of NameValueCollection</value>
   </data>
   <data name="ExceptionShouldBeImplementedBySubclass" xml:space="preserve">
     <value>Method must be overriden by subclass.</value>
+  </data>
+  <data name="ExceptionTypeMustDeriveFromType" xml:space="preserve">
+    <value>Type must be derived from '{0}'.</value>
+  </data>
+  <data name="ExceptionTypeMustImplementInterface" xml:space="preserve">
+    <value>Type must implement interface '{0}'.</value>
+  </data>
+  <data name="ExceptionConfigurationSectionPointsToNonExistingSource" xml:space="preserve">
+    <value>The configuration section '{0}' specifies Source '{1}', which is not declared in the configuration sources section.</value>
+  </data>
+  <data name="ExceptionConfigurationSourceNotFound" xml:space="preserve">
+    <value>A configuration source named '{0}' was not found in the {1} section.</value>
+  </data>
+  <data name="ExceptionIncompaitbleMergeElementType" xml:space="preserve">
+    <value>Cannot merge the configuration element.
+The local elements type '{0}' is  incompatible with the parent elements type '{1}'.</value>
   </data>
 </root>

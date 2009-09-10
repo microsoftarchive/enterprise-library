@@ -64,7 +64,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.Design
 		}
 
 		/// <summary>
-		/// Sets up the design time objects to represent the configuration for the validation block.
+        /// Sets up the design time objects to represent the configuration for the Validation Application Block.
 		/// </summary>
 		/// <param name="serviceProvider">The a mechanism for retrieving a service object; that is, an object that provides custom support to other objects.</param>
 		/// <param name="rootNode">The root node of the application.</param>

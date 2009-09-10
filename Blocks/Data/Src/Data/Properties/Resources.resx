@@ -225,4 +225,10 @@
   <data name="ExceptionParameterDiscoveryNotSupported" xml:space="preserve">
     <value>The database type "{0}" does not support automatic parameter discovery. Use an IParameterMapper instead.</value>
   </data>
+  <data name="DefaultSqlConnctionString" xml:space="preserve">
+    <value>Database=Database;Server=(local)\SQLEXPRESS;Integrated Security=SSPI</value>
+  </data>
+  <data name="ExceptionArgumentMustInheritFromDatabase" xml:space="preserve">
+    <value>Type must inherit from Microsoft.Practices.EnterpriseLibrary.Data.Database</value>
+  </data>
 </root>

@@ -16,7 +16,7 @@ using System.Text;
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation
 {
     /// <summary>
-    /// Represents the WMI event fired when an unknown error reconfiguring for the logging block is detected.
+    /// Represents the WMI event fired when an unknown error reconfiguring for the Logging Application Block is detected.
     /// </summary>
     public class LoggingReconfigurationFailureEvent : LoggingEvent
     {

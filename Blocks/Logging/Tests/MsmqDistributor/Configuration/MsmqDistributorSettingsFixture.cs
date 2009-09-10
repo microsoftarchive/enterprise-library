@@ -24,12 +24,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Configur
         [TestMethod]
         public void CanReadSettingsFromConfigurationFile()
         {
-            MsmqDistributorSettings settings = MsmqDistributorSettings.GetSettings(new SystemConfigurationSource());
+            using (var configurationSource = new SystemConfigurationSource(false))
+            {
+                MsmqDistributorSettings settings = MsmqDistributorSettings.GetSettings(configurationSource);
 
-            Assert.IsNotNull(settings);
-            Assert.AreEqual(CommonUtil.MessageQueuePath, settings.MsmqPath);
-            Assert.AreEqual(1000, settings.QueueTimerInterval);
-            Assert.AreEqual("Msmq Distributor", settings.ServiceName);
+                Assert.IsNotNull(settings);
+                Assert.AreEqual(CommonUtil.MessageQueuePath, settings.MsmqPath);
+                Assert.AreEqual(1000, settings.QueueTimerInterval);
+                Assert.AreEqual("Msmq Distributor", settings.ServiceName);
+            }
         }
     }
 }

@@ -24,7 +24,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
     /// </summary>
     public static class TransactionScopeConnections
     {
-        // There's a reason why this field is not thread-static: notifications for completed oracle transactions
+        // There's a reason why this field is not thread-static: notifications for completed Oracle transactions
         // may happen in a different thread
         static readonly Dictionary<Transaction, Dictionary<string, DbConnection>> transactionConnections =
             new Dictionary<Transaction, Dictionary<string, DbConnection>>();

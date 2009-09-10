@@ -141,7 +141,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// Initializes a new instance of the <see cref="MsmqTraceListenerData"/> class with default values.
         /// </summary>
         public MsmqTraceListenerData()
+            : base(typeof(MsmqTraceListener))
         {
+            ListenerDataType = typeof(MsmqTraceListenerData);
         }
 
         /// <summary>

@@ -10,16 +10,16 @@
 //===============================================================================
 
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
+using System.Transactions;
 using System.Xml;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
-using System.Transactions;
 using Microsoft.Practices.EnterpriseLibrary.Data.Instrumentation;
-using System.Collections.Generic;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
 {
@@ -90,6 +90,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
 
         protected override void Arrange()
         {
+            numberOfConnectionsCreated = 0;
             database = new TestableSqlConnection(connectionstring, this);
             commandExecutedEvents = new List<DateTime>();
             commandFailedEvents = new List<CommandFailedArgs>();
@@ -97,9 +98,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
 
         protected class CommandFailedArgs
         {
-            public Exception Exception {get;set;}
-            public string CommandText {get;set;}
-            public string ConnectionString {get;set;}
+            public Exception Exception { get; set; }
+            public string CommandText { get; set; }
+            public string ConnectionString { get; set; }
         }
 
         private class InstrumentationProvider : IDataInstrumentationProvider
@@ -129,12 +130,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
 
             public void FireConnectionOpenedEvent()
             {
-                
+
             }
 
             public void FireConnectionFailedEvent(string connectionString, Exception exception)
             {
-                
+
             }
 
             #endregion
@@ -144,7 +145,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
         {
             AsynchronousConnectionContext context;
             public TestableSqlConnection(string connectionstring, AsynchronousConnectionContext context)
-                :base(connectionstring, new InstrumentationProvider(context))
+                : base(connectionstring, new InstrumentationProvider(context))
             {
                 this.context = context;
             }
@@ -168,7 +169,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
     {
         protected SqlTransaction transaction;
         protected DbConnection connection;
-        
+
         protected override void Arrange()
         {
             base.Arrange();
@@ -178,7 +179,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
 
             //reset number of connections
             numberOfConnectionsCreated = 0;
-            
+
             transaction = connection.BeginTransaction() as SqlTransaction;
         }
 
@@ -233,22 +234,22 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
             database.BeginExecuteReader(CommandType.Text,
                 "SELECT 'hello async world'",
                 ar =>
+                {
+                    callbackHasRun = true;
+                    try
                     {
-                        callbackHasRun = true;
-                        try
+                        using (IDataReader reader = database.EndExecuteReader(ar))
                         {
-                            using (IDataReader reader = database.EndExecuteReader(ar))
-                            {
-                                canReadOneRecord = reader.Read();
-                                result = reader.GetString(0);
-                                canReadSecondRecord = reader.Read();
-                            }
+                            canReadOneRecord = reader.Read();
+                            result = reader.GetString(0);
+                            canReadSecondRecord = reader.Read();
                         }
-                        finally
-                        {
-                            asyncComplete.Await();
-                        }
-                    }, null);
+                    }
+                    finally
+                    {
+                        asyncComplete.Await();
+                    }
+                }, null);
         }
 
         [TestMethod]
@@ -269,18 +270,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
         int numberOforderDetailsInDatabase;
         private readonly Barrier barrier = new Barrier(2);
         private int numberOfAffectedRecords = 0;
-        protected override void  Arrange()
+        protected override void Arrange()
         {
- 	        base.Arrange();
+            base.Arrange();
 
             numberOforderDetailsInDatabase = (int)database.ExecuteScalar(CommandType.Text, "SELECT count(*) FROM [Order Details]");
-            
+
             //reset number of  connections created
             numberOfConnectionsCreated = 0;
             commandExecutedEvents.Clear();
 
             database.BeginExecuteNonQuery(transaction, CommandType.Text, "DELETE FROM [Order Details]",
-                ar => { 
+                ar =>
+                {
                     numberOfAffectedRecords = database.EndExecuteNonQuery(ar);
                     barrier.Await();
                 }, null);
@@ -315,7 +317,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
             Assert.AreEqual(1, commandExecutedEvents.Count);
         }
     }
-    
+
     [TestClass]
     public class WhenAsynchronouslyInvokingBeginExecuteNonQueryWithBadSql : TransactionalAsynchronousConnectionWithRollback
     {
@@ -343,7 +345,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
             {
                 database.EndExecuteNonQuery(asyncResult);
             }
-            catch (SqlException){ }
+            catch (SqlException) { }
 
             Assert.AreEqual(ConnectionState.Closed, lastConnectionStateChange);
         }
@@ -396,7 +398,50 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
         public void ThenConnectionIsClosedAfterEndExecute()
         {
             database.EndExecuteNonQuery(asyncResult);
-            
+
+            Assert.AreEqual(ConnectionState.Closed, lastConnectionStateChange);
+        }
+
+        [TestMethod]
+        public void ThenCommandExecutedEventWasFiredOnEndExecute()
+        {
+            Assert.AreEqual(0, commandExecutedEvents.Count);
+            database.EndExecuteNonQuery(asyncResult);
+            Assert.AreEqual(1, commandExecutedEvents.Count);
+        }
+    }
+
+    [TestClass]
+    public class WhenAsynchronouslyInvokingBeginExecuteNonQueryOnSprocCommand : AsynchronousConnectionContext
+    {
+        IAsyncResult asyncResult;
+
+        protected override void Arrange()
+        {
+            base.Arrange();
+
+            asyncResult =
+                database.BeginExecuteNonQuery(
+                    new SqlCommand
+                    {
+                        CommandText = "Ten Most Expensive Products",
+                        CommandType = CommandType.StoredProcedure
+                    },
+                    null,
+                    null);
+        }
+
+        [TestMethod]
+        public void CanCallEndExecute()
+        {
+            database.EndExecuteNonQuery(asyncResult);
+        }
+
+        [TestMethod]
+        public void ThenConnectionIsClosedAfterEndExecute()
+        {
+            database.EndExecuteNonQuery(asyncResult);
+
             Assert.AreEqual(ConnectionState.Closed, lastConnectionStateChange);
         }
 
@@ -433,7 +478,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
             database.EndExecuteNonQuery(asyncResult);
             Assert.AreEqual(0, numberOfConnectionsCreated);
         }
-        
+
         [TestMethod]
         public void ThenCommandExecutedEventWasFiredOnEndExecute()
         {
@@ -461,7 +506,42 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
         {
             var reader = database.EndExecuteReader(asyncResult);
             Assert.AreEqual(ConnectionState.Open, lastConnectionStateChange);
-            
+
+            reader.Close();
+            Assert.AreEqual(ConnectionState.Closed, lastConnectionStateChange);
+        }
+
+        [TestMethod]
+        public void ThenCommandExecutedEventWasFiredOnEndExecute()
+        {
+            Assert.AreEqual(0, commandExecutedEvents.Count);
+            database.EndExecuteReader(asyncResult).Dispose();
+            Assert.AreEqual(1, commandExecutedEvents.Count);
+        }
+    }
+
+    [TestClass]
+    public class WhenAsynchronouslyInvokingExecuteReaderWithCommand : AsynchronousConnectionContext
+    {
+        IAsyncResult asyncResult;
+
+        protected override void Arrange()
+        {
+            base.Arrange();
+
+            asyncResult =
+                database.BeginExecuteReader(
+                    new SqlCommand { CommandType = CommandType.Text, CommandText = "SELECT 'hello there'" },
+                    null,
+                    null);
+        }
+
+        [TestMethod]
+        public void ThenConnectionIsClosedOnceReaderIsClosed()
+        {
+            var reader = database.EndExecuteReader(asyncResult);
+            Assert.AreEqual(ConnectionState.Open, lastConnectionStateChange);
+
             reader.Close();
             Assert.AreEqual(ConnectionState.Closed, lastConnectionStateChange);
         }
@@ -487,15 +567,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
 
             string queryString = "Select * from Region for xml auto, xmldata";
             SqlCommand sqlCommand = database.GetSqlStringCommand(queryString) as SqlCommand;
-            database.BeginExecuteXmlReader(sqlCommand, 
+            database.BeginExecuteXmlReader(sqlCommand,
                 ar =>
-                    {
-                        barrier.Await();
-                        reader = database.EndExecuteXmlReader(ar);
-                        barrier.Await();
-                    }, null);
+                {
+                    barrier.Await();
+                    reader = database.EndExecuteXmlReader(ar);
+                    barrier.Await();
+                }, null);
         }
-
 
         [TestMethod]
         public void ThenEndExecuteXmlReaderReturnsXml()
@@ -509,7 +588,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
             }
         }
 
-
         [TestMethod]
         public void ThenCommandExecutedEventWasFiredOnEndExecute()
         {
@@ -518,6 +596,52 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
             barrier.Await(4000);
             reader.Close();
             Assert.AreEqual(1, commandExecutedEvents.Count);
+        }
+    }
+
+    [TestClass]
+    public class WhenAsynchronouslyInvokingExecuteXmlReaderAndThenInvokingEndExecute : AsynchronousConnectionContext
+    {
+        private IAsyncResult result;
+
+        protected override void Arrange()
+        {
+            base.Arrange();
+
+            string queryString = "Select * from [Order Details] for xml auto, xmldata";
+            SqlCommand command = database.GetSqlStringCommand(queryString) as SqlCommand;
+            result = database.BeginExecuteXmlReader(command, null, null);
+        }
+
+        [TestMethod]
+        public void ThenEndExecuteXmlReaderReturnsXml()
+        {
+            using (var reader = database.EndExecuteXmlReader(result))
+            {
+                Assert.IsNotNull(reader);
+                Assert.IsNotNull(reader.MoveToContent());
+            }
+        }
+
+        [TestMethod]
+        public void ThenCanReadToTheEnd()
+        {
+            using (var reader = database.EndExecuteXmlReader(result))
+            {
+                while (reader.Read()) ;
+            }
+        }
+
+        [TestMethod]
+        public void ThenConnectionIsClosedWhenReaderIsClosed()
+        {
+            Assert.AreNotEqual(ConnectionState.Closed, this.lastConnectionStateChange);
+            using (var reader = database.EndExecuteXmlReader(result))
+            {
+                Assert.AreNotEqual(ConnectionState.Closed, this.lastConnectionStateChange);
+                while (reader.Read()) ;
+            }
+            Assert.AreEqual(ConnectionState.Closed, this.lastConnectionStateChange);
         }
     }
 
@@ -560,6 +684,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
             Assert.AreEqual(0, commandExecutedEvents.Count);
             database.EndExecuteXmlReader(asyncResult).Close();
             Assert.AreEqual(1, commandExecutedEvents.Count);
+        }
+
+        [TestMethod]
+        public void ThenConnectionIsNotClosedWhenReaderIsClosed()
+        {
+            Assert.AreNotEqual(ConnectionState.Closed, this.lastConnectionStateChange);
+            using (var reader = database.EndExecuteXmlReader(asyncResult))
+            {
+                Assert.AreNotEqual(ConnectionState.Closed, this.lastConnectionStateChange);
+                while (reader.Read()) ;
+            }
+            Assert.AreNotEqual(ConnectionState.Closed, this.lastConnectionStateChange);
         }
     }
 
@@ -646,7 +782,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
             Assert.AreEqual(1, commandExecutedEvents.Count);
         }
     }
-    
+
     [TestClass]
     public class WhenAsynchronouslyInvokingExecuteReaderWithBadSQL : AsynchronousConnectionContext
     {
@@ -655,7 +791,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
         protected override void Arrange()
         {
             base.Arrange();
-            
+
             asyncResult = database.BeginExecuteReader(CommandType.Text, "bad sql", null, null);
         }
 
@@ -674,7 +810,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
             {
                 database.EndExecuteReader(asyncResult);
             }
-            catch(SqlException){ }
+            catch (SqlException) { }
 
             Assert.AreEqual(ConnectionState.Closed, lastConnectionStateChange);
         }
@@ -836,6 +972,37 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
         public void ThenNoNewConnectionIsCreated()
         {
             Assert.AreEqual(0, numberOfConnectionsCreated);
+        }
+    }
+
+    [TestClass]
+    public class WhenAsynchronouslyInvokingBeginExecuteReaderOnSprocInsideAmbientTransaction : AsynchronousConnectionContext
+    {
+        TransactionScope transactionScope;
+
+        protected override void Arrange()
+        {
+            base.Arrange();
+
+            this.transactionScope = new TransactionScope();
+        }
+
+        protected override void Teardown()
+        {
+            this.transactionScope.Dispose();
+        }
+
+        protected override void Act()
+        {
+            var asyncResult = database.BeginExecuteReader("Ten Most Expensive Products", null, null);
+            var reader = database.EndExecuteReader(asyncResult);
+            reader.Dispose();
+        }
+
+        [TestMethod]
+        public void SharedConnectionIsStillOpen()
+        {
+            database.ExecuteNonQuery("Ten Most Expensive Products");
         }
     }
 
@@ -1155,8 +1322,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
 
         }
     }
-    
-    
+
+
     public abstract class SystemTransactionalAsynchronousConnectionWithRollback : AsynchronousConnectionContext
     {
         protected TransactionScope transactionScope;
@@ -1173,7 +1340,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
         }
     }
 
-    
+
     [TestClass]
     public class WhenExecutingNonQueryWithinSystemTransaction : SystemTransactionalAsynchronousConnectionWithRollback
     {
@@ -1183,7 +1350,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
         {
             base.Act();
 
-            asyncResult = database.BeginExecuteNonQuery(CommandType.Text, 
+            asyncResult = database.BeginExecuteNonQuery(CommandType.Text,
                 @"CREATE TABLE [test] (c2 int);
                  INSERT INTO test (c2) VALUES (12)",
                 null, null);
@@ -1210,18 +1377,256 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
             }
         }
 
-
         [TestMethod]
         public void ThenAsyncExecuteReaderParticipatesInSameTransaction()
         {
             database.EndExecuteNonQuery(asyncResult);
 
             IAsyncResult execReader = database.BeginExecuteReader(CommandType.Text, "Select * from test", null, null);
-            IDataReader reader = database.EndExecuteReader(execReader);
+            using (IDataReader reader = database.EndExecuteReader(execReader))
+            {
+                Assert.IsTrue(reader.Read());
+                Assert.AreEqual(12, reader.GetInt32(0));
+            }
+        }
+    }
 
-            Assert.IsTrue(reader.Read());
-            Assert.AreEqual(12, reader.GetInt32(0));
+    public abstract class AsynchronousConnectionContextWithNonAsyncConnectionString
+        : AsynchronousConnectionContext
+    {
+        protected override void Arrange()
+        {
+            this.connectionstring = @"server=(local)\SQLEXPRESS;database=Northwind;Integrated Security=true";
+            base.Arrange();
+        }
+    }
 
+    public abstract class TransactionalAsynchronousConnectionWithRollbackNonAsyncConnectionString
+        : TransactionalAsynchronousConnectionWithRollback
+    {
+        protected override void Arrange()
+        {
+            this.connectionstring = @"server=(local)\SQLEXPRESS;database=Northwind;Integrated Security=true";
+            base.Arrange();
+        }
+    }
+
+    [TestClass]
+    public class WhenAsynchronouslyInvokingBeginExecuteNonQueryWithNonAsyncConnectionString
+        : AsynchronousConnectionContextWithNonAsyncConnectionString
+    {
+        protected override void Act()
+        {
+            try
+            {
+                database.BeginExecuteNonQuery(CommandType.Text, "SELECT 'hello there'", null, null);
+                Assert.Fail("should have thrown");
+            }
+            catch (Exception e)
+            {
+                if (e is AssertFailedException)
+                {
+                    throw;
+                }
+            }
+        }
+
+        [TestMethod]
+        public void ThenConnectionIsClosed()
+        {
+            Assert.AreEqual(ConnectionState.Closed, this.lastConnectionStateChange);
+        }
+
+        [TestMethod]
+        [Ignore]
+        public void ThenCommandFailedInstrumentationIsIncremented()
+        {
+            Assert.AreEqual(1, this.commandFailedEvents.Count);
+        }
+    }
+
+    [TestClass]
+    public class WhenAsynchronouslyInvokingBeginExecuteReaderWithNonAsyncConnectionString
+        : AsynchronousConnectionContextWithNonAsyncConnectionString
+    {
+        protected override void Act()
+        {
+            try
+            {
+                database.BeginExecuteReader(CommandType.Text, "SELECT 'hello there'", null, null);
+                Assert.Fail("should have thrown");
+            }
+            catch (Exception e)
+            {
+                if (e is AssertFailedException)
+                {
+                    throw;
+                }
+            }
+        }
+
+        [TestMethod]
+        public void ThenConnectionIsClosed()
+        {
+            Assert.AreEqual(ConnectionState.Closed, this.lastConnectionStateChange);
+        }
+
+        [TestMethod]
+        [Ignore]
+        public void ThenCommandFailedInstrumentationIsIncremented()
+        {
+            Assert.AreEqual(1, this.commandFailedEvents.Count);
+        }
+    }
+
+    [TestClass]
+    public class WhenAsynchronouslyInvokingBeginExecuteXmlReaderWithNonAsyncConnectionString
+        : AsynchronousConnectionContextWithNonAsyncConnectionString
+    {
+        protected override void Act()
+        {
+            try
+            {
+                database.BeginExecuteXmlReader(
+                    new SqlCommand
+                    {
+                        CommandType = CommandType.Text,
+                        CommandText = "Select * from Region for xml auto, xmldata"
+                    },
+                    null,
+                    null);
+                Assert.Fail("should have thrown");
+            }
+            catch (Exception e)
+            {
+                if (e is AssertFailedException)
+                {
+                    throw;
+                }
+            }
+        }
+
+        [TestMethod]
+        public void ThenConnectionIsClosed()
+        {
+            Assert.AreEqual(ConnectionState.Closed, this.lastConnectionStateChange);
+        }
+
+        [TestMethod]
+        [Ignore]
+        public void ThenCommandFailedInstrumentationIsIncremented()
+        {
+            Assert.AreEqual(1, this.commandFailedEvents.Count);
+        }
+    }
+
+    [TestClass]
+    public class WhenAsynchronouslyInvokingBeginExecuteNonQueryInTransactionWithNonAsyncConnectionString
+        : TransactionalAsynchronousConnectionWithRollbackNonAsyncConnectionString
+    {
+        protected override void Act()
+        {
+            try
+            {
+                database.BeginExecuteNonQuery(this.transaction, CommandType.Text, "SELECT 'hello there'", null, null);
+                Assert.Fail("should have thrown");
+            }
+            catch (Exception e)
+            {
+                if (e is AssertFailedException)
+                {
+                    throw;
+                }
+            }
+        }
+
+        [TestMethod]
+        public void ThenConnectionIsNotClosed()
+        {
+            Assert.AreEqual(ConnectionState.Open, this.lastConnectionStateChange);
+        }
+
+        [TestMethod]
+        [Ignore]
+        public void ThenCommandFailedInstrumentationIsIncremented()
+        {
+            Assert.AreEqual(1, this.commandFailedEvents.Count);
+        }
+    }
+
+    [TestClass]
+    public class WhenAsynchronouslyInvokingBeginExecuteReaderInTransactionWithNonAsyncConnectionString
+        : TransactionalAsynchronousConnectionWithRollbackNonAsyncConnectionString
+    {
+        protected override void Act()
+        {
+            try
+            {
+                database.BeginExecuteReader(this.transaction, CommandType.Text, "SELECT 'hello there'", null, null);
+                Assert.Fail("should have thrown");
+            }
+            catch (Exception e)
+            {
+                if (e is AssertFailedException)
+                {
+                    throw;
+                }
+            }
+        }
+
+        [TestMethod]
+        public void ThenConnectionIsNotClosed()
+        {
+            Assert.AreEqual(ConnectionState.Open, this.lastConnectionStateChange);
+        }
+
+        [TestMethod]
+        [Ignore]
+        public void ThenCommandFailedInstrumentationIsIncremented()
+        {
+            Assert.AreEqual(1, this.commandFailedEvents.Count);
+        }
+    }
+
+    [TestClass]
+    public class WhenAsynchronouslyInvokingBeginExecuteXmlReaderInTransactionWithNonAsyncConnectionString
+        : TransactionalAsynchronousConnectionWithRollbackNonAsyncConnectionString
+    {
+        protected override void Act()
+        {
+            try
+            {
+                database.BeginExecuteXmlReader(
+                    new SqlCommand
+                    {
+                        CommandType = CommandType.Text,
+                        CommandText = "Select * from Region for xml auto, xmldata"
+                    },
+                    this.transaction,
+                    null,
+                    null);
+                Assert.Fail("should have thrown");
+            }
+            catch (Exception e)
+            {
+                if (e is AssertFailedException)
+                {
+                    throw;
+                }
+            }
+        }
+
+        [TestMethod]
+        public void ThenConnectionIsNotClosed()
+        {
+            Assert.AreEqual(ConnectionState.Open, this.lastConnectionStateChange);
+        }
+
+        [TestMethod]
+        [Ignore]
+        public void ThenCommandFailedInstrumentationIsIncremented()
+        {
+            Assert.AreEqual(1, this.commandFailedEvents.Count);
         }
     }
 }

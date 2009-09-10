@@ -112,7 +112,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
 		public ConfigurationElement SourceElement { get; set; }
 
 		/// <summary>
-        /// Ocurrs when a <see cref="ConfigurationSetting"/> is changed.
+        /// Occurrs when a <see cref="ConfigurationSetting"/> is changed.
 		/// </summary>
 		public event EventHandler<EventArgs> Changed;
 	}

@@ -15,7 +15,7 @@ using System.Collections.Generic;
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography
 {
     /// <summary>
-    /// Represetns the protected key cache.
+    /// Represents the protected key cache.
     /// </summary>
     public class ProtectedKeyCache
     {

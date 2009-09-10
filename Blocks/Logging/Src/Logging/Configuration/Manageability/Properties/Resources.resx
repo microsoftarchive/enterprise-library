@@ -196,7 +196,7 @@
     <value>Log warning on missing category</value>
   </data>
   <data name="LoggingSettingsPolicyName" xml:space="preserve">
-    <value>Specify Logging Block Settings</value>
+    <value>Specify Logging Application Block Settings</value>
   </data>
   <data name="MsmqTraceListenerPriorityPartName" xml:space="preserve">
     <value>Priority</value>

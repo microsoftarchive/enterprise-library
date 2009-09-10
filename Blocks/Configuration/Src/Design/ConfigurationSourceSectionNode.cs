@@ -114,21 +114,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design
 			}
 		}
 
-		/// <summary>
-		/// Gets the configuration parameter for the selected configuration source.
-		/// </summary>
-		/// <value>
-		/// The configuration parameter for the selected configuration source.
-		/// </value>
-		[Browsable(false)]
-		public IConfigurationParameter ConfigurationParameter
-		{
-			get
-			{
-				return configurationSourceElementNode.ConfigurationParameter;
-			}
-		}		
-
 		private void OnElementNodeRemoved(object sender, ConfigurationNodeChangedEventArgs args)
 		{
 			configurationSourceElementNode = null;

@@ -22,8 +22,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation
         /// <summary>
         /// Initializes a new instance of the <see cref="CacheCallbackFailureEvent"/> class.
         /// </summary>
-        /// <param name="instanceName">Name of the <see cref="CacheManager"/> instance the failure ocurred in.</param>
-        /// <param name="key">The key which was used to access the cache when the failure ocurred.</param>
+        /// <param name="instanceName">Name of the <see cref="CacheManager"/> instance the failure occurred in.</param>
+        /// <param name="key">The key which was used to access the cache when the failure occurred.</param>
         /// <param name="exceptionMessage">The message that represents the exception thrown when the configured callback could not be executed.</param>
        public CacheCallbackFailureEvent(string instanceName, string key, string exceptionMessage)
 			: base(instanceName)
@@ -33,7 +33,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation
 		}
 
         /// <summary>
-        /// Get the key which was used to access the cache when the failure ocurred.
+        /// Get the key which was used to access the cache when the failure occurred.
         /// </summary>
 		public string Key
 		{

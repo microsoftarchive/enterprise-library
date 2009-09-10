@@ -180,36 +180,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerMo
 
         private static InjectionParameterValue GetInjectionParameterValue(ParameterValue dependencyParameter)
         {
-            if (dependencyParameter is ConstantParameterValue)
-            {
-                ConstantParameterValue parameterValue = (ConstantParameterValue)dependencyParameter;
-                return new InjectionParameter(parameterValue.Type, parameterValue.Value);
-            }
-
-            if (dependencyParameter is ContainerResolvedParameter)
-            {
-                ContainerResolvedParameter containerResolvedParameter = (ContainerResolvedParameter)dependencyParameter;
-                return new ResolvedParameter(containerResolvedParameter.Type, containerResolvedParameter.Name);
-            }
-
-            if (dependencyParameter is ContainerResolvedEnumerableParameter)
-            {
-                ContainerResolvedEnumerableParameter containerResolvedParameter =
-                    (ContainerResolvedEnumerableParameter)dependencyParameter;
-
-                IEnumerable<ResolvedParameter> resolveParameters =
-                    from name in containerResolvedParameter.Names
-                    select new ResolvedParameter(containerResolvedParameter.ElementType, name);
-
-                return new ResolvedArrayParameter(containerResolvedParameter.ElementType, resolveParameters.ToArray());
-            }
-
-            throw new ArgumentException(
-                string.Format(
-                    CultureInfo.CurrentCulture,
-                    Properties.Resources.ExceptionUnrecognizedDependencyParameterType,
-                    dependencyParameter.GetType()),
-                "dependencyParameter");
+            var visitor = new UnityParameterVisitor();
+            visitor.Visit(dependencyParameter);
+            return visitor.InjectionParameter;
         }
 
         private static LifetimeManager CreateLifetimeManager(TypeRegistration registrationEntry)
@@ -225,7 +198,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerMo
         {
             public Type ServiceType { get; set; }
 
-            public override void AddPolicies(Type typeToCreate, string name, IPolicyList policies)
+            public override void AddPolicies(Type serviceType, Type typeToCreate, string name, IPolicyList policies)
             {
                 PolicyListAccessor.AddDefaultPolicy(ServiceType, typeToCreate, name, policies);
             }
@@ -294,6 +267,30 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerMo
             public void AddDefaultRegistration(Type serviceType, Type implementationType, string name)
             {
                 AddDefaultPolicy(serviceType, implementationType, name, Context.Policies);
+            }
+        }
+
+        private class UnityParameterVisitor : ParameterValueVisitor
+        {
+            public InjectionParameterValue InjectionParameter { get; private set; }
+
+            protected override void VisitConstantParameterValue(ConstantParameterValue parameterValue)
+            {
+                this.InjectionParameter = new InjectionParameter(parameterValue.Type, parameterValue.Value);
+            }
+
+            protected override void VisitResolvedParameterValue(ContainerResolvedParameter parameterValue)
+            {
+                InjectionParameter = new ResolvedParameter(parameterValue.Type, parameterValue.Name);
+            }
+
+            protected override void VisitEnumerableParameterValue(ContainerResolvedEnumerableParameter parameterValue)
+            {
+                var resolveParameters = parameterValue.Names
+                        .Select(name => new ResolvedParameter(parameterValue.ElementType, name))
+                        .ToArray();
+
+                InjectionParameter = new ResolvedArrayParameter(parameterValue.ElementType, resolveParameters);
             }
         }
     }

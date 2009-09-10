@@ -184,7 +184,7 @@
     <value>Oracle Package</value>
   </data>
   <data name="PrefixDescription" xml:space="preserve">
-    <value>Gets or sets the preifix used for the oracle objects.</value>
+    <value>Gets or sets the preifix used for the Oracle objects.</value>
   </data>
   <data name="ProviderMappingsNodeName" xml:space="preserve">
     <value>Custom Provider Mappings</value>

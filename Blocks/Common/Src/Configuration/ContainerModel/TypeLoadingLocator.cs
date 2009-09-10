@@ -19,7 +19,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerMo
     /// loads a type by name, and returns an instance of that type as the provider.
     /// </summary>
     /// <remarks>
-    /// This is primarily used to support the Data block's configuration provider, which
+    /// This is primarily used to support the Data Access Application Block's configuration provider, which
     /// has to pull stuff from several spots. Also, we load by name rather than
     /// using a type object directly to avoid a compile time dependency from Common on the
     /// Data assembly.

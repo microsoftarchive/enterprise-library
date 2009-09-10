@@ -22,7 +22,7 @@ using Microsoft.Practices.EnterpriseLibrary.Security.Instrumentation;
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Cache.CachingStore
 {
 	/// <summary>
-    /// <see cref="ISecurityCacheProvider"/> implementation that caches the athenticated session information and
+    /// <see cref="ISecurityCacheProvider"/> implementation that caches the authenticated session information and
 	/// performs token handling.
 	/// </summary>
 	[ConfigurationElementType(typeof(CachingStoreProviderData))]

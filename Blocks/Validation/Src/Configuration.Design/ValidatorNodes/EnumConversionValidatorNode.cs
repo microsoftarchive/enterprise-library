@@ -21,7 +21,7 @@ using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.Design.Prop
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.Design.ValidatorNodes
 {
 	/// <summary>
-	/// Respresents the designtime configuration node for an <see cref="EnumConversionValidatorData"/>.
+    /// Represents the designtime configuration node for an <see cref="EnumConversionValidatorData"/>.
 	/// </summary>
 	public class EnumConversionValidatorNode : ValueValidatorNode
 	{

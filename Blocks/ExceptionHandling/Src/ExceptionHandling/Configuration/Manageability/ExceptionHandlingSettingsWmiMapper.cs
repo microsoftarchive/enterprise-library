@@ -15,7 +15,7 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability;
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.Manageability
 {
     /// <summary>
-    /// Represensta a mapper for excetion handling configuration to Wmi.
+    /// Represensta a mapper for exception handling configuration to Wmi.
     /// </summary>
 	public static class ExceptionHandlingSettingsWmiMapper
 	{

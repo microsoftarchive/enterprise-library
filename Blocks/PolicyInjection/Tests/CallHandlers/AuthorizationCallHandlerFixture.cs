@@ -38,12 +38,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         IUnityContainer AllowJackPolicyContainer;
         IUnityContainer AllowBasedOnTokensPolicyContainer;
 
-        IConfigurationSource authorizationConfiguration;
+        FileConfigurationSource authorizationConfiguration;
 
         [TestInitialize]
         public void TestInitialize()
         {
-            authorizationConfiguration = new FileConfigurationSource("Authorization.config");
+            authorizationConfiguration = new FileConfigurationSource("Authorization.config", false);
             var securitySettings = (SecuritySettings)authorizationConfiguration.GetSection(SecuritySettings.SectionName);
 
             AllowFredPolicyContainer = new UnityContainer();
@@ -169,19 +169,23 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
             policyData.Handlers.Add(data);
             settings.Policies.Add(policyData);
 
-            var configSource = new FileConfigurationSource("Authorization.config");
-            IUnityContainer container = new UnityContainer().AddNewExtension<Interception>();
-            settings.ConfigureContainer(container, configSource);
-            new UnityContainerConfigurator(container)
-                .RegisterAll(configSource, (ITypeRegistrationsProvider)configSource.GetSection(SecuritySettings.SectionName));
+            using (var configSource = new FileConfigurationSource("Authorization.config", false))
+            {
+                IUnityContainer container = new UnityContainer().AddNewExtension<Interception>();
+                settings.ConfigureContainer(container, configSource);
+                new UnityContainerConfigurator(container)
+                    .RegisterAll(
+                        configSource,
+                        (ITypeRegistrationsProvider)configSource.GetSection(SecuritySettings.SectionName));
 
-            InjectionFriendlyRuleDrivenPolicy policy = container.Resolve<InjectionFriendlyRuleDrivenPolicy>("policy");
+                InjectionFriendlyRuleDrivenPolicy policy = container.Resolve<InjectionFriendlyRuleDrivenPolicy>("policy");
 
-            ICallHandler handler =
-                (policy.GetHandlersFor(new MethodImplementationInfo(null, (MethodInfo)MethodBase.GetCurrentMethod()), container)).ElementAt(0);
-            Assert.IsNotNull(handler);
-            Assert.AreEqual(handler.Order, data.Order);
-            //Assert.AreSame(authorizationProvider, ((AuthorizationCallHandler)handler).AutorizationProvider); // TODO this test only checked for provider name, so it didn't fail even though the configuration source supplied didn't have the settings required to build it
+                ICallHandler handler =
+                    (policy.GetHandlersFor(new MethodImplementationInfo(null, (MethodInfo)MethodBase.GetCurrentMethod()), container)).ElementAt(0);
+                Assert.IsNotNull(handler);
+                Assert.AreEqual(handler.Order, data.Order);
+                //Assert.AreSame(authorizationProvider, ((AuthorizationCallHandler)handler).AutorizationProvider); // TODO this test only checked for provider name, so it didn't fail even though the configuration source supplied didn't have the settings required to build it
+            }
         }
 
         [TestMethod]

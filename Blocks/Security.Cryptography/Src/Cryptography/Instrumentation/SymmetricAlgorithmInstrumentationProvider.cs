@@ -17,7 +17,7 @@ using System.Diagnostics;
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Instrumentation
 {
 	/// <summary>
-	/// Defines the logical events that can be instrumented for symmetric crypto providers.
+    /// Defines the logical events that can be instrumented for symmetric cryptography providers.
 	/// </summary>
     [HasInstallableResourcesAttribute]
     [PerformanceCountersDefinition(counterCategoryName, "CryptographyHelpResourceName")]

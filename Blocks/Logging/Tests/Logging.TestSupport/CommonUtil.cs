@@ -385,7 +385,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport
         {
             ExeConfigurationFileMap fileMap = new ExeConfigurationFileMap();
             fileMap.ExeConfigFilename = "test.exe.config";
-            System.Configuration.Configuration rwConfiguration = ConfigurationManager.OpenMappedExeConfiguration(fileMap, ConfigurationUserLevel.None);
+            System.Configuration.Configuration rwConfiguration = 
+                ConfigurationManager.OpenMappedExeConfiguration(fileMap, ConfigurationUserLevel.None);
             rwConfiguration.Sections.Remove(LoggingSettings.SectionName);
             rwConfiguration.Sections.Add(LoggingSettings.SectionName, loggingSettings);
 
@@ -393,8 +394,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport
             rwConfiguration.Save();
             rwConfiguration = ConfigurationManager.OpenMappedExeConfiguration(fileMap, ConfigurationUserLevel.None);
 
-            FileConfigurationSource.ResetImplementation(fileMap.ExeConfigFilename, false);
-            return new FileConfigurationSource(fileMap.ExeConfigFilename);
+            return new FileConfigurationSource(fileMap.ExeConfigFilename, false);
         }
     }
 }

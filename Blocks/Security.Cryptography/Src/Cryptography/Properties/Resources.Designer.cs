@@ -216,6 +216,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Properties
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Parameter must implement type &apos;{0}&apos;..
+        /// </summary>
+        internal static string ExceptionParameterMustImplementType {
+            get {
+                return ResourceManager.GetString("ExceptionParameterMustImplementType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The hash comparison failed..
         /// </summary>
         internal static string HashComparisonFailed {

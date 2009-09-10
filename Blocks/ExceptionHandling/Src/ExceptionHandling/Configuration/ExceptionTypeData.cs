@@ -14,15 +14,21 @@ using System.Configuration;
 using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Instrumentation;
+using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Properties;
 using Container = Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel.Container;
+using System.ComponentModel;
+using System.Drawing.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
 {
     /// <summary>
     /// Represents the configuration for an <see cref="System.Exception"/>
-    /// that will be handled by an exception policy.
-    /// </summary>		
+    /// that will be handled by an exception policy. 
+    /// </summary>
+    [ResourceDisplayName(typeof(Resources), "AddExceptionTypeDisplayName")]		
+    [ResourceDescription(typeof(Resources), "AddExceptionTypeHelpText")]
     public class ExceptionTypeData : NamedConfigurationElement
     {
         private static readonly AssemblyQualifiedTypeNameConverter typeConverter = new AssemblyQualifiedTypeNameConverter();
@@ -62,6 +68,27 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
         }
 
         /// <summary>
+        /// Gets or sets the name of the element.
+        /// </summary>
+        /// <value>
+        /// The name of the element.
+        /// </value>
+        [ReadOnly(true)]
+        //[ResourceDescription(typeof(Resources), "NodeNameDescription")]
+        public override string Name
+        {
+            get
+            {
+                return base.Name;
+            }
+            set
+            {
+                base.Name = value;
+            }
+        }
+
+
+        /// <summary>
         /// Gets or sets the <see cref="Exception"/> type.
         /// </summary>
         /// <value>
@@ -80,6 +107,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
         /// The fully qualified type name of the <see cref="Exception"/> type.
         /// </value>
         [ConfigurationProperty(typeProperty, IsRequired = true)]
+        //[Required]
+        [ResourceDescription(typeof(Resources), "ExceptionTypeNodeNameDescription")]
+        [ReadOnly(true)]
+        //[SRCategory("CategoryGeneral", typeof(Resources))]
         public string TypeName
         {
             get { return (string)this[typeProperty]; }
@@ -93,6 +124,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
         /// One of the <see cref="PostHandlingAction"/> values.
         /// </value>
         [ConfigurationProperty(postHandlingActionProperty, IsRequired = true, DefaultValue = PostHandlingAction.NotifyRethrow)]
+        [ResourceDescription(typeof(Resources), "ExceptionTypePostHandlingActionDescription")]
+        //[SRCategory("CategoryGeneral", typeof(Resources))]
+        //[Required]
         public PostHandlingAction PostHandlingAction
         {
             get { return (PostHandlingAction)this[postHandlingActionProperty]; }
@@ -106,6 +140,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
         /// A collection of <see cref="ExceptionHandlerData"/> objects.
         /// </value>
         [ConfigurationProperty(exceptionHandlersProperty)]
+        [ResourceDisplayName(typeof(Resources), "ExceptionHandlersDisplayName")]
+        [OrderableCollection(true)]
+        [Browsable(false)]
+        [ConfigurationCollection(typeof(ExceptionHandlerData))]
         public NameTypeConfigurationElementCollection<ExceptionHandlerData, CustomHandlerData> ExceptionHandlers
         {
             get

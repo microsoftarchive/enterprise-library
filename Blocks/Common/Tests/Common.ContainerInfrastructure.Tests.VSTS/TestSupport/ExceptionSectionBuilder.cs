@@ -42,8 +42,7 @@ namespace Common.ContainerInfrastructure.Tests.VSTS.TestSupport
                 section.ExceptionPolicies.Add(builder.GetPolicyData());
             }
 
-            configurationSource.Add(null,
-                BlockSectionNames.ExceptionHandling,
+            configurationSource.Add(BlockSectionNames.ExceptionHandling,
                 section);
         }
     }

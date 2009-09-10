@@ -22,7 +22,7 @@ using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.Design.ValidatorNodes
 {
     /// <summary>
-    /// Respresents the designtime configuration node for an <see cref="CustomValidatorData"/>.
+    /// Represents the designtime configuration node for an <see cref="CustomValidatorData"/>.
     /// </summary>
     public class CustomValidatorNode: SingleValidatorNodeBase
     {

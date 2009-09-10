@@ -10,43 +10,32 @@
 //===============================================================================
 
 using System;
-using System.Security;
+using System.Data;
 using System.Security.Principal;
-using System.Threading;
-using ExceptionHandlingQuickStart.BusinessLayer;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 
 namespace ExceptionHandlingQuickStart.BusinessLayer
 {
-	/// <summary>
-	/// Summary description for Class1.
-	/// </summary>
 	public class AppService
 	{
-		public AppService()
-		{
-			//
-			// TODO: Add constructor logic here
-			//
-		}
+	    private readonly ExceptionManager exceptionManager;
 
-	
-		/// <summary>
-		/// </summary>
+        public AppService()
+        {
+            exceptionManager = EnterpriseLibraryContainer.Current.GetInstance<ExceptionManager>();
+        }
+
 		public void ProcessA()
 		{
-			throw new System.Exception("Original Exception: Fatal exception in business layer");
+			throw new Exception("Original Exception: Fatal exception in business layer");
 		}
 
-		/// <summary>
-		/// </summary>
 		public void ProcessB()
 		{
-			throw new System.Data.DBConcurrencyException("Original Exception: Concurrency problem in business layer");
+			throw new DBConcurrencyException("Original Exception: Concurrency problem in business layer");
 		}
 		
-		/// <summary>
-		/// </summary>
 		private void ProcessC()
 		{
 			// Assume operation failed due to authentication. Get current
@@ -83,8 +72,6 @@ namespace ExceptionHandlingQuickStart.BusinessLayer
 			throw new System.Security.SecurityException(identityInfo);
 		}
 
-		/// <summary>
-		/// </summary>
 		public void ProcessD()
 		{
 			throw new BusinessLayerException("Original Exception: Problem in business layer");
@@ -96,23 +83,8 @@ namespace ExceptionHandlingQuickStart.BusinessLayer
 		/// </summary>
 		public bool ProcessWithPropagate()
 		{
-			try
-			{
-				this.ProcessA();
-			}
-			catch(Exception ex)
-			{
-				// Quick Start is configured so that the Propagate Policy will
-				// log the exception and then recommend a rethrow.
-				bool rethrow = ExceptionPolicy.HandleException(ex, "Propagate Policy");
-
-				if (rethrow)
-				{
-					throw;			
-				}			
-			}
-
-			return true;
+		    exceptionManager.Process(ProcessA, "Propagate Policy");
+		    return true;
 		}
 
 		/// <summary>
@@ -122,86 +94,31 @@ namespace ExceptionHandlingQuickStart.BusinessLayer
 		/// </summary>
 		public bool ProcessWithWrap()
 		{
-			try
-			{
-				this.ProcessB();
-			}
-			catch(Exception ex)
-			{
-				// Quick Start is configured so that the Wrap Policy will
-				// log the exception and then recommend a rethrow.
-				bool rethrow = ExceptionPolicy.HandleException(ex, "Wrap Policy");
-
-				if (rethrow)
-				{
-					throw;			
-				}			
-			}
-
-			return true;
+            // Quick Start is configured so that the Wrap Policy will
+            // log the exception and then recommend a rethrow.
+            exceptionManager.Process(ProcessB, "Wrap Policy");
+		    return true;
 		}
 	
-		/// <summary>
-		/// </summary>
 		public void ProcessWithReplace()
 		{
-			try
-			{
-				ProcessC();
-			}
-			catch(Exception ex)
-			{
-				// Invoke our policy that is responsible for making sure no secure information
-				// gets out of our layer.
-				bool rethrow = ExceptionPolicy.HandleException(ex, "Replace Policy");
-
-				if (rethrow)
-				{
-					throw;			
-				}			
-			}
+            // Invoke our policy that is responsible for making sure no secure information
+            // gets out of our layer.
+            exceptionManager.Process(ProcessC, "Replace Policy");
 		}
 
-		/// <summary>
-		/// </summary>
 		public void ProcessAndResume()
 		{
-			try
-			{
-				ProcessC();
-			}
-			catch(Exception ex)
-			{
-				// Invoke our policy that is responsible for making sure no secure information
-				// gets out of our layer.
-				bool rethrow = ExceptionPolicy.HandleException(ex, "Handle and Resume Policy");
-
-				if (rethrow)
-				{
-					throw;			
-				}			
-			}
+            // Invoke our policy that is responsible for making sure no secure information
+            // gets out of our layer.
+            exceptionManager.Process(ProcessC, "Handle and Resume Policy");
 		}
 
-		/// <summary>
-		/// </summary>
 		public void ProcessAndNotify()
 		{
-			try
-			{
-				ProcessD();
-			}
-			catch(Exception ex)
-			{
-				// Invoke our policy that is responsible for making sure no secure information
-				// gets out of our layer.
-				bool rethrow = ExceptionPolicy.HandleException(ex, "Notify Policy");
-
-				if (rethrow)
-				{
-					throw;			
-				}
-			}
+            // Invoke our policy that is responsible for making sure no secure information
+            // gets out of our layer.
+            exceptionManager.Process(ProcessD, "Notify Policy");
 		}
 	}
 }

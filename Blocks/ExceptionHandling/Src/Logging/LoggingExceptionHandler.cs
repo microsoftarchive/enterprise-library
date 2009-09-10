@@ -26,7 +26,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging
     /// <summary>
     /// Represents an <see cref="IExceptionHandler"/> that formats
     /// the exception into a log message and sends it to
-    /// the Enterprise Library Logging Block.
+    /// the Enterprise Library Logging Application Block.
     /// </summary>
     [ConfigurationElementType(typeof(LoggingExceptionHandlerData))]
     public class LoggingExceptionHandler : IExceptionHandler

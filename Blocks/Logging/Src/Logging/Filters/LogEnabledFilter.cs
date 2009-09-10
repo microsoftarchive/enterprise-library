@@ -15,7 +15,7 @@ using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Filters
 {
 	/// <summary>
-	/// Represents a boolean on/off filter.
+	/// Represents a Boolean on/off filter.
 	/// </summary>
 	[ConfigurationElementType(typeof(LogEnabledFilterData))]
 	public class LogEnabledFilter : LogFilter
@@ -44,7 +44,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Filters
 		}
 
 		/// <summary>
-		/// Gets or set the boolean flag for the filter.
+		/// Gets or set the Boolean flag for the filter.
 		/// </summary>
 		public bool Enabled
 		{

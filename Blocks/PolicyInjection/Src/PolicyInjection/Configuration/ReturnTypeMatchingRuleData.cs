@@ -19,7 +19,7 @@ using FakeRules = Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Matching
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
 {
     /// <summary>
-    /// A configuration element that stores config information about an
+    /// A configuration element that stores configuration information about an
     /// instance of <see cref="ReturnTypeMatchingRule"/>.
     /// </summary>
     public class ReturnTypeMatchingRuleData : StringBasedMatchingRuleData

@@ -21,7 +21,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
 {
     /// <summary>
     /// An <see cref="ICallHandler"/> that runs any exceptions returned from the
-    /// target through the Exception Handling block.
+    /// target through the Exception Handling Application Block.
     /// </summary>
     /// <remarks>If the exception policy is configured to swallow exceptions,
     /// do not configure this call handler on a method with a non-void return value,

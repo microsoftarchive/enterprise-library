@@ -15,7 +15,7 @@ using System.Text.RegularExpressions;
 namespace Microsoft.Practices.EnterpriseLibrary.Security
 {
     /// <summary>
-    /// Represents a lexical analyzer for boolean expressions.
+    /// Represents a lexical analyzer for Boolean expressions.
     /// </summary>
     public class LexicalAnalyzer
     {
@@ -29,7 +29,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security
         /// <summary>
         /// The expression to analyze.
         /// </summary>
-        /// <param name="expression">A boolean expression.</param>
+        /// <param name="expression">A Boolean expression.</param>
         public LexicalAnalyzer(string expression)
         {
             this.expression = expression;

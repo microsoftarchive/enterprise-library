@@ -17,7 +17,7 @@ using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography;
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.Cryptography
 {
 	/// <summary>
-	/// Implementation of Symmetric Storage Encryption used by the Caching block
+    /// Implementation of Symmetric Storage Encryption used by the Caching Application Block
 	/// </summary>
 	[ConfigurationElementType(typeof(SymmetricStorageEncryptionProviderData))]
 	public class SymmetricStorageEncryptionProvider : IStorageEncryptionProvider

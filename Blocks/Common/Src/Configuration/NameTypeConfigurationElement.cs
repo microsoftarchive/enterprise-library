@@ -50,7 +50,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 		/// <value>
 		/// The <see cref="Type"/> the element is the configuration for.
 		/// </value>
-		public Type Type
+		public virtual Type Type
 		{
 			get { return (Type)typeConverter.ConvertFrom(TypeName); }
 			set { TypeName = typeConverter.ConvertToString(value); }

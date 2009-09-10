@@ -94,10 +94,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         }
 
         /// <summary>
-        /// Gets a <see cref="ConfigurationSectionInfo"/> object containing the Caching Block's configuration information.
+        /// Gets a <see cref="ConfigurationSectionInfo"/> object containing the Caching Application Block's configuration information.
         /// </summary>
         /// <param name="serviceProvider">The a mechanism for retrieving a service object; that is, an object that provides custom support to other objects.</param>
-        /// <returns>A <see cref="ConfigurationSectionInfo"/> object containing the Caching Block's configuration information.</returns>
+        /// <returns>A <see cref="ConfigurationSectionInfo"/> object containing the Caching Application Block's configuration information.</returns>
         protected override ConfigurationSectionInfo GetConfigurationSectionInfo(IServiceProvider serviceProvider)
         {
             ConfigurationNode rootNode = ServiceHelper.GetCurrentRootNode(serviceProvider);

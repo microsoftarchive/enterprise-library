@@ -49,13 +49,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation.Tests
                 = new DefaultCachingEventLogger(true, false);
             ConfigurationErrorsException exception = new ConfigurationErrorsException(exceptionMessage);
 
-            using (EventLog eventLog = GetEventLog())
+            using (var eventLog = new EventLogTracker(GetEventLog()))
             {
-                int originalEventCount = eventLog.Entries.Count;
-
                 logger.LogConfigurationError(instanceName, exception);
 
-                var newEntries = from entry in eventLog.GetNewEntries(originalEventCount)
+                var newEntries = from entry in eventLog.NewEntries()
                                  where entry.Message.IndexOf(exceptionMessage) > -1
                                  select entry;
 

@@ -114,6 +114,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Configuration\ConfigurationSourceBuilderExtensions.cs" />
+    <Compile Include="Configuration\IExceptionConfigurationLoggingProvider.cs" />
     <Compile Include="Configuration\LoggingExceptionHandlerData.cs">
       <SubType>Code</SubType>
     </Compile>

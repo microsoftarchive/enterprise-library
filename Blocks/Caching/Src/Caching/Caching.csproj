@@ -159,6 +159,21 @@
     </Compile>
     <Compile Include="Configuration\CustomCacheStorageData.cs" />
     <Compile Include="Configuration\CustomCacheManagerData.cs" />
+    <Compile Include="Configuration\Fluent\CacheManagerExtension.cs" />
+    <Compile Include="Configuration\Fluent\CacheManagerSettingsExtension.cs" />
+    <Compile Include="Configuration\Fluent\CachingConfigurationSourceBuilderExtensions.cs" />
+    <Compile Include="Configuration\Fluent\CacheStorageExtension.cs" />
+    <Compile Include="Configuration\Fluent\IBackingStoreEncryptItemsUsing.cs" />
+    <Compile Include="Configuration\Fluent\ICachingConfiguration.cs" />
+    <Compile Include="Configuration\Fluent\ICachingConfigurationCacheManager.cs" />
+    <Compile Include="Configuration\Fluent\ICachingConfigurationCacheManagerOptions.cs" />
+    <Compile Include="Configuration\Fluent\ICachingConfigurationCustomCacheManager.cs" />
+    <Compile Include="Configuration\Fluent\IStoreInCustomStore.cs" />
+    <Compile Include="Configuration\Fluent\IStoreInIsolatedStorage.cs" />
+    <Compile Include="Configuration\Fluent\StoreInCustomStoreExtension.cs" />
+    <Compile Include="Configuration\Fluent\StoreInIsolatedStorageExtension.cs" />
+    <Compile Include="Configuration\Fluent\ForCacheManagerNamedExtension.cs" />
+    <Compile Include="Configuration\Fluent\ForCustomCacheManagerNamedExtension.cs" />
     <Compile Include="Configuration\IsolatedStorageCacheStorageData.cs">
       <SubType>Code</SubType>
     </Compile>

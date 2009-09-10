@@ -20,7 +20,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration.Manageabil
 {
     /// <summary>
     /// Provides a default implementation for <see cref="IsolatedStorageCacheStorageData"/> that
-    /// splits policy overrides processing and WMI objects generation, performing approriate logging of 
+    /// splits policy overrides processing and WMI objects generation, performing appropriate logging of 
     /// policy processing errors.
     /// </summary>
 	public class IsolatedStorageCacheStorageDataManageabilityProvider

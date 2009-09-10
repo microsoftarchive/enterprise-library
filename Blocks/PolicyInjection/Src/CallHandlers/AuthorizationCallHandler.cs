@@ -21,7 +21,7 @@ using Microsoft.Practices.Unity.InterceptionExtension;
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers
 {
     /// <summary>
-    /// An <see cref="ICallHandler"/> that checks the Security Block for authorization
+    /// An <see cref="ICallHandler"/> that checks the Security Application Block for authorization
     /// before permitting the call to proceed to the target.
     /// </summary>
     [ConfigurationElementType(typeof(AuthorizationCallHandlerData))]

@@ -111,9 +111,11 @@
     <Compile Include="CachingStoreProvider.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Configuration\Fluent\CacheSecurityInCacheStoreExtension.cs" />
     <Compile Include="Configuration\CachingStoreProviderData.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Configuration\Fluent\ICacheSecurityInCacheStore.cs" />
     <Compile Include="Configuration\Manageability\CachingStoreProviderDataManageabilityProvider.cs" />
     <Compile Include="Configuration\Manageability\CachingStoreProviderDataWmiMapper.cs" />
     <Compile Include="Configuration\Manageability\CachingStoreProviderSetting.cs" />

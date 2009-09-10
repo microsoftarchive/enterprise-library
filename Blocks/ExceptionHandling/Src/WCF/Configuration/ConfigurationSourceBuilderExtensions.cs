@@ -13,48 +13,60 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 using System.Diagnostics;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.Configuration;
 using System.Collections.Specialized;
+using Microsoft.Practices.EnterpriseLibrary.Common.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 {
 
-    /// <summary/>
+    /// <summary>
+    /// Provides fluent configuration exception handling extensions to <see cref="IExceptionConfigurationAddExceptionHandlers"/>
+    /// </summary>
     public static class WcfExceptionShieldingConfigurationSourceBuilderExtensions
     {
-        /// <summary/>
+        /// <summary>
+        /// Shields an exception in Wcf by wrapping it in with a fault contract type.
+        /// </summary>
+        /// <param name="context">Interface to extend to add ShieldExceptionForWcf options.</param>
+        /// <param name="faultContractType">Fault contract type use when wrapping an exception.</param>
+        /// <param name="faultContractMessage">Exeption message to use on new exception.</param>
+        /// <returns></returns>
         public static IExceptionConfigurationWcfShieldingProvider ShieldExceptionForWcf(this IExceptionConfigurationAddExceptionHandlers context, Type faultContractType, string faultContractMessage)
         {
-            IExceptionHandlerExtension exceptionHandlerExtension = (IExceptionHandlerExtension)context;
-            FaultContractExceptionHandlerData shieldingHandling = new FaultContractExceptionHandlerData
-            {
-                Name = faultContractType.FullName,
-                FaultContractType = faultContractType.AssemblyQualifiedName,
-                ExceptionMessage = faultContractMessage
-            };
-            exceptionHandlerExtension.CurrentExceptionTypeData.ExceptionHandlers.Add(shieldingHandling);
+            if (faultContractType == null) throw new ArgumentNullException("faultContractType");
 
-            return new ExceptionConfigurationLoggingProviderBuilder(
-                (IExceptionConfigurationForExceptionTypeOrPostHandling)context,
-                shieldingHandling);
-
+            return new ExceptionConfigurationLoggingProviderBuilder((IExceptionConfigurationForExceptionTypeOrPostHandling)context,
+                                                                    faultContractType, 
+                                                                    faultContractMessage);
         }
 
-        private class ExceptionConfigurationLoggingProviderBuilder : ExceptionConfigurationAddExceptionHandlers, IExceptionConfigurationWcfShieldingProvider
+        private class ExceptionConfigurationLoggingProviderBuilder : ExceptionHandlerConfigurationExtension, IExceptionConfigurationWcfShieldingProvider
         {
-            FaultContractExceptionHandlerData schieldingHandler;
+            readonly FaultContractExceptionHandlerData shieldingHandling;
 
-            public ExceptionConfigurationLoggingProviderBuilder(IExceptionConfigurationForExceptionTypeOrPostHandling context, FaultContractExceptionHandlerData schieldingHandler)
+            public ExceptionConfigurationLoggingProviderBuilder(IExceptionConfigurationForExceptionTypeOrPostHandling context, 
+                                                                Type faultContractType, 
+                                                                string faultContractMessage)
                 :base(context)
             {
-                this.schieldingHandler = schieldingHandler;
+                shieldingHandling = new FaultContractExceptionHandlerData
+                {
+                    Name = faultContractType.FullName,
+                    FaultContractType = faultContractType.AssemblyQualifiedName,
+                    ExceptionMessage = faultContractMessage
+                };
+                
+                base.CurrentExceptionTypeData.ExceptionHandlers.Add(shieldingHandling);
             }
 
             public IExceptionConfigurationWcfShieldingProvider MapProperty(string name, string source)
             {
-                this.schieldingHandler.PropertyMappings.Add(
+                if (string.IsNullOrEmpty(name)) throw new ArgumentException(Resources.ExceptionStringNullOrEmpty, "name");
+
+                this.shieldingHandling.PropertyMappings.Add(
                     new FaultContractExceptionHandlerMappingData(name, source)
                 );
 
@@ -62,12 +74,5 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
             }
 
         }
-    }
-
-    /// <summary/>
-    public interface IExceptionConfigurationWcfShieldingProvider : IExceptionConfigurationForExceptionTypeOrPostHandling
-    {
-        /// <summary/>
-        IExceptionConfigurationWcfShieldingProvider MapProperty(string name, string source);
     }
 }

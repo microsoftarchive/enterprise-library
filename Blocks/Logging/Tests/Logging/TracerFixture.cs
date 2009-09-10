@@ -97,8 +97,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
 
         static IServiceLocator GetContainerWithTracingFlag(bool tracingEnabled)
         {
-            var config = new FileConfigurationSource(
-                AppDomain.CurrentDomain.SetupInformation.ConfigurationFile);
+            var config = new FileConfigurationSource(AppDomain.CurrentDomain.SetupInformation.ConfigurationFile, false);
             var loggingSettings = ((LoggingSettings)config.GetSection(LoggingSettings.SectionName));
             loggingSettings.TracingEnabled = tracingEnabled;
             Logger.Reset();
@@ -108,8 +107,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
 
         static void SetTracingFlag(bool tracingEnabled)
         {
-            ConfigurationChangeFileWatcher.SetDefaultPollDelayInMilliseconds(100);
-            SystemConfigurationSource.ResetImplementation(true);
             Logger.Reset();
 
             System.Configuration.Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
@@ -118,7 +115,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
             config.Save();
 
             ConfigurationManager.RefreshSection(LoggingSettings.SectionName);
-            SystemConfigurationSource.Implementation.ConfigSourceChanged(string.Empty);
 
             Thread.Sleep(200);
         }
@@ -315,8 +311,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
             LogWriter logWriter = new LogWriter(new List<ILogFilter>(), new List<LogSource>(), source, null, new LogSource("errors"), "default", false, false);
             new Tracer("testoperation", Guid.NewGuid(), logWriter, (IServiceLocator)null).Dispose();
         }
-
-
 
         [TestMethod]
         public void PassingServiceLocatorForInstrumentationProviderRequestsInstrumentationProviderInstance()

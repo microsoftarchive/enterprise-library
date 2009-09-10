@@ -108,25 +108,25 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         [Ignore] // TODO requires converting the policy injection facade to use a container.
         public void ShouldCombineWithPoliciesDefinedInConfiguration()
         {
-            FileConfigurationSource configSource =
-                new FileConfigurationSource("CombinesWithConfig.config");
+            using (var configSource = new FileConfigurationSource("CombinesWithConfig.config", false))
+            {
+                EventLog eventLog = new EventLog("Application");
 
-            EventLog eventLog = new EventLog("Application");
+                int beforeCount = eventLog.Entries.Count;
 
-            int beforeCount = eventLog.Entries.Count;
+                TypeWhichUndergoesAttributeBasedLogging typeWhichUndergoesLoggingOnMethodCall =
+                    PolicyInjection.Create<TypeWhichUndergoesAttributeBasedLogging>(configSource);
 
-            TypeWhichUndergoesAttributeBasedLogging typeWhichUndergoesLoggingOnMethodCall =
-                PolicyInjection.Create<TypeWhichUndergoesAttributeBasedLogging>(configSource);
+                typeWhichUndergoesLoggingOnMethodCall.TestMethod();
 
-            typeWhichUndergoesLoggingOnMethodCall.TestMethod();
+                typeWhichUndergoesLoggingOnMethodCall.MyProperty = "hello";
 
-            typeWhichUndergoesLoggingOnMethodCall.MyProperty = "hello";
+                int afterCount = eventLog.Entries.Count;
 
-            int afterCount = eventLog.Entries.Count;
+                Assert.AreEqual(beforeCount + 2, afterCount);
 
-            Assert.AreEqual(beforeCount + 2, afterCount);
-
-            Assert.IsTrue(eventLog.Entries[eventLog.Entries.Count - 1].Message.Contains("This is before the call"));
+                Assert.IsTrue(eventLog.Entries[eventLog.Entries.Count - 1].Message.Contains("This is before the call"));
+            }
         }
 
         LogCallHandler GetHandlerFromAttribute(LogCallHandlerAttribute attribute)

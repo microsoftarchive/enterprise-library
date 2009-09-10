@@ -62,6 +62,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// </summary>
         public TraceListenerData()
         {
+            
+        }
+
+        /// <summary>
+        /// Initializes an instance of <see cref="TraceListenerData"/> for the given <paramref name="traceListenerType"/>.
+        /// </summary>
+        /// <param name="traceListenerType">Type of trace listener this element represents.</param>
+        public TraceListenerData(Type traceListenerType)
+            : base(null, traceListenerType)
+        {
+            this.ListenerDataType = this.GetType();
         }
 
         /// <summary>
@@ -121,7 +132,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// <summary>
         /// Gets or sets the <see cref="TraceOptions"/> for the represented <see cref="TraceListener"/>.
         /// </summary>
-        [ConfigurationProperty(traceOutputOptionsProperty, IsRequired = false)]
+        [ConfigurationProperty(traceOutputOptionsProperty, IsRequired = false, DefaultValue=TraceOptions.None)]
         public TraceOptions TraceOutputOptions
         {
             get

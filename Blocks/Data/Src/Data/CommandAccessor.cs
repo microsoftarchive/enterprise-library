@@ -89,7 +89,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
             AsyncCallback callback, object state, object[] parameterValues)
         {
             parameterMapper.AssignParameters(command, parameterValues);
-            return database.BeginExecuteReader(command, CommandBehavior.CloseConnection, callback, state);
+            return database.BeginExecuteReader(command, callback, state);
         }
 
         /// <summary>Complete an operation started by <see cref="IDataAccessor{TResult}.BeginExecute"/>.</summary>

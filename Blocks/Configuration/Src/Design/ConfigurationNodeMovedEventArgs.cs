@@ -14,7 +14,7 @@ using System;
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design
 {
 	/// <summary>
-	/// Provides data for the <seealso cref="ConfigurationNode.ChildMoved"/> events.
+	/// Provides data for the <see cref="ConfigurationNode.ChildMoved"/> events.
 	/// </summary>
     public class ConfigurationNodeMovedEventArgs : ConfigurationNodeChangedEventArgs
     {

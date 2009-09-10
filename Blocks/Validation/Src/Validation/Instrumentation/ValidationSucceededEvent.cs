@@ -16,7 +16,7 @@ using System.Text;
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Instrumentation
 {
 	/// <summary>
-	/// Represents the WMI event fired when a validation operation is sucessful.
+    /// Represents the WMI event fired when a validation operation is successful.
 	/// </summary>
 	public class ValidationSucceededEvent : ValidationCalledEvent
 	{

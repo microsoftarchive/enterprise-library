@@ -12,15 +12,21 @@
 using System;
 using System.Collections.Specialized;
 using System.Configuration;
+using System.Collections.Generic;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
-using System.Collections.Generic;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Properties;
+using System.ComponentModel;
+using System.Drawing.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
 {
     /// <summary>
     /// Configuration object for Custom Providers.
     /// </summary>
+    [ResourceDisplayName(typeof(Resources), "AddCustomHandlerData")]
+    [ResourceDescription(typeof(Resources), "AddCustomHandlerDataDescription")]
     public class CustomHandlerData
         : ExceptionHandlerData, IHelperAssistedCustomConfigurationData<CustomHandlerData>
     {
@@ -55,6 +61,40 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
         }
 
         /// <summary>
+        /// Gets or sets the <see cref="Type"/> the element is the configuration for.
+        /// </summary>
+        /// <value>
+        /// The <see cref="Type"/> the element is the configuration for.
+        /// </value>
+        [Editor("Console.Wpf.ComponentModel.Editors.TypeSelectorEditor, Console.Wpf", typeof(UITypeEditor))]
+        [BaseType(typeof(IExceptionHandler), typeof(CustomHandlerData))]
+        [ResourceDescription(typeof(Resources), "ExceptionHandlerTypeDescription")]
+        //[SRCategory("CategoryGeneral", typeof(Resources))]
+        //[Required]
+        public override Type Type
+        {
+            get
+            {
+                return base.Type;
+            }
+            set
+            {
+                base.Type = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets the custom configuration attributes.
+        /// </summary>        		
+        [ResourceDescription(typeof(Resources), "ExceptionHandlerAdditionalPropertiesDescription")]
+        //[SRCategory("CategoryGeneral", typeof(Resources))]
+        //[CustomAttributesValidation]
+        public NameValueCollection Attributes
+        {
+            get { return helper.Attributes; }
+        }
+
+        /// <summary>
         /// Sets the attribute value for a key.
         /// </summary>
         /// <param name="key">The attribute name.</param>
@@ -62,14 +102,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
         public void SetAttributeValue(string key, string value)
         {
             helper.HandleSetAttributeValue(key, value);
-        }
-
-        /// <summary>
-        /// Gets or sets custom configuration attributes.
-        /// </summary>        		
-        public NameValueCollection Attributes
-        {
-            get { return helper.Attributes; }
         }
 
         /// <summary>

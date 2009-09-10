@@ -90,6 +90,7 @@
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
     <Reference Include="System.Management.Instrumentation">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -122,6 +123,15 @@
     </Compile>
     <Compile Include="Configuration\CustomAuthorizationProviderData.cs" />
     <Compile Include="Configuration\CustomSecurityCacheProviderData.cs" />
+    <Compile Include="Configuration\Fluent\AuthorizeUsingRuleProviderExtension.cs" />
+    <Compile Include="Configuration\Fluent\AuthorizeUsingCustomExtension.cs" />
+    <Compile Include="Configuration\Fluent\CacheSecurityInCustomStoreExtension.cs" />
+    <Compile Include="Configuration\Fluent\ConfigureSecuritySettingsExtension.cs" />
+    <Compile Include="Configuration\Fluent\IAuthorizeUsingCustomProvider.cs" />
+    <Compile Include="Configuration\Fluent\IAuthorizeUsingRuleProvider.cs" />
+    <Compile Include="Configuration\Fluent\ICacheSecurityInCustomStore.cs" />
+    <Compile Include="Configuration\Fluent\IConfigureSecuritySettings.cs" />
+    <Compile Include="Configuration\Fluent\SecuritySettingsExtension.cs" />
     <Compile Include="Configuration\Manageability\AuthorizationProviderSetting.cs" />
     <Compile Include="Configuration\Manageability\AuthorizationRuleProviderDataManageabilityProvider.cs" />
     <Compile Include="Configuration\Manageability\AuthorizationRuleProviderDataWmiMapper.cs" />

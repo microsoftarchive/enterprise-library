@@ -15,8 +15,10 @@ using System.Configuration.Provider;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using System.Collections.Generic;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Security.Instrumentation;
+using Microsoft.Practices.EnterpriseLibrary.Security.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration
 {
@@ -24,6 +26,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration
     /// Represents the configuration data for the 
     /// security providers.
     /// </summary>
+    [ResourceDisplayName(typeof(Resources), "SecuritySettingsDisplayName")]
     public class SecuritySettings : SerializableConfigurationSection, ITypeRegistrationsProvider
     {
 		/// <summary>
@@ -88,6 +91,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration
         /// <para>This property maps to the <c>authorizationProviders</c> element in configuration.</para>
         /// </remarks>
 		[ConfigurationProperty(authorizationProvidersProperty, IsRequired= false)]
+        [ResourceDisplayName(typeof(Resources), "AuthorizationProvidersDisplayName")]
         public NameTypeConfigurationElementCollection<AuthorizationProviderData, CustomAuthorizationProviderData> AuthorizationProviders
 		{
 			get
@@ -106,6 +110,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration
         /// <para>This property maps to the <c>securityCacheProviders</c> element in configuration.</para>
         /// </remarks>
 		[ConfigurationProperty(securityCacheProvidersProperty, IsRequired= false)]
+        [ResourceDisplayName(typeof(Resources), "SecurityCacheProvidersDisplayName")]
 		public NameTypeConfigurationElementCollection<SecurityCacheProviderData, CustomSecurityCacheProviderData> SecurityCacheProviders
 		{
 			get

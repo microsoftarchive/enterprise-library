@@ -121,7 +121,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
 
         /// <summary>
         /// Updates the exception policy node reference to point to ones defined under
-        /// the exception handling block.
+        /// the Exception Handling Application Block.
         /// </summary>
         /// <param name="hierarchy">Hierarchy to use to locate other exception policy nodes.</param>
         public override void ResolveNodeReferences(IConfigurationUIHierarchy hierarchy)

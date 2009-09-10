@@ -19,7 +19,7 @@ using Microsoft.Practices.EnterpriseLibrary.Logging.Properties;
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.ExtraInformation
 {
     /// <summary>
-    /// Provides useful diagostic information from the debug susbsystem.
+    /// Provides useful diagnostic information from the debug subsystem.
     /// </summary>
     public class DebugInformationProvider : IExtraInformationProvider
     {

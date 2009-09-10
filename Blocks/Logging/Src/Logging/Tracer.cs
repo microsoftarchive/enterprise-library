@@ -42,7 +42,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
     /// <para>Lifetime of the Tracer object will determine the beginning and the end of
     /// the trace.  The trace message will include, method being traced, start time, end time 
     /// and duration.</para>
-    /// <para>Since Tracer uses the logging block to log the trace message, you can include application
+    /// <para>Since Tracer uses the Logging Application Block to log the trace message, you can include application
     /// data as part of your trace message. Configured items from call context will be logged as
     /// part of the message.</para>
     /// <para>Trace message will be logged to the log category with the same name as the tracer operation name.

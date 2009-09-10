@@ -15,6 +15,8 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
@@ -34,6 +36,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
     /// <para/>
     /// The elapsed time is calculated from the creation date of the logging file.
     /// </remarks>
+    [ConfigurationElementType(typeof(RollingFlatFileTraceListenerData))]
     public class RollingFlatFileTraceListener : FlatFileTraceListener
     {
         private readonly StreamWriterRollingHelper rollingHelper;
@@ -53,7 +56,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         /// <param name="formatter">The formatter.</param>
         /// <param name="rollSizeKB">The maxium file size (KB) before rolling.</param>
         /// <param name="timeStampPattern">The date format that will be appended to the new roll file.</param>
-        /// <param name="rollFileExistsBehavior">Expected behavior that will be used when the rool file has to be created.</param>
+        /// <param name="rollFileExistsBehavior">Expected behavior that will be used when the roll file has to be created.</param>
         /// <param name="rollInterval">The time interval that makes the file rolles.</param>
         public RollingFlatFileTraceListener(
             string fileName,
@@ -85,7 +88,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         /// <param name="formatter">The formatter.</param>
         /// <param name="rollSizeKB">The maxium file size (KB) before rolling.</param>
         /// <param name="timeStampPattern">The date format that will be appended to the new roll file.</param>
-        /// <param name="rollFileExistsBehavior">Expected behavior that will be used when the rool file has to be created.</param>
+        /// <param name="rollFileExistsBehavior">Expected behavior that will be used when the roll file has to be created.</param>
         /// <param name="rollInterval">The time interval that makes the file rolles.</param>
         /// <param name="maxArchivedFiles">The maximum number of archived files to keep.</param>
         public RollingFlatFileTraceListener(
@@ -285,31 +288,28 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
             public string ComputeArchiveFileName(string actualFileName,
                                                  DateTime currentDateTime)
             {
-                string archiveFileName;
-
                 string directory = Path.GetDirectoryName(actualFileName);
                 string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(actualFileName);
                 string extension = Path.GetExtension(actualFileName);
 
-                string archiveFileNameWithTimestampWithoutExtension
-                    = string.IsNullOrEmpty(owner.timeStampPattern)
-                        ? fileNameWithoutExtension
-                        : fileNameWithoutExtension
-                            + "."
-                            + currentDateTime.ToString(owner.timeStampPattern, CultureInfo.InvariantCulture);
-
-                if (owner.rollFileExistsBehavior == RollFileExistsBehavior.Overwrite)
+                StringBuilder fileNameBuilder = new StringBuilder(fileNameWithoutExtension);
+                if (!string.IsNullOrEmpty(owner.timeStampPattern))
                 {
-                    archiveFileName = Path.Combine(directory, archiveFileNameWithTimestampWithoutExtension + extension);
+                    fileNameBuilder.Append('.');
+                    fileNameBuilder.Append(currentDateTime.ToString(owner.timeStampPattern, CultureInfo.InvariantCulture));
                 }
-                else
+
+                if (owner.rollFileExistsBehavior == RollFileExistsBehavior.Increment)
                 {
                     // look for max sequence for date
-                    int maxSequence = FindMaxSequenceNumber(directory, archiveFileNameWithTimestampWithoutExtension, extension);
-                    archiveFileName = Path.Combine(directory, archiveFileNameWithTimestampWithoutExtension + "." + (maxSequence + 1) + extension);
+                    int newSequence = FindMaxSequenceNumber(directory, fileNameBuilder.ToString(), extension) + 1;
+                    fileNameBuilder.Append('.');
+                    fileNameBuilder.Append(newSequence.ToString(CultureInfo.CurrentCulture));
                 }
 
-                return archiveFileName;
+                fileNameBuilder.Append(extension);
+
+                return Path.Combine(directory, fileNameBuilder.ToString());
             }
 
             /// <summary>
@@ -327,7 +327,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
                                                             string.Format("{0}*{1}", fileName, extension));
 
                 int maxSequence = 0;
-                Regex regex = new Regex(string.Format(@"{0}\.(?<sequence>\d+){1}", fileName, extension));
+                Regex regex = new Regex(string.Format(@"{0}\.(?<sequence>\d+){1}$", fileName, extension));
                 for (int i = 0; i < existingFiles.Length; i++)
                 {
                     Match sequenceMatch = regex.Match(existingFiles[i]);

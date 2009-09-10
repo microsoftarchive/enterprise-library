@@ -69,27 +69,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.SqlConfigurationSource.Tests
         [TestMethod]
         public void DifferentConfigationInfoDoesNotShareImplementation()
         {
-            SqlConfigurationSourceImplementation configSourceImpl1 = SqlConfigurationSource.GetImplementation(data1);
-            SqlConfigurationSourceImplementation configSourceImpl2 = SqlConfigurationSource.GetImplementation(data2);
+            SqlConfigurationSource configSourceImpl1 = new SqlConfigurationSource(data1, false);
+            SqlConfigurationSource configSourceImpl2 = new SqlConfigurationSource(data2, false);
 
             Assert.IsFalse(ReferenceEquals(configSourceImpl1, configSourceImpl2));
         }
 
-        [TestMethod]
-        public void SharedConfigurationFilesCanHaveDifferentCasing()
-        {
-            SqlConfigurationSourceImplementation configSourceImpl1 = SqlConfigurationSource.GetImplementation(data1);
-
-            SqlConfigurationData tempData = new SqlConfigurationData(
-                data1.ConnectionString.ToUpper(),
-                data1.GetStoredProcedure.ToUpper(),
-                data1.SetStoredProcedure.ToUpper(),
-                data1.RefreshStoredProcedure.ToUpper(),
-                data1.RemoveStoredProcedure.ToUpper());
-            SqlConfigurationSourceImplementation configSourceImpl2 = SqlConfigurationSource.GetImplementation(tempData);
-
-            Assert.AreSame(configSourceImpl1, configSourceImpl2);
-        }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
@@ -103,8 +88,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.SqlConfigurationSource.Tests
         {
             ConfigurationChangeWatcher.SetDefaultPollDelayInMilliseconds(50);
 
-            SqlConfigurationSource.ResetImplementation(data1, true);
-            SystemConfigurationSource.ResetImplementation(true);
+            //SqlConfigurationSource.ResetImplementation(data1, true);
+            //SystemConfigurationSource.ResetImplementation(true);
 
             bool sysSourceChanged = false;
             bool otherSourceChanged = false;

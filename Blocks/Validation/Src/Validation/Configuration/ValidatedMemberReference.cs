@@ -15,7 +15,7 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 {
 	/// <summary>
-	/// Represents the validation informamtion for a member of a type.
+	/// Represents the validation information for a member of a type.
 	/// </summary>
 	/// <seealso cref="ValidationRulesetData"/>
 	/// <seealso cref="ValidatedMemberReference"/>

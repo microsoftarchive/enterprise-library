@@ -23,7 +23,7 @@ using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration.
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration.Design
 {
     /// <summary>
-    /// Visual control that allows an user to import an protected key from an archived key file, from within the cryptographic key wizard.
+    /// Visual control that allows a user to import an protected key from an archived key file, from within the cryptographic key wizard.
     /// </summary>
     public partial class ImportArchivedKeyControl : UserControl, IWizardValidationTarget
     {

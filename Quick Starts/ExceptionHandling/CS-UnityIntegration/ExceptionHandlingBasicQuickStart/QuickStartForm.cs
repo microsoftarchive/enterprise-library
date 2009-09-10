@@ -16,6 +16,7 @@ using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using ExceptionHandlingQuickStart.BusinessLayer;
+using ExceptionHandlingQuickStart.Properties;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.Configuration;
@@ -250,7 +251,7 @@ namespace ExceptionHandlingQuickStart
 		static void Main()
 		{
 			IUnityContainer container = new UnityContainer();
-			UnityConfigurationSection section = (UnityConfigurationSection)ConfigurationManager.GetSection("unity");
+			var section = (UnityConfigurationSection)ConfigurationManager.GetSection("unity");
 			section.Containers.Default.Configure(container);
 
 			AppForm = container.Resolve<QuickStartForm>();
@@ -304,30 +305,7 @@ namespace ExceptionHandlingQuickStart
 			try
 			{
 				Cursor = System.Windows.Forms.Cursors.WaitCursor;
-
-				StringBuilder sb = new StringBuilder();
-
-				sb.Append("Scenario: Propagate original exception");
-				sb.Append(Environment.NewLine);
-				sb.Append(Environment.NewLine);
-				sb.Append("1. UI layer calls into business layer.");
-				sb.Append(Environment.NewLine);
-				sb.Append(Environment.NewLine);
-				sb.Append("2. A System.Exception occurs and is detected in the business layer.");
-				sb.Append(Environment.NewLine);
-				sb.Append(Environment.NewLine);
-				sb.Append("3. The business layer specifies the \"Propagate Policy\" as the exception handling policy.");
-				sb.Append(Environment.NewLine);
-				sb.Append(Environment.NewLine);
-				sb.Append("4. The \"Propagate Policy\" is configured to recommend a rethrow upon return from processing the exception handlers.");
-				sb.Append(Environment.NewLine);
-				sb.Append(Environment.NewLine);
-				sb.Append("5. Control is returned to the business layer, which rethrows the original exception.");
-				sb.Append(Environment.NewLine);
-				sb.Append(Environment.NewLine);
-				sb.Append("6. The original exception is caught and displayed.");
-
-				DisplayScenarioStart(sb.ToString());
+                DisplayScenarioStart(Resources.PropagateOriginalExceptionText);
 
 				this.service.ProcessWithPropagate();
 			}
@@ -342,32 +320,9 @@ namespace ExceptionHandlingQuickStart
 			try
 			{
 				Cursor = System.Windows.Forms.Cursors.WaitCursor;
+			    DisplayScenarioStart(Resources.WrapExceptionText);
 
-				StringBuilder sb = new StringBuilder();
-
-				sb.Append("Scenario: Wrap the original exception with another before propagating");
-				sb.Append(Environment.NewLine);
-				sb.Append(Environment.NewLine);
-				sb.Append("1. UI layer calls into business layer.");
-				sb.Append(Environment.NewLine);
-				sb.Append(Environment.NewLine);
-				sb.Append("2. A DBConcurrencyException occurs and is detected in the business layer.");
-				sb.Append(Environment.NewLine);
-				sb.Append(Environment.NewLine);
-				sb.Append("3. The business layer specifies the \"Wrap Policy\" as the exception handling policy.");
-				sb.Append(Environment.NewLine);
-				sb.Append(Environment.NewLine);
-				sb.Append("4. The \"Wrap Policy\" is configured to use a wrap handler to wrap the original exception with a BusinessLayerException exception.");
-				sb.Append(Environment.NewLine);
-				sb.Append(Environment.NewLine);
-				sb.Append("5. The rethrowAction is set to \"Throw\", resulting in the BusinessLayerException exception being thrown by the block upon completion of the handler chain execution.");
-				sb.Append(Environment.NewLine);
-				sb.Append(Environment.NewLine);
-				sb.Append("6. The new exception, which wraps the original exception, is caught and displayed.");
-
-				DisplayScenarioStart(sb.ToString());
-
-				this.service.ProcessWithWrap();
+                this.service.ProcessWithWrap();
 			}
 			catch (Exception ex)
 			{
@@ -380,30 +335,7 @@ namespace ExceptionHandlingQuickStart
 			try
 			{
 				Cursor = System.Windows.Forms.Cursors.WaitCursor;
-
-				StringBuilder sb = new StringBuilder();
-
-				sb.Append("Scenario: Replace the original exception with another before propagating");
-				sb.Append(Environment.NewLine);
-				sb.Append(Environment.NewLine);
-				sb.Append("1. UI layer calls into business layer.");
-				sb.Append(Environment.NewLine);
-				sb.Append(Environment.NewLine);
-				sb.Append("2. A SecurityException exception occurs and is detected in the business layer.");
-				sb.Append(Environment.NewLine);
-				sb.Append(Environment.NewLine);
-				sb.Append("3. The business layer specifies the \"Replace Policy\" as the exception handling policy.");
-				sb.Append(Environment.NewLine);
-				sb.Append(Environment.NewLine);
-				sb.Append("4. The \"Replace Policy\" is configured to use a replace handler to replace the original exception with an ApplicationException exception.");
-				sb.Append(Environment.NewLine);
-				sb.Append(Environment.NewLine);
-				sb.Append("5. The rethrowAction is set to \"Throw\", resulting in the new exception being thrown by the block upon completion of the handler chain execution.");
-				sb.Append(Environment.NewLine);
-				sb.Append(Environment.NewLine);
-				sb.Append("6. The new exception is caught and displayed.");
-
-				DisplayScenarioStart(sb.ToString());
+			    DisplayScenarioStart(Resources.ReplaceExceptionText);
 
 				this.service.ProcessWithReplace();
 			}
@@ -418,24 +350,7 @@ namespace ExceptionHandlingQuickStart
 			try
 			{
 				Cursor = System.Windows.Forms.Cursors.WaitCursor;
-
-				StringBuilder sb = new StringBuilder();
-
-				sb.Append("Scenario: Process and resume execution");
-				sb.Append(Environment.NewLine);
-				sb.Append(Environment.NewLine);
-				sb.Append("1. UI layer calls into business layer.");
-				sb.Append(Environment.NewLine);
-				sb.Append(Environment.NewLine);
-				sb.Append("2. A SecurityException occurs and is detected in the business layer.");
-				sb.Append(Environment.NewLine);
-				sb.Append(Environment.NewLine);
-				sb.Append("3. The business layer specifies the \"Handle and Resume Policy\" as the exception handling policy.");
-				sb.Append(Environment.NewLine);
-				sb.Append(Environment.NewLine);
-				sb.Append("4. The \"Handle and Resume Policy\" is configured with a rethrowAction of \"None\", resulting in execution being resumed upon completion of the handler chain execution.");
-
-				DisplayScenarioStart(sb.ToString());
+                DisplayScenarioStart(Resources.SuppressExceptionText);
 
 				this.service.ProcessAndResume();
 

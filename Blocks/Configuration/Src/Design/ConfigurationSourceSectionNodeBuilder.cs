@@ -15,7 +15,7 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design
 {
     /// <summary>
-    /// Represnets a configuration source node builder.
+    /// Represents a configuration source node builder.
     /// </summary>
     public sealed class ConfigurationSourceSectionNodeBuilder : NodeBuilder
     {

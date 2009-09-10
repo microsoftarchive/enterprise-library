@@ -44,19 +44,35 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection
         /// Add policies to the <paramref name="policies"/> to configure the container with 
         /// an appropriate <see cref="IInstanceInterceptionPolicy"/>
         /// </summary>
-        /// <param name="typeToCreate">Type to register.</param>
+        /// <param name="serviceType">Type of the interface being registered. This parameter is
+        /// ignored by this class.</param>
+        /// <param name="implementationType">Type to register.</param>
         /// <param name="name">Name used to resolve the type object.</param>
         /// <param name="policies">Policy list to add policies to.</param>
-        public override void AddPolicies(Type typeToCreate, string name, IPolicyList policies)
+        public override void AddPolicies(Type serviceType, Type implementationType, string name, IPolicyList policies)
         {
             policies.Set<IInstanceInterceptionPolicy>(
                 new InstanceInterceptionPolicy(Interceptor),
-                typeToCreate);
+                implementationType);
+            policies.Set<IInterceptionBehaviorsPolicy>(
+                new PolicyInjectionInterceptionBehaviorsPolicy(),
+                implementationType);
         }
 
         ///<summary>
         /// The <see cref="IInstanceInterceptor"/> set on the <see cref="IInstanceInterceptionPolicy"/>
         ///</summary>
         public IInstanceInterceptor Interceptor { get; private set; }
+
+        private class PolicyInjectionInterceptionBehaviorsPolicy : IInterceptionBehaviorsPolicy
+        {
+            private readonly static IInterceptionBehaviorDescriptor[] behaviorDescriptors =
+                new IInterceptionBehaviorDescriptor[] { new PolicyInjectionBehaviorDescriptor() };
+
+            public IEnumerable<IInterceptionBehaviorDescriptor> InterceptionBehaviorDescriptors
+            {
+                get { return behaviorDescriptors; }
+            }
+        }
     }
 }

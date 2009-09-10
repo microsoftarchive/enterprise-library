@@ -37,7 +37,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// <summary>
         /// Constructs a new <see cref="MemberNameMatchingRuleData"/> instance.
         /// </summary>
-        /// <param name="matchingRuleName">Matching rule name in config file.</param>
+        /// <param name="matchingRuleName">Matching rule name in configuration file.</param>
         public MemberNameMatchingRuleData(string matchingRuleName)
             : base(matchingRuleName, typeof(FakeRules.MemberNameMatchingRule))
         {
@@ -46,7 +46,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// <summary>
         /// Constructs a new <see cref="MemberNameMatchingRuleData"/> instance.
         /// </summary>
-        /// <param name="matchingRuleName">Matching rule name in config file.</param>
+        /// <param name="matchingRuleName">Matching rule name in configuration file.</param>
         /// <param name="match">Member name pattern to match.</param>
         public MemberNameMatchingRuleData(string matchingRuleName, string match)
             : this(matchingRuleName, new MatchData[] { new MatchData(match) })
@@ -57,7 +57,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// <summary>
         /// Constructs a new <see cref="MemberNameMatchingRuleData"/> instance.
         /// </summary>
-        /// <param name="matchingRuleName">Matching rule name in config file.</param>
+        /// <param name="matchingRuleName">Matching rule name in configuration file.</param>
         /// <param name="matches">Collection of <see cref="MatchData"/> containing the patterns
         /// to match. If any pattern matches, the rule matches.</param>
         public MemberNameMatchingRuleData(string matchingRuleName, IEnumerable<MatchData> matches)

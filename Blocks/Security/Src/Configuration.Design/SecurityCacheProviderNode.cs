@@ -19,7 +19,7 @@ using Microsoft.Practices.EnterpriseLibrary.Security.Configuration.Design.Proper
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration.Design
 {
     /// <summary>
-	/// Representa a <see cref="SecurityCacheProviderData"/> configuration element. This class is abstract.
+	/// Represents a <see cref="SecurityCacheProviderData"/> configuration element. This class is abstract.
     /// </summary>
     [Image(typeof(SecurityCacheProviderNode))]
     [SelectedImage(typeof(SecurityCacheProviderNode))]

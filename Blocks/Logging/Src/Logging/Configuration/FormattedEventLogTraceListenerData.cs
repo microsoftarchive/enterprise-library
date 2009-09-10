@@ -33,7 +33,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// Initializes a <see cref="FormattedEventLogTraceListenerData"/>.
         /// </summary>
         public FormattedEventLogTraceListenerData()
+            : base(typeof(FormattedEventLogTraceListener))
         {
+            ListenerDataType = typeof(FormattedEventLogTraceListenerData);
         }
 
         /// <summary>
@@ -95,7 +97,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// <summary>
         /// Gets or sets the event log source of the <see cref="FormattedEventLogTraceListenerData"/>.
         /// </summary>
-        [ConfigurationProperty(sourceProperty, IsRequired = true)]
+        [ConfigurationProperty(sourceProperty, IsRequired = true, DefaultValue = "Enterprise Library Logging")]
         public string Source
         {
             get { return (string)base[sourceProperty]; }

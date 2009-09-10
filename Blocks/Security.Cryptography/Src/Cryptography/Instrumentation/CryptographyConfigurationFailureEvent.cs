@@ -16,7 +16,7 @@ using System.Text;
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Instrumentation
 {
 	/// <summary>
-	/// Represents the WMI event fired when an error in the configuration for the crypto block is detected.
+    /// Represents the WMI event fired when an error in the configuration for the Cryptography Application Block is detected.
 	/// </summary>
 	public class CryptographyConfigurationFailureEvent : CryptographyEvent
 	{

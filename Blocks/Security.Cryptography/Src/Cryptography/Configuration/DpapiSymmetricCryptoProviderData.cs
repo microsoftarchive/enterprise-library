@@ -28,8 +28,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         /// <summary>
         /// <para>Initializes a new instance of the <see cref="DpapiSymmetricCryptoProviderData"/> class.</para>
         /// </summary>
-        public DpapiSymmetricCryptoProviderData()
+        public DpapiSymmetricCryptoProviderData() 
         {
+            Type = typeof(DpapiSymmetricCryptoProvider);
         }
 
         /// <summary>

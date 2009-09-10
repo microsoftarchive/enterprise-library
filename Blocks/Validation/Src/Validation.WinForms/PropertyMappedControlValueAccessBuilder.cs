@@ -15,7 +15,7 @@ using System.Reflection;
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WinForms
 {
     /// <summary>
-    /// Represents abuild for <see cref="PropertyMappedControlValueAccess"/> objects.
+    /// Represents a build for <see cref="PropertyMappedControlValueAccess"/> objects.
     /// </summary>
 	public class PropertyMappedControlValueAccessBuilder : MemberValueAccessBuilder
 	{

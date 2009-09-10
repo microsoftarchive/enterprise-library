@@ -33,6 +33,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         /// <summary>
         /// Initialize a new instance of the <see cref="HashProviderData"/> clas with a name and a <see cref="IHashProvider"/> type.
         /// </summary>
+        /// <param name="type">The type of the <see cref="IHashProvider"/>.</param>
+        public HashProviderData(Type type)
+            : this(null, type)
+        {
+        }
+
+        /// <summary>
+        /// Initialize a new instance of the <see cref="HashProviderData"/> clas with a name and a <see cref="IHashProvider"/> type.
+        /// </summary>
         /// <param name="name">The name of the configured <see cref="IHashProvider"/>.</param>
         /// <param name="type">The type of the <see cref="IHashProvider"/>.</param>
         public HashProviderData(string name, Type type)

@@ -215,7 +215,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation
         /// Fires the CacheCallbackFailed event - reported when an exception occurs during
         /// a cache callback.
         /// </summary>
-        /// <param name="key">The key that was used accessing the <see cref="CacheManager"/> when this failure ocurred.</param>
+        /// <param name="key">The key that was used accessing the <see cref="CacheManager"/> when this failure occurred.</param>
         /// <param name="exception">The exception causing the failure.</param>
         public void FireCacheCallbackFailed(string key, Exception exception)
         {

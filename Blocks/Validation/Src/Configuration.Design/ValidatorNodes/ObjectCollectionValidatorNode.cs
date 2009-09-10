@@ -20,7 +20,7 @@ using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Validation;
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.Design.ValidatorNodes
 {
 	/// <summary>
-	/// Respresents the designtime configuration node for a <see cref="ObjectCollectionValidatorData"/>.
+    /// Represents the designtime configuration node for a <see cref="ObjectCollectionValidatorData"/>.
 	/// </summary>
 	public class ObjectCollectionValidatorNode : SingleValidatorNodeBase
 	{

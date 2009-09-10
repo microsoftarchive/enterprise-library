@@ -164,8 +164,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
                 .WithContainerResolvedParameter<LogSource>("___NO_MATCHES")
                 .WithContainerResolvedParameter<LogSource>("___ERRORS")
                 .WithValueConstructorParameter("")
-                .WithValueConstructorParameter(false)
-                .WithValueConstructorParameter(false)
+                .WithValueConstructorParameter(true)
+                .WithValueConstructorParameter(true)
                 .WithValueConstructorParameter(true)
                 .VerifyConstructorParameters();
 
@@ -309,8 +309,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
                 .WithContainerResolvedParameter<LogSource>("___NO_MATCHES")
                 .WithContainerResolvedParameter<LogSource>("___ERRORS")
                 .WithValueConstructorParameter("")
-                .WithValueConstructorParameter(false)
-                .WithValueConstructorParameter(false)
+                .WithValueConstructorParameter(true)
+                .WithValueConstructorParameter(true)
                 .WithValueConstructorParameter(true)
                 .VerifyConstructorParameters();
         }

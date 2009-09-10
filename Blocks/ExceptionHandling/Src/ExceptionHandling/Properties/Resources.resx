@@ -204,4 +204,46 @@
   <data name="ExceptionPolicyNotFound" xml:space="preserve">
     <value>The policy with name '{0}' cannot be found. Exception handling aborted.</value>
   </data>
+  <data name="SectionDisplayName" xml:space="preserve">
+    <value>Exception Handling Settings</value>
+  </data>
+  <data name="AddExceptionTypeDisplayName" xml:space="preserve">
+    <value>Exception Type</value>
+  </data>
+  <data name="AddExceptionTypeHelpText" xml:space="preserve">
+    <value>Add a new exception type that is handled by this exception policy.</value>
+  </data>
+  <data name="ExceptionHandlersDisplayName" xml:space="preserve">
+    <value>Handlers</value>
+  </data>
+  <data name="ExceptionPoliciesDisplayName" xml:space="preserve">
+    <value>Policies</value>
+  </data>
+  <data name="ExceptionTypesDisplayName" xml:space="preserve">
+    <value>Exception Types</value>
+  </data>
+  <data name="AddPolicyDisplayDescription" xml:space="preserve">
+    <value>Add a new policy.</value>
+  </data>
+  <data name="AddPolicyDisplayName" xml:space="preserve">
+    <value>Policy</value>
+  </data>
+  <data name="AddReplaceHandlerData" xml:space="preserve">
+    <value>Replace Handler</value>
+  </data>
+  <data name="AddReplaceHandlerDataDescription" xml:space="preserve">
+    <value>Replace the exception with another exception.</value>
+  </data>
+  <data name="AddWrapHandlerData" xml:space="preserve">
+    <value>Wrap Handler</value>
+  </data>
+  <data name="AddWrapHandlerDataDescription" xml:space="preserve">
+    <value>Wrap the exception within another exception.</value>
+  </data>
+  <data name="AddCustomHandlerData" xml:space="preserve">
+    <value>Custom</value>
+  </data>
+  <data name="AuthorizationProviderTypeDescription" xml:space="preserve">
+    <value>AuthorizationProviderTypeDescription</value>
+  </data>
 </root>

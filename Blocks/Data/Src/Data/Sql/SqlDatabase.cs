@@ -54,7 +54,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql
         public SqlDatabase(string connectionString, IDataInstrumentationProvider instrumentationProvider)
             : base(connectionString, SqlClientFactory.Instance, instrumentationProvider)
         {
-            
+
         }
 
         /// <summary>
@@ -101,9 +101,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql
         {
             SqlCommand sqlCommand = CheckIfSqlCommand(command);
 
-            ConnectionWrapper wrapper = GetOpenConnection(false);
-            PrepareCommand(command, wrapper.Connection);
-            return DoExecuteXmlReader(sqlCommand);
+            using (ConnectionWrapper wrapper = GetOpenConnection(false))
+            {
+                PrepareCommand(command, wrapper.Connection);
+                return DoExecuteXmlReader(sqlCommand, Transaction.Current == null);
+            }
         }
 
         /// <summary>
@@ -129,7 +131,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql
             SqlCommand sqlCommand = CheckIfSqlCommand(command);
 
             PrepareCommand(sqlCommand, transaction);
-            return DoExecuteXmlReader(sqlCommand);
+            return DoExecuteXmlReader(sqlCommand, false);
         }
 
         /// <summary>
@@ -152,9 +154,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql
         {
             SqlCommand sqlCommand = CheckIfSqlCommand(command);
 
-            ConnectionWrapper wrapper = GetOpenConnection(false);
-            PrepareCommand(command, wrapper.Connection);
-            return DoBeginExecuteXmlReader(sqlCommand, false, callback, state);
+            DbConnection connection = this.GetNewOpenConnection();
+            try
+            {
+                PrepareCommand(command, this.GetNewOpenConnection());
+                return DoBeginExecuteXmlReader(sqlCommand, callback, state);
+            }
+            catch
+            {
+                connection.Close();
+                throw;
+            }
         }
 
         /// <summary>
@@ -181,7 +191,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql
             SqlCommand sqlCommand = CheckIfSqlCommand(command);
 
             PrepareCommand(sqlCommand, transaction);
-            return DoBeginExecuteXmlReader(sqlCommand, false, callback, state);
+            return DoBeginExecuteXmlReader(sqlCommand, callback, state);
         }
 
         /// <summary>
@@ -204,11 +214,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql
             {
                 XmlReader reader = command.EndExecuteXmlReader(daabAsyncResult.InnerAsyncResult);
                 instrumentationProvider.FireCommandExecutedEvent(daabAsyncResult.StartTime);
-                return reader;
+                return
+                    command.Transaction == null
+                        ? new ConnectionClosingXmlReaderWrapper(reader, command.Connection)
+                        : reader;
             }
             catch (Exception e)
             {
                 instrumentationProvider.FireCommandFailedEvent(command.CommandText, ConnectionStringNoCredentials, e);
+                if (command.Transaction == null)
+                {
+                    // for a reader, the standard cleanup will not close the connection, so it needs to be closed
+                    // in the catch block if necessary
+                    command.Connection.Close();
+                }
                 throw;
             }
             finally
@@ -217,24 +236,25 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql
             }
         }
 
-        private static IAsyncResult DoBeginExecuteXmlReader(SqlCommand sqlCommand, bool closeConnection, AsyncCallback callback, object state)
+        private static IAsyncResult DoBeginExecuteXmlReader(SqlCommand command, AsyncCallback callback, object state)
         {
-            return WrappedAsyncOperation.BeginAsyncOperation(callback,
-                                       cb => sqlCommand.BeginExecuteXmlReader(cb, state),
-                                       ar => new DaabAsyncResult(ar, sqlCommand, closeConnection, DateTime.Now));
+            return WrappedAsyncOperation.BeginAsyncOperation(
+                callback,
+                cb => command.BeginExecuteXmlReader(cb, state),
+                ar => new DaabAsyncResult(ar, command, false, false, DateTime.Now));
         }
 
         /// <devdoc>
         /// Execute the actual XML Reader call.
         /// </devdoc>        
-        private XmlReader DoExecuteXmlReader(SqlCommand sqlCommand)
+        private XmlReader DoExecuteXmlReader(SqlCommand sqlCommand, bool closeConnectionOnReaderClose)
         {
             try
             {
                 DateTime startTime = DateTime.Now;
                 XmlReader reader = sqlCommand.ExecuteXmlReader();
                 instrumentationProvider.FireCommandExecutedEvent(startTime);
-                return reader;
+                return closeConnectionOnReaderClose ? new ConnectionClosingXmlReaderWrapper(reader, sqlCommand.Connection) : reader;
             }
             catch (Exception e)
             {
@@ -469,11 +489,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql
             };
         }
 
-        private static IAsyncResult DoBeginExecuteNonQuery(SqlCommand command, bool closeConnection, AsyncCallback callback, object state)
+        private static IAsyncResult DoBeginExecuteNonQuery(SqlCommand command, bool disposeCommand, AsyncCallback callback, object state)
         {
-            return WrappedAsyncOperation.BeginAsyncOperation(callback,
-                                       cb => command.BeginExecuteNonQuery(cb, state),
-                                       ar => new DaabAsyncResult(ar, command, closeConnection, DateTime.Now));
+            bool closeConnection = command.Transaction == null;
+
+            return WrappedAsyncOperation.BeginAsyncOperation(
+                callback,
+                cb => command.BeginExecuteNonQuery(cb, state),
+                ar => new DaabAsyncResult(ar, command, disposeCommand, closeConnection, DateTime.Now));
         }
 
         /// <summary>
@@ -496,7 +519,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql
         {
             SqlCommand sqlCommand = CheckIfSqlCommand(command);
 
-            return DoBeginExecuteNonQuery(sqlCommand, false, callback, state);
+            DbConnection connection = this.GetNewOpenConnection();
+            try
+            {
+                PrepareCommand(sqlCommand, connection);
+                return DoBeginExecuteNonQuery(sqlCommand, false, callback, state);
+            }
+            catch
+            {
+                connection.Close();
+                throw;
+            }
         }
 
         /// <summary>
@@ -520,9 +553,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql
         /// </returns>
         public override IAsyncResult BeginExecuteNonQuery(DbCommand command, DbTransaction transaction, AsyncCallback callback, object state)
         {
-            PrepareCommand(command, transaction);
+            SqlCommand sqlCommand = CheckIfSqlCommand(command);
 
-            return BeginExecuteNonQuery(command, callback, state);
+            PrepareCommand(sqlCommand, transaction);
+            return DoBeginExecuteNonQuery(sqlCommand, false, callback, state);
         }
 
         /// <summary>
@@ -546,12 +580,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql
         /// <seealso cref="EndExecuteNonQuery(IAsyncResult)"/>
         public override IAsyncResult BeginExecuteNonQuery(string storedProcedureName, AsyncCallback callback, object state, params object[] parameterValues)
         {
-            if (string.IsNullOrEmpty(storedProcedureName)) throw new ArgumentException("storedProcedureName", Resources.ExceptionNullOrEmptyString);
+            SqlCommand sqlCommand = CheckIfSqlCommand(GetStoredProcCommand(storedProcedureName, parameterValues));
 
-            using (DbCommand command = GetStoredProcCommand(storedProcedureName, parameterValues))
+            DbConnection connection = this.GetNewOpenConnection();
+            try
             {
-                PrepareCommand(command, GetNewOpenConnection());
-                return DoBeginExecuteNonQuery((SqlCommand)command, true, callback, state);
+                PrepareCommand(sqlCommand, connection);
+                return DoBeginExecuteNonQuery(sqlCommand, true, callback, state);
+            }
+            catch
+            {
+                connection.Close();
+                throw;
             }
         }
 
@@ -577,14 +617,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql
         /// </returns>
         /// <seealso cref="Database.ExecuteNonQuery(string,object[])"/>
         /// <seealso cref="EndExecuteNonQuery(IAsyncResult)"/>
-        public override IAsyncResult BeginExecuteNonQuery(DbTransaction transaction, string storedProcedureName, 
+        public override IAsyncResult BeginExecuteNonQuery(DbTransaction transaction, string storedProcedureName,
             AsyncCallback callback, object state,
             params object[] parameterValues)
         {
-            using (DbCommand command = GetStoredProcCommand(storedProcedureName, parameterValues))
-            {
-                return BeginExecuteNonQuery(command, transaction, callback, state);
-            }
+            SqlCommand sqlCommand = CheckIfSqlCommand(GetStoredProcCommand(storedProcedureName, parameterValues));
+
+            PrepareCommand(sqlCommand, transaction);
+            return DoBeginExecuteNonQuery(sqlCommand, true, callback, state);
         }
 
         /// <summary>
@@ -608,10 +648,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql
         /// <seealso cref="EndExecuteNonQuery(IAsyncResult)"/>
         public override IAsyncResult BeginExecuteNonQuery(CommandType commandType, string commandText, AsyncCallback callback, object state)
         {
-            using (SqlCommand command = CreateSqlCommandByCommandType(commandType, commandText))
+            SqlCommand sqlCommand = CreateSqlCommandByCommandType(commandType, commandText);
+
+            DbConnection connection = this.GetNewOpenConnection();
+            try
             {
-                PrepareCommand(command, GetNewOpenConnection());
-                return DoBeginExecuteNonQuery(command, true, callback, state);
+                PrepareCommand(sqlCommand, connection);
+                return DoBeginExecuteNonQuery(sqlCommand, true, callback, state);
+            }
+            catch
+            {
+                connection.Close();
+                throw;
             }
         }
 
@@ -637,13 +685,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql
         /// </returns>
         /// <seealso cref="Database.ExecuteNonQuery(CommandType,string)"/>
         /// <seealso cref="EndExecuteNonQuery(IAsyncResult)"/>
-        public override IAsyncResult BeginExecuteNonQuery(DbTransaction transaction, CommandType commandType, string commandText, 
+        public override IAsyncResult BeginExecuteNonQuery(DbTransaction transaction, CommandType commandType, string commandText,
             AsyncCallback callback, object state)
         {
-            using (SqlCommand command = CreateSqlCommandByCommandType(commandType, commandText))
-            {
-                return BeginExecuteNonQuery(command, transaction, callback, state);
-            }
+            SqlCommand sqlCommand = CreateSqlCommandByCommandType(commandType, commandText);
+
+            PrepareCommand(sqlCommand, transaction);
+            return DoBeginExecuteNonQuery(sqlCommand, true, callback, state);
         }
 
         /// <summary>
@@ -680,40 +728,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql
             }
         }
 
-        private static IAsyncResult DoBeginExecuteReader(SqlCommand command, CommandBehavior commandBehavior, AsyncCallback callback, object state)
+        private static IAsyncResult DoBeginExecuteReader(SqlCommand command, bool disposeCommand, AsyncCallback callback, object state)
         {
+            CommandBehavior commandBehavior =
+                command.Transaction == null ? CommandBehavior.CloseConnection : CommandBehavior.Default;
 
-            return WrappedAsyncOperation.BeginAsyncOperation(callback,
+            return WrappedAsyncOperation.BeginAsyncOperation(
+                callback,
                 cb => command.BeginExecuteReader(cb, state, commandBehavior),
-                ar => new DaabAsyncResult(ar, command, false, DateTime.Now));
+                ar => new DaabAsyncResult(ar, command, disposeCommand, false, DateTime.Now));
         }
 
-        /// <summary>
-        /// <para>Initiates the asynchronous execution of a <paramref name="command"/> which will return a <see cref="IDataReader"/>.</para>
-        /// </summary>
-        /// <param name="command">
-        /// <para>The <see cref="DbCommand"/> to execute.</para> </param>
-        /// <param name="commandBehavior"><see cref="CommandBehavior"/> to use when the reader is closed.</param>
-        /// <param name="callback">The async callback to execute when the result of the operation is available. Pass <langword>null</langword>
-        /// if you don't want to use a callback.</param>
-        /// <param name="state">Additional state object to pass to the callback.</param>
-        /// <returns>
-        /// <para>An <see cref="IAsyncResult"/> that can be used to poll or wait for results, or both; 
-        /// this value is also needed when invoking <see cref="Database.EndExecuteReader"/>, 
-        /// which returns the <see cref="IDataReader"/>.</para>
-        /// </returns>
-        /// <seealso cref="Database.ExecuteReader(DbCommand)"/>
-        /// <seealso cref="Database.EndExecuteReader"/>
-        public override IAsyncResult BeginExecuteReader(DbCommand command, CommandBehavior commandBehavior, AsyncCallback callback, object state)
-        {
-            SqlCommand sqlCommand = CheckIfSqlCommand(command);
-
-            ConnectionWrapper wrapper = GetOpenConnection();
-            PrepareCommand(sqlCommand, wrapper.Connection);
-
-            return DoBeginExecuteReader(sqlCommand, commandBehavior, callback, state);
-        }
-        
         /// <summary>
         /// <para>Initiates the asynchronous execution of a <paramref name="command"/> which will return a <see cref="IDataReader"/>.</para>
         /// </summary>
@@ -732,7 +757,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql
         /// <seealso cref="EndExecuteReader(IAsyncResult)"/>
         public override IAsyncResult BeginExecuteReader(DbCommand command, AsyncCallback callback, object state)
         {
-            return BeginExecuteReader(command, CommandBehavior.Default, callback, state);
+            SqlCommand sqlCommand = CheckIfSqlCommand(command);
+
+            DbConnection connection = this.GetNewOpenConnection();
+            try
+            {
+                PrepareCommand(sqlCommand, connection);
+                return DoBeginExecuteReader(sqlCommand, false, callback, state);
+            }
+            catch
+            {
+                connection.Close();
+                throw;
+            }
         }
 
         /// <summary>
@@ -759,8 +796,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql
             SqlCommand sqlCommand = CheckIfSqlCommand(command);
 
             PrepareCommand(sqlCommand, transaction);
-
-            return DoBeginExecuteReader(sqlCommand, CommandBehavior.Default, callback, state);
+            return DoBeginExecuteReader(sqlCommand, false, callback, state);
         }
 
         /// <summary>
@@ -784,11 +820,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql
         /// <seealso cref="EndExecuteReader(IAsyncResult)"/>
         public override IAsyncResult BeginExecuteReader(string storedProcedureName, AsyncCallback callback, object state, params object[] parameterValues)
         {
-            if (string.IsNullOrEmpty(storedProcedureName)) throw new ArgumentException("storedProcedureName", Resources.ExceptionNullOrEmptyString);
+            SqlCommand sqlCommand = CheckIfSqlCommand(GetStoredProcCommand(storedProcedureName, parameterValues));
 
-            using (DbCommand command = GetStoredProcCommand(storedProcedureName, parameterValues))
+            DbConnection connection = this.GetNewOpenConnection();
+            try
             {
-                return BeginExecuteReader(command, CommandBehavior.CloseConnection, callback, state);
+                PrepareCommand(sqlCommand, connection);
+                return DoBeginExecuteReader(sqlCommand, true, callback, state);
+            }
+            catch
+            {
+                connection.Close();
+                throw;
             }
         }
 
@@ -816,10 +859,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql
         /// <seealso cref="EndExecuteReader(IAsyncResult)"/>
         public override IAsyncResult BeginExecuteReader(DbTransaction transaction, string storedProcedureName, AsyncCallback callback, object state, params object[] parameterValues)
         {
-            using (DbCommand command = GetStoredProcCommand(storedProcedureName, parameterValues))
-            {
-                return BeginExecuteReader(command, transaction, callback, state);
-            }
+            SqlCommand sqlCommand = CheckIfSqlCommand(GetStoredProcCommand(storedProcedureName, parameterValues));
+
+            PrepareCommand(sqlCommand, transaction);
+            return DoBeginExecuteReader(sqlCommand, true, callback, state);
         }
 
         /// <summary>
@@ -847,9 +890,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql
         /// <seealso cref="EndExecuteReader(IAsyncResult)"/>
         public override IAsyncResult BeginExecuteReader(CommandType commandType, string commandText, AsyncCallback callback, object state)
         {
-            using (var command = CreateSqlCommandByCommandType(commandType, commandText))
+            SqlCommand sqlCommand = CreateSqlCommandByCommandType(commandType, commandText);
+
+            DbConnection connection = this.GetNewOpenConnection();
+            try
             {
-                return BeginExecuteReader(command, CommandBehavior.CloseConnection, callback, state);
+                PrepareCommand(sqlCommand, connection);
+                return DoBeginExecuteReader(sqlCommand, true, callback, state);
+            }
+            catch
+            {
+                connection.Close();
+                throw;
             }
         }
 
@@ -878,10 +930,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql
         public override IAsyncResult BeginExecuteReader(DbTransaction transaction, CommandType commandType, string commandText,
             AsyncCallback callback, object state)
         {
-            using (SqlCommand command = CreateSqlCommandByCommandType(commandType, commandText))
-            {
-                return BeginExecuteReader(command, transaction, callback, state);
-            }
+            SqlCommand sqlCommand = CreateSqlCommandByCommandType(commandType, commandText);
+
+            PrepareCommand(sqlCommand, transaction);
+            return DoBeginExecuteReader(sqlCommand, true, callback, state);
         }
 
         /// <summary>
@@ -910,6 +962,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql
             catch (Exception e)
             {
                 instrumentationProvider.FireCommandFailedEvent(command.CommandText, ConnectionStringNoCredentials, e);
+                if (command.Transaction == null)
+                {
+                    // for a reader, the standard cleanup will not close the connection, so it needs to be closed
+                    // in the catch block if necessary
+                    command.Connection.Close();
+                }
                 throw;
             }
             finally
@@ -917,7 +975,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql
                 CleanupConnectionFromAsyncOperation(daabAsyncResult);
             }
         }
-
 
         /// <summary>
         /// <para>Initiates the asynchronous execution of a <paramref name="command"/> which will return a single value.</para>
@@ -987,7 +1044,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql
         {
             return BeginExecuteReader(storedProcedureName, callback, state, parameterValues);
         }
-
 
         /// <summary>
         /// <para>Initiates the asynchronous execution of <paramref name="storedProcedureName"/> using the given <paramref name="parameterValues" /> inside a transaction which will return a single value.</para>
@@ -1095,6 +1151,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql
 
         private static void CleanupConnectionFromAsyncOperation(DaabAsyncResult daabAsyncResult)
         {
+            if (daabAsyncResult.DisposeCommand)
+            {
+                if (daabAsyncResult.Command != null)
+                {
+                    daabAsyncResult.Command.Dispose();
+                }
+            }
             if (daabAsyncResult.CloseConnection)
             {
                 if (daabAsyncResult.Connection != null)

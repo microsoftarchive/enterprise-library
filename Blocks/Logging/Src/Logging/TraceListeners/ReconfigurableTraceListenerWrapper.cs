@@ -16,7 +16,7 @@ using Microsoft.Practices.ServiceLocation;
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
 {
     /// <summary>
-    /// A <see cref="TraceListener"/> wrapper that reacts to update requests in the Logging Block disposing the
+    /// A <see cref="TraceListener"/> wrapper that reacts to update requests in the Logging Application Block disposing the
     /// listener it currently wraps and resolving a new one.
     /// </summary>
     public class ReconfigurableTraceListenerWrapper : TraceListenerWrapper, ILoggingUpdateHandler
@@ -29,7 +29,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         /// update requests.
         /// </summary>
         /// <param name="wrappedTraceListener">The <see cref="TraceListener"/> to wrap.</param>
-        /// <param name="coordinator">The coordinator for updates in the Logging Block.</param>
+        /// <param name="coordinator">The coordinator for updates in the Logging Application Block.</param>
         public ReconfigurableTraceListenerWrapper(
             TraceListener wrappedTraceListener,
             ILoggingUpdateCoordinator coordinator)

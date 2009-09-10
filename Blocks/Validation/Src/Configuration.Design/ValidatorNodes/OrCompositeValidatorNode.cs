@@ -21,7 +21,7 @@ using Microsoft.Practices.EnterpriseLibrary.Configuration.Design;
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.Design.ValidatorNodes
 {
 	/// <summary>
-	/// Respresents the designtime configuration node for an <see cref="OrCompositeValidatorData"/>.
+    /// Represents the designtime configuration node for an <see cref="OrCompositeValidatorData"/>.
 	/// </summary>
 	public class OrCompositeValidatorNode : CompositeValidatorNodeBase
 	{

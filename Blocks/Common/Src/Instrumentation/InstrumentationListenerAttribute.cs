@@ -18,7 +18,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation
 	/// <summary>
 	/// Defines a class that will listen for instrumentation events broadcast by other classes
 	/// and report them to system services. This attribute is placed on the class that is to be
-	/// listened to to define the class that will listen to it.
+	/// listened to, in order to define the class that will listen to it.
 	/// </summary>
     [AttributeUsage(AttributeTargets.Class, Inherited=true)]
 	public sealed class InstrumentationListenerAttribute : Attribute

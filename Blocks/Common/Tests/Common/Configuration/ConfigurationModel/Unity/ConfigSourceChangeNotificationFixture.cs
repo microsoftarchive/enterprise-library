@@ -105,7 +105,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
 
             eventSource.SourceChanged += (sender, e) => { sourceChangedEventArgs = e; };
 
-            eventSource.GetSection<TestsConfigurationSection>().SectionChanged += 
+            eventSource.GetSection<TestsConfigurationSection>().SectionChanged +=
                 (sender, e) => { sectionChangedEventArgs = e; };
 
             eventSource.GetSection<AppSettingsSection>().SectionChanged +=
@@ -119,7 +119,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
         {
             Assert.IsNotNull(sourceChangedEventArgs);
             Assert.AreSame(configurationSource, sourceChangedEventArgs.ConfigurationSource);
-            CollectionAssert.AreEqual(new[] {testsSectionName}, sourceChangedEventArgs.ChangedSectionNames);
+            CollectionAssert.AreEqual(new[] { testsSectionName }, sourceChangedEventArgs.ChangedSectionNames);
         }
 
         [TestMethod]
@@ -127,7 +127,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
         {
             Assert.AreSame(mockLocator, sourceChangedEventArgs.Container);
         }
-	
+
         [TestMethod]
         public void WhenConfigSourceChangeIsSignaled_ThenSectionChangedIsInEventArgs()
         {
@@ -140,7 +140,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
         {
             Assert.AreSame(mockLocator, sectionChangedEventArgs.Container);
         }
-	
+
         [TestMethod]
         public void WhenConfigSourceChangeIsSignaled_ThenChangeEventsForSectionsNotInTheSourceAreNotRaised()
         {
@@ -157,12 +157,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
             throw new NotImplementedException();
         }
 
-        public void Add(IConfigurationParameter saveParameter, string sectionName, ConfigurationSection configurationSection)
+        public void Add(string sectionName, ConfigurationSection configurationSection)
         {
             throw new NotImplementedException();
         }
 
-        public void Remove(IConfigurationParameter removeParameter, string sectionName)
+        public void Remove(string sectionName)
         {
             throw new NotImplementedException();
         }
@@ -172,7 +172,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
             add { ++ChangeHandlersRegistered; }
             remove { --ChangeHandlersRegistered; }
         }
-        
+
         public void AddSectionChangeHandler(string sectionName, ConfigurationChangedEventHandler handler)
         {
             throw new NotImplementedException();
@@ -182,6 +182,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
         {
             throw new NotImplementedException();
         }
-    }
 
+        public void Dispose()
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

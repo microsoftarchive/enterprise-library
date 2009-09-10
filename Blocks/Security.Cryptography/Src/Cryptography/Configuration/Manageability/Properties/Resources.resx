@@ -127,7 +127,7 @@
     <value>Default symmetric crypto provider</value>
   </data>
   <data name="CryptographySettingsPolicyName" xml:space="preserve">
-    <value>Specify Cryptography Block Settings</value>
+    <value>Specify Cryptography Application Block Settings</value>
   </data>
   <data name="DpapiSymmetricProviderScopePartName" xml:space="preserve">
     <value>Scope</value>
@@ -163,7 +163,7 @@
     <value>Key protection scope</value>
   </data>
   <data name="SymmetricCryptoProviderPolicyNameTemplate" xml:space="preserve">
-    <value>Specify settings for symmetric crypto provider '{0}'</value>
+    <value>Specify settings for symmetric cryptography providers '{0}'</value>
   </data>
   <data name="SymmetricCryptoProvidersCategoryName" xml:space="preserve">
     <value>Symmetric crypto providers</value>

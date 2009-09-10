@@ -30,37 +30,36 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
         [TestMethod]
         public void RunningWatcherKeepsOnlyOnePollingThread()
         {
-            ConfigurationChangeWatcher.SetDefaultPollDelayInMilliseconds(50);
-            TestConfigurationChangeWatcher watcher = new TestConfigurationChangeWatcher();
-            try
+            using (TestConfigurationChangeWatcher watcher = new TestConfigurationChangeWatcher(50))
             {
-                watcher.ConfigurationChanged += new ConfigurationChangedEventHandler(OnConfigurationChanged);
+                try
+                {
+                    watcher.ConfigurationChanged += new ConfigurationChangedEventHandler(OnConfigurationChanged);
 
-                for (int i = 0; i < 20; i++)
+                    for (int i = 0; i < 20; i++)
+                    {
+                        watcher.StopWatching();
+                        watcher.StartWatching();
+                    }
+
+                    // ramp up
+                    Thread.Sleep(50);
+
+                    watcher.DoNotification();
+
+                    // wait for notification
+                    Thread.Sleep(150);
+
+                    Assert.AreEqual(1, notifications);
+                }
+                finally
                 {
                     watcher.StopWatching();
-                    watcher.StartWatching();
                 }
-
-                // ramp up
-                Thread.Sleep(50);
-
-                watcher.DoNotification();
-
-                // wait for notification
-                Thread.Sleep(150);
-
-                Assert.AreEqual(1, notifications);
-            }
-            finally
-            {
-                watcher.StopWatching();
-                ConfigurationChangeWatcher.ResetDefaultPollDelay();
             }
         }
 
-        void OnConfigurationChanged(object sender,
-                                    ConfigurationChangedEventArgs e)
+        void OnConfigurationChanged(object sender, ConfigurationChangedEventArgs e)
         {
             lock (this)
             {
@@ -71,7 +70,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
 
     class TestConfigurationChangeWatcher : ConfigurationChangeWatcher
     {
-        [ThreadStatic]
+        public TestConfigurationChangeWatcher(int pollDelay)
+        {
+            SetPollDelayInMilliseconds(pollDelay);
+        }
+
         static bool notified;
 
         DateTime lastWriteTime = DateTime.Now;
@@ -87,11 +90,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
             return new ConfigurationChangedEventArgs(SectionName);
         }
 
-        protected override string BuildThreadName()
-        {
-            return "Test Watcher";
-        }
-
         internal void DoNotification()
         {
             notify = true;
@@ -104,7 +102,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
                 notified = true;
                 lastWriteTime = DateTime.Now;
             }
-
             return lastWriteTime;
         }
 

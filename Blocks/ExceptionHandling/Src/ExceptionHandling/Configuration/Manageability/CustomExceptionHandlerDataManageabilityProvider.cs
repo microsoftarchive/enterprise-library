@@ -21,7 +21,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
 {
     /// <summary>
     /// Provides an implementation for <see cref="CustomHandlerData"/> that
-    /// splits policy overrides processing and WMI objects generation, performing approriate logging of 
+    /// splits policy overrides processing and WMI objects generation, performing appropriate logging of 
     /// policy processing errors.
     /// </summary>
 	public class CustomHandlerDataManageabilityProvider

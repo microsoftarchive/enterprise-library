@@ -67,14 +67,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design
         IConfigurationSource ConfigurationSource { get; set;}
 
 		/// <summary>
-		/// When implemented by a class, gets the <see cref="IConfigurationParameter"/> for the current hierarchy.
-		/// </summary>
-		/// <value>
-		/// The <see cref="IConfigurationParameter"/> for the current hierarchy.
-		/// </value>
-        IConfigurationParameter ConfigurationParameter { get; set;}
-
-		/// <summary>
 		/// When implemented by a class, finds a node via it's path.
 		/// </summary>
 		/// <param name="path">

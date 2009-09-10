@@ -16,7 +16,7 @@ using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.Design.Prop
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.Design.ValidatorNodes
 {
 	/// <summary>
-	/// Respresents the designtime configuration node for a <see cref="ObjectValidatorData"/>.
+    /// Represents the designtime configuration node for a <see cref="ObjectValidatorData"/>.
 	/// </summary>
 	public class ObjectValidatorNode : SingleValidatorNodeBase
 	{

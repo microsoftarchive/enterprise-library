@@ -16,7 +16,7 @@ using System.Runtime.Serialization;
 namespace Microsoft.Practices.EnterpriseLibrary.Logging
 {
     /// <summary>
-    /// Logging block exception.
+    /// Logging Application Block exception.
     /// </summary>
     [Serializable]
     [ComVisible(false)]

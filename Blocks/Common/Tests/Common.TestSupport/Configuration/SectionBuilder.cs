@@ -28,24 +28,24 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration
         private readonly TypeRegistrationProvidersConfigurationSection section =
             new TypeRegistrationProvidersConfigurationSection();
 
-        private TypeRegistrationProviderSettings currentSettings;
+        private TypeRegistrationProviderElement _currentElement;
 
         LocatorSectionBuilder IProviderName.WithProviderName(string name)
         {
-            currentSettings.Name = name;
-            section.TypeRegistrationProviders.Add(currentSettings);
+            _currentElement.Name = name;
+            section.TypeRegistrationProviders.Add(_currentElement);
             return this;
         }
 
         public IProviderName AddConfigSection(string sectionName)
         {
-            currentSettings = new TypeRegistrationProviderSettings {SectionName = sectionName};
+            _currentElement = new TypeRegistrationProviderElement {SectionName = sectionName};
             return this;
         }
 
         public IProviderName AddProvider<TProvider>()
         {
-            currentSettings = new TypeRegistrationProviderSettings
+            _currentElement = new TypeRegistrationProviderElement
             {
                 ProviderTypeName = typeof (TProvider).AssemblyQualifiedName
             };
@@ -60,8 +60,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration
         
         public void AddTo(IConfigurationSource configurationSource)
         {
-            configurationSource.Add(null, 
-                TypeRegistrationProvidersConfigurationSection.SectionName,
+            configurationSource.Add(TypeRegistrationProvidersConfigurationSection.SectionName,
                 section);
         }
     }

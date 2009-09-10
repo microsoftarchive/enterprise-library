@@ -28,62 +28,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
         const string externalSectionSource = "dummy.external.config";
 
         [TestMethod]
-        public void FileConfigurationAndSystemConfigurationDoNotShareImplementation()
-        {
-            BaseFileConfigurationSourceImplementation configSourceImpl1 = FileConfigurationSource.GetImplementation(AppDomain.CurrentDomain.SetupInformation.ConfigurationFile);
-            BaseFileConfigurationSourceImplementation configSourceImpl2 = SystemConfigurationSource.Implementation;
-
-            Assert.IsFalse(ReferenceEquals(configSourceImpl1, configSourceImpl2));
-        }
-
-        [TestMethod]
-        public void ConfigurationFilePathsAreResolvedBeforeImplementationIsCreated()
-        {
-            string fullConfigurationFilepath = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile;
-            string configurationFilename = Path.GetFileName(fullConfigurationFilepath);
-
-            FileConfigurationSource.ResetImplementation(fullConfigurationFilepath, false);
-            BaseFileConfigurationSourceImplementation configSourceImpl1 = new FileConfigurationSource(configurationFilename).Implementation;
-            BaseFileConfigurationSourceImplementation configSourceImpl2 = new FileConfigurationSource(fullConfigurationFilepath).Implementation;
-
-            Assert.AreSame(configSourceImpl1, configSourceImpl2);
-        }
-
-        [TestMethod]
-        public void DifferentConfigationFilesDoNotShareImplementation()
-        {
-            string fullConfigurationFilepath = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile;
-            string otherConfigurationFilepath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Other.config");
-            File.Copy(fullConfigurationFilepath, otherConfigurationFilepath);
-            try
-            {
-                BaseFileConfigurationSourceImplementation configSourceImpl1 = FileConfigurationSource.GetImplementation(fullConfigurationFilepath);
-                BaseFileConfigurationSourceImplementation configSourceImpl2 = FileConfigurationSource.GetImplementation(otherConfigurationFilepath);
-
-                Assert.IsFalse(ReferenceEquals(configSourceImpl1, configSourceImpl2));
-            }
-            finally
-            {
-                if (File.Exists(otherConfigurationFilepath))
-                {
-                    File.Delete(otherConfigurationFilepath);
-                }
-            }
-        }
-
-        [TestMethod]
-        public void SharedConfigurationFilesCanHaveDifferentCasing()
-        {
-            string ConfigurationFilepath1 = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile.ToUpper();
-            string ConfigurationFilepath2 = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile.ToLower();
-
-            BaseFileConfigurationSourceImplementation configSourceImpl1 = FileConfigurationSource.GetImplementation(ConfigurationFilepath1);
-            BaseFileConfigurationSourceImplementation configSourceImpl2 = FileConfigurationSource.GetImplementation(ConfigurationFilepath2);
-
-            Assert.AreSame(configSourceImpl1, configSourceImpl2);
-        }
-
-        [TestMethod]
         public void SectionsCanBeAccessedThroughFileConfigurationSource()
         {
             string fullConfigurationFilepath = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile;
@@ -92,11 +36,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
 
             try
             {
-                FileConfigurationSource.ResetImplementation(otherConfigurationFilepath, false);
-                FileConfigurationSource otherConfiguration = new FileConfigurationSource(otherConfigurationFilepath);
-                DummySection dummySection = otherConfiguration.GetSection(localSection) as DummySection;
+                using (FileConfigurationSource otherConfiguration =
+                    new FileConfigurationSource(otherConfigurationFilepath, false))
+                {
+                    DummySection dummySection = otherConfiguration.GetSection(localSection) as DummySection;
 
-                Assert.IsNotNull(dummySection);
+                    Assert.IsNotNull(dummySection);
+                }
             }
             finally
             {
@@ -116,11 +62,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
 
             try
             {
-                FileConfigurationSource.ResetImplementation(otherConfigurationFilepath, false);
-                FileConfigurationSource otherConfiguration = new FileConfigurationSource(otherConfigurationFilepath);
-                object wrongSection = otherConfiguration.GetSection("wrong section");
+                using (FileConfigurationSource otherConfiguration =
+                    new FileConfigurationSource(otherConfigurationFilepath, false))
+                {
+                    object wrongSection = otherConfiguration.GetSection("wrong section");
 
-                Assert.IsNull(wrongSection);
+                    Assert.IsNull(wrongSection);
+                }
             }
             finally
             {
@@ -148,12 +96,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
         [TestMethod]
         public void DifferentFileConfigurationSourcesDoNotShareEvents()
         {
-            ConfigurationChangeWatcher.SetDefaultPollDelayInMilliseconds(50);
             string otherConfigurationFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Other.config");
-
-            FileConfigurationSource.ResetImplementation(otherConfigurationFile, true);
-            SystemConfigurationSource.ResetImplementation(true);
-
             File.Copy(AppDomain.CurrentDomain.SetupInformation.ConfigurationFile, otherConfigurationFile);
 
             try
@@ -161,41 +104,44 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
                 bool sysSourceChanged = false;
                 bool otherSourceChanged = false;
 
-                SystemConfigurationSource systemSource = new SystemConfigurationSource();
-                FileConfigurationSource otherSource = new FileConfigurationSource(otherConfigurationFile);
+                using (SystemConfigurationSource systemSource = new SystemConfigurationSource(true, 50))
+                using (FileConfigurationSource otherSource = new FileConfigurationSource(otherConfigurationFile, true, 50))
+                {
+                    DummySection sysDummySection = systemSource.GetSection(localSection) as DummySection;
+                    DummySection otherDummySection = otherSource.GetSection(localSection) as DummySection;
+                    Assert.IsTrue(sysDummySection != null);
+                    Assert.IsTrue(otherDummySection != null);
 
-                DummySection sysDummySection = systemSource.GetSection(localSection) as DummySection;
-                DummySection otherDummySection = otherSource.GetSection(localSection) as DummySection;
-                Assert.IsTrue(sysDummySection != null);
-                Assert.IsTrue(otherDummySection != null);
+                    systemSource.AddSectionChangeHandler(
+                        localSection,
+                        delegate(object o, ConfigurationChangedEventArgs args)
+                        {
+                            sysSourceChanged = true;
+                        });
 
-                systemSource.AddSectionChangeHandler(localSection, delegate(object o,
-                                                                            ConfigurationChangedEventArgs args)
-                                                                   {
-                                                                       sysSourceChanged = true;
-                                                                   });
+                    otherSource.AddSectionChangeHandler(
+                        localSection,
+                        delegate(object o, ConfigurationChangedEventArgs args)
+                        {
+                            Assert.AreEqual(12, ((DummySection)otherSource.GetSection(localSection)).Value);
+                            otherSourceChanged = true;
+                        });
 
-                otherSource.AddSectionChangeHandler(localSection, delegate(object o,
-                                                                           ConfigurationChangedEventArgs args)
-                                                                  {
-                                                                      Assert.AreEqual(12, ((DummySection)otherSource.GetSection(localSection)).Value);
-                                                                      otherSourceChanged = true;
-                                                                  });
+                    DummySection rwSection = new DummySection();
+                    System.Configuration.Configuration rwConfiguration = ConfigurationManager.OpenExeConfiguration(otherConfigurationFile);
+                    rwConfiguration.Sections.Remove(localSection);
+                    rwConfiguration.Sections.Add(localSection, rwSection = new DummySection());
+                    rwSection.Name = localSection;
+                    rwSection.Value = 12;
+                    rwSection.SectionInformation.ConfigSource = localSectionSource;
 
-                DummySection rwSection = new DummySection();
-                System.Configuration.Configuration rwConfiguration = ConfigurationManager.OpenExeConfiguration(otherConfigurationFile);
-                rwConfiguration.Sections.Remove(localSection);
-                rwConfiguration.Sections.Add(localSection, rwSection = new DummySection());
-                rwSection.Name = localSection;
-                rwSection.Value = 12;
-                rwSection.SectionInformation.ConfigSource = localSectionSource;
+                    rwConfiguration.SaveAs(otherConfigurationFile);
 
-                rwConfiguration.SaveAs(otherConfigurationFile);
+                    Thread.Sleep(500);
 
-                Thread.Sleep(200);
-
-                Assert.AreEqual(false, sysSourceChanged);
-                Assert.AreEqual(true, otherSourceChanged);
+                    Assert.AreEqual(false, sysSourceChanged);
+                    Assert.AreEqual(true, otherSourceChanged);
+                }
             }
             finally
             {
@@ -209,33 +155,32 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
         [TestMethod]
         public void RemovingSectionCausesChangeNotification()
         {
-            ConfigurationChangeWatcher.SetDefaultPollDelayInMilliseconds(50);
             string otherConfigurationFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Other.config");
-
-            FileConfigurationSource.ResetImplementation(otherConfigurationFile, true);
             File.Copy(AppDomain.CurrentDomain.SetupInformation.ConfigurationFile, otherConfigurationFile);
 
             try
             {
                 bool otherSourceChanged = false;
 
-                FileConfigurationSource otherSource = new FileConfigurationSource(otherConfigurationFile);
+                using (FileConfigurationSource otherSource = new FileConfigurationSource(otherConfigurationFile, true, 50))
+                {
+                    DummySection otherDummySection = otherSource.GetSection(localSection) as DummySection;
+                    Assert.IsTrue(otherDummySection != null);
 
-                DummySection otherDummySection = otherSource.GetSection(localSection) as DummySection;
-                Assert.IsTrue(otherDummySection != null);
+                    otherSource.AddSectionChangeHandler(
+                        localSection,
+                        delegate(object o, ConfigurationChangedEventArgs args)
+                        {
+                            Assert.IsNull(otherSource.GetSection(localSection));
+                            otherSourceChanged = true;
+                        });
 
-                otherSource.AddSectionChangeHandler(localSection, delegate(object o,
-                                                                           ConfigurationChangedEventArgs args)
-                                                                  {
-                                                                      Assert.IsNull(otherSource.GetSection(localSection));
-                                                                      otherSourceChanged = true;
-                                                                  });
+                    otherSource.Remove(localSection);
 
-                otherSource.Remove(otherConfigurationFile, localSection);
+                    Thread.Sleep(300);
 
-                Thread.Sleep(300);
-
-                Assert.AreEqual(true, otherSourceChanged);
+                    Assert.AreEqual(true, otherSourceChanged);
+                }
             }
             finally
             {
@@ -247,36 +192,39 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
         }
 
         [TestMethod]
+        [Ignore]
+        // this test relied on lazily initialization of the Configuration object, and would only work if changes
+        // happened before any section was requested
         public void ReadsLatestVersionOnFirstRequest()
         {
             string otherConfigurationFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Other.config");
 
-            FileConfigurationSource.ResetImplementation(otherConfigurationFile, false);
             try
             {
                 File.Copy(AppDomain.CurrentDomain.SetupInformation.ConfigurationFile, otherConfigurationFile);
 
-                FileConfigurationSource otherSource = new FileConfigurationSource(otherConfigurationFile);
+                using (FileConfigurationSource otherSource = new FileConfigurationSource(otherConfigurationFile, false))
+                {
+                    DummySection rwSection = null;
+                    ExeConfigurationFileMap fileMap = new ExeConfigurationFileMap();
+                    fileMap.ExeConfigFilename = otherConfigurationFile;
+                    System.Configuration.Configuration rwConfiguration =
+                        ConfigurationManager.OpenMappedExeConfiguration(fileMap, ConfigurationUserLevel.None);
+                    rwConfiguration.Sections.Remove(localSection);
+                    rwConfiguration.Sections.Add(localSection, rwSection = new DummySection());
+                    rwSection.Name = localSection;
+                    rwSection.Value = 12;
+                    rwSection.SectionInformation.ConfigSource = localSectionSource;
 
-                DummySection rwSection = null;
-                ExeConfigurationFileMap fileMap = new ExeConfigurationFileMap();
-                fileMap.ExeConfigFilename = otherConfigurationFile;
-                System.Configuration.Configuration rwConfiguration = ConfigurationManager.OpenMappedExeConfiguration(fileMap, ConfigurationUserLevel.None);
-                rwConfiguration.Sections.Remove(localSection);
-                rwConfiguration.Sections.Add(localSection, rwSection = new DummySection());
-                rwSection.Name = localSection;
-                rwSection.Value = 12;
-                rwSection.SectionInformation.ConfigSource = localSectionSource;
+                    rwConfiguration.Save();
 
-                rwConfiguration.Save();
-
-                DummySection otherSection = otherSource.GetSection(localSection) as DummySection;
-                Assert.IsNotNull(otherSection);
-                Assert.AreEqual(12, otherSection.Value);
+                    DummySection otherSection = otherSource.GetSection(localSection) as DummySection;
+                    Assert.IsNotNull(otherSection);
+                    Assert.AreEqual(12, otherSection.Value);
+                }
             }
             finally
             {
-                FileConfigurationSource.ResetImplementation(otherConfigurationFile, true);
                 if (File.Exists(otherConfigurationFile))
                 {
                     File.Delete(otherConfigurationFile);
@@ -288,32 +236,31 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
         public void AddIsReflectedInNextRequestWithoutRefresh()
         {
             string otherConfigurationFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Other.config");
-            FileConfigurationParameter parameter = new FileConfigurationParameter(otherConfigurationFile);
 
-            FileConfigurationSource.ResetImplementation(otherConfigurationFile, false);
             try
             {
                 File.Copy(AppDomain.CurrentDomain.SetupInformation.ConfigurationFile, otherConfigurationFile);
-                FileConfigurationSource otherSource = new FileConfigurationSource(otherConfigurationFile);
 
-                DummySection otherSection = otherSource.GetSection(localSection) as DummySection;
+                using (FileConfigurationSource otherSource = new FileConfigurationSource(otherConfigurationFile, false))
+                {
+                    DummySection otherSection = otherSource.GetSection(localSection) as DummySection;
 
-                // update twice, just to make sure
-                DummySection newSection = new DummySection();
-                newSection.Value = 13;
-                otherSource.Add(parameter, localSection, newSection);
+                    // update twice, just to make sure
+                    DummySection newSection = new DummySection();
+                    newSection.Value = 13;
+                    otherSource.Add(localSection, newSection);
 
-                newSection = new DummySection();
-                newSection.Value = 12;
-                otherSource.Add(parameter, localSection, newSection);
+                    newSection = new DummySection();
+                    newSection.Value = 12;
+                    otherSource.Add(localSection, newSection);
 
-                otherSection = otherSource.GetSection(localSection) as DummySection;
-                Assert.IsNotNull(otherSection);
-                Assert.AreEqual(12, otherSection.Value);
+                    otherSection = otherSource.GetSection(localSection) as DummySection;
+                    Assert.IsNotNull(otherSection);
+                    Assert.AreEqual(12, otherSection.Value);
+                }
             }
             finally
             {
-                FileConfigurationSource.ResetImplementation(otherConfigurationFile, true);
                 if (File.Exists(otherConfigurationFile))
                 {
                     File.Delete(otherConfigurationFile);
@@ -325,28 +272,27 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
         public void RemoveIsReflectedInNextRequestWithoutRefresh()
         {
             string otherConfigurationFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Other.config");
-            FileConfigurationParameter parameter = new FileConfigurationParameter(otherConfigurationFile);
-
-            FileConfigurationSource.ResetImplementation(otherConfigurationFile, false);
+            
             try
             {
                 File.Copy(AppDomain.CurrentDomain.SetupInformation.ConfigurationFile, otherConfigurationFile);
-                FileConfigurationSource otherSource = new FileConfigurationSource(otherConfigurationFile);
 
-                DummySection otherSection = otherSource.GetSection(localSection) as DummySection;
+                using (FileConfigurationSource otherSource = new FileConfigurationSource(otherConfigurationFile, false))
+                {
+                    DummySection otherSection = otherSource.GetSection(localSection) as DummySection;
 
-                DummySection newSection = new DummySection();
-                newSection.Value = 13;
-                otherSource.Add(parameter, localSection, newSection);
+                    DummySection newSection = new DummySection();
+                    newSection.Value = 13;
+                    otherSource.Add(localSection, newSection);
 
-                otherSource.Remove(parameter, localSection);
+                    otherSource.Remove(localSection);
 
-                otherSection = otherSource.GetSection(localSection) as DummySection;
-                Assert.IsNull(otherSection);
+                    otherSection = otherSource.GetSection(localSection) as DummySection;
+                    Assert.IsNull(otherSection);
+                }
             }
             finally
             {
-                FileConfigurationSource.ResetImplementation(otherConfigurationFile, true);
                 if (File.Exists(otherConfigurationFile))
                 {
                     File.Delete(otherConfigurationFile);
@@ -355,43 +301,41 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
         }
 
         [TestMethod]
-        [Ignore] // This test is broken
+        [Ignore]
         public void ChangeInExternalConfigSourceIsDetected()
         {
-            ConfigurationChangeWatcher.SetDefaultPollDelayInMilliseconds(50);
             string otherConfigurationFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Other.config");
-            FileConfigurationParameter parameter = new FileConfigurationParameter(otherConfigurationFile);
 
-            FileConfigurationSource.ResetImplementation(otherConfigurationFile, true);
             try
             {
                 File.Copy(AppDomain.CurrentDomain.SetupInformation.ConfigurationFile, otherConfigurationFile);
-                FileConfigurationSource otherSource = new FileConfigurationSource(otherConfigurationFile);
 
-                DummySection rwSection;
-                System.Configuration.Configuration rwConfiguration = ConfigurationManager.OpenExeConfiguration(otherConfigurationFile);
-                rwConfiguration.Sections.Remove(externalSection);
-                rwConfiguration.Sections.Add(externalSection, rwSection = new DummySection());
-                rwSection.Name = externalSection;
-                rwSection.Value = 12;
-                rwSection.SectionInformation.ConfigSource = externalSectionSource;
-                rwConfiguration.Save(ConfigurationSaveMode.Full);
+                using (FileConfigurationSource otherSource = new FileConfigurationSource(otherConfigurationFile, true, 50))
+                {
+                    DummySection rwSection;
+                    System.Configuration.Configuration rwConfiguration =
+                        ConfigurationManager.OpenExeConfiguration(otherConfigurationFile);
+                    rwConfiguration.Sections.Remove(externalSection);
+                    rwConfiguration.Sections.Add(externalSection, rwSection = new DummySection());
+                    rwSection.Name = externalSection;
+                    rwSection.Value = 12;
+                    rwSection.SectionInformation.ConfigSource = externalSectionSource;
+                    rwConfiguration.Save(ConfigurationSaveMode.Full);
 
-                DummySection otherSection = otherSource.GetSection(externalSection) as DummySection;
-                Assert.AreEqual(12, otherSection.Value);
+                    DummySection otherSection = otherSource.GetSection(externalSection) as DummySection;
+                    Assert.AreEqual(12, otherSection.Value);
 
-                rwSection.Value = 13;
-                rwConfiguration.Save(ConfigurationSaveMode.Modified);
+                    rwSection.Value = 13;
+                    rwConfiguration.Save(ConfigurationSaveMode.Modified);
 
-                Thread.Sleep(1000);
+                    Thread.Sleep(300);
 
-                otherSection = otherSource.GetSection(externalSection) as DummySection;
-                Assert.AreEqual(13, otherSection.Value);
+                    otherSection = otherSource.GetSection(externalSection) as DummySection;
+                    Assert.AreEqual(13, otherSection.Value);
+                }
             }
             finally
             {
-                ConfigurationChangeWatcher.ResetDefaultPollDelay();
-                FileConfigurationSource.ResetImplementation(otherConfigurationFile, true);
                 if (File.Exists(otherConfigurationFile))
                 {
                     File.Delete(otherConfigurationFile);
@@ -403,12 +347,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
         public void SavingWithEmptyProtectionProviderThrowsArgumentException()
         {
             string configurationFile = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile;
-            FileConfigurationSource fileConfigSource = new FileConfigurationSource(configurationFile);
-            FileConfigurationParameter parameter = new FileConfigurationParameter(configurationFile);
+            FileConfigurationSource fileConfigSource = new FileConfigurationSource(configurationFile, false);
 
             DummySection newSection = new DummySection();
 
-            fileConfigSource.Add(parameter, localSection, newSection, string.Empty);
+            fileConfigSource.Add(localSection, newSection, string.Empty);
         }
 
         [TestMethod]
@@ -417,12 +360,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
             DummySection dummySection = new DummySection();
 
             string configurationFile = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile;
-            FileConfigurationSource fileConfigSource = new FileConfigurationSource(configurationFile);
-            FileConfigurationParameter parameter = new FileConfigurationParameter(configurationFile);
+            FileConfigurationSource fileConfigSource = new FileConfigurationSource(configurationFile, false);
 
-            fileConfigSource.Add(parameter, protectedSection, dummySection, ProtectedConfiguration.DefaultProvider);
-
-            FileConfigurationSource.ResetImplementation(configurationFile, true);
+            fileConfigSource.Add(protectedSection, dummySection, ProtectedConfiguration.DefaultProvider);
 
             ConfigurationSection section = fileConfigSource.GetSection(protectedSection);
 

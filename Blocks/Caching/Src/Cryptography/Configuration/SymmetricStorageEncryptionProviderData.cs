@@ -29,7 +29,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Cryptography.Configurati
 		/// <summary>
 		/// Initializs an instance of a <see cref="SymmetricStorageEncryptionProviderData"/> class.
 		/// </summary>
-		public SymmetricStorageEncryptionProviderData()
+		public SymmetricStorageEncryptionProviderData() : base(typeof(SymmetricStorageEncryptionProvider))
 		{
 		}
 

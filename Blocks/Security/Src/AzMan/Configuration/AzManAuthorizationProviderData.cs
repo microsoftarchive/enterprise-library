@@ -36,6 +36,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.AzMan.Configuration
         /// </summary>
         public AzManAuthorizationProviderData()
         {
+            Type = typeof(AzManAuthorizationProvider);
         }
 
         /// <summary>

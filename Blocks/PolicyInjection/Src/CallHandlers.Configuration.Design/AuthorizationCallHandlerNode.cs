@@ -81,7 +81,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
         /// <summary>
         /// The operation name to use when performing the authorization operation.
         /// </summary>
-        /// <value>Gets or sets the operation name to use as configured for the Security block.</value>
+        /// <value>Gets or sets the operation name to use as configured for the Security Application Block.</value>
         [SRDescription("OperationNameDescription", typeof(Resources))]
         [SRCategory("CategoryGeneral", typeof(Resources))]
         [Required]

@@ -11,7 +11,6 @@
 
 using System;
 using System.Data.Common;
-using System.Data.SqlClient;
 using System.Threading;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Data
@@ -23,6 +22,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
     {
         readonly IAsyncResult innerAsyncResult;
         readonly DbCommand command;
+        readonly bool disposeCommand;
         readonly bool closeConnection;
         readonly DateTime startTime;
 
@@ -32,12 +32,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
         /// <param name="innerAsyncResult">The <see cref='IAsyncResult'/> object returned from the underlying
         /// async operation.</param>
         /// <param name="command">Command that was executed.</param>
+        /// <param name="disposeCommand">Should the command be disposed at EndInvoke time?</param>
         /// <param name="closeConnection">Should this connection be closed at EndInvoke time?</param>
         /// <param name="startTime">Time operation was invoked.</param>
-        public DaabAsyncResult(IAsyncResult innerAsyncResult, DbCommand command, bool closeConnection, DateTime startTime)
+        public DaabAsyncResult(
+            IAsyncResult innerAsyncResult,
+            DbCommand command,
+            bool disposeCommand,
+            bool closeConnection,
+            DateTime startTime)
         {
             this.innerAsyncResult = innerAsyncResult;
             this.command = command;
+            this.disposeCommand = disposeCommand;
             this.closeConnection = closeConnection;
             this.startTime = startTime;
         }
@@ -80,6 +87,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
         public IAsyncResult InnerAsyncResult
         {
             get { return innerAsyncResult; }
+        }
+
+        /// <summary>
+        /// Should the command be disposed by the End method?
+        /// </summary>
+        public bool DisposeCommand
+        {
+            get { return disposeCommand; }
         }
 
         /// <summary>

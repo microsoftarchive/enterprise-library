@@ -14,9 +14,10 @@ using System.Data;
 using System.Data.Common;
 using System.Data.Odbc;
 using System.Data.SqlClient;
+using System.Transactions;
 using System.Xml;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Practices.EnterpriseLibrary.Data.TestSupport;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
 {
@@ -164,6 +165,58 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
             }
 
             return actualOutput;
+        }
+
+        [TestMethod]
+        public void ClosingAnXmlReaderClosesTheUnderlyingConnection_Bug2751()
+        {
+            var database = new SqlDatabase(@"server=(local)\SQLEXPRESS;database=Northwind;Integrated Security=true");
+
+            var command = new SqlCommand { CommandText = "Select * from Region for xml auto", CommandType = CommandType.Text };
+
+            using (var reader = database.ExecuteXmlReader(command))
+            {
+                Assert.AreNotEqual(ConnectionState.Closed, command.Connection.State);
+            }
+            Assert.AreEqual(ConnectionState.Closed, command.Connection.State);
+        }
+
+        [TestMethod]
+        public void ClosingAnXmlReaderExecutedWithATrasactionDoesNotCloseTheUnderlyingConnection_Bug2751()
+        {
+            var database = new SqlDatabase(@"server=(local)\SQLEXPRESS;database=Northwind;Integrated Security=true");
+
+            using (var connection = database.CreateConnection())
+            {
+                connection.Open();
+                var transaction = connection.BeginTransaction();
+
+                var command = new SqlCommand { CommandText = "Select * from Region for xml auto", CommandType = CommandType.Text };
+
+                using (var reader = database.ExecuteXmlReader(command, transaction))
+                {
+                    Assert.AreNotEqual(ConnectionState.Closed, command.Connection.State);
+                }
+                Assert.AreNotEqual(ConnectionState.Closed, command.Connection.State);
+            }
+        }
+
+        [TestMethod]
+        public void ClosingAnXmlReaderExecutedWhileInATrasactionScopeDoesNotCloseTheUnderlyingConnection_Bug2751()
+        {
+            var database = new SqlDatabase(@"server=(local)\SQLEXPRESS;database=Northwind;Integrated Security=true");
+
+            var command = new SqlCommand { CommandText = "Select * from Region for xml auto", CommandType = CommandType.Text };
+
+            using (new TransactionScope())
+            {
+                using (var reader = database.ExecuteXmlReader(command))
+                {
+                    Assert.AreNotEqual(ConnectionState.Closed, command.Connection.State);
+                }
+                Assert.AreNotEqual(ConnectionState.Closed, command.Connection.State);
+            }
+            Assert.AreEqual(ConnectionState.Closed, command.Connection.State);
         }
     }
 }

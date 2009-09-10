@@ -21,7 +21,7 @@ using FakeRules = Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Matching
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
 {
     /// <summary>
-    /// Configuration element that stores the config information for an instance
+    /// Configuration element that stores the configuration information for an instance
     /// of <see cref="NamespaceMatchingRule"/>.
     /// </summary>
     public class NamespaceMatchingRuleData : MatchingRuleData
@@ -38,7 +38,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// <summary>
         /// Constructs a new <see cref="NamespaceMatchingRuleData"/> instance.
         /// </summary>
-        /// <param name="matchingRuleName">Matching rule name in config file.</param>
+        /// <param name="matchingRuleName">Matching rule name in configuration file.</param>
         public NamespaceMatchingRuleData(string matchingRuleName)
             : this(matchingRuleName, new List<MatchData>())
         {
@@ -47,7 +47,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// <summary>
         /// Constructs a new <see cref="NamespaceMatchingRuleData"/> instance.
         /// </summary>
-        /// <param name="matchingRuleName">Matching rule name in config file.</param>
+        /// <param name="matchingRuleName">Matching rule name in configuration file.</param>
         /// <param name="namespaceName">Namespace pattern to match.</param>
         public NamespaceMatchingRuleData(string matchingRuleName, string namespaceName)
             : this(matchingRuleName, new MatchData[] { new MatchData(namespaceName) })
@@ -57,7 +57,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// <summary>
         /// Constructs a new <see cref="NamespaceMatchingRuleData"/> instance.
         /// </summary>
-        /// <param name="matchingRuleName">Matching rule name in config file.</param>
+        /// <param name="matchingRuleName">Matching rule name in configuration file.</param>
         /// <param name="matches">Collection of namespace patterns to match. If any
         /// of the patterns match then the rule matches.</param>
         public NamespaceMatchingRuleData(string matchingRuleName, IEnumerable<MatchData> matches)

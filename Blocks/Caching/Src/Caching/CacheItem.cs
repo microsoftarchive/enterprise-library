@@ -54,7 +54,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
         /// <summary>
         /// Constructs a fully formed CacheItem. This constructor is to be used when restoring an existing
         /// CacheItem from the backing store. As such, it does not generate its own Guid for this instance,
-        /// but allows the guid to be passed in, as read from the backing store.
+        /// but allows the GUID to be passed in, as read from the backing store.
         /// </summary>
         /// <param name="lastAccessedTime">Time this CacheItem last accessed by user.</param>
         /// <param name="key">Key provided  by the user for this cache item. May not be null.</param>

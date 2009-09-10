@@ -52,25 +52,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Unity
             var transientPolicies = new PolicyList(this.Context.Policies);
             foreach (var member in injectionMembers)
             {
-                member.AddPolicies(t, name, transientPolicies);
+                member.AddPolicies(null, t, name, transientPolicies);
             }
 
             object result;
+            var buildContext = new BuilderContext(Context.Strategies.MakeStrategyChain(),
+                Context.Lifetime, transientPolicies, new NamedTypeBuildKey(t, name),
+                existing);
             try
             {
-                result =
-                    new Builder()
-                        .BuildUp(
-                            this.Context.Locator,
-                            this.Context.Lifetime,
-                            transientPolicies,
-                            this.Context.Strategies.MakeStrategyChain(),
-                            new NamedTypeBuildKey(t, name),
-                            existing);
+                result = buildContext.Strategies.ExecuteBuildUp(buildContext);
             }
-            catch (BuildFailedException exception)
+            catch (Exception exception)
             {
-                throw new ResolutionFailedException(t, name, exception);
+                throw new ResolutionFailedException(t, name, exception, buildContext);
             }
             return result;
         }

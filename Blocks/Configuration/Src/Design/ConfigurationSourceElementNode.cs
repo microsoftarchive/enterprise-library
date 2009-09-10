@@ -50,14 +50,5 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design
 		/// </value>
 		[Browsable(false)]
 		public abstract IConfigurationSource ConfigurationSource { get; }
-
-		/// <summary>
-		/// When overridden by a class, gets the <see cref="IConfigurationParameter"/> that this node represents.
-		/// </summary>
-		/// <value>
-		/// The <see cref="IConfigurationParameter"/> that this node represents.
-		/// </value>
-		[Browsable(false)]
-		public abstract IConfigurationParameter ConfigurationParameter { get; }
 	}
 }

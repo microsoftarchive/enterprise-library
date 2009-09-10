@@ -17,7 +17,7 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Properties;
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 {
     /// <summary>
-    /// Represesnts a collection of <see cref="NameTypeConfigurationElement"/> objects.
+    /// Represents a collection of <see cref="NameTypeConfigurationElement"/> objects.
     /// </summary>
     /// <typeparam name="T">The type of <see cref="NameTypeConfigurationElement"/> object this collection contains.</typeparam>
     /// <typeparam name="TCustomElementData">The type used for Custom configuration elements in this collection.</typeparam>

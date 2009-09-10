@@ -17,7 +17,7 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability;
 namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Manageability
 {
 	/// <summary>
-	/// Represents the configuration information for a provider mapping defined by the Database Application Block
+    /// Represents the configuration information for a provider mapping defined by the Data Access Application Block 
 	/// configuration section.
 	/// </summary>
 	/// <seealso cref="Microsoft.Practices.EnterpriseLibrary.Data.Configuration.DatabaseSettings"/>

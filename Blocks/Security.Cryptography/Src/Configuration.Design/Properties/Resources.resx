@@ -204,10 +204,10 @@ Please select the data protection mode. “User” mode will encrypt your data u
     <value>DPAPI Symmetric Cryptography Provider</value>
   </data>
   <data name="ErrorExportingKey" xml:space="preserve">
-    <value>An error ocurred exporting the key.</value>
+    <value>An error occurred exporting the key.</value>
   </data>
   <data name="ErrorImportingKey" xml:space="preserve">
-    <value>An error ocurred importing the key. Please make sure the filepath and ProtectionScope are corrent.</value>
+    <value>An error occurred importing the key. Please make sure the filepath and ProtectionScope are corrent.</value>
   </data>
   <data name="ExistingKeyLabel" xml:space="preserve">
     <value>Use an existing DPAPI-protected key file</value>

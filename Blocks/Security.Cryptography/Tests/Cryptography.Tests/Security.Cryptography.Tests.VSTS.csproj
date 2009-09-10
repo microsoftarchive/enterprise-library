@@ -74,6 +74,13 @@
     <Compile Include="AssertHelpers.cs" />
     <Compile Include="Configuration\CryptographyReconfigurableTypeRegistrationFixture.cs" />
     <Compile Include="Configuration\CryptographyTypeRegistrationFixture.cs" />
+    <Compile Include="Configuration\Fluent\EncryptUsingHashAlgorithmProviderExtensionFixture.cs" />
+    <Compile Include="Configuration\Fluent\EncryptUsingKeyedHashAlgorithmProviderExtensionFixture.cs" />
+    <Compile Include="Configuration\Fluent\EncryptUsingSymmetricAlgorithmProviderExtensionFixture.cs" />
+    <Compile Include="Configuration\Fluent\CryptographyConfigurationSourceBuilderExtensionFixture.cs" />
+    <Compile Include="Configuration\Fluent\EncryptUsingCustomHashProviderNamedExtensionFixture.cs" />
+    <Compile Include="Configuration\Fluent\EncryptUsingCustomSymmetricProviderNamedExtensionFixture.cs" />
+    <Compile Include="Configuration\Fluent\EncryptUsingDPAPIProviderNamedExtensionFixture.cs" />
     <Compile Include="Configuration\HashConfigurationSerializationFixture.cs" />
     <Compile Include="Configuration\SymmetricConfigurationSerializationFixture.cs" />
     <Compile Include="Configuration\Unity\KeyedHashAlgorithmProviderPolicyCreationFixture.cs" />

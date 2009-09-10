@@ -72,8 +72,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography
         /// </summary>
         /// <param name="hashProviderNames">Sequence of names of the hash providers as defined in configuration.</param>
         /// <param name="hashProviders">The hash providers corresponding to the names in <paramref name="hashProviderNames"/> at the same index.</param>
-        /// <param name="cryptoProviderNames">Sequence of names of the crypto providers as defined in configuration.</param>
-        /// <param name="symmetricCryptoProviders">The symmetric crypto providers corresponding to the names give in <paramref name="cryptoProviderNames"/>
+        /// <param name="cryptoProviderNames">Sequence of names of the cryptography providers as defined in configuration.</param>
+        /// <param name="symmetricCryptoProviders">The symmetric cryptography providers corresponding to the names give in <paramref name="cryptoProviderNames"/>
         /// <param name="instrumentationProvider">The instrumentation provider used to report errors.</param>
         /// at the same index.</param>
         public CryptographyManagerImpl(IEnumerable<string> hashProviderNames, IEnumerable<IHashProvider> hashProviders,

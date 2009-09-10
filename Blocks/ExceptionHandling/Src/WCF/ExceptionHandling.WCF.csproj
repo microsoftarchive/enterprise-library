@@ -63,6 +63,7 @@
     </Compile>
     <Compile Include="Configuration\ConfigurationSourceBuilderExtensions.cs" />
     <Compile Include="Configuration\FaultContractExceptionHandlerMappingData.cs" />
+    <Compile Include="Configuration\IExceptionConfigurationWcfShieldingProvider.cs" />
     <Compile Include="Configuration\Manageability\FaultContractExceptionHandlerDataWmiMapper.cs" />
     <Compile Include="Configuration\Manageability\Installer.cs">
       <SubType>Component</SubType>

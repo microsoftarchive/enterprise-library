@@ -17,7 +17,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration.Manageabi
 {
 
     /// <summary>
-    /// Representa a manageability provider for custom security cache provider.
+    /// Represents a manageability provider for custom security cache provider.
     /// </summary>
 	public class CustomSecurityCacheProviderDataManageabilityProvider 
 		: CustomProviderDataManageabilityProvider<CustomSecurityCacheProviderData>

@@ -23,7 +23,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
 
             Assert.IsTrue(source.Contains("test"));
             Assert.AreEqual(source.GetSection("test").GetType(), typeof(LocalConfigurationSection));
-            Assert.IsTrue(source.Remove("test"));
+            source.Remove("test");
             Assert.IsNull(source.GetSection("random"));
         }
 

@@ -15,20 +15,20 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.SqlConfigurationSource.Design.Tests
 {
-    [TestClass]
-    public class SqlConfigurationSourceElementNodeFixture : ConfigurationDesignHost
-    {
-        [TestMethod]
-        public void SqlConfigurationSourceElementNodeDefaults()
-        {
-            SqlConfigurationSourceElementNode sqlConfigNode = new SqlConfigurationSourceElementNode();
-            Assert.AreEqual("Sql Configuration Source", sqlConfigNode.Name);
-            Assert.AreEqual(String.Empty, sqlConfigNode.ConnectionString);
-            Assert.AreEqual(String.Empty, sqlConfigNode.GetStoredProcedure);
-            Assert.AreEqual(String.Empty, sqlConfigNode.SetStoredProcedure);
-            Assert.AreEqual(String.Empty, sqlConfigNode.RefreshStoredProcedure);
-            Assert.AreEqual(String.Empty, sqlConfigNode.RemoveStoredProcedure);
-            Assert.AreEqual(typeof(SqlConfigurationSource), sqlConfigNode.Type);
-        }
-    }
+    //[TestClass]
+    //public class SqlConfigurationSourceElementNodeFixture : ConfigurationDesignHost
+    //{
+    //    [TestMethod]
+    //    public void SqlConfigurationSourceElementNodeDefaults()
+    //    {
+    //        SqlConfigurationSourceElementNode sqlConfigNode = new SqlConfigurationSourceElementNode();
+    //        Assert.AreEqual("Sql Configuration Source", sqlConfigNode.Name);
+    //        Assert.AreEqual(String.Empty, sqlConfigNode.ConnectionString);
+    //        Assert.AreEqual(String.Empty, sqlConfigNode.GetStoredProcedure);
+    //        Assert.AreEqual(String.Empty, sqlConfigNode.SetStoredProcedure);
+    //        Assert.AreEqual(String.Empty, sqlConfigNode.RefreshStoredProcedure);
+    //        Assert.AreEqual(String.Empty, sqlConfigNode.RemoveStoredProcedure);
+    //        Assert.AreEqual(typeof(SqlConfigurationSource), sqlConfigNode.Type);
+    //    }
+    //}
 }

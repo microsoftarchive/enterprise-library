@@ -9,7 +9,6 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
@@ -28,155 +27,34 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
         IDictionary<string, int> updatedSectionsTally;
         ICollection updatedSectionNames;
 
-        [TestInitialize]
-        public void Setup()
-        {
-            SystemConfigurationSource.ResetImplementation(false);
-            ConfigurationChangeWatcher.SetDefaultPollDelayInMilliseconds(50);
-
-            System.Configuration.Configuration rwConfiguration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-            DummySection rwSection;
-
-            rwConfiguration.Sections.Remove(localSection);
-            rwConfiguration.Sections.Add(localSection, rwSection = new DummySection());
-            rwSection.Name = localSection;
-            rwSection.Value = 10;
-            rwSection.SectionInformation.ConfigSource = localSectionSource;
-
-            updatedSectionsTally = new Dictionary<string, int>(0);
-        }
-
-        [TestCleanup]
-        public void TearDown()
-        {
-            ConfigurationChangeWatcher.ResetDefaultPollDelay();
-        }
-
-        [TestMethod]
-        public void SameImplementationSurvivesAcrossInstances()
-        {
-            SystemConfigurationSource source1 = new SystemConfigurationSource();
-            object section = source1.GetSection(localSection);
-
-            Assert.IsNotNull(section);
-            Assert.AreEqual(1, SystemConfigurationSource.Implementation.WatchedSections.Count);
-            Assert.IsTrue(SystemConfigurationSource.Implementation.WatchedSections.Contains(localSection));
-
-            source1 = null;
-
-            GC.Collect(3);
-
-            Assert.AreEqual(1, SystemConfigurationSource.Implementation.WatchedSections.Count);
-            Assert.IsTrue(SystemConfigurationSource.Implementation.WatchedSections.Contains("dummy.local"));
-        }
-
-        [TestMethod]
-        public void CanReceiveNotificationsFromImplementation()
-        {
-            SystemConfigurationSource.ResetImplementation(false);
-
-            SystemConfigurationSource source = new SystemConfigurationSource();
-            source.GetSection(localSection);
-            source.AddSectionChangeHandler(localSection, new ConfigurationChangedEventHandler(OnConfigurationChanged));
-
-            SystemConfigurationSource.Implementation.ConfigSourceChanged(localSectionSource);
-
-            Assert.AreEqual(1, updatedSectionsTally[localSection]);
-        }
-
-        [TestMethod]
-        public void CanReceiveSourceNotificationsFromImplementation()
-        {
-            SystemConfigurationSource.ResetImplementation(false);
-
-            SystemConfigurationSource source = new SystemConfigurationSource();
-            source.GetSection(localSection);
-            source.SourceChanged += this.OnConfigurationSourceChanged;
-
-            SystemConfigurationSource.Implementation.ConfigSourceChanged(localSectionSource);
-
-            CollectionAssert.AreEqual(new[] { localSection }, updatedSectionNames);
-        }
-
         [TestMethod]
         public void SystemConfigurationSourceReturnsReadOnlySections()
         {
-            SystemConfigurationSource.ResetImplementation(false);
-
-            SystemConfigurationSource source = new SystemConfigurationSource();
+            SystemConfigurationSource source = new SystemConfigurationSource(false);
             ConfigurationSection dummySection = source.GetSection(localSection);
 
             Assert.IsTrue(dummySection.IsReadOnly());
         }
 
         [TestMethod]
-        public void CanStopReceivingNotificationsFromImplementation()
-        {
-            SystemConfigurationSource.ResetImplementation(false);
-
-            SystemConfigurationSource source = new SystemConfigurationSource();
-            source.GetSection(localSection);
-
-            source.AddSectionChangeHandler(localSection, new ConfigurationChangedEventHandler(OnConfigurationChanged));
-            SystemConfigurationSource.Implementation.ConfigSourceChanged(localSectionSource);
-            Assert.AreEqual(1, updatedSectionsTally[localSection]);
-
-            source.RemoveSectionChangeHandler(localSection, new ConfigurationChangedEventHandler(OnConfigurationChanged));
-            SystemConfigurationSource.Implementation.ConfigSourceChanged(localSectionSource);
-
-            Assert.AreEqual(1, updatedSectionsTally[localSection]);
-            source.AddSectionChangeHandler(localSection, new ConfigurationChangedEventHandler(OnConfigurationChanged));
-            SystemConfigurationSource.Implementation.ConfigSourceChanged(localSectionSource);
-            Assert.AreEqual(2, updatedSectionsTally[localSection]);
-        }
-
-        [TestMethod]
-        public void CanStopReceivingSourceChangedNotificationsFromImplementation()
-        {
-            SystemConfigurationSource.ResetImplementation(false);
-
-            SystemConfigurationSource source = new SystemConfigurationSource();
-            source.GetSection(localSection);
-
-            this.updatedSectionNames = null;
-
-            source.SourceChanged += this.OnConfigurationSourceChanged;
-            SystemConfigurationSource.Implementation.ConfigSourceChanged(localSectionSource);
-            CollectionAssert.AreEqual(new[] { localSection }, this.updatedSectionNames);
-
-            this.updatedSectionNames = null;
-
-            source.SourceChanged -= this.OnConfigurationSourceChanged;
-            SystemConfigurationSource.Implementation.ConfigSourceChanged(localSectionSource);
-            Assert.IsNull(this.updatedSectionNames);
-        }
-
-        [TestMethod]
         public void RemovingAndAddingSection()
         {
-            SystemConfigurationSource.ResetImplementation(true);
-            SystemConfigurationSource sysSource = new SystemConfigurationSource();
+            SystemConfigurationSource sysSource = new SystemConfigurationSource(false);
 
             DummySection dummySection = sysSource.GetSection(localSection) as DummySection;
             Assert.IsTrue(dummySection != null);
-
-            Thread.Sleep(300);
 
             System.Configuration.Configuration rwConfiguration =
                 ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             string fileName = rwConfiguration.FilePath;
             int numSections = rwConfiguration.Sections.Count;
-            FileConfigurationParameter parameter = new FileConfigurationParameter(fileName);
-            sysSource.Remove(parameter, localSection);
-
-            Thread.Sleep(300);
+            sysSource.Remove(localSection);
 
             rwConfiguration =
                 ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             Assert.AreEqual(rwConfiguration.Sections.Count, numSections - 1);
-            sysSource.Add(parameter, localSection, new DummySection()); // can't be the same instance
+            sysSource.Add(localSection, new DummySection()); // can't be the same instance
 
-            Thread.Sleep(300);
             rwConfiguration =
                 ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             Assert.AreEqual(rwConfiguration.Sections.Count, numSections);

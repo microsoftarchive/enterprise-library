@@ -31,12 +31,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.SqlConfigurationSource.Storage
 		private string connectString;
         private string getStoredProcedure;
 
-        /// <summary>
+        /// <summary/>
         /// 
-        /// </summary>
-        /// <summary>
-        /// <para>Initialize a new instance of the <see cref="ConfigurationChangingEventArgs"/> class with the configuration file, the section name, the old value, and the new value of the changes.</para>
-        /// </summary>
         /// <param name="connectString"><para>The connection string to the SQL Server database.</para></param>
         /// <param name="getStoredProcedure"><para>The stored procedure name to get the data.</para></param>
         /// <param name="configurationSectionName"><para>The section name of the changes.</para></param>
@@ -100,16 +96,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.SqlConfigurationSource.Storage
                 return currentLastWriteTime;
             }
 		}
-
-		/// <summary>
-		/// Returns the string that should be assigned to the thread used by the watcher
-		/// </summary>
-		/// <returns>The name for the thread</returns>
-		protected override string BuildThreadName()
-		{
-            return String.Format("_ConfigurationSqlWatcherThread : {0} : {1}", connectString, getStoredProcedure);
-		}
-	    
+    
 		/// <summary>
 		/// Builds the change event data, including the full path of the watched file
 		/// </summary>

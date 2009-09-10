@@ -57,10 +57,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\..\GlobalAssemblyInfo.cs">
-      <Link>GlobalAssemblyInfo.cs</Link>
-    </Compile>
     <Compile Include="APTCAFixture.cs" />
+    <Compile Include="Configuration\SendToDatabaseTraceListenerExtensionFixture.cs" />
     <Compile Include="Configuration\FormattedDatabaseTraceListenerConfigurationFixture.cs" />
     <Compile Include="Configuration\FormattedDatabaseTraceListenerDataFixtures.cs" />
     <Compile Include="Configuration\Unity\FormattedDatabaseTraceListenerPolicyCreatorFixture.cs" />

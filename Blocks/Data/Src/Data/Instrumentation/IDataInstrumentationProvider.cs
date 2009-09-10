@@ -15,7 +15,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Instrumentation
 {
     /// <summary>
     /// Interface that defines the events that are raised for instrumentation
-    /// of the Data Access block.
+    /// of the Data Access Application Block.
     /// </summary>
     public interface IDataInstrumentationProvider
     {

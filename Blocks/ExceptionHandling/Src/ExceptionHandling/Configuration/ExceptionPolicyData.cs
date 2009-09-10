@@ -14,14 +14,18 @@ using System.Configuration;
 using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Instrumentation;
+using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
 {
     /// <summary>
     /// Represents the configuration for an <see cref="ExceptionPolicy"/>.
-    /// </summary>    		
+    /// </summary> 
+    [ResourceDisplayName(typeof(Resources), "AddPolicyDisplayName")]		
+    [ResourceDescription(typeof(Resources), "AddPolicyDsiplayDescription")]
 	public class ExceptionPolicyData : NamedConfigurationElement
     {
 		private const string exceptionTypesProperty = "exceptionTypes";
@@ -50,7 +54,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
 		/// <value>
 		/// A collection of <see cref="ExceptionTypeData"/> objects.
 		/// </value>
-		[ConfigurationProperty(exceptionTypesProperty)]		
+		[ConfigurationProperty(exceptionTypesProperty)]
+        [ResourceDisplayName(typeof(Resources), "ExceptionTypesDisplayName")]
+        [System.ComponentModel.Browsable(false)]
+        [ConfigurationCollection(typeof(ExceptionTypeData))]
 		public NamedElementCollection<ExceptionTypeData> ExceptionTypes
 		{
 			get

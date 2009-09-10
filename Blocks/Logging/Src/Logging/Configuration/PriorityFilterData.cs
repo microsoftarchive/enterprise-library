@@ -29,6 +29,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// </summary>
         public PriorityFilterData()
         {
+            Type = typeof(PriorityFilter);
         }
 
         /// <summary>

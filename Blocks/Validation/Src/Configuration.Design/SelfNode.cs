@@ -19,7 +19,7 @@ using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.Design.Prop
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.Design
 {
     /// <summary>
-    /// Respresents the designtime configuration container for validators that directly apply to the type being validated.
+    /// Represents the designtime configuration container for validators that directly apply to the type being validated.
     /// </summary>
     [Image(typeof(SelfNode))]
     [SelectedImage(typeof(SelfNode))]

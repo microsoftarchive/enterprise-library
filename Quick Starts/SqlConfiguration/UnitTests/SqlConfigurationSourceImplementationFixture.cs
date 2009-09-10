@@ -71,7 +71,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.SqlConfigurationSource.Tests
 
             data = new SqlConfigurationData(connectString, getStoredProc, setStoredProc, refreshStoredProc, removeStoredProc);
 
-            SqlConfigurationSource.ResetImplementation(data, false);
 
             System.Configuration.Configuration rwConfiguration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             DummySection rwSection;
@@ -80,7 +79,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.SqlConfigurationSource.Tests
             rwConfiguration.Sections.Add(localSection, rwSection = new DummySection());
             rwSection.Name = localSection;
             rwSection.Value = 10;
-            SqlConfigurationSourceImplementation configSourceImpl = new SqlConfigurationSourceImplementation(data, false);
+            SqlConfigurationSource configSourceImpl = new SqlConfigurationSource(data, false);
             configSourceImpl.SaveSection(rwSection.Name, rwSection);
 
             rwConfiguration.Sections.Remove(externalSection);
@@ -109,7 +108,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.SqlConfigurationSource.Tests
         [TestMethod]
         public void CanGetExistingSection()
         {
-            SqlConfigurationSourceImplementation implementation = new SqlConfigurationSourceImplementation(data, false);
+            SqlConfigurationSource implementation = new SqlConfigurationSource(data, false);
             object section = implementation.GetSection(localSection);
 
             Assert.IsNotNull(section);
@@ -118,7 +117,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.SqlConfigurationSource.Tests
         [TestMethod]
         public void GetsNullIfSectionDoesNotExist()
         {
-            SqlConfigurationSourceImplementation implementation = new SqlConfigurationSourceImplementation(data, false);
+            SqlConfigurationSource implementation = new SqlConfigurationSource(data, false);
             object section = implementation.GetSection(nonExistingSection);
 
             Assert.IsNull(section);
@@ -128,101 +127,101 @@ namespace Microsoft.Practices.EnterpriseLibrary.SqlConfigurationSource.Tests
         public void GetsNullForSectionWithEmptyValue()
         {
             UpdateSection(localSection, typeof(DummySection).FullName, null);
-            SqlConfigurationSourceImplementation implementation = new SqlConfigurationSourceImplementation(data, false);
+            SqlConfigurationSource implementation = new SqlConfigurationSource(data, false);
             object section = implementation.GetSection(localSection);
 
             Assert.IsNull(section);
         }
 
-        [TestMethod]
-        public void NewInstanceHasNoWatchers()
-        {
-            SqlConfigurationSourceImplementation implementation = new SqlConfigurationSourceImplementation(data, false);
+        //[TestMethod]
+        //public void NewInstanceHasNoWatchers()
+        //{
+        //    SqlConfigurationSource implementation = new SqlConfigurationSource(data, false);
 
-            Assert.AreEqual(0, implementation.WatchedConfigSources.Count);
-            Assert.AreEqual(0, implementation.WatchedSections.Count);
-        }
+        //    Assert.AreEqual(0, implementation.WatchedConfigSources.Count);
+        //    Assert.AreEqual(0, implementation.WatchedSections.Count);
+        //}
 
-        [TestMethod]
-        public void RequestForNonexistentSectionCreatesNoWatcher()
-        {
-            SqlConfigurationSourceImplementation implementation = new SqlConfigurationSourceImplementation(data, false);
+        //[TestMethod]
+        //public void RequestForNonexistentSectionCreatesNoWatcher()
+        //{
+        //    SqlConfigurationSource implementation = new SqlConfigurationSource(data, false);
 
-            object section = implementation.GetSection(nonExistingSection);
+        //    object section = implementation.GetSection(nonExistingSection);
 
-            Assert.IsNull(section);
-            Assert.AreEqual(0, implementation.WatchedConfigSources.Count);
-            Assert.AreEqual(0, implementation.WatchedSections.Count);
-        }
+        //    Assert.IsNull(section);
+        //    Assert.AreEqual(0, implementation.WatchedConfigSources.Count);
+        //    Assert.AreEqual(0, implementation.WatchedSections.Count);
+        //}
 
-        [TestMethod]
-        public void FirstRequestForSectionCreatesWatcher()
-        {
-            SqlConfigurationSourceImplementation implementation = new SqlConfigurationSourceImplementation(data, true);
+        //[TestMethod]
+        //public void FirstRequestForSectionCreatesWatcher()
+        //{
+        //    SqlConfigurationSource implementation = new SqlConfigurationSource(data, true);
 
-            object section = implementation.GetSection(localSection);
+        //    object section = implementation.GetSection(localSection);
 
-            Assert.IsNotNull(section);
-            Assert.AreEqual(1, implementation.WatchedConfigSources.Count);
-            Assert.IsTrue(implementation.WatchedConfigSources.Contains(externalSectionSource));
-            Assert.AreEqual(1, implementation.WatchedSections.Count);
-            Assert.IsTrue(implementation.WatchedSections.Contains(localSection));
+        //    Assert.IsNotNull(section);
+        //    Assert.AreEqual(1, implementation.WatchedConfigSources.Count);
+        //    Assert.IsTrue(implementation.WatchedConfigSources.Contains(externalSectionSource));
+        //    Assert.AreEqual(1, implementation.WatchedSections.Count);
+        //    Assert.IsTrue(implementation.WatchedSections.Contains(localSection));
 
-            Assert.IsNotNull(implementation.ConfigSourceWatcherMappings[externalSectionSource].Watcher);
-            Assert.AreEqual(implementation.ConfigSourceWatcherMappings[externalSectionSource].Watcher.GetType(), typeof(ConfigurationChangeSqlWatcher));
+        //    Assert.IsNotNull(implementation.ConfigSourceWatcherMappings[externalSectionSource].Watcher);
+        //    Assert.AreEqual(implementation.ConfigSourceWatcherMappings[externalSectionSource].Watcher.GetType(), typeof(ConfigurationChangeSqlWatcher));
 
-            implementation.Dispose();
-        }
+        //    implementation.Dispose();
+        //}
 
-        [TestMethod]
-        public void SecondRequestForSameSectionDoesNotCreateSecondWatcher()
-        {
-            SqlConfigurationSourceImplementation implementation = new SqlConfigurationSourceImplementation(data, false);
+        //[TestMethod]
+        //public void SecondRequestForSameSectionDoesNotCreateSecondWatcher()
+        //{
+        //    SqlConfigurationSource implementation = new SqlConfigurationSource(data, false);
 
-            object section1 = implementation.GetSection(localSection);
-            object section2 = implementation.GetSection(localSection);
+        //    object section1 = implementation.GetSection(localSection);
+        //    object section2 = implementation.GetSection(localSection);
 
-            Assert.IsNotNull(section1);
-            Assert.IsNotNull(section2);
-            Assert.AreEqual(1, implementation.WatchedConfigSources.Count);
-            Assert.IsTrue(implementation.WatchedConfigSources.Contains(externalSectionSource));
-            Assert.AreEqual(1, implementation.WatchedSections.Count);
-            Assert.IsTrue(implementation.WatchedSections.Contains(localSection));
-        }
+        //    Assert.IsNotNull(section1);
+        //    Assert.IsNotNull(section2);
+        //    Assert.AreEqual(1, implementation.WatchedConfigSources.Count);
+        //    Assert.IsTrue(implementation.WatchedConfigSources.Contains(externalSectionSource));
+        //    Assert.AreEqual(1, implementation.WatchedSections.Count);
+        //    Assert.IsTrue(implementation.WatchedSections.Contains(localSection));
+        //}
 
-        [TestMethod]
-        public void SecondRequestForDifferentSectionDoesNotCreateSecondConfigSourceWatcher()
-        {
-            SqlConfigurationSourceImplementation implementation = new SqlConfigurationSourceImplementation(data, false);
+        //[TestMethod]
+        //public void SecondRequestForDifferentSectionDoesNotCreateSecondConfigSourceWatcher()
+        //{
+        //    SqlConfigurationSource implementation = new SqlConfigurationSource(data, false);
 
-            object section1 = implementation.GetSection(localSection);
-            object section2 = implementation.GetSection(localSection2);
+        //    object section1 = implementation.GetSection(localSection);
+        //    object section2 = implementation.GetSection(localSection2);
 
-            Assert.IsNotNull(section1);
-            Assert.IsNotNull(section2);
-            Assert.AreEqual(1, implementation.WatchedConfigSources.Count);
-            Assert.IsTrue(implementation.WatchedConfigSources.Contains(externalSectionSource));
-        }
+        //    Assert.IsNotNull(section1);
+        //    Assert.IsNotNull(section2);
+        //    Assert.AreEqual(1, implementation.WatchedConfigSources.Count);
+        //    Assert.IsTrue(implementation.WatchedConfigSources.Contains(externalSectionSource));
+        //}
 
-        [TestMethod]
-        public void RequestsForTwoSectionsCreatesSectionWatchersForBoth()
-        {
-            SqlConfigurationSourceImplementation implementation = new SqlConfigurationSourceImplementation(data, false);
+        //[TestMethod]
+        //public void RequestsForTwoSectionsCreatesSectionWatchersForBoth()
+        //{
+        //    SqlConfigurationSource implementation = new SqlConfigurationSource(data, false);
 
-            object section1 = implementation.GetSection(localSection);
-            object section2 = implementation.GetSection(externalSection);
+        //    object section1 = implementation.GetSection(localSection);
+        //    object section2 = implementation.GetSection(externalSection);
 
-            Assert.IsNotNull(section1);
-            Assert.IsNotNull(section2);
-            Assert.AreEqual(2, implementation.WatchedSections.Count);
-            Assert.IsTrue(implementation.WatchedSections.Contains(localSection));
-            Assert.IsTrue(implementation.WatchedSections.Contains(externalSection));
-        }
+        //    Assert.IsNotNull(section1);
+        //    Assert.IsNotNull(section2);
+        //    Assert.AreEqual(2, implementation.WatchedSections.Count);
+        //    Assert.IsTrue(implementation.WatchedSections.Contains(localSection));
+        //    Assert.IsTrue(implementation.WatchedSections.Contains(externalSection));
+        //}
 
         [TestMethod]
         public void WatchedSectionIsUpdatedIfNotificationIsFired()
         {
-            SqlConfigurationSourceImplementation implementation = new SqlConfigurationSourceImplementation(data, false);
+            SqlConfigurationSource implementation = new SqlConfigurationSource(data, false);
 
             object section1 = implementation.GetSection(localSection);
             Assert.IsNotNull(section1);
@@ -244,39 +243,39 @@ namespace Microsoft.Practices.EnterpriseLibrary.SqlConfigurationSource.Tests
             Assert.AreEqual(15, dummySection1.Value);
         }
 
-        [TestMethod]
-        public void WatchedExistingSectionIsNoLongerWatchedIfRemovedFromConfiguration()
-        {
-            SqlConfigurationSourceImplementation implementation = new SqlConfigurationSourceImplementation(data, false);
-            DummySection dummySection1 = implementation.GetSection(localSection) as DummySection;
-            DummySection dummySection2 = implementation.GetSection(localSection2) as DummySection;
-            Assert.IsNotNull(dummySection1);
-            Assert.IsNotNull(dummySection2);
-            Assert.AreEqual(1, implementation.WatchedConfigSources.Count);
-            Assert.IsTrue(implementation.WatchedConfigSources.Contains(externalSectionSource));
-            Assert.AreEqual(2, implementation.WatchedSections.Count);
-            Assert.IsTrue(implementation.WatchedSections.Contains(localSection));
-            Assert.IsTrue(implementation.WatchedSections.Contains(localSection2));
+        //[TestMethod]
+        //public void WatchedExistingSectionIsNoLongerWatchedIfRemovedFromConfiguration()
+        //{
+        //    SqlConfigurationSource implementation = new SqlConfigurationSource(data, false);
+        //    DummySection dummySection1 = implementation.GetSection(localSection) as DummySection;
+        //    DummySection dummySection2 = implementation.GetSection(localSection2) as DummySection;
+        //    Assert.IsNotNull(dummySection1);
+        //    Assert.IsNotNull(dummySection2);
+        //    Assert.AreEqual(1, implementation.WatchedConfigSources.Count);
+        //    Assert.IsTrue(implementation.WatchedConfigSources.Contains(externalSectionSource));
+        //    Assert.AreEqual(2, implementation.WatchedSections.Count);
+        //    Assert.IsTrue(implementation.WatchedSections.Contains(localSection));
+        //    Assert.IsTrue(implementation.WatchedSections.Contains(localSection2));
 
-            System.Configuration.Configuration rwConfiguration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-            implementation.RemoveSection(localSection2);
+        //    System.Configuration.Configuration rwConfiguration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+        //    implementation.RemoveSection(localSection2);
 
-            implementation.ConfigSourceChanged(externalSectionSource);
+        //    implementation.ConfigSourceChanged(externalSectionSource);
 
-            Assert.AreEqual(2, implementation.WatchedConfigSources.Count);
-            Assert.IsTrue(implementation.WatchedConfigSources.Contains(externalSectionSource));
-            Assert.IsTrue(implementation.WatchedConfigSources.Contains(SqlConfigurationSourceImplementation.NullConfigSource));
-            Assert.AreEqual(1, implementation.WatchedSections.Count);
-            Assert.IsTrue(implementation.WatchedSections.Contains(localSection));
-            Assert.AreEqual(1, implementation.ConfigSourceWatcherMappings[string.Empty].WatchedSections.Count);
-            Assert.IsTrue(implementation.ConfigSourceWatcherMappings[string.Empty].WatchedSections.Contains(localSection));
-            Assert.AreEqual(1, implementation.ConfigSourceWatcherMappings[SqlConfigurationSourceImplementation.NullConfigSource].WatchedSections.Count);
-        }
+        //    Assert.AreEqual(2, implementation.WatchedConfigSources.Count);
+        //    Assert.IsTrue(implementation.WatchedConfigSources.Contains(externalSectionSource));
+        //    Assert.IsTrue(implementation.WatchedConfigSources.Contains(SqlConfigurationSourceImplementation.NullConfigSource));
+        //    Assert.AreEqual(1, implementation.WatchedSections.Count);
+        //    Assert.IsTrue(implementation.WatchedSections.Contains(localSection));
+        //    Assert.AreEqual(1, implementation.ConfigSourceWatcherMappings[string.Empty].WatchedSections.Count);
+        //    Assert.IsTrue(implementation.ConfigSourceWatcherMappings[string.Empty].WatchedSections.Contains(localSection));
+        //    Assert.AreEqual(1, implementation.ConfigSourceWatcherMappings[SqlConfigurationSourceImplementation.NullConfigSource].WatchedSections.Count);
+        //}
 
         [TestMethod]
         public void RegisteredObjectForNonRequestedSectionIsNotNotified()
         {
-            SqlConfigurationSourceImplementation implementation = new SqlConfigurationSourceImplementation(data, false);
+            SqlConfigurationSource implementation = new SqlConfigurationSource(data, false);
             implementation.AddSectionChangeHandler(localSection, new ConfigurationChangedEventHandler(OnConfigurationChanged));
 
             implementation.ConfigSourceChanged(externalSectionSource);
@@ -287,7 +286,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.SqlConfigurationSource.Tests
         [TestMethod]
         public void AllRegisteredObjectsAreNotifiedOfDifferentSectionsChanges()
         {
-            SqlConfigurationSourceImplementation implementation = new SqlConfigurationSourceImplementation(data, false);
+            SqlConfigurationSource implementation = new SqlConfigurationSource(data, false);
             implementation.GetSection(localSection);
             implementation.GetSection(localSection2);
             implementation.AddSectionChangeHandler(localSection, new ConfigurationChangedEventHandler(OnConfigurationChanged));
@@ -302,7 +301,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.SqlConfigurationSource.Tests
         [TestMethod]
         public void RegisteredObjectIsNotifiedOfSectionChanges()
         {
-            SqlConfigurationSourceImplementation implementation = new SqlConfigurationSourceImplementation(data, false);
+            SqlConfigurationSource implementation = new SqlConfigurationSource(data, false);
             implementation.GetSection(externalSection);
             implementation.AddSectionChangeHandler(externalSection, new ConfigurationChangedEventHandler(OnConfigurationChanged));
 
@@ -314,7 +313,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.SqlConfigurationSource.Tests
         [TestMethod]
         public void AllRegisteredObjectsAreNotifiedOfSectionChanges()
         {
-            SqlConfigurationSourceImplementation implementation = new SqlConfigurationSourceImplementation(data, false);
+            SqlConfigurationSource implementation = new SqlConfigurationSource(data, false);
             implementation.GetSection(externalSection);
             implementation.AddSectionChangeHandler(externalSection, new ConfigurationChangedEventHandler(OnConfigurationChanged));
             implementation.AddSectionChangeHandler(externalSection, new ConfigurationChangedEventHandler(OnConfigurationChanged));
@@ -328,7 +327,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.SqlConfigurationSource.Tests
         [TestMethod]
         public void RegisteredObjectIsNotifiedOfSectionChangesIfConfigSourceHasChanged()
         {
-            SqlConfigurationSourceImplementation implementation = new SqlConfigurationSourceImplementation(data, false);
+            SqlConfigurationSource implementation = new SqlConfigurationSource(data, false);
             implementation.GetSection(externalSection);
             implementation.AddSectionChangeHandler(externalSection, new ConfigurationChangedEventHandler(OnConfigurationChanged));
 
@@ -340,7 +339,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.SqlConfigurationSource.Tests
         [TestMethod]
         public void CanAddAndRemoveHandlers()
         {
-            SqlConfigurationSourceImplementation implementation = new SqlConfigurationSourceImplementation(data, false);
+            SqlConfigurationSource implementation = new SqlConfigurationSource(data, false);
             object section = implementation.GetSection(externalSection);
             Assert.IsNotNull(section);
 
@@ -363,7 +362,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.SqlConfigurationSource.Tests
         {
             ConfigurationChangeSqlWatcher.SetDefaultPollDelayInMilliseconds(100);
 
-            SqlConfigurationSourceImplementation implementation = new SqlConfigurationSourceImplementation(data, false);
+            SqlConfigurationSource implementation = new SqlConfigurationSource(data, false);
 
             object section1 = implementation.GetSection(localSection);
             Assert.IsNotNull(section1);
@@ -396,7 +395,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.SqlConfigurationSource.Tests
         [TestMethod]
         public void RestoredSectionGetsNotificationOnRestoreAndGetsFurtherNotifications()
         {
-            SqlConfigurationSourceImplementation implementation = new SqlConfigurationSourceImplementation(data, false);
+            SqlConfigurationSource implementation = new SqlConfigurationSource(data, true);
 
             object section1 = implementation.GetSection(localSection);
             Assert.IsNotNull(section1);

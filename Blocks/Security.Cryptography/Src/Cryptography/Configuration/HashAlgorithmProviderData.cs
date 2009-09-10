@@ -31,7 +31,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         /// <summary>
         /// Initializes with default configuration.
         /// </summary>
-        public HashAlgorithmProviderData()
+        public HashAlgorithmProviderData() : base(typeof(HashAlgorithmProvider))
+        {
+        }
+
+        /// <summary>
+        /// Initializes with default configuration.
+        /// </summary>
+        /// <param name="type">The type of the <see cref="IHashProvider"/>.</param>
+        public HashAlgorithmProviderData(Type type)
+            : base(type)
         {
         }
 
@@ -85,7 +94,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         /// <summary>
         /// Gets or sets the salt enabled flag.
         /// </summary>
-        [ConfigurationProperty(saltEnabledProperty, IsRequired = true)]
+        [ConfigurationProperty(saltEnabledProperty, IsRequired = true, DefaultValue=true)]
         public bool SaltEnabled
         {
             get { return (bool)this[saltEnabledProperty]; }

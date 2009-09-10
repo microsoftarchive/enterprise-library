@@ -166,6 +166,24 @@ EndProject
 Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "Web", "Validation\Tests\Integration.AspNet.Tests\Web", "{7229C7C8-FEF5-481D-82D9-660D5D6804B4}"
 	ProjectSection(WebsiteProperties) = preProject
 	TargetFramework = "3.0"
+		Debug.AspNetCompiler.VirtualPath = "/Web"
+		Debug.AspNetCompiler.PhysicalPath = "Validation\Tests\Integration.AspNet.Tests\Web\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\Web\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/Web"
+		Release.AspNetCompiler.PhysicalPath = "Validation\Tests\Integration.AspNet.Tests\Web\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\Web\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "47699"
+	EndProjectSection
+	ProjectSection(WebsiteProperties) = preProject
+	TargetFramework = "3.0"
 		ProjectReferences = "{E814A5DC-C15B-4BA4-AB7C-B7C9A34AC2FD}|Microsoft.Practices.EnterpriseLibrary.Validation.dll;{5E66DD34-3ABB-48F7-AF8E-1F6D1C41FB9B}|Microsoft.Practices.EnterpriseLibrary.Validation.Integration.AspNet.dll;{A09297C8-2C40-470B-8856-D856676DDFFA}|Microsoft.Practices.EnterpriseLibrary.Common.dll;{C6DE0220-E31B-486B-AB57-107636AEB927}|Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.dll;{3D3C0BEE-437E-487C-B9B3-46288AE933B9}|Microsoft.Practices.EnterpriseLibrary.Validation.TestSupport.dll;"
 		Debug.AspNetCompiler.VirtualPath = "/Web"
 		Debug.AspNetCompiler.PhysicalPath = "Validation\Tests\Integration.AspNet.Tests\Web\"
@@ -181,7 +199,7 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "Web", "Validation\Tests\Int
 		Release.AspNetCompiler.ForceOverwrite = "true"
 		Release.AspNetCompiler.FixedNames = "false"
 		Release.AspNetCompiler.Debug = "False"
-		VWDPort = "24357"
+		VWDPort = "47699"
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Security.Cryptography", "Security.Cryptography\Src\Cryptography\Security.Cryptography.csproj", "{6A4E6A8A-A39F-4643-BA9B-87AED00BB03E}"

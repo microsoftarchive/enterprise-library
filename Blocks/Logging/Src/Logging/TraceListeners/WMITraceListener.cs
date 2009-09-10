@@ -11,12 +11,15 @@
 
 using System.Diagnostics;
 using ManagementInstrumentation = System.Management.Instrumentation.Instrumentation;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
 {
     /// <summary>
     /// WmiTraceListener is a <see cref="TraceListener"/> that send a WMI event
     /// </summary>
+    [ConfigurationElementType(typeof(WmiTraceListenerData))]
     public class WmiTraceListener : TraceListener
     {
         /// <summary>

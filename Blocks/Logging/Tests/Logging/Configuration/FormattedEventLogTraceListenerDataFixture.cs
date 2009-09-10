@@ -40,6 +40,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Tests
         {
             Assert.AreEqual(2, listenerData.GetRegistrations().Count());
         }
+        
+
+        [TestMethod]
+        public void WhenCreatingInstanceUsingDefaultContructor_ThenListenerDataTypeIsSet()
+        {
+            var listener = new FormattedEventLogTraceListenerData();
+            Assert.AreEqual(typeof(FormattedEventLogTraceListenerData), listener.ListenerDataType);
+        }
 
         [TestMethod]
         public void WhenCreatesRegistration_ThenCreatesATypeRegistrationForTheWrapperWithTheOriginalName()

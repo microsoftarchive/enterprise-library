@@ -12,7 +12,7 @@
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation
 {
 	/// <summary>
-	/// Represents the WMI event fired when an error ocurred in the caching block.
+    /// Represents the WMI event fired when an error occurred in the Caching Application Block.
 	/// </summary>
 	public class CacheFailureEvent : CacheEvent
 	{
@@ -22,7 +22,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation
 		/// <summary>
 		/// Initializes a new instance of the <see cref="CacheFailureEvent"/> class.
 		/// </summary>
-		/// <param name="instanceName">The name of the <see cref="CacheManager"/> instance this failure ocurred in.</param>
+        /// <param name="instanceName">The name of the <see cref="CacheManager"/> instance this failure occurred in.</param>
 		/// <param name="errorMessage">The message that describes the failure.</param>
 		/// <param name="exceptionMessage">The message that represents the exception causing the failure.</param>
 		public CacheFailureEvent(string instanceName, string errorMessage, string exceptionMessage)

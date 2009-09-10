@@ -95,7 +95,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverr
                         {
                             UpdateConfigurationSource(node.Hierarchy, originalFilePath);
                             node.Hierarchy.ConfigurationSource = null;
-                            node.Hierarchy.ConfigurationParameter = null;
                         }
 
                         if (temporarySaveSuccessful)
@@ -194,10 +193,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverr
 
         private static void UpdateConfigurationSource(IConfigurationUIHierarchy configurationUIHierarchy, string filename)
         {
-            FileConfigurationSource.ResetImplementation(filename, false);
-
-            configurationUIHierarchy.ConfigurationSource = new FileConfigurationSource(filename);
-            configurationUIHierarchy.ConfigurationParameter = new FileConfigurationParameter(filename);
+            configurationUIHierarchy.ConfigurationSource = new FileConfigurationSource(filename, false);
             configurationUIHierarchy.StorageService.ConfigurationFile = filename;
 
             if (configurationUIHierarchy.RootNode != null)

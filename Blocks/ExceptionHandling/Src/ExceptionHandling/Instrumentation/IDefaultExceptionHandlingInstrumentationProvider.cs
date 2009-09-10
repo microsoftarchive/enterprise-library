@@ -13,7 +13,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Instrumentatio
 {
     /// <summary>
     /// Interface that defines the errors that can be reported when there's a fundamental
-    /// problem with the exception handling block.
+    /// problem with the Exception Handling Application Block.
     /// </summary>
     public interface IDefaultExceptionHandlingInstrumentationProvider
     {

@@ -22,7 +22,7 @@ using ParameterKind = Microsoft.Practices.Unity.InterceptionExtension.ParameterK
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
 {
     /// <summary>
-    /// A configuration element storing config information for an instance of
+    /// A configuration element storing configuration information for an instance of
     /// <see cref="ParameterTypeMatchingRule"/>.
     /// </summary>
     public class ParameterTypeMatchingRuleData : MatchingRuleData

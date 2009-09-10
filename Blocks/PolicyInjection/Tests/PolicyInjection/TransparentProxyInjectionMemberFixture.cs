@@ -63,7 +63,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests
         private class PolicyExposingInjectionMember : InjectionMember
         {
             public IPolicyList Policies;
-            public override void AddPolicies(Type typeToCreate, string name, IPolicyList policies)
+            public override void AddPolicies(Type serviceType, Type typeToCreate, string name, IPolicyList policies)
             {
                 this.Policies = policies;
             }

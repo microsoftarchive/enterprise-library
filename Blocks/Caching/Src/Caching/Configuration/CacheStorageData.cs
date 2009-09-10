@@ -35,6 +35,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
 		{
 		}
 
+        /// <summary>
+        /// Initialize a new instance of the <see cref="CacheStorageData"/> class with a name and the type of <see cref="IBackingStore"/>.
+        /// </summary>
+        /// <param name="type">The type of <see cref="IBackingStore"/>.</param>
+        public CacheStorageData(Type type)
+            : this(null, type)
+        {
+        }
+
 		/// <summary>
 		/// Initialize a new instance of the <see cref="CacheStorageData"/> class with a name and the type of <see cref="IBackingStore"/>.
 		/// </summary>

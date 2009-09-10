@@ -16,7 +16,7 @@ using System.Configuration;
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability
 {
     /// <summary>
-    /// Representa a manageable configuration source (like group policy).
+    /// Represents a manageable configuration source (like group policy).
     /// </summary>
     public class ManageableConfigurationSourceImplementation : IDisposable
     {

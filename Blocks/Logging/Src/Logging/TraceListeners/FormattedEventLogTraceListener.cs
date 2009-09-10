@@ -11,6 +11,8 @@
 
 using System.Diagnostics;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
 {
@@ -18,6 +20,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
     /// FormattedEventLogTraceListener is a <see cref="TraceListener"/> that wraps an <see cref="FormattedEventLogTraceListener"/> 
     /// and uses a <see cref="ILogFormatter"/> to transform the data to trace.
     /// </summary>
+    [ConfigurationElementType(typeof(FormattedEventLogTraceListenerData))]
     public class FormattedEventLogTraceListener : FormattedTraceListenerWrapperBase
     {
         /// <summary>

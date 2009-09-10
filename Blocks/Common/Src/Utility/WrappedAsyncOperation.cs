@@ -85,8 +85,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Utility
                 callback(result);
             }
             return result;
-
         }
-
     }
 }

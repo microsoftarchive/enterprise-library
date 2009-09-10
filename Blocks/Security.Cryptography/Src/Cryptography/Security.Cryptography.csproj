@@ -116,6 +116,21 @@
     <Compile Include="Configuration\DpapiSymmetricCryptoProviderData.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Configuration\Fluent\ConfigureCryptographyExtension.cs" />
+    <Compile Include="Configuration\Fluent\EncryptUsingCustomHashProviderNamedExtension.cs" />
+    <Compile Include="Configuration\Fluent\EncryptUsingCustomSymmetricProviderNamedExtension.cs" />
+    <Compile Include="Configuration\Fluent\EncryptUsingDPAPIProviderNamedExtension.cs" />
+    <Compile Include="Configuration\Fluent\EncryptUsingSymmetricAlgorithmProviderExtension.cs" />
+    <Compile Include="Configuration\Fluent\CryptographyConfigurationSourceBuilderExtension.cs" />
+    <Compile Include="Configuration\Fluent\EncryptUsingHashAlgorithmProviderNamedExtension.cs" />
+    <Compile Include="Configuration\Fluent\EncryptUsingKeyedHashAlgorithmProviderNamedExtension.cs" />
+    <Compile Include="Configuration\Fluent\IConfigureCryptography.cs" />
+    <Compile Include="Configuration\Fluent\IEncryptUsingCustomHashProviderNamed.cs" />
+    <Compile Include="Configuration\Fluent\IEncryptUsingCustomSymmetricProviderNamed.cs" />
+    <Compile Include="Configuration\Fluent\IEncryptUsingDPAPIProviderNamed.cs" />
+    <Compile Include="Configuration\Fluent\IEncryptUsingHashAlgorithmProviderNamed.cs" />
+    <Compile Include="Configuration\Fluent\IEncryptUsingKeyedHashAlgorithmProviderNamed.cs" />
+    <Compile Include="Configuration\Fluent\IEncryptUsingSymmetricProviderNamed.cs" />
     <Compile Include="Configuration\HashAlgorithmProviderData.cs">
       <SubType>Code</SubType>
     </Compile>

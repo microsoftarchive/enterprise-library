@@ -48,7 +48,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests.Conf
             symmetricAlgorithmProvider = new CustomSymmetricCryptoProviderData("symm provider", typeof(MockCustomSymmetricProvider));
             cryptoSettings.SymmetricCryptoProviders.Add(symmetricAlgorithmProvider);
             cryptoSettings.DefaultSymmetricCryptoProviderName = symmetricAlgorithmProvider.Name;
-            updatableConfigurationSource.Add(null, CryptographySettings.SectionName, cryptoSettings);
+            updatableConfigurationSource.Add(CryptographySettings.SectionName, cryptoSettings);
 
             container = new UnityContainer();
             containerConfigurator = new UnityContainerConfigurator(container);

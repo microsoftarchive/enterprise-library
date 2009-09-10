@@ -364,7 +364,7 @@
     <value>Timer interval for the distributor service to check MSMQ for new messages</value>
   </data>
   <data name="RecoverableDescription" xml:space="preserve">
-    <value>A boolean that indicates whether MSMQ messages written by this TraceListener are recoverable</value>
+    <value>A Boolean that indicates whether MSMQ messages written by this TraceListener are recoverable</value>
   </data>
   <data name="ReferenceAlreadyExists" xml:space="preserve">
     <value>A reference to TraceListener {0} already exists for this source.</value>
@@ -424,13 +424,13 @@
     <value>Unprocessed Category</value>
   </data>
   <data name="UseAuthenticationDescription" xml:space="preserve">
-    <value>A boolean that indicates whether the TraceListener should authenticate against MSMQ</value>
+    <value>A Boolean that indicates whether the TraceListener should authenticate against MSMQ</value>
   </data>
   <data name="UseDeadLetterQueueDescription" xml:space="preserve">
-    <value>A boolean that indicates whether the deadletter queue should be used</value>
+    <value>A Boolean that indicates whether the deadletter queue should be used</value>
   </data>
   <data name="UseEncryptionDescription" xml:space="preserve">
-    <value>A boolean that indicates whether messages written to the MSMQ should be encrypted</value>
+    <value>A Boolean that indicates whether messages written to the MSMQ should be encrypted</value>
   </data>
   <data name="WmiTraceListenerNode" xml:space="preserve">
     <value>WMI TraceListener</value>

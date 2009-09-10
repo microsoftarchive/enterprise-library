@@ -21,7 +21,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
 {
     /// <summary>
     /// Provides an implementation for <see cref="WrapHandlerData"/> that
-    /// splits policy overrides processing and WMI objects generation, performing approriate logging of 
+    /// splits policy overrides processing and WMI objects generation, performing appropriate logging of 
     /// policy processing errors.
     /// </summary>
 	public class ReplaceHandlerDataManageabilityProvider
@@ -33,7 +33,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
 		public const String ExceptionMessagePropertyName = "exceptionMessage";
 
         /// <summary>
-        /// The name of the replace excetion type property.
+        /// The name of the replace exception type property.
         /// </summary>
 		public const String ReplaceExceptionTypePropertyName = "replaceExceptionType";
 

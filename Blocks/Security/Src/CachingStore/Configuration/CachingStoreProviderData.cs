@@ -36,6 +36,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cache.CachingStore.Conf
 		/// </summary>
 		public CachingStoreProviderData()
 		{
+            Type = typeof(CachingStoreProvider);
 		}
 
 		/// <summary>
@@ -55,9 +56,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cache.CachingStore.Conf
 		}
 
 		/// <summary>
-		/// Gets or sets the Caching Block Cache instance name.
+        /// Gets or sets the Caching Application Block Cache instance name.
 		/// </summary>
-		/// <value>Caching Block Cache Instance Name.</value>
+        /// <value>Caching Application Block Cache Instance Name.</value>
 		[ConfigurationProperty(cacheManagerProperty, IsRequired = true)]
 		public string CacheManager
 		{
@@ -69,7 +70,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cache.CachingStore.Conf
 		/// Gets or sets the Sliding Session Expiration duration (in minutes).
 		/// </summary>
 		/// <value>Sliding Session Expiration duration</value>
-		[ConfigurationProperty(slidingExpirationProperty, IsRequired = true)]
+        [ConfigurationProperty(slidingExpirationProperty, IsRequired = true, DefaultValue = 10)]
 		public int SlidingExpiration
 		{
 			get { return (int)this[slidingExpirationProperty]; }
@@ -80,7 +81,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cache.CachingStore.Conf
 		/// Gets or sets the Absolute Session Expiration duration (in minutes).
 		/// </summary>
 		/// <value>Absolute Session Expiration duration</value>
-		[ConfigurationProperty(absoluteExpirationProperty, IsRequired = true)]
+		[ConfigurationProperty(absoluteExpirationProperty, IsRequired = true, DefaultValue=60)]
 		public int AbsoluteExpiration
 		{
 			get { return (int)this[absoluteExpirationProperty]; }

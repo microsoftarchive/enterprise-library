@@ -15,14 +15,19 @@ using System.Configuration;
 using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Instrumentation;
+using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Properties;
+
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
 {
     /// <summary>
     /// Represents the Exception Handling Application Block configuration section in a configuration file.
     /// </summary>
+    [ResourceDisplayName(typeof(Resources), "SectionDisplayName")]
+    [ViewModel("Console.Wpf.ViewModel.HierarchicalSectionViewModel, Console.Wpf")]
     public class ExceptionHandlingSettings : SerializableConfigurationSection, ITypeRegistrationsProvider
     {
         /// <summary>
@@ -58,6 +63,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
         /// A collection of <see cref="ExceptionPolicyData"/> objects.
         /// </value>
         [ConfigurationProperty(policiesProperty)]
+        [ResourceDisplayName(typeof(Resources), "ExceptionPoliciesDisplayName")]
+        [System.ComponentModel.Browsable(false)]
+        [ConfigurationCollection(typeof(ExceptionPolicyData))]
         public NamedElementCollection<ExceptionPolicyData> ExceptionPolicies
         {
             get { return (NamedElementCollection<ExceptionPolicyData>)this[policiesProperty]; }

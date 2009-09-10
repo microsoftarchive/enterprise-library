@@ -165,6 +165,9 @@
   <data name="ExceptionNullOrEmptyString" xml:space="preserve">
     <value>The value can not be a null or empty string.</value>
   </data>
+  <data name="ExceptionParameterMustImplementType" xml:space="preserve">
+    <value>Parameter must implement type '{0}'.</value>
+  </data>
   <data name="HashComparisonFailed" xml:space="preserve">
     <value>The hash comparison failed.</value>
   </data>

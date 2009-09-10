@@ -38,7 +38,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// Constructs an <see cref="AssemblyMatchingRuleData"/> instance with the given
         /// rule name and assembly name pattern to match.
         /// </summary>
-        /// <param name="matchingRuleName">Name of rule from the config file.</param>
+        /// <param name="matchingRuleName">Name of rule from the configuration file.</param>
         /// <param name="assemblyName">Assembly name to match.</param>
         public AssemblyMatchingRuleData(string matchingRuleName, string assemblyName)
             : base(matchingRuleName, typeof(FakeRules.AssemblyMatchingRule))

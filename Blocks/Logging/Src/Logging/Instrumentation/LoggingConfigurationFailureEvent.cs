@@ -16,7 +16,7 @@ using System.Text;
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation
 {
     /// <summary>
-	/// Represents the WMI event fired when an error in the configuration for the logging block is detected.
+    /// Represents the WMI event fired when an error in the configuration for the Logging Application Block is detected.
 	/// </summary>
     public class LoggingConfigurationFailureEvent : LoggingEvent
     {

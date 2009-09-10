@@ -119,11 +119,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.TestSupport
                 source = configurationSource;
             }
 
-            public override IConfigurationParameter ConfigurationParameter
-            {
-                get { return null; }
-            }
-
             public override IConfigurationSource ConfigurationSource
             {
                 get { return source; }

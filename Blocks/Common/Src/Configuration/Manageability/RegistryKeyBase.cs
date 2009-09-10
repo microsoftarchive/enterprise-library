@@ -47,16 +47,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
 		public abstract IRegistryKey DoOpenSubKey(String name);
 
 		/// <summary>
-		/// Gets the boolean value represented by the value for requested name in the registry key.
+		/// Gets the Boolean value represented by the value for requested name in the registry key.
 		/// </summary>
 		/// <remarks>
 		/// An integer value of 1 is considered <langword>true</langword>, any other 
 		/// value is considered <langword>false</langword>.
 		/// </remarks>
 		/// <param name="valueName">The name of the value to get.</param>
-		/// <returns>The boolean value for the requested name in the registry key.</returns>
+		/// <returns>The Boolean value for the requested name in the registry key.</returns>
 		/// <exception cref="RegistryAccessException">when there is no value for the given name,
-		/// or the value exists but it is not an integer representing a boolean.</exception>
+		/// or the value exists but it is not an integer representing a Boolean.</exception>
 		public bool? GetBoolValue(String valueName)
 		{
 			int? value = GetIntValue(valueName);

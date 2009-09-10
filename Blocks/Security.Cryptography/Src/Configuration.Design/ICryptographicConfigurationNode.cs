@@ -16,12 +16,12 @@ using System.Text;
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration.Design
 {
     /// <summary>
-    /// Represents a configuration node that contains cryptographic key infromation.
+    /// Represents a configuration node that contains cryptographic key information.
     /// </summary>
     public interface ICryptographicKeyConfigurationNode
     {
         /// <summary>
-        /// Gets the cryptographic key infromation.
+        /// Gets the cryptographic key information.
         /// </summary>
         ProtectedKeySettings KeySettings { get; }
 

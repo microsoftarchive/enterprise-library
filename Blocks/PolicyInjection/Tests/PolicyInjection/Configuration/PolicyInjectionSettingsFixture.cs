@@ -26,13 +26,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
         [DeploymentItem("OldStyle.config")]
         public void SkipsInjectorsElement()
         {
-            IConfigurationSource source = new FileConfigurationSource("OldStyle.config");
+            using (var source = new FileConfigurationSource("OldStyle.config", false))
+            {
+                PolicyInjectionSettings settings
+                    = (PolicyInjectionSettings)source.GetSection(PolicyInjectionSettings.SectionName);
 
-            PolicyInjectionSettings settings
-                = (PolicyInjectionSettings)source.GetSection(PolicyInjectionSettings.SectionName);
-
-            Assert.IsNotNull(settings);
-            Assert.AreEqual(3, settings.Policies.Count);
+                Assert.IsNotNull(settings);
+                Assert.AreEqual(3, settings.Policies.Count);
+            }
         }
     }
 

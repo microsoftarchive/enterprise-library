@@ -52,11 +52,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
 
         protected abstract TypeRegistration GetTypeRegistration();
 
-        protected T ResolveDefault<T>()
+        protected T ResolveUnnamed<T>()
         {
-            return container.Resolve<T>(TypeRegistration.DefaultName);
+            return container.Resolve<T>(TypeRegistration.DefaultName<T>());
         }
 
+        protected T ResolveDefault<T>()
+        {
+            return container.Resolve<T>();
+        }
     }
 
     [TestClass]
@@ -71,15 +75,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
         [TestMethod]
         public void ThenTheSuppliedTypeIsRegistered()
         {
-            var foo = ResolveDefault<FooWithoutDefaultConstructor>();
+            var foo = ResolveUnnamed<FooWithoutDefaultConstructor>();
             Assert.IsNotNull(foo);
         }
 
         [TestMethod]
         public void ThenTheInstanceIsRegisteredAsSingleton()
         {
-            var fooFirst = ResolveDefault<FooWithoutDefaultConstructor>();
-            var fooSecond = ResolveDefault<FooWithoutDefaultConstructor>();
+            var fooFirst = ResolveUnnamed<FooWithoutDefaultConstructor>();
+            var fooSecond = ResolveUnnamed<FooWithoutDefaultConstructor>();
             Assert.AreSame(fooFirst, fooSecond);
         }
     }
@@ -111,14 +115,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
         [TestMethod]
         public void ThenMappedInstanceIsAvailable()
         {
-            Assert.IsInstanceOfType(ResolveDefault<IFoo>(), typeof(Foo));
+            Assert.IsInstanceOfType(ResolveUnnamed<IFoo>(), typeof(Foo));
         }
 
         [TestMethod]
         public void TheInstanceIsRegisteredAsSingleton()
         {
-            IFoo aFoo = ResolveDefault<IFoo>();
-            IFoo anotherfoo = ResolveDefault<IFoo>();
+            IFoo aFoo = ResolveUnnamed<IFoo>();
+            IFoo anotherfoo = ResolveUnnamed<IFoo>();
 
             Assert.AreSame(aFoo, anotherfoo);
         }
@@ -145,7 +149,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
         [ExpectedException(typeof(ResolutionFailedException))]
         public void CannotResolveServiceTypeWithoutAName()
         {
-            ResolveDefault<IFoo>();
+            ResolveUnnamed<IFoo>();
         }
     }
 
@@ -161,7 +165,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
         [TestMethod]
         public void ThenTheContainerInjectsTheParameters()
         {
-            var resolvedObject = ResolveDefault<TypeWithOneArgumentConstructor>();
+            var resolvedObject = ResolveUnnamed<TypeWithOneArgumentConstructor>();
             Assert.AreEqual("foo bar", resolvedObject.ConstructorParameter);
         }
     }
@@ -177,7 +181,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
         [TestMethod]
         public void ThenContainerSuppliesValueParameterToConstructedObject()
         {
-            var resolvedObject = (TypeWithOneArgumentConstructor)ResolveDefault<IFoo>();
+            var resolvedObject = (TypeWithOneArgumentConstructor)ResolveUnnamed<IFoo>();
             Assert.AreEqual("foo bar", resolvedObject.ConstructorParameter);
         }
     }
@@ -193,7 +197,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
         [TestMethod]
         public void ThenTheContainerProvidesANullValueForConstructedObject()
         {
-            var resolvedObject = ResolveDefault<TypeWithOneArgumentConstructor>();
+            var resolvedObject = ResolveUnnamed<TypeWithOneArgumentConstructor>();
             Assert.IsNull(resolvedObject.ConstructorParameter);
         }
     }
@@ -211,7 +215,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
         [TestMethod]
         public void ThenTheContainerProvidesTheExpressionForConstructedObject()
         {
-            var resolvedObject = ResolveDefault<TypeWithOneArgumentConstructor>();
+            var resolvedObject = ResolveUnnamed<TypeWithOneArgumentConstructor>();
             Assert.AreEqual(Property, resolvedObject.ConstructorParameter);
         }
     }
@@ -235,7 +239,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
         [TestMethod]
         public void ThenResultParameterIsResolved()
         {
-            var resolvedObject = ResolveDefault<TypeWithOneReferenceArgumentConstructor>();
+            var resolvedObject = ResolveUnnamed<TypeWithOneReferenceArgumentConstructor>();
             Assert.AreSame(theFoo, resolvedObject.ConstructorParameter);
         }
     }
@@ -265,7 +269,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
         [TestMethod]
         public void ThenResultParameterIsEvaluated()
         {
-            var resolvedObject = ResolveDefault<TypeWithOneReferenceArgumentConstructor>();
+            var resolvedObject = ResolveUnnamed<TypeWithOneReferenceArgumentConstructor>();
             Assert.AreSame(theFoo, resolvedObject.ConstructorParameter);
         }
     }
@@ -296,7 +300,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
         [TestMethod]
         public void ThenTheNamedInstanceIsInjectedToCreatedObject()
         {
-            var resolvedObject = ResolveDefault<TypeWithOneReferenceArgumentConstructor>();
+            var resolvedObject = ResolveUnnamed<TypeWithOneReferenceArgumentConstructor>();
             Assert.AreSame(theFoo, resolvedObject.ConstructorParameter);
         }
     }
@@ -328,7 +332,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
         [TestMethod]
         public void ThenTheNamedInstanceIsInjectedToCreatedObject()
         {
-            var resolvedObject = ResolveDefault<TypeWithOneReferenceArgumentConstructor>();
+            var resolvedObject = ResolveUnnamed<TypeWithOneReferenceArgumentConstructor>();
             Assert.AreSame(theFoo, resolvedObject.ConstructorParameter);
         }
     }
@@ -354,7 +358,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
         [TestMethod]
         public void ThenTheContainerProvidesTheValueSuppliedToTheLambdaExpressionForConstructedObject()
         {
-            var resolvedObject = ResolveDefault<TypeWithOneArgumentConstructor>();
+            var resolvedObject = ResolveUnnamed<TypeWithOneArgumentConstructor>();
             Assert.AreEqual(constantExpression, resolvedObject.ConstructorParameter);
         }
     }
@@ -371,7 +375,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
         [TestMethod]
         public void ThenTheContainerInjectsAnEmptyEnumerableToCreatedObject()
         {
-            var resolvedObject = ResolveDefault<TypeWithOneEnumerableArgumentConstructor>();
+            var resolvedObject = ResolveUnnamed<TypeWithOneEnumerableArgumentConstructor>();
             Assert.AreEqual(0, resolvedObject.ConstructorParameter.Count());
         }
     }
@@ -398,7 +402,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
         [TestMethod]
         public void ThenTheContainerInjectsAnSingleElementEnumerableToCreatedObject()
         {
-            var resolvedObject = ResolveDefault<TypeWithOneEnumerableArgumentConstructor>();
+            var resolvedObject = ResolveUnnamed<TypeWithOneEnumerableArgumentConstructor>();
             CollectionAssert.AreEquivalent(new[] { theFoo }, new List<IFoo>(resolvedObject.ConstructorParameter));
         }
     }
@@ -432,7 +436,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
         [TestMethod]
         public void ThenTheContainerInjectsTwoElementEnumerableToCreatedObject()
         {
-            var resolvedObject = ResolveDefault<TypeWithOneEnumerableArgumentConstructor>();
+            var resolvedObject = ResolveUnnamed<TypeWithOneEnumerableArgumentConstructor>();
             CollectionAssert.AreEqual(new[] { theFoo2, theFoo1, }, new List<IFoo>(resolvedObject.ConstructorParameter));
         }
     }
@@ -450,7 +454,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
         [TestMethod]
         public void ThenTheContainerInjectsNull()
         {
-            var resolvedObject = ResolveDefault<TypeWithOneReferenceArgumentConstructor>();
+            var resolvedObject = ResolveUnnamed<TypeWithOneReferenceArgumentConstructor>();
             Assert.IsNull(resolvedObject.ConstructorParameter);
         }
     }
@@ -469,7 +473,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
         [TestMethod]
         public void ThenTheContainerInjectsNull()
         {
-            var resolvedObject = ResolveDefault<TypeWithOneReferenceArgumentConstructor>();
+            var resolvedObject = ResolveUnnamed<TypeWithOneReferenceArgumentConstructor>();
             Assert.IsNull(resolvedObject.ConstructorParameter);
         }
     }
@@ -497,7 +501,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
         [TestMethod]
         public void ThenTheContainerInjectsNull()
         {
-            var resolvedObject = ResolveDefault<TypeWithOneReferenceArgumentConstructor>();
+            var resolvedObject = ResolveUnnamed<TypeWithOneReferenceArgumentConstructor>();
             Assert.AreSame(namedFoo, resolvedObject.ConstructorParameter);
         }
     }
@@ -527,14 +531,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
         [TestMethod]
         public void ThenConstantPropertyValuesAreInjected()
         {
-            var resolvedObject = ResolveDefault<TypeWithProperties>();
+            var resolvedObject = ResolveUnnamed<TypeWithProperties>();
             Assert.AreEqual(5, resolvedObject.IntValueProperty);
         }
 
         [TestMethod]
         public void ThenContainerResolvedValuesAreInjected()
         {
-            var resolvedObject = ResolveDefault<TypeWithProperties>();
+            var resolvedObject = ResolveUnnamed<TypeWithProperties>();
             Assert.AreEqual(foo, resolvedObject.FooProperty);
         }
     }
@@ -552,7 +556,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
         public void ThenResolvingDefaultReturnsDifferentInstance()
         {
             var foo = container.Resolve<Tofu>("foo");
-            var defaultFoo = ResolveDefault<Tofu>();
+            var defaultFoo = ResolveUnnamed<Tofu>();
 
             Assert.AreNotSame(foo, defaultFoo);
         }
@@ -589,7 +593,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
         {
             try
             {
-                ResolveDefault<IFoo>();
+                ResolveUnnamed<IFoo>();
                 Assert.Fail("Should have failed");
             }
             catch (ResolutionFailedException)
@@ -720,15 +724,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
         [TestMethod]
         public void ThenTheContainerResolvesTheUpdatedRegistrations()
         {
-            var instance = ResolveDefault<TypeWithOneArgumentConstructor>();
+            var instance = ResolveUnnamed<TypeWithOneArgumentConstructor>();
             Assert.AreEqual("modified value", instance.ConstructorParameter);
         }
 
         [TestMethod]
         public void ThenTheUpdatedRegistrationStillHasTransientLifetime()
         {
-            var instance = ResolveDefault<TypeWithOneArgumentConstructor>();
-            var secondInstance = ResolveDefault<TypeWithOneArgumentConstructor>();
+            var instance = ResolveUnnamed<TypeWithOneArgumentConstructor>();
+            var secondInstance = ResolveUnnamed<TypeWithOneArgumentConstructor>();
 
             Assert.AreNotSame(instance, secondInstance);
         }
@@ -759,15 +763,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
         [TestMethod]
         public void ThenTheContainerResolvesTheUpdatedRegistrations()
         {
-            var instance = ResolveDefault<TypeWithOneArgumentConstructor>();
+            var instance = ResolveUnnamed<TypeWithOneArgumentConstructor>();
             Assert.AreEqual("modified value", instance.ConstructorParameter);
         }
 
         [TestMethod]
         public void ThenTheUpdatedRegistrationStillHasSingletonLifetime()
         {
-            var instance = ResolveDefault<TypeWithOneArgumentConstructor>();
-            var secondInstance = ResolveDefault<TypeWithOneArgumentConstructor>();
+            var instance = ResolveUnnamed<TypeWithOneArgumentConstructor>();
+            var secondInstance = ResolveUnnamed<TypeWithOneArgumentConstructor>();
 
             Assert.AreSame(instance, secondInstance);
         }
@@ -799,13 +803,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
 
         protected override void ActBeforeReconfigured()
         {
-            originalInstance = ResolveDefault<TypeWithOneArgumentConstructor>();
+            originalInstance = ResolveUnnamed<TypeWithOneArgumentConstructor>();
         }
 
         [TestMethod]
         public void ThenTheContainerResolvestheOriginalInstance()
         {
-            var instance = ResolveDefault<TypeWithOneArgumentConstructor>();
+            var instance = ResolveUnnamed<TypeWithOneArgumentConstructor>();
             Assert.AreSame(originalInstance, instance);
         }
     }
@@ -838,7 +842,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
 
         protected override void ActBeforeReconfigured()
         {
-            originalInstance = ResolveDefault<TypeWithOneArgumentConstructor>();
+            originalInstance = ResolveDefault<IFoo>();
         }
 
         [TestMethod]
@@ -846,8 +850,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
         {
             var instance = ResolveDefault<IFoo>();
             Assert.AreSame(originalInstance, instance);
+            Assert.IsInstanceOfType(originalInstance, typeof(TypeWithOneArgumentConstructor));
         }
-
     }
 
     [TestClass]
@@ -874,8 +878,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
         [TestMethod]
         public void ThenTheLifetimeShoudlStillBeSingleton()
         {
-            var instance = ResolveDefault<IFoo>();
-            var secondInstance = ResolveDefault<IFoo>();
+            var instance = ResolveUnnamed<IFoo>();
+            var secondInstance = ResolveUnnamed<IFoo>();
             Assert.AreSame(instance, secondInstance);
         }
     }
@@ -1028,7 +1032,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
 
         protected override void ActBeforeReconfigured()
         {
-            instancePriorToReconfigure = ResolveDefault<IFoo>() as Foo;
+            instancePriorToReconfigure = ResolveUnnamed<IFoo>() as Foo;
         }
 
         protected override TypeRegistration GetUpdatedRegistration()
@@ -1048,7 +1052,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
             Assert.IsNotNull(instancePriorToReconfigure);
             Assert.AreEqual("string ctor", instancePriorToReconfigure.Name);
 
-            Foo reconfiguredInstance = ResolveDefault<IFoo>() as Foo;
+            Foo reconfiguredInstance = ResolveUnnamed<IFoo>() as Foo;
             Assert.IsNotNull(reconfiguredInstance);
             Assert.AreEqual(42.ToString(), reconfiguredInstance.Name);
 
@@ -1072,7 +1076,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
 
         protected override void ActBeforeReconfigured()
         {
-            instancePriorToReconfigure = ResolveDefault<IFoo>() as Foo;
+            instancePriorToReconfigure = ResolveUnnamed<IFoo>() as Foo;
         }
 
         protected override TypeRegistration GetUpdatedRegistration()
@@ -1092,7 +1096,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
             Assert.IsNotNull(instancePriorToReconfigure);
             Assert.AreEqual("string ctor", instancePriorToReconfigure.Name);
 
-            Foo reconfiguredInstance = ResolveDefault<IFoo>() as Foo;
+            Foo reconfiguredInstance = ResolveUnnamed<IFoo>() as Foo;
             Assert.IsNotNull(reconfiguredInstance);
             Assert.IsNull(reconfiguredInstance.Name);
         }
@@ -1120,7 +1124,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
 
         protected override void ActBeforeReconfigured()
         {
-            instancePriorToReconfigure = ResolveDefault<IFoo>() as Foo;
+            instancePriorToReconfigure = ResolveUnnamed<IFoo>() as Foo;
         }
 
         protected override TypeRegistration GetUpdatedRegistration()
@@ -1145,7 +1149,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
             Assert.AreEqual("LastName", instancePriorToReconfigure.LastName);
             Assert.AreEqual("Initials", instancePriorToReconfigure.Initials);
 
-            Foo reconfiguredInstance = ResolveDefault<IFoo>() as Foo;
+            Foo reconfiguredInstance = ResolveUnnamed<IFoo>() as Foo;
             Assert.IsNotNull(reconfiguredInstance);
             Assert.IsNull(reconfiguredInstance.Name);
             Assert.AreEqual("different", reconfiguredInstance.LastName);

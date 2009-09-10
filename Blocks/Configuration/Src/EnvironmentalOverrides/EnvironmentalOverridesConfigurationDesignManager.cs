@@ -11,14 +11,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design;
 using System.ComponentModel.Design;
+using System.Configuration;
 using System.Diagnostics;
 using System.IO;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides.Configuration;
-using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides
@@ -61,7 +60,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverr
             {
                 if (environmentMergeService.EnvironmentMergeInProgress) return;
             }
-                
+
             IConfigurationUIHierarchy hierarchy = ServiceHelper.GetCurrentHierarchy(serviceProvider);
             Debug.Assert(hierarchy != null);
 
@@ -72,9 +71,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverr
 
             foreach (EnvironmentNode environmentNode in hierarchy.FindNodesByType(typeof(EnvironmentNode)))
             {
-                string environmentDeltaFilePath = Path.Combine(configurationFileDirectory, environmentNode.EnvironmentDeltaFile);
+                string environmentDeltaFilePath =
+                    Path.Combine(configurationFileDirectory, environmentNode.EnvironmentDeltaFile);
 
-                Dictionary<string, ConfigurationNodeMergeData> mergeDataByPath = environmentNode.EnvironmentMergeData.UnfoldMergeData(hierarchy, false);
+                Dictionary<string, ConfigurationNodeMergeData> mergeDataByPath =
+                    environmentNode.EnvironmentMergeData.UnfoldMergeData(hierarchy, false);
                 EnvironmentMergeSection environmentMergeSection = new EnvironmentMergeSection();
                 environmentMergeSection.EnvironmentName = environmentNode.Name;
                 environmentMergeSection.EnvironmentDeltaFile = environmentNode.EnvironmentConfigurationFile;
@@ -84,15 +85,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverr
 
                 try
                 {
-                    FileConfigurationSource.ResetImplementation(environmentDeltaFilePath, false);
-                    FileConfigurationSource fileConfigurationSource = new FileConfigurationSource(environmentDeltaFilePath);
+                    FileConfigurationSource fileConfigurationSource =
+                        new FileConfigurationSource(environmentDeltaFilePath, false);
                     if (!string.IsNullOrEmpty(protectionProvider))
                     {
-                        fileConfigurationSource.Save(environmentDeltaFilePath, EnvironmentMergeSection.EnvironmentMergeData, environmentMergeSection, protectionProvider);
+                        fileConfigurationSource.Save(EnvironmentMergeSection.EnvironmentMergeData, environmentMergeSection, protectionProvider);
                     }
                     else
                     {
-                        fileConfigurationSource.Save(environmentDeltaFilePath, EnvironmentMergeSection.EnvironmentMergeData, environmentMergeSection);
+                        fileConfigurationSource.Add(EnvironmentMergeSection.EnvironmentMergeData, environmentMergeSection);
                     }
                 }
                 catch (ConfigurationErrorsException configurationErrors)
@@ -112,7 +113,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverr
                 mergeElement.ConfigurationNodePath = path;
                 mergeElement.OverrideProperties = mergeData.OverrideProperties;
 
-                foreach(string propertyName in mergeData.AllPropertyNames)
+                foreach (string propertyName in mergeData.AllPropertyNames)
                 {
                     object propertyValue = mergeData.GetPropertyValue(propertyName, typeof(string), null, configurationHierarchy);
                     string serializedRepresentation = SerializationUtility.SerializeToString(propertyValue, configurationHierarchy);

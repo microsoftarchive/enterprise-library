@@ -240,7 +240,7 @@ Message:
     <value>Client: # of Logs Written/Sec</value>
   </data>
   <data name="NumLogsWrittenSecMsg" xml:space="preserve">
-    <value>Number of logs per second written by client using the Enterprise Library Logging Block.</value>
+    <value>Number of logs per second written by client using the Enterprise Library Logging Application Block.</value>
   </data>
   <data name="NumLogsDistributedSec" xml:space="preserve">
     <value>Distributor: # of Logs Distributed/Sec</value>
@@ -360,7 +360,7 @@ Message:
     <value>The value can not be a null or empty string.</value>
   </data>
   <data name="ExceptionDuringFormattingOriginalEntryForReporting" xml:space="preserve">
-    <value>An error ocurred while formatting the log entry for reporting {0}.</value>
+    <value>An error occurred while formatting the log entry for reporting {0}.</value>
   </data>
   <data name="TemplateForFailedLogEntry" xml:space="preserve">
     <value>{timestamp}: {title} - {message}</value>
@@ -515,6 +515,18 @@ Message:
     <value>The creation expression for this type registration must be a Linq New or MemberInit Expression.</value>
   </data>
   <data name="ReconfigurationFailure" xml:space="preserve">
-    <value>An unknown error occurred reconfiguring the logging block. Reconfiguration will not take place.</value>
+    <value>An unknown error occurred reconfiguring the Logging Application Block. Reconfiguration will not take place.</value>
+  </data>
+  <data name="AllEventsTraceSourceName" xml:space="preserve">
+    <value>All Events</value>
+  </data>
+  <data name="ErrorsTraceSourceName" xml:space="preserve">
+    <value>Logging Errors &amp; Warnings</value>
+  </data>
+  <data name="NotProcessedTraceSourceName" xml:space="preserve">
+    <value>Unprocessed Category</value>
+  </data>
+  <data name="ParameterMustImplementType" xml:space="preserve">
+    <value>Parameter must implement type '{0}'.</value>
   </data>
 </root>

@@ -17,7 +17,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Instrumentation
 {
 
     /// <summary>
-    /// Represents the WMI event fired when an error in the configuration for the validation block is detected.
+    /// Represents the WMI event fired when an error in the configuration for the Validation Application Block is detected.
     /// </summary>
     public class ValidationConfigurationFailureEvent : ValidationEvent
     {

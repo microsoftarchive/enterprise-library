@@ -15,7 +15,7 @@ using System.Globalization;
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability
 {
     /// <summary>
-    /// Represents a key for manageability configuration implemenation.
+    /// Represents a key for manageability configuration implementation.
     /// </summary>
     public struct ImplementationKey
     {

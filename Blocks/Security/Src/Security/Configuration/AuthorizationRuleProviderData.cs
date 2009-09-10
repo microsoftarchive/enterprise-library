@@ -20,14 +20,18 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Collections.Generic;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Unity;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Security.Instrumentation;
+using Microsoft.Practices.EnterpriseLibrary.Security.Properties;
+using Container=Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel.Container;
 
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration
@@ -36,6 +40,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration
     /// Represents the configuration data for an
     /// <see cref="Microsoft.Practices.EnterpriseLibrary.Security.AuthorizationRuleProvider"/>.
     /// </summary>
+    [ResourceDisplayName(typeof(Resources), "AddAuthorizationRuleProviderData")]
+    [ResourceDescription(typeof(Resources), "AddAuthorizationRuleProviderDataDescription")]
 	public class AuthorizationRuleProviderData : AuthorizationProviderData
     {
         private const string rulesProperty = "rules";
@@ -46,8 +52,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration
         /// </summary>
         public AuthorizationRuleProviderData()
         {
+            Type = typeof(AuthorizationRuleProvider);
         }
 
+        
 		/// <summary>
 		/// Initializes a new instance of the 
 		/// <see cref="AuthorizationRuleProviderData"/> class.
@@ -64,6 +72,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration
         /// </summary>
 		/// <value>A collection of <see cref="AuthorizationRuleData"/>.</value>
 		[ConfigurationProperty(rulesProperty, IsRequired= false)]
+        [Browsable(false)]
 		public NamedElementCollection<AuthorizationRuleData> Rules
 		{
 			get

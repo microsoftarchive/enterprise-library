@@ -11,8 +11,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.ComponentModel;
+using System.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 {
@@ -78,21 +78,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         /// <summary>
         /// Removes a <see cref="ConfigurationSection"/> from the configuration source.
         /// </summary>
-        /// <param name="name">The name of the section to remove.</param>
-        public bool Remove(string name)
-        {
-            return sections.Remove(name);
-        }
-
-        /// <summary>
-        /// Removes a <see cref="ConfigurationSection"/> from the configuration source.
-        /// </summary>
-        /// <param name="removeParameter">The <see cref="IConfigurationParameter"/> that represents the location where 
-        /// to save the updated configuration. It is ignored in by implementation.</param>
         /// <param name="sectionName">The name of the section to remove.</param>
-        public void Remove(IConfigurationParameter removeParameter, string sectionName)
+        public void Remove(string sectionName)
         {
-            Remove(sectionName);
+            sections.Remove(sectionName);
         }
 
         /// <summary>
@@ -103,21 +92,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         public bool Contains(string name)
         {
             return sections.ContainsKey(name);
-        }
-
-        /// <summary>
-        /// Adds a <see cref="ConfigurationSection"/> to the configuration source.
-        /// </summary>
-        /// <remarks>
-        /// If a configuration section with the specified name already exists it will be replaced.
-        /// </remarks>
-        /// <param name="saveParameter">The <see cref="IConfigurationParameter"/> that represents the location where 
-        /// to save the updated configuration. It is ignored in by implementation.</param>
-        /// <param name="sectionName">The name by which the <paramref name="configurationSection"/> should be added.</param>
-        /// <param name="configurationSection">The configuration section to add.</param>
-        public void Add(IConfigurationParameter saveParameter, string sectionName, ConfigurationSection configurationSection)
-        {
-            Add(sectionName, configurationSection);
         }
 
         /// <summary>
@@ -152,5 +126,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
                 handler(this, args);
             }
         }
+
+        void IDisposable.Dispose()
+        { }
     }
 }

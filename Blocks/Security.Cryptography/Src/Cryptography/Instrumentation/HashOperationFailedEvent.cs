@@ -12,7 +12,7 @@
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Instrumentation
 {
 	/// <summary>
-	/// Represents the WMI event fired when an error ocurred during a hash operation.
+	/// Represents the WMI event fired when an error occurred during a hash operation.
 	/// </summary>
 	public class HashOperationFailedEvent : CryptographyEvent
 	{
@@ -22,7 +22,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Instrument
 		/// <summary>
 		/// Initializes a new instance of the <see cref="HashOperationFailedEvent"/> class.
 		/// </summary>
-		/// <param name="instanceName">The name of the <see cref="IHashProvider"/> instance this failure ocurred in.</param>
+        /// <param name="instanceName">The name of the <see cref="IHashProvider"/> instance this failure occurred in.</param>
 		/// <param name="errorMessage">The message that describes the failure.</param>
 		/// <param name="exceptionMessage">The message that represents the exception causing the failure.</param>
 		public HashOperationFailedEvent(string instanceName, string errorMessage, string exceptionMessage)

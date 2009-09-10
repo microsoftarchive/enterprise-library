@@ -57,15 +57,12 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\..\GlobalAssemblyInfo.cs">
-      <Link>GlobalAssemblyInfo.cs</Link>
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="APTCAFixture.cs" />
     <Compile Include="CachedIdentitiesFixture.cs" />
     <Compile Include="CachedPrincipalsFixture.cs" />
     <Compile Include="CachedProfilesFixture.cs" />
     <Compile Include="CachingStoreProviderFixture.cs" />
+    <Compile Include="Configuration\Fluent\CacheSecurityInCacheStoreExtensionFixture.cs" />
     <Compile Include="Configuration\SecurityCacheTypeRegistrationsFixture.cs" />
     <Compile Include="Configuration\SecurityCacheConfigurationSerializationFixture.cs" />
     <Compile Include="Configuration\Unity\CachingStoreProviderInstantiationFixture.cs" />

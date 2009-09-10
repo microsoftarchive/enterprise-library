@@ -24,7 +24,7 @@ using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography;
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration.Design
 {
     /// <summary>
-    /// Visual control that allows an user to specify a key for an cryptography algorithm.
+    /// Visual control that allows a user to specify a key for an cryptography algorithm.
     /// </summary>
     public partial class CreateNewKeyControl : UserControl, IWizardValidationTarget
     {

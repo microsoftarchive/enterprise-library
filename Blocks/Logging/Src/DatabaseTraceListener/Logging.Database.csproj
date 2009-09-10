@@ -57,6 +57,8 @@
     <Compile Include="..\..\..\GlobalAssemblyInfo.cs">
       <Link>GlobalAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Configuration\Fluent\ILoggingConfigurationSendToDatabaseTraceListener.cs" />
+    <Compile Include="Configuration\Fluent\SendToDatabaseTraceListenerExtension.cs" />
     <Compile Include="Configuration\FormattedDatabaseTraceListenerData.cs" />
     <Compile Include="Configuration\Manageability\FormattedDatabaseTraceListenerDataManageabilityProvider.cs" />
     <Compile Include="Configuration\Manageability\FormattedDatabaseTraceListenerDataWmiMapper.cs" />

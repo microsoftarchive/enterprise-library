@@ -49,7 +49,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Design
 		}
 
 		/// <summary>
-		/// Add the Data Access Block to the current configuration 
+        /// Add the Data Access Application Block to the current configuration 
 		/// </summary>
 		/// <param name="e">The <see cref="CommandExecutingEventArgs"/> containing the event data.</param>
 		protected override void OnExecuted(EventArgs e)

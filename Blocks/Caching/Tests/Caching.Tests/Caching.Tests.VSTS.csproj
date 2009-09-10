@@ -83,6 +83,12 @@
     <Compile Include="Configuration\CacheManagerDataFixture.cs" />
     <Compile Include="Configuration\CacheManagerSettingsTypeRegistrationFixture.cs" />
     <Compile Include="Configuration\CacheManagerSettingsReconfigurableTypeRegistrationFixture.cs" />
+    <Compile Include="Configuration\Fluent\CachingConfigurationSourceBuilderExtensionsFixture.cs" />
+    <Compile Include="Configuration\Fluent\ForCustomCacheManagerNamedExtensionFixture.cs" />
+    <Compile Include="Configuration\Fluent\ForCacheManagerNamedExtensionFixture.cs" />
+    <Compile Include="Configuration\Fluent\StoreCacheManagerItemsInCustomStorageExtensionFixture.cs" />
+    <Compile Include="Configuration\Fluent\StoreCacheManagerItemsInIsolatedStorageExtensionFixture.cs" />
+    <Compile Include="Configuration\Fluent\StoreCacheManagerItemsInMemoryFixture.cs" />
     <Compile Include="Configuration\IsolatedStorageCacheStorageDataFixture.cs" />
     <Compile Include="Configuration\MockCacheManagerDataFixture.cs" />
     <Compile Include="Configuration\Unity\CachingBlockInstantiationFixture.cs" />

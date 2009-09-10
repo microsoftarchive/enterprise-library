@@ -23,7 +23,7 @@ using System.Globalization;
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration.Design
 {
     /// <summary>
-    /// Visual control that allows an user to export an protected key to an archived key file.
+    /// Visual control that allows a user to export an protected key to an archived key file.
     /// </summary>
     public partial class ExportKeyControl : UserControl, IWizardValidationTarget
     {

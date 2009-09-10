@@ -775,7 +775,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Formatters.Tests
             foreach (var date in boundaries)
             {
                 Assert.AreEqual(
-                    date.ToString("MM/dd/yyyy"),
+                    date.ToString("MM\\/dd\\/yyyy"),
                     TextFormatter.FormatFixedUSDate(date),
                     string.Format("Date formats differed using the US format for date: {0}.", date));
             }

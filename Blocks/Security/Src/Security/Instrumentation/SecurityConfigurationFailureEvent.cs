@@ -16,7 +16,7 @@ using System.Text;
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Instrumentation
 {
     /// <summary>
-    /// Represents the WMI event fired when an error in the configuration for the security block is detected.
+    /// Represents the WMI event fired when an error in the configuration for the Security Application Block is detected.
     /// </summary>
     public class SecurityConfigurationFailureEvent : SecurityEvent
     {

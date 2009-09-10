@@ -12,7 +12,7 @@
 namespace Microsoft.Practices.EnterpriseLibrary.Data.Oracle
 {
 	/// <summary>
-	/// Represents the description of an oracle package mapping.
+	/// Represents the description of an Oracle package mapping.
 	/// </summary>
 	/// <remarks>
 	/// <see cref="IOraclePackage"/> is used to specify how to transform store procedure names 

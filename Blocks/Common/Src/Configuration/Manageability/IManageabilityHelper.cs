@@ -14,7 +14,7 @@ using System;
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability
 {
     /// <summary>
-    /// Defines a helper for managability configuration.
+    /// Defines a helper for manageability configuration.
     /// </summary>
     public interface IManageabilityHelper
     {

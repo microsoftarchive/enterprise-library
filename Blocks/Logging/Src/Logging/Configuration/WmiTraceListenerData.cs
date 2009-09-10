@@ -25,7 +25,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// Initializes a new instance of the <see cref="WmiTraceListenerData"/> class.
         /// </summary>
         public WmiTraceListenerData()
+            : base(typeof(WmiTraceListener))
         {
+            ListenerDataType = typeof(WmiTraceListenerData);
         }
 
         /// <summary>

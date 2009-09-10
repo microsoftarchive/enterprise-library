@@ -10,18 +10,17 @@
 //===============================================================================
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Management.Instrumentation;
 using System.Runtime.Serialization;
-using System.Text;
 using System.Security;
 using System.Security.Permissions;
+using System.Text;
 using System.Threading;
 using System.Xml.Serialization;
-using System.Collections.Generic;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging
@@ -379,7 +378,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
             {
                 try
                 {
-                    this.ActivityId = GetActivityId();
+                    this.ActivityId = LogEntryContext.GetActivityId();
                 }
                 catch (Exception)
                 {
@@ -394,43 +393,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
 
         private void InitializeMachineName()
         {
-            this.MachineName = GetMachineNameSafe();
-        }
-
-        internal static string GetMachineNameSafe()
-        {
-            try
-            {
-                return Environment.MachineName;
-            }
-            catch (Exception e)
-            {
-                return string.Format(CultureInfo.CurrentCulture, Properties.Resources.IntrinsicPropertyError, e.Message);
-            }
+            this.MachineName = LogEntryContext.GetMachineNameSafe();
         }
 
         private void InitializeAppDomainName()
         {
-            this.AppDomainName = GetAppDomainNameSafe();
-        }
-
-        internal static string GetAppDomainNameSafe()
-        {
-            try
-            {
-                return AppDomain.CurrentDomain.FriendlyName;
-            }
-            catch (Exception e)
-            {
-                return string.Format(CultureInfo.CurrentCulture, Properties.Resources.IntrinsicPropertyError, e.Message);
-            }
+            this.AppDomainName = LogEntryContext.GetAppDomainNameSafe();
         }
 
         private void InitializeProcessId()
         {
             if (this.UnmanagedCodePermissionAvailable)
             {
-                this.ProcessId = GetProcessIdSafe();
+                this.ProcessId = LogEntryContext.GetProcessIdSafe();
             }
             else
             {
@@ -440,42 +415,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
             }
         }
 
-        internal static string GetProcessIdSafe()
-        {
-            try
-            {
-                return GetCurrentProcessId();
-            }
-            catch (Exception e)
-            {
-                return string.Format(CultureInfo.CurrentCulture, Properties.Resources.IntrinsicPropertyError, e.Message);
-            }
-        }
-
-
         private void InitializeProcessName()
         {
             if (this.UnmanagedCodePermissionAvailable)
             {
-                this.ProcessName = GetProcessNameSafe();
+                this.ProcessName = LogEntryContext.GetProcessNameSafe();
             }
             else
             {
                 this.ProcessName = string.Format(CultureInfo.CurrentCulture,
                     Properties.Resources.IntrinsicPropertyError,
                     Properties.Resources.LogEntryIntrinsicPropertyNoUnmanagedCodePermissionError);
-            }
-        }
-
-        internal static string GetProcessNameSafe()
-        {
-            try
-            {
-                return GetProcessName();
-            }
-            catch (Exception e)
-            {
-                return string.Format(CultureInfo.CurrentCulture, Properties.Resources.IntrinsicPropertyError, e.Message);
             }
         }
 
@@ -497,7 +447,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
             {
                 try
                 {
-                    this.Win32ThreadId = GetCurrentThreadId();
+                    this.Win32ThreadId = LogEntryContext.GetCurrentThreadId();
                 }
                 catch (Exception e)
                 {
@@ -685,9 +635,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// <returns>The process name.</returns>
         public static string GetProcessName()
         {
-            StringBuilder buffer = new StringBuilder(1024);
-            int length = NativeMethods.GetModuleFileName(NativeMethods.GetModuleHandle(null), buffer, buffer.Capacity);
-            return buffer.ToString();
+            return LogEntryContext.GetProcessName();
         }
 
         private static ICollection<string> BuildCategoriesCollection(string category)
@@ -720,21 +668,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
             }
         }
 
-        private static Guid GetActivityId()
-        {
-            return Trace.CorrelationManager.ActivityId;
-        }
-
-        private static string GetCurrentProcessId()
-        {
-            return NativeMethods.GetCurrentProcessId().ToString(NumberFormatInfo.InvariantInfo);
-        }
-
-        private static string GetCurrentThreadId()
-        {
-            return NativeMethods.GetCurrentThreadId().ToString(NumberFormatInfo.InvariantInfo);
-        }
-
         // Serialization customization methods
 
         // The Categories collection may be non-serializable. We copy it to an array so that
@@ -753,6 +686,79 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         {
             // We've just be deserialized, stick in our categories collection.
             categories = categoryStrings;
+        }
+    }
+
+    internal static class LogEntryContext
+    {
+        internal static string GetAppDomainNameSafe()
+        {
+            try
+            {
+                return AppDomain.CurrentDomain.FriendlyName;
+            }
+            catch (Exception e)
+            {
+                return string.Format(CultureInfo.CurrentCulture, Properties.Resources.IntrinsicPropertyError, e.Message);
+            }
+        }
+
+        internal static string GetMachineNameSafe()
+        {
+            try
+            {
+                return Environment.MachineName;
+            }
+            catch (Exception e)
+            {
+                return string.Format(CultureInfo.CurrentCulture, Properties.Resources.IntrinsicPropertyError, e.Message);
+            }
+        }
+
+        internal static string GetProcessIdSafe()
+        {
+            try
+            {
+                return GetCurrentProcessId();
+            }
+            catch (Exception e)
+            {
+                return string.Format(CultureInfo.CurrentCulture, Properties.Resources.IntrinsicPropertyError, e.Message);
+            }
+        }
+
+        internal static string GetProcessNameSafe()
+        {
+            try
+            {
+                return GetProcessName();
+            }
+            catch (Exception e)
+            {
+                return string.Format(CultureInfo.CurrentCulture, Properties.Resources.IntrinsicPropertyError, e.Message);
+            }
+        }
+
+        internal static Guid GetActivityId()
+        {
+            return Trace.CorrelationManager.ActivityId;
+        }
+
+        internal static string GetProcessName()
+        {
+            StringBuilder buffer = new StringBuilder(1024);
+            int length = NativeMethods.GetModuleFileName(NativeMethods.GetModuleHandle(null), buffer, buffer.Capacity);
+            return buffer.ToString();
+        }
+
+        internal static string GetCurrentProcessId()
+        {
+            return NativeMethods.GetCurrentProcessId().ToString(NumberFormatInfo.InvariantInfo);
+        }
+
+        internal static string GetCurrentThreadId()
+        {
+            return NativeMethods.GetCurrentThreadId().ToString(NumberFormatInfo.InvariantInfo);
         }
     }
 }

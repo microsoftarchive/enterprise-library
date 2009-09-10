@@ -19,7 +19,7 @@ using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration.Design
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration.Design
 {
     /// <summary>
-    /// Represents the configuration section for the policy injection block.
+    /// Represents the configuration section for the Policy Injection Application Block.
     /// </summary>
     [Image(typeof(PolicyInjectionSettingsNode))]
     [SelectedImage(typeof(PolicyInjectionSettingsNode))]

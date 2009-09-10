@@ -11,8 +11,11 @@
 
 using System;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Configuration;
+using System.Drawing.Design;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Unity;
 using System.Linq.Expressions;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
@@ -24,6 +27,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration
 	/// <summary>
 	/// Configuration object for Custom Providers.
 	/// </summary>
+    [ResourceDisplayName(typeof(Resources), "AddCustomAuthorizationProviderData")]
+    [ResourceDescription(typeof(Resources), "AddCustomAuthorizationProviderDataDescription")]
 	public class CustomAuthorizationProviderData
 		: AuthorizationProviderData, IHelperAssistedCustomConfigurationData<CustomAuthorizationProviderData>
 	{
@@ -74,6 +79,28 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration
 		{
 			get { return helper.Attributes; }
 		}
+
+	    /// <summary>
+	    /// Gets or sets the <see cref="Type"/> the element is the configuration for.
+	    /// </summary>
+	    /// <value>
+	    /// The <see cref="Type"/> the element is the configuration for.
+	    /// </value>
+	    [Editor("Console.Wpf.ComponentModel.Editors.TypeSelectorEditor, Console.Wpf", typeof(UITypeEditor))]
+        [BaseType(typeof(IAuthorizationProvider), typeof(CustomAuthorizationProviderData))]
+        [ResourceDescription(typeof(Resources), "AuthorizationProviderTypeDescription")]
+        [Browsable(true)]
+        public override Type Type
+        {
+            get
+            {
+                return base.Type;
+            }
+            set
+            {
+                base.Type = value;
+            }
+        }
 
 		/// <summary>
 		/// Gets a <see cref="ConfigurationPropertyCollection"/> of the properties that are defined for 

@@ -14,7 +14,7 @@ using System;
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design
 {
     /// <summary>
-	/// Provides data for the <seealso cref="IConfigurationUIHierarchy.Saved"/> event of the <see cref="IConfigurationUIHierarchyService"/>.
+	/// Provides data for the <see cref="IConfigurationUIHierarchy.Saved"/> event of the <see cref="IConfigurationUIHierarchyService"/>.
     /// </summary>    
     public class HierarchySavedEventArgs : EventArgs
     {

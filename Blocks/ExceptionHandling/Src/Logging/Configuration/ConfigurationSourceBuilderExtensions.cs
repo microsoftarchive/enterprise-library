@@ -13,97 +13,95 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 using System.Diagnostics;
+using Microsoft.Practices.EnterpriseLibrary.Common.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 {
-
-    /// <summary/>
+    /// <summary>
+    /// Extensions to <see cref="IExceptionConfigurationAddExceptionHandlers"/> that support logging exceptions.
+    /// </summary>
     public static class ExceptionHandlingLoggingConfigurationSourceBuilderExtensions
     {
-        /// <summary/>
+        /// <summary>
+        /// Category name to log <see cref="Exception"/> under.  This should align with a category name defined through the <see cref="LoggingConfigurationSourceBuilderExtensions"/> extensions.
+        /// </summary>
+        /// <param name="context">Interface to extend to provide this handler fluent interface.</param>
+        /// <param name="categoryName">Name of the category.</param>
+        /// <returns></returns>
         public static IExceptionConfigurationLoggingProvider LogToCategory(this IExceptionConfigurationAddExceptionHandlers context, string categoryName)
         {
-            IExceptionHandlerExtension exceptionHandlerExtension = (IExceptionHandlerExtension)context;
-            LoggingExceptionHandlerData loggingHandler = new LoggingExceptionHandlerData
-            {
-                Name = categoryName,
-                LogCategory = categoryName,
-                FormatterType = typeof(TextExceptionFormatter)
-            };
-            exceptionHandlerExtension.CurrentExceptionTypeData.ExceptionHandlers.Add(loggingHandler);
+            if (string.IsNullOrEmpty(categoryName)) 
+                throw new ArgumentException(Resources.ExceptionStringNullOrEmpty, "categoryName");
 
-            return new ExceptionConfigurationLoggingProviderBuilder(
-                (IExceptionConfigurationForExceptionTypeOrPostHandling)context,
-                loggingHandler);
-
+            return new ExceptionConfigurationLoggingProviderBuilder(context, categoryName);
         }
 
-        private class ExceptionConfigurationLoggingProviderBuilder : ExceptionConfigurationAddExceptionHandlers, IExceptionConfigurationLoggingProvider
+        private class ExceptionConfigurationLoggingProviderBuilder : ExceptionHandlerConfigurationExtension, IExceptionConfigurationLoggingProvider
         {
-            LoggingExceptionHandlerData logHandler;
+            private LoggingExceptionHandlerData logHandler;
             
-            public ExceptionConfigurationLoggingProviderBuilder(IExceptionConfigurationForExceptionTypeOrPostHandling context, LoggingExceptionHandlerData logHandler)
+            public ExceptionConfigurationLoggingProviderBuilder(IExceptionConfigurationAddExceptionHandlers context, string categoryName)
                 :base(context)
             {
-                this.logHandler = logHandler;
+                logHandler = new LoggingExceptionHandlerData
+                {
+                    Name = categoryName,
+                    LogCategory = categoryName,
+                    FormatterType = typeof(TextExceptionFormatter)
+                };
+
+                base.CurrentExceptionTypeData.ExceptionHandlers.Add(logHandler);
             }
 
-            IExceptionConfigurationLoggingProvider IExceptionConfigurationLoggingProvider.UsingTitle(string title)
+            public IExceptionConfigurationLoggingProvider UsingTitle(string title)
             {
+                if (string.IsNullOrEmpty(title))
+                    throw new ArgumentException(Resources.ExceptionStringNullOrEmpty, "title");
+
                 logHandler.Title = title;
                 
                 return this;
             }
 
-            IExceptionConfigurationLoggingProvider IExceptionConfigurationLoggingProvider.UsingExceptionFormatter(Type exceptionFormatterType)
+            public IExceptionConfigurationLoggingProvider UsingExceptionFormatter(Type exceptionFormatterType)
             {
+                if (exceptionFormatterType == null)
+                    throw new ArgumentNullException("exceptionFormatterType");
+
                 logHandler.FormatterType = exceptionFormatterType;
 
                 return this;
             }
 
-            IExceptionConfigurationLoggingProvider IExceptionConfigurationLoggingProvider.WithSeverity(TraceEventType severity)
+            public IExceptionConfigurationLoggingProvider UsingExceptionFormatter<T>()
+            {
+                return UsingExceptionFormatter(typeof (T));
+            }
+
+            public IExceptionConfigurationLoggingProvider WithSeverity(TraceEventType severity)
             {
                 logHandler.Severity = severity;
 
                 return this;
             }
 
-            IExceptionConfigurationLoggingProvider IExceptionConfigurationLoggingProvider.WithPriority(int priority)
+            public IExceptionConfigurationLoggingProvider WithPriority(int priority)
             {
                 logHandler.Priority = priority;
 
                 return this;
             }
 
-            IExceptionConfigurationLoggingProvider IExceptionConfigurationLoggingProvider.UsingEventId(int eventId)
+            public IExceptionConfigurationLoggingProvider UsingEventId(int eventId)
             {
                 logHandler.EventId = eventId;
 
                 return this;
             }
         }
-    }
-
-    /// <summary/>
-    public interface IExceptionConfigurationLoggingProvider : IExceptionConfigurationForExceptionTypeOrPostHandling
-    {
-        /// <summary/>
-        IExceptionConfigurationLoggingProvider UsingTitle(string title);
-
-        /// <summary/>
-        IExceptionConfigurationLoggingProvider UsingEventId(int eventId);
-
-        /// <summary/>
-        IExceptionConfigurationLoggingProvider UsingExceptionFormatter(Type exceptionFormatterType);
-
-        /// <summary/>
-        IExceptionConfigurationLoggingProvider WithSeverity(TraceEventType severity);
-
-        /// <summary/>
-        IExceptionConfigurationLoggingProvider WithPriority(int priority);
     }
 }

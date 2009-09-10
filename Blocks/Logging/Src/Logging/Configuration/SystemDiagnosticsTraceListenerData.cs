@@ -25,6 +25,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// </summary>
         public SystemDiagnosticsTraceListenerData()
         {
+            ListenerDataType = typeof(SystemDiagnosticsTraceListenerData);
         }
 
         /// <summary>

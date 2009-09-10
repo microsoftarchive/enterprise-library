@@ -13,8 +13,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.Reflection;
 using System.Text;
 using System.Threading;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport.TraceListeners;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -357,6 +359,39 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
             StringBuilder buffer = new StringBuilder(1024);
             NativeMethods.GetModuleFileName(NativeMethods.GetModuleHandle(null), buffer, buffer.Capacity);
             return buffer.ToString();
+        }
+
+        [TestMethod]
+        public void ToStringUsesDefaultFormatterWithTokenReplacements()
+        {
+            // uses a separate application domain to ensure type initialization happens in the order that shows the issue
+
+            var domain = AppDomain.CreateDomain("test");
+            try
+            {
+                var helper = (ToStringUsesDefaultFormatterWithTokenReplacementsHelper)
+                    domain.CreateInstanceFromAndUnwrap(
+                        Assembly.GetExecutingAssembly().CodeBase,
+                        typeof(ToStringUsesDefaultFormatterWithTokenReplacementsHelper).FullName);
+                var toString = helper.GetLogEntryToString();
+
+                Assert.IsTrue(toString.Contains("asdfg"), "Message not present in the default formatter");
+            }
+            finally
+            {
+                AppDomain.Unload(domain);
+            }
+        }
+    }
+
+    public class ToStringUsesDefaultFormatterWithTokenReplacementsHelper : MarshalByRefObject
+    {
+        public string GetLogEntryToString()
+        {
+            var ignored = TextFormatter.DefaultTextFormat;
+            LogEntry entry = new LogEntry { Message = "asdfg" };
+
+            return entry.ToString();
         }
     }
 }

@@ -12,7 +12,7 @@
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design
 {
     /// <summary>
-    /// Points on the main menu where <see cref="ConfigurationUICommand"/> objets can be sited.
+    /// Points on the main menu where <see cref="ConfigurationUICommand"/> objects can be sited.
     /// </summary>
     public enum InsertionPoint
     {

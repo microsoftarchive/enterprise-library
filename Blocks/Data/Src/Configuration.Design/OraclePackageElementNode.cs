@@ -48,10 +48,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Design
 		}
 
 		/// <summary>
-		/// Gets or sets the prefix for the oracle package.
+		/// Gets or sets the prefix for the Oracle package.
 		/// </summary>
 		/// <value>
-		/// The prefix for the oracle package.
+		/// The prefix for the Oracle package.
 		/// </value>
 		[Required]
 		[SRCategory("CategoryGeneral", typeof(Resources))]

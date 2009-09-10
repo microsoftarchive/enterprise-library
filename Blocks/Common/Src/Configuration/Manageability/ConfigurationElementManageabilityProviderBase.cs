@@ -24,7 +24,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
 {
 	/// <summary>
 	/// Provides a default implementation for <see cref="ConfigurationElementManageabilityProvider"/> that
-	/// splits policy overrides processing and WMI objects generation, performing approriate logging of 
+	/// splits policy overrides processing and WMI objects generation, performing appropriate logging of 
 	/// policy processing errors.
 	/// </summary>
 	/// <typeparam name="T">The managed configuration element type. Must inherit from <see cref="NamedConfigurationElement"/>.

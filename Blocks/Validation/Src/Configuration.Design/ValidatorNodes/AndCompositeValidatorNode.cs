@@ -18,7 +18,7 @@ using Microsoft.Practices.EnterpriseLibrary.Configuration.Design;
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.Design.ValidatorNodes
 {
     /// <summary>
-    /// Respresents the designtime configuration node for an <see cref="AndCompositeValidatorData"/>.
+    /// Represents the designtime configuration node for an <see cref="AndCompositeValidatorData"/>.
     /// </summary>
     public class AndCompositeValidatorNode : CompositeValidatorNodeBase
     {

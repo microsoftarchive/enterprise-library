@@ -28,6 +28,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// </summary>
         public LogEnabledFilterData()
         {
+            Type = typeof(LogEnabledFilter);
         }
 
         /// <summary>
@@ -54,7 +55,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// <summary>
         /// Gets or sets the enabled value.
         /// </summary>
-        [ConfigurationProperty(enabledProperty, IsRequired = true)]
+        [ConfigurationProperty(enabledProperty, IsRequired = true, DefaultValue=false)]
         public bool Enabled
         {
             get { return (bool)base[enabledProperty]; }

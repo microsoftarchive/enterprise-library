@@ -15,7 +15,7 @@ using System.Threading;
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.ExtraInformation
 {
     /// <summary>
-    /// Provides useful diagostic information from the managed runtime.
+    /// Provides useful diagnostic information from the managed runtime.
     /// </summary>
     public class ManagedSecurityContextInformationProvider : IExtraInformationProvider
     {

@@ -19,25 +19,25 @@ namespace Microsoft.Practices.EnterpriseLibrary.SqlConfigurationSource.Design.Te
     [TestClass]
     public class SqlConfigurationSourceRegistrarFixture
     {
-        MockUIComandService cmdService;
-        ServiceContainer services;
+        //MockUIComandService cmdService;
+        //ServiceContainer services;
 
-        [TestInitialize]
-        public void TestInitialize()
-        {
-            cmdService = new MockUIComandService();
-            services = new ServiceContainer();
-            services.AddService(typeof(IUICommandService), cmdService);
-        }
+        //[TestInitialize]
+        //public void TestInitialize()
+        //{
+        //    cmdService = new MockUIComandService();
+        //    services = new ServiceContainer();
+        //    services.AddService(typeof(IUICommandService), cmdService);
+        //}
 
-        [TestMethod]
-        public void VerifyCommandRegistration()
-        {
-            SqlConfigurationSourceCommandRegistrar registrar = new SqlConfigurationSourceCommandRegistrar(services);
-            registrar.Register();
+        //[TestMethod]
+        //public void VerifyCommandRegistration()
+        //{
+        //    SqlConfigurationSourceCommandRegistrar registrar = new SqlConfigurationSourceCommandRegistrar(services);
+        //    registrar.Register();
 
-            Assert.AreEqual(1, cmdService.List[typeof(ConfigurationSourceSectionNode)].Count);
-            Assert.AreEqual(2, cmdService.List[typeof(SqlConfigurationSourceElementNode)].Count);
-        }
+        //    Assert.AreEqual(1, cmdService.List[typeof(ConfigurationSourceSectionNode)].Count);
+        //    Assert.AreEqual(2, cmdService.List[typeof(SqlConfigurationSourceElementNode)].Count);
+        //}
     }
 }

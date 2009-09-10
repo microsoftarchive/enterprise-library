@@ -10,7 +10,6 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
@@ -32,8 +31,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Instrumentation
         [TestMethod, DeploymentItem("errornous.config")]
         public void ConfigurationErrorsAreLoggedInEventLog()
         {
-            FileConfigurationSource configurationSourceWithInvalidConfiguration = new FileConfigurationSource("errornous.config");
-
+            using (var configurationSourceWithInvalidConfiguration = new FileConfigurationSource("errornous.config", false))
             using (EventLogTracker eventLog = new EventLogTracker(GetEventLog()))
             {
                 try

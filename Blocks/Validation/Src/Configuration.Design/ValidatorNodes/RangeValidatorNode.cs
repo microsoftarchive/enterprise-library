@@ -17,7 +17,7 @@ using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.Design.Prop
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.Design.ValidatorNodes
 {
     /// <summary>
-    /// Respresents the designtime configuration node for an <see cref="RangeValidatorData"/>.
+    /// Represents the designtime configuration node for an <see cref="RangeValidatorData"/>.
     /// </summary>
     public class RangeValidatorNode : RangeValidatorNodeBase<string>
     {

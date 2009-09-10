@@ -297,6 +297,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Parameter must implement type &apos;{0}&apos;..
+        /// </summary>
+        internal static string ExceptionParameterMustImplement {
+            get {
+                return ResourceManager.GetString("ExceptionParameterMustImplement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Absolute time cannot be less than current time..
         /// </summary>
         internal static string ExceptionRangeAbsoluteTime {

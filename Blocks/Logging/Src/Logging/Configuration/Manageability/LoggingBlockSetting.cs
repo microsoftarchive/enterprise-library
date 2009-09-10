@@ -32,7 +32,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         /// Initialize a new instance of the <see cref="LoggingBlockSetting"/> class with the block configuration,
         /// the default category, if a warning is log when no categories match, and if tracing is enabled.
         /// </summary>
-        /// <param name="sourceElement">The logging block configuration.</param>
+        /// <param name="sourceElement">The Logging Application Block configuration.</param>
         /// <param name="defaultCategory">The default category.</param>
         /// <param name="logWarningWhenNoCategoriesMatch">true to log warnings if no categories match; otherwise false.</param>
         /// <param name="tracingEnabled">true if tracing is enabled; otherwise false.</param>

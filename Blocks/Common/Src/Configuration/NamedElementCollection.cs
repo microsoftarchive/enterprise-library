@@ -20,7 +20,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 	/// Represents a collection of <see cref="NamedConfigurationElement"/> objects.
 	/// </summary>
 	/// <typeparam name="T">A newable object that inherits from <see cref="NamedConfigurationElement"/>.</typeparam>
-	public class NamedElementCollection<T> : ConfigurationElementCollection, IEnumerable<T>
+	public class NamedElementCollection<T> : ConfigurationElementCollection, IMergeableConfigurationElementCollection, IEnumerable<T>
 		where T : NamedConfigurationElement, new()
 	{
 
@@ -119,5 +119,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 			T namedElement = (T)element;
 			return namedElement.Name;
 		}
-	}
+
+        void IMergeableConfigurationElementCollection.ResetCollection(IEnumerable<ConfigurationElement> configurationElements)
+        {
+            BaseClear();
+            foreach (T element in configurationElements)
+            {
+                Add(element);
+            }
+        }
+
+        ConfigurationElement IMergeableConfigurationElementCollection.CreateNewElement()
+        {
+            return CreateNewElement();
+        }
+    }
 }

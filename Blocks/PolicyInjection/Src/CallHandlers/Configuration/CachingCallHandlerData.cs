@@ -21,7 +21,7 @@ using Microsoft.Practices.Unity.InterceptionExtension;
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Configuration
 {
     /// <summary>
-    /// Configuration element class that manages the config data for the <see cref="CachingCallHandler"/>.
+    /// Configuration element class that manages the configuration data for the <see cref="CachingCallHandler"/>.
     /// </summary>
     public class CachingCallHandlerData : CallHandlerData
     {
@@ -38,7 +38,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
         /// <summary>
         /// Create a new <see cref="CachingCallHandlerData"/> instance with the given name.
         /// </summary>
-        /// <param name="handlerName">Name of handler to store in config file.</param>
+        /// <param name="handlerName">Name of handler to store in configuration file.</param>
         public CachingCallHandlerData(string handlerName)
             : base(handlerName, typeof(CachingCallHandler))
         {
@@ -48,8 +48,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
         /// <summary>
         /// Create a new <see cref="CachingCallHandlerData"/> instance with the given name.
         /// </summary>
-        /// <param name="handlerName">Name of handler to store in config file.</param>
-        /// <param name="handlerOrder">Order of handler to store in config file.</param>
+        /// <param name="handlerName">Name of handler to store in configuration file.</param>
+        /// <param name="handlerOrder">Order of handler to store in configuration file.</param>
         public CachingCallHandlerData(string handlerName, int handlerOrder)
             : base(handlerName, typeof(CachingCallHandler), handlerOrder)
         {

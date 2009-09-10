@@ -21,7 +21,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
     /// <summary>
     /// Contains settings to determine which <see cref="TypeRegistrationsProvider"/> to configure the <see cref="EnterpriseLibraryContainer"/> with.
     /// </summary>
-    public class TypeRegistrationProvidersConfigurationSection : ConfigurationSection
+    public class TypeRegistrationProvidersConfigurationSection : SerializableConfigurationSection
     {
         /// <summary>The section name under which this configuration section is expected to be found.</summary>
         public const string SectionName = "typeRegistrationProvidersConfiguration";
@@ -48,14 +48,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         private const string TypeRegistrationProvidersProperty = "";
 
         /// <summary>
-        /// Gets the collection of <see cref="TypeRegistrationProviderSettings"/> configured in this section.   
+        /// Gets the collection of <see cref="TypeRegistrationProviderElement"/> configured in this section.   
         /// </summary>
         [ConfigurationProperty(TypeRegistrationProvidersProperty, Options=ConfigurationPropertyOptions.IsDefaultCollection)]
-        public TypeRegistrationProviderSettingsCollection TypeRegistrationProviders
+        public TypeRegistrationProviderElementCollection TypeRegistrationProviders
         {
             get
             {
-                return (TypeRegistrationProviderSettingsCollection)base[TypeRegistrationProvidersProperty];
+                return (TypeRegistrationProviderElementCollection)base[TypeRegistrationProvidersProperty];
             }
         }
     }

@@ -13,12 +13,15 @@ using System;
 using System.Diagnostics;
 using System.Messaging;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
 {
     /// <summary>
     /// Is a <see cref="TraceListener"/> that delivers the log entries to an Msmq instance.
     /// </summary>
+    [ConfigurationElementType(typeof(MsmqTraceListenerData))]
     public class MsmqTraceListener : FormattedTraceListenerBase
     {
         readonly MessagePriority messagePriority;

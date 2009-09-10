@@ -24,11 +24,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         /// <summary>
         /// TODO: Add Comment
         /// </summary>
-        /// <param name="saveParameter"></param>
         /// <param name="sectionName"></param>
         /// <param name="configurationSection"></param>
         /// <param name="protectionProviderName"></param>
-        void Add(IConfigurationParameter saveParameter, string sectionName, ConfigurationSection configurationSection, string protectionProviderName);
+        void Add(string sectionName, ConfigurationSection configurationSection, string protectionProviderName);
 
 
     }

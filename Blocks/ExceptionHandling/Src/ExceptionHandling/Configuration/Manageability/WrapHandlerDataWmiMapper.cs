@@ -16,7 +16,7 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability;
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.Manageability
 {
     /// <summary>
-    /// Represents a mapper for wrap hanlder configuration to Wmi.
+    /// Represents a mapper for wrap handler configuration to Wmi.
     /// </summary>
     public static class WrapHandlerDataWmiMapper
     {

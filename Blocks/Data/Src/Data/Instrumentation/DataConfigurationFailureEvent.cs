@@ -14,7 +14,7 @@ using System;
 namespace Microsoft.Practices.EnterpriseLibrary.Data.Instrumentation
 {
 	/// <summary>
-	/// Represents the WMI event fired when an error in the configuration for the data access block is detected.
+    /// Represents the WMI event fired when an error in the configuration for the Data Access Application Block is detected.
 	/// </summary>
 	public class DataConfigurationFailureEvent : DataEvent
 	{
@@ -23,7 +23,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Instrumentation
 		/// <summary>
 		/// Initializes a new instance of the <see cref="DataConfigurationFailureEvent"/> class.
 		/// </summary>
-		/// <param name="instanceName">Name of the <see cref="Database"/> instance the failure ocurred in.</param>
+        /// <param name="instanceName">Name of the <see cref="Database"/> instance the failure occurred in.</param>
 		/// <param name="exceptionMessage">The message that represents the exception thrown when the configuration error was detected.</param>
 		public DataConfigurationFailureEvent(string instanceName, string exceptionMessage)
 			: base(instanceName)

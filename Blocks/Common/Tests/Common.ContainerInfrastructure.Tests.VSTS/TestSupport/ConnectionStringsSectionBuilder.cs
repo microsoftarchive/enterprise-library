@@ -40,10 +40,10 @@ namespace Common.ContainerInfrastructure.Tests.VSTS.TestSupport
                 builder.AddTo(section);
             }
 
-            configurationSource.Add(null, "connectionStrings", section);
+            configurationSource.Add("connectionStrings", section);
 
             var databaseSettings = new DatabaseSettings {DefaultDatabase = defaultDatabase};
-            configurationSource.Add(null, DatabaseSettings.SectionName, databaseSettings);
+            configurationSource.Add(DatabaseSettings.SectionName, databaseSettings);
         }
 
         private class ConnectionStringBuilder :

@@ -58,6 +58,7 @@
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.OracleClient" />
     <Reference Include="System.Management" />
     <Reference Include="System.Transactions" />
     <Reference Include="System.XML" />
@@ -69,6 +70,7 @@
     <Compile Include="Configuration\DataAccessTypeRegistrationFixture.cs" />
     <Compile Include="Configuration\DatabaseSyntheticConfigurationSettingsFixture.cs" />
     <Compile Include="Configuration\DatabaseWithContainerFixture.cs" />
+    <Compile Include="Configuration\Fluent\DataConfigurationSourceBuilderExtensionsFixture.cs" />
     <Compile Include="Configuration\Unity\DataAccessBlockExtensionFixture.cs" />
     <Compile Include="ConnectionStringFixture.cs">
       <SubType>Code</SubType>
@@ -152,9 +154,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Northwind.mdb">
+    <None Include="Northwind.mdb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />

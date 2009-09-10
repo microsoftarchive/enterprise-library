@@ -12,11 +12,13 @@
 using System.Configuration;
 using System.Xml;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Common.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 {
 	/// <summary>
-	/// Represents a named <see cref="ConfigurationElement"/> wher the name is the key to a collection.
+	/// Represents a named <see cref="ConfigurationElement"/> where the name is the key to a collection.
 	/// </summary>
 	/// <remarks>
 	/// This class is used in conjunction with a <see cref="Configuration.NamedElementCollection&lt;T&gt;"/>.
@@ -51,7 +53,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 		/// </value>
 		[ConfigurationProperty(nameProperty, IsKey = true, DefaultValue = "Name", IsRequired= true)]				
 		[StringValidator(MinLength=1)]
-		public string Name
+        [ResourceDescription(typeof(Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design.Resources), "NodeNameDescription")]
+        //[Required]
+        //[SRCategory("CategoryName", typeof(Resources))]
+        public virtual string Name
 		{
 			get { return (string)this[nameProperty]; }
 			set { this[nameProperty] = value; }

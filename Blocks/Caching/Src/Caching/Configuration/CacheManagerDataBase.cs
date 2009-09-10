@@ -31,6 +31,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
 		{
 		}
 
+
+        /// <summary>
+        /// Initialize a new instance of the <see cref="CacheManagerDataBase"/> class.
+        /// </summary>
+        /// <param name="type">The type of <see cref="ICacheManager"/>.</param>
+        public CacheManagerDataBase(Type type)
+            : base(null, type)
+        {
+        }
+
+
 		/// <summary>
 		/// Initialize a new instance of the <see cref="CacheManagerDataBase"/> class.
 		/// </summary>

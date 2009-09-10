@@ -41,7 +41,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Tests.Configuration
             settings = new SecuritySettings();
             settings.AuthorizationProviders.Add(ruleProvider);
 
-            updatableConfigurationSource.Add(null, SecuritySettings.SectionName, settings);
+            updatableConfigurationSource.Add(SecuritySettings.SectionName, settings);
 
             container = new UnityContainer();
             containerConfigurator = new UnityContainerConfigurator(container);

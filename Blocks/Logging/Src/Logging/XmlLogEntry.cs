@@ -20,7 +20,7 @@ using System.Management.Instrumentation;
 namespace Microsoft.Practices.EnterpriseLibrary.Logging
 {
 	/// <summary>
-	/// Entension of <see cref="LogEntry"/> for adding XMl Support.
+	/// Extension of <see cref="LogEntry"/> for adding XML Support.
 	/// </summary>
 	[Serializable]
 	public class XmlLogEntry : LogEntry

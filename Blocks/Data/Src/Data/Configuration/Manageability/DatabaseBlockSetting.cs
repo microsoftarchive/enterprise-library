@@ -17,7 +17,7 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability;
 namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Manageability
 {
 	/// <summary>
-	/// Represents the configuration information for the Database Application Block.
+    /// Represents the configuration information for the Data Access Application Block.
 	/// </summary>
 	/// <seealso cref="Microsoft.Practices.EnterpriseLibrary.Data.Configuration.DatabaseSettings"/>
 	[ManagementEntity]

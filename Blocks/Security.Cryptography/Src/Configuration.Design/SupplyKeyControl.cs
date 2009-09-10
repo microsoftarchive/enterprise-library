@@ -21,7 +21,7 @@ using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration.
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration.Design
 {
     /// <summary>
-    /// Visual control that allows an user to select an to select a method of proving a key.
+    /// Visual control that allows a user to select an to select a method of proving a key.
     /// </summary>
     public partial class SupplyKeyControl : UserControl
     {

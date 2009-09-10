@@ -45,7 +45,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConfigurationSqlChangedEventArgs.cs" />
-    <Compile Include="ConfigurationSqlChangingEventArgs.cs" />
     <Compile Include="ConfigurationSqlSourceWatcher.cs" />
     <Compile Include="Configuration\SqlConfigurationData.cs" />
     <Compile Include="Configuration\SqlConfigurationParameter.cs" />
@@ -58,7 +57,6 @@
     <Compile Include="SqlConfigurationManager.cs" />
     <Compile Include="SqlConfigurationSource.cs" />
     <Compile Include="SqlConfigurationSourceElement.cs" />
-    <Compile Include="SqlConfigurationSourceImplementation.cs" />
     <Compile Include="Configuration\SqlConfigurationSystem.cs" />
     <Compile Include="Storage\ConfigurationChangeSqlWatcher.cs" />
   </ItemGroup>

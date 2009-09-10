@@ -19,7 +19,7 @@ using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Instrumentatio
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration
 {
     /// <summary>
-    /// <para>Represents the common configuration data for all symmetric crypto providers.</para>
+    /// <para>Represents the common configuration data for all symmetric cryptography providers.</para>
     /// </summary>
     public class SymmetricProviderData : NameTypeConfigurationElement
     {

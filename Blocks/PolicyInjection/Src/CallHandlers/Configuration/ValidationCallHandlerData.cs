@@ -21,7 +21,7 @@ using Microsoft.Practices.Unity.InterceptionExtension;
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Configuration
 {
     /// <summary>
-    /// A configuration element class that stores the config data for
+    /// A configuration element class that stores the configuration data for
     /// the <see cref="ValidationCallHandler"/>.
     /// </summary>
     public class ValidationCallHandlerData : CallHandlerData

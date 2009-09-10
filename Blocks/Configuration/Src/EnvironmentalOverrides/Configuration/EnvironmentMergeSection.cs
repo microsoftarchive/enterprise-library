@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides.Configuration
 {
@@ -23,6 +24,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverr
     /// <remarks>
     /// This configuration section is used by the Environmental Overrides extension to the configuration tool at designtime.
     /// </remarks>
+    [ViewModel("Console.Wpf.ViewModel.BlockSpecifics.EnvironmentMergeSectionViewModel, Console.Wpf")]
     public class EnvironmentMergeSection : ConfigurationSection
     {
         /// <summary>

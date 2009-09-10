@@ -18,7 +18,7 @@ using System.Configuration;
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel
 {
     /// <summary>
-    /// A <see cref="TypeRegistrationsProvider"/> that can be configured through a <see cref="TypeRegistrationProviderSettings"/>.
+    /// A <see cref="TypeRegistrationsProvider"/> that can be configured through a <see cref="TypeRegistrationProviderElement"/>.
     /// </summary>
     public static class ConfigurationBasedTypeRegistrationsProviderFactory
     {
@@ -69,22 +69,22 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerMo
                 section = new TypeRegistrationProvidersConfigurationSection();
             }
 
-            foreach (TypeRegistrationProviderSettings typeRegistrationProviderSettings in section.TypeRegistrationProviders)
+            foreach (TypeRegistrationProviderElement typeRegistrationProviderElement in section.TypeRegistrationProviders)
             {
-                if (!string.IsNullOrEmpty(typeRegistrationProviderSettings.SectionName) &&
-                    !string.IsNullOrEmpty(typeRegistrationProviderSettings.ProviderTypeName))
+                if (!string.IsNullOrEmpty(typeRegistrationProviderElement.SectionName) &&
+                    !string.IsNullOrEmpty(typeRegistrationProviderElement.ProviderTypeName))
                 {
                     throw new ConfigurationErrorsException(
                         string.Format("Type Registration Provider Settings '{0}' cannot declare both sectionName and providerType attributes",
-                        typeRegistrationProviderSettings.Name));
+                        typeRegistrationProviderElement.Name));
                 }
-                if (!string.IsNullOrEmpty(typeRegistrationProviderSettings.SectionName))
+                if (!string.IsNullOrEmpty(typeRegistrationProviderElement.SectionName))
                 {
-                    yield return new ConfigSectionLocator(typeRegistrationProviderSettings.SectionName, reconfiguringEventSource);
+                    yield return new ConfigSectionLocator(typeRegistrationProviderElement.SectionName, reconfiguringEventSource);
                 }
-                else if (!string.IsNullOrEmpty(typeRegistrationProviderSettings.ProviderTypeName))
+                else if (!string.IsNullOrEmpty(typeRegistrationProviderElement.ProviderTypeName))
                 {
-                    yield return new TypeLoadingLocator(typeRegistrationProviderSettings.ProviderTypeName, reconfiguringEventSource);
+                    yield return new TypeLoadingLocator(typeRegistrationProviderElement.ProviderTypeName, reconfiguringEventSource);
                 }
             }
         }

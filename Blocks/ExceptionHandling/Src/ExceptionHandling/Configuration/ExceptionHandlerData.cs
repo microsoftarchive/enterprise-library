@@ -31,6 +31,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
         /// <summary>
         /// Initializes an instance of an <see cref="ExceptionHandlerData"/> class with a name and an <see cref="IExceptionHandler"/> type.
         /// </summary>
+        /// <param name="type">
+        /// The configured <see cref="IExceptionHandler"/> type.
+        /// </param>
+        public ExceptionHandlerData(Type type)
+            : this(null, type)
+        {
+        }
+
+
+        /// <summary>
+        /// Initializes an instance of an <see cref="ExceptionHandlerData"/> class with a name and an <see cref="IExceptionHandler"/> type.
+        /// </summary>
         /// <param name="name">
         /// The name of the configured <see cref="IExceptionHandler"/>.
         /// </param>

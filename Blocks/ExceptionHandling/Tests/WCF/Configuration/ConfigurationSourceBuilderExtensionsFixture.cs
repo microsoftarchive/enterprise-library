@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
@@ -56,6 +57,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.Tests.Conf
         protected ExceptionTypeData GetExceptionTypeData()
         {
             return GetExceptionPolicyData().ExceptionTypes.Where(x => x.Type == exceptionType).First();
+        }
+    }
+
+    [TestClass]
+    public class When_AddingExceptionShieldingHandlerToExceptionTypePassingNullType : Given_ExceptionTypeInConfigurationSourceBuilder
+    {
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void Then_ShieldExceptionForWcf_ThrowsArgumentNullException()
+        {
+            exception.ShieldExceptionForWcf(null, "Fault Contract Message");
         }
     }
 
@@ -109,17 +121,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.Tests.Conf
     [TestClass]
     public class When_AddingExceptionShieldingHandlerWithPropertyMappingsToExceptionType : Given_ExceptionTypeInConfigurationSourceBuilder
     {
-        NameValueCollection mappings;
-
         protected override void Arrange()
         {
             base.Arrange();
 
-
             exception.ShieldExceptionForWcf(typeof(object), "Message")
                 .MapProperty("prop2", "prop3")
                 .MapProperty("prop1", "prop4");
-
         }
 
         [TestMethod]
@@ -136,6 +144,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.Tests.Conf
 
             Assert.IsTrue(shieldingExceptionHandler.PropertyMappings.Where(
                 x => x.Name == "prop1" && x.Source == "prop4").Any());
+        }
+    }
+
+    [TestClass]
+    public class When_AddingExceptionShieldingHandlerPasssingNullNameToPropertyMapping : Given_ExceptionTypeInConfigurationSourceBuilder
+    {
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void Then_MapProperty_ThrowsArgumentException()
+        {
+            exception.ShieldExceptionForWcf(typeof(object), "Message")
+                .MapProperty(null, "prop3");
         }
     }
 }

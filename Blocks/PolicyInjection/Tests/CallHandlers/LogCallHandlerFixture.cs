@@ -268,20 +268,20 @@ Call Stack: @@BEGIN CALL STACK@@{{property(CallStack)}}@@END CALL STACK@@{{newli
         [Ignore] // TODO requires converting the policy injection facade to use a container.
         public void ShouldLogOnlyToCategoriesGivenInConfig()
         {
-            FileConfigurationSource configSource =
-                new FileConfigurationSource("LogCallHandler.config");
+            using (var configSource = new FileConfigurationSource("LogCallHandler.config", false))
+            {
+                EventLog eventLog = new EventLog("Application");
 
-            EventLog eventLog = new EventLog("Application");
+                int beforeEventLogEntries = eventLog.Entries.Count;
 
-            int beforeEventLogEntries = eventLog.Entries.Count;
+                LoggingTarget target = PolicyInjection.Create<LoggingTarget>(configSource);
 
-            LoggingTarget target = PolicyInjection.Create<LoggingTarget>(configSource);
+                target.DoSomething(1, "two", 3.0);
 
-            target.DoSomething(1, "two", 3.0);
+                int afterEventLogEntries = eventLog.Entries.Count;
 
-            int afterEventLogEntries = eventLog.Entries.Count;
-
-            Assert.AreEqual(beforeEventLogEntries + 1, afterEventLogEntries);
+                Assert.AreEqual(beforeEventLogEntries + 1, afterEventLogEntries);
+            }
         }
 
         [TestMethod]
@@ -375,42 +375,42 @@ Call Stack: @@BEGIN CALL STACK@@{{property(CallStack)}}@@END CALL STACK@@{{newli
         [DeploymentItem("LogCallHandler.config")]
         public void AssembledCorrectlyLogCallHandler()
         {
-            FileConfigurationSource configSource =
-                new FileConfigurationSource("LogCallHandler.config");
+            using (var configSource = new FileConfigurationSource("LogCallHandler.config", false))
+            {
+                PolicyInjectionSettings settings = new PolicyInjectionSettings();
 
-            PolicyInjectionSettings settings = new PolicyInjectionSettings();
+                PolicyData policyData = new PolicyData("policy");
+                LogCallHandlerData data = new LogCallHandlerData("fooHandler", 66);
+                data.BeforeMessage = "before";
+                data.AfterMessage = "after";
+                data.IncludeCallTime = true;
+                data.EventId = 100;
+                data.Categories.Add(new LogCallHandlerCategoryEntry("category1"));
+                data.Categories.Add(new LogCallHandlerCategoryEntry("category2"));
+                policyData.MatchingRules.Add(new CustomMatchingRuleData("matchesEverything", typeof(AlwaysMatchingRule)));
+                policyData.Handlers.Add(data);
+                settings.Policies.Add(policyData);
 
-            PolicyData policyData = new PolicyData("policy");
-            LogCallHandlerData data = new LogCallHandlerData("fooHandler", 66);
-            data.BeforeMessage = "before";
-            data.AfterMessage = "after";
-            data.IncludeCallTime = true;
-            data.EventId = 100;
-            data.Categories.Add(new LogCallHandlerCategoryEntry("category1"));
-            data.Categories.Add(new LogCallHandlerCategoryEntry("category2"));
-            policyData.MatchingRules.Add(new CustomMatchingRuleData("matchesEverything", typeof(AlwaysMatchingRule)));
-            policyData.Handlers.Add(data);
-            settings.Policies.Add(policyData);
+                IUnityContainer container = new UnityContainer().AddNewExtension<Interception>();
+                settings.ConfigureContainer(container, configSource);
+                new UnityContainerConfigurator(container)
+                    .RegisterAll(configSource,
+                    (ITypeRegistrationsProvider)configSource.GetSection(LoggingSettings.SectionName));
 
-            IUnityContainer container = new UnityContainer().AddNewExtension<Interception>();
-            settings.ConfigureContainer(container, configSource);
-            new UnityContainerConfigurator(container)
-                .RegisterAll(configSource,
-                (ITypeRegistrationsProvider)configSource.GetSection(LoggingSettings.SectionName));
+                InjectionFriendlyRuleDrivenPolicy policy = container.Resolve<InjectionFriendlyRuleDrivenPolicy>("policy");
 
-            InjectionFriendlyRuleDrivenPolicy policy = container.Resolve<InjectionFriendlyRuleDrivenPolicy>("policy");
-
-            LogCallHandler handler
-                = (LogCallHandler)(policy.GetHandlersFor(GetMethodImpl(MethodBase.GetCurrentMethod()), container)).ElementAt(0);
-            Assert.IsNotNull(handler);
-            Assert.AreEqual(66, handler.Order);
-            Assert.AreEqual("before", handler.BeforeMessage);
-            Assert.AreEqual("after", handler.AfterMessage);
-            Assert.AreEqual(true, handler.IncludeCallTime);
-            Assert.AreEqual(100, handler.EventId);
-            Assert.AreEqual(2, handler.Categories.Count);
-            CollectionAssert.Contains(handler.Categories, "category1");
-            CollectionAssert.Contains(handler.Categories, "category2");
+                LogCallHandler handler = (LogCallHandler)
+                    (policy.GetHandlersFor(GetMethodImpl(MethodBase.GetCurrentMethod()), container)).ElementAt(0);
+                Assert.IsNotNull(handler);
+                Assert.AreEqual(66, handler.Order);
+                Assert.AreEqual("before", handler.BeforeMessage);
+                Assert.AreEqual("after", handler.AfterMessage);
+                Assert.AreEqual(true, handler.IncludeCallTime);
+                Assert.AreEqual(100, handler.EventId);
+                Assert.AreEqual(2, handler.Categories.Count);
+                CollectionAssert.Contains(handler.Categories, "category1");
+                CollectionAssert.Contains(handler.Categories, "category2");
+            }
         }
 
         [TestMethod]

@@ -226,7 +226,7 @@ Message:
     <value>Client: # of Logs Written/Sec</value>
   </data>
   <data name="NumLogsWrittenSecMsg" xml:space="preserve">
-    <value>Number of logs per second written by client using the Enterprise Library Logging Block.</value>
+    <value>Number of logs per second written by client using the Enterprise Library Logging Application Block.</value>
   </data>
   <data name="NumLogsDistributedSec" xml:space="preserve">
     <value>Distributor: # of Logs Distributed/Sec</value>

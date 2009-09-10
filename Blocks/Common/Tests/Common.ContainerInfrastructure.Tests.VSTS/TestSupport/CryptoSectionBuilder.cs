@@ -43,7 +43,7 @@ namespace Common.ContainerInfrastructure.Tests.VSTS.TestSupport
             {
                 builder.AddTo(section);
             }
-            configurationSource.Add(null, BlockSectionNames.Cryptography, section);
+            configurationSource.Add(BlockSectionNames.Cryptography, section);
         }
 
         private class HashProviderBuilder

@@ -14,7 +14,7 @@ using System;
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Instrumentation
 {
     /// <summary>
-    /// Interface defining instrumentation used to report errors in the Cryptography block.
+    /// Interface defining instrumentation used to report errors in the Cryptography Application Block.
     /// </summary>
     public interface IDefaultCryptographyInstrumentationProvider
     {

@@ -77,7 +77,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
 
             ConfigurationSourceSection settings = new ConfigurationSourceSection();
 
-            FileConfigurationSource.ResetImplementation(sourceFile1, false);
             ConfigurationSourceElement data1 = new FileConfigurationSourceElement(sourceName1, sourceFile1);
             ConfigurationSourceElement data2 = new SystemConfigurationSourceElement(sourceName2);
 
@@ -87,21 +86,22 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
 
             IDictionary<string, ConfigurationSection> sections = new Dictionary<string, ConfigurationSection>();
             sections[ConfigurationSourceSection.SectionName] = settings;
-            IConfigurationSource configurationSource
-                = ConfigurationTestHelper.SaveSectionsInFileAndReturnConfigurationSource(sections);
+            using (var configurationSource = ConfigurationTestHelper.SaveSectionsInFileAndReturnConfigurationSource(sections))
+            {
+                ConfigurationSourceSection roSettigs =
+                    (ConfigurationSourceSection)configurationSource.GetSection(ConfigurationSourceSection.SectionName);
 
-            ConfigurationSourceSection roSettigs = (ConfigurationSourceSection)configurationSource.GetSection(ConfigurationSourceSection.SectionName);
+                Assert.IsNotNull(roSettigs);
+                Assert.AreEqual(2, roSettigs.Sources.Count);
+                Assert.AreEqual(sourceName1, roSettigs.SelectedSource);
 
-            Assert.IsNotNull(roSettigs);
-            Assert.AreEqual(2, roSettigs.Sources.Count);
-            Assert.AreEqual(sourceName1, roSettigs.SelectedSource);
+                Assert.IsNotNull(roSettigs.Sources.Get(sourceName1));
+                Assert.AreSame(typeof(FileConfigurationSourceElement), roSettigs.Sources.Get(sourceName1).GetType());
+                Assert.AreEqual(sourceFile1, ((FileConfigurationSourceElement)roSettigs.Sources.Get(sourceName1)).FilePath);
 
-            Assert.IsNotNull(roSettigs.Sources.Get(sourceName1));
-            Assert.AreSame(typeof(FileConfigurationSourceElement), roSettigs.Sources.Get(sourceName1).GetType());
-            Assert.AreEqual(sourceFile1, ((FileConfigurationSourceElement)roSettigs.Sources.Get(sourceName1)).FilePath);
-
-            Assert.IsNotNull(roSettigs.Sources.Get(sourceName2));
-            Assert.AreSame(typeof(SystemConfigurationSourceElement), roSettigs.Sources.Get(sourceName2).GetType());
+                Assert.IsNotNull(roSettigs.Sources.Get(sourceName2));
+                Assert.AreSame(typeof(SystemConfigurationSourceElement), roSettigs.Sources.Get(sourceName2).GetType());
+            }
         }
     }
 }

@@ -10,16 +10,13 @@
 //===============================================================================
 
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Reflection;
-using System.Text;
 using System.Windows.Forms;
-using System.Xml;
-using System.Xml.XPath;
-using System.Xml.Xsl;
 using ExceptionHandlingQuickStart.BusinessLayer;
+using ExceptionHandlingQuickStart.Properties;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 
 namespace ExceptionHandlingQuickStart
@@ -27,29 +24,27 @@ namespace ExceptionHandlingQuickStart
     /// <summary>
     /// Enterprise Library Exception Handling Application Block Quick Start.
     /// </summary>
-    public class QuickStartForm : System.Windows.Forms.Form
+    public class QuickStartForm : Form
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.Container components = null;
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.GroupBox groupBox;
+        private Container components = null;
+        private GroupBox groupBox1;
+        private Label label2;
+        private GroupBox groupBox;
 
-        private Process viewerProcess = null;
-        private System.Windows.Forms.Button replaceExceptionButton;
-        private System.Windows.Forms.Button wrapExceptionButton;
-        private System.Windows.Forms.Button viewWalkthroughButton;
-        private System.Windows.Forms.Button quitButton;
-        private System.Windows.Forms.PictureBox logoPictureBox;
-        private System.Windows.Forms.TextBox resultsTextBox;
+        private Process viewerProcess;
+        private Button replaceExceptionButton;
+        private Button wrapExceptionButton;
+        private Button viewWalkthroughButton;
+        private Button quitButton;
+        private PictureBox logoPictureBox;
+        private TextBox resultsTextBox;
 
         private const string HelpViewerArguments = @"/helpcol ms-help://MS.VSCC.v90/MS.VSIPCC.v90/ms.practices.entlib.2008oct /LaunchFKeywordTopic ExceptionhandlingQS1";
-        private System.Windows.Forms.Button suppressExceptionButton;
-        private System.Windows.Forms.Button propagateOriginalExceptionButton;
-
-        public static System.Windows.Forms.Form AppForm;
+        private Button suppressExceptionButton;
+        private Button propagateOriginalExceptionButton;
 
         public QuickStartForm()
         {
@@ -240,8 +235,8 @@ namespace ExceptionHandlingQuickStart
         [STAThread]
         static void Main()
         {
-            AppForm = new QuickStartForm();
-            Application.Run(AppForm);
+            var form = new QuickStartForm();
+            Application.Run(form);
         }
 
         private void QuickStartForm_Load(object sender, System.EventArgs e)
@@ -290,32 +285,9 @@ namespace ExceptionHandlingQuickStart
             try
             {
                 Cursor = System.Windows.Forms.Cursors.WaitCursor;
+                DisplayScenarioStart(Resources.PropagateOriginalExceptionText);
 
-                StringBuilder sb = new StringBuilder();
-
-                sb.Append("Scenario: Propagate original exception");
-                sb.Append(Environment.NewLine);
-                sb.Append(Environment.NewLine);
-                sb.Append("1. UI layer calls into business layer.");
-                sb.Append(Environment.NewLine);
-                sb.Append(Environment.NewLine);
-                sb.Append("2. A System.Exception occurs and is detected in the business layer.");
-                sb.Append(Environment.NewLine);
-                sb.Append(Environment.NewLine);
-                sb.Append("3. The business layer specifies the \"Propagate Policy\" as the exception handling policy.");
-                sb.Append(Environment.NewLine);
-                sb.Append(Environment.NewLine);
-                sb.Append("4. The \"Propagate Policy\" is configured to recommend a rethrow upon return from processing the exception handlers.");
-                sb.Append(Environment.NewLine);
-                sb.Append(Environment.NewLine);
-                sb.Append("5. Control is returned to the business layer, which rethrows the original exception.");
-                sb.Append(Environment.NewLine);
-                sb.Append(Environment.NewLine);
-                sb.Append("6. The original exception is caught and displayed.");
-
-                DisplayScenarioStart(sb.ToString());
-
-                AppService svc = new AppService();
+                var svc = new AppService();
 
                 svc.ProcessWithPropagate();
             }
@@ -330,33 +302,9 @@ namespace ExceptionHandlingQuickStart
             try
             {
                 Cursor = System.Windows.Forms.Cursors.WaitCursor;
+                DisplayScenarioStart(Resources.WrapExceptionText);
 
-                StringBuilder sb = new StringBuilder();
-
-                sb.Append("Scenario: Wrap the original exception with another before propagating");
-                sb.Append(Environment.NewLine);
-                sb.Append(Environment.NewLine);
-                sb.Append("1. UI layer calls into business layer.");
-                sb.Append(Environment.NewLine);
-                sb.Append(Environment.NewLine);
-                sb.Append("2. A DBConcurrencyException occurs and is detected in the business layer.");
-                sb.Append(Environment.NewLine);
-                sb.Append(Environment.NewLine);
-                sb.Append("3. The business layer specifies the \"Wrap Policy\" as the exception handling policy.");
-                sb.Append(Environment.NewLine);
-                sb.Append(Environment.NewLine);
-                sb.Append("4. The \"Wrap Policy\" is configured to use a wrap handler to wrap the original exception with a BusinessLayerException exception.");
-                sb.Append(Environment.NewLine);
-                sb.Append(Environment.NewLine);
-                sb.Append("5. The rethrowAction is set to \"Throw\", resulting in the BusinessLayerException exception being thrown by the block upon completion of the handler chain execution.");
-                sb.Append(Environment.NewLine);
-                sb.Append(Environment.NewLine);
-                sb.Append("6. The new exception, which wraps the original exception, is caught and displayed.");
-
-                DisplayScenarioStart(sb.ToString());
-
-                AppService svc = new AppService();
-
+                var svc = new AppService();
                 svc.ProcessWithWrap();
             }
             catch (Exception ex)
@@ -370,32 +318,9 @@ namespace ExceptionHandlingQuickStart
             try
             {
                 Cursor = System.Windows.Forms.Cursors.WaitCursor;
+                DisplayScenarioStart(Resources.ReplaceExceptionText);
 
-                StringBuilder sb = new StringBuilder();
-
-                sb.Append("Scenario: Replace the original exception with another before propagating");
-                sb.Append(Environment.NewLine);
-                sb.Append(Environment.NewLine);
-                sb.Append("1. UI layer calls into business layer.");
-                sb.Append(Environment.NewLine);
-                sb.Append(Environment.NewLine);
-                sb.Append("2. A SecurityException exception occurs and is detected in the business layer.");
-                sb.Append(Environment.NewLine);
-                sb.Append(Environment.NewLine);
-                sb.Append("3. The business layer specifies the \"Replace Policy\" as the exception handling policy.");
-                sb.Append(Environment.NewLine);
-                sb.Append(Environment.NewLine);
-                sb.Append("4. The \"Replace Policy\" is configured to use a replace handler to replace the original exception with an ApplicationException exception.");
-                sb.Append(Environment.NewLine);
-                sb.Append(Environment.NewLine);
-                sb.Append("5. The rethrowAction is set to \"Throw\", resulting in the new exception being thrown by the block upon completion of the handler chain execution.");
-                sb.Append(Environment.NewLine);
-                sb.Append(Environment.NewLine);
-                sb.Append("6. The new exception is caught and displayed.");
-
-                DisplayScenarioStart(sb.ToString());
-                AppService svc = new AppService();
-
+                var svc = new AppService();
                 svc.ProcessWithReplace();
             }
             catch (Exception ex)
@@ -408,33 +333,15 @@ namespace ExceptionHandlingQuickStart
         {
             try
             {
-                Cursor = System.Windows.Forms.Cursors.WaitCursor;
+                Cursor = Cursors.WaitCursor;
+                DisplayScenarioStart(Resources.SuppressExceptionText);
 
-                StringBuilder sb = new StringBuilder();
-
-                sb.Append("Scenario: Process and resume execution");
-                sb.Append(Environment.NewLine);
-                sb.Append(Environment.NewLine);
-                sb.Append("1. UI layer calls into business layer.");
-                sb.Append(Environment.NewLine);
-                sb.Append(Environment.NewLine);
-                sb.Append("2. A SecurityException occurs and is detected in the business layer.");
-                sb.Append(Environment.NewLine);
-                sb.Append(Environment.NewLine);
-                sb.Append("3. The business layer specifies the \"Handle and Resume Policy\" as the exception handling policy.");
-                sb.Append(Environment.NewLine);
-                sb.Append(Environment.NewLine);
-                sb.Append("4. The \"Handle and Resume Policy\" is configured with a rethrowAction of \"None\", resulting in execution being resumed upon completion of the handler chain execution.");
-
-                DisplayScenarioStart(sb.ToString());
-
-                AppService svc = new AppService();
-
+                var svc = new AppService();
                 svc.ProcessAndResume();
 
-                this.resultsTextBox.Text += "Exception processed, execution resumed.";
+                resultsTextBox.Text += "Exception processed, execution resumed.";
 
-                Cursor = System.Windows.Forms.Cursors.Default;
+                Cursor = Cursors.Default;
             }
             catch (Exception ex)
             {
@@ -463,7 +370,7 @@ namespace ExceptionHandlingQuickStart
         /// <summary>
         /// Displays Quick Start help topics using the Help 2 Viewer.
         /// </summary>
-        private void viewWalkthroughButton_Click(object sender, System.EventArgs e)
+        private void viewWalkthroughButton_Click(object sender, EventArgs e)
         {
             try
             {
@@ -532,7 +439,7 @@ namespace ExceptionHandlingQuickStart
 
                 Application.Exit();
             }
-            QuickStartForm.AppForm.Cursor = System.Windows.Forms.Cursors.Default;
+            this.Cursor = System.Windows.Forms.Cursors.Default;
         }
 
     }

@@ -149,20 +149,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design
 			return GetCurrentHierarchy(serviceProvider).ConfigurationSource;
 		}
 
-		/// <summary>
-		/// Gets the current selected <see cref="IConfigurationUIHierarchy"/>'s <see cref="IConfigurationParameter"/>.
-		/// </summary>
-		/// <param name="serviceProvider">
-		/// The a mechanism for retrieving a service object; that is, an object that provides custom support to other objects.
-		/// </param>
-		/// <returns>The current selected <see cref="IConfigurationUIHierarchy"/>'s <see cref="IConfigurationParameter"/>.</returns>
-		public static IConfigurationParameter GetCurrentConfigurationParameter(IServiceProvider serviceProvider)
-		{
-			if (null == serviceProvider) throw new ArgumentNullException("serviceProvider");
-
-			return GetCurrentHierarchy(serviceProvider).ConfigurationParameter;
-		}
-
         /// <summary>
         /// Gets the registered <see cref="INodeNameCreationService"/>.
         /// </summary>

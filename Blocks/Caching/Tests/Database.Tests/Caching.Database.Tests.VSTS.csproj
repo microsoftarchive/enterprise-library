@@ -56,12 +56,10 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\..\GlobalAssemblyInfo.cs">
-      <Link>GlobalAssemblyInfo.cs</Link>
-    </Compile>
     <Compile Include="APTCAFixture.cs" />
     <Compile Include="Configuration\DataCacheStorageContainerModelFixture.cs" />
     <Compile Include="Configuration\DataCacheStorageDataFixture.cs" />
+    <Compile Include="Configuration\Fluent\StoreCacheManagerItemsInDatabaseExtensionFixture.cs" />
     <Compile Include="Configuration\Unity\DataCacheStorageInstantiationFixture.cs" />
     <Compile Include="DataBackingStoreFixture.cs" />
     <Compile Include="DatabaseCacheExceptionBehavior.cs" />

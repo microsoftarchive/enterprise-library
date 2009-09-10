@@ -22,7 +22,7 @@ using PropertyMatchingOption = Microsoft.Practices.Unity.InterceptionExtension.P
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
 {
     /// <summary>
-    /// A configuration element class that stores config information for instances
+    /// A configuration element class that stores configuration information for instances
     /// of <see cref="PropertyMatchingRule"/>.
     /// </summary>
     public class PropertyMatchingRuleData : MatchingRuleData

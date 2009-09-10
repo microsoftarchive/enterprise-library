@@ -48,7 +48,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
         /// <exception cref="InvalidOperationException">Error processing configuration information defined in application configuration file.</exception>
         public static ICacheManager GetCacheManager(string cacheManagerName)
         {
-            if (String.IsNullOrEmpty(cacheManagerName)) throw new ArgumentException(Common.Properties.Resources.ExceptionStringNullOrEmpty, cacheManagerName);
+            if (String.IsNullOrEmpty(cacheManagerName)) throw new ArgumentException(Common.Properties.Resources.ExceptionStringNullOrEmpty, "cacheManagerName");
 
             return InnerGetCacheManager(cacheManagerName);
         }

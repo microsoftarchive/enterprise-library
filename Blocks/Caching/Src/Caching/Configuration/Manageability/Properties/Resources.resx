@@ -139,7 +139,7 @@
     <value>Default cache manager</value>
   </data>
   <data name="CacheManagerSettingsPolicyName" xml:space="preserve">
-    <value>Specify settings for caching block</value>
+    <value>Specify settings for Caching Application Block</value>
   </data>
   <data name="CachingSectionCategoryName" xml:space="preserve">
     <value>Caching</value>

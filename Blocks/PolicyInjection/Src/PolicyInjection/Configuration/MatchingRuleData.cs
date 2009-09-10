@@ -18,7 +18,7 @@ using System.Collections.Generic;
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
 {
     /// <summary>
-    /// A configuration element base class that stores config information about a matching rule.
+    /// A configuration element base class that stores configuration information about a matching rule.
     /// </summary>
     public class MatchingRuleData : NameTypeConfigurationElement
     {

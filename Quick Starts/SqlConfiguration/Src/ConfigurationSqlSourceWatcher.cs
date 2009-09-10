@@ -15,6 +15,7 @@ using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.SqlConfigurationSource.Storage;
 using System.IO;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Storage;
 
 namespace Microsoft.Practices.EnterpriseLibrary.SqlConfigurationSource
 {
@@ -28,7 +29,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.SqlConfigurationSource
         /// </summary>
         private string connectString;
         private string getStoredProc;
-    
+        private ConfigurationChangeWatcher watcher;
+
         /// <summary>
         /// 
         /// </summary>
@@ -41,7 +43,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.SqlConfigurationSource
 
             if (refresh)
             {
-                SetUpWatcher(changed);
+                this.watcher = new ConfigurationChangeSqlWatcher(connectString, getStoredProc, this.ConfigSource);
+                this.watcher.ConfigurationChanged += changed;
             }
 
 		}
@@ -49,12 +52,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.SqlConfigurationSource
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="changed"></param>
-		private void SetUpWatcher(ConfigurationChangedEventHandler changed)
-		{
-            this.configWatcher = new ConfigurationChangeSqlWatcher(connectString, getStoredProc, this.ConfigSource);
-			this.configWatcher.ConfigurationChanged += changed;
-		}
-        
-	}
+        public override ConfigurationChangeWatcher Watcher
+        {
+            get { return watcher; }
+        }
+    }
 }

@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{241CC28C-B5B3-4F9F-A8CA-A85BB0F52D23}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Console.Wpf</RootNamespace>
+    <AssemblyName>Console.Wpf</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel><ExpressionBlendVersion>3.0.1921.0</ExpressionBlendVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Practices.Unity, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Lib\Microsoft.Practices.Unity.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationFramework.Aero">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="UIAutomationProvider">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="PresentationCore">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="PresentationFramework">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Page Include="Resources\AdderStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\Brushes.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\Converters.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\ExpanderDictionary.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\ViewModelDataTemplates.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Shell.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\BlockVisualizer.Generic.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\ElementModelContainer.Generic.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\Generic.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Shell.xaml.cs">
+      <DependentUpon>Shell.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ComponentModel\Converters\ElementReferenceConverter.cs" />
+    <Compile Include="ComponentModel\Editors\AssemblyLoader.cs" />
+    <Compile Include="ComponentModel\Editors\GACWrap.cs" />
+    <Compile Include="ComponentModel\Editors\LoadAssemblyFromCacheDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ComponentModel\Editors\LoadAssemblyFromCacheDialog.designer.cs">
+      <DependentUpon>LoadAssemblyFromCacheDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ComponentModel\Editors\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="ComponentModel\Editors\TypeBuildException.cs" />
+    <Compile Include="ComponentModel\Editors\TypeBuildNode.cs" />
+    <Compile Include="ComponentModel\Editors\TypeBuildNodeConstraint.cs" />
+    <Compile Include="ComponentModel\Editors\TypeSelector.cs" />
+    <Compile Include="ComponentModel\Editors\TypeSelectorEditor.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ComponentModel\Editors\TypeSelectorUI.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Controls\BlockVisualizer.cs" />
+    <Compile Include="Converters\GridWidthConverter.cs" />
+    <Compile Include="Controls\ToggleButtonExtensions.cs" />
+    <Compile Include="Controls\ElementModelContainer.cs" />
+    <Compile Include="Controls\RelationshipAdorner.cs" />
+    <Compile Include="Controls\VisualTreeWalker.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Converters\BooleanInverseConverter.cs" />
+    <Compile Include="Converters\ChildCountToVisibility.cs" />
+    <Compile Include="Converters\EnumerableToVisibilityConverter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Converters\StringToVisibilityConverter.cs" />
+    <Compile Include="Converters\ZIndexToBooleanConverter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="Validation\RequiredValidationRule.cs" />
+    <Compile Include="Validation\ConfigurationValidatorRule.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\EnvironmentMergeSectionViewModel.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\OverriddenElementViewModel.cs" />
+    <Compile Include="ViewModel\IElementExtendedPropertyProvider.cs" />
+    <Compile Include="ViewModel\Services\AssemblyAttributeSectionLocator.cs" />
+    <Compile Include="ViewModel\Services\AssemblyLocator.cs" />
+    <Compile Include="ViewModel\Services\BinPathProbingAssemblyLocator.cs" />
+    <Compile Include="ViewModel\Services\CollectionChangedSource.cs" />
+    <Compile Include="ViewModel\Services\ConfigurationSectionLocator.cs" />
+    <Compile Include="ViewModel\CollectionElementViewModel.cs" />
+    <Compile Include="ViewModel\ComponentModel\ViewModelPropertyDescriptor.cs" />
+    <Compile Include="ViewModel\ComponentModel\ViewModelTypeDescriptorProxy.cs" />
+    <Compile Include="ViewModel\ConfigurationSourceViewModel.cs" />
+    <Compile Include="ViewModel\DelegateCommand.cs" />
+    <Compile Include="ViewModel\ElementCollectionViewModelAdder.cs" />
+    <Compile Include="ViewModel\ElementCollectionViewModel.cs" />
+    <Compile Include="ViewModel\ElementProperty.cs" />
+    <Compile Include="ViewModel\ElementReferenceProperty.cs" />
+    <Compile Include="ViewModel\ElementViewModel.cs" />
+    <Compile Include="ViewModel\HeaderViewModel.cs" />
+    <Compile Include="ViewModel\HierarchicalSectionViewModel.cs" />
+    <Compile Include="ViewModel\Property.cs" />
+    <Compile Include="ViewModel\Services\MergeableConfigurationCollectionService.cs" />
+    <Compile Include="ViewModel\SectionViewModel.cs" />
+    <Compile Include="ViewModel\Services\DiscoverDerivedConfigurationTypesService.cs" />
+    <Compile Include="ViewModel\Services\ElementLookup.cs" />
+    <Compile Include="ViewModel\Services\ServiceProviderExtensions.cs" />
+    <Compile Include="ViewModel\StringHeaderViewModel.cs" />
+    <Compile Include="ViewModel\ViewModel.cs" />
+    <EmbeddedResource Include="ComponentModel\Editors\LoadAssemblyFromCacheDialog.resx">
+      <DependentUpon>LoadAssemblyFromCacheDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ComponentModel\Editors\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ComponentModel\Editors\TypeSelectorUI.resx">
+      <DependentUpon>TypeSelectorUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\Src\Common.csproj">
+      <Project>{A09297C8-2C40-470B-8856-D856676DDFFA}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\ExceptionHandling\Src\ExceptionHandling\ExceptionHandling.csproj">
+      <Project>{2DB0AD6D-BF59-4EBB-9F99-49ABD8539FD2}</Project>
+      <Name>ExceptionHandling</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\ExceptionHandling\Src\Logging\ExceptionHandling.Logging.csproj">
+      <Project>{EC311AD3-0A26-4808-901B-A983E97E5790}</Project>
+      <Name>ExceptionHandling.Logging</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Logging\Src\Logging\Logging.csproj">
+      <Project>{6AC97717-899D-4F72-BC5B-2C37959CD4FF}</Project>
+      <Name>Logging</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Security\Src\Security\Security.csproj">
+      <Project>{CF2CBDAD-4D43-45EA-9D40-4CD9CC7EE744}</Project>
+      <Name>Security</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\add.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Extensions\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

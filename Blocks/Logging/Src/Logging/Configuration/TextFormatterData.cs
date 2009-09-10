@@ -30,6 +30,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// </summary>
         public TextFormatterData()
         {
+            Type = typeof(TextFormatter);
         }
 
         /// <summary>

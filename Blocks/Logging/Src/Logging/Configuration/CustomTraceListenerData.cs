@@ -33,6 +33,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         public CustomTraceListenerData()
             : base()
         {
+            ListenerDataType = typeof(CustomTraceListenerData);
         }
 
         /// <summary>

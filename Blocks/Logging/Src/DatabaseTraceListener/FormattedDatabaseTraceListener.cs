@@ -111,7 +111,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database
         /// Validates that enough information exists to attempt executing the stored procedures
         /// </summary>
         /// <param name="logEntry">The LogEntry to validate.</param>
-        /// <returns>A boolean indicating whether the parameters for the LogEntry configuration are valid.</returns>
+        /// <returns>A Boolean indicating whether the parameters for the LogEntry configuration are valid.</returns>
         private bool ValidateParameters(LogEntry logEntry)
         {
             bool valid = true;

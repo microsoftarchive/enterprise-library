@@ -16,7 +16,7 @@ using System.Text;
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Instrumentation
 {
     /// <summary>
-    /// Represents the WMI event fired when an error ocurred in the exception handling block.
+    /// Represents the WMI event fired when an error occurred in the Exception Handling Application Block.
     /// </summary>
     public class ExceptionHandlingFailureEvent : ExceptionHandlingEvent
     {
@@ -26,7 +26,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Instrumentatio
         /// <summary>
         /// Initializes a new instance of the <see cref="ExceptionHandlingFailureEvent"/> class.
         /// </summary>
-        /// <param name="instanceName">The name of the exception policy this failure ocurred in.</param>
+        /// <param name="instanceName">The name of the exception policy this failure occurred in.</param>
         /// <param name="exceptionMessage">The message that represents the exception causing the failure.</param>
         public ExceptionHandlingFailureEvent(string instanceName, string exceptionMessage)
         {
@@ -43,7 +43,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Instrumentatio
         }
 
 		/// <summary>
-        /// Gets the name of the exception policy this failure ocurred in.
+        /// Gets the name of the exception policy this failure occurred in.
 		/// </summary>
 		public string InstanceName
 		{

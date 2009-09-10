@@ -21,7 +21,7 @@ using Microsoft.Practices.EnterpriseLibrary.Logging.Properties;
 namespace Microsoft.Practices.EnterpriseLibrary.Logging
 {
 	/// <summary>
-	/// <para>Provides exception formatting when not using the Exception Handling block.</para>
+    /// <para>Provides exception formatting when not using the Exception Handling Application Block.</para>
 	/// </summary>
 	public class ExceptionFormatter
 	{

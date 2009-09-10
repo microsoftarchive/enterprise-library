@@ -39,8 +39,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
         [TestMethod]
         public void CanSaveConfigurationSectionToFile()
         {
-            SystemConfigurationSource source = new SystemConfigurationSource();
-            source.Save(file, InstrumentationConfigurationSection.SectionName, CreateInstrumentationSection());
+            FileConfigurationSource source = new FileConfigurationSource(file, false);
+            source.Save(InstrumentationConfigurationSection.SectionName, CreateInstrumentationSection());
 
             ValidateConfiguration(file);
         }
@@ -53,7 +53,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
             doc.AppendChild(elem);
             doc.Save(tempFile);
             return tempFile;
-            ;
         }
 
         void ValidateConfiguration(string configFile)
@@ -75,18 +74,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
-        public void TryToSaveWithNullOrEmptyFileNameThrows()
-        {
-            SystemConfigurationSource source = new SystemConfigurationSource();
-            source.Save((string)null, InstrumentationConfigurationSection.SectionName, CreateInstrumentationSection());
-        }
-
-        [TestMethod]
         public void TryToSaveWithAFileConfigurationSaveParameter()
         {
-            SystemConfigurationSource source = new SystemConfigurationSource();
-            source.Add(new FileConfigurationParameter(file), InstrumentationConfigurationSection.SectionName, CreateInstrumentationSection());
+            FileConfigurationSource source = new FileConfigurationSource(file, false);
+            source.Add(InstrumentationConfigurationSection.SectionName, CreateInstrumentationSection());
 
             ValidateConfiguration(file);
         }
@@ -97,14 +88,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
             string tempFile = CreateFile();
             try
             {
-                FileConfigurationSource.ResetImplementation(tempFile, false);
-                IConfigurationSource source = new FileConfigurationSource(tempFile);
-                source.Add(new FileConfigurationParameter(tempFile), InstrumentationConfigurationSection.SectionName, CreateInstrumentationSection());
-                ValidateConfiguration(tempFile);
-                source.Add(new FileConfigurationParameter(tempFile), InstrumentationConfigurationSection.SectionName, CreateInstrumentationSection());
-                ValidateConfiguration(tempFile);
-                source.Add(new FileConfigurationParameter(tempFile), InstrumentationConfigurationSection.SectionName, CreateInstrumentationSection());
-                ValidateConfiguration(tempFile);
+                using (var source = new FileConfigurationSource(tempFile, false))
+                {
+                    source.Add(InstrumentationConfigurationSection.SectionName, CreateInstrumentationSection());
+                    ValidateConfiguration(tempFile);
+                    source.Add(InstrumentationConfigurationSection.SectionName, CreateInstrumentationSection());
+                    ValidateConfiguration(tempFile);
+                    source.Add(InstrumentationConfigurationSection.SectionName, CreateInstrumentationSection());
+                    ValidateConfiguration(tempFile);
+                }
             }
             finally
             {
@@ -114,41 +106,23 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
-        public void TryToSaveWithTheWrongConfigurationSaveParameterTypeThrows()
-        {
-            SystemConfigurationSource source = new SystemConfigurationSource();
-            source.Add(new WrongConfigurationSaveParameter(), InstrumentationConfigurationSection.SectionName, CreateInstrumentationSection());
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
         public void TryToSaveWithNullOrEmptySectionNameThrows()
         {
-            SystemConfigurationSource source = new SystemConfigurationSource();
-            source.Save(file, null, CreateInstrumentationSection());
+            FileConfigurationSource source = new FileConfigurationSource(file, false);
+            source.Save(null, CreateInstrumentationSection());
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
         public void TryToSaveWithNullSectionThrows()
         {
-            SystemConfigurationSource source = new SystemConfigurationSource();
-            source.Save(file, InstrumentationConfigurationSection.SectionName, null);
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(FileNotFoundException))]
-        public void SaveConfigurationSectionWithNoConfigurationFileThrows()
-        {
-            SystemConfigurationSource source = new SystemConfigurationSource();
-            source.Save("foo.exe.cofig", InstrumentationConfigurationSection.SectionName, CreateInstrumentationSection());
+            FileConfigurationSource source = new FileConfigurationSource(file, false);
+            source.Save(InstrumentationConfigurationSection.SectionName, null);
         }
 
         InstrumentationConfigurationSection CreateInstrumentationSection()
         {
             return new InstrumentationConfigurationSection(true, true, true, "fooApplicationName");
         }
-
-        class WrongConfigurationSaveParameter : IConfigurationParameter {}
     }
 }

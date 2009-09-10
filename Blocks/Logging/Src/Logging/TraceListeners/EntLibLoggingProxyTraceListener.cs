@@ -177,7 +177,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         }
 
         /// <summary>
-        /// Writes trace information, a data object and event information through the Logging Block.
+        /// Writes trace information, a data object and event information through the Logging Application Block.
         /// </summary>
         /// <param name="eventCache">A <see cref="TraceEventCache"/> object that contains the current process ID, thread ID, and stack trace information.</param>
         /// <param name="source">An identification of the source of the trace request.</param>
@@ -229,7 +229,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         }
 
         /// <summary>
-        /// Writes trace information, a formatted array of objects and event information through the Logging Block.
+        /// Writes trace information, a formatted array of objects and event information through the Logging Application Block.
         /// </summary>
         /// <param name="eventCache">A <see cref="TraceEventCache"/> object that contains the current process ID, thread ID, and stack trace information.</param>
         /// <param name="source">An identification of the source of the trace request.</param>
@@ -255,7 +255,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         }
 
         /// <summary>
-        /// Writes trace information, a message, and event information through the Logging Block.
+        /// Writes trace information, a message, and event information through the Logging Application Block.
         /// </summary>
         /// <param name="eventCache">A <see cref="TraceEventCache"/> object that contains the current process ID, thread ID, and stack trace information.</param>
         /// <param name="source">An identification of the source of the trace request.</param>
@@ -298,7 +298,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         }
 
         /// <summary>
-        /// Writes the specified message through the Logging Block.
+        /// Writes the specified message through the Logging Application Block.
         /// </summary>
         public override void Write(string message)
         {
@@ -306,7 +306,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         }
 
         /// <summary>
-        /// Writes the specified message through the Logging Block.
+        /// Writes the specified message through the Logging Application Block.
         /// </summary>
         public override void WriteLine(string message)
         {

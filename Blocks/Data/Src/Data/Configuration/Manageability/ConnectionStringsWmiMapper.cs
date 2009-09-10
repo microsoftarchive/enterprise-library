@@ -17,7 +17,7 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability;
 namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Manageability
 {
     /// <summary>
-    /// Representa a mapper for connection strings in configuration to Wmi.
+    /// Represents a mapper for connection strings in configuration to Wmi.
     /// </summary>
 	public static class ConnectionStringsWmiMapper
 	{

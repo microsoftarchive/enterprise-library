@@ -72,15 +72,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Tests
         [TestMethod]
         public void CanBuildCustomAuthorizationProviderFromSystemConfiguration()
         {
-            IConfigurationSource configurationSource
-                = new SystemConfigurationSource();
+            using (var configurationSource = new SystemConfigurationSource(false))
+            {
+                IAuthorizationProvider custom = 
+                    EnterpriseLibraryContainer.CreateDefaultContainer(configurationSource)
+                        .GetInstance<IAuthorizationProvider>("custom");
 
-            IAuthorizationProvider custom
-                = EnterpriseLibraryContainer.CreateDefaultContainer(configurationSource).GetInstance<IAuthorizationProvider>("custom");
-
-            Assert.IsNotNull(custom);
-            Assert.AreSame(typeof(MockCustomAuthorizationProvider), custom.GetType());
-            Assert.AreEqual("value1", ((MockCustomAuthorizationProvider)custom).customValue);
+                Assert.IsNotNull(custom);
+                Assert.AreSame(typeof(MockCustomAuthorizationProvider), custom.GetType());
+                Assert.AreEqual("value1", ((MockCustomAuthorizationProvider)custom).customValue);
+            }
         }
     }
 }

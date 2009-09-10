@@ -82,15 +82,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Storage
 		}
 
 		/// <summary>
-		/// Returns the string that should be assigned to the thread used by the watcher
-		/// </summary>
-		/// <returns>The name for the thread</returns>
-		protected override string BuildThreadName()
-		{
-			return "_ConfigurationFileWatcherThread : " + configFilePath;
-		}
-
-		/// <summary>
 		/// Builds the change event data, including the full path of the watched file
 		/// </summary>
 		/// <returns>The change event information</returns>

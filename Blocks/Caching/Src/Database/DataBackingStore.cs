@@ -21,7 +21,7 @@ using EntLibData = Microsoft.Practices.EnterpriseLibrary.Data;
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.Database
 {
     /// <summary>
-    /// Implementation of a BackingStore to allow CacheItems to be stored through Data block
+    /// Implementation of a BackingStore to allow CacheItems to be stored through Data Access Application Block.
     /// </summary>
     [ConfigurationElementType(typeof(DataCacheStorageData))]
     public class DataBackingStore : BaseBackingStore

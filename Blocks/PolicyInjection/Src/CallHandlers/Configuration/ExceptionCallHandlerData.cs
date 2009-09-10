@@ -67,7 +67,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
         }
 
         /// <summary>
-        /// The exception policy name as defined in configuration for the Exception Handling block.
+        /// The exception policy name as defined in configuration for the Exception Handling Application Block.
         /// </summary>
         /// <value>The "exceptionPolicyName" attribute in configuration</value>
         [ConfigurationProperty(ExceptionPolicyNamePropertyName, IsRequired = true)]

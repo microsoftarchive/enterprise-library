@@ -156,4 +156,13 @@
   <data name="ValidationFailedMessage" xml:space="preserve">
     <value>Parameter validation failed</value>
   </data>
+  <data name="ValidationResultsHeader" xml:space="preserve">
+    <value>Validation results:</value>
+  </data>
+  <data name="ValidationResultTemplate" xml:space="preserve">
+    <value>    Result: {0} Message: {1}</value>
+  </data>
+  <data name="ValidationResultWithKeyTemplate" xml:space="preserve">
+    <value>    Result: {0} Key: {2} Message: {1}</value>
+  </data>
 </root>
