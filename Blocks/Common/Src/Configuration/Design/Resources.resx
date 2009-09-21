@@ -117,11 +117,134 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="CategoryGeneral" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="CategoryLocalization" xml:space="preserve">
+    <value>Localization</value>
+  </data>
+  <data name="CategoryName" xml:space="preserve">
+    <value>(name)</value>
+  </data>
+  <data name="ConfigurationSourceSectionDisplayName" xml:space="preserve">
+    <value>Configuration Sources</value>
+  </data>
+  <data name="ConfigurationSourceSectionParentSourceDescription" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ConfigurationSourceSectionParentSourceDisplayName" xml:space="preserve">
+    <value>Parent Source</value>
+  </data>
+  <data name="ConfigurationSourceSectionRedirectedSectionsDisplayName" xml:space="preserve">
+    <value>Redirected Sections</value>
+  </data>
+  <data name="ConfigurationSourceSectionSelectedSourceDescription" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ConfigurationSourceSectionSelectedSourceDisplayName" xml:space="preserve">
+    <value>Selected Source</value>
+  </data>
+  <data name="ConfigurationSourceSectionSourcesDisplayName" xml:space="preserve">
+    <value>Sources</value>
+  </data>
   <data name="ExceptionStringNullOrEmpty" xml:space="preserve">
     <value>The value can not be null or string or empty.</value>
   </data>
   <data name="ExceptionValueNullMessage" xml:space="preserve">
     <value>The value for {0} can not be null.</value>
+  </data>
+  <data name="FileConfigurationSourceElementDescription" xml:space="preserve">
+    <value />
+  </data>
+  <data name="FileConfigurationSourceElementDisplayName" xml:space="preserve">
+    <value>File Based Configuration Source</value>
+  </data>
+  <data name="FileConfigurationSourceElementFilePathDescription" xml:space="preserve">
+    <value />
+  </data>
+  <data name="FileConfigurationSourceElementFilePathDisplayName" xml:space="preserve">
+    <value>File Path</value>
+  </data>
+  <data name="FileConfigurationSourceElementFilePathFilter" xml:space="preserve">
+    <value>Configuration Files (*.config)|*.config|All files (*.*)|*.*</value>
+  </data>
+  <data name="InstrumentationSectionDisplayName" xml:space="preserve">
+    <value>Instrumentation Settings</value>
+  </data>
+  <data name="InstrumentationSectionEventLoggingEnabledDescription" xml:space="preserve">
+    <value>InstrumentationSectionEventLoggingEnabledDescription</value>
+  </data>
+  <data name="InstrumentationSectionEventLoggingEnabledDisplayName" xml:space="preserve">
+    <value>Enable Event Log</value>
+  </data>
+  <data name="InstrumentationSectionPerformanceCountersEnabledDescription" xml:space="preserve">
+    <value>InstrumentationSectionPerformanceCountersEnabledDescription</value>
+  </data>
+  <data name="InstrumentationSectionPerformanceCountersEnabledDisplayName" xml:space="preserve">
+    <value>Enable Performance Counters</value>
+  </data>
+  <data name="InstrumentationSectionWmiEnabledDescription" xml:space="preserve">
+    <value>InstrumentationSectionWmiEnabledDescription</value>
+  </data>
+  <data name="InstrumentationSectionWmiEnabledDisplayName" xml:space="preserve">
+    <value>Enable WMI</value>
+  </data>
+  <data name="ManageableConfigurationSourceElementApplicationNameDescription" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ManageableConfigurationSourceElementApplicationNameDisplayName" xml:space="preserve">
+    <value>Application Name</value>
+  </data>
+  <data name="ManageableConfigurationSourceElementDescription" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ManageableConfigurationSourceElementDisplayName" xml:space="preserve">
+    <value>Manageable Configuration Source</value>
+  </data>
+  <data name="ManageableConfigurationSourceElementEnableGroupPoliciesDescription" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ManageableConfigurationSourceElementEnableGroupPoliciesDisplayName" xml:space="preserve">
+    <value>Group Policy Enabled</value>
+  </data>
+  <data name="ManageableConfigurationSourceElementEnableWmiDescription" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ManageableConfigurationSourceElementEnableWmiDisplayName" xml:space="preserve">
+    <value>WMI Enabled</value>
+  </data>
+  <data name="ManageableConfigurationSourceElementFilePathDescription" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ManageableConfigurationSourceElementFilePathDisplayName" xml:space="preserve">
+    <value>File Path</value>
+  </data>
+  <data name="ManageableConfigurationSourceElementFilePathFilter" xml:space="preserve">
+    <value>All files (*.*)|*.*</value>
+  </data>
+  <data name="NameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="RedirectedSectionElementDescription" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RedirectedSectionElementDisplayName" xml:space="preserve">
+    <value>Redirected Sections</value>
+  </data>
+  <data name="RedirectedSectionElementSourceNameDescription" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RedirectedSectionElementSourceNameDisplayName" xml:space="preserve">
+    <value>Source</value>
+  </data>
+  <data name="SystemConfigurationSourceElementDescription" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SystemConfigurationSourceElementDisplayName" xml:space="preserve">
+    <value>System Configuration Source</value>
+  </data>
+  <data name="TypeNameDisplayName" xml:space="preserve">
+    <value>Type</value>
   </data>
   <data name="ValidationErrorToString" xml:space="preserve">
     <value>The property {0} is invalid for {1}. Message: {2}</value>

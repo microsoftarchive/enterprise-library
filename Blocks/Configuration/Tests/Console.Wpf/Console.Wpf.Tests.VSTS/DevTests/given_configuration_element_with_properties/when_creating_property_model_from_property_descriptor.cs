@@ -142,7 +142,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_configuration_element_with_prope
             var Prop1 = properties.Where(x => x.PropertyName == "Prop1").FirstOrDefault();
 
             Assert.IsNotNull(Prop1);
-            Assert.IsTrue(Prop1.ReadOnly);
+            Assert.IsTrue(Prop1.DesignTimeReadOnly);
         }
 
         [TestMethod]

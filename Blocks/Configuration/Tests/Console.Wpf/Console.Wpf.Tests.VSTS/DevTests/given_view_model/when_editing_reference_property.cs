@@ -127,7 +127,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model
             base.Act();
 
             var referredElement = logCategoryProperty.Value as CollectionElementViewModel;
-            referredElement.Delete.Execute(null);
+            referredElement.DeleteCommand.Execute(null);
         }
 
         [TestMethod]

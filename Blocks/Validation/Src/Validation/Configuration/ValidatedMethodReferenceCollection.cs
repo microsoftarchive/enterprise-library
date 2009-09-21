@@ -10,13 +10,15 @@
 //===============================================================================
 
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using System.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 {
 	/// <summary>
 	/// Represents a collection of validated methods.
 	/// </summary>
-	/// <seealso cref="ValidatedMethodReference"/>
+    /// <seealso cref="ValidatedMethodReference"/>
+    [ConfigurationCollection(typeof(ValidatedMethodReference), AddItemName = "method", ClearItemsName = "clear", RemoveItemName = "remove")]
 	public class ValidatedMethodReferenceCollection : NamedElementCollection<ValidatedMethodReference>
 	{
 		/// <summary>

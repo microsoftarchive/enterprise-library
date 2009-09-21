@@ -9,6 +9,16 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+//===============================================================================
+// Microsoft patterns & practices Enterprise Library
+// Exception Handling Application Block
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
 using System;
 using System.Configuration;
 using System.Linq;
@@ -29,6 +39,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
     /// </summary>
     [ResourceDisplayName(typeof(Resources), "AddExceptionTypeDisplayName")]		
     [ResourceDescription(typeof(Resources), "AddExceptionTypeHelpText")]
+    [CollectionElementAddCommand("Console.Wpf.ViewModel.TypePickingCollectionElementAddCommand, Console.Wpf")]
     public class ExceptionTypeData : NamedConfigurationElement
     {
         private static readonly AssemblyQualifiedTypeNameConverter typeConverter = new AssemblyQualifiedTypeNameConverter();
@@ -73,8 +84,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
         /// <value>
         /// The name of the element.
         /// </value>
-        [ReadOnly(true)]
-        //[ResourceDescription(typeof(Resources), "NodeNameDescription")]
+        [DesignTimeReadOnly(true)]
+        [ResourceDescription(typeof(Resources), "NameDescription")]
+        [ResourceDisplayName(typeof(Resources), "NameDisplayName")]
         public override string Name
         {
             get
@@ -107,10 +119,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
         /// The fully qualified type name of the <see cref="Exception"/> type.
         /// </value>
         [ConfigurationProperty(typeProperty, IsRequired = true)]
-        //[Required]
-        [ResourceDescription(typeof(Resources), "ExceptionTypeNodeNameDescription")]
-        [ReadOnly(true)]
-        //[SRCategory("CategoryGeneral", typeof(Resources))]
+        [ResourceDescription(typeof(Resources), "TypeNameDescription")]
+        [ResourceDisplayName(typeof(Resources), "TypeNameDisplayName")]
+        [BaseType(typeof(Exception), TypeSelectorIncludes.BaseType | TypeSelectorIncludes.AbstractTypes)]
         public string TypeName
         {
             get { return (string)this[typeProperty]; }
@@ -125,8 +136,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
         /// </value>
         [ConfigurationProperty(postHandlingActionProperty, IsRequired = true, DefaultValue = PostHandlingAction.NotifyRethrow)]
         [ResourceDescription(typeof(Resources), "ExceptionTypePostHandlingActionDescription")]
-        //[SRCategory("CategoryGeneral", typeof(Resources))]
-        //[Required]
+        [ResourceDisplayName(typeof(Resources), "PostHandlingActionDisplayName")]
         public PostHandlingAction PostHandlingAction
         {
             get { return (PostHandlingAction)this[postHandlingActionProperty]; }
@@ -142,7 +152,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
         [ConfigurationProperty(exceptionHandlersProperty)]
         [ResourceDisplayName(typeof(Resources), "ExceptionHandlersDisplayName")]
         [OrderableCollection(true)]
-        [Browsable(false)]
         [ConfigurationCollection(typeof(ExceptionHandlerData))]
         public NameTypeConfigurationElementCollection<ExceptionHandlerData, CustomHandlerData> ExceptionHandlers
         {

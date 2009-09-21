@@ -4,10 +4,13 @@
 
 	<!--Converters -->
 	<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    <Converters:BooleanToHiddenConverter x:Key="BooleanToHiddenConverter" />
 	<Converters:ZIndexToBooleanConverter x:Key="BooleanToZIndexConverter" />
 	<Converters:EnumerableToVisibilityConverter x:Key="EnumerableToVisibilityConverter" />
 	<Converters:ChildCountToVisibility x:Key="ChildCountToVisibility" />
 	<Converters:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
 	<Converters:BooleanInverseConverter x:Key="BooleanInverseConverter" />
+	<Converters:TypeToVisibilityConverter x:Key="TypeToVisibilityConverter" />
+	<Converters:SuggestedValueTypeConverter x:Key="SuggestedValueTypeConverter" />
 
 </ResourceDictionary>

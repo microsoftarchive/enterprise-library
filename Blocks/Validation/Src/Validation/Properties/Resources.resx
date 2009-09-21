@@ -315,4 +315,11 @@
   <data name="ExceptionCannotConvertBound" xml:space="preserve">
     <value>The string representing the bound value could not be converted to the bound type.</value>
   </data>
+  <data name="ValidationAttributeFailed" xml:space="preserve">
+    <value>Validation using {0} threw an exception: {1}</value>
+    <comment>{0} validator type name {1} exception message</comment>
+  </data>
+  <data name="ExceptionContainsNullElements" xml:space="preserve">
+    <value>Enumerable contains null elements.</value>
+  </data>
 </root>

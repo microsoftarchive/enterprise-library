@@ -29,11 +29,17 @@ namespace Console.Wpf.ViewModel
 
             MoveUp = new DelegateCommand((o) => containingCollection.MoveUp(this), (o) => !containingCollection.IsFirst(this));
             MoveDown = new DelegateCommand((o) => containingCollection.MoveDown(this), (o) => !containingCollection.IsLast(this));
-            Delete = new DelegateCommand((o) => containingCollection.Delete(this));
+            DeleteCommand = new DelegateCommand((o) => this.Delete());
         }
 
         public ICommand MoveUp { get; protected set; }
         public ICommand MoveDown { get; protected set; }
-        public ICommand Delete { get; protected set; }
+        public ICommand DeleteCommand { get; protected set; }
+
+        public virtual void Delete()
+        {
+            containingCollection.Delete(this);
+        }
+
     }
 }

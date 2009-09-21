@@ -12,6 +12,7 @@
 using System;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 {
@@ -50,6 +51,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 		/// Gets or sets the default ruleset for the represented type.
 		/// </summary>
 		[ConfigurationProperty(DefaultRulePropertyName)]
+        [Reference(typeof(ValidationSettings), typeof(ValidationRulesetData))]
 		public string DefaultRuleset
 		{
 			get { return (string)this[DefaultRulePropertyName]; }

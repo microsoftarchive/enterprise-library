@@ -19,6 +19,8 @@ using System;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using System.Collections.Generic;
 using Microsoft.Practices.EnterpriseLibrary.Security.Instrumentation;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Caching.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Cache.CachingStore.Configuration
 {
@@ -59,7 +61,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cache.CachingStore.Conf
         /// Gets or sets the Caching Application Block Cache instance name.
 		/// </summary>
         /// <value>Caching Application Block Cache Instance Name.</value>
-		[ConfigurationProperty(cacheManagerProperty, IsRequired = true)]
+        [ConfigurationProperty(cacheManagerProperty, IsRequired = true)]
+        [Reference(typeof(CacheManagerSettings), typeof(CacheManagerDataBase))]
 		public string CacheManager
 		{
 			get { return (string)this[cacheManagerProperty]; }

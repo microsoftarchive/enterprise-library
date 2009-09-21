@@ -10,6 +10,7 @@
 //===============================================================================
 
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using System.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 {
@@ -17,6 +18,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 	/// Represents a collection of validator configuration objects.
 	/// </summary>
 	/// <seealso cref="ValidatorData"/>
+    [ConfigurationCollection(typeof(ValidatorData), AddItemName = "validator")]
 	public class ValidatorDataCollection : NameTypeConfigurationElementCollection<ValidatorData, CustomValidatorData>
 	{
 		/// <summary>

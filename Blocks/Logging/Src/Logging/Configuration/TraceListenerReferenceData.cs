@@ -10,12 +10,14 @@
 //===============================================================================
 
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 {
 	/// <summary>
 	/// Configuration for a reference to named <see cref="TraceListenerData"/>.
 	/// </summary>
+    [ViewModel(ViewModels.TraceListenerReferenceElementViewModel)]
 	public class TraceListenerReferenceData : NamedConfigurationElement
 	{
 		/// <summary>

@@ -18,12 +18,14 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel.Unity;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.Utility;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
 {
     /// <summary>
     /// A <see cref="ConfigurationSection"/> that stores the policy set in configuration.
     /// </summary>
+    [ViewModel(ViewModels.HierarchicalViewModel)]
     public class PolicyInjectionSettings : SerializableConfigurationSection, ITypeRegistrationsProvider
     {
         //private const string InjectorsPropertyName = "injectors";
@@ -39,6 +41,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// </summary>
         /// <value>The <see cref="PolicyData"/> collection.</value>
         [ConfigurationProperty(PoliciesPropertyName)]
+        [ConfigurationCollection(typeof(PolicyData))]
         public NamedElementCollection<PolicyData> Policies
         {
             get { return (NamedElementCollection<PolicyData>)base[PoliciesPropertyName]; }

@@ -55,6 +55,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverr
         {
             base.BaseAdd(mergeNode);
         }
+
+        /// <summary>
+        /// Removed an instance of <see cref="EnvironmentNodeMergeElement"/> from the collection.
+        /// </summary>
+        /// <param name="mergeElement">An instance of <see cref="EnvironmentNodeMergeElement"/>.</param>
+        public void Remove(EnvironmentNodeMergeElement mergeElement)
+        {
+            base.BaseRemove(mergeElement.ConfigurationNodePath);
+        }
     }
 
     /// <summary>
@@ -79,6 +88,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverr
             get { return (string)base[ConfigurationNodePathPropertyName]; }
             set { base[ConfigurationNodePathPropertyName] = value; }
         }
+
+
 
         /// <summary>
         /// Gets or sets wether the settings in this configuration element should override the main configurations settings at designtime.

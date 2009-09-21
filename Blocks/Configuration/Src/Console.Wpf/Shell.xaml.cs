@@ -22,6 +22,7 @@ using Microsoft.Win32;
 using System.Windows.Forms.Design;
 using Console.Wpf.ViewModel;
 using System.ComponentModel.Design;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides.Configuration;
 
 namespace Console.Wpf
 {
@@ -48,6 +49,10 @@ namespace Console.Wpf
         	serviceContainer.AddService(typeof(MergeableConfigurationCollectionService),
         	                            new MergeableConfigurationCollectionService());
 
+            serviceContainer.AddService(typeof(ElementLookup), new ElementLookup());
+
+            FileMenu_NewEnvironment_Click(this, null);
+
         }
 
         private void FileMenu_Open_Click(object sender, RoutedEventArgs e)
@@ -55,7 +60,7 @@ namespace Console.Wpf
             var dialog = new OpenFileDialog()
                              {
                                  Title = "Select Configuration File",
-                                 InitialDirectory = Environment.CurrentDirectory,
+                                 InitialDirectory = @"f:\temp",
                                  DefaultExt = "*.config",
                                  Multiselect = false,
                                  Filter = "Configure files (*.config)|*.config|All Files (*.*)|*.*",
@@ -77,6 +82,33 @@ namespace Console.Wpf
             }
         }
 
+        List<SectionViewModel> environments = new List<SectionViewModel>();
+        private void FileMenu_NewEnvironment_Click(object sender, RoutedEventArgs e)
+        {
+            EnvironmentMergeSection section = new EnvironmentMergeSection() { EnvironmentName = "Test environment" };
+            var environmentViewModel = SectionViewModel.CreateSection(serviceContainer, section);
+            environments.Add(environmentViewModel);
+        }
+
+
+        private void FileMenu_OpenEnvironment_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new OpenFileDialog()
+            {
+                Title = "Select Delta Configuration File",
+                InitialDirectory = Environment.CurrentDirectory,
+                DefaultExt = "*.dconfig",
+                Multiselect = false,
+                Filter = "Delta configuration file (*.dconfig)|*.dconfig|All Files (*.*)|*.*",
+                FilterIndex = 0
+            };
+
+            if (dialog.ShowDialog(this) == true)
+            {
+                MessageBox.Show("asdasd");
+            }
+
+        }
 
         private void FileMenu_Save_Click(object sender, RoutedEventArgs e)
         {

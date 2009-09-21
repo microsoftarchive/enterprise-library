@@ -18,6 +18,7 @@ using System.Text;
 using System.Windows.Input;
 using Console.Wpf.Tests.VSTS.DevTests.Contexts;
 using Console.Wpf.ViewModel;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
@@ -27,11 +28,11 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model
     [TestClass]
     public class when_creating_hierarchical_section_model : ExceptionHandlingSettingsContext
     {
-        private HierarchicalSectionViewModel sectionViewModel;
+        private SectionViewModel sectionViewModel;
 
         protected override void Act()
         {
-            sectionViewModel = new HierarchicalSectionViewModel(ServiceProvider, Section);
+            sectionViewModel = SectionViewModel.CreateSection(ServiceProvider, Section);
             sectionViewModel.UpdateLayout();
         }
 
@@ -40,7 +41,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model
         {
             var policies = ElementsFromType<ExceptionPolicyData>();
             Assert.IsTrue(policies.Any());
-            Assert.IsTrue(policies.All(x => x.Column == 1));
+            Assert.IsTrue(policies.All(x => x.Column == 0));
         }
 
         [TestMethod]
@@ -48,7 +49,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model
         {
             var exceptionTypes = ElementsFromType<ExceptionTypeData>();
             Assert.IsTrue(exceptionTypes.Any());
-            Assert.IsTrue(exceptionTypes.All(x => x.Column == 2));
+            Assert.IsTrue(exceptionTypes.All(x => x.Column == 1));
             
         }
 
@@ -57,7 +58,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model
         {
             var handlers = ElementsFromType<ExceptionHandlerData>();
             Assert.IsTrue(handlers.Any());
-            Assert.IsTrue(handlers.All(x => x.Column == 3));
+            Assert.IsTrue(handlers.All(x => x.Column == 2));
         }
 
         [TestMethod]
@@ -116,7 +117,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model
             var relatedelements = sectionViewModel.GetRelatedElements(policy);
 
             CollectionAssert.AreEquivalent(
-                policy.ChildElements.SelectMany(x => x.ChildElements).Concat(new [] {sectionViewModel}).ToArray(),
+                policy.ChildElements.SelectMany(x => x.ChildElements).ToArray(),
                 relatedelements.ToArray());
         }
 
@@ -152,8 +153,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model
             
             for(int i = 0; i < headers.Count(); i++)
             {
-                // todo: need to move to zero based check.
-                Assert.IsTrue(headers.ElementAt(i).Column == i + 1, string.Format("Header is not in expected column {0}", i));
+                Assert.IsTrue(headers.ElementAt(i).Column == i, string.Format("Header is not in expected column {0}", i));
             }            
         }
 
@@ -171,17 +171,36 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model
 
             var childAdders =
                 policyElement.ChildElements.SelectMany(x => x.ChildAdders)
-                        .OfType<ElementCollectionViewModelAdder>()
+                        .OfType<CollectionElementAddCommand>()
                         .Select(x => x.DisplayName);
 
 
             var policyAdders = policyElement.ChildAdders
-                                .OfType<ElementCollectionViewModelAdder>()
+                                .OfType<CollectionElementAddCommand>()
                                 .Select(x => x.DisplayName);
 
             CollectionAssert.AreEquivalent(childAdders.ToArray(), 
                                             policyAdders.ToArray());            
         }
+
+        [TestMethod]
+        public void then_top_level_headers_offer_add_commands()
+        {
+            var topLevelHeaders =
+                sectionViewModel.GetAllGridVisuals().OfType<ElementViewModelWrappingHeaderViewModel>().Where(
+                    x => x.Column == 0);
+            Assert.IsTrue(topLevelHeaders.All(x => x.ChildAdders.Count() > 0));
+        }
+
+        [TestMethod]
+        public void then_non_top_level_headers_do_not_offer_add_commands()
+        {
+            var nonTopLevelHeaders =
+               sectionViewModel.GetAllGridVisuals().OfType<ElementViewModelWrappingHeaderViewModel>().Where(
+                   x => x.Column != 0);
+            Assert.IsTrue(nonTopLevelHeaders.All(x => x.ChildAdders.Count() == 0));
+        }
+
 
         private IEnumerable<ElementViewModel> ElementsFromType<T>()
         {

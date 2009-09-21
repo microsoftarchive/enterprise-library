@@ -38,7 +38,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_property_grid_consuming_view_mod
             {
                 var PropertiesForGrid = TypeDescriptor.GetProperties(propertyContext.Element).OfType<PropertyDescriptor>();
 
-                foreach (Property propertyFromModel in propertyContext.Properties)
+                foreach (Property propertyFromModel in propertyContext.Properties.Where(x=>!x.Hidden))
                 {
                     var propertyforGrid = PropertiesForGrid.Where(x => x.Name == propertyFromModel.PropertyName).FirstOrDefault();
 
@@ -59,7 +59,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_property_grid_consuming_view_mod
         public void then_all_display_names_match()
         {
             AssertForAllProperties(
-                (propertyForGrid, propertyFromModel) 
+                (propertyForGrid, propertyFromModel)
                     => Assert.AreEqual(propertyFromModel.DisplayName, propertyForGrid.DisplayName));
         }
 
@@ -88,28 +88,20 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_property_grid_consuming_view_mod
                     => Assert.AreEqual(propertyFromModel.Converter.GetType(), propertyForGrid.Converter.GetType()));
         }
 
-        //[TestMethod]
-        //public void then_all_converters_match()
-        //{
-        //    AssertForAllProperties(
-        //        (propertyForGrid, propertyFromModel)
-        //            => Assert.AreEqual(propertyFromModel.Converter.GetType(), propertyForGrid.Converter.GetType()));
-        //}
 
+        [TestMethod]
+        public void then_all_properties_with_child_properties_have_child_properties()
+        {
+            AssertForAllProperties(
+                (propertyForGrid, propertyFromModel) =>
+                {
+                    if (propertyFromModel.HasChildProperties)
+                    {
+                        Assert.IsNotNull(propertyForGrid.GetChildProperties());
 
-        //[TestMethod]
-        //public void then_all_properties_with_child_properties_have_child_properties()
-        //{
-        //    AssertForAllProperties(
-        //        (propertyForGrid, propertyFromModel) => 
-        //        {
-        //            if (propertyFromModel.HasChildProperties)
-        //            {
-        //                Assert.IsNotNull(propertyForGrid.GetChildProperties());
-
-        //                Assert.AreEqual(propertyFromModel.ChildProperties.Count(), propertyForGrid.GetChildProperties().Count);
-        //            }
-        //        });
-        //}
+                        Assert.AreEqual(propertyFromModel.ChildProperties.Count(), propertyForGrid.GetChildProperties().Count);
+                    }
+                });
+        }
     }
 }

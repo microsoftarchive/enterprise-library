@@ -17,12 +17,14 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Instrumentation;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration
 {
     /// <summary>
     /// <para>Configuration settings for cryptography.</para>
     /// </summary>
+    [ViewModel(ViewModels.TabularViewModel)]
     public class CryptographySettings : SerializableConfigurationSection, ITypeRegistrationsProvider
     {       
 		private const string hashProvidersProperty = "hashProviders";
@@ -46,6 +48,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
 		/// The instance name of the default <see cref="IHashProvider"/> instance.
 		/// </summary>
 		[ConfigurationProperty(defaultHashProviderNameProperty, IsRequired= false)]
+        [Reference(typeof(CryptographySettings), typeof(HashProviderData))]
 		public string DefaultHashProviderName
 		{
 			get { return (string)this[defaultHashProviderNameProperty]; }
@@ -62,6 +65,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
 		/// <para>This property maps to the <c>hashProviders</c> element in configuration.</para>
 		/// </remarks>
 		[ConfigurationProperty(hashProvidersProperty, IsRequired= false)]
+        [ConfigurationCollection(typeof(HashProviderData))]
 		public NameTypeConfigurationElementCollection<HashProviderData, CustomHashProviderData> HashProviders
 		{
             get { return (NameTypeConfigurationElementCollection<HashProviderData, CustomHashProviderData>)base[hashProvidersProperty]; }
@@ -72,6 +76,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
 		/// The instance name of the default <see cref="ISymmetricCryptoProvider"/> instance.
 		/// </summary>
 		[ConfigurationProperty(defaultSymmetricCryptoProviderNameProperty, IsRequired= false)]
+        [Reference(typeof(CryptographySettings), typeof(SymmetricProviderData))]
 		public string DefaultSymmetricCryptoProviderName
 		{
 			get { return (string)this[defaultSymmetricCryptoProviderNameProperty]; }
@@ -87,7 +92,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
 		/// <remarks>
 		/// <para>This property maps to the <c>hashProviders</c> element in configuration.</para>
 		/// </remarks>
-		[ConfigurationProperty(symmetricCryptoProvidersProperty, IsRequired= false)]
+        [ConfigurationProperty(symmetricCryptoProvidersProperty, IsRequired = false)]
+        [ConfigurationCollection(typeof(SymmetricProviderData))]
         public NameTypeConfigurationElementCollection<SymmetricProviderData, CustomSymmetricCryptoProviderData> SymmetricCryptoProviders
 		{
             get { return (NameTypeConfigurationElementCollection<SymmetricProviderData, CustomSymmetricCryptoProviderData>)base[symmetricCryptoProvidersProperty]; }

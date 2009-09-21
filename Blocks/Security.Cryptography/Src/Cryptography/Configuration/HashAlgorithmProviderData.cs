@@ -15,6 +15,8 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using System.Collections.Generic;
 using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Instrumentation;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using System.Security.Cryptography;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration
 {
@@ -85,6 +87,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         /// The fully qualified type name of the type of <see cref="System.Security.Cryptography.HashAlgorithm"/>.
         /// </value>
         [ConfigurationProperty(algorithmTypeProperty, IsRequired = true)]
+        [System.ComponentModel.Editor(EditorTypes.TypeSelector, EditorTypes.UITypeEditor)]
+        [BaseType(typeof(HashAlgorithm))]
         public string AlgorithmTypeName
         {
             get { return (string)this[algorithmTypeProperty]; }

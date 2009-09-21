@@ -75,6 +75,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
 
             var rm = new ResourceManager(ResourceType);
             DisplayNameValue = rm.GetString(ResourceName);
+            if (String.IsNullOrEmpty(DisplayNameValue)) DisplayNameValue = ResourceName;
             resourceLoaded = true;
         }
     }

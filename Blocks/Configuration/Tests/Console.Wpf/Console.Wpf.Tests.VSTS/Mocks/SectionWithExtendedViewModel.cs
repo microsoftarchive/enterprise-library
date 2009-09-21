@@ -14,9 +14,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Configuration;
+using System.Windows;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Console.Wpf.ViewModel;
 using System.ComponentModel;
+using System.Windows.Controls;
 
 namespace Console.Wpf.Tests.VSTS.Mocks
 {
@@ -26,7 +28,7 @@ namespace Console.Wpf.Tests.VSTS.Mocks
 
         public SectionWithExtendedViewModel()
         {
-            ElementCollection = new ElementCollectionWithExtendedViewmodel();
+            ElementCollection = new ElementCollectionWithExtendedViewModel();
 
             ElementCollection.Add(new CollectionElementWithExtendedViewmodel()); 
             ElementCollection.Add(new CollectionElementWithExtendedViewmodel());
@@ -48,14 +50,14 @@ namespace Console.Wpf.Tests.VSTS.Mocks
         }
 
         [ConfigurationProperty("ElementCollection")]
-        public ElementCollectionWithExtendedViewmodel ElementCollection
+        public ElementCollectionWithExtendedViewModel ElementCollection
         {
-            get { return (ElementCollectionWithExtendedViewmodel)base["ElementCollection"]; }
+            get { return (ElementCollectionWithExtendedViewModel)base["ElementCollection"]; }
             set { base["ElementCollection"] = value; }
         }
     }
 
-    [ViewModel(typeof(ElementViewModelEx))]
+    [ViewModel(typeof(ElementViewModelEx), typeof(UIElement))]
     public class ElementWithExtendedViewModel : ConfigurationElement
     {
 
@@ -63,7 +65,7 @@ namespace Console.Wpf.Tests.VSTS.Mocks
 
     [ViewModel(typeof(ElementCollectionViewModelEx))]
     [ConfigurationCollection(typeof(CollectionElementWithExtendedViewmodel))]
-    public class ElementCollectionWithExtendedViewmodel : ConfigurationElementCollection
+    public class ElementCollectionWithExtendedViewModel : ConfigurationElementCollection
     {
         public void Add(CollectionElementWithExtendedViewmodel element)
         {
@@ -81,13 +83,30 @@ namespace Console.Wpf.Tests.VSTS.Mocks
         }
     }
 
-
-
     [ViewModel(typeof(CollectionElementViewModelEx))]
+    [CollectionElementAddCommand(typeof(CustomElementCollectionAddCommand))]
+    [CollectionElementAddCommand(typeof(AnotherCustomElementCollectionAddCommand))]
     public class CollectionElementWithExtendedViewmodel : ConfigurationElement
     {
     }
 
+
+    public class CustomElementCollectionAddCommand : CollectionElementAddCommand
+    {
+        public CustomElementCollectionAddCommand(Type configurationElementType, ElementCollectionViewModel elementCollectionModel) : 
+            base(configurationElementType, elementCollectionModel)
+        {
+        }
+    }
+
+    public class AnotherCustomElementCollectionAddCommand : CollectionElementAddCommand
+    {
+        public AnotherCustomElementCollectionAddCommand(Type configurationElementType, ElementCollectionViewModel elementCollectionModel)
+            : base(configurationElementType, elementCollectionModel)
+        {
+        }
+    }
+       
 
     public class SectionViewModelEx : SectionViewModel
     {

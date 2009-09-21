@@ -9,27 +9,24 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Console.Wpf.ViewModel;
 
-namespace Console.Wpf.Tests.VSTS.Mocks
+namespace Console.Wpf.Tests.VSTS.TestSupport
 {
-    public class MockSection : ConfigurationSection
+    public static class ElementViewModelExtensions
     {
-        private const string childrenProperty = "children";
-
-        public MockSection()
+        public static IEnumerable<ElementViewModel> GetDescendentsOfType<T>(this ElementViewModel model)
         {
-            this[childrenProperty] = new NamedElementCollection<TestHandlerData>();
+            return GetDescendentsOfType<T, ElementViewModel>(model);
         }
 
-        [ConfigurationProperty(childrenProperty)]
-        public NamedElementCollection<TestHandlerData> Children
+        public static IEnumerable<V> GetDescendentsOfType<T, V>(this ElementViewModel model)
         {
-            get
-            {
-                return (NamedElementCollection<TestHandlerData>)this[childrenProperty];
-            }
+            return model.DescendentElements().Where(x => typeof(T).IsAssignableFrom(x.ConfigurationType)).OfType<V>();
         }
     }
 }

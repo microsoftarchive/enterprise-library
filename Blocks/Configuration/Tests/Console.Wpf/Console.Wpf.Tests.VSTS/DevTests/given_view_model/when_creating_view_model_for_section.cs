@@ -9,6 +9,8 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -97,7 +99,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model
         public void then_exception_policy_collection_contains_adders()
         {
             ElementCollectionViewModel policyCollection = (ElementCollectionViewModel)viewModel.ChildElements.Where(x => x.ConfigurationType == typeof(NamedElementCollection<ExceptionPolicyData>)).First();
-            Assert.IsTrue(policyCollection.ChildAdders.OfType<ElementCollectionViewModelAdder>().Any(a => a.DisplayName == "Policy"));
+            Assert.IsTrue(policyCollection.ChildAdders.OfType<CollectionElementAddCommand>().Any(a => a.DisplayName == "Policy"));
         }
 
         [TestMethod]
@@ -109,7 +111,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model
                     x => typeof(NamedElementCollection<ExceptionHandlerData>).IsAssignableFrom(x.ConfigurationType)).
                     First();
 
-            var adders = handlerCollection.ChildAdders.OfType<ElementCollectionViewModelAdder>();
+            var adders = handlerCollection.ChildAdders.OfType<CollectionElementAddCommand>();
             Assert.IsNotNull(adders.Single(a => a.DisplayName == "Wrap Handler"));
             Assert.IsNotNull(adders.Single(a => a.DisplayName == "Replace Handler"));
             Assert.IsNotNull(adders.Single(a => a.DisplayName == "Custom"));
@@ -153,7 +155,45 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model
             }
         }
 
-      
+        [TestMethod]
+        public void when_getting_path_it_is_unique()
+        {
+            List<string> paths = new List<string>();
+            foreach (var x in viewModel.DescendentElements())
+            {
+                if (paths.Contains(x.Path)) Assert.Fail();
+                paths.Add(x.Path);
+            }
+        }
+
+        [TestMethod]
+        public void when_changing_parent_path_path_changes()
+        {
+            var anyPolicy = viewModel.DescendentElements().Where(x => x.ConfigurationType == typeof(ExceptionPolicyData)).First();
+            var handlerWithinPolicy = anyPolicy.DescendentElements().Where(x => typeof(ExceptionHandlerData).IsAssignableFrom(x.ConfigurationType)).First();
+
+            string name = anyPolicy.Name;
+            using (var propListener = new PropertyChangedListener(handlerWithinPolicy))
+            {
+                anyPolicy.Property("Name").Value = "new name";
+
+                Assert.IsTrue(propListener.ChangedProperties.Contains("Path"));
+            }
+        }
+
+        [TestMethod]
+        public void when_changing_name_path_changes()
+        {
+            var anyPolicy = viewModel.DescendentElements().Where(x => x.ConfigurationType == typeof(ExceptionPolicyData)).First();
+
+            string name = anyPolicy.Name;
+            using (var propListener = new PropertyChangedListener(anyPolicy))
+            {
+                anyPolicy.Property("Name").Value = "new name";
+
+                Assert.IsTrue(propListener.ChangedProperties.Contains("Path"));
+            }
+        }
     }
 
     [TestClass]
@@ -189,7 +229,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model
     }
 
     [TestClass]
-    public class when_executing_adder : ExceptionHandlingSettingsContext
+    public class when_executing_adder_on_leaf_nodes : ExceptionHandlingSettingsContext
     {
         private ElementCollectionViewModel handlerCollection;
         private int startingCount;
@@ -213,7 +253,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model
 
         protected override void Act()
         {
-            var command = handlerCollection.ChildAdders.OfType<ElementCollectionViewModelAdder>().Where(a => a.DisplayName == "Wrap Handler").First();
+            var command = handlerCollection.ChildAdders.OfType<CollectionElementAddCommand>().Where(a => a.DisplayName == "Wrap Handler").First();
             command.Execute(null);
         }
 
@@ -230,5 +270,24 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model
         {
             Assert.IsTrue(handlerCollection.ChildElements.Any(x => x.Name == "New Wrap Handler 1"));
         }
+
+        [TestMethod]
+        public void then_collection_rows_are_recalculated()
+        {
+            int lastRow = handlerCollection.ChildElements.First().Row;
+            foreach(var element in handlerCollection.ChildElements.Skip(1))
+            {
+                Assert.AreEqual(lastRow + 1, element.Row);
+                lastRow = element.Row;
+            }
+        }
+
+        [TestMethod]
+        public void then_rowspan_for_added_node_is_one()
+        {
+            Assert.IsTrue(handlerCollection.ChildElements.All(x => x.RowSpan == 1));
+        }
     }
+
+   
 }

@@ -16,6 +16,7 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using System.Collections.Generic;
 using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration
 {
@@ -68,6 +69,24 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         {
             get { return (DataProtectionScope)this[protectedKeyProtectionScope]; }
             set { this[protectedKeyProtectionScope] = value; }
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [System.ComponentModel.Editor(EditorTypes.TypeSelector, EditorTypes.UITypeEditor)]
+        [BaseType(typeof(KeyedHashAlgorithm))]
+        public override string TypeName
+        {
+            get
+            {
+                return base.TypeName;
+            }
+            set
+            {
+                base.TypeName = value;
+            }
         }
 
         /// <summary>

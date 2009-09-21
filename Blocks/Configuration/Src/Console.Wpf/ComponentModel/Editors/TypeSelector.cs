@@ -24,6 +24,7 @@ namespace Console.Wpf.ComponentModel.Editors
     /// <summary>
     /// Represents a selector for types
     /// </summary>
+    
     public class TypeSelector
     {
         readonly Type baseType_;

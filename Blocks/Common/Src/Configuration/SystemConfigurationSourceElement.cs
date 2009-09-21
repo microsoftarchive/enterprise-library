@@ -10,19 +10,25 @@
 //===============================================================================
 
 using Microsoft.Practices.EnterpriseLibrary.Common.Properties;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+
+using DesigntimeResource = Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design.Resources;
+using RuntimeResources = Microsoft.Practices.EnterpriseLibrary.Common.Properties.Resources;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 {
     /// <summary>
     /// Represents the configuration settings that describe an <see cref="SystemConfigurationSource"/>.
     /// </summary>
+    [ResourceDisplayName(typeof(DesigntimeResource), "SystemConfigurationSourceElementDisplayName")]
+    [ResourceDescription(typeof(DesigntimeResource), "SystemConfigurationSourceElementDescription")]
     public class SystemConfigurationSourceElement : ConfigurationSourceElement
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="SystemConfigurationSourceElement"/> class with default values.
         /// </summary>
         public SystemConfigurationSourceElement()
-            : this(Resources.SystemConfigurationSourceName)
+            : this(RuntimeResources.SystemConfigurationSourceName)
         { }
 
         /// <summary>

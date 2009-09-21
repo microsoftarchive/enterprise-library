@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows;
 
 namespace Console.Wpf.ViewModel
 {
@@ -26,13 +27,25 @@ namespace Console.Wpf.ViewModel
             Row = -1;
             Column = -1;
             RowSpan = 1;
-            Column = 1;
+            ColumnSpan = 1;
         }
 
         public int Row { get; set; }
         public int Column { get; set; }
         public int RowSpan { get; set; }
         public int ColumnSpan { get; set; }
+
+        public Type CustomVisualType { get; set; }
+        public virtual FrameworkElement CustomVisual
+        {
+            get
+            {
+                if (CustomVisualType == null) return null;
+                var visualElement = (FrameworkElement)Activator.CreateInstance(CustomVisualType);
+                visualElement.DataContext = this;
+                return visualElement;
+            }
+        }
 
         /// <summary>
         /// Returns true if this <see cref="ViewModel"/> should be shown.

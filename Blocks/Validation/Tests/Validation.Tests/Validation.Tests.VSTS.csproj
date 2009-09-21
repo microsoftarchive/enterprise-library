@@ -23,6 +23,7 @@
     <Optimize>false</Optimize>
     <OutputPath>.\bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>false</DebugSymbols>
@@ -44,6 +45,9 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.configuration" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -85,6 +89,10 @@
     <Compile Include="Instrumentation\IntegrationFixture.cs" />
     <Compile Include="Instrumentation\PerformanceCounterFixture.cs" />
     <Compile Include="Integration\ValidationIntegrationHelperFixture.cs" />
+    <Compile Include="ValidationAttributeValidatedTypeFixture.cs" />
+    <Compile Include="ValidationAttributeValidatorBuilderFixture.cs" />
+    <Compile Include="ValidationAttributeValidatorFactoryFixture.cs" />
+    <Compile Include="ValidationReflectorHelperFixture.cs" />
     <Compile Include="MetadataValidatedElementFixture.cs" />
     <Compile Include="MetadataValidatedParameterElementFixture.cs" />
     <Compile Include="MetadataValidatedTypeFixture.cs" />
@@ -96,6 +104,7 @@
     </Compile>
     <Compile Include="PropertyValidationFactoryFixture.cs" />
     <Compile Include="ResourcesFixture.cs" />
+    <Compile Include="UnityValidationExtensionFixture.cs" />
     <Compile Include="ValidationFixture.cs" />
     <Compile Include="MemberAccessValidatorBuilderFactoryFixture.cs" />
     <Compile Include="MetadataValidatorBuilderFixture.cs" />
@@ -143,6 +152,7 @@
     <Compile Include="Validators\StringLengthValidatorFixture.cs" />
     <Compile Include="Validators\TypeConversionValidatorAttributeFixture.cs" />
     <Compile Include="Validators\TypeConversionValidatorFixture.cs" />
+    <Compile Include="Validators\ValidationAttributeValidatorFixture.cs" />
     <Compile Include="Validators\ValidatorFixture.cs" />
     <Compile Include="Validators\ValueAccessComparisonValidatorFixture.cs" />
     <Compile Include="Validators\ValueAccessValidatorFixture.cs" />

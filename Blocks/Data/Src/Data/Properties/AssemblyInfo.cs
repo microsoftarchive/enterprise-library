@@ -14,6 +14,8 @@ using System.Reflection;
 using System.Runtime.ConstrainedExecution;
 using System.Security;
 using System.Security.Permissions;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Data.Configuration;
 
 [assembly : SecurityPermission(SecurityAction.RequestMinimum)]
 [assembly : ReliabilityContract(Consistency.WillNotCorruptState, Cer.None)]
@@ -24,3 +26,5 @@ using System.Security.Permissions;
 [assembly : WmiConfiguration(@"root\EnterpriseLibrary", HostingModel = ManagementHostingModel.Decoupled, IdentifyLevel = false)]
 [assembly : AllowPartiallyTrustedCallers]
 [assembly : SecurityTransparent]
+
+[assembly: HandlesSectionName(DatabaseSettings.SectionName)]

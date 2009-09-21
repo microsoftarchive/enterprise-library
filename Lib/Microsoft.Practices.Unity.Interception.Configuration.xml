@@ -4,6 +4,85 @@
         <name>Microsoft.Practices.Unity.Interception.Configuration</name>
     </assembly>
     <members>
+        <member name="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.AdditionalInterfaceElement">
+            <summary>
+            Configuration element for configuring additional interception interfaces.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptionMemberElement">
+            <summary>
+            Base class for interception-related configuration elements.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptionMemberElement.OnDeserializeUnrecognizedAttribute(System.String,System.String)">
+            <summary>
+            Gets a value indicating whether an unknown attribute is encountered during deserialization.
+            </summary>
+            <param name="name">The name of the unrecognized attribute.</param>
+            <param name="value">The value of the unrecognized attribute.</param>
+            <returns><see langword="true"/> when an unknown attribute is encountered while deserializing; otherwise, 
+            <see langword="false"/>.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptionMemberElement.CreateInstance``1(System.String)">
+            <summary>
+            Creates an instance of the type represented by <paramref name="typeName"/> through the default constructor.
+            </summary>
+            <typeparam name="TInterface">The base type the created instance is casted to.</typeparam>
+            <param name="typeName">The name or the alias for the type of the instance to create.</param>
+            <returns>A new instace of <paramref name="typeName"/>.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.AdditionalInterfaceElement.CreateInjectionMember">
+            <summary>
+            Returns the InjectionMember object represented by this configuration
+            element.
+            </summary>
+            <returns>The <see cref="T:Microsoft.Practices.Unity.InterceptionExtension.AdditionalInterface"/> object.</returns>
+        </member>
+        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.AdditionalInterfaceElement.TypeName">
+            <summary>
+            Gets or sets the string name of the type of the represented object.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptionBehaviorElement">
+            <summary>
+            Configuration element for configuring interception behaviors.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptionBehaviorElement.CreateInjectionMember">
+            <summary>
+            Returns the InjectionMember object represented by this configuration
+            element.
+            </summary>
+            <remarks>
+            The nature of the returned <see cref="T:Microsoft.Practices.Unity.InterceptionExtension.InterceptionBehavior"/> depends on how  the 
+            element is configured: an interception behavior type, an interception behavior descriptor type
+            or a key to resolve a behavior from a unity container.
+            </remarks>
+            <returns>The <see cref="T:Microsoft.Practices.Unity.InterceptionExtension.InterceptionBehavior"/> object.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptionBehaviorElement.DeserializeElement(System.Xml.XmlReader,System.Boolean)">
+            <summary>
+            Reads XML from the configuration file.
+            </summary>
+            <param name="reader">The <see cref="T:System.Xml.XmlReader"/> that reads from the configuration file.</param>
+            <param name="serializeCollectionKey"><see langword="true"/> to serialize only the collectionkey properties; 
+            otherwise, <see langword="false"/>.</param>
+        </member>
+        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptionBehaviorElement.BehaviorTypeName">
+            <summary>
+            Returns the string name of the type of the interception behavior represented by this element.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptionBehaviorElement.BehaviorDescriptorTypeName">
+            <summary>
+            Returns the string name of the type of the interception behavior descriptor represented by this element.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptionBehaviorElement.BehaviorName">
+            <summary>
+            Returns the name to use to resolve the interception behavior represented by this element.
+            </summary>
+        </member>
         <member name="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptorConfigurationElementCollection">
             <summary>
             Collection of <see cref="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptorConfigurationElement"/> elements
@@ -29,6 +108,23 @@
             </returns>
             
             <param name="element">The <see cref="T:System.Configuration.ConfigurationElement"></see> to return the key for. </param>
+        </member>
+        <member name="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptorElement">
+            <summary>
+            Configuration element for configuring interceptors.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptorElement.CreateInjectionMember">
+            <summary>
+            Returns the InjectionMember object represented by this configuration
+            element.
+            </summary>
+            <returns>The <see cref="T:Microsoft.Practices.Unity.InterceptionExtension.AdditionalInterface"/> object.</returns>
+        </member>
+        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptorElement.TypeName">
+            <summary>
+            Returns the string name of the type of the represented object.
+            </summary>
         </member>
         <member name="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptorTargetConfigurationElementBase">
             <summary>
@@ -338,6 +434,21 @@
         <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.Properties.Resources.CannotHaveLifetimeWithoutTypeName">
             <summary>
               Looks up a localized string similar to The &lt;lifetime/&gt; element is not allowed on element named &apos;{0}&apos; because it doesn&apos;t have a type attribute..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.Properties.Resources.ExceptionCannotCreateInstance">
+            <summary>
+              Looks up a localized string similar to Cannot create instance of type {0} with a default constructor..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.Properties.Resources.ExceptionResolvedTypeNotCompatible">
+            <summary>
+              Looks up a localized string similar to The type name {0} resolved to type {1} is not compatible with the requested type {2}..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.Properties.Resources.MustHaveAtLeastOneBehaviorAttribute">
+            <summary>
+              Looks up a localized string similar to The interception behavior element must have one and only one of the &apos;behavior&apos;, &apos;behaviorType&apos; and &apos;behaviorDescriptorType&apos; attributes..
             </summary>
         </member>
         <member name="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.KeyInterceptorTargetConfigurationElement">

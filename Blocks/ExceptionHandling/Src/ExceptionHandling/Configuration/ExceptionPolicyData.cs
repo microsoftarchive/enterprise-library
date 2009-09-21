@@ -56,7 +56,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
 		/// </value>
 		[ConfigurationProperty(exceptionTypesProperty)]
         [ResourceDisplayName(typeof(Resources), "ExceptionTypesDisplayName")]
-        [System.ComponentModel.Browsable(false)]
         [ConfigurationCollection(typeof(ExceptionTypeData))]
 		public NamedElementCollection<ExceptionTypeData> ExceptionTypes
 		{

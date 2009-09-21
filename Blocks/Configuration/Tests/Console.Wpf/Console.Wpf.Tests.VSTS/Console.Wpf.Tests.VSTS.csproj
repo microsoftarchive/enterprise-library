@@ -63,6 +63,7 @@
     <Compile Include="DevTests\Contexts\WrapHandlerConfigurationElementContext.cs" />
     <Compile Include="DevTests\given_assembly_location\when_locating_assemblies_from_current_directory.cs" />
     <Compile Include="DevTests\given_assembly_location\when_locating_assembly_sections.cs" />
+    <Compile Include="DevTests\given_caching_configuraton\when_adding_caching_configuration_model.cs" />
     <Compile Include="DevTests\given_configuration_element_with_properties\when_creating_property_model_from_configuration.cs" />
     <Compile Include="DevTests\given_configuration_element_with_properties\when_creating_property_model_from_property_descriptor.cs">
       <SubType>Code</SubType>
@@ -72,11 +73,16 @@
     <Compile Include="DevTests\given_configuration_element_with_properties\when_creating_property_model_with_uitype_editor.cs" />
     <Compile Include="DevTests\given_configuration_source\when_creating_configurationsourceviewmodel.cs" />
     <Compile Include="DevTests\given_configuration_validator_rule\when_validating_value_with_configuration_validator_rule.cs" />
-    <Compile Include="DevTests\given_environment_node_in_view_model\when_adding_environment_node_to_view_model.cs" />
-    <Compile Include="DevTests\given_environment_node_in_view_model\when_adding_ext_properties_to_view_model.cs" />
+    <Compile Include="DevTests\given_element_reference\when_creating_element_reference_using_path.cs" />
     <Compile Include="DevTests\Contexts\ServiceProviderContext.cs" />
     <Compile Include="DevTests\Contexts\ExceptionHandlingSettingsContext.cs" />
+    <Compile Include="DevTests\given_element_reference\when_creating_reference_using_parent_path.cs" />
+    <Compile Include="DevTests\given_environment_node_in_view_model\when_adding_ext_properties_to_view_model.cs" />
+    <Compile Include="DevTests\given_environment_node_in_view_model\when_attaching_empty_overrides.cs" />
+    <Compile Include="DevTests\given_environment_node_in_view_model\when_overriding_properties.cs" />
+    <Compile Include="DevTests\given_logging_configuration\given_logging_configuration.cs" />
     <Compile Include="DevTests\given_property_grid_consuming_view_model\when_property_grid_consumes_model_element.cs" />
+    <Compile Include="DevTests\given_type_picking_add_command\when_executing_command.cs" />
     <Compile Include="DevTests\given_view_model\when_creating_model_that_contains_properties.cs" />
     <Compile Include="DevTests\given_view_model\when_editing_reference_property.cs" />
     <Compile Include="DevTests\given_view_model\when_querying_model_for_references.cs" />
@@ -87,7 +93,7 @@
     <Compile Include="Mocks\CompositeKeyCollection.cs" />
     <Compile Include="Mocks\CompositeKeyElement.cs" />
     <Compile Include="Mocks\MockElementWithMultipleChildCollections.cs" />
-    <Compile Include="Mocks\MockSection.cs" />
+    <Compile Include="Mocks\MockSectionWithSingleChild.cs" />
     <Compile Include="Mocks\ADerivedHandler.cs" />
     <Compile Include="Mocks\CustomTestHandlerData.cs" />
     <Compile Include="Mocks\SectionWithExtendedViewModel.cs" />
@@ -101,8 +107,21 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestSupport\PropertyChangedListener.cs" />
     <Compile Include="TestSupport\TestConfigurationBuilder.cs" />
+    <Compile Include="TestSupport\ElementViewModelExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Caching\Src\Caching\Caching.csproj">
+      <Project>{E725A5B4-A379-492F-89E3-3D8021376C3F}</Project>
+      <Name>Caching</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Caching\Src\Cryptography\Caching.Cryptography.csproj">
+      <Project>{A03EA97B-97CB-41EF-A55D-15C6496D8943}</Project>
+      <Name>Caching.Cryptography</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Caching\Src\Database\Caching.Database.csproj">
+      <Project>{674B06A5-A61C-4546-8475-90D4A7FE31D8}</Project>
+      <Name>Caching.Database</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\Common\Src\Common.csproj">
       <Project>{A09297C8-2C40-470B-8856-D856676DDFFA}</Project>
       <Name>Common</Name>

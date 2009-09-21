@@ -72,7 +72,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration
         /// </summary>
 		/// <value>A collection of <see cref="AuthorizationRuleData"/>.</value>
 		[ConfigurationProperty(rulesProperty, IsRequired= false)]
-        [Browsable(false)]
+        [ConfigurationCollection(typeof(AuthorizationRuleData))]
 		public NamedElementCollection<AuthorizationRuleData> Rules
 		{
 			get

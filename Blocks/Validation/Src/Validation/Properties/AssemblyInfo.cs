@@ -15,6 +15,8 @@ using System.Runtime.CompilerServices;
 using System.Runtime.ConstrainedExecution;
 using System.Management.Instrumentation;
 using System.Security;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration;
 
 [assembly: SecurityPermission(SecurityAction.RequestMinimum)]
 
@@ -27,3 +29,5 @@ using System.Security;
 
 [assembly: AllowPartiallyTrustedCallers]
 [assembly: SecurityTransparent]
+
+[assembly: HandlesSectionName(ValidationSettings.SectionName)]

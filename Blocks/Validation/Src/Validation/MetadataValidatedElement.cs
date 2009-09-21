@@ -151,7 +151,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
                 yield break;
 
             foreach (ValidatorAttribute attribute in
-                this.memberInfo.GetCustomAttributes(typeof(ValidatorAttribute), false))
+                ValidationReflectionHelper.GetCustomAttributes(this.memberInfo, typeof(ValidatorAttribute), false))
             {
                 if (this.ruleset.Equals(attribute.Ruleset))
                     yield return attribute;

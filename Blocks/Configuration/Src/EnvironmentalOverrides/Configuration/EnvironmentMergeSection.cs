@@ -24,7 +24,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverr
     /// <remarks>
     /// This configuration section is used by the Environmental Overrides extension to the configuration tool at designtime.
     /// </remarks>
-    [ViewModel("Console.Wpf.ViewModel.BlockSpecifics.EnvironmentMergeSectionViewModel, Console.Wpf")]
+    [ViewModel("Console.Wpf.ViewModel.BlockSpecifics.EnvironmentalOverridesViewModel, Console.Wpf")]
     public class EnvironmentMergeSection : ConfigurationSection
     {
         /// <summary>

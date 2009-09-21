@@ -22,24 +22,31 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using System.Windows.Input;
 using System.Diagnostics;
 using Console.Wpf.ViewModel.ComponentModel;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 
 namespace Console.Wpf.ViewModel
 {
+    [DebuggerDisplay("Name : {Name} ConfigurationType : {ConfigurationType} Path = {Path}")]
     public class ElementViewModel : ViewModel, INotifyPropertyChanged, ICustomTypeDescriptor
     {
-        IServiceProvider serviceProvider;
-        ConfigurationElement parentElement;
-        PropertyDescriptor declaringProperty;
-        ConfigurationElement thisElement;
-        NamedConfigurationElement thisElementWithName;
-        IEnumerable<Attribute> metadataAttributes;
-        ElementViewModel parentElementModel;
-        List<ElementViewModel> childElements;
-        List<Property> properties;
+        readonly IServiceProvider serviceProvider;
+        readonly ConfigurationElement parentElement;
+        readonly PropertyDescriptor declaringProperty;
+        readonly ConfigurationElement thisElement;
+        readonly NamedConfigurationElement thisElementWithName;
+        readonly MetadataCollection metadata;
+        readonly ElementViewModel parentElementModel;
+        readonly ElementViewModelPath path;
+
+
+        ExtendedPropertyContainer extendedProperties;
+        ObservableCollection<ElementViewModel> childElements;
+        ObservableCollection<Property> properties;
         ViewModelTypeDescriptorProxy typeDescriptorProxy;
 
         public ElementViewModel(IServiceProvider serviceProvider, ElementViewModel parentElementModel, PropertyDescriptor declaringProperty)
-            : this(serviceProvider, parentElementModel, declaringProperty, declaringProperty.Attributes.OfType<Attribute>())
+            : this(serviceProvider, parentElementModel, declaringProperty, new Attribute[0])
         {
         }
 
@@ -47,8 +54,11 @@ namespace Console.Wpf.ViewModel
             : this(serviceProvider, parentElementModel, declaringProperty.GetValue(parentElementModel.thisElement) as ConfigurationElement, additonalAttributes)
         {
             this.declaringProperty = declaringProperty;
-        }
 
+            this.metadata = new MetadataCollection(TypeDescriptor.GetAttributes(ConfigurationType).OfType<Attribute>().ToArray());
+            this.metadata.Override(declaringProperty.Attributes.OfType<Attribute>());
+            this.metadata.Override(additonalAttributes);
+        }
 
         protected ElementViewModel(IServiceProvider serviceProvider, ElementViewModel parentElementModel, ConfigurationElement thisElement, IEnumerable<Attribute> additonalAttributes)
         {
@@ -57,10 +67,16 @@ namespace Console.Wpf.ViewModel
             this.thisElement = thisElement;
             this.parentElementModel = parentElementModel;
             this.thisElementWithName = thisElement as NamedConfigurationElement;
-            this.metadataAttributes = additonalAttributes;
+            this.path = new ElementViewModelPath(parentElementModel, this);
 
-            this.parentElement = parentElementModel == null ? null : parentElementModel.thisElement;
-            
+            this.metadata = new MetadataCollection(TypeDescriptor.GetAttributes(ConfigurationType).OfType<Attribute>().ToArray());
+            this.metadata.Override(additonalAttributes);
+
+            if (parentElementModel != null)
+            {
+                this.parentElement = parentElementModel.thisElement;
+                this.parentElementModel.PropertyChanged += (sender, args) => { if (args.PropertyName == "Path") DoPropertyChanged("Path"); };
+            }
         }
 
         protected void PropagatePropertyValueChanged(string propertyName, string thisPropertyName)
@@ -94,7 +110,7 @@ namespace Console.Wpf.ViewModel
 
         protected IEnumerable<Attribute> MetadataAttributes
         {
-            get { return metadataAttributes; }
+            get { return metadata.Attributes; }
         }
 
         protected PropertyDescriptor DeclaringProperty
@@ -113,17 +129,17 @@ namespace Console.Wpf.ViewModel
             }
         }
 
+        public string Path
+        {
+            get
+            {
+                return path.PathString;
+            }
+        }
+
         public virtual Type ConfigurationType
         {
             get { return thisElement.GetType(); }
-        }
-
-        public virtual IEnumerable<Property> GetExtendedProperties()
-        {
-            ElementLookup lookup = serviceProvider.GetService<ElementLookup>();
-            if (lookup == null) return Enumerable.Empty<Property>();
-
-            return lookup.FindExtendedPropertyProviders().Where(x => x.CanExtend(this)).SelectMany(x => x.GetExtendedProperties(this));
         }
 
         public virtual IEnumerable<Property> GetAllProperties()
@@ -135,16 +151,16 @@ namespace Console.Wpf.ViewModel
                                         .Select(x => CreateProperty(x))
                                         .Cast<Property>();
 
-            var extendedProperties = GetExtendedProperties();
-
-            return declaredProperties.Union(extendedProperties);
+            return declaredProperties;
         }
 
         private void EnsureHasAllProperties()
         {
             if (properties == null)
             {
-                properties = GetAllProperties().ToList();
+                properties = new ObservableCollection<Property>(GetAllProperties());
+
+                extendedProperties = new ExtendedPropertyContainer(serviceProvider.GetService<ElementLookup>(), this, properties);
             }
         }
 
@@ -153,7 +169,7 @@ namespace Console.Wpf.ViewModel
             return Properties.Where(x => x.PropertyName == propertyName).FirstOrDefault();
         }
 
-        public IEnumerable<Property> Properties
+        public ObservableCollection<Property> Properties
         {
             get
             {
@@ -171,6 +187,7 @@ namespace Console.Wpf.ViewModel
         {
             return TypeDescriptor.GetProperties(thisElement)
                         .OfType<PropertyDescriptor>()
+                        .Where(x => x.IsBrowsable)
                         .Where(x => typeof(ConfigurationElement).IsAssignableFrom(x.PropertyType)) // only properties that are configuration elements
                         .Where(x => x.Attributes.OfType<ConfigurationPropertyAttribute>().Any())  //that have the configuration property attribute
                         .Select(x => CreateChildCollectionOrLeaf(x)) //create either a collection or a lead
@@ -181,16 +198,11 @@ namespace Console.Wpf.ViewModel
         {
             if (childElements == null)
             {
-                RefreshChildElements();
+                childElements = new ObservableCollection<ElementViewModel>(GetAllChildElements());
             }
         }
 
-        protected void RefreshChildElements()
-        {
-            childElements = GetAllChildElements().ToList();
-        }
-
-        public IEnumerable<ElementViewModel> ChildElements
+        public ObservableCollection<ElementViewModel> ChildElements
         {
             get
             {
@@ -245,7 +257,7 @@ namespace Console.Wpf.ViewModel
         {
             get
             {
-                foreach(var child in ChildElements)
+                foreach (var child in ChildElements)
                 {
                     foreach (var adder in child.ChildAdders)
                     {
@@ -277,6 +289,8 @@ namespace Console.Wpf.ViewModel
             }
         }
 
+        //todo: we can remove this here. though i didnt think i'd hurt having.
+        //removing would mean, relying on the contaning collections NotifyCollectionChange
         public event EventHandler Deleted;
 
         protected ElementViewModel CreateChildCollectionOrLeaf(PropertyDescriptor declaringProperty)
@@ -312,13 +326,18 @@ namespace Console.Wpf.ViewModel
                 return displayNameAttribute.DisplayName;
             }
 
-            return string.Empty;
+            return ConfigurationType.Name;
         }
 
         #region property changed
 
         protected virtual void DoPropertyChanged(string propertyName)
         {
+            if (propertyName == "Name")
+            {
+                DoPropertyChanged("Path");
+            }
+
             var handler = PropertyChanged;
             if (handler != null)
             {
@@ -394,5 +413,136 @@ namespace Console.Wpf.ViewModel
         }
 
         #endregion
+
+        private class ElementViewModelPath
+        {
+            private const string pathSepperator = "/";
+            private const string axisSepperator = ":";
+
+            readonly ElementViewModelPath parentPath;
+            readonly ElementViewModel me;
+            readonly string myTypeName;
+
+            public ElementViewModelPath(ElementViewModel parentViewModel, ElementViewModel me)
+            {
+                this.parentPath = (parentViewModel != null) ? parentViewModel.path : null;
+                this.me = me;
+                this.myTypeName = me.ConfigurationType.Name;
+            }
+
+            public string PathString
+            {
+                get
+                {
+                    string parentPathString = parentPath == null ? string.Empty : parentPath.PathString;
+                    return parentPathString + pathSepperator + myTypeName + axisSepperator + me.Name;
+                }
+            }
+
+            public string TypePath
+            {
+                get
+                {
+                    string parentTypePath = parentPath == null ? string.Empty : parentPath.TypePath;
+                    return parentTypePath + pathSepperator + me.ConfigurationType.ToString();
+                }
+            }
+        }
+
+        private class ExtendedPropertyContainer
+        {
+            readonly IElementChangeScope extendedPropetryProviders;
+            readonly Dictionary<IElementExtendedPropertyProvider, Property[]> propertiesByExtensionProviders = new Dictionary<IElementExtendedPropertyProvider, Property[]>();
+            readonly ElementViewModel subject;
+            readonly ObservableCollection<Property> properties;
+
+            public ExtendedPropertyContainer(ElementLookup lookup, ElementViewModel subject, ObservableCollection<Property> properties)
+            {
+                this.properties = properties;
+                this.subject = subject;
+                this.extendedPropetryProviders = lookup.FindExtendedPropertyProviders();
+                extendedPropetryProviders.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(extendedPropetryProviders_CollectionChanged);
+
+                Refresh();
+            }
+
+            private void Refresh()
+            {
+                foreach (IElementExtendedPropertyProvider provider in propertiesByExtensionProviders.Keys.ToArray())
+                {
+                    RemoveExtensionProvider(provider);
+                }
+
+                propertiesByExtensionProviders.Clear();
+                foreach (IElementExtendedPropertyProvider provider in extendedPropetryProviders.Enum().OfType<IElementExtendedPropertyProvider>().Where(x => x.CanExtend(subject)))
+                {
+                    AddExtensionProvider(provider);
+                }
+            }
+
+            private void RemoveExtensionProvider(IElementExtendedPropertyProvider provider)
+            {
+                Property[] extendedProperties = null;
+                if (propertiesByExtensionProviders.TryGetValue(provider, out extendedProperties))
+                {
+                    propertiesByExtensionProviders.Remove(provider);
+                    foreach (Property property in extendedProperties)
+                    {
+                        properties.Remove(property);
+                    }
+                }
+            }
+
+            private void AddExtensionProvider(IElementExtendedPropertyProvider provider)
+            {
+                if (provider.CanExtend(subject))
+                {
+                    var extendedProperties = provider.GetExtendedProperties(subject).ToArray();
+                    propertiesByExtensionProviders.Add(provider, extendedProperties);
+                    foreach (var extendedProperty in extendedProperties)
+                    {
+                        properties.Add(extendedProperty);
+                    }
+                }
+            }
+
+            void extendedPropetryProviders_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+            {
+                switch (e.Action)
+                {
+                    case NotifyCollectionChangedAction.Add:
+                        foreach (IElementExtendedPropertyProvider extProvider in e.NewItems)
+                        {
+                            AddExtensionProvider(extProvider);
+                        }
+                        break;
+
+                    case NotifyCollectionChangedAction.Remove:
+                        foreach (IElementExtendedPropertyProvider extProvider in e.OldItems)
+                        {
+                            RemoveExtensionProvider(extProvider);
+                        }
+                        break;
+
+                    case NotifyCollectionChangedAction.Reset:
+                        Refresh();
+                        break;
+                }
+            }
+
+
+        }
+
+        /// <summary>
+        /// Returns the type path information for an <see cref="ElementViewModel"/> in the
+        /// form ParentTypePath/ConfigurationElementType.
+        /// </summary>
+        public virtual string TypePath
+        {
+            get
+            {
+                return path.TypePath;
+            }
+        }
     }
 }

@@ -10,13 +10,15 @@
 //===============================================================================
 
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using System.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 {
 	/// <summary>
 	/// Represents a collection of validated properties.
 	/// </summary>
-	/// <seealso cref="ValidatedPropertyReference"/>
+    /// <seealso cref="ValidatedPropertyReference"/>
+    [ConfigurationCollection(typeof(ValidatedPropertyReference), AddItemName = "property", ClearItemsName = "clear", RemoveItemName = "remove")]
 	public class ValidatedPropertyReferenceCollection : NamedElementCollection<ValidatedPropertyReference>
 	{
 		/// <summary>

@@ -10,6 +10,7 @@
 //===============================================================================
 
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Configuration;
 using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
@@ -17,12 +18,15 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Filters;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Container=Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel.Container;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 {
     /// <summary>
     /// Configuration settings for client-side logging applications.
     /// </summary>
+    [ViewModel(ViewModels.LogggingSectionViewModel)]
     public class LoggingSettings : SerializableConfigurationSection, ITypeRegistrationsProvider
     {
         private const string ErrorsTraceSourceKey = "___ERRORS";
@@ -122,6 +126,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// Gets or sets the default logging category.
         /// </summary>
         [ConfigurationProperty(defaultCategoryProperty, IsRequired = true)]
+        [Reference(typeof(LoggingSettings), typeof(TraceSourceData))]
         public string DefaultCategory
         {
             get
@@ -139,6 +144,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// the available <see cref="System.Diagnostics.TraceListener"/>s.
         /// </summary>
         [ConfigurationProperty(traceListenerDataCollectionProperty)]
+        [ViewModel(ViewModels.TraceListenerElementCollectionViewModel)]
+        [ConfigurationCollection(typeof(TraceListenerData))]
         public TraceListenerDataCollection TraceListeners
         {
             get
@@ -152,6 +159,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// the available <see cref="Microsoft.Practices.EnterpriseLibrary.Logging.Formatters.ILogFormatter"/>s.
         /// </summary>
         [ConfigurationProperty(formatterDataCollectionProperty)]
+        [ConfigurationCollection(typeof(FormatterData))]
         public NameTypeConfigurationElementCollection<FormatterData, CustomFormatterData> Formatters
         {
             get
@@ -165,6 +173,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// the available <see cref="Microsoft.Practices.EnterpriseLibrary.Logging.Filters.ILogFilter"/>s.
         /// </summary>
         [ConfigurationProperty(logFiltersProperty)]
+        [ConfigurationCollection(typeof(LogFilterData))]
         public NameTypeConfigurationElementCollection<LogFilterData, CustomLogFilterData> LogFilters
         {
             get
@@ -178,6 +187,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// the available <see cref="LogSource"/>s.
         /// </summary>
         [ConfigurationProperty(traceSourcesProrperty)]
+        [ConfigurationCollection(typeof(TraceSourceData))]
         public NamedElementCollection<TraceSourceData> TraceSources
         {
             get

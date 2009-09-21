@@ -18,12 +18,14 @@ using Microsoft.Practices.EnterpriseLibrary.Caching.BackingStoreImplementations;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using System.Collections.Generic;
 using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
 {
     /// <summary>
     /// Overall configuration settings for Caching
     /// </summary>    
+    [ViewModel(ViewModels.TabularViewModel)]
     public class CacheManagerSettings : SerializableConfigurationSection, ITypeRegistrationsProvider
     {
 		/// <summary>
@@ -39,6 +41,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
         /// <summary>
         /// Defines the default manager instance to use when no other manager is specified
         /// </summary>
+        [Reference(typeof(CacheManagerSettings), typeof(CacheManagerDataBase))]
 		[ConfigurationProperty(defaultCacheManagerProperty, IsRequired= true)]
         public string DefaultCacheManager
         {
@@ -53,6 +56,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
 		/// The collection of defined <see cref="CacheManager"/> objects.
 		/// </value>
         [ConfigurationProperty(cacheManagersProperty, IsRequired= true)]
+        [ConfigurationCollection(typeof(CacheManagerDataBase))]
 		public NameTypeConfigurationElementCollection<CacheManagerDataBase, CustomCacheManagerData> CacheManagers
 		{
 			get { return (NameTypeConfigurationElementCollection<CacheManagerDataBase, CustomCacheManagerData>)base[cacheManagersProperty]; }
@@ -65,6 +69,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
 		/// The collection of defined <see cref="IBackingStore"/> objects.
 		/// </value>
 		[ConfigurationProperty(backingStoresProperty, IsRequired= false)]
+        [ConfigurationCollection(typeof(CacheStorageData))]
 		public NameTypeConfigurationElementCollection<CacheStorageData, CustomCacheStorageData> BackingStores
 		{
             get { return (NameTypeConfigurationElementCollection<CacheStorageData, CustomCacheStorageData>)base[backingStoresProperty]; }
@@ -76,7 +81,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
 		/// <value>
 		/// The collection of defined <see cref="IStorageEncryptionProvider"/> objects.
 		/// </value>
-		[ConfigurationProperty(encryptionProvidersProperty, IsRequired= false)]
+        [ConfigurationProperty(encryptionProvidersProperty, IsRequired = false)]
+        [ConfigurationCollection(typeof(StorageEncryptionProviderData))]
         public NameTypeConfigurationElementCollection<StorageEncryptionProviderData, StorageEncryptionProviderData> EncryptionProviders
 		{
             get { return (NameTypeConfigurationElementCollection<StorageEncryptionProviderData, StorageEncryptionProviderData>)base[encryptionProvidersProperty]; }

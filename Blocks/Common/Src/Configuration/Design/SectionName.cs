@@ -20,7 +20,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
     ///<summary>
     /// Indicates that this assembly handles the <see cref="ConfigurationSection"/>.
     ///</summary>
-    [AttributeUsage(AttributeTargets.Assembly)]
+    [AttributeUsage(AttributeTargets.Assembly,AllowMultiple=true)]
     public class HandlesSectionNameAttribute : Attribute
     {
         private string name;

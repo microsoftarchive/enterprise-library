@@ -11,6 +11,7 @@
 
 using System;
 using System.Configuration;
+using System.ComponentModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 {
@@ -63,7 +64,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 		/// the fully qualified name of the <see cref="Type"/> the element is the configuration for.
 		/// </value>
 		[ConfigurationProperty(typeProperty, IsRequired = true)]
-		public string TypeName
+        [Browsable(false)]
+		public virtual string TypeName
 		{
 			get { return (string)this[typeProperty]; }
 			set { this[typeProperty] = value; }

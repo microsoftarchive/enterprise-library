@@ -47,6 +47,10 @@ namespace Console.Wpf.ViewModel
         static Type[] PropertyConstructorArgTypes = new[] { typeof(IServiceProvider), typeof(object), typeof(PropertyDescriptor) };
         static ConstructorInfo PropertyConstructor = typeof(Property).GetConstructor(PropertyConstructorArgTypes);
 
+        static Type[] AddCommandConstructorArgTypes = new[] {typeof (Type), typeof (ElementCollectionViewModel)};
+        static ConstructorInfo AddCommandConstructor = typeof (CollectionElementAddCommand).GetConstructor(AddCommandConstructorArgTypes);
+
+
         public SectionViewModel(IServiceProvider serviceProvider, ConfigurationSection section)
             :this(serviceProvider, section, TypeDescriptor.GetAttributes(section).OfType<Attribute>()) //section has attributes from class-decl by default
         {
@@ -70,14 +74,18 @@ namespace Console.Wpf.ViewModel
         {
             get
             {
-                return GetAllGridVisuals().Max(x => x.Row) + 1;
+                var gridVisuals = GetAllGridVisuals();
+                if (gridVisuals.Any()) return gridVisuals.Max(x => x.Row) + 1;
+                return 1;
             }
         }
         public virtual int Columns
         {
             get
             {
-                return GetAllGridVisuals().Max(x => x.Column) + 1;
+                var gridVisuals = GetAllGridVisuals();
+                if (gridVisuals.Any()) return gridVisuals.Max(x => x.Column) + 1;
+                return 1;
             }
         }
 
@@ -96,7 +104,34 @@ namespace Console.Wpf.ViewModel
 
         public virtual IEnumerable<ElementViewModel> GetRelatedElements(ElementViewModel element)
         {
-            return Enumerable.Empty<ElementViewModel>();
+            List<ElementViewModel> relatedElements = new List<ElementViewModel>();
+
+            //element we refer to
+            relatedElements.AddRange(element.Properties.OfType<ElementReferenceProperty>()
+                                                       .Where(x => x.Value != null)
+                                                       .Select(x => x.Value)
+                                                       .Cast<ElementViewModel>()
+                                                       .Where(x => x.IsShown));
+
+
+            //elements that refer to us.
+            relatedElements.AddRange(DescendentElements(x => x.Properties.OfType<ElementReferenceProperty>().Where(y => y.Value == element).Any()));
+
+            //our parent
+            var firstVisibleParent = element.AncesterElements().FirstOrDefault(x => x.IsShown);
+            if (firstVisibleParent != null)
+            {
+                relatedElements.Add(firstVisibleParent);
+            }
+
+            //our children
+            relatedElements.AddRange(element.ChildElements.Where(x => x.IsShown));
+
+            //for children that are collection, their children as well.
+            relatedElements.AddRange(element.ChildElements.OfType<ElementCollectionViewModel>().SelectMany(x=>x.ChildElements).OfType<CollectionElementViewModel>().Where(x => x.IsShown).Cast<ElementViewModel>());
+
+            //that should be it. by default.
+            return relatedElements;
         }
 
         public event EventHandler ChildrenChangedEvent;
@@ -171,6 +206,29 @@ namespace Console.Wpf.ViewModel
                 new object[] { serviceProvider, parent, declaringProperty });
         }
 
+        public virtual IEnumerable<CollectionElementAddCommand> CreateElementCollectionAddCommands(Type elementTypeToAdd, ElementCollectionViewModel parentCollection)
+        {
+            var addCommandAttributes = TypeDescriptor.GetAttributes(elementTypeToAdd).OfType<CollectionElementAddCommandAttribute>().ToArray();
+
+            if (addCommandAttributes.Count() > 0)
+            {
+                foreach (var addCommand in addCommandAttributes)
+                {
+                    var constructor = addCommand.AddCommandType.GetConstructor(AddCommandConstructorArgTypes);
+                    yield return CreateAddCommand(constructor, elementTypeToAdd, parentCollection);
+                }
+            }
+            else
+            {
+                yield return CreateAddCommand(AddCommandConstructor, elementTypeToAdd, parentCollection);
+            }                
+        }
+
+        private static CollectionElementAddCommand CreateAddCommand(ConstructorInfo constructor, params object[] constructorArguments)
+        {
+            return (CollectionElementAddCommand)constructor.Invoke(constructorArguments);
+        }
+
         protected virtual ElementProperty CreateReferenceElementProperty(ElementViewModel parent, PropertyDescriptor declaringProperty)
         {
             IEnumerable<Attribute> metadataForCreatingProperty = GetMetaDataAttributesFromProperty(declaringProperty);
@@ -223,12 +281,23 @@ namespace Console.Wpf.ViewModel
                 if (contructorToCall == null) throw new InvalidOperationException("TODO");
             }
 
-            return (T)contructorToCall.Invoke(consturctorArgValues);
+            var modelElement = (T) contructorToCall.Invoke(consturctorArgValues);
+            ApplyCustomViewModelAttributes(modelElement, viewModelAttribute);
 
+            return modelElement;
+        }
+
+
+        private static void ApplyCustomViewModelAttributes(object element, ViewModelAttribute attribute)
+        {
+            var viewModel = element as ViewModel;
+            if (viewModel != null && attribute != null)
+            {
+                viewModel.CustomVisualType = attribute.ModelVisualType;
+            }
         }
 
         #endregion
-
 
     }
 }

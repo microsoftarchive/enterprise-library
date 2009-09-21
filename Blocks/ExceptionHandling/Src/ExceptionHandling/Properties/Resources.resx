@@ -246,4 +246,61 @@
   <data name="AuthorizationProviderTypeDescription" xml:space="preserve">
     <value>AuthorizationProviderTypeDescription</value>
   </data>
+  <data name="AttributesDescription" xml:space="preserve">
+    <value>Attributes</value>
+  </data>
+  <data name="AttributesDisplayName" xml:space="preserve">
+    <value>Attributes</value>
+  </data>
+  <data name="EventIdDisplayName" xml:space="preserve">
+    <value>Event id</value>
+  </data>
+  <data name="ExceptionHandlerTypeDescription" xml:space="preserve">
+    <value>Custom Handler Type</value>
+  </data>
+  <data name="ExceptionHandlerTypeDisplayName" xml:space="preserve">
+    <value>Custom Handler Type</value>
+  </data>
+  <data name="ExceptionMessageDisplayName" xml:space="preserve">
+    <value>Exception message</value>
+  </data>
+  <data name="ExceptionMessageResourceNameDisplayName" xml:space="preserve">
+    <value>Exception message resource name</value>
+  </data>
+  <data name="ExceptionMessageResourceTypeDisplayName" xml:space="preserve">
+    <value>Exception message resource type</value>
+  </data>
+  <data name="FormatterTypeNameDisplayName" xml:space="preserve">
+    <value>Formatter type name</value>
+  </data>
+  <data name="LogCategoryDisplayName" xml:space="preserve">
+    <value>Log category</value>
+  </data>
+  <data name="NameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="PostHandlingActionDisplayName" xml:space="preserve">
+    <value>Post handling action</value>
+  </data>
+  <data name="PriorityDisplayName" xml:space="preserve">
+    <value>Priority</value>
+  </data>
+  <data name="ReplaceExceptionTypeNameDisplayName" xml:space="preserve">
+    <value>Replace exception type </value>
+  </data>
+  <data name="SeverityDisplayName" xml:space="preserve">
+    <value>Severity</value>
+  </data>
+  <data name="TitleDisplayName" xml:space="preserve">
+    <value>Title</value>
+  </data>
+  <data name="TypeNameDisplayName" xml:space="preserve">
+    <value>Type name</value>
+  </data>
+  <data name="UseDefaultLoggerDisplayName" xml:space="preserve">
+    <value>Use default logger</value>
+  </data>
+  <data name="WrapExceptionTypeNameDisplayName" xml:space="preserve">
+    <value>Wrap exception type</value>
+  </data>
 </root>

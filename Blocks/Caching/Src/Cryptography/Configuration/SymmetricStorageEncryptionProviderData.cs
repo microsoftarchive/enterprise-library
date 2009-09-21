@@ -16,6 +16,8 @@ using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography;
 using System.Linq.Expressions;
 using System;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.Cryptography.Configuration
 {
@@ -47,7 +49,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Cryptography.Configurati
 		/// <summary>
 		/// Name of symmetric instance
 		/// </summary>       
-		[ConfigurationProperty(symmetricInstanceProperty, IsRequired = true)]
+        [ConfigurationProperty(symmetricInstanceProperty, IsRequired = true)]
+        [Reference(typeof(CryptographySettings), typeof(SymmetricAlgorithmProviderData))]
 		public string SymmetricInstance
 		{
 			get { return (string) base[symmetricInstanceProperty]; }

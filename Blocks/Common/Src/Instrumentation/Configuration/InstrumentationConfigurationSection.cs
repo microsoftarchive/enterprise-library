@@ -11,6 +11,7 @@
 
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Configuration
 {
@@ -18,6 +19,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Configura
 	/// Configuration object for Instrumentation. This section defines the instrumentation behavior 
 	/// for the entire application
 	/// </summary>
+    [ResourceDisplayName(typeof(Resources), "InstrumentationSectionDisplayName")]
 	public class InstrumentationConfigurationSection : SerializableConfigurationSection
     {
 		private const string performanceCountersEnabled = "performanceCountersEnabled";
@@ -75,6 +77,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Configura
 		/// Gets and sets the value of PerformanceCountersEnabled
 		/// </summary>
         [ConfigurationProperty(performanceCountersEnabled, IsRequired = false, DefaultValue = false)]
+        [ResourceDisplayName(typeof(Resources), "InstrumentationSectionPerformanceCountersEnabledDisplayName")]
+        [ResourceDescription(typeof(Resources), "InstrumentationSectionPerformanceCountersEnabledDescription")]
         public bool PerformanceCountersEnabled
         {
             get { return (bool)this[performanceCountersEnabled]; }
@@ -85,6 +89,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Configura
 		/// Gets and sets the value of EventLoggingEnabled
 		/// </summary>
         [ConfigurationProperty(eventLoggingEnabled, IsRequired = false, DefaultValue = false)]
+        [ResourceDisplayName(typeof(Resources), "InstrumentationSectionEventLoggingEnabledDisplayName")]
+        [ResourceDescription(typeof(Resources), "InstrumentationSectionEventLoggingEnabledDescription")]
         public bool EventLoggingEnabled
         {
             get { return (bool)this[eventLoggingEnabled]; }
@@ -95,6 +101,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Configura
 		/// Gets and sets value of WmiEnabled
 		/// </summary>
         [ConfigurationProperty(wmiEnabled, IsRequired = false, DefaultValue = false)]
+        [ResourceDisplayName(typeof(Resources), "InstrumentationSectionWmiEnabledDisplayName")]
+        [ResourceDescription(typeof(Resources), "InstrumentationSectionWmiEnabledDescription")]
         public bool WmiEnabled
         {
             get { return (bool)this[wmiEnabled]; }

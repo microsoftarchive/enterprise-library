@@ -20,21 +20,24 @@ using System.Windows.Input;
 
 namespace Console.Wpf.ViewModel
 {
-    public class ElementCollectionViewModelAdder : ICommand
+    public class CollectionElementAddCommand : ICommand
     {
-        private readonly ElementCollectionViewModel elementCollectionModel;
+        
         private readonly string displayName;
         private readonly string helpText;
-        private readonly Type configurationElementType;
+        
 
-        public ElementCollectionViewModelAdder(Type configurationElementType, ElementCollectionViewModel elementCollectionModel)
+        public CollectionElementAddCommand(Type configurationElementType, ElementCollectionViewModel elementCollectionModel)
         {
-            this.configurationElementType = configurationElementType;
-            this.elementCollectionModel = elementCollectionModel;
+            this.ConfigurationElementType = configurationElementType;
+            this.ElementCollectionModel = elementCollectionModel;
 
             displayName = GetDisplayName(configurationElementType);
             helpText = GetHelpText(configurationElementType);
         }
+
+        protected Type ConfigurationElementType { get; private set; }
+        protected ElementCollectionViewModel ElementCollectionModel { get; private set; }
 
         public string DisplayName
         {
@@ -49,7 +52,7 @@ namespace Console.Wpf.ViewModel
 
         public virtual void Execute(object parameter)
         {
-            elementCollectionModel.CreateNewChildElement(configurationElementType);
+            ElementCollectionModel.CreateNewChildElement(ConfigurationElementType);
         }
 
         public virtual bool CanExecute(object parameter) 

@@ -67,8 +67,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
         /// Gets or sets the message for the replacement exception.
         /// </summary>
         [ConfigurationProperty(exceptionMessageProperty, IsRequired = false)]
-        [ResourceDescription(typeof(Resources), "WrapHandlerNodeMessageDescription")]
-        //[SRCategory("CategoryGeneral", typeof(Resources))]
+        [ResourceDescription(typeof(Resources), "ExceptionMessageDescription")]
+        [ResourceDisplayName(typeof(Resources), "ExceptionMessageDisplayName")]
         public string ExceptionMessage
         {
             get { return (string)this[exceptionMessageProperty]; }
@@ -78,8 +78,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
 
         /// <summary/>
         [ConfigurationProperty(ExceptionMessageResourceTypeNameProperty)]
-        [ResourceDescription(typeof(Resources), "ExceptionMessageTypeNameDescription")]
-        //[SRCategory("CategoryLocalization", typeof(Resources))]
+        [ResourceDescription(typeof(Resources), "ExceptionMessageResourceTypeDescription")]
+        [ResourceDisplayName(typeof(Resources), "ExceptionMessageResourceTypeDisplayName")]
+        [ResourceCategory(typeof(ResourceCategoryAttribute), "CategoryLocalization")]
         [Editor(EditorTypes.TypeSelector, typeof(UITypeEditor))]
         [BaseType(typeof(Object), TypeSelectorIncludes.None)]
         public string ExceptionMessageResourceType
@@ -91,7 +92,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
         /// <summary/>
         [ConfigurationProperty(ExceptionMessageResourceNameProperty)]
         [ResourceDescription(typeof(Resources), "ExceptionMessageResourceNameDescription")]
-        //[SRCategory("CategoryLocalization", typeof(Resources))]
+        [ResourceDisplayName(typeof(Resources), "ExceptionMessageResourceNameDisplayName")]
+        [ResourceCategory(typeof(ResourceCategoryAttribute), "CategoryLocalization")]
         public string ExceptionMessageResourceName
         {
             get { return (string)this[ExceptionMessageResourceNameProperty]; }
@@ -114,11 +116,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
         /// The fully qualified type name of the replacement exception.
         /// </value>
         [ConfigurationProperty(wrapExceptionTypeProperty, IsRequired = true)]
-        //[Required]
         [Editor(EditorTypes.TypeSelector, typeof(UITypeEditor))]
         [BaseType(typeof(Exception), TypeSelectorIncludes.BaseType)]
-        [ResourceDescription(typeof(Resources), "ExceptionWrapTypeNameDescription")]
-        //[SRCategory("CategoryGeneral", typeof(Resources))]
+        [ResourceDescription(typeof(Resources), "WrapExceptionTypeNameDescription")]
+        [ResourceDisplayName(typeof(Resources), "WrapExceptionTypeNameDisplayName")]
         public string WrapExceptionTypeName
         {
             get { return (string)this[wrapExceptionTypeProperty]; }

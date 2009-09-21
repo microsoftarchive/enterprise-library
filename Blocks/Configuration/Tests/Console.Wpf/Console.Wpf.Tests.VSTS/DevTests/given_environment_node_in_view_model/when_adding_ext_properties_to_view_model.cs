@@ -42,7 +42,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_extension_provider_in_view_model
         {
             ElementLookup lookup = (ElementLookup)ServiceProvider.GetService(typeof(ElementLookup));
             var extensionProviders = lookup.FindExtendedPropertyProviders();
-            Assert.IsTrue(extensionProviders.Count() > 0);
+            Assert.IsTrue(extensionProviders.Enum().Count() > 0);
         }
 
         [TestMethod]
@@ -50,6 +50,17 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_extension_provider_in_view_model
         {
             var aWrapHandler = ehabModel.DescendentElements(x => x.ConfigurationType == typeof(WrapHandlerData)).First();
             Assert.IsTrue(aWrapHandler.Properties.Where(x => x.PropertyName == "Extended Property").Any());
+        }
+
+        [TestMethod]
+        public void then_extended_properties_are_discovered_after_properties_collection_was_accessed()
+        {
+            var aWrapHandler = ehabModel.DescendentElements(x => x.ConfigurationType == typeof(WrapHandlerData)).First();
+            var propeties = aWrapHandler.Properties;
+
+            sectionWithExtendedPropertyProvider = SectionViewModel.CreateSection(ServiceProvider, new ConfigurationSectionWithExtendedPropertyProvider());
+            Assert.AreEqual(2, aWrapHandler.Properties.Where(x => x.PropertyName == "Extended Property").Count());
+
         }
     }
 

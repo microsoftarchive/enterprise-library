@@ -19,6 +19,7 @@ using System.Windows;
 using System.Globalization;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using System.Windows.Input;
+using Console.Wpf.ViewModel.ComponentModel;
 
 namespace Console.Wpf.ViewModel
 {
@@ -38,11 +39,11 @@ namespace Console.Wpf.ViewModel
         private Type designTimeType;
         private bool hidden;
         private bool @readonly;
+        private bool? designTimeReadOnly = null;
         private TypeConverter converter;
         private UITypeEditor popupEditor;
         private FrameworkElement dropdownEditor;
         private string category;
-        
 
         public Property(IServiceProvider serviceProvider, object component, PropertyDescriptor declaringProperty)
             : this(serviceProvider, component, declaringProperty, new Attribute[0])
@@ -55,8 +56,15 @@ namespace Console.Wpf.ViewModel
             this.component = component;
             this.declaringProperty = declaringProperty;
 
-            metadata = new MetadataCollection(declaringProperty.Attributes.OfType<Attribute>());
-            metadata.Override(additionalAttributes);
+            if (declaringProperty != null)
+            {
+                metadata = new MetadataCollection(declaringProperty.Attributes.OfType<Attribute>());
+                metadata.Override(additionalAttributes);
+            }
+            else
+            {
+                metadata = new MetadataCollection(additionalAttributes);
+            }
 
             Initialize(declaringProperty, metadata.Attributes);
         	LaunchEditor = new LaunchEditorCommand();
@@ -64,17 +72,22 @@ namespace Console.Wpf.ViewModel
 
         private void Initialize(PropertyDescriptor declaringProperty, IEnumerable<Attribute> attributes)
         {
-            this.propertyName = declaringProperty.Name;
-            this.displayName = declaringProperty.DisplayName;
-            this.description = declaringProperty.Description;
-            this.propertyType = declaringProperty.PropertyType;
-            this.designTimeType = declaringProperty.PropertyType;
-            this.@readonly = declaringProperty.IsReadOnly;
-            this.hidden = !declaringProperty.IsBrowsable;
-            this.converter = declaringProperty.Converter;
-            this.category = declaringProperty.Category;
-            this.popupEditor = declaringProperty.GetEditor(typeof(UITypeEditor)) as UITypeEditor;
-            this.dropdownEditor = declaringProperty.GetEditor(typeof(FrameworkElement)) as FrameworkElement;
+            this.category = ResourceCategoryAttribute.General.Category;
+            this.converter = new StringConverter();
+
+            if (declaringProperty != null)
+            {
+                this.propertyName = declaringProperty.Name;
+                this.displayName = declaringProperty.DisplayName;
+                this.description = declaringProperty.Description;
+                this.propertyType = declaringProperty.PropertyType;
+                this.designTimeType = declaringProperty.PropertyType;
+                this.@readonly = declaringProperty.IsReadOnly;
+                this.hidden = !declaringProperty.IsBrowsable;
+                this.converter = declaringProperty.Converter;
+                this.popupEditor = declaringProperty.GetEditor(typeof(UITypeEditor)) as UITypeEditor;
+                this.dropdownEditor = declaringProperty.GetEditor(typeof(FrameworkElement)) as FrameworkElement;
+            }
 
             if (dropdownEditor != null)
             {
@@ -94,6 +107,19 @@ namespace Console.Wpf.ViewModel
             {
                 Type converterType = Type.GetType(converterAttribute.ConverterTypeName);
                 converter = (TypeConverter)Activator.CreateInstance(converterType);
+            }
+
+            CategoryAttribute categoryAttribute = attributes.OfType<CategoryAttribute>().FirstOrDefault();
+            if (categoryAttribute != null)
+            {
+                category = categoryAttribute.Category;
+            }
+
+            DesignTimeReadOnlyAttribute designTimeReadOnlyAttribute =
+                attributes.OfType<DesignTimeReadOnlyAttribute>().FirstOrDefault();
+            if (designTimeReadOnlyAttribute != null)
+            {
+                designTimeReadOnly = designTimeReadOnlyAttribute.ReadOnly;
             }
         }
 
@@ -272,6 +298,12 @@ namespace Console.Wpf.ViewModel
             }
         }
 
+        public IEnumerable<string> BindableSuggestedValues
+        {
+            get { return SuggestedValues.Select(x=>Converter.ConvertToString(this, CultureInfo.CurrentUICulture, x)); }
+        }
+
+
         /// <summary>
         /// returns <see langword="true"/> if the property is readonly.
         /// otherwise <see langword="false"/>.
@@ -280,12 +312,30 @@ namespace Console.Wpf.ViewModel
         {
             get
             {
+                return @readonly;
+            }
+        }
+
+        public virtual bool DesignTimeReadOnly
+        {
+            get
+            {
                 if (HasSuggestedValues && Converter.GetStandardValuesExclusive(this))
                 {
                     return true;
                 }
-                return @readonly;
+
+                if (designTimeReadOnly.HasValue)
+                    return designTimeReadOnly.Value;
+
+                return ReadOnly;
             }
+        }
+
+        public string BindableValue
+        {
+            get { return Converter.ConvertToString(this, CultureInfo.CurrentUICulture, Value); }
+            set { Value = Converter.ConvertFromString(this, CultureInfo.CurrentUICulture, value); }
         }
 
         /// <summary>
@@ -340,6 +390,8 @@ namespace Console.Wpf.ViewModel
 
         protected virtual void OnPropertyChanged(string propertyName)
         {
+            if (propertyName == "Value") OnPropertyChanged("BindableValue");
+
             PropertyChangedEventHandler handlers = PropertyChanged;
             if (handlers != null)
             {
@@ -400,52 +452,7 @@ namespace Console.Wpf.ViewModel
 
             return null;
         }
-
-        private class MetadataCollection
-        {
-            Dictionary<Type, List<Attribute>> attributesByType;
-
-            public MetadataCollection(IEnumerable<Attribute> attributes)
-            {
-                attributesByType = attributes.GroupBy(x => x.GetType()).ToDictionary(k => k.Key, v => v.ToList());
-            }
-
-            public void Override(IEnumerable<Attribute>  attributes)
-            {
-                foreach (var attributesKeyedByType in attributes.GroupBy(x => x.GetType()))
-                {
-                    Type attributeType = attributesKeyedByType.Key;
-                    List<Attribute> attributesOfType;
-
-                    if (!attributesByType.TryGetValue(attributeType, out attributesOfType))
-                    {
-                        attributesOfType = new List<Attribute>();
-                        attributesByType[attributeType] = attributesOfType;
-                    }
-                    
-                    AttributeUsageAttribute usage = AttributeUsageAttribute.GetCustomAttribute(attributesKeyedByType.Key, typeof(AttributeUsageAttribute)) as AttributeUsageAttribute;
-
-                    if (usage != null && usage.AllowMultiple)
-                    {
-                        attributesOfType.AddRange(attributesKeyedByType);
-                    }
-                    else
-                    {
-                        attributesOfType.Clear();
-                        attributesOfType.Add(attributesKeyedByType.First());
-                    }
-                }
-            }
-
-
-            public IEnumerable<Attribute> Attributes
-            {
-                get
-                {
-                    return attributesByType.SelectMany(x => x.Value);
-                }
-            }
-        }
+           
     }
 
 
@@ -453,7 +460,7 @@ namespace Console.Wpf.ViewModel
     {
         public void Execute(object parameter)
         {
-            var propertyModel = parameter as ElementProperty;
+            var propertyModel = parameter as Property;
             if (propertyModel != null)
             {
                 propertyModel.ShowUITypeEditor();

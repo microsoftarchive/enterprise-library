@@ -41,6 +41,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerMo
             this.container.AddNewExtensionIfNotPresent<ReaderWriterLockExtension>();
             this.container.AddNewExtensionIfNotPresent<LifetimeInspector>();
             this.container.AddNewExtensionIfNotPresent<PolicyListAccessor>();
+            AddValidationExtension();
 
             container.RegisterInstance(ChangeEventSource);
         }
@@ -192,6 +193,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerMo
                 return new TransientLifetimeManager();
             }
             return new ContainerControlledLifetimeManager();
+        }
+
+        private void AddValidationExtension()
+        {
+            // We load this by name so we don't have a hard dependency from common -> validation
+            const string extensionTypeName = "Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.Unity.ValidationBlockExtension, Microsoft.Practices.EnterpriseLibrary.Validation";
+            Type extensionType = Type.GetType(extensionTypeName);
+            if (extensionType != null && container.Configure(extensionType) == null)
+            {
+                var vabExtension = (UnityContainerExtension)Activator.CreateInstance(extensionType);
+                container.AddExtension(vabExtension);
+            }
         }
 
         private class DefaultInjectionMember : InjectionMember

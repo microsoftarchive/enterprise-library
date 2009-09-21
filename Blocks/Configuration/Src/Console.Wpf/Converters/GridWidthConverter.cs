@@ -21,7 +21,7 @@ namespace Console.Wpf.Converters
 		{
 			Double width = 0;
 			var parsed = Double.TryParse(value.ToString(), out width);
-			return parsed ? width : 350;
+			return parsed ? width : 260;
 		}
 		
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

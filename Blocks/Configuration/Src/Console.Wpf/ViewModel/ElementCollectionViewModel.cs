@@ -24,6 +24,7 @@ using Console.Wpf.ViewModel.Services;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Utility;
 using System.Reflection;
+using System.Collections.ObjectModel;
 
 namespace Console.Wpf.ViewModel
 {
@@ -77,11 +78,11 @@ namespace Console.Wpf.ViewModel
 
                     var customTypes = GetCustomType();
                     return types.Concat(customTypes)
-                            .Select(x => new ElementCollectionViewModelAdder(x, this))
+                            .SelectMany(x => this.ContainingSection.CreateElementCollectionAddCommands(x, this))
                             .OrderBy(a => a.DisplayName).Cast<ICommand>();
                 }
 
-                return new[] { new ElementCollectionViewModelAdder(CollectionElementType, this) };
+                return this.ContainingSection.CreateElementCollectionAddCommands(CollectionElementType, this).Cast<ICommand>();
             }
         }
 
@@ -92,7 +93,7 @@ namespace Console.Wpf.ViewModel
 
             if (genericType != null)
             {
-                return new[] { ConfigurationType.GetGenericArguments()[1] };
+                return new[] { genericType.GetGenericArguments()[1] };
             }
 
             return new Type[0];
@@ -115,12 +116,15 @@ namespace Console.Wpf.ViewModel
             return leaf.Union(contained);
         }
 
-        public virtual void CreateNewChildElement(Type elementType)
+        //todo: should not rely on NamedConfigurationElement
+        public virtual ElementViewModel CreateNewChildElement(Type elementType)
         {
             var element = (NamedConfigurationElement)Activator.CreateInstance(elementType);
             element.Name = CalculateNameFromType(elementType);
 
-            var mergeableService = serviceProvider.GetService<MergeableConfigurationCollectionService>();
+            var mergeableService = serviceProvider.EnsuredGetService<MergeableConfigurationCollectionService>();
+            
+            // add the new element to the configuration.
             var mergeableCollection = mergeableService.GetMergeableCollection(thisElementCollection);
 
             mergeableCollection.ResetCollection(
@@ -128,12 +132,19 @@ namespace Console.Wpf.ViewModel
                 .Concat(new [] { element })
                 .ToArray());
 
-            RefreshChildElements();
 
+            // add the new element to the view model.
+            var childElementModel = ContainingSection.CreateCollectionElement(this, element);
+            ChildElements.Add(childElementModel);
+
+
+            // todo: this might not be necesarry any more, if we change the ChangeSourceImplementation.
             NotifyCollectionChanged(
                 new NotifyCollectionChangedEventArgs(
                     NotifyCollectionChangedAction.Add,
                     ChildElements.Where(x=>x.ConfigurationElement == element)));
+
+            return childElementModel;
         }
 
         private void NotifyCollectionChanged(NotifyCollectionChangedEventArgs eventArguments)
@@ -169,19 +180,26 @@ namespace Console.Wpf.ViewModel
             }
         }
 
+        //todo: should we have a Delete() on ElementViewModel too? then override on CollectionElement.
+        // from here just call element.Delete();
         public void Delete(CollectionElementViewModel element)
         {
-            var mergeableService = serviceProvider.GetService<MergeableConfigurationCollectionService>();
+            var mergeableService = serviceProvider.EnsuredGetService<MergeableConfigurationCollectionService>();
             var mergeableCollection = mergeableService.GetMergeableCollection(thisElementCollection);
 
+            //remove the element from configuration collection.
             var list =
                 thisElementCollection.OfType<ConfigurationElement>().Where(x => x != element.ConfigurationElement).
                     ToArray();
             mergeableCollection.ResetCollection(list);
 
-            RefreshChildElements();
+            //remove the element from the view.
+            ChildElements.Remove(element);
+
+            // todo: this might not be necesarry any more, if we change the ChangeSourceImplementation.
             NotifyCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
 
+            //notify deleted.
             element.OnDeleted();
         }
 
@@ -197,19 +215,24 @@ namespace Console.Wpf.ViewModel
 
         private void MoveElement(CollectionElementViewModel element, int moveDistance)
         {
-            var mergeableService = serviceProvider.GetService<MergeableConfigurationCollectionService>();
+            var mergeableService = serviceProvider.EnsuredGetService<MergeableConfigurationCollectionService>();
             var mergeableCollection = mergeableService.GetMergeableCollection(thisElementCollection);
 
             var list = thisElementCollection.OfType<ConfigurationElement>().ToArray();
             
+            //move the element in the configuration collection.
             MoveConfigurationItem(list, element.ConfigurationElement, moveDistance);
             mergeableCollection.ResetCollection(list);
 
-            RefreshChildElements();
+            //move the element in the view.
+            MoveConfigurationItem(ChildElements, element, moveDistance);
+
+
+            // todo: this might not be necesarry any more, if we change the ChangeSourceImplementation.
             NotifyCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         }
 
-        private void MoveConfigurationItem(ConfigurationElement[] elements, ConfigurationElement element, int relativeMoveIndex)
+        private void MoveConfigurationItem<T>(IList<T> elements, T element, int relativeMoveIndex) where T : class
         {
             for(int i = 0; i < elements.Count(); i++)
             {
@@ -224,6 +247,7 @@ namespace Console.Wpf.ViewModel
                 }
             }
         }
-     
+
+        
     }
 }

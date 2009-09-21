@@ -49,6 +49,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// </summary>
         /// <value>The matching rule data collection.</value>
         [ConfigurationProperty(MatchingRulesPropertyName)]
+        [ConfigurationCollection(typeof(MatchingRuleData))]
         public NameTypeConfigurationElementCollection<MatchingRuleData, CustomMatchingRuleData> MatchingRules
         {
             get { return (NameTypeConfigurationElementCollection<MatchingRuleData, CustomMatchingRuleData>)base[MatchingRulesPropertyName]; }
@@ -60,6 +61,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// </summary>
         /// <value>The handler data collection.</value>
         [ConfigurationProperty(HandlersPropertyName)]
+        [ConfigurationCollection(typeof(CallHandlerData))]
         public NameTypeConfigurationElementCollection<CallHandlerData, CustomCallHandlerData> Handlers
         {
             get { return (NameTypeConfigurationElementCollection<CallHandlerData, CustomCallHandlerData>)base[HandlersPropertyName]; }

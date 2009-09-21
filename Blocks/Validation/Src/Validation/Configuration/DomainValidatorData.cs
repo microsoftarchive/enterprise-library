@@ -45,6 +45,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 		/// Gets the collection of elements for the domain for the represented <see cref="DomainValidator{T}"/>.
 		/// </summary>
 		[ConfigurationProperty(DomainPropertyName)]
+        [ConfigurationCollection(typeof(DomainConfigurationElement))]
 		public NamedElementCollection<DomainConfigurationElement> Domain
 		{
 			get { return (NamedElementCollection<DomainConfigurationElement>)this[DomainPropertyName]; }

@@ -135,6 +135,112 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
 
         /// <summary>
         /// Returns a validator representing the validation criteria specified for type <typeparamref name="T"/>
+        /// through configuration and attributes on type <typeparamref name="T"/> and its ancestors for the default ruleset.
+        /// </summary>
+        /// <typeparam name="T">The type to get the validator for.</typeparam>
+        /// <param name="source"></param>
+        /// <returns>The validator.</returns>
+        public static Validator<T> CreateValidator<T>(ValidationSpecificationSource source)
+        {
+            return DefaultCompositeValidatorFactory.CreateValidator<T>();
+        }
+
+        /// <summary>
+        /// Returns a validator representing the validation criteria specified for type <typeparamref name="T"/>
+        /// through configuration and attributes on type <typeparamref name="T"/> and its ancestors for the supplied ruleset.
+        /// </summary>
+        /// <typeparam name="T">The type to get the validator for.</typeparam>
+        /// <param name="ruleset">The name of the required ruleset.</param>
+        /// <param name="source"></param>
+        /// <returns>The validator.</returns>
+        /// <exception cref="ArgumentNullException">when the <paramref name="ruleset"/> is <see langword="null"/>.</exception>
+        public static Validator<T> CreateValidator<T>(string ruleset, ValidationSpecificationSource source)
+        {
+            return DefaultCompositeValidatorFactory.CreateValidator<T>(ruleset);
+        }
+
+        /// <summary>
+        /// Returns a validator representing the validation criteria specified for type <typeparamref name="T"/>
+        /// through configuration and attributes on type <typeparamref name="T"/> and its ancestors for the default ruleset
+        /// retrieving configuration information from the supplied <see cref="IConfigurationSource"/>.
+        /// </summary>
+        /// <typeparam name="T">The type to get the validator for.</typeparam>
+        /// <param name="configurationSource">The configuration source from where configuration information is to be retrieved.</param>
+        /// <param name="source"></param>
+        /// <returns>The validator.</returns>
+        /// <exception cref="ArgumentNullException">when the <paramref name="configurationSource"/> is <see langword="null"/>.</exception>
+        public static Validator<T> CreateValidator<T>(IConfigurationSource configurationSource, ValidationSpecificationSource source)
+        {
+            return CreateValidator<T>(string.Empty, configurationSource);
+        }
+
+        /// <summary>
+        /// Returns a validator representing the validation criteria specified for type <typeparamref name="T"/>
+        /// through configuration and attributes on type <typeparamref name="T"/> and its ancestors for the supplied ruleset
+        /// retrieving configuration information from the supplied <see cref="IConfigurationSource"/>.
+        /// </summary>
+        /// <typeparam name="T">The type to get the validator for.</typeparam>
+        /// <param name="ruleset">The name of the required ruleset.</param>
+        /// <param name="configurationSource">The configuration source from where configuration information is to be retrieved.</param>
+        /// <param name="source"></param>
+        /// <returns>The validator.</returns>
+        /// <exception cref="ArgumentNullException">when the <paramref name="ruleset"/> is <see langword="null"/>.</exception>
+        /// <exception cref="ArgumentNullException">when the <paramref name="configurationSource"/> is <see langword="null"/>.</exception>
+        public static Validator<T> CreateValidator<T>(string ruleset, IConfigurationSource configurationSource, ValidationSpecificationSource source)
+        {
+            var validatorFactory = CreateCompositeValidatorFactory(configurationSource);
+
+            return validatorFactory.CreateValidator<T>(ruleset);
+        }
+
+        /// <summary>
+        /// Returns a validator representing the validation criteria specified for type <paramref name="targetType"/>
+        /// through configuration and aatributes on type <paramref name="targetType"/> and its ancestors for the default ruleset.
+        /// </summary>
+        /// <param name="targetType">The type to get the validator for.</param>
+        /// <param name="source"></param>
+        /// <returns>The validator.</returns>
+        public static Validator CreateValidator(Type targetType, ValidationSpecificationSource source)
+        {
+            return DefaultCompositeValidatorFactory.CreateValidator(targetType);
+        }
+
+        /// <summary>
+        /// Returns a validator representing the validation criteria specified for type <paramref name="targetType"/>
+        /// through configuration and attributes on type <paramref name="targetType"/> and its ancestors for the supplied ruleset.
+        /// </summary>
+        /// <param name="targetType">The type to get the validator for.</param>
+        /// <param name="ruleset">The name of the required ruleset.</param>
+        /// <param name="source"></param>
+        /// <returns>The validator.</returns>
+        /// <exception cref="ArgumentNullException">when the <paramref name="ruleset"/> is <see langword="null"/>.</exception>
+        public static Validator CreateValidator(Type targetType, string ruleset, ValidationSpecificationSource source)
+        {
+            return DefaultCompositeValidatorFactory.CreateValidator(targetType, ruleset);
+        }
+
+        /// <summary>
+        /// Returns a validator representing the validation criteria specified for type <paramref name="targetType"/>
+        /// through configuration and attributes on type <paramref name="targetType"/> and its ancestors for the supplied ruleset
+        /// retrieving configuration information from the supplied <see cref="IConfigurationSource"/>.
+        /// </summary>
+        /// <param name="targetType">The type to get the validator for.</param>
+        /// <param name="ruleset">The name of the required ruleset.</param>
+        /// <param name="configurationSource">The configuration source from where configuration information is to be retrieved.</param>
+        /// <param name="source"></param>
+        /// <returns>The validator.</returns>
+        /// <exception cref="ArgumentNullException">when the <paramref name="ruleset"/> is <see langword="null"/>.</exception>
+        /// <exception cref="ArgumentNullException">when the <paramref name="configurationSource"/> is <see langword="null"/>.</exception>
+        public static Validator CreateValidator(Type targetType, string ruleset, IConfigurationSource configurationSource, ValidationSpecificationSource source)
+        {
+            var factory = CreateCompositeValidatorFactory(configurationSource);
+
+            return factory.CreateValidator(targetType, ruleset);
+
+        }
+
+        /// <summary>
+        /// Returns a validator representing the validation criteria specified for type <typeparamref name="T"/>
         /// through attributes on type <typeparamref name="T"/> and its ancestors for the default ruleset.
         /// </summary>
         /// <typeparam name="T">The type to get the validator for.</typeparam>
@@ -169,7 +275,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         {
             return DefaultAttributeValidatorFactory.CreateValidator(targetType, ruleset);
         }
-
 
         /// <summary>
         /// Returns a validator representing the validation criteria specified for type <typeparamref name="T"/>
@@ -281,6 +386,26 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
                 });
         }
 
+        private static ValidatorFactory GetValidatorFactory(ValidationSpecificationSource source)
+        {
+            switch (source)
+            {
+                case ValidationSpecificationSource.Attributes:
+                    return DefaultAttributeValidatorFactory;
+                case ValidationSpecificationSource.Configuration:
+                    return DefaultConfigurationValidatorFactory;
+                case ValidationSpecificationSource.Both:
+                    return DefaultCompositeValidatorFactory;
+                //case ValidationSpecificationSource.DataAnnotations:
+                case ValidationSpecificationSource.All:
+                    return DefaultCompositeValidatorFactory;
+                default:
+                    break;
+            }
+
+            throw new ArgumentException("source");
+        }
+
         private static AttributeValidatorFactory DefaultAttributeValidatorFactory
         {
             get { return EnterpriseLibraryContainer.Current.GetInstance<AttributeValidatorFactory>(); }
@@ -295,6 +420,5 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         {
             get { return EnterpriseLibraryContainer.Current.GetInstance<ValidatorFactory>(); }
         }
-
     }
 }

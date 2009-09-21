@@ -33,16 +33,16 @@ namespace Console.Wpf.ComponentModel.Converters
 
         public override object ConvertTo(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destinationType)
         {
+            EnsureTargetElements(context);
+            
             if (destinationType == null)
             {
                 throw new ArgumentNullException("destinationType");
             }
 
-            if (value is string && !string.IsNullOrEmpty((string)value) && destinationType == typeof(ElementViewModel))
+            if (value is string && destinationType == typeof(ElementViewModel))
             {
-                EnsureTargetElements(context);
-
-                string str = ((string)value).Trim();
+                string str = value == null ? string.Empty : ((string)value).Trim();
 
                 ElementViewModel element = targetElements.Where(x => ((string)x.Property(reference.PropertyToMatch).Value) == str).FirstOrDefault();
                 
@@ -50,6 +50,7 @@ namespace Console.Wpf.ComponentModel.Converters
             }
 
             if (destinationType == typeof(ElementViewModel) && value == null) return null;
+            if (destinationType == typeof(ElementViewModel) && value is ElementViewModel) return value;
 
             if (destinationType == typeof(string))
             {
@@ -66,6 +67,7 @@ namespace Console.Wpf.ComponentModel.Converters
 
         public override object ConvertFrom(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value)
         {
+            EnsureTargetElements(context);
             if (value != null && value is ElementViewModel)
             {
                 return ((ElementViewModel)value).Property(reference.PropertyToMatch).Value;
@@ -73,6 +75,10 @@ namespace Console.Wpf.ComponentModel.Converters
             if (value != null && value is string)
             {
                 return ConvertTo(context, culture, value, typeof(ElementViewModel));
+            }
+            if (value == null)
+            {
+                return null;
             }
             return base.ConvertFrom(context, culture, value);
         }

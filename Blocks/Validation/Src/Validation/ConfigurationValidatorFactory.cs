@@ -33,14 +33,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
                 configurationSource,
                 ValidationInstrumentationProvider.FromConfigurationSource(configurationSource));
         }
-        
+
         ///<summary>
-        /// Initialzies a <see cref="ConfigurationValidatorFactory"/>.
+        /// Initializes a <see cref="ConfigurationValidatorFactory"/>.
         ///</summary>
         ///<param name="configurationSource">The configuration source containing the validation rules to create validators from.</param>
-        ///<param name="instrumntationProvider">The <see cref="IValidationInstrumentationProvider"/> provider to use for instrumentation purposes.</param>
-        public ConfigurationValidatorFactory(IConfigurationSource configurationSource, IValidationInstrumentationProvider instrumntationProvider)
-            : base(instrumntationProvider)
+        ///<param name="instrumentationProvider">The <see cref="IValidationInstrumentationProvider"/> provider to use for instrumentation purposes.</param>
+        public ConfigurationValidatorFactory(IConfigurationSource configurationSource, IValidationInstrumentationProvider instrumentationProvider)
+            : base(instrumentationProvider)
         {
             ConfigurationSource = configurationSource;
         }

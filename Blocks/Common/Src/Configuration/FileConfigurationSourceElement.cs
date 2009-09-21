@@ -11,12 +11,19 @@
 
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Properties;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+
+using DesigntimeResource = Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design.Resources;
+using RuntimeResources = Microsoft.Practices.EnterpriseLibrary.Common.Properties.Resources;
+using System.ComponentModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 {
     /// <summary>
     /// Represents the configuration settings that describe a <see cref="FileConfigurationSource"/>.
     /// </summary>
+    [ResourceDisplayName(typeof(DesigntimeResource), "FileConfigurationSourceElementDisplayName")]
+    [ResourceDescription(typeof(DesigntimeResource), "FileConfigurationSourceElementDescription")]
     public class FileConfigurationSourceElement : ConfigurationSourceElement
     {
         private const string filePathProperty = "filePath";
@@ -24,7 +31,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         /// <summary>
 		/// Initializes a new instance of the <see cref="FileConfigurationSourceElement"/> class with a default name and an empty path.
         /// </summary>
-        public FileConfigurationSourceElement() : this(Resources.FileConfigurationSourceName, string.Empty)
+        public FileConfigurationSourceElement()
+            : this(RuntimeResources.FileConfigurationSourceName, string.Empty)
         {
         }
 
@@ -44,6 +52,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         /// Gets or sets the file path. This is a required field.
         /// </summary>
         [ConfigurationProperty(filePathProperty, IsRequired = true)]
+        [ResourceDisplayName(typeof(DesigntimeResource), "FileConfigurationSourceElementFilePathDisplayName")]
+        [ResourceDescription(typeof(DesigntimeResource), "FileConfigurationSourceElementFilePathDescription")]
+        [Editor(EditorTypes.FilteredFilePath, EditorTypes.UITypeEditor)]
+        [FilteredFileNameEditorAttribute(typeof(DesigntimeResource), "FileConfigurationSourceElementFilePathFilter")]
         public string FilePath
         {
             get { return (string)this[filePathProperty]; }

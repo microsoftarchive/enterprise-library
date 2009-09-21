@@ -18,6 +18,7 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation;
 using System.Collections.Generic;
 using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
 {
@@ -103,6 +104,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
 		/// in the cache.
 		/// </summary>
 		[ConfigurationProperty(backingStoreNameProperty, IsRequired = true)]
+        [Reference(typeof(CacheManagerSettings), typeof(CacheStorageData))]
 		public string CacheStorage
 		{
 			get { return (string)base[backingStoreNameProperty]; }

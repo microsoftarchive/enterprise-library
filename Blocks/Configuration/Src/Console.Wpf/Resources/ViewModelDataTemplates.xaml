@@ -11,12 +11,17 @@
 		<ResourceDictionary Source="/Console.Wpf;component/Resources/Brushes.xaml" />
 	</ResourceDictionary.MergedDictionaries>
 
+	<ControlTemplate x:Key="NoAdornerErrorTemplate">
+		<AdornedElementPlaceholder />
+	</ControlTemplate>
+	
 	<DataTemplate DataType="{x:Type ViewModel:HeaderViewModel}">
-		<TextBlock Text="{Binding Name}"
-				   FontStyle="Italic" />
+			<TextBlock Text="{Binding Name}"
+					   FontStyle="Italic"
+					   HorizontalAlignment="Stretch" FontWeight="Bold" />
 	</DataTemplate>
 	
-	<DataTemplate DataType="{x:Type ViewModel:ElementProperty}"
+	<DataTemplate DataType="{x:Type ViewModel:Property}"
 				  x:Key="ChildPropertyTemplate">
 		<Grid>
 			<Grid.RowDefinitions>
@@ -52,22 +57,19 @@
 							Margin="-1"
 							x:Name="ErrorAdorner"
 							Visibility="Collapsed" />
-					<TextBox IsReadOnly="{Binding ReadOnly}"
+					<TextBox IsReadOnly="{Binding DesignTimeReadOnly}"
 							 Validation.ErrorTemplate="{StaticResource NoAdornerErrorTemplate}"
 							 HorizontalAlignment="Stretch"
-							 x:Name="valueTextBox">
-						<TextBox.Text>
-							<Binding Path="Value"
-									 ValidatesOnExceptions="True"
-									 UpdateSourceTrigger="PropertyChanged" />
-						</TextBox.Text>
+							 x:Name="valueTextBox"
+                             Text="{Binding BindableValue}">
 					</TextBox>
-					<ComboBox ItemsSource="{Binding SuggestedValues}"
+					<ComboBox ItemsSource="{Binding BindableSuggestedValues}"
 							  HorizontalAlignment="Left"
-							  SelectedItem="{Binding Value}"
+							  Text="{Binding BindableValue}"
 							  x:Name="propertyDropdown"
 							  Grid.Column="0"
-							  IsEditable="{Binding ReadOnly, Converter={StaticResource BooleanInverseConverter}}"
+							  IsEditable="{Binding DesignTimeReadOnly, Converter={StaticResource BooleanInverseConverter}}"
+                              IsReadOnly="{Binding DesignTimeReadOnly}"
 							  Visibility="Collapsed" />
 				</Grid>
 			</DockPanel>
@@ -109,14 +111,11 @@
 				<Setter Property="Visibility"
 						Value="Collapsed" />
 			</DataTrigger>
+
 		</DataTemplate.Triggers>
 	</DataTemplate>
 
-	<ControlTemplate x:Key="NoAdornerErrorTemplate">
-		<AdornedElementPlaceholder />		
-	</ControlTemplate>
-	
-	<DataTemplate DataType="{x:Type ViewModel:ElementProperty}">
+	<DataTemplate DataType="{x:Type ViewModel:Property}">
 		<Grid>
 			<Grid.RowDefinitions>
 				<RowDefinition />
@@ -128,8 +127,6 @@
 				<ColumnDefinition Width="Auto"
 								  SharedSizeGroup="Column2" />
 				<ColumnDefinition Width="*" />
-				<!--<ColumnDefinition Width="20"
-								  SharedSizeGroup="Column4" />-->
 			</Grid.ColumnDefinitions>
 			<!--Child Properties -->
 			<ToggleButton Visibility="{Binding HasChildProperties, Converter={StaticResource BooleanToVisibilityConverter}}"
@@ -170,27 +167,27 @@
 							Margin="-1"
 							x:Name="ErrorAdorner"
 							Visibility="Collapsed" />
-					<TextBox IsReadOnly="{Binding ReadOnly}"
+					<TextBox IsReadOnly="{Binding DesignTimeReadOnly}"
 							 Validation.ErrorTemplate="{StaticResource NoAdornerErrorTemplate}"
 							 HorizontalAlignment="Stretch"
-							 x:Name="valueTextBox">
-						<TextBox.Text>
-							<Binding Path="Value"
-									 ValidatesOnExceptions="True"
-									 UpdateSourceTrigger="PropertyChanged" />
-						</TextBox.Text>
+							 x:Name="valueTextBox"
+                             Text="{Binding BindableValue, Mode=TwoWay}">
 					</TextBox>
-					<ComboBox ItemsSource="{Binding SuggestedValues}"
+					<ComboBox ItemsSource="{Binding BindableSuggestedValues}"
 							  HorizontalAlignment="Left"
-							  SelectedItem="{Binding Value}"
+							  Text="{Binding BindableValue}"
 							  x:Name="propertyDropdown"
 							  Grid.Column="0"
-							  IsEditable="{Binding ReadOnly, Converter={StaticResource BooleanInverseConverter}}"
+							  IsEditable="{Binding DesignTimeReadOnly, Converter={StaticResource BooleanInverseConverter}}"
+                              IsReadOnly="{Binding DesignTimeReadOnly}"
 							  Visibility="Collapsed" />
 				</Grid>
 			</DockPanel>
 		</Grid>
 		<DataTemplate.Triggers>
+			<Trigger Property="IsFocused" Value="True" SourceName="valueTextBox">
+				<Setter Property="FontWeight" TargetName="valueTextBox" Value="Bold"/>
+			</Trigger>
 			<Trigger Property="Validation.HasError"
 					 Value="true"
 					 SourceName="valueTextBox">
@@ -239,7 +236,7 @@
 				   Margin="5,0,0,0" />
 	</DataTemplate>
 
-    <DataTemplate DataType="{x:Type ViewModel:ElementCollectionViewModelAdder}">
+    <DataTemplate DataType="{x:Type ViewModel:CollectionElementAddCommand}">
         <Button Content="{Binding DisplayName}"
 				Command="{Binding}"
 				Margin="0,0,10,5">
@@ -304,7 +301,7 @@
 	</DataTemplate>
 
 	<DataTemplate DataType="{x:Type ViewModel:SectionViewModel}">
-		<Expander Style="{StaticResource ConfigSectionExpander}"
+		<Expander Style="{StaticResource SectionExpander}"
 				  Header="{Binding Name}">
 			<Controls:BlockVisualizer />
 		</Expander>

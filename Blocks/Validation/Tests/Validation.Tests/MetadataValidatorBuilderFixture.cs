@@ -11,10 +11,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using Microsoft.Practices.EnterpriseLibrary.Validation.TestSupport.TestClasses;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.ComponentModel.DataAnnotations;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
 {
@@ -568,7 +570,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         }
 
         [TestMethod]
-        public void OnlyPropertiesWithRuleNameAreConsideredIfRuleNameIsSpecifiedOnCreation() {}
+        public void OnlyPropertiesWithRuleNameAreConsideredIfRuleNameIsSpecifiedOnCreation() { }
 
         #endregion
 
@@ -1051,6 +1053,75 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
 
         #endregion
 
+        #region test cases with buddy classes
+
+        [TestMethod]
+        public void CanCreateValidatorForPropertyWithSingleValidatorAttributeOnMetadataType()
+        {
+            Validator validator = builder.CreateValidatorForProperty(typeof(BaseTestTypeWithValidatorAttributesOnMetadataType).GetProperty("PropertyWithSingleAttribute"), "");
+
+            Assert.IsNotNull(validator);
+
+            ValueAccessValidatorBuilder valueAccessBuilder = mockFactory.requestedMembers["BaseTestTypeWithValidatorAttributesOnMetadataType.PropertyWithSingleAttribute"];
+
+            Assert.IsNotNull(valueAccessBuilder);
+            Assert.AreSame(valueAccessBuilder.BuiltValidator, validator);
+            Assert.AreEqual(false, valueAccessBuilder.IgnoreNulls);
+            Assert.AreEqual(CompositionType.And, valueAccessBuilder.CompositionType);
+            IDictionary<string, MockValidator<object>> valueValidators = CreateValidatorsMapping(valueAccessBuilder.ValueValidators);
+            Assert.AreEqual(1, valueValidators.Count);
+            Assert.IsTrue(valueValidators.ContainsKey("PropertyWithSingleAttribute-Message1-Metadata"));
+        }
+
+        [TestMethod]
+        public void CanCreateValidatorFromSelfValidationAttributesOnMetadataType()
+        {
+            Validator validator = builder.CreateValidator(typeof(TestTypeWithoutSelfValidationAttributesOnMethodsInTheMetadataType), "");
+
+            ValidationResults validationResults = validator.Validate(new TestTypeWithoutSelfValidationAttributesOnMethodsInTheMetadataType());
+
+            Assert.IsFalse(validationResults.IsValid);
+            Assert.AreEqual("validation from self-validation method", validationResults.ElementAt(0).Message);
+        }
+
+        [MetadataType(typeof(BaseTestTypeWithValidatorAttributesOnMetadataTypeMetadata))]
+        public class BaseTestTypeWithValidatorAttributesOnMetadataType
+        {
+
+            private class BaseTestTypeWithValidatorAttributesOnMetadataTypeMetadata
+            {
+                [MockValidator(false, MessageTemplate = "PropertyWithSingleAttribute-Message1-Metadata")]
+                [MockValidator(false, MessageTemplate = "PropertyWithSingleAttribute-Message1-RuleA-Metadata", Ruleset = "RuleA")]
+                public int PropertyWithSingleAttribute { get; set; }
+            }
+
+            public int PropertyWithSingleAttribute
+            {
+                get { return 0; }
+            }
+        }
+
+        [MetadataType(typeof(TestTypeWithoutSelfValidationAttributesOnMethodsInTheMetadataTypeMetadata))]
+        public class TestTypeWithoutSelfValidationAttributesOnMethodsInTheMetadataType
+        {
+            [HasSelfValidation]
+            private class TestTypeWithoutSelfValidationAttributesOnMethodsInTheMetadataTypeMetadata
+            {
+                [SelfValidation]
+                public void SelfValidate(ValidationResults validationResults)
+                {
+                }
+            }
+
+            public void SelfValidate(ValidationResults validationResults)
+            {
+                validationResults.AddResult(
+                    new ValidationResult("validation from self-validation method", null, null, null, null));
+            }
+        }
+
+        #endregion
+
         #region misc test cases
 
         [TestMethod]
@@ -1109,14 +1180,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         }
 
         [MockValueAccessBuilderCapturing]
-        public class ValueAccessBuilderIsSuppliedToValidatorDescriptorTestClass {}
+        public class ValueAccessBuilderIsSuppliedToValidatorDescriptorTestClass { }
 
         public class MockValueAccessBuilderCapturingAttribute : MockValidatorAttribute
         {
             public static IList<MemberValueAccessBuilder> suppliedValueAccessBuilders = new List<MemberValueAccessBuilder>();
 
             public MockValueAccessBuilderCapturingAttribute()
-                : base(false) {}
+                : base(false) { }
 
             protected override Validator DoCreateValidator(Type targetType,
                                                            Type ownerType,

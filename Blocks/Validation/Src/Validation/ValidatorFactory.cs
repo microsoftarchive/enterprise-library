@@ -160,7 +160,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
                 WrapAndInstrumentValidator);
         }
 
-
         /// <summary>
         /// Creates the validator for the specified target and ruleset.
         /// </summary>

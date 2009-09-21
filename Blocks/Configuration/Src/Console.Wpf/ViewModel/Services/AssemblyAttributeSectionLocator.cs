@@ -32,8 +32,7 @@ namespace Console.Wpf.ViewModel.Services
         {
             foreach (var assembly in assemblies)
             {
-                var attribute = assembly.GetCustomAttribute<HandlesSectionNameAttribute>();
-                if (attribute != null)
+                foreach (var attribute in assembly.GetCustomAttributes<HandlesSectionNameAttribute>())
                 {
                     sectionNames.Add(attribute.Name);
                 }
@@ -52,9 +51,9 @@ namespace Console.Wpf.ViewModel.Services
     static class AssemblyExtensions
     {
 
-        public static T GetCustomAttribute<T>(this Assembly assembly)
+        public static IEnumerable<T> GetCustomAttributes<T>(this Assembly assembly)
         {
-            return (T)assembly.GetCustomAttributes(typeof (T), false).FirstOrDefault();
+            return assembly.GetCustomAttributes(typeof (T), false).OfType<T>();
         }
     }
 }

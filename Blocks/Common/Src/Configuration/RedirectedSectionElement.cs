@@ -14,10 +14,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 {
     /// <summary/>
+    [ResourceDisplayName(typeof(Resources), "RedirectedSectionElementDisplayName")]
+    [ResourceDescription(typeof(Resources), "RedirectedSectionElementDescription")]
     public class RedirectedSectionElement : NamedConfigurationElement
     {
         /// <summary/>
@@ -25,6 +28,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 
         /// <summary/>
         [ConfigurationProperty(sourceNameProperty, IsRequired = true)]
+        [ResourceDisplayName(typeof(Resources), "RedirectedSectionElementSourceNameDisplayName")]
+        [ResourceDescription(typeof(Resources), "RedirectedSectionElementSourceNameDescription")]
+        [Reference(typeof(ConfigurationSourceSection), typeof(ConfigurationSourceElement))]
         public string SourceName
         {
             get { return (string)this[sourceNameProperty]; }

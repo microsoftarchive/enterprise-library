@@ -60,6 +60,8 @@ namespace Console.Wpf.ViewModel
         {
             get { return configurationProperty.IsRequired; }
         }
+
+      
     }
 
 

@@ -60,35 +60,34 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
             TypeName = typeName;
         }
 
-        /// <summary>
-        /// Gets or sets the <see cref="Type"/> the element is the configuration for.
-        /// </summary>
-        /// <value>
-        /// The <see cref="Type"/> the element is the configuration for.
-        /// </value>
+		/// <summary>
+		/// Gets or sets the fully qualified name of the <see cref="Type"/> the element is the configuration for.
+		/// </summary>
+		/// <value>
+		/// the fully qualified name of the <see cref="Type"/> the element is the configuration for.
+		/// </value>
         [Editor("Console.Wpf.ComponentModel.Editors.TypeSelectorEditor, Console.Wpf", typeof(UITypeEditor))]
         [BaseType(typeof(IExceptionHandler), typeof(CustomHandlerData))]
         [ResourceDescription(typeof(Resources), "ExceptionHandlerTypeDescription")]
-        //[SRCategory("CategoryGeneral", typeof(Resources))]
-        //[Required]
-        public override Type Type
+        [ResourceDisplayName(typeof(Resources), "ExceptionHandlerTypeDisplayName")]
+        [Browsable(true)]
+        public override string TypeName
         {
             get
             {
-                return base.Type;
+                return base.TypeName;
             }
             set
             {
-                base.Type = value;
+                base.TypeName = value;
             }
         }
-
+        
         /// <summary>
         /// Gets the custom configuration attributes.
         /// </summary>        		
-        [ResourceDescription(typeof(Resources), "ExceptionHandlerAdditionalPropertiesDescription")]
-        //[SRCategory("CategoryGeneral", typeof(Resources))]
-        //[CustomAttributesValidation]
+        [ResourceDescription(typeof(Resources), "AttributesDescription")]
+        [ResourceDisplayName(typeof(Resources), "AttributesDisplayName")]
         public NameValueCollection Attributes
         {
             get { return helper.Attributes; }

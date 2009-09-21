@@ -17,6 +17,7 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Collections.Generic;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
 {
@@ -69,7 +70,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
 		/// <summary>
 		/// Gets the name of the referenced <see cref="IStorageEncryptionProvider"/>.
 		/// </summary>
-		[ConfigurationProperty(encryptionProviderNameProperty, IsRequired = false)]
+        [ConfigurationProperty(encryptionProviderNameProperty, IsRequired = false)]
+        [Reference(typeof(CacheManagerSettings), typeof(StorageEncryptionProviderData))]
 		public string StorageEncryption
 		{
 			get { return (string)base[encryptionProviderNameProperty]; }

@@ -16,10 +16,13 @@
 	<ControlTemplate x:Key="ReorderUpButton"
 					 TargetType="{x:Type Button}">
 		<Grid HorizontalAlignment="Left"
-			  VerticalAlignment="Top">
-			<Path HorizontalAlignment="Left"
+			  VerticalAlignment="Top" 
+			  Width="18" 
+			  Height="8"
+			  Background="Transparent">
+			<Path HorizontalAlignment="Center"
 				  x:Name="Arrow"
-				  VerticalAlignment="Top"
+				  VerticalAlignment="Center"
 				  Fill="{TemplateBinding Foreground}"
 				  Data="M 0 0 L 4 4 L 8 0 Z"
 				  RenderTransformOrigin="0.5,0.5"
@@ -81,10 +84,13 @@
 	<ControlTemplate x:Key="ReorderDownButton"
 					 TargetType="{x:Type Button}">
 		<Grid HorizontalAlignment="Left"
-			  VerticalAlignment="Top">
-			<Path HorizontalAlignment="Left"
+			  VerticalAlignment="Top" 
+			  Width="18" 
+			  Height="8"
+			  Background="Transparent">
+			<Path HorizontalAlignment="Center"
 				  x:Name="Arrow"
-				  VerticalAlignment="Top"
+				  VerticalAlignment="Center"
 				  Fill="{TemplateBinding Foreground}"
 				  Data="M 0 0 L 4 4 L 8 0 Z"
 				  RenderTransformOrigin="0.5,0.5"
@@ -146,41 +152,41 @@
 	<ControlTemplate x:Key="ExpanderToggleButton"
 					 TargetType="{x:Type ToggleButton}">
 		<Grid>
-			<Path HorizontalAlignment="Center"
+			<Path HorizontalAlignment="Stretch"
 				  x:Name="Close_Arrow"
-				  VerticalAlignment="Center"
+				  VerticalAlignment="Stretch"
 				  Fill="{TemplateBinding Foreground}"
-				  Data="M 0 0 L 4 4 L 8 0 Z"
+				  Data="F1M11.258,1L21.65,19 0.866,19 11.258,1z"
 				  RenderTransformOrigin="0.5,0.5"
 				  Visibility="Collapsed"
 				  Stretch="Fill"
-				  Width="10"
+				  Width="12"
 				  Height="6">
 				<Path.RenderTransform>
 					<TransformGroup>
 						<ScaleTransform />
 						<SkewTransform />
-						<RotateTransform Angle="-45" />
+						<RotateTransform Angle="135" />
 						<TranslateTransform />
 					</TransformGroup>
 				</Path.RenderTransform>
 			</Path>
 			<Path Visibility="Visible"
-				  HorizontalAlignment="Center"
+				  HorizontalAlignment="Stretch"
 				  x:Name="Open_Arrow"
-				  VerticalAlignment="Center"
+				  VerticalAlignment="Stretch"
 				  Fill="{TemplateBinding Foreground}"
-				  Data="M 0 4 L 4 0 L 8 4 Z"
+				  Data="F1M11.258,1L21.65,19 0.866,19 11.258,1z"
 				  RenderTransformOrigin="0.5,0.5"
 				  Stretch="Fill"
-				  Width="10"
+				  Width="12"
 				  Height="6">
 				<Path.RenderTransform>
 					<TransformGroup>
 						<ScaleTransform />
 						<SkewTransform />
 						<RotateTransform Angle="90" />
-						<TranslateTransform />
+						<TranslateTransform X="0" Y="0" />
 					</TransformGroup>
 				</Path.RenderTransform>
 			</Path>
@@ -192,8 +198,8 @@
 						TargetName="Close_Arrow">
 					<Setter.Value>
 						<TransformGroup>
-							<ScaleTransform ScaleX="1.5"
-											ScaleY="1.5" />
+							<ScaleTransform ScaleX="1.3"
+											ScaleY="1.3" />
 							<SkewTransform />
 							<RotateTransform Angle="-45" />
 							<TranslateTransform />
@@ -204,8 +210,8 @@
 						TargetName="Open_Arrow">
 					<Setter.Value>
 						<TransformGroup>
-							<ScaleTransform ScaleX="1.5"
-											ScaleY="1.5" />
+							<ScaleTransform ScaleX="1.3"
+											ScaleY="1.3" />
 							<SkewTransform />
 							<RotateTransform Angle="90" />
 							<TranslateTransform />
@@ -219,8 +225,8 @@
 						TargetName="Open_Arrow">
 					<Setter.Value>
 						<TransformGroup>
-							<ScaleTransform ScaleX="1.5"
-											ScaleY="1.5" />
+							<ScaleTransform ScaleX="1.3"
+											ScaleY="1.3" />
 							<SkewTransform />
 							<RotateTransform Angle="90" />
 							<TranslateTransform />
@@ -231,10 +237,10 @@
 						TargetName="Close_Arrow">
 					<Setter.Value>
 						<TransformGroup>
-							<ScaleTransform ScaleX="1.5"
-											ScaleY="1.5" />
+							<ScaleTransform ScaleX="1.3"
+											ScaleY="1.3" />
 							<SkewTransform />
-							<RotateTransform Angle="-45" />
+							<RotateTransform Angle="135" />
 							<TranslateTransform />
 						</TransformGroup>
 					</Setter.Value>
@@ -250,14 +256,21 @@
 				<Setter Property="Visibility"
 						TargetName="Open_Arrow"
 						Value="Collapsed" />
+				<Setter Property="RenderTransform" TargetName="Close_Arrow">
+					<Setter.Value>
+						<TransformGroup>
+							<ScaleTransform/>
+							<SkewTransform/>
+							<RotateTransform Angle="135"/>
+							<TranslateTransform/>
+						</TransformGroup>
+					</Setter.Value>
+				</Setter>
 			</Trigger>
 			<Trigger Property="IsEnabled"
 					 Value="False">
-				<Setter Property="Foreground"
-						Value="{DynamicResource DisabledForegroundBrush}" />
-				<Setter Property="Fill"
-						Value="{DynamicResource DisabledForegroundBrush}"
-						TargetName="Close_Arrow" />
+				<Setter Property="Fill" TargetName="Open_Arrow" Value="Gray"/>
+				<Setter Property="Fill" TargetName="Close_Arrow" Value="Gray"/>
 			</Trigger>
 		</ControlTemplate.Triggers>
 	</ControlTemplate>
@@ -268,7 +281,7 @@
 		</Grid>
 	</ControlTemplate>
 
-	<Style x:Key="ConfigSectionExpander"
+	<Style x:Key="SectionExpander"
 		   TargetType="{x:Type Expander}">
 		<Setter Property="Background"
 				Value="{DynamicResource LightBrush}" />
@@ -277,7 +290,7 @@
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type Expander}">
-					<Grid Margin="0"
+					<Grid Margin="0,0,0,10"
 						  d:DesignWidth="191.25">
 						<Grid.RowDefinitions>
 							<RowDefinition Height="Auto" />
@@ -293,10 +306,11 @@
 							<Grid>
 								<Grid.ColumnDefinitions>
 									<ColumnDefinition Width="20" />
-									<ColumnDefinition />
+									<ColumnDefinition MinWidth="160"/>
 									<ColumnDefinition Width="20" />
 								</Grid.ColumnDefinitions>
 								<ToggleButton Template="{DynamicResource ExpanderToggleButton}"
+                                    x:Name="expanderToggle"
 									Background="{DynamicResource NormalBrush}"
 									IsChecked="{Binding IsExpanded, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
 									OverridesDefaultStyle="True" />
@@ -314,7 +328,8 @@
 						</Border>
 						<Border
 							BorderBrush="{DynamicResource LightGreyBorderBrush}"
-							BorderThickness="1" HorizontalAlignment="Stretch" Grid.RowSpan="3" Margin="0,20,0,0" />
+							BorderThickness="1" HorizontalAlignment="Stretch" Grid.RowSpan="3" Margin="0,20,0,0"
+                            Visibility="{Binding IsChecked, Converter={StaticResource BooleanToHiddenConverter}, ElementName=expanderToggle}" />
 
 						<Border Grid.Row="1"
 								Background="{StaticResource PopupBackground}"
@@ -340,7 +355,7 @@
 							BorderBrush="{DynamicResource SolidBorderBrush}"
 							BorderThickness="1,0,1,1"
 							CornerRadius="0,0,2,2"
-							Padding="15">
+							Padding="5">
 							<ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
 								Margin="{TemplateBinding Padding}"
 								VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
@@ -424,10 +439,10 @@
 	</Style>
 	<Style x:Key="AdderExpander"
 		   TargetType="{x:Type Expander}">
-		<Setter Property="Background"
+		<!--<Setter Property="Background"
 				Value="{DynamicResource LightBrush}" />
 		<Setter Property="BorderBrush"
-				Value="{DynamicResource NormalBorderBrush}" />
+				Value="{DynamicResource NormalBorderBrush}" /> -->
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type Expander}">

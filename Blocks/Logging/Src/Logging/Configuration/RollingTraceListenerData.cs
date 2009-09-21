@@ -16,6 +16,7 @@ using System.Linq.Expressions;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 {
@@ -141,6 +142,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// Gets and sets the formatter name.
         /// </summary>
         [ConfigurationProperty(formatterNameProperty, IsRequired = false)]
+        [Reference(typeof(LoggingSettings), typeof(FormatterData))]
         public string Formatter
         {
             get { return (string)base[formatterNameProperty]; }

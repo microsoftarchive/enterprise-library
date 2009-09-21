@@ -46,6 +46,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
 		/// to provide manageability to configuration elements.
 		/// </summary>
 		[ConfigurationProperty(manageabilityProvidersCollectionPropertyName)]
+        [ConfigurationCollection(typeof(ConfigurationElementManageabilityProviderData))]
 		public NamedElementCollection<ConfigurationElementManageabilityProviderData> ManageabilityProviders
 		{
 			get { return (NamedElementCollection<ConfigurationElementManageabilityProviderData>)base[manageabilityProvidersCollectionPropertyName]; }

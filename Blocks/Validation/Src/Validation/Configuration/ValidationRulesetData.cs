@@ -44,6 +44,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 		/// Gets the collection of validators configured for the type owning the ruleset.
 		/// </summary>
 		[ConfigurationProperty(validatorsPropertyName, IsDefaultCollection = true)]
+        [ConfigurationCollection(typeof(ValidatorData))]
 		public ValidatorDataCollection Validators
 		{
 			get { return (ValidatorDataCollection)this[validatorsPropertyName]; }
@@ -63,7 +64,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 		/// <summary>
 		/// Gets the collection of validated methods for the type owning the ruleset.
 		/// </summary>
-		[ConfigurationProperty(MethodsPropertyName)]
+        [ConfigurationProperty(MethodsPropertyName)]
 		public ValidatedMethodReferenceCollection Methods
 		{
 			get { return (ValidatedMethodReferenceCollection)this[MethodsPropertyName]; }
@@ -73,7 +74,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 		/// <summary>
 		/// Gets the collection of validated properties for the type owning the ruleset.
 		/// </summary>
-		[ConfigurationProperty(PropertiesPropertyName)]
+        [ConfigurationProperty(PropertiesPropertyName)]
 		public new ValidatedPropertyReferenceCollection Properties
 		{
 			get { return (ValidatedPropertyReferenceCollection)this[PropertiesPropertyName]; }

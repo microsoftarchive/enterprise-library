@@ -34,6 +34,9 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_configuration_element_with_prope
 
         protected class ConfigurationElementWithSimpleProperties : ConfigurationSection
         {
+            private const string designTimeReadOnlyTrueProperty = "designTimeReadOnlyTrue";
+            private const string designTimeReadOnlyFalseProperty = "designTimeReadOnlyFalse";
+            private const string readOnlyProperty = "readOnly";
             private const string numberProperty = "number";
             private const string requiredProperty = "required";
             private const string guidProperty = "guid";
@@ -76,6 +79,31 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_configuration_element_with_prope
                 get { return (string) base[validatedProperty];}
                 set { base[validatedProperty] = value; }
             }
+
+            [ConfigurationProperty(designTimeReadOnlyTrueProperty)]
+            [DesignTimeReadOnly(true)]
+            public string DesignTimeReadOnly
+            {
+                get { return (string) base[designTimeReadOnlyTrueProperty]; }
+                set { base[designTimeReadOnlyTrueProperty] = value;}
+            }
+
+            [ConfigurationProperty(designTimeReadOnlyFalseProperty)]
+            [DesignTimeReadOnly(false)]
+            public string DesignTimeWritable
+            {
+                get { return (string) base[designTimeReadOnlyFalseProperty]; }
+                set { base[designTimeReadOnlyFalseProperty] = value;}
+            }
+
+            [ConfigurationProperty(readOnlyProperty)]
+            [ReadOnly(true)]
+            public string ReadOnlyProperty
+            {
+                get { return (string) base[readOnlyProperty]; }
+                set { base[readOnlyProperty] = value;}
+            }
+            
         }
     }
 
@@ -89,6 +117,14 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_configuration_element_with_prope
         {
             var sectionModel = SectionViewModel.CreateSection(ServiceProvider, SectionWithSimpleProperties);
             properties = sectionModel.Properties;
+        }
+
+
+        [TestMethod]
+        public void can_create_property_wihtout_pd()
+        {
+            var property = new Property(ServiceProvider, null, null);
+            Assert.IsNotNull(property);
         }
 
         [TestMethod]
@@ -180,7 +216,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_configuration_element_with_prope
     }
 
     [TestClass]
-    public class when_disovering_property_with_designtime_type : given_configuration_element_with_properties
+    public class when_disovering_property_with_designtime_attributes : given_configuration_element_with_properties
     {
         IEnumerable<Property> properties;
         ConfigurationElementWithSimpleProperties configurationElement;
@@ -241,6 +277,42 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_configuration_element_with_prope
         }
     }
 
+
+    [TestClass]
+    public class when_disovering_property_with_designtime_readonly : given_configuration_element_with_properties
+    {
+        IEnumerable<ElementProperty> properties;
+        ConfigurationElementWithSimpleProperties configurationElement;
+
+        protected override void Act()
+        {
+            var sectionModel = SectionViewModel.CreateSection(ServiceProvider, SectionWithSimpleProperties);
+
+            configurationElement = (ConfigurationElementWithSimpleProperties)sectionModel.ConfigurationElement;
+            properties = sectionModel.Properties.OfType<ElementProperty>();
+        }
+
+        [TestMethod]
+        public void then_should_return_true_if_designtimereadonly()
+        {
+            var property = properties.Where(p => p.PropertyName == "DesignTimeReadOnly").First();
+            Assert.IsTrue(property.DesignTimeReadOnly);
+        }
+
+        [TestMethod]
+        public void then_should_return_true_if_not_designtimereadonly()
+        {
+            var property = properties.Where(p => p.PropertyName == "DesignTimeWritable").First();
+            Assert.IsFalse(property.DesignTimeReadOnly);
+        }
+
+        [TestMethod]
+        public void then_should_default_to_readonly_value_if_not_set()
+        {
+            var property = properties.Where(p => p.PropertyName == "ReadOnlyProperty").First();
+            Assert.AreEqual(property.ReadOnly, property.DesignTimeReadOnly);
+        }
+    }
     //[TestClass]
     //public class when_disovering_property_with_validation_attribute : given_configuration_element_with_properties
     //{

@@ -14,7 +14,7 @@
 
 	<Style TargetType="{x:Type Controls:ElementModelContainer}">
 		<Setter Property="Margin"
-				Value="0,0,50,10" />
+				Value="0,0,40,7" />
 		<Setter Property="Background"
 				Value="White" />
 		<Setter Property="Template">
@@ -44,7 +44,7 @@
 									<ColumnDefinition Width="Auto" />
 									<ColumnDefinition Width="*" />
 								</Grid.ColumnDefinitions>
-								<ToggleButton Visibility="{Binding Content.Properties, Converter={StaticResource EnumerableToVisibilityConverter}, ElementName=contentPresenter}"
+								<ToggleButton Visibility="{Binding Content.Properties, Converter={StaticResource EnumerableToVisibilityConverter}, ElementName=contentPresenter, FallbackValue=Collapsed}"
 											  x:Name="ShowProperties"
 											  VerticalAlignment="Center"
 											  Background="{DynamicResource NormalBrush}"
@@ -89,13 +89,13 @@
 							</Border>
 						<Canvas Grid.Column="2"
 								VerticalAlignment="Top"
-								Margin="0,4,0,0">
-							<Expander Visibility="{Binding Content.ChildAdders, Converter={StaticResource EnumerableToVisibilityConverter}, ElementName=contentPresenter, FallbackValue=Collapsed}"
+								Margin="0,5,0,0">
+							<Expander
 								Background="{TemplateBinding Background}"
 								Margin="3,0,0,0"
 								Style="{DynamicResource AdderExpander}"
 								IsExpanded="{Binding (Panel.ZIndex), Converter={StaticResource BooleanToZIndexConverter}, Mode=OneWayToSource, RelativeSource={RelativeSource AncestorType={x:Type Controls:ElementModelContainer}, Mode=FindAncestor}}"
-								HorizontalAlignment="Right">
+								HorizontalAlignment="Right" Visibility="{Binding Content.ChildAdders, Converter={StaticResource EnumerableToVisibilityConverter}, ElementName=contentPresenter, FallbackValue=Collapsed}">
 								<StackPanel>
 									<Border Background="{StaticResource PopupBackground}"
 										BorderBrush="{StaticResource LightGreyBorderBrush}"
@@ -124,6 +124,17 @@
 							</Expander>
 						</Canvas>
 					</Grid>
+					<ControlTemplate.Triggers>
+						<DataTrigger Binding="{Binding Path=Content, ElementName=contentPresenter, Converter={StaticResource TypeToVisibilityConverter}}"
+									 Value="Header">
+							<Setter Property="BorderBrush"
+									Value="Transparent"
+									TargetName="contentBorder" />
+							<Setter Property="Background"
+									Value="Transparent"
+									TargetName="contentBorder" />
+						</DataTrigger>
+					</ControlTemplate.Triggers>
 				</ControlTemplate>
 			</Setter.Value>
 		</Setter>

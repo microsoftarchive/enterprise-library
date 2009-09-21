@@ -15,61 +15,384 @@ using System.Linq;
 using System.Text;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using System.Collections.Specialized;
+using System.Windows.Data;
+using System.ComponentModel;
+using System.Collections.ObjectModel;
 
 
 namespace Console.Wpf.ViewModel.Services
 {
-    /// <summary>
-    /// night not need this service
-    /// </summary>
-    public class ElementLookup
+    public class ElementLookup : INotifyCollectionChanged
     {
-        List<SectionViewModel> sections = new List<SectionViewModel>();
+        CompositeCollection innerCollection;
+        INotifyCollectionChanged innerCollectionChanged;
+        IEnumerable<ElementViewModel> allElements;
 
+        Dictionary<ElementViewModel, TrackChildElementCreationAndRemoval> elements = new Dictionary<ElementViewModel, TrackChildElementCreationAndRemoval>();
+        Dictionary<ElementViewModel, TrackPathPropertyChangedAndUpdateReferences> elementPathTrackers = new Dictionary<ElementViewModel, TrackPathPropertyChangedAndUpdateReferences>();
+        List<ElementReferenceImplementationBase> references = new List<ElementReferenceImplementationBase>();
+
+        ObservableCollection<SectionViewModel> sections = new ObservableCollection<SectionViewModel>();
+        
+        public ElementLookup()
+        {
+            innerCollection = new CompositeCollection();
+            innerCollection.Add(new CollectionContainer { Collection = sections });
+
+            var view = ((ICollectionViewFactory)innerCollection).CreateView();
+            innerCollectionChanged = view;
+            allElements = view.OfType<ElementViewModel>();
+
+            innerCollectionChanged.CollectionChanged += (sender, args) => DoCollectionChanged(args) ;
+        }
+
+        #region todo: can be removed after refactored reference properties
         public IEnumerable<ElementViewModel> FindInstancesOfConfigurationType(Type scope, Type configurationType)
         {
             var scopeElements = FindInstancesOfConfigurationType(scope);
-            return FindInstancesOfConfigurationType(scopeElements, configurationType);
+            return FindInstancesOfConfigurationType(scopeElements.SelectMany(x=>x.DescendentElements()), configurationType);
         }
 
-        public IEnumerable<ElementViewModel> FindInstancesOfConfigurationType(ElementViewModel scope, Type configurationType)
-        {
-            return FindInstancesOfConfigurationType(new[] { scope }, configurationType);
-        }
-
+        //todo: can be removed after refactored reference properties
         public IEnumerable<ElementViewModel> FindInstancesOfConfigurationType(Type configurationType)
         {
-            return FindInstancesOfConfigurationType(BuildGlobalScope(), configurationType);
+            return FindInstancesOfConfigurationType(allElements, configurationType);
         }
 
-        private IEnumerable<ElementViewModel> BuildGlobalScope()
+        //todo: can be removed after refactored reference properties
+        private IEnumerable<ElementViewModel> FindInstancesOfConfigurationType(IEnumerable<ElementViewModel> elements, Type configurationType)
         {
-            var sectionsThemSelves = sections.Cast<ElementViewModel>();
-
-            return sectionsThemSelves;
+            var a = elements.Where(x => configurationType.IsAssignableFrom(x.ConfigurationType)).ToList();
+            return a;
         }
-
-        private IEnumerable<ElementViewModel> FindInstancesOfConfigurationType(IEnumerable<ElementViewModel> scope, Type configurationType)
-        {
-            var roots = scope;
-            var descendentsOfRoots = scope.SelectMany(x => x.DescendentElements());
-            var allElements = roots.Union(descendentsOfRoots);
-
-            return allElements.Where(x => configurationType.IsAssignableFrom(x.ConfigurationType));
-        }
+        #endregion 
 
         public void AddSection(SectionViewModel sectionModel)
         {
             sections.Add(sectionModel);
+            
+            AddElement(sectionModel);
         }
 
-        public IEnumerable<IElementExtendedPropertyProvider> FindExtendedPropertyProviders()
+        private void AddElement(ElementViewModel element)
         {
-            var roots = BuildGlobalScope();
-            var descendentsOfRoots = roots.SelectMany(x => x.DescendentElements());
-            var allElements = roots.Union(descendentsOfRoots);
-
-            return allElements.OfType<IElementExtendedPropertyProvider>();
+            CollectionContainer collectionContainer = new CollectionContainer() { Collection = element.ChildElements };
+            elements.Add(element, new TrackChildElementCreationAndRemoval(this, element));
+            elementPathTrackers.Add(element, new TrackPathPropertyChangedAndUpdateReferences(this, element));
+            innerCollection.Add(collectionContainer);
         }
+
+        public IElementChangeScope FindExtendedPropertyProviders()
+        {
+            return new ElementChangeScope(this, x=>x is IElementExtendedPropertyProvider);
+        }
+
+        public ElementReference CreateReference(string parentPath, string elementName)
+        {
+            ElementViewModel element = null;
+            ElementViewModel parentElement = elements.Keys.Where(x => x.Path == parentPath).FirstOrDefault();
+            if (parentElement != null) element = parentElement.ChildElements.Where(x => x.Name == elementName).FirstOrDefault();
+
+            ElementReferenceOverParentPath reference = new ElementReferenceOverParentPath(this, element, parentPath, elementName);
+
+            references.Add(reference);
+            return reference;
+
+        }
+        public ElementReference CreateReference(string elementPath)
+        {
+            ElementViewModel element = elements.Keys.Where(x => x.Path == elementPath).FirstOrDefault();
+            ElementReferenceOverAbsolutePath reference = new ElementReferenceOverAbsolutePath(this, element, elementPath);
+
+            references.Add(reference);
+            return reference;
+        }
+
+        public IElementChangeScope CreateChangeScope(Func<ElementViewModel, bool> predicate)
+        {
+            return new ElementChangeScope(this, predicate);
+        }
+
+        #region INotifyCollectionChanged implementation
+
+        protected virtual void DoCollectionChanged(NotifyCollectionChangedEventArgs args)
+        {
+            var handler = CollectionChanged;
+            if (handler != null)
+            {
+                handler(this, args);
+            }
+        }
+
+        public event NotifyCollectionChangedEventHandler CollectionChanged;
+
+        #endregion
+
+
+        private abstract class ElementReferenceImplementationBase : ElementReference
+        {
+            readonly ElementLookup lookup;
+            readonly NotifyCollectionChangedEventHandler lookupChangedHandler;
+
+            public ElementReferenceImplementationBase(ElementLookup lookup, ElementViewModel element)
+                :base(element)
+            {
+                this.lookup = lookup;
+                this.lookupChangedHandler = new NotifyCollectionChangedEventHandler(lookup_CollectionChanged);
+                this.lookup.CollectionChanged += lookupChangedHandler;
+            }
+
+            void lookup_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+            {
+                switch (e.Action)
+                {
+                    case NotifyCollectionChangedAction.Add:
+
+                        if (base.Element != null) return;
+
+                        FindMatchingeElement(e.NewItems.OfType<ElementViewModel>());
+
+                        break;
+
+                    case NotifyCollectionChangedAction.Reset:
+
+                        if (base.Element != null) return;
+
+                        FindMatchingeElement(lookup.allElements);
+                        
+                        break;
+
+                }
+            }
+
+            private void FindMatchingeElement(IEnumerable<ElementViewModel> elements)
+            {
+                var match = elements.Where(Matches).FirstOrDefault();
+                if (match != null)
+                {
+                    base.DoElementFound(match);
+                }
+            }
+
+            protected abstract bool Matches(ElementViewModel element);
+
+            public void TryMatch(ElementViewModel element)
+            {
+                if (this.Element != null) return;
+                if (Matches(element)) DoElementFound(element);
+            }
+
+            public override void Dispose(bool disposing)
+            {
+                if (disposing)
+                {
+                    if (lookup != null)
+                    {
+                        lookup.CollectionChanged -= lookupChangedHandler;
+                        lookup.references.Remove(this);
+                    }
+                }
+            }
+        }
+
+        private class ElementReferenceOverAbsolutePath : ElementReferenceImplementationBase
+        {
+            string path;
+
+            public ElementReferenceOverAbsolutePath(ElementLookup lookup, ElementViewModel element, string path)
+                : base(lookup, element)
+            {
+                this.path = path;
+                
+                base.PathChanged += (sender, args) =>
+                    {
+                        this.path = Element.Path;
+                    };
+            }
+
+            protected override bool Matches(ElementViewModel element)
+            {
+                return this.path == element.Path;   
+            }
+
+        }
+        
+        private class ElementReferenceOverParentPath : ElementReferenceImplementationBase
+        {
+            string parentPath;
+            string elementName;
+
+            public ElementReferenceOverParentPath(ElementLookup lookup, ElementViewModel element, string parentPath, string elementName)
+                : base(lookup, element)
+            {
+                this.parentPath = parentPath;
+                this.elementName = elementName;
+
+                base.PathChanged += (sender, args) =>
+                {
+                    this.parentPath = Element.ParentElement.Path;
+                    this.elementName = Element.Name;
+                };
+            }
+
+            protected override bool Matches(ElementViewModel element)
+            {
+                if (element.ParentElement == null) return false;
+                return this.parentPath == element.ParentElement.Path && element.Name == elementName;
+            }
+
+        }
+
+        private class TrackPathPropertyChangedAndUpdateReferences  : IDisposable
+        {
+            readonly ElementLookup lookup;
+            readonly ElementViewModel element;
+            readonly PropertyChangedEventHandler elementPropertyChangedHandler;
+
+            public TrackPathPropertyChangedAndUpdateReferences(ElementLookup lookup, ElementViewModel element)
+	        {
+                this.lookup = lookup;
+                this.element = element;
+
+                elementPropertyChangedHandler = new PropertyChangedEventHandler(element_PropertyChanged);
+                this.element.PropertyChanged += elementPropertyChangedHandler;
+	        }
+
+            void element_PropertyChanged(object sender, PropertyChangedEventArgs e)
+            {
+                if (e.PropertyName == "Path")
+                {
+                    string newPath = element.Path;
+                    foreach (var reference in lookup.references)
+                    {
+                        reference.TryMatch(element);
+                    }
+                }
+            }
+
+            public void  Dispose()
+            {
+                element.PropertyChanged -= elementPropertyChangedHandler;
+            }
+        }
+
+        private class TrackChildElementCreationAndRemoval : IDisposable
+        {
+            readonly NotifyCollectionChangedEventHandler childElementsChangedHandler;
+            readonly ElementViewModel element;
+            readonly ElementLookup lookup;
+
+            public TrackChildElementCreationAndRemoval(ElementLookup lookup, ElementViewModel element)
+            {
+                this.lookup = lookup;
+                this.element = element;
+
+                AddElements(element.ChildElements);
+                
+                childElementsChangedHandler = new NotifyCollectionChangedEventHandler(ChildElements_CollectionChanged);
+                element.ChildElements.CollectionChanged += childElementsChangedHandler;
+
+            }
+
+            void ChildElements_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+            {
+                switch (e.Action)
+                {
+                    case NotifyCollectionChangedAction.Add:
+                        AddElements(e.NewItems.OfType<ElementViewModel>());
+                        break;
+
+                    case NotifyCollectionChangedAction.Remove:
+
+                        break;
+
+                    case NotifyCollectionChangedAction.Replace:
+
+                        break;
+
+                    case NotifyCollectionChangedAction.Reset:
+                        
+                        break;
+
+                }
+            }
+
+            private void AddElements(IEnumerable<ElementViewModel> children)
+            {
+                foreach (var child in children)
+                {
+                    lookup.AddElement(child);
+                }
+            }
+
+            public void Dispose()
+            {
+                if (element != null && element.ChildElements != null && childElementsChangedHandler != null)
+                {
+                    element.ChildElements.CollectionChanged -= childElementsChangedHandler;
+                }
+            }
+        }
+
+        private class ElementChangeScope : IElementChangeScope
+        {
+            ElementLookup lookup;
+            Func<ElementViewModel, bool> predicate;
+            
+            public ElementChangeScope(ElementLookup lookup, Func<ElementViewModel, bool> predicate)
+            {
+                this.lookup = lookup;
+                this.predicate = predicate;
+
+                this.lookup.CollectionChanged += new NotifyCollectionChangedEventHandler(lookup_CollectionChanged);
+            }
+
+            void lookup_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+            {
+                NotifyCollectionChangedEventArgs args;
+                
+                switch(e.Action)
+                {
+                    case NotifyCollectionChangedAction.Add:
+                        args = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, e.NewItems.OfType<ElementViewModel>().Where(predicate).ToList());
+                        break;
+
+                    case NotifyCollectionChangedAction.Remove:
+                        args = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, e.OldItems.OfType<ElementViewModel>().Where(predicate).ToList());
+                        break;
+
+                    case NotifyCollectionChangedAction.Reset:
+                        args = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset);
+                        break;
+
+                    default: return;
+                }
+
+
+                var handler = CollectionChanged;
+                if (handler != null)
+                {
+                    handler(this, args);
+                }
+            }
+
+            public event NotifyCollectionChangedEventHandler CollectionChanged;
+
+            public IEnumerable<ElementViewModel> Enum()
+            {
+                return lookup.allElements.Where(predicate);
+            }
+
+            public void Dispose()
+            {
+                throw new NotImplementedException();
+            }
+        }
+    }
+
+    public interface IElementChangeScope : INotifyCollectionChanged, IDisposable
+    {
+        IEnumerable<ElementViewModel> Enum();
     }
 }

@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Windows;
 using Console.Wpf.ViewModel.Services;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
@@ -75,6 +76,21 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model
         public void then_view_model_attribute_on_declaring_property_overwrites_attribute_on_type()
         {
             Assert.IsTrue(viewModel.DescendentElements().OfType<ElementViewModelEx2>().Any());
+        }
+
+        [TestMethod]
+        public void then_view_model_custom_UIElement_type_is_specified()
+        {
+            var element = viewModel.DescendentElements().OfType<ElementViewModelEx>().First();
+            Assert.AreEqual(typeof(UIElement), element.CustomVisualType);
+        }
+
+        [TestMethod]
+        public void then_custom_add_commands_attached()
+        {
+            var element = viewModel.DescendentElements().OfType<ElementCollectionViewModel>().Where(x => x.ConfigurationType == typeof(ElementCollectionWithExtendedViewModel)).First();
+            Assert.IsNotNull(element.ChildAdders.OfType<CustomElementCollectionAddCommand>().Single());
+            Assert.IsNotNull(element.ChildAdders.OfType<AnotherCustomElementCollectionAddCommand>().Single());
         }
 
     }

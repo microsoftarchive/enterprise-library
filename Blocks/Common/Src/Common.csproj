@@ -156,6 +156,11 @@
     <Compile Include="Configuration\ContainerModel\NullContainerReconfiguringEventSource.cs" />
     <Compile Include="Configuration\ContainerModel\ParameterValueVisitor.cs" />
     <Compile Include="Configuration\Design\BaseTypeAttribute.cs" />
+    <Compile Include="Configuration\Design\CollectionElementAddCommandAttribute.cs" />
+    <Compile Include="Configuration\Design\DesignTimeReadOnly.cs" />
+    <Compile Include="Configuration\Design\EnvironmentalOverridesAttribute.cs" />
+    <Compile Include="Configuration\Design\FilteredFileNameEditorAttribute.cs" />
+    <Compile Include="Configuration\Design\ResourceCategoryAttribute.cs" />
     <Compile Include="Configuration\Design\DesignTimeTypeAttribute.cs" />
     <Compile Include="Configuration\Design\EditorTypes.cs" />
     <Compile Include="Configuration\Design\ReferenceAttribute.cs" />

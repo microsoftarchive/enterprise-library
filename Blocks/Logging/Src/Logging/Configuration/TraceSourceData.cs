@@ -14,6 +14,7 @@ using System.Diagnostics;
 using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
@@ -80,7 +81,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// <summary>
         /// Gets the collection of references to trace listeners for the trace source.
         /// </summary>
-        [ConfigurationProperty(traceListenersProperty)]
+        [ConfigurationProperty(traceListenersProperty)]        
+        [ConfigurationCollection(typeof(TraceListenerReferenceData))]
         public NamedElementCollection<TraceListenerReferenceData> TraceListeners
         {
             get { return (NamedElementCollection<TraceListenerReferenceData>)base[traceListenersProperty]; }

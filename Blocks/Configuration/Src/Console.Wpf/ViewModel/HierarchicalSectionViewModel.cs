@@ -18,99 +18,106 @@ namespace Console.Wpf.ViewModel
 {
     public class HierarchicalSectionViewModel : SectionViewModel
     {
-        private HeaderViewModel[] headers;
+        private List<ElementViewModelWrappingHeaderViewModel> headers = new List<ElementViewModelWrappingHeaderViewModel>();
 
-        public HierarchicalSectionViewModel(IServiceProvider serviceProvider, ConfigurationSection section) : base(serviceProvider, section)
+        public HierarchicalSectionViewModel(IServiceProvider serviceProvider, ConfigurationSection section)
+            : base(serviceProvider, section)
         {
+        }
+
+        protected class LayoutContext
+        {
+            public int CurrentRow = 0;
+            public int CurrentColumn = 0;
+            public int CurrentHeaderRow = 0;
         }
 
         public override void UpdateLayout()
         {
             base.UpdateLayout();
+            headers.Clear();
 
-            int currentColumn = 0;
-            int currentRow = 1;
+            var context = new LayoutContext() { CurrentColumn = 0, CurrentRow = 1, CurrentHeaderRow = 0 };
 
-            var collection = ChildElements.OfType<ElementCollectionViewModel>().FirstOrDefault();
-            if (collection != null)
-                UpdateLayout(collection, currentRow, currentColumn + 1);
+            var collections = ChildElements.OfType<ElementCollectionViewModel>();
+            foreach (var collection in collections)
+            {
+                UpdateLayout(collection, context);
+
+                // reset initial values for next collection
+                context.CurrentColumn = 0;
+                context.CurrentHeaderRow = context.CurrentRow + 1;
+                context.CurrentRow = context.CurrentHeaderRow + 1;
+            }
         }
 
-        protected int UpdateLayout(ElementCollectionViewModel collection, int row, int col)
+        protected void UpdateLayout(ElementCollectionViewModel collection, LayoutContext context)
         {
-            int currentRow = row;
-            foreach(var item in collection.ChildElements.OfType<CollectionElementViewModel>())
+            int initialRow = context.CurrentRow;
+
+            AddCollectionHeader(collection, context.CurrentHeaderRow, context.CurrentColumn);
+            foreach (var item in collection.ChildElements.OfType<CollectionElementViewModel>())
             {
-                int startingRow = currentRow;
-                currentRow = UpdateLayout(item, currentRow, col);
-                item.RowSpan = currentRow - startingRow;
+                int startingRow = context.CurrentRow;
+                UpdateLayout(item, context);
+                item.RowSpan = Math.Max(1, context.CurrentRow - startingRow);
             }
 
-            return currentRow;
+            // Increment row by at least one, in case there are no children.
+            context.CurrentRow = Math.Max(context.CurrentRow, initialRow + 1);
         }
-        
-        protected int UpdateLayout(CollectionElementViewModel collectionElement, int row, int col)
-        {
-            collectionElement.Row = row;
-            collectionElement.Column = col;
 
-            var innerCollection = collectionElement.ChildElements.OfType<ElementCollectionViewModel>().FirstOrDefault();
-            if (innerCollection == null)
+        protected void UpdateLayout(CollectionElementViewModel collectionElement, LayoutContext context)
+        {
+            collectionElement.Row = context.CurrentRow;
+            collectionElement.Column = context.CurrentColumn;
+
+            var innerCollections = collectionElement.ChildElements.OfType<ElementCollectionViewModel>();
+            if (innerCollections.Count() == 0)
             {
-                return row + 1;
+                context.CurrentRow++;
             }
             else
             {
-                return UpdateLayout(innerCollection, row, col + 1);
-            }
-        }
-
-        private void EnsureHeaders()
-        {
-            if (headers == null)
-            {
-                var newHeaders = new List<HeaderViewModel>();
-                var collectionGroups =
-                 DescendentElements().OfType<ElementCollectionViewModel>().GroupBy(x => x.CollectionElementType);
-
-                //todo: Move to 0 zero based
-                int i = 1;
-                foreach (var group in collectionGroups)
+                for (int i = 0; i < innerCollections.Count(); i++)
                 {
-                    newHeaders.Add(new StringHeaderViewModel(group.First().Name) {Row = 0, Column = i++});
-                }
+                    var innerCollection = innerCollections.ElementAt(0);
 
-                headers = newHeaders.ToArray();
+                    context.CurrentColumn++;
+                    UpdateLayout(innerCollection, context);
+                    context.CurrentColumn--;
+
+
+                    // Only increment header row and current row if it's
+                    // not the last collection
+                    if (i != innerCollections.Count() - 1)
+                    {
+                        context.CurrentHeaderRow = context.CurrentRow + 1;
+                        context.CurrentRow = context.CurrentHeaderRow + 1;
+                    }
+                }
             }
         }
 
-        public override System.Collections.Generic.IEnumerable<ElementViewModel> GetRelatedElements(ElementViewModel element)
+        private void AddCollectionHeader(ElementCollectionViewModel collection, int row, int column)
         {
-            var firstNonCollectionParent = element.AncesterElements().FirstOrDefault(x => !typeof(ElementCollectionViewModel).IsAssignableFrom(x.GetType()));
-            if (firstNonCollectionParent != null)
-                yield return firstNonCollectionParent;
-
-//todo:  Reorganize logic
-            foreach(var child in element.ChildElements)
+            if (!headers.Any(h => h.Path == collection.TypePath))
             {
-				if (typeof(ElementCollectionViewModel).IsAssignableFrom(child.GetType()))
-				{
-					foreach (var grandchild in child.ChildElements)
-					{
-						yield return grandchild;
-					}
-				}
-				else
-				{
-					yield return child;
-				}
+                var header = new ElementViewModelWrappingHeaderViewModel(collection, IsTopLevelCollection(column));
+                header.Row = row;
+                header.Column = column;
+                headers.Add(header);
             }
+        }
+
+        private bool IsTopLevelCollection(int column)
+        {
+            return column == 0;
         }
 
         public override System.Collections.Generic.IEnumerable<ViewModel> GetAdditionalGridVisuals()
         {
-            EnsureHeaders();
-            return headers;
+            return headers.Cast<ViewModel>();
         }
     }
 }

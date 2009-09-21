@@ -19,12 +19,24 @@ namespace Console.Wpf.ViewModel.ComponentModel
 {
     public class ViewModelPropertyDescriptor : PropertyDescriptor
     {
+        EventHandler changedHandler;
         Property property;
 
         private ViewModelPropertyDescriptor(Property property, Attribute[] attributes)
             : base(property.PropertyName, attributes)
         {
             this.property = property;
+            this.property.PropertyChanged += (sender, args) =>
+                {
+                    if (args.PropertyName == "Value")
+                    {
+                        var handler = changedHandler;
+                        if (handler != null)
+                        {
+                            handler(this, EventArgs.Empty);
+                        }
+                    }
+                };
         }
 
         public override Type ComponentType
@@ -103,6 +115,24 @@ namespace Console.Wpf.ViewModel.ComponentModel
 
         }
 
+        public override void AddValueChanged(object component, EventHandler handler)
+        {
+            changedHandler += handler;
+        }
+
+        public override void RemoveValueChanged(object component, EventHandler handler)
+        {
+            changedHandler -= handler;
+        }
+
+        public override bool SupportsChangeEvents
+        {
+            get
+            {
+                return true;
+            }
+        }
+
         public override PropertyDescriptorCollection GetChildProperties(object instance, Attribute[] filter)
         {
             return base.GetChildProperties(instance, filter);
@@ -115,7 +145,7 @@ namespace Console.Wpf.ViewModel.ComponentModel
 
         public static ViewModelPropertyDescriptor CreateProperty(Property property, Attribute[] attributes)
         {
-            return new ViewModelPropertyDescriptor(property, property.Attributes.Union(attributes).ToArray());
+            return new ViewModelPropertyDescriptor(property, attributes);
         }
 
     }

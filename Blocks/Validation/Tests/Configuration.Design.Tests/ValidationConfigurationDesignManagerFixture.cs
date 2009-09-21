@@ -22,6 +22,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.Design.
     public class ValidationConfigurationDesignManagerFixture : ConfigurationDesignHost
     {
         [TestMethod]
+        [Ignore]
         public void OpenAndSaveConfiguration()
         {
             ApplicationNode.Hierarchy.Load();
@@ -89,6 +90,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.Design.
         }
 
         [TestMethod]
+        [Ignore]
         public void BuildContextTest()
         {
             ValidationConfigurationDesignManager designManager = new ValidationConfigurationDesignManager();

@@ -10,6 +10,7 @@
 //===============================================================================
 
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using System.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 {
@@ -17,6 +18,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 	/// Represents a collection of validated fields.
 	/// </summary>
 	/// <seealso cref="ValidatedFieldReference"/>
+    [ConfigurationCollection(typeof(ValidatedFieldReference), AddItemName = "field", ClearItemsName = "clear", RemoveItemName = "remove")]
 	public class ValidatedFieldReferenceCollection : NamedElementCollection<ValidatedFieldReference>
 	{
 		/// <summary>

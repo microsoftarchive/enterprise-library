@@ -137,7 +137,7 @@ namespace Console.Wpf.Controls
 			var item = sender as ListBoxItem;
 			if (item != null)
 			{
-				var adder = item.DataContext as ElementCollectionViewModelAdder;
+				var adder = item.DataContext as CollectionElementAddCommand;
 				if (adder != null)
 				{
 					//Raise the ShowHelpTextEvent
@@ -149,7 +149,7 @@ namespace Console.Wpf.Controls
 			}
 		}
 
-		public void ActivateHelpTextUI(ElementCollectionViewModelAdder provider)
+		public void ActivateHelpTextUI(CollectionElementAddCommand provider)
 		{
 			//Find the help display text block and update it's text and it's visibility
 			var helpText = Template.FindName("PART_HelpTextDisplay", this) as TextBlock;
@@ -218,7 +218,7 @@ namespace Console.Wpf.Controls
 	internal delegate void AdderRoutedEventHandler(object sender, AdderRoutedEventArgs args);
 	internal class AdderRoutedEventArgs : RoutedEventArgs
 	{
-		public ElementCollectionViewModelAdder Adder { get; set; }
+		public CollectionElementAddCommand Adder { get; set; }
 
 		public AdderRoutedEventArgs(RoutedEvent routedEvent) : base(routedEvent)
 		{

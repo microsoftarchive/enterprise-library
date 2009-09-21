@@ -14,6 +14,8 @@ using System.Security.Permissions;
 using System.Runtime.ConstrainedExecution;
 using System.Runtime.CompilerServices;
 using System.Security;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
 
 [assembly : SecurityPermission(SecurityAction.RequestMinimum)]
 [assembly : ReliabilityContract(Consistency.WillNotCorruptState, Cer.None)]
@@ -24,3 +26,5 @@ using System.Security;
 
 [assembly: AllowPartiallyTrustedCallers]
 [assembly: SecurityTransparent]
+
+[assembly: HandlesSectionName(PolicyInjectionSettings.SectionName)]

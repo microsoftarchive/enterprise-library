@@ -126,6 +126,22 @@
             <param name="dependencyType">Type of dependency desired.</param>
             <returns>a <see cref="T:Microsoft.Practices.ObjectBuilder2.IDependencyResolverPolicy"/> object if this override applies, null if not.</returns>
         </member>
+        <member name="M:Microsoft.Practices.Unity.ResolverOverride.OnType``1">
+            <summary>
+            Wrap this resolver in one that verifies the type of the object being built.
+            This allows you to narrow any override down to a specific type easily.
+            </summary>
+            <typeparam name="T">Type to constrain the override to.</typeparam>
+            <returns>The new override.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.ResolverOverride.OnType(System.Type)">
+            <summary>
+            Wrap this resolver in one that verifies the type of the object being built.
+            This allows you to narrow any override down to a specific type easily.
+            </summary>
+            <param name="typeToOverride">Type to constrain the override to.</param>
+            <returns>The new override.</returns>
+        </member>
         <member name="M:Microsoft.Practices.Unity.CompositeResolverOverride.Add(Microsoft.Practices.Unity.ResolverOverride)">
             <summary>
             Add a new <see cref="T:Microsoft.Practices.Unity.ResolverOverride"/> to the collection
@@ -790,6 +806,22 @@
             Name this resolver will resolve.
             </summary>
         </member>
+        <member name="T:Microsoft.Practices.ObjectBuilder2.BuildOperation">
+            <summary>
+            Base class for the current operation stored in the build context.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Practices.ObjectBuilder2.BuildOperation.#ctor(System.Type)">
+            <summary>
+            Create a new <see cref="T:Microsoft.Practices.ObjectBuilder2.BuildOperation"/>.
+            </summary>
+            <param name="typeBeingConstructed">Type currently being built.</param>
+        </member>
+        <member name="P:Microsoft.Practices.ObjectBuilder2.BuildOperation.TypeBeingConstructed">
+            <summary>
+             The type that's currently being built.
+            </summary>
+        </member>
         <member name="T:Microsoft.Practices.ObjectBuilder2.EnumerableExtensions">
             <summary>
             The almost inevitable collection of extra helper methods on
@@ -836,13 +868,12 @@
             override a named parameter passed to a constructor.
             </summary>
         </member>
-        <member name="M:Microsoft.Practices.Unity.ParameterOverride.#ctor(System.Type,System.String,System.Object)">
+        <member name="M:Microsoft.Practices.Unity.ParameterOverride.#ctor(System.String,System.Object)">
             <summary>
             Construct a new <see cref="T:Microsoft.Practices.Unity.ParameterOverride"/> object that will
             override the given named constructor parameter, and pass the given
             value.
             </summary>
-            <param name="typeToConstruct">Type the constructor is on.</param>
             <param name="parameterName">Name of the constructor parameter.</param>
             <param name="parameterValue">Value to pass for the constructor.</param>
         </member>
@@ -855,35 +886,12 @@
             <param name="dependencyType">Type of dependency desired.</param>
             <returns>a <see cref="T:Microsoft.Practices.ObjectBuilder2.IDependencyResolverPolicy"/> object if this override applies, null if not.</returns>
         </member>
-        <member name="T:Microsoft.Practices.Unity.ParameterOverride`1">
-            <summary>
-            A generic version of <see cref="T:Microsoft.Practices.Unity.ParameterOverride"/> that lets you specify
-            the type the constructor is on as a generic parameter.
-            </summary>
-            <typeparam name="T">Type the constructor is on.</typeparam>
-        </member>
-        <member name="M:Microsoft.Practices.Unity.ParameterOverride`1.#ctor(System.String,System.Object)">
-            <summary>
-            Construct a new <see cref="T:Microsoft.Practices.Unity.ParameterOverride"/> object that will
-            override the given named constructor parameter, and pass the given
-            value.
-            </summary>
-            <param name="parameterName">Name of the constructor parameter.</param>
-            <param name="parameterValue">Value to pass for the constructor.</param>
-        </member>
         <member name="T:Microsoft.Practices.Unity.ParameterOverrides">
             <summary>
             A convenience form of <see cref="T:Microsoft.Practices.Unity.ParameterOverride"/> that lets you
             specify multiple parameter overrides in one shot rather than having
             to construct multiple objects.
             </summary>
-        </member>
-        <member name="M:Microsoft.Practices.Unity.ParameterOverrides.#ctor(System.Type)">
-            <summary>
-            Create an instance of <see cref="T:Microsoft.Practices.Unity.ParameterOverrides"/> that lets you specify
-            overrides when calling the constructor for <paramref name="typeToConstruct"/>.
-            </summary>
-            <param name="typeToConstruct">Type to override constructor parameters.</param>
         </member>
         <member name="M:Microsoft.Practices.Unity.ParameterOverrides.MakeOverride(System.String,System.Object)">
             <summary>
@@ -894,18 +902,43 @@
             <param name="value">Value to store in the resolver.</param>
             <returns>The created <see cref="T:Microsoft.Practices.Unity.ResolverOverride"/>.</returns>
         </member>
-        <member name="T:Microsoft.Practices.Unity.ParameterOverrides`1">
+        <member name="T:Microsoft.Practices.Unity.PropertyOverride">
             <summary>
-            A generic version of <see cref="T:Microsoft.Practices.Unity.ParameterOverrides"/> that let you specify the type
-            using generics syntax.
+            A <see cref="T:Microsoft.Practices.Unity.ResolverOverride"/> that lets you override
+            the value for a specified property.
             </summary>
-            <typeparam name="T">Type of the object being constructed.</typeparam>
         </member>
-        <member name="M:Microsoft.Practices.Unity.ParameterOverrides`1.#ctor">
+        <member name="M:Microsoft.Practices.Unity.PropertyOverride.#ctor(System.String,System.Object)">
             <summary>
-            Create an instance of <see cref="T:Microsoft.Practices.Unity.ParameterOverrides"/> that lets you specify
-            overrides when calling the constructor for <typeparamref name="T"/>.
+             Create an instance of <see cref="T:Microsoft.Practices.Unity.PropertyOverride"/>.
             </summary>
+            <param name="propertyName">The property name.</param>
+            <param name="propertyValue">Value to use for the property.</param>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.PropertyOverride.GetResolver(Microsoft.Practices.ObjectBuilder2.IBuilderContext,System.Type)">
+            <summary>
+            Return a <see cref="T:Microsoft.Practices.ObjectBuilder2.IDependencyResolverPolicy"/> that can be used to give a value
+            for the given desired dependency.
+            </summary>
+            <param name="context">Current build context.</param>
+            <param name="dependencyType">Type of dependency desired.</param>
+            <returns>a <see cref="T:Microsoft.Practices.ObjectBuilder2.IDependencyResolverPolicy"/> object if this override applies, null if not.</returns>
+        </member>
+        <member name="T:Microsoft.Practices.Unity.PropertyOverrides">
+            <summary>
+            A convenience form of <see cref="T:Microsoft.Practices.Unity.PropertyOverride"/> that lets you
+            specify multiple property overrides in one shot rather than having
+            to construct multiple objects.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.PropertyOverrides.MakeOverride(System.String,System.Object)">
+            <summary>
+            When implemented in derived classes, this method is called from the <see cref="M:Microsoft.Practices.Unity.OverrideCollection`3.Add(`1,`2)"/>
+            method to create the actual <see cref="T:Microsoft.Practices.Unity.ResolverOverride"/> objects.
+            </summary>
+            <param name="key">Key value to create the resolver.</param>
+            <param name="value">Value to store in the resolver.</param>
+            <returns>The created <see cref="T:Microsoft.Practices.Unity.ResolverOverride"/>.</returns>
         </member>
         <member name="T:Microsoft.Practices.Unity.StaticFactory.IStaticFactoryConfiguration">
             <summary>
@@ -971,6 +1004,18 @@
             A convenience method to do a new buildup operation on an existing context.
             </summary>
             <param name="newBuildKey">Key to use to build up.</param>
+            <returns>Created object.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.ObjectBuilder2.IBuilderContext.NewBuildUp(System.Object,System.Action{Microsoft.Practices.ObjectBuilder2.IPolicyList})">
+            <summary>
+            A convenience method to do a new buildup operation on an existing context. This
+            overload allows you to specify extra policies which will be in effect for the duration
+            of the build.
+            </summary>
+            <param name="newBuildKey">Key defining what to build up.</param>
+            <param name="policyAdderBlock">A delegate that takes a <see cref="T:Microsoft.Practices.ObjectBuilder2.IPolicyList"/>. This
+            is invoked before the build up process starts to give callers the opportunity to add
+            custom policies to the build process.</param>
             <returns>Created object.</returns>
         </member>
         <member name="P:Microsoft.Practices.ObjectBuilder2.IBuilderContext.Strategies">
@@ -1098,20 +1143,23 @@
             <param name="dependencyType">Type of the dependency.</param>
             <returns>Resolver to use, or null if no override matches for the current operation.</returns>
         </member>
-        <member name="M:Microsoft.Practices.ObjectBuilder2.BuilderContext.NewBuildUp``1(Microsoft.Practices.ObjectBuilder2.IBuilderContext)">
-            <summary>
-            A convenience method to do a new buildup operation on an existing context.
-            </summary>
-            <remarks>This helper is specific to NamedTypeBuildKey.</remarks>
-            <typeparam name="T">Type to return from the buildup.</typeparam>
-            <param name="context">Existing context.</param>
-            <returns>The built up object.</returns>
-        </member>
         <member name="M:Microsoft.Practices.ObjectBuilder2.BuilderContext.NewBuildUp(System.Object)">
             <summary>
             A convenience method to do a new buildup operation on an existing context.
             </summary>
             <param name="newBuildKey">Key to use to build up.</param>
+            <returns>Created object.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.ObjectBuilder2.BuilderContext.NewBuildUp(System.Object,System.Action{Microsoft.Practices.ObjectBuilder2.IPolicyList})">
+            <summary>
+            A convenience method to do a new buildup operation on an existing context. This
+            overload allows you to specify extra policies which will be in effect for the duration
+            of the build.
+            </summary>
+            <param name="newBuildKey">Key defining what to build up.</param>
+            <param name="policyAdderBlock">A delegate that takes a <see cref="T:Microsoft.Practices.ObjectBuilder2.IPolicyList"/>. This
+            is invoked before the build up process starts to give callers the opportunity to add
+            custom policies to the build process.</param>
             <returns>Created object.</returns>
         </member>
         <member name="P:Microsoft.Practices.ObjectBuilder2.BuilderContext.Strategies">
@@ -2041,11 +2089,6 @@
             </summary>
             <returns>The description string.</returns>
         </member>
-        <member name="P:Microsoft.Practices.ObjectBuilder2.ConstructorArgumentResolveOperation.TypeBeingConstructed">
-            <summary>
-             The type that's currently being built.
-            </summary>
-        </member>
         <member name="P:Microsoft.Practices.ObjectBuilder2.ConstructorArgumentResolveOperation.ConstructorSignature">
             <summary>
             String describing the constructor being set up.
@@ -2076,6 +2119,15 @@
             </summary>
             <param name="context">The <see cref="T:Microsoft.Practices.ObjectBuilder2.IBuilderContext"/> currently being
             used for the build of this object.</param>
+        </member>
+        <member name="M:Microsoft.Practices.ObjectBuilder2.DynamicMethodConstructorStrategy.ThrowForNullExistingObjectWithInvalidConstructor(Microsoft.Practices.ObjectBuilder2.IBuilderContext,System.String)">
+            <summary>
+            A helper method used by the generated IL to throw an exception if
+            a dependency cannot be resolved because of an invalid constructor.
+            </summary>
+            <param name="context">The <see cref="T:Microsoft.Practices.ObjectBuilder2.IBuilderContext"/> currently being
+            used for the build of this object.</param>
+            <param name="signature">The signature of the invalid constructor.</param>
         </member>
         <member name="M:Microsoft.Practices.ObjectBuilder2.DynamicMethodConstructorStrategy.ThrowForAttemptingToConstructInterface(Microsoft.Practices.ObjectBuilder2.IBuilderContext)">
             <summary>
@@ -2113,11 +2165,6 @@
             Generate the description string.
             </summary>
             <returns>The string.</returns>
-        </member>
-        <member name="P:Microsoft.Practices.ObjectBuilder2.InvokingConstructorOperation.TypeBeingConstructed">
-            <summary>
-            The type currently being constructed.
-            </summary>
         </member>
         <member name="P:Microsoft.Practices.ObjectBuilder2.InvokingConstructorOperation.ConstructorSignature">
             <summary>
@@ -2353,11 +2400,6 @@
             </summary>
             <returns>The string.</returns>
         </member>
-        <member name="P:Microsoft.Practices.ObjectBuilder2.InvokingMethodOperation.TypeBeingConstructed">
-            <summary>
-            The type currently being constructed.
-            </summary>
-        </member>
         <member name="P:Microsoft.Practices.ObjectBuilder2.InvokingMethodOperation.MethodSignature">
             <summary>
             Method we're trying to call.
@@ -2383,11 +2425,6 @@
             Generate the string describing what parameter was being resolved.
             </summary>
             <returns>The description string.</returns>
-        </member>
-        <member name="P:Microsoft.Practices.ObjectBuilder2.MethodArgumentResolveOperation.TypeBeingConstructed">
-            <summary>
-             The type that's currently being built.
-            </summary>
         </member>
         <member name="P:Microsoft.Practices.ObjectBuilder2.MethodArgumentResolveOperation.MethodSignature">
             <summary>
@@ -2447,11 +2484,6 @@
             the base <see cref="M:Microsoft.Practices.ObjectBuilder2.PropertyOperation.ToString"/> method.
             </summary>
             <returns>The format string.</returns>
-        </member>
-        <member name="P:Microsoft.Practices.ObjectBuilder2.PropertyOperation.TypeBeingConstructed">
-            <summary>
-            The type currently being build up.
-            </summary>
         </member>
         <member name="P:Microsoft.Practices.ObjectBuilder2.PropertyOperation.PropertyName">
             <summary>
@@ -3280,6 +3312,43 @@
             <typeparam name="TTypeToBuild">Type that will be requested from the container.</typeparam>
             <param name="factoryMethod">Delegate to invoke to create the instance.</param>
             <returns>The container extension object this method was invoked on.</returns>
+        </member>
+        <member name="T:Microsoft.Practices.Unity.TypeBasedOverride">
+            <summary>
+            An implementation of <see cref="T:Microsoft.Practices.Unity.ResolverOverride"/> that
+            acts as a decorator over another <see cref="T:Microsoft.Practices.Unity.ResolverOverride"/>.
+            This checks to see if the current type being built is the
+            right one before checking the inner <see cref="T:Microsoft.Practices.Unity.ResolverOverride"/>.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.TypeBasedOverride.#ctor(System.Type,Microsoft.Practices.Unity.ResolverOverride)">
+            <summary>
+            Create an instance of <see cref="T:Microsoft.Practices.Unity.TypeBasedOverride"/>
+            </summary>
+            <param name="targetType">Type to check for.</param>
+            <param name="innerOverride">Inner override to check after type matches.</param>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.TypeBasedOverride.GetResolver(Microsoft.Practices.ObjectBuilder2.IBuilderContext,System.Type)">
+            <summary>
+            Return a <see cref="T:Microsoft.Practices.ObjectBuilder2.IDependencyResolverPolicy"/> that can be used to give a value
+            for the given desired dependency.
+            </summary>
+            <param name="context">Current build context.</param>
+            <param name="dependencyType">Type of dependency desired.</param>
+            <returns>a <see cref="T:Microsoft.Practices.ObjectBuilder2.IDependencyResolverPolicy"/> object if this override applies, null if not.</returns>
+        </member>
+        <member name="T:Microsoft.Practices.Unity.TypeBasedOverride`1">
+            <summary>
+            A convenience version of <see cref="T:Microsoft.Practices.Unity.TypeBasedOverride"/> that lets you
+            specify the type to construct via generics syntax.
+            </summary>
+            <typeparam name="T">Type to check for.</typeparam>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.TypeBasedOverride`1.#ctor(Microsoft.Practices.Unity.ResolverOverride)">
+            <summary>
+            Create an instance of <see cref="T:Microsoft.Practices.Unity.TypeBasedOverride`1"/>.
+            </summary>
+            <param name="innerOverride">Inner override to check after type matches.</param>
         </member>
         <member name="T:Microsoft.Practices.Unity.UnityContainerExtensions">
             <summary>
@@ -5084,6 +5153,11 @@
         <member name="P:Microsoft.Practices.Unity.Properties.Resources.ResolvingPropertyValueOperation">
             <summary>
               Looks up a localized string similar to Resolving value for property {0}.{1}.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Unity.Properties.Resources.SelectedConstructorHasRefParameters">
+            <summary>
+              Looks up a localized string similar to The constructor {1} selected for type {0} has ref or out parameters. Such parameters are not supported for constructor injection..
             </summary>
         </member>
         <member name="P:Microsoft.Practices.Unity.Properties.Resources.SettingPropertyOperation">

@@ -26,6 +26,7 @@ namespace Console.Wpf.ComponentModel.Editors
     /// <summary>
     /// <para>Represents the UI for the assembly selector dialog.</para>
     /// </summary>
+    //todo: load types on a background thread.
     public class TypeSelectorUI : Form
     {
         private const string AssemblyFileFilter = "Assemblies (*.exe;*.dll) | *.exe;*.dll";

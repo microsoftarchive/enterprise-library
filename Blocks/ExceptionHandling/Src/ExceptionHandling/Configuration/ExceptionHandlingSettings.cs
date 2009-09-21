@@ -64,7 +64,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
         /// </value>
         [ConfigurationProperty(policiesProperty)]
         [ResourceDisplayName(typeof(Resources), "ExceptionPoliciesDisplayName")]
-        [System.ComponentModel.Browsable(false)]
         [ConfigurationCollection(typeof(ExceptionPolicyData))]
         public NamedElementCollection<ExceptionPolicyData> ExceptionPolicies
         {

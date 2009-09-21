@@ -32,13 +32,19 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model_and_config_collection
             
             ChangedSource = new CollectionChangedSource();
             ServiceProvider.AddService(typeof(CollectionChangedSource), ChangedSource);
+            ServiceProvider.AddService(typeof(ElementLookup), new ElementLookup());
 
             var section = new MockSectionWithMultipleChildCollections();
-            section.Children.Add(new TestHandlerData(){Name = "One"});
-            section.Children.Add(new TestHandlerData(){Name = "Two"});
-            section.Children.Add(new TestHandlerData(){Name = "Three"});
+            BuildSection(section);
 
             ViewModel = new SectionViewModel(ServiceProvider, section);
+        }
+
+        protected virtual void BuildSection(MockSectionWithMultipleChildCollections section)
+        {
+            section.Children.Add(new TestHandlerData() { Name = "One" });
+            section.Children.Add(new TestHandlerData() { Name = "Two" });
+            section.Children.Add(new TestHandlerData() { Name = "Three" });
         }
 
         protected CollectionChangedSource ChangedSource { get; set; }
@@ -204,7 +210,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model_and_config_collection
                             .First(x => x.Name == "Two");
 
             handler.Deleted += (s, e) => { deletedFired = true; };
-            handler.Delete.Execute(null);
+            handler.DeleteCommand.Execute(null);
         }
 
         [TestMethod]
@@ -226,5 +232,83 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model_and_config_collection
             Assert.IsTrue(deletedFired);
         }
 
+    }
+
+    [TestClass]
+    public class when_executing_adder_on_middle_nodes : ServiceProviderContext
+    {
+        private ElementCollectionViewModel childrenCollection;
+        private int startingCount;
+
+        protected override void Arrange()
+        {
+            base.Arrange();
+
+            var section = new MockSectionWithSingleChild();
+
+            section.Children.Add(CreateNewElement("One"));
+            section.Children.Add(CreateNewElement("Two"));
+
+            ViewModel = SectionViewModel.CreateSection(ServiceProvider, section);
+
+            childrenCollection = ViewModel.DescendentElements(
+                      e => e.ConfigurationType ==
+                            typeof(NamedElementCollection<TestHandlerDataWithChildren>)).Cast<ElementCollectionViewModel>().First();
+
+            startingCount =
+                childrenCollection.ChildElements.Count(
+                    x => typeof(TestHandlerDataWithChildren).IsAssignableFrom(x.ConfigurationType));
+        }
+
+        private static TestHandlerDataWithChildren CreateNewElement(string name)
+        {
+            var element = new TestHandlerDataWithChildren() {Name = name};
+            element.Children.Add(new TestHandlerData() {Name = name + ".One"});
+            element.Children.Add(new TestHandlerData() {Name = name + ".Two"});
+            return element;
+        }
+
+        protected override void Act()
+        {
+            var command = childrenCollection.ChildAdders.OfType<CollectionElementAddCommand>().First();
+            command.Execute(null);
+        }
+
+        public SectionViewModel ViewModel { get; set; }
+        [TestMethod]
+        public void then_new_child_is_added_to_collection()
+        {
+            Assert.AreEqual(startingCount + 1,
+                            childrenCollection.ChildElements.Count(
+                                x => typeof(TestHandlerDataWithChildren).IsAssignableFrom(x.ConfigurationType)));
+        }
+
+
+        [TestMethod]
+        public void then_collection_rows_are_recalculated()
+        {
+            ElementViewModel lastElement = childrenCollection.ChildElements.First();
+            foreach (var element in childrenCollection.ChildElements.Skip(1))
+            {
+                var lastElementsLastHandler =
+                    lastElement.DescendentElements().Last(
+                        e => typeof(TestHandlerData).IsAssignableFrom(e.ConfigurationType));
+
+                Assert.AreEqual(lastElementsLastHandler.Row + 1, element.Row);
+                lastElement = element;
+            }
+        }
+
+        [TestMethod]
+        public void then_rowspan_for_nodes_matches_children_count()
+        {
+            Assert.IsTrue(
+                childrenCollection.ChildElements.All(
+                    x =>
+                    x.RowSpan ==
+                    Math.Max(1, x.DescendentElements().Count(
+                                    h => typeof(TestHandlerData).IsAssignableFrom(h.ConfigurationType)))));
+
+        }
     }
 }

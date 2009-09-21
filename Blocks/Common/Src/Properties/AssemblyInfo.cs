@@ -15,6 +15,9 @@ using System.Runtime.CompilerServices;
 using System.Runtime.ConstrainedExecution;
 using System.Security;
 using System.Security.Permissions;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 
 [assembly : SecurityPermission(SecurityAction.RequestMinimum)]
 [assembly : ReliabilityContract(Consistency.WillNotCorruptState, Cer.None)]
@@ -26,3 +29,7 @@ using System.Security.Permissions;
 [assembly : ReflectionPermission(SecurityAction.RequestMinimum)]
 [assembly : AllowPartiallyTrustedCallers]
 [assembly : SecurityTransparent]
+
+[assembly: HandlesSectionName(InstrumentationConfigurationSection.SectionName)]
+[assembly: HandlesSectionName(ConfigurationSourceSection.SectionName)]
+[assembly: HandlesSectionName(TypeRegistrationProvidersConfigurationSection.SectionName)]

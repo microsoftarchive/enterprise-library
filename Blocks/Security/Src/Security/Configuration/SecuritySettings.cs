@@ -27,6 +27,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration
     /// security providers.
     /// </summary>
     [ResourceDisplayName(typeof(Resources), "SecuritySettingsDisplayName")]
+    [ViewModel("Console.Wpf.ViewModel.HierarchicalSectionViewModel, Console.Wpf")]
     public class SecuritySettings : SerializableConfigurationSection, ITypeRegistrationsProvider
     {
 		/// <summary>
@@ -52,7 +53,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration
         /// <summary>
         /// The instance name of the default <see cref="IAuthorizationProvider"/> instance.
         /// </summary>
-		[ConfigurationProperty(defaultAuthorizationProviderNameProperty, IsRequired= false)]
+		[ConfigurationProperty(defaultAuthorizationProviderNameProperty, IsRequired= false)]   
+        [Reference(typeof(SecuritySettings), typeof(AuthorizationProviderData))]
 		public string DefaultAuthorizationProviderName
 		{
 			get
@@ -69,6 +71,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration
         /// The instance name of the default <see cref="ISecurityCacheProvider"/> instance.
         /// </summary>
 		[ConfigurationProperty(defaultSecurityCacheProviderNameProperty, IsRequired= false)]
+        [Reference(typeof(SecuritySettings), typeof(SecurityCacheProviderData))]
 		public string DefaultSecurityCacheProviderName
 		{
 			get
@@ -92,6 +95,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration
         /// </remarks>
 		[ConfigurationProperty(authorizationProvidersProperty, IsRequired= false)]
         [ResourceDisplayName(typeof(Resources), "AuthorizationProvidersDisplayName")]
+        [ConfigurationCollection(typeof(AuthorizationProviderData))]
         public NameTypeConfigurationElementCollection<AuthorizationProviderData, CustomAuthorizationProviderData> AuthorizationProviders
 		{
 			get
@@ -111,6 +115,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration
         /// </remarks>
 		[ConfigurationProperty(securityCacheProvidersProperty, IsRequired= false)]
         [ResourceDisplayName(typeof(Resources), "SecurityCacheProvidersDisplayName")]
+        [ConfigurationCollection(typeof(SecurityCacheProviderData))]
 		public NameTypeConfigurationElementCollection<SecurityCacheProviderData, CustomSecurityCacheProviderData> SecurityCacheProviders
 		{
 			get

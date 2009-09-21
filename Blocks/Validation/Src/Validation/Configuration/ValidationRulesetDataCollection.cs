@@ -19,6 +19,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 	/// Represents a collection of validated properties.
 	/// </summary>
 	/// <seealso cref="ValidationRulesetData"/>
+    [ConfigurationCollection(typeof(ValidationRulesetData), AddItemName = "ruleset", ClearItemsName = "clear", RemoveItemName = "remove")]
 	public class ValidationRulesetDataCollection : NamedElementCollection<ValidationRulesetData>
 	{
 		/// <summary>

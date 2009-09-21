@@ -11,6 +11,7 @@
 
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration
 {
@@ -59,6 +60,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration
 		/// <para>This property maps to the <c>defaultInstance</c> element in configuration.</para>
 		/// </remarks>
 		[ConfigurationProperty(defaultDatabaseProperty, IsRequired = false)]
+        [Reference(typeof(ConnectionStringSettings))]
 		public string DefaultDatabase
 		{
 			get

@@ -21,23 +21,50 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
     public sealed class ViewModelAttribute : Attribute
     {
         private readonly string modelTypeName;
+        private readonly string modelVisualTypeName;
 
-        /// <summary/>
+        ///<summary>
+        ///</summary>
+        ///<param name="modelType"></param>
         public ViewModelAttribute(Type modelType)
-        {
-            this.modelTypeName = modelType.AssemblyQualifiedName;
-        }
+            : this(modelType.AssemblyQualifiedName)
+        { }
 
         /// <summary/>
+        public ViewModelAttribute(Type modelType, Type modelVisualType)
+            : this(modelType.AssemblyQualifiedName, modelVisualType.AssemblyQualifiedName)
+        { }
+
+        ///<summary>
+        ///</summary>
+        ///<param name="modelTypeName"></param>
         public ViewModelAttribute(string modelTypeName)
+            : this(modelTypeName, string.Empty)
+        { }
+
+        /// <summary/>
+        public ViewModelAttribute(string modelTypeName, string modelVisualTypeName)
         {
             this.modelTypeName = modelTypeName;
+            this.modelVisualTypeName = modelVisualTypeName;
+        }
+
+        ///<summary>
+        ///</summary>
+        public Type ModelVisualType
+        {
+            get
+            {
+                return string.IsNullOrEmpty(modelVisualTypeName)?null:Type.GetType(modelVisualTypeName, true, true);
+            }
         }
 
         /// <summary/>
         public Type ModelType
         {
-            get { return Type.GetType(modelTypeName); }
+            get { return Type.GetType(modelTypeName, true, true); }
         }
+
+
     }
 }
