@@ -119,7 +119,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         /// </remarks>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1720",
             Justification = "Keeping the name")]
-        protected virtual string GetMessage(object objectToValidate, string key)
+        protected internal virtual string GetMessage(object objectToValidate, string key)
         {
             return string.Format(
                 CultureInfo.CurrentCulture,

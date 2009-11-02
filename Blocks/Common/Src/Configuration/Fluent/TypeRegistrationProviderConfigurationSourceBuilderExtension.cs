@@ -10,12 +10,9 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Practices.EnterpriseLibrary.Common.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent;
+using Microsoft.Practices.EnterpriseLibrary.Common.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 {
@@ -33,7 +30,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         /// <see cref="TypeRegistrationProviderElement"/>
         public static IConfigureTypeRegistrations ConfigureTypeRegistrations(this IConfigurationSourceBuilder configurationSourceBuilder)
         {
-            return new ConfigureTypeRegistrationBuilder(configurationSourceBuilder);
+            return new ConfigureTypeRegistrationBuilder(configurationSourceBuilder, false);
+        }
+
+        /// <summary>
+        /// Main entry point to configure a <see cref="TypeRegistrationProvidersConfigurationSection"/> section with no 
+        /// default type registrations.
+        /// </summary>
+        /// <param name="configurationSourceBuilder">The builder interface to extend.</param>
+        /// <returns>A fluent interface that allows to add <see cref="ITypeRegistrationsProvider"/> instances.</returns>
+        /// <see cref="ITypeRegistrationsProvider"/>
+        /// <see cref="TypeRegistrationProviderElement"/>
+        public static IConfigureTypeRegistrations ConfigureEmptyTypeRegistrations(this IConfigurationSourceBuilder configurationSourceBuilder)
+        {
+            return new ConfigureTypeRegistrationBuilder(configurationSourceBuilder, true);
         }
 
         private class ConfigureTypeRegistrationBuilder : IConfigureTypeRegistrations, IConfigureTypeRegistration
@@ -41,9 +51,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
             TypeRegistrationProvidersConfigurationSection typeRegistrationsConfigurationSection;
             TypeRegistrationProviderElement currentTypeRegistration;
 
-            public ConfigureTypeRegistrationBuilder(IConfigurationSourceBuilder configurationSourceBuilder)
+            public ConfigureTypeRegistrationBuilder(IConfigurationSourceBuilder configurationSourceBuilder, bool empty)
             {
                 typeRegistrationsConfigurationSection = new TypeRegistrationProvidersConfigurationSection();
+                if (empty)
+                {
+                    typeRegistrationsConfigurationSection.TypeRegistrationProviders.Clear();
+                }
 
                 configurationSourceBuilder.AddSection(TypeRegistrationProvidersConfigurationSection.SectionName, typeRegistrationsConfigurationSection);
 
@@ -51,9 +65,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 
             public IConfigureTypeRegistration AddTypeRegistrationsProviderNamed(string typeRegistrationProviderName)
             {
-                if (string.IsNullOrEmpty(typeRegistrationProviderName)) 
+                if (string.IsNullOrEmpty(typeRegistrationProviderName))
                     throw new ArgumentException(Resources.ExceptionStringNullOrEmpty, "typeRegistrationProviderName");
-                
+
                 currentTypeRegistration = new TypeRegistrationProviderElement
                 {
                     Name = typeRegistrationProviderName

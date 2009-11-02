@@ -25,10 +25,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
     public class MetadataValidatedType : MetadataValidatedElement, IValidatedType
     {
         /// <summary>
-        /// 
+        /// Initializes a new instance of the <see cref="MetadataValidatedType"/> class for a type and a ruleset.
         /// </summary>
-        /// <param name="targetType"></param>
-        /// <param name="ruleset"></param>
+        /// <param name="targetType">The target type.</param>
+        /// <param name="ruleset">The ruleset.</param>
         public MetadataValidatedType(Type targetType, string ruleset)
             : base(targetType, ruleset)
         { }
@@ -88,7 +88,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
 
                 if (!hasReturnType && parameters.Length == 1 && parameters[0].ParameterType == typeof(ValidationResults))
                 {
-                    foreach (SelfValidationAttribute attribute 
+                    foreach (SelfValidationAttribute attribute
                         in ValidationReflectionHelper.GetCustomAttributes(methodInfo, typeof(SelfValidationAttribute), false))
                     {
                         if (this.Ruleset.Equals(attribute.Ruleset))

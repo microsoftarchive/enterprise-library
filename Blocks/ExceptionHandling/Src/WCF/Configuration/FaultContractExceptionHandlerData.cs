@@ -16,12 +16,16 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
 using System.Collections.Generic;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using System.ComponentModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.Configuration
 {
 	/// <summary>
 	/// Configuration data for the <see cref="FaultContractExceptionHandler"/> class.
 	/// </summary>
+    [ResourceDescription(typeof(DesignResources), "FaultContractExceptionHandlerDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "FaultContractExceptionHandlerDataDisplayName")]
 	public class FaultContractExceptionHandlerData : ExceptionHandlerData
 	{
 		/// <summary>
@@ -39,7 +43,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.Configurat
 		/// <summary>
 		/// Initializes a new instance of the <see cref="FaultContractExceptionHandlerData"/> class.
 		/// </summary>
-		public FaultContractExceptionHandlerData() { }
+        public FaultContractExceptionHandlerData() { Type = typeof(FaultContractExceptionHandler); }
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="FaultContractExceptionHandlerData"/> class.
@@ -86,6 +90,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.Configurat
 		/// </summary>
 		/// <value>The exception message.</value>
 		[ConfigurationProperty(ExceptionMessageAttributeName, IsRequired = false)]
+        [ResourceDescription(typeof(DesignResources), "FaultContractExceptionHandlerDataExceptionMessageDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "FaultContractExceptionHandlerDataExceptionMessageDisplayName")]
 		public string ExceptionMessage
 		{
 			get { return this[ExceptionMessageAttributeName] as string; }
@@ -97,6 +103,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.Configurat
 		/// </summary>
 		/// <value>The type of the fault contract.</value>
 		[ConfigurationProperty(FaultContractTypeAttributeName, IsRequired = true)]
+        [ResourceDescription(typeof(DesignResources), "FaultContractExceptionHandlerDataFaultContractTypeDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "FaultContractExceptionHandlerDataFaultContractTypeDisplayName")]
+        [Editor(CommonDesignTime.EditorTypes.TypeSelector, CommonDesignTime.EditorTypes.UITypeEditor)]
+        [BaseType(typeof(object))]
 		public string FaultContractType
 		{
 			get { return this[FaultContractTypeAttributeName] as string; }
@@ -108,6 +118,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.Configurat
 		/// source properties on the exception to properties in the fault contract.
 		/// </summary>
 		[ConfigurationProperty(PropertyMappingsPropertyName)]
+        [ConfigurationCollection(typeof(FaultContractExceptionHandlerMappingData))]
+        [ResourceDescription(typeof(DesignResources), "FaultContractExceptionHandlerDataPropertyMappingsDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "FaultContractExceptionHandlerDataPropertyMappingsDisplayName")]
+        [System.ComponentModel.Editor(CommonDesignTime.EditorTypes.CollectionEditor, CommonDesignTime.EditorTypes.FrameworkElement)]
+        [CollectionEditorTemplate("FaultContractExceptionHandlerMappingDataItemHeader", "FaultContractExceptionHandlerMappingDataItem")]
+        [EnvironmentalOverrides(false)]
+        [DesignTimeReadOnly(false)]
 		public NamedElementCollection<FaultContractExceptionHandlerMappingData> PropertyMappings
 		{
 			get { return (NamedElementCollection<FaultContractExceptionHandlerMappingData>)this[PropertyMappingsPropertyName]; }

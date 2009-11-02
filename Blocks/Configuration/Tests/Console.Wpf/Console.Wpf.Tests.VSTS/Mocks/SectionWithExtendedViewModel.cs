@@ -19,6 +19,7 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Console.Wpf.ViewModel;
 using System.ComponentModel;
 using System.Windows.Controls;
+using Microsoft.Practices.Unity;
 
 namespace Console.Wpf.Tests.VSTS.Mocks
 {
@@ -30,8 +31,8 @@ namespace Console.Wpf.Tests.VSTS.Mocks
         {
             ElementCollection = new ElementCollectionWithExtendedViewModel();
 
-            ElementCollection.Add(new CollectionElementWithExtendedViewmodel()); 
-            ElementCollection.Add(new CollectionElementWithExtendedViewmodel());
+            ElementCollection.Add(new CollectionElementWithExtendedViewModel()); 
+            ElementCollection.Add(new CollectionElementWithExtendedViewModel());
         }
 
         [ConfigurationProperty("Element")]
@@ -63,18 +64,21 @@ namespace Console.Wpf.Tests.VSTS.Mocks
 
     }
 
+
+
+
     [ViewModel(typeof(ElementCollectionViewModelEx))]
-    [ConfigurationCollection(typeof(CollectionElementWithExtendedViewmodel))]
+    [ConfigurationCollection(typeof(CollectionElementWithExtendedViewModel))]
     public class ElementCollectionWithExtendedViewModel : ConfigurationElementCollection
     {
-        public void Add(CollectionElementWithExtendedViewmodel element)
+        public void Add(CollectionElementWithExtendedViewModel element)
         {
             base.BaseAdd(element);
         }
 
         protected override ConfigurationElement CreateNewElement()
         {
-            return new CollectionElementWithExtendedViewmodel();
+            return new CollectionElementWithExtendedViewModel();
         }
 
         protected override object GetElementKey(ConfigurationElement element)
@@ -84,34 +88,15 @@ namespace Console.Wpf.Tests.VSTS.Mocks
     }
 
     [ViewModel(typeof(CollectionElementViewModelEx))]
-    [CollectionElementAddCommand(typeof(CustomElementCollectionAddCommand))]
-    [CollectionElementAddCommand(typeof(AnotherCustomElementCollectionAddCommand))]
-    public class CollectionElementWithExtendedViewmodel : ConfigurationElement
+    public class CollectionElementWithExtendedViewModel : ConfigurationElement
     {
     }
 
-
-    public class CustomElementCollectionAddCommand : CollectionElementAddCommand
-    {
-        public CustomElementCollectionAddCommand(Type configurationElementType, ElementCollectionViewModel elementCollectionModel) : 
-            base(configurationElementType, elementCollectionModel)
-        {
-        }
-    }
-
-    public class AnotherCustomElementCollectionAddCommand : CollectionElementAddCommand
-    {
-        public AnotherCustomElementCollectionAddCommand(Type configurationElementType, ElementCollectionViewModel elementCollectionModel)
-            : base(configurationElementType, elementCollectionModel)
-        {
-        }
-    }
-       
 
     public class SectionViewModelEx : SectionViewModel
     {
-        public SectionViewModelEx(IServiceProvider serviceProvider, ConfigurationSection section)
-            :base(serviceProvider, section)
+        public SectionViewModelEx(IUnityContainer builder, ConfigurationSection section)
+            : base(builder, "sectionName", section)
         {
         }
     }
@@ -119,16 +104,16 @@ namespace Console.Wpf.Tests.VSTS.Mocks
 
     public class ElementCollectionViewModelEx : ElementCollectionViewModel
     {
-        public ElementCollectionViewModelEx(IServiceProvider serviceProvider, ElementViewModel parentElementModel, PropertyDescriptor declaringProperty)
-            : base(serviceProvider, parentElementModel, declaringProperty)
+        public ElementCollectionViewModelEx(ElementViewModel parentElementModel, PropertyDescriptor declaringProperty)
+            : base(parentElementModel, declaringProperty)
         {
         }
     }
 
     public class CollectionElementViewModelEx : CollectionElementViewModel
     {
-        public CollectionElementViewModelEx(IServiceProvider serviceProvider, ElementCollectionViewModel containingCollection, ConfigurationElement thisElement)
-            : base(serviceProvider, containingCollection, thisElement)
+        public CollectionElementViewModelEx(ElementCollectionViewModel containingCollection, ConfigurationElement thisElement)
+            : base(containingCollection, thisElement)
         {
         }
     }
@@ -136,17 +121,38 @@ namespace Console.Wpf.Tests.VSTS.Mocks
 
     public class ElementViewModelEx : ElementViewModel
     {
-        public ElementViewModelEx(IServiceProvider serviceProvider, ElementViewModel parentElementModel, PropertyDescriptor declaringProperty)
-            :base(serviceProvider, parentElementModel, declaringProperty)
+        public ElementViewModelEx(ElementViewModel parentElementModel, PropertyDescriptor declaringProperty)
+            :base(parentElementModel, declaringProperty)
         {
+        }
+
+        protected override IEnumerable<Property> GetAllProperties()
+        {
+            return base.GetAllProperties().Union(new Property[]{ this.ContainingSection.CreateProperty<CustomProperty>() }) ;
         }
     }
 
     public class ElementViewModelEx2 : ElementViewModel
     {
-        public ElementViewModelEx2(IServiceProvider serviceProvider, ElementViewModel parentElementModel, PropertyDescriptor declaringProperty)
-            : base(serviceProvider, parentElementModel, declaringProperty)
+        public ElementViewModelEx2(ElementViewModel parentElementModel, PropertyDescriptor declaringProperty)
+            : base(parentElementModel, declaringProperty)
         {
+        }
+    }
+
+
+    public class CustomProperty : CustomPropertry<string>, IPropertyNeedsInitialization
+    {
+        public static bool WasInitialized = false;
+
+        public CustomProperty(IServiceProvider serviceProvider) : base(serviceProvider, "CustomProprty")
+        {
+            
+        }
+
+        public void Initialize()
+        {
+            WasInitialized = true;
         }
     }
 }

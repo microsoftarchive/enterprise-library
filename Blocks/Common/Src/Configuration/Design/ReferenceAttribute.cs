@@ -58,6 +58,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
         }
 
         /// <summary/>
+        public bool ScopeIsDeclaringElement
+        {
+            get;
+            set;
+        }
+
+        /// <summary/>
         public Type TargetType
         {
             get { return Type.GetType(targetTypeName); }

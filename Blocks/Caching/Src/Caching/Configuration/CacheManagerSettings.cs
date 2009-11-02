@@ -25,7 +25,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
     /// <summary>
     /// Overall configuration settings for Caching
     /// </summary>    
-    [ViewModel(ViewModels.TabularViewModel)]
+    [ViewModel(CachingDesignTime.ViewModelTypeNames.CacheManagerSectionViewModel)]
+    [ResourceDescription(typeof(DesignResources), "CacheManagerSettingsDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "CacheManagerSettingsDisplayName")]
     public class CacheManagerSettings : SerializableConfigurationSection, ITypeRegistrationsProvider
     {
 		/// <summary>
@@ -41,8 +43,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
         /// <summary>
         /// Defines the default manager instance to use when no other manager is specified
         /// </summary>
-        [Reference(typeof(CacheManagerSettings), typeof(CacheManagerDataBase))]
+        [Reference(typeof(NameTypeConfigurationElementCollection<CacheManagerDataBase, CustomCacheManagerData>), typeof(CacheManagerDataBase))]
 		[ConfigurationProperty(defaultCacheManagerProperty, IsRequired= true)]
+        [ResourceDescription(typeof(DesignResources), "CacheManagerSettingsDefaultCacheManagerDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "CacheManagerSettingsDefaultCacheManagerDisplayName")]
         public string DefaultCacheManager
         {
 			get { return (string)base[defaultCacheManagerProperty]; }
@@ -57,6 +61,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
 		/// </value>
         [ConfigurationProperty(cacheManagersProperty, IsRequired= true)]
         [ConfigurationCollection(typeof(CacheManagerDataBase))]
+        [ResourceDescription(typeof(DesignResources), "CacheManagerSettingsCacheManagersDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "CacheManagerSettingsCacheManagersDisplayName")]
 		public NameTypeConfigurationElementCollection<CacheManagerDataBase, CustomCacheManagerData> CacheManagers
 		{
 			get { return (NameTypeConfigurationElementCollection<CacheManagerDataBase, CustomCacheManagerData>)base[cacheManagersProperty]; }
@@ -70,6 +76,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
 		/// </value>
 		[ConfigurationProperty(backingStoresProperty, IsRequired= false)]
         [ConfigurationCollection(typeof(CacheStorageData))]
+        [ResourceDescription(typeof(DesignResources), "CacheManagerSettingsBackingStoresDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "CacheManagerSettingsBackingStoresDisplayName")]
 		public NameTypeConfigurationElementCollection<CacheStorageData, CustomCacheStorageData> BackingStores
 		{
             get { return (NameTypeConfigurationElementCollection<CacheStorageData, CustomCacheStorageData>)base[backingStoresProperty]; }
@@ -83,6 +91,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
 		/// </value>
         [ConfigurationProperty(encryptionProvidersProperty, IsRequired = false)]
         [ConfigurationCollection(typeof(StorageEncryptionProviderData))]
+        [ResourceDescription(typeof(DesignResources), "CacheManagerSettingsEncryptionProvidersDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "CacheManagerSettingsEncryptionProvidersDisplayName")]
         public NameTypeConfigurationElementCollection<StorageEncryptionProviderData, StorageEncryptionProviderData> EncryptionProviders
 		{
             get { return (NameTypeConfigurationElementCollection<StorageEncryptionProviderData, StorageEncryptionProviderData>)base[encryptionProvidersProperty]; }

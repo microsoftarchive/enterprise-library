@@ -15,6 +15,7 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
 using FakeRules = Microsoft.Practices.EnterpriseLibrary.PolicyInjection.MatchingRules;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
 {
@@ -22,6 +23,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
     /// A configuration element that stores configuration information for
     /// an instance of <see cref="TagAttributeMatchingRule"/>.
     /// </summary>
+    [ResourceDescription(typeof(DesignResources), "TagAttributeMatchingRuleDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "TagAttributeMatchingRuleDataDisplayName")]
     public class TagAttributeMatchingRuleData : StringBasedMatchingRuleData
     {
         /// <summary>
@@ -29,6 +32,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// </summary>
         public TagAttributeMatchingRuleData()
         {
+            Type = typeof(FakeRules.TagAttributeMatchingRule);
         }
 
         /// <summary>
@@ -39,6 +43,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         public TagAttributeMatchingRuleData(string matchingRuleName, string tagToMatch)
             : base(matchingRuleName, tagToMatch, typeof(FakeRules.TagAttributeMatchingRule))
         {
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [ResourceDescription(typeof(DesignResources), "TagAttributeMatchingRuleDataMatchDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "TagAttributeMatchingRuleDataMatchDisplayName")]
+        public override string Match
+        {
+            get{ return base.Match; }
+            set{ base.Match =value; }
         }
 
         /// <summary>

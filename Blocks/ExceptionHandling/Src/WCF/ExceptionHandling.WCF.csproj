@@ -62,6 +62,11 @@
       <Link>GlobalAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Configuration\ConfigurationSourceBuilderExtensions.cs" />
+    <Compile Include="Configuration\DesignResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DesignResources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Configuration\FaultContractExceptionHandlerMappingData.cs" />
     <Compile Include="Configuration\IExceptionConfigurationWcfShieldingProvider.cs" />
     <Compile Include="Configuration\Manageability\FaultContractExceptionHandlerDataWmiMapper.cs" />
@@ -76,6 +81,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Configuration\WcfExceptionHandlingDesignTime.cs" />
     <Compile Include="ExceptionShielding.cs" />
     <Compile Include="ExceptionShieldingAttribute.cs" />
     <Compile Include="ExceptionShieldingBehavior.cs" />
@@ -93,6 +99,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Configuration\DesignResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>DesignResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Configuration\Manageability\Properties\Resources.resx">
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>

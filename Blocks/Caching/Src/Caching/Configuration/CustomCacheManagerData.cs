@@ -15,12 +15,17 @@ using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using System.Collections.Generic;
+using System.ComponentModel;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
 {
 	/// <summary>
 	/// Configuration object for Custom Providers.
 	/// </summary>
+    [ResourceDescription(typeof(DesignResources), "CustomCacheManagerDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "CustomCacheManagerDataDisplayName")]
+    [TypePickingCommand(Title = "Custom Cache Manager (using type picker)")]
 	public class CustomCacheManagerData
 		: CacheManagerDataBase, IHelperAssistedCustomConfigurationData<CustomCacheManagerData>
 	{
@@ -63,6 +68,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
 		{
 			helper.HandleSetAttributeValue(key, value);
 		}
+
+        /// <summary>
+        /// Overridden in order to apply <see cref="BrowsableAttribute"/>.
+        /// </summary>
+        [Browsable(true)]
+        [Editor(CommonDesignTime.EditorTypes.TypeSelector, CommonDesignTime.EditorTypes.UITypeEditor)]
+        [BaseType(typeof(ICacheManager), typeof(CustomCacheManagerData))]
+        [ResourceDescription(typeof(DesignResources), "CustomCacheManagerDataTypeNameDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "CustomCacheManagerDataTypeNameDisplayName")]
+        public override string TypeName
+        {
+            get{ return base.TypeName; }
+            set{ base.TypeName = value; }
+        }
 
 		/// <summary>
 		/// Gets or sets custom configuration attributes.

@@ -10,10 +10,7 @@
 //===============================================================================
 
 using System.Collections;
-using System.Collections.Generic;
 using System.Configuration;
-using System.Threading;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Storage;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
@@ -22,10 +19,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
     public class SystemConfigurationSourceFixture
     {
         const string localSection = "dummy.local";
+        const string addedSectionName = "dummy.local.newSection";
+        const string removeSectionName = "dummy.toBeRemoved";
         const string localSectionSource = "";
-
-        IDictionary<string, int> updatedSectionsTally;
-        ICollection updatedSectionNames;
 
         [TestMethod]
         public void SystemConfigurationSourceReturnsReadOnlySections()
@@ -60,22 +56,32 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
             Assert.AreEqual(rwConfiguration.Sections.Count, numSections);
         }
 
-        void OnConfigurationChanged(object sender,
-                                    ConfigurationChangedEventArgs args)
+        [TestMethod]
+        public void AddingASectionIsReflectedInMemoryAndOnDisk_Bug2931()
         {
-            if (updatedSectionsTally.ContainsKey(args.SectionName))
-            {
-                updatedSectionsTally[args.SectionName] = updatedSectionsTally[args.SectionName] + 1;
-            }
-            else
-            {
-                updatedSectionsTally[args.SectionName] = 1;
-            }
+            SystemConfigurationSource sysSource = new SystemConfigurationSource(false);
+            var originalSection = (DummySection)(sysSource.GetSection(addedSectionName));
+            Assert.IsNull(originalSection);
+
+            var newSection = new DummySection();
+            sysSource.Add(addedSectionName, newSection);
+
+            var returnedSection = (DummySection)(sysSource.GetSection(addedSectionName));
+            Assert.IsNotNull(returnedSection);
+            sysSource.Remove(addedSectionName);
         }
 
-        void OnConfigurationSourceChanged(object sender, ConfigurationSourceChangedEventArgs args)
+        [TestMethod]
+        public void RemovingSectionIsReflectedInMemoryAndOnDisk_Bug2931()
         {
-            this.updatedSectionNames = args.ChangedSectionNames;
+            SystemConfigurationSource sysSource = new SystemConfigurationSource(false);
+            var originalSection = (DummySection)(sysSource.GetSection(removeSectionName));
+            Assert.IsNotNull(originalSection);
+
+            sysSource.Remove(removeSectionName);
+
+            var returnedSection = (DummySection)(sysSource.GetSection(removeSectionName));
+            Assert.IsNull(returnedSection);
         }
     }
 }

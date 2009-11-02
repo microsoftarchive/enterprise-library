@@ -10,6 +10,7 @@
 //===============================================================================
 
 using System;
+using System.ComponentModel.DataAnnotations;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -31,7 +32,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
         {
             ValidatorAttribute attribute = new EnumConversionValidatorAttribute(typeof(MockEnumValidator));
 
-            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null, null);
             Assert.IsNotNull(validator);
 
             EnumConversionValidator typedValidator = validator as EnumConversionValidator;
@@ -48,7 +49,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             ValueValidatorAttribute attribute = new EnumConversionValidatorAttribute(typeof(MockEnumValidator));
             attribute.Negated = true;
 
-            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null, null);
             Assert.IsNotNull(validator);
 
             EnumConversionValidator typedValidator = validator as EnumConversionValidator;
@@ -65,7 +66,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             ValidatorAttribute attribute = new EnumConversionValidatorAttribute(typeof(MockEnumValidator));
             attribute.MessageTemplate = "my message template";
 
-            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null, null);
             Assert.IsNotNull(validator);
 
             EnumConversionValidator typedValidator = validator as EnumConversionValidator;
@@ -83,7 +84,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             attribute.Negated = true;
             attribute.MessageTemplate = "my message template";
 
-            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null, null);
             Assert.IsNotNull(validator);
 
             EnumConversionValidator typedValidator = validator as EnumConversionValidator;
@@ -92,6 +93,44 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             Assert.AreEqual("my message template", validator.MessageTemplate);
             Assert.AreEqual(typeof(MockEnumValidator), typedValidator.EnumType);
             Assert.AreEqual(true, typedValidator.Negated);
+        }
+
+        [TestMethod]
+        public void CanUseAttributeAsValidationAttributeForValidValue()
+        {
+            ValidationAttribute attribute =
+                new EnumConversionValidatorAttribute(typeof(MockEnumValidator))
+                {
+                    MessageTemplate = "template {1}"
+                };
+
+            Assert.IsTrue(attribute.IsValid("MyEnumValue"));
+        }
+
+        [TestMethod]
+        public void CanUseAttributeAsValidationAttribute()
+        {
+            ValidationAttribute attribute =
+                new EnumConversionValidatorAttribute(typeof(MockEnumValidator))
+                {
+                    MessageTemplate = "template {1}"
+                };
+
+            Assert.IsFalse(attribute.IsValid("invalid"));
+            Assert.AreEqual("template name", attribute.FormatErrorMessage("name"));
+        }
+
+        [TestMethod]
+        public void ValidatingWithValidatorAttributeWithARulesetSkipsValidation()
+        {
+            ValidationAttribute attribute =
+                new EnumConversionValidatorAttribute(typeof(MockEnumValidator))
+                {
+                    MessageTemplate = "template {1}",
+                    Ruleset = "some ruleset"
+                };
+
+            Assert.IsTrue(attribute.IsValid("invalid"));
         }
     }
 }

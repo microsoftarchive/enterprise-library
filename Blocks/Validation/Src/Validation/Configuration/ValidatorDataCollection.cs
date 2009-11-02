@@ -18,7 +18,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 	/// Represents a collection of validator configuration objects.
 	/// </summary>
 	/// <seealso cref="ValidatorData"/>
-    [ConfigurationCollection(typeof(ValidatorData), AddItemName = "validator")]
+    [ConfigurationCollection(typeof(ValidatorData), AddItemName = "validator", ClearItemsName="clear", RemoveItemName="remove")]
 	public class ValidatorDataCollection : NameTypeConfigurationElementCollection<ValidatorData, CustomValidatorData>
 	{
 		/// <summary>

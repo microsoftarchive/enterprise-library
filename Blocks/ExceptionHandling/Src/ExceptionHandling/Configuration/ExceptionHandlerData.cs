@@ -13,6 +13,7 @@ using System;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using System.Collections.Generic;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
 {

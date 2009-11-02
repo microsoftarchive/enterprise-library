@@ -63,10 +63,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
                 }
             }
 
-
-            public ConfigurationElement CreateNewElement()
+            public ConfigurationElement CreateNewElement(Type configurationType)
             {
-                return new ConnectionStringSettings();
+                return new ConnectionStringSettings() { Name = "Connection String" + connectionStringCollection.Count };
             }
         }
 
@@ -89,7 +88,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
             }
 
 
-            public ConfigurationElement CreateNewElement()
+            public ConfigurationElement CreateNewElement(Type configurationType)
             {
                 return new KeyValueConfigurationElement("", "");
             }

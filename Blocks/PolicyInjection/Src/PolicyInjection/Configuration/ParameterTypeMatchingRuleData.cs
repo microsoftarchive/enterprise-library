@@ -18,6 +18,8 @@ using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
 using FakeRules = Microsoft.Practices.EnterpriseLibrary.PolicyInjection.MatchingRules;
 using ParameterKind = Microsoft.Practices.Unity.InterceptionExtension.ParameterKind;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using System.ComponentModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
 {
@@ -25,6 +27,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
     /// A configuration element storing configuration information for an instance of
     /// <see cref="ParameterTypeMatchingRule"/>.
     /// </summary>
+    [ResourceDescription(typeof(DesignResources), "ParameterTypeMatchingRuleDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "ParameterTypeMatchingRuleDataDisplayName")]
     public class ParameterTypeMatchingRuleData : MatchingRuleData
     {
         private const string matchesPropertyName = "matches";
@@ -34,6 +38,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// </summary>
         public ParameterTypeMatchingRuleData()
         {
+            Type = typeof(FakeRules.ParameterTypeMatchingRule);
         }
 
         /// <summary>
@@ -66,6 +71,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// <value>The "matches" subelement.</value>
         [ConfigurationProperty(matchesPropertyName)]
         [ConfigurationCollection(typeof(ParameterTypeMatchData))]
+        [ResourceDescription(typeof(DesignResources), "ParameterTypeMatchingRuleDataMatchesDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "ParameterTypeMatchingRuleDataMatchesDisplayName")]
+        [System.ComponentModel.Editor(CommonDesignTime.EditorTypes.CollectionEditor, CommonDesignTime.EditorTypes.FrameworkElement)]
+        [CollectionEditorTemplate("ParameterTypeCollectionHeader", "ParameterTypeCollectionItem")]
+        [EnvironmentalOverrides(false)]
         public MatchDataCollection<ParameterTypeMatchData> Matches
         {
             get { return (MatchDataCollection<ParameterTypeMatchData>)base[matchesPropertyName]; }
@@ -104,6 +114,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
     /// An extended <see cref="MatchData"/> class that also includes the
     /// <see cref="ParameterKind"/> of the parameter to match.
     /// </summary>
+    [ResourceDescription(typeof(DesignResources), "ParameterTypeMatchDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "ParameterTypeMatchDataDisplayName")]
+    [ViewModel(PolicyInjectionDesignTime.ViewModelTypeNames.PiabParameterTypeMatchDataViewModel)]
     public class ParameterTypeMatchData : MatchData
     {
         private const string kindPropertyName = "parameterKind";
@@ -153,6 +166,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// </summary>
         /// <value>The "parameterKind" config attribute.</value>
         [ConfigurationProperty(kindPropertyName, IsRequired = false, DefaultValue = ParameterKind.InputOrOutput)]
+        [ResourceDescription(typeof(DesignResources), "ParameterTypeMatchDataParameterKindDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "ParameterTypeMatchDataParameterKindDisplayName")]
         public ParameterKind ParameterKind
         {
             get { return (ParameterKind)base[kindPropertyName]; }

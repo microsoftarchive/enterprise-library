@@ -24,22 +24,23 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
     /// </remarks>
     public class ValidatorBuilderBase
     {
-        private MemberAccessValidatorBuilderFactory memberAccessValidatorFactory;
+        private static readonly MemberAccessValidatorBuilderFactory DefaultMemberAccessValidatorFactory =
+            new MemberAccessValidatorBuilderFactory();
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public ValidatorBuilderBase()
-            : this(new MemberAccessValidatorBuilderFactory())
-        { }
+        private readonly MemberAccessValidatorBuilderFactory memberAccessValidatorFactory;
+        private readonly ValidatorFactory validatorFactory;
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="memberAccessValidatorFactory"></param>
-        public ValidatorBuilderBase(MemberAccessValidatorBuilderFactory memberAccessValidatorFactory)
+        /// <param name="validatorFactory"></param>
+        public ValidatorBuilderBase(
+            MemberAccessValidatorBuilderFactory memberAccessValidatorFactory,
+            ValidatorFactory validatorFactory)
         {
             this.memberAccessValidatorFactory = memberAccessValidatorFactory;
+            this.validatorFactory = validatorFactory;
         }
 
         /// <summary>
@@ -139,10 +140,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         /// <param name="validatedElement"></param>
         /// <param name="validatorBuilderCreator"></param>
         /// <returns></returns>
-        protected Validator CreateValidatorForValidatedElement(IValidatedElement validatedElement,
+        protected Validator CreateValidatorForValidatedElement(
+            IValidatedElement validatedElement,
             CompositeValidatorBuilderCreator validatorBuilderCreator)
         {
-            IEnumerator<IValidatorDescriptor> validatorDescriptorsEnumerator = validatedElement.GetValidatorDescriptors().GetEnumerator();
+            IEnumerator<IValidatorDescriptor> validatorDescriptorsEnumerator =
+                validatedElement.GetValidatorDescriptors().GetEnumerator();
 
             if (!validatorDescriptorsEnumerator.MoveNext())
             {
@@ -153,9 +156,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
 
             do
             {
-                Validator validator = validatorDescriptorsEnumerator.Current.CreateValidator(validatedElement.TargetType,
-                    validatedElement.MemberInfo.ReflectedType,
-                    this.memberAccessValidatorFactory.MemberValueAccessBuilder);
+                Validator validator =
+                    validatorDescriptorsEnumerator.Current
+                        .CreateValidator(
+                            validatedElement.TargetType,
+                            validatedElement.MemberInfo.ReflectedType,
+                            this.memberAccessValidatorFactory.MemberValueAccessBuilder,
+                            this.validatorFactory);
                 validatorBuilder.AddValueValidator(validator);
             }
             while (validatorDescriptorsEnumerator.MoveNext());
@@ -222,6 +229,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         {
             return this.memberAccessValidatorFactory.GetTypeValidatorBuilder(validatedElement.MemberInfo as Type,
                 validatedElement);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        protected ValidatorFactory ValidatorFactory
+        {
+            get { return this.validatorFactory; }
         }
     }
 }

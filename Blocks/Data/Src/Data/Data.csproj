@@ -121,6 +121,12 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="CommandAccessor.cs" />
+    <Compile Include="Configuration\DataAccessDesignTime.cs" />
+    <Compile Include="Configuration\DesignResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DesignResources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Configuration\Fluent\AnotherDatabaseConfigurationExtensions.cs" />
     <Compile Include="Configuration\Fluent\DatabaseConfigurationExtension.cs" />
     <Compile Include="Configuration\DatabaseData.cs" />
@@ -169,6 +175,11 @@
     <Compile Include="IRowMapper.cs" />
     <Compile Include="IDataAccessor.cs" />
     <Compile Include="MapBuilder.cs" />
+    <Compile Include="Oracle\Configuration\DesignResources.Designer.cs">
+      <DependentUpon>DesignResources.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
     <Compile Include="ReflectionRowMapper.cs" />
     <Compile Include="SprocAccessor.cs" />
     <Compile Include="Sql\Configuration\SqlDatabaseData.cs" />
@@ -227,10 +238,18 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Configuration\DesignResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>DesignResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Configuration\Manageability\Properties\Resources.resx">
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Oracle\Configuration\DesignResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>DesignResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

@@ -16,12 +16,16 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 using System.Collections.Generic;
+using System.ComponentModel;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 {
     /// <summary>
     /// Configuration object for custom log formatters.
     /// </summary>
+    [ResourceDescription(typeof(DesignResources), "CustomFormatterDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "CustomFormatterDataDisplayName")]
     public class CustomFormatterData
         : FormatterData, IHelperAssistedCustomConfigurationData<CustomFormatterData>
     {
@@ -63,6 +67,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         public void SetAttributeValue(string key, string value)
         {
             helper.HandleSetAttributeValue(key, value);
+        }
+
+        /// <summary>
+        /// Overridden in order to apply <see cref="BrowsableAttribute"/>.
+        /// </summary>
+        [Browsable(true)]
+        [Editor(CommonDesignTime.EditorTypes.TypeSelector, CommonDesignTime.EditorTypes.UITypeEditor)]
+        [BaseType(typeof(ILogFormatter), typeof(CustomFormatterData))]
+        [ResourceDescription(typeof(DesignResources), "CustomFormatterDataTypeNameDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "CustomFormatterDataTypeNameDisplayName")]
+        public override string TypeName
+        {
+            get { return base.TypeName; }
+            set { base.TypeName = value; }
         }
 
         /// <summary>

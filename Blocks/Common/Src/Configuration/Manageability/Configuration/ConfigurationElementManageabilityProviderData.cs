@@ -14,12 +14,15 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability.Configuration
 {
 	/// <summary>
 	/// Represents the configuration settings that describe an <see cref="ConfigurationElementManageabilityProvider"/>.
 	/// </summary>
+    [ResourceDescription(typeof(DesignResources), "ConfigurationElementManageabilityProviderDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "ConfigurationElementManageabilityProviderDataDisplayName")]
 	public class ConfigurationElementManageabilityProviderData : NameTypeConfigurationElement
 	{
 		private const string targetTypePropertyName = "targetType";
@@ -47,6 +50,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
 		/// </summary>
 		[ConfigurationProperty(targetTypePropertyName, IsRequired = true)]
 		[TypeConverter(typeof(AssemblyQualifiedTypeNameConverter))]
+        [ResourceDescription(typeof(DesignResources), "ConfigurationElementManageabilityProviderDataTargetTypeDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "ConfigurationElementManageabilityProviderDataTargetTypeDisplayName")]
 		public Type TargetType
 		{
 			get { return (Type)base[targetTypePropertyName]; }

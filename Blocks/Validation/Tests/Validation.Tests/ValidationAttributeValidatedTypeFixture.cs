@@ -123,7 +123,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         [TestMethod]
         public void WhenCreatingAttributeFromReturnedValidationDescriptor_ThenCreatesValidationAttributeValidatorForTheSingleAttribute()
         {
-            var validator = this.validatedElement.GetValidatorDescriptors().ElementAt(0).CreateValidator(null, null, null);
+            var validator = this.validatedElement.GetValidatorDescriptors().ElementAt(0).CreateValidator(null, null, null, null);
 
             Assert.IsInstanceOfType(validator, typeof(ValidationAttributeValidator));
             Assert.IsFalse(validator.Validate(100).IsValid);
@@ -184,7 +184,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         [TestMethod]
         public void WhenCreatingAttributeFromReturnedValidationDescriptor_ThenCreatesValidationAttributeValidatorForTheSingleAttribute()
         {
-            var validator = this.validatedElement.GetValidatorDescriptors().ElementAt(0).CreateValidator(null, null, null);
+            var validator = this.validatedElement.GetValidatorDescriptors().ElementAt(0).CreateValidator(null, null, null, null);
 
             Assert.IsInstanceOfType(validator, typeof(ValidationAttributeValidator));
             Assert.IsFalse(validator.Validate("bbbbbbbbbbbbbbbbbbbb").IsValid);

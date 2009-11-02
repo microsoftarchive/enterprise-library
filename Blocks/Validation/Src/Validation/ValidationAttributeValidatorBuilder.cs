@@ -11,6 +11,7 @@
 
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Reflection;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation
@@ -22,20 +23,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
     public class ValidationAttributeValidatorBuilder : ValidatorBuilderBase
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="ValidationAttributeValidatorBuilder"/> class with the default 
-        /// <see cref="MemberAccessValidatorBuilderFactory"/>.
+        /// Initializes a new instance of the <see cref="ValidationAttributeValidatorBuilder"/> class.
         /// </summary>
-        public ValidationAttributeValidatorBuilder()
-            : base()
-        { }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ValidationAttributeValidatorBuilder"/> class with the supplied
-        /// <see cref="MemberAccessValidatorBuilderFactory"/>.
-        /// </summary>        
-        /// <param name="memberAccessValidatorFactory">A factory to create member accessors if necessary.</param>
-        public ValidationAttributeValidatorBuilder(MemberAccessValidatorBuilderFactory memberAccessValidatorFactory)
-            : base(memberAccessValidatorFactory)
+        /// <param name="memberAccessValidatorFactory"></param>
+        /// <param name="validatorFactory">Factory to use when building nested validators.</param>
+        public ValidationAttributeValidatorBuilder(
+            MemberAccessValidatorBuilderFactory memberAccessValidatorFactory,
+            ValidatorFactory validatorFactory)
+            : base(memberAccessValidatorFactory, validatorFactory)
         { }
 
         /// <summary>
@@ -46,6 +41,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         public Validator CreateValidator(Type type)
         {
             return CreateValidator(new ValidationAttributeValidatedType(type));
+        }
+
+        internal Validator CreateValidatorForProperty(PropertyInfo propertyInfo)
+        {
+            return CreateValidatorForValidatedElement(
+                new ValidationAttributeValidatedElement(propertyInfo),
+                this.GetCompositeValidatorBuilderForProperty);
         }
     }
 }

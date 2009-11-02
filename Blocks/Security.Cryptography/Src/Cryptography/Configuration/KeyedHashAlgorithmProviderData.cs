@@ -23,6 +23,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
     /// <summary>
     /// <para>Configuration settings for the <c>KeyedHashAlgorithm</c> hash provider.</para>
     /// </summary>
+    [TypePickingCommand("AlgorithmTypeName", Replace = CommandReplacement.DefaultAddCommandReplacement, CommandModelTypeName= CryptographyDesignTime.CommandTypeNames.AddKeyedHashProviderCommand)]
+    [ResourceDescription(typeof(DesignResources), "KeyedHashAlgorithmProviderDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "KeyedHashAlgorithmProviderDataDisplayName")]
+    [ViewModel(CryptographyDesignTime.ViewModelTypeNames.KeyedHashAlgorithmProviderDataViewModel)]
     public class KeyedHashAlgorithmProviderData : HashAlgorithmProviderData
     {
         private const string protectedKeyFilename = "protectedKeyFilename";
@@ -55,6 +59,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         /// 
         /// </summary>	
         [ConfigurationProperty(protectedKeyFilename)]
+        [ResourceDescription(typeof(DesignResources), "KeyedHashAlgorithmProviderDataProtectedKeyFilenameDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "KeyedHashAlgorithmProviderDataProtectedKeyFilenameDisplayName")]
+        [System.ComponentModel.Browsable(false)]
         public string ProtectedKeyFilename
         {
             get { return (string)this[protectedKeyFilename]; }
@@ -65,6 +72,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         /// 
         /// </summary>
         [ConfigurationProperty(protectedKeyProtectionScope)]
+        [ResourceDescription(typeof(DesignResources), "KeyedHashAlgorithmProviderDataProtectedKeyProtectionScopeDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "KeyedHashAlgorithmProviderDataProtectedKeyProtectionScopeDisplayName")]
+        [System.ComponentModel.Browsable(false)]
         public DataProtectionScope ProtectedKeyProtectionScope
         {
             get { return (DataProtectionScope)this[protectedKeyProtectionScope]; }
@@ -75,18 +85,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         /// <summary>
         /// 
         /// </summary>
-        [System.ComponentModel.Editor(EditorTypes.TypeSelector, EditorTypes.UITypeEditor)]
+        [System.ComponentModel.Editor(CommonDesignTime.EditorTypes.TypeSelector, CommonDesignTime.EditorTypes.UITypeEditor)]
         [BaseType(typeof(KeyedHashAlgorithm))]
-        public override string TypeName
+        [ResourceDescription(typeof(DesignResources), "KeyedHashAlgorithmProviderDataAlgorithmTypeNameDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "KeyedHashAlgorithmProviderDataAlgorithmTypeNameDisplayName")]
+        public override string AlgorithmTypeName
         {
-            get
-            {
-                return base.TypeName;
-            }
-            set
-            {
-                base.TypeName = value;
-            }
+            get { return base.AlgorithmTypeName; }
+            set { base.AlgorithmTypeName = value; }
         }
 
         /// <summary>

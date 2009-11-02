@@ -85,7 +85,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
         {
             OrCompositeValidatorData rwValidatorData = new OrCompositeValidatorData("validator1");
 
-            Validator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(null, null, null, null);
 
             Assert.IsNotNull(validator);
             Assert.AreSame(typeof(OrCompositeValidator), validator.GetType());
@@ -102,7 +102,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             rwValidatorData.Validators.Add(new MockValidatorData("child validator 2", false));
             rwValidatorData.Validators.Get(1).MessageTemplate = "child validator 2";
 
-            Validator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(null, null, null, null);
 
             Assert.IsNotNull(validator);
             Assert.AreSame(typeof(OrCompositeValidator), validator.GetType());

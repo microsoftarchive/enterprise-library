@@ -15,6 +15,7 @@ using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.Unity.InterceptionExtension;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
 {
@@ -22,6 +23,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
     /// A <see cref="ConfigurationElement"/> that maps the information about
     /// a policy from the configuration source.
     /// </summary>
+    [ResourceDescription(typeof(DesignResources), "PolicyDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "PolicyDataDisplayName")]
     public class PolicyData : NamedConfigurationElement
     {
         private const string HandlersPropertyName = "handlers";
@@ -50,6 +53,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// <value>The matching rule data collection.</value>
         [ConfigurationProperty(MatchingRulesPropertyName)]
         [ConfigurationCollection(typeof(MatchingRuleData))]
+        [ResourceDescription(typeof(DesignResources), "PolicyDataMatchingRulesDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "PolicyDataMatchingRulesDisplayName")]
+        [PromoteCommands]
         public NameTypeConfigurationElementCollection<MatchingRuleData, CustomMatchingRuleData> MatchingRules
         {
             get { return (NameTypeConfigurationElementCollection<MatchingRuleData, CustomMatchingRuleData>)base[MatchingRulesPropertyName]; }
@@ -62,6 +68,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// <value>The handler data collection.</value>
         [ConfigurationProperty(HandlersPropertyName)]
         [ConfigurationCollection(typeof(CallHandlerData))]
+        [ResourceDescription(typeof(DesignResources), "PolicyDataHandlersDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "PolicyDataHandlersDisplayName")]
+        [PromoteCommands]
         public NameTypeConfigurationElementCollection<CallHandlerData, CustomCallHandlerData> Handlers
         {
             get { return (NameTypeConfigurationElementCollection<CallHandlerData, CustomCallHandlerData>)base[HandlersPropertyName]; }

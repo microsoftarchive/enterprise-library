@@ -98,7 +98,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             rwValidatorData.UpperBound = upperBound;
             rwValidatorData.UpperBoundType = RangeBoundaryType.Inclusive;
 
-            Validator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(null, null, null, null);
 
             Assert.IsNotNull(validator);
             Assert.AreSame(typeof(DateTimeRangeValidator), validator.GetType());
@@ -122,7 +122,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             rwValidatorData.UpperBoundType = RangeBoundaryType.Inclusive;
             rwValidatorData.MessageTemplate = "message template override";
 
-            Validator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(null, null, null, null);
 
             Assert.IsNotNull(validator);
             Assert.AreSame(typeof(DateTimeRangeValidator), validator.GetType());

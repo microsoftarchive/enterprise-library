@@ -15,12 +15,14 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using System.Linq.Expressions;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
 {
 	/// <summary>
 	/// Base class for configuration data defined for all types of StorageEncryptionProviders
 	/// </summary>
+    [Browsable(false)]
 	public class StorageEncryptionProviderData : NameTypeConfigurationElement
 	{
 		/// <summary>

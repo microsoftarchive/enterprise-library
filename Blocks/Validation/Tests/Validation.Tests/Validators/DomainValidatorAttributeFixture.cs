@@ -10,6 +10,7 @@
 //===============================================================================
 
 using System;
+using System.ComponentModel.DataAnnotations;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -32,7 +33,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             object[] domain = new object[] { 1, 2, 3 };
             ValidatorAttribute attribute = new DomainValidatorAttribute(domain);
 
-            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null, null);
             Assert.IsNotNull(validator);
 
             DomainValidator<object> typedValidator = validator as DomainValidator<object>;
@@ -49,7 +50,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             object[] domain = new object[] { 1, 2, 3 };
             ValidatorAttribute attribute = new DomainValidatorAttribute(1, 2, 3);
 
-            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null, null);
             Assert.IsNotNull(validator);
 
             DomainValidator<object> typedValidator = validator as DomainValidator<object>;
@@ -68,7 +69,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             DomainValidatorAttribute attribute = new DomainValidatorAttribute(domain);
             attribute.Negated = true;
 
-            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null, null);
             Assert.IsNotNull(validator);
 
             DomainValidator<object> typedValidator = validator as DomainValidator<object>;
@@ -85,7 +86,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             object[] domain = new object[] { "a", "b", "c" };
             ValidatorAttribute attribute = new DomainValidatorAttribute(domain);
 
-            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null, null);
             Assert.IsNotNull(validator);
 
             DomainValidator<object> typedValidator = validator as DomainValidator<object>;
@@ -104,7 +105,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             DomainValidatorAttribute attribute = new DomainValidatorAttribute(domain);
             attribute.Negated = true;
 
-            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null, null);
             Assert.IsNotNull(validator);
 
             DomainValidator<object> typedValidator = validator as DomainValidator<object>;
@@ -124,7 +125,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             attribute.Negated = true;
             attribute.MessageTemplate = "my message template";
 
-            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null, null);
             Assert.IsNotNull(validator);
 
             DomainValidator<object> typedValidator = validator as DomainValidator<object>;
@@ -143,7 +144,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             DomainValidatorAttribute attribute = new DomainValidatorAttribute(domain);
             attribute.MessageTemplate = "my message template";
 
-            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null, null);
             Assert.IsNotNull(validator);
 
             DomainValidator<object> typedValidator = validator as DomainValidator<object>;
@@ -152,6 +153,44 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             Assert.AreEqual("my message template", typedValidator.MessageTemplate);
             Assert.AreEqual(false, typedValidator.Negated);
             Assert.AreEqual(3, typedValidator.Domain.Count);
+        }
+
+        [TestMethod]
+        public void CanUseAttributeAsValidationAttributeForValidValue()
+        {
+            ValidationAttribute attribute =
+                new DomainValidatorAttribute(new object[] { "a", "b", "c" })
+                {
+                    MessageTemplate = "template {1}"
+                };
+
+            Assert.IsTrue(attribute.IsValid("a"));
+        }
+
+        [TestMethod]
+        public void CanUseAttributeAsValidationAttribute()
+        {
+            ValidationAttribute attribute =
+                new DomainValidatorAttribute(new object[] { "a", "b", "c" })
+                {
+                    MessageTemplate = "template {1}"
+                };
+
+            Assert.IsFalse(attribute.IsValid("z"));
+            Assert.AreEqual("template name", attribute.FormatErrorMessage("name"));
+        }
+
+        [TestMethod]
+        public void ValidatingWithValidatorAttributeWithARulesetSkipsValidation()
+        {
+            ValidationAttribute attribute =
+                new DomainValidatorAttribute(new object[] { "a", "b", "c" })
+                {
+                    MessageTemplate = "template {1}",
+                    Ruleset = "some ruleset"
+                };
+
+            Assert.IsTrue(attribute.IsValid("z"));
         }
     }
 }

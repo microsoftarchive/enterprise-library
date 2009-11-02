@@ -22,6 +22,7 @@ using System.Configuration;
 using Console.Wpf.ViewModel.Services;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
 using System.ComponentModel;
+using Microsoft.Practices.Unity;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_extension_provider_in_view_model
 {
@@ -33,16 +34,16 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_extension_provider_in_view_model
 
         protected override void Act()
         {
-            ehabModel = SectionViewModel.CreateSection(ServiceProvider, Section);
-            sectionWithExtendedPropertyProvider = SectionViewModel.CreateSection(ServiceProvider, new ConfigurationSectionWithExtendedPropertyProvider());
+            ehabModel = SectionViewModel.CreateSection(Container, ExceptionHandlingSettings.SectionName, Section);
+            sectionWithExtendedPropertyProvider = SectionViewModel.CreateSection(Container, "extended", new ConfigurationSectionWithExtendedPropertyProvider());
         }
 
         [TestMethod]
         public void then_element_extended_property_provider_can_be_found()
         {
-            ElementLookup lookup = (ElementLookup)ServiceProvider.GetService(typeof(ElementLookup));
+            ElementLookup lookup = (ElementLookup)Container.Resolve<ElementLookup>();
             var extensionProviders = lookup.FindExtendedPropertyProviders();
-            Assert.IsTrue(extensionProviders.Enum().Count() > 0);
+            Assert.IsTrue(extensionProviders.Count() > 0);
         }
 
         [TestMethod]
@@ -58,9 +59,8 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_extension_provider_in_view_model
             var aWrapHandler = ehabModel.DescendentElements(x => x.ConfigurationType == typeof(WrapHandlerData)).First();
             var propeties = aWrapHandler.Properties;
 
-            sectionWithExtendedPropertyProvider = SectionViewModel.CreateSection(ServiceProvider, new ConfigurationSectionWithExtendedPropertyProvider());
+            sectionWithExtendedPropertyProvider = SectionViewModel.CreateSection(Container, "mock section", new ConfigurationSectionWithExtendedPropertyProvider());
             Assert.AreEqual(2, aWrapHandler.Properties.Where(x => x.PropertyName == "Extended Property").Count());
-
         }
     }
 
@@ -70,14 +70,13 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_extension_provider_in_view_model
     {
     }
 
-
     public class SectionViewModelExtension : SectionViewModel, IElementExtendedPropertyProvider
     {
-        IServiceProvider serviceProvider;
-        public SectionViewModelExtension(IServiceProvider serviceProvider, ConfigurationSection section)
-            : base(serviceProvider, section)
+        IUnityContainer builder;
+        public SectionViewModelExtension(IUnityContainer builder, ConfigurationSection section)
+            : base(builder, "sectionName", section)
         {
-            this.serviceProvider = serviceProvider;
+            this.builder = builder;
         }
 
         public bool CanExtend(ElementViewModel element)
@@ -89,7 +88,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_extension_provider_in_view_model
         {
             if (element.ConfigurationType == typeof(WrapHandlerData))
             {
-                yield return new Property(serviceProvider, element, new ExtendedPropertyDescriptor(element));
+                yield return new Property(builder.Resolve<IServiceProvider>(), element, new ExtendedPropertyDescriptor(element));
             }
         }
 

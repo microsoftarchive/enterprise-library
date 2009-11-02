@@ -9,6 +9,7 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using System.ComponentModel.DataAnnotations;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -23,7 +24,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
         {
             ValidatorAttribute attribute = new StringLengthValidatorAttribute(20);
 
-            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null, null);
             Assert.IsNotNull(validator);
 
             StringLengthValidator stringLengthValidator = validator as StringLengthValidator;
@@ -41,7 +42,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             ValueValidatorAttribute attribute = new StringLengthValidatorAttribute(20);
             attribute.Negated = true;
 
-            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null, null);
             Assert.IsNotNull(validator);
 
             StringLengthValidator stringLengthValidator = validator as StringLengthValidator;
@@ -58,7 +59,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
         {
             ValidatorAttribute attribute = new StringLengthValidatorAttribute(10, 20);
 
-            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null, null);
             Assert.IsNotNull(validator);
 
             StringLengthValidator stringLengthValidator = validator as StringLengthValidator;
@@ -77,7 +78,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             ValueValidatorAttribute attribute = new StringLengthValidatorAttribute(10, 20);
             attribute.Negated = true;
 
-            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null, null);
             Assert.IsNotNull(validator);
 
             StringLengthValidator stringLengthValidator = validator as StringLengthValidator;
@@ -96,7 +97,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             ValidatorAttribute attribute = new StringLengthValidatorAttribute(10, 20);
             attribute.MessageTemplate = "overriden message template";
 
-            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null, null);
             Assert.IsNotNull(validator);
 
             StringLengthValidator stringLengthValidator = validator as StringLengthValidator;
@@ -116,7 +117,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             attribute.MessageTemplate = "overriden message template";
             attribute.Negated = true;
 
-            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null, null);
             Assert.IsNotNull(validator);
 
             StringLengthValidator stringLengthValidator = validator as StringLengthValidator;
@@ -134,7 +135,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
         {
             ValidatorAttribute attribute = new StringLengthValidatorAttribute(10, RangeBoundaryType.Exclusive, 0, RangeBoundaryType.Ignore);
 
-            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null, null);
             Assert.IsNotNull(validator);
 
             StringLengthValidator stringLengthValidator = validator as StringLengthValidator;
@@ -153,7 +154,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             ValueValidatorAttribute attribute = new StringLengthValidatorAttribute(10, RangeBoundaryType.Exclusive, 0, RangeBoundaryType.Ignore);
             attribute.Negated = true;
 
-            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null, null);
             Assert.IsNotNull(validator);
 
             StringLengthValidator stringLengthValidator = validator as StringLengthValidator;
@@ -172,7 +173,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             ValidatorAttribute attribute = new StringLengthValidatorAttribute(10, RangeBoundaryType.Exclusive, 0, RangeBoundaryType.Ignore);
             attribute.MessageTemplate = "my message template";
 
-            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null, null);
             Assert.IsNotNull(validator);
 
             StringLengthValidator stringLengthValidator = validator as StringLengthValidator;
@@ -192,7 +193,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             attribute.Negated = true;
             attribute.MessageTemplate = "my message template";
 
-            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null, null);
             Assert.IsNotNull(validator);
 
             StringLengthValidator stringLengthValidator = validator as StringLengthValidator;
@@ -203,6 +204,44 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             Assert.AreEqual(RangeBoundaryType.Ignore, stringLengthValidator.UpperBoundType);
             Assert.AreEqual("my message template", stringLengthValidator.MessageTemplate);
             Assert.AreEqual(true, stringLengthValidator.Negated);
+        }
+
+        [TestMethod]
+        public void CanUseAttributeAsValidationAttributeForValidValue()
+        {
+            ValidationAttribute attribute =
+                new StringLengthValidatorAttribute(10)
+                {
+                    MessageTemplate = "template {1}"
+                };
+
+            Assert.IsTrue(attribute.IsValid("abcdefg"));
+        }
+
+        [TestMethod]
+        public void CanUseAttributeAsValidationAttribute()
+        {
+            ValidationAttribute attribute =
+                new StringLengthValidatorAttribute(10)
+                {
+                    MessageTemplate = "template {1}"
+                };
+
+            Assert.IsFalse(attribute.IsValid("abcdefghijklm"));
+            Assert.AreEqual("template name", attribute.FormatErrorMessage("name"));
+        }
+
+        [TestMethod]
+        public void ValidatingWithValidatorAttributeWithARulesetSkipsValidation()
+        {
+            ValidationAttribute attribute =
+                new StringLengthValidatorAttribute(10)
+                {
+                    MessageTemplate = "template {1}",
+                    Ruleset = "some ruleset"
+                };
+
+            Assert.IsTrue(attribute.IsValid("abcdefghijklm"));
         }
     }
 }

@@ -13,6 +13,7 @@ using System;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.ComponentModel.DataAnnotations;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
 {
@@ -38,7 +39,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
         {
             RelativeDateTimeValidatorAttribute validatorAttribute = new RelativeDateTimeValidatorAttribute(3, DateTimeUnit.Hour);
 
-            RelativeDateTimeValidator validator = ((IValidatorDescriptor)validatorAttribute).CreateValidator(null, null, null) as RelativeDateTimeValidator;
+            RelativeDateTimeValidator validator = ((IValidatorDescriptor)validatorAttribute).CreateValidator(null, null, null, null) as RelativeDateTimeValidator;
             Assert.IsNotNull(validator);
 
             Assert.AreEqual(0, validator.LowerBound);
@@ -57,7 +58,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             RelativeDateTimeValidatorAttribute validatorAttribute = new RelativeDateTimeValidatorAttribute(3, DateTimeUnit.Hour);
             validatorAttribute.Negated = true;
 
-            RelativeDateTimeValidator validator = ((IValidatorDescriptor)validatorAttribute).CreateValidator(null, null, null) as RelativeDateTimeValidator;
+            RelativeDateTimeValidator validator = ((IValidatorDescriptor)validatorAttribute).CreateValidator(null, null, null, null) as RelativeDateTimeValidator;
             Assert.IsNotNull(validator);
 
             Assert.AreEqual(0, validator.LowerBound);
@@ -75,7 +76,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
         {
             RelativeDateTimeValidatorAttribute validatorAttribute = new RelativeDateTimeValidatorAttribute(3, DateTimeUnit.Hour, RangeBoundaryType.Ignore);
 
-            RelativeDateTimeValidator validator = ((IValidatorDescriptor)validatorAttribute).CreateValidator(null, null, null) as RelativeDateTimeValidator;
+            RelativeDateTimeValidator validator = ((IValidatorDescriptor)validatorAttribute).CreateValidator(null, null, null, null) as RelativeDateTimeValidator;
             Assert.IsNotNull(validator);
 
             Assert.AreEqual(0, validator.LowerBound);
@@ -94,7 +95,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             RelativeDateTimeValidatorAttribute validatorAttribute = new RelativeDateTimeValidatorAttribute(3, DateTimeUnit.Hour, RangeBoundaryType.Ignore);
             validatorAttribute.Negated = true;
 
-            RelativeDateTimeValidator validator = ((IValidatorDescriptor)validatorAttribute).CreateValidator(null, null, null) as RelativeDateTimeValidator;
+            RelativeDateTimeValidator validator = ((IValidatorDescriptor)validatorAttribute).CreateValidator(null, null, null, null) as RelativeDateTimeValidator;
             Assert.IsNotNull(validator);
 
             Assert.AreEqual(0, validator.LowerBound);
@@ -112,7 +113,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
         {
             RelativeDateTimeValidatorAttribute validatorAttribute = new RelativeDateTimeValidatorAttribute(3, DateTimeUnit.Hour, 7, DateTimeUnit.Year);
 
-            RelativeDateTimeValidator validator = ((IValidatorDescriptor)validatorAttribute).CreateValidator(null, null, null) as RelativeDateTimeValidator;
+            RelativeDateTimeValidator validator = ((IValidatorDescriptor)validatorAttribute).CreateValidator(null, null, null, null) as RelativeDateTimeValidator;
             Assert.IsNotNull(validator);
 
             Assert.AreEqual(3, validator.LowerBound);
@@ -131,7 +132,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             RelativeDateTimeValidatorAttribute validatorAttribute = new RelativeDateTimeValidatorAttribute(3, DateTimeUnit.Hour, 7, DateTimeUnit.Year);
             validatorAttribute.Negated = true;
 
-            RelativeDateTimeValidator validator = ((IValidatorDescriptor)validatorAttribute).CreateValidator(null, null, null) as RelativeDateTimeValidator;
+            RelativeDateTimeValidator validator = ((IValidatorDescriptor)validatorAttribute).CreateValidator(null, null, null, null) as RelativeDateTimeValidator;
             Assert.IsNotNull(validator);
 
             Assert.AreEqual(3, validator.LowerBound);
@@ -150,7 +151,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             RelativeDateTimeValidatorAttribute validatorAttribute = new RelativeDateTimeValidatorAttribute(2, DateTimeUnit.Minute, RangeBoundaryType.Inclusive,
                                                                                                            3, DateTimeUnit.Hour, RangeBoundaryType.Exclusive);
 
-            RelativeDateTimeValidator validator = ((IValidatorDescriptor)validatorAttribute).CreateValidator(null, null, null) as RelativeDateTimeValidator;
+            RelativeDateTimeValidator validator = ((IValidatorDescriptor)validatorAttribute).CreateValidator(null, null, null, null) as RelativeDateTimeValidator;
             Assert.IsNotNull(validator);
 
             Assert.AreEqual(2, validator.LowerBound);
@@ -170,7 +171,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
                                                                                                            3, DateTimeUnit.Hour, RangeBoundaryType.Exclusive);
             validatorAttribute.Negated = true;
 
-            RelativeDateTimeValidator validator = ((IValidatorDescriptor)validatorAttribute).CreateValidator(null, null, null) as RelativeDateTimeValidator;
+            RelativeDateTimeValidator validator = ((IValidatorDescriptor)validatorAttribute).CreateValidator(null, null, null, null) as RelativeDateTimeValidator;
             Assert.IsNotNull(validator);
 
             Assert.AreEqual(2, validator.LowerBound);
@@ -190,7 +191,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
                                                                                                            3, DateTimeUnit.Hour, RangeBoundaryType.Exclusive);
             validatorAttribute.MessageTemplate = "my message template";
 
-            RelativeDateTimeValidator validator = ((IValidatorDescriptor)validatorAttribute).CreateValidator(null, null, null) as RelativeDateTimeValidator;
+            RelativeDateTimeValidator validator = ((IValidatorDescriptor)validatorAttribute).CreateValidator(null, null, null, null) as RelativeDateTimeValidator;
             Assert.IsNotNull(validator);
 
             Assert.AreEqual(2, validator.LowerBound);
@@ -211,7 +212,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             validatorAttribute.Negated = true;
             validatorAttribute.MessageTemplate = "my message template";
 
-            RelativeDateTimeValidator validator = ((IValidatorDescriptor)validatorAttribute).CreateValidator(null, null, null) as RelativeDateTimeValidator;
+            RelativeDateTimeValidator validator = ((IValidatorDescriptor)validatorAttribute).CreateValidator(null, null, null, null) as RelativeDateTimeValidator;
             Assert.IsNotNull(validator);
 
             Assert.AreEqual(2, validator.LowerBound);
@@ -222,6 +223,44 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             Assert.AreEqual(RangeBoundaryType.Exclusive, validator.UpperBoundType);
             Assert.AreEqual("my message template", validator.MessageTemplate);
             Assert.AreEqual(true, validator.Negated);
+        }
+
+        [TestMethod]
+        public void CanUseAttributeAsValidationAttributeForValidValue()
+        {
+            ValidationAttribute attribute =
+                new RelativeDateTimeValidatorAttribute(10, DateTimeUnit.Day, RangeBoundaryType.Inclusive)
+                {
+                    MessageTemplate = "template {1}"
+                };
+
+            Assert.IsTrue(attribute.IsValid(DateTime.Today.AddDays(5)));
+        }
+
+        [TestMethod]
+        public void CanUseAttributeAsValidationAttribute()
+        {
+            ValidationAttribute attribute =
+                new RelativeDateTimeValidatorAttribute(10, DateTimeUnit.Day, RangeBoundaryType.Inclusive)
+                {
+                    MessageTemplate = "template {1}"
+                };
+
+            Assert.IsFalse(attribute.IsValid(DateTime.Today.AddDays(15)));
+            Assert.AreEqual("template name", attribute.FormatErrorMessage("name"));
+        }
+
+        [TestMethod]
+        public void ValidatingWithValidatorAttributeWithARulesetSkipsValidation()
+        {
+            ValidationAttribute attribute =
+                new RelativeDateTimeValidatorAttribute(10, DateTimeUnit.Day, RangeBoundaryType.Inclusive)
+                {
+                    MessageTemplate = "template {1}",
+                    Ruleset = "some ruleset"
+                };
+
+            Assert.IsTrue(attribute.IsValid(DateTime.Today.AddDays(15)));
         }
     }
 }

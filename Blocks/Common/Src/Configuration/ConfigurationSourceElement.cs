@@ -12,12 +12,14 @@
 using System;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Properties;
+using System.ComponentModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 {
     /// <summary>
 	/// Represents the configuration settings that describe an <see cref="IConfigurationSource"/>.
 	/// </summary>
+    [Browsable(false)]
     public class ConfigurationSourceElement : NameTypeConfigurationElement
     {
         /// <summary>

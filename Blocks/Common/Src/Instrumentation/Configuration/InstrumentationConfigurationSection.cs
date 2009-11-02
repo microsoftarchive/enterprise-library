@@ -19,7 +19,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Configura
 	/// Configuration object for Instrumentation. This section defines the instrumentation behavior 
 	/// for the entire application
 	/// </summary>
-    [ResourceDisplayName(typeof(Resources), "InstrumentationSectionDisplayName")]
+    [ResourceDescription(typeof(DesignResources), "InstrumentationConfigurationSectionDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "InstrumentationConfigurationSectionDisplayName")]
 	public class InstrumentationConfigurationSection : SerializableConfigurationSection
     {
 		private const string performanceCountersEnabled = "performanceCountersEnabled";
@@ -77,8 +78,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Configura
 		/// Gets and sets the value of PerformanceCountersEnabled
 		/// </summary>
         [ConfigurationProperty(performanceCountersEnabled, IsRequired = false, DefaultValue = false)]
-        [ResourceDisplayName(typeof(Resources), "InstrumentationSectionPerformanceCountersEnabledDisplayName")]
-        [ResourceDescription(typeof(Resources), "InstrumentationSectionPerformanceCountersEnabledDescription")]
+        [ResourceDescription(typeof(DesignResources), "InstrumentationConfigurationSectionPerformanceCountersEnabledDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "InstrumentationConfigurationSectionPerformanceCountersEnabledDisplayName")]
         public bool PerformanceCountersEnabled
         {
             get { return (bool)this[performanceCountersEnabled]; }
@@ -89,8 +90,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Configura
 		/// Gets and sets the value of EventLoggingEnabled
 		/// </summary>
         [ConfigurationProperty(eventLoggingEnabled, IsRequired = false, DefaultValue = false)]
-        [ResourceDisplayName(typeof(Resources), "InstrumentationSectionEventLoggingEnabledDisplayName")]
-        [ResourceDescription(typeof(Resources), "InstrumentationSectionEventLoggingEnabledDescription")]
+        [ResourceDescription(typeof(DesignResources), "InstrumentationConfigurationSectionEventLoggingEnabledDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "InstrumentationConfigurationSectionEventLoggingEnabledDisplayName")]
         public bool EventLoggingEnabled
         {
             get { return (bool)this[eventLoggingEnabled]; }
@@ -101,8 +102,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Configura
 		/// Gets and sets value of WmiEnabled
 		/// </summary>
         [ConfigurationProperty(wmiEnabled, IsRequired = false, DefaultValue = false)]
-        [ResourceDisplayName(typeof(Resources), "InstrumentationSectionWmiEnabledDisplayName")]
-        [ResourceDescription(typeof(Resources), "InstrumentationSectionWmiEnabledDescription")]
+        [ResourceDescription(typeof(DesignResources), "InstrumentationConfigurationSectionWmiEnabledDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "InstrumentationConfigurationSectionWmiEnabledDisplayName")]
         public bool WmiEnabled
         {
             get { return (bool)this[wmiEnabled]; }
@@ -113,6 +114,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Configura
         /// Gets and sets value of ApplicationInstanceName
         /// </summary>
         [ConfigurationProperty(applicationInstanceName, IsRequired = false, DefaultValue="")]
+        [ResourceDescription(typeof(DesignResources), "InstrumentationConfigurationSectionApplicationInstanceNameDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "InstrumentationConfigurationSectionApplicationInstanceNameDisplayName")]
         public string ApplicationInstanceName
         {
             get { return (string)this[applicationInstanceName]; }

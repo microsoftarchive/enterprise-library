@@ -15,12 +15,15 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using System.Collections.Generic;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Instrumentation;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration
 {
     /// <summary>
     /// <para>Configuration settings for a DPAPI Symmetric Cryptography Provider.</para>
     /// </summary>		
+    [ResourceDescription(typeof(DesignResources), "DpapiSymmetricCryptoProviderDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "DpapiSymmetricCryptoProviderDataDisplayName")]
     public class DpapiSymmetricCryptoProviderData : SymmetricProviderData
     {
         private const string scopeProperty = "scope";
@@ -53,8 +56,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         /// <para>One of the <see cref="DataProtectionScope"/> values.</para>
         /// </value>		
         [ConfigurationProperty(scopeProperty, IsRequired = false, DefaultValue = DataProtectionScope.CurrentUser)]
-        //[TypeConverter(typeof(EnumConverter))]
-            public DataProtectionScope Scope
+        [ResourceDescription(typeof(DesignResources), "DpapiSymmetricCryptoProviderDataScopeDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "DpapiSymmetricCryptoProviderDataScopeDisplayName")]
+        public DataProtectionScope Scope
         {
             get { return (DataProtectionScope) this[scopeProperty]; }
             set { this[scopeProperty] = value; }

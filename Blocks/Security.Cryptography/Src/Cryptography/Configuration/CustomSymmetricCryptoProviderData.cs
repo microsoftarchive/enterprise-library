@@ -15,14 +15,19 @@ using System.Collections.Specialized;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using System.ComponentModel;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration
 {
     /// <summary>
     /// Configuration object for Custom Providers.
     /// </summary>
+    [ResourceDescription(typeof(DesignResources), "CustomSymmetricCryptoProviderDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "CustomSymmetricCryptoProviderDataDisplayName")]
+    [TypePickingCommand(Title = "Custom Symmetric Crypto Provider (using type picker)")]
     public class CustomSymmetricCryptoProviderData
-        : SymmetricAlgorithmProviderData, IHelperAssistedCustomConfigurationData<CustomSymmetricCryptoProviderData>
+        : SymmetricProviderData, IHelperAssistedCustomConfigurationData<CustomSymmetricCryptoProviderData>
     {
         private readonly CustomProviderDataHelper<CustomSymmetricCryptoProviderData> helper;
 
@@ -65,6 +70,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         protected override ConfigurationPropertyCollection Properties
         {
             get { return helper.Properties; }
+        }
+
+        /// <summary>
+        /// Overridden in order to apply <see cref="BrowsableAttribute"/>.
+        /// </summary>
+        [Browsable(true)]
+        [Editor(CommonDesignTime.EditorTypes.TypeSelector, CommonDesignTime.EditorTypes.UITypeEditor)]
+        [BaseType(typeof(ISymmetricCryptoProvider), typeof(CustomSymmetricCryptoProviderData))]
+        [ResourceDescription(typeof(DesignResources), "CustomSymmetricCryptoProviderDataTypeNameDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "CustomSymmetricCryptoProviderDataTypeNameDisplayName")]
+        public override string TypeName
+        {
+            get { return base.TypeName; }
+            set { base.TypeName = value; }
         }
 
         #region IHelperAssistedCustomConfigurationData<CustomSymmetricCryptoProviderData> Members

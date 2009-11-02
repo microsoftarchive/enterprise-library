@@ -15,6 +15,8 @@ using System.Configuration;
 using System.Text.RegularExpressions;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using System.ComponentModel;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 {
@@ -23,6 +25,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 	/// </summary>
 	/// <seealso cref="AndCompositeValidator"/>
 	/// <seealso cref="RegexValidator"/>
+    [ResourceDescription(typeof(DesignResources), "RegexValidatorDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "RegexValidatorDataDisplayName")]
 	public class RegexValidatorData : ValueValidatorData
 	{
 		private static readonly AssemblyQualifiedTypeNameConverter typeConverter = new AssemblyQualifiedTypeNameConverter();
@@ -31,7 +35,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 		/// <para>Initializes a new instance of the <see cref="RegexValidatorData"/> class.</para>
 		/// </summary>
 		public RegexValidatorData()
-		{ }
+		{
+            Type = typeof(RegexValidator);
+        }
 
 		/// <summary>
 		/// <para>Initializes a new instance of the <see cref="RegexValidatorData"/> class with a name.</para>
@@ -46,7 +52,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 		/// Gets or sets the pattern for the represented validator.
 		/// </summary>
 		/// <seealso cref="RegexValidator.Pattern"/>
-		[ConfigurationProperty(PatternPropertyName)]
+        [ConfigurationProperty(PatternPropertyName)]
+        [Editor(CommonDesignTime.EditorTypes.RegexTypeEditor, CommonDesignTime.EditorTypes.UITypeEditor)]
+        [ResourceDescription(typeof(DesignResources), "RegexValidatorDataPatternDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "RegexValidatorDataPatternDisplayName")]
 		public string Pattern
 		{
 			get { return (string)this[PatternPropertyName]; }
@@ -54,12 +63,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 		}
 
 		private const string OptionsPropertyName = "options";
+
 		/// <summary>
 		/// Gets or sets the regex options for the represented validator.
 		/// </summary>
 		/// <seealso cref="RegexOptions"/>
 		/// <seealso cref="RegexValidator.Options"/>
 		[ConfigurationProperty(OptionsPropertyName)]
+        [Editor(CommonDesignTime.EditorTypes.Flags, CommonDesignTime.EditorTypes.FrameworkElement)]
+        [ResourceDescription(typeof(DesignResources), "RegexValidatorDataOptionsDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "RegexValidatorDataOptionsDisplayName")]
 		public RegexOptions Options
 		{
 			get { return (RegexOptions)this[OptionsPropertyName]; }
@@ -71,6 +84,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 		/// Gets or sets the name of the resource holding the regex pattern.
 		/// </summary>
 		[ConfigurationProperty(PatternResourceNamePropertyName)]
+        [ResourceDescription(typeof(DesignResources), "RegexValidatorDataPatternResourceNameDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "RegexValidatorDataPatternResourceNameDisplayName")]
+        [Category("CategoryLocalization")]
 		public string PatternResourceName
 		{
 			get { return (string)this[PatternResourceNamePropertyName]; }
@@ -82,6 +98,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 		/// Gets or sets the name of the resource type holding the regex pattern.
 		/// </summary>
 		[ConfigurationProperty(PatternResourceTypePropertyName)]
+        [Editor(CommonDesignTime.EditorTypes.TypeSelector, CommonDesignTime.EditorTypes.UITypeEditor)]
+        [Category("CategoryLocalization")]
+        [ResourceDescription(typeof(DesignResources), "RegexValidatorDataPatternResourceTypeNameDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "RegexValidatorDataPatternResourceTypeNameDisplayName")]
 		public string PatternResourceTypeName
 		{
 			get { return (string)this[PatternResourceTypePropertyName]; }

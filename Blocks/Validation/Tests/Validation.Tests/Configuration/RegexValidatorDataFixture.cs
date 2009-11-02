@@ -99,7 +99,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             rwValidatorData.PatternResourceType = typeof(Resources);
             rwValidatorData.Options = RegexOptions.Multiline | RegexOptions.IgnoreCase;
 
-            Validator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(null, null, null, null);
 
             Assert.IsNotNull(validator);
             Assert.AreSame(typeof(RegexValidator), validator.GetType());
@@ -121,7 +121,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             rwValidatorData.Negated = true;
             rwValidatorData.Options = RegexOptions.Multiline | RegexOptions.IgnoreCase;
 
-            Validator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(null, null, null, null);
 
             Assert.IsNotNull(validator);
             Assert.AreSame(typeof(RegexValidator), validator.GetType());
@@ -143,7 +143,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             rwValidatorData.PatternResourceType = typeof(Resources);
             rwValidatorData.MessageTemplate = "message template override";
 
-            Validator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(null, null, null, null);
 
             Assert.IsNotNull(validator);
             Assert.AreSame(typeof(RegexValidator), validator.GetType());
@@ -166,7 +166,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             rwValidatorData.Options = RegexOptions.Multiline | RegexOptions.IgnoreCase;
             rwValidatorData.MessageTemplate = "message template override";
 
-            Validator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(null, null, null, null);
 
             Assert.IsNotNull(validator);
             Assert.AreSame(typeof(RegexValidator), validator.GetType());

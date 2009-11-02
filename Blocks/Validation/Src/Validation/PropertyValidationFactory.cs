@@ -11,10 +11,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Validation.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 
@@ -28,31 +28,27 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
     {
         private static IDictionary<PropertyValidatorCacheKey, Validator> attributeOnlyPropertyValidatorsCache
             = new Dictionary<PropertyValidatorCacheKey, Validator>();
-        private static object attributeOnlyPropertyValidatorsCacheLock = new object();
-        private static IDictionary<PropertyValidatorCacheKey, Validator> attributeAndDefaultConfigurationPropertyValidatorsCache
-            = new Dictionary<PropertyValidatorCacheKey, Validator>();
-        private static object attributeAndDefaultConfigurationPropertyValidatorsCacheLock = new object();
         private static IDictionary<PropertyValidatorCacheKey, Validator> defaultConfigurationOnlyPropertyValidatorsCache
             = new Dictionary<PropertyValidatorCacheKey, Validator>();
-        private static object defaultConfigurationOnlyPropertyValidatorsCacheLock = new object();
+        private static IDictionary<PropertyValidatorCacheKey, Validator> validationAttributeOnlyPropertyValidatorsCache
+            = new Dictionary<PropertyValidatorCacheKey, Validator>();
 
         /// <summary>
         /// Resets the cached validators.
         /// </summary>
-
         public static void ResetCaches()
         {
-            lock (attributeOnlyPropertyValidatorsCacheLock)
+            lock (attributeOnlyPropertyValidatorsCache)
             {
                 attributeOnlyPropertyValidatorsCache.Clear();
             }
-            lock (attributeAndDefaultConfigurationPropertyValidatorsCacheLock)
-            {
-                attributeAndDefaultConfigurationPropertyValidatorsCache.Clear();
-            }
-            lock (defaultConfigurationOnlyPropertyValidatorsCacheLock)
+            lock (defaultConfigurationOnlyPropertyValidatorsCache)
             {
                 defaultConfigurationOnlyPropertyValidatorsCache.Clear();
+            }
+            lock (validationAttributeOnlyPropertyValidatorsCache)
+            {
+                validationAttributeOnlyPropertyValidatorsCache.Clear();
             }
         }
 
@@ -71,6 +67,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
             ValidationSpecificationSource validationSpecificationSource,
             MemberValueAccessBuilder memberValueAccessBuilder)
         {
+            // TODO should pass along validator factory?
             return GetPropertyValidator(type,
                 propertyInfo,
                 ruleset,
@@ -118,19 +115,36 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
                 throw new InvalidOperationException(Resources.ExceptionPropertyNotReadable);
             }
 
-            switch (validationSpecificationSource)
+            var validators = new List<Validator>();
+            if (validationSpecificationSource.IsSet(ValidationSpecificationSource.Attributes))
             {
-                case ValidationSpecificationSource.Both:
-                    return GetPropertyValidator(type, propertyInfo, ruleset, memberAccessValidatorBuilderFactory);
-
-                case ValidationSpecificationSource.Attributes:
-                    return GetPropertyValidatorFromAttributes(type, propertyInfo, ruleset, memberAccessValidatorBuilderFactory);
-
-                case ValidationSpecificationSource.Configuration:
-                    return GetPropertyValidatorFromConfiguration(type, propertyInfo, ruleset, memberAccessValidatorBuilderFactory);
+                validators.Add(
+                    GetPropertyValidatorFromAttributes(type, propertyInfo, ruleset, memberAccessValidatorBuilderFactory));
+            }
+            if (validationSpecificationSource.IsSet(ValidationSpecificationSource.Configuration))
+            {
+                validators.Add(
+                    GetPropertyValidatorFromConfiguration(type, propertyInfo, ruleset, memberAccessValidatorBuilderFactory));
+            }
+            if (validationSpecificationSource.IsSet(ValidationSpecificationSource.DataAnnotations))
+            {
+                validators.Add(
+                    GetPropertyValidatorFromValidationAttributes(type, propertyInfo, ruleset, memberAccessValidatorBuilderFactory));
             }
 
-            return null;
+            var effectiveValidators = validators.Where(v => v != null).ToArray();
+            if (effectiveValidators.Length == 1)
+            {
+                return effectiveValidators[0];
+            }
+            else if (effectiveValidators.Length > 1)
+            {
+                return new AndCompositeValidator(effectiveValidators);
+            }
+            else
+            {
+                return null;
+            }
         }
 
         /// <summary>
@@ -141,55 +155,22 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         /// <param name="ruleset"></param>
         /// <param name="memberAccessValidatorBuilderFactory"></param>
         /// <returns></returns>
-        public static Validator GetPropertyValidator(Type type, PropertyInfo propertyInfo,
-            string ruleset, MemberAccessValidatorBuilderFactory memberAccessValidatorBuilderFactory)
+        public static Validator GetPropertyValidatorFromAttributes(
+            Type type,
+            PropertyInfo propertyInfo,
+            string ruleset,
+            MemberAccessValidatorBuilderFactory memberAccessValidatorBuilderFactory)
         {
             Validator validator = null;
 
-            lock (attributeAndDefaultConfigurationPropertyValidatorsCacheLock)
-            {
-                PropertyValidatorCacheKey key = new PropertyValidatorCacheKey(type, propertyInfo.Name, ruleset);
-
-                if (!attributeAndDefaultConfigurationPropertyValidatorsCache.TryGetValue(key, out validator))
-                {
-                    Validator attributesValidator = GetPropertyValidatorFromAttributes(type, propertyInfo, ruleset, memberAccessValidatorBuilderFactory);
-                    Validator configurationValidator = GetPropertyValidatorFromConfiguration(type, propertyInfo, ruleset, memberAccessValidatorBuilderFactory);
-
-                    if (null != attributesValidator && null != configurationValidator)
-                        validator = new AndCompositeValidator(attributesValidator, configurationValidator);
-                    else if (null != attributesValidator)
-                        validator = attributesValidator;
-                    else
-                        validator = configurationValidator;
-
-                    attributeAndDefaultConfigurationPropertyValidatorsCache[key] = validator;
-                }
-            }
-
-            return validator;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="type"></param>
-        /// <param name="propertyInfo"></param>
-        /// <param name="ruleset"></param>
-        /// <param name="memberAccessValidatorBuilderFactory"></param>
-        /// <returns></returns>
-        public static Validator GetPropertyValidatorFromAttributes(Type type, PropertyInfo propertyInfo,
-            string ruleset, MemberAccessValidatorBuilderFactory memberAccessValidatorBuilderFactory)
-        {
-            Validator validator = null;
-
-            lock (attributeOnlyPropertyValidatorsCacheLock)
+            lock (attributeOnlyPropertyValidatorsCache)
             {
                 var key = new PropertyValidatorCacheKey(type, propertyInfo.Name, ruleset);
                 if (!attributeOnlyPropertyValidatorsCache.TryGetValue(key, out validator))
                 {
-                    validator
-                        = new MetadataValidatorBuilder(memberAccessValidatorBuilderFactory)
-                                .CreateValidatorForProperty(propertyInfo, ruleset);
+                    validator =
+                        new MetadataValidatorBuilder(memberAccessValidatorBuilderFactory, ValidationFactory.DefaultCompositeValidatorFactory)
+                            .CreateValidatorForProperty(propertyInfo, ruleset);
 
                     attributeOnlyPropertyValidatorsCache[key] = validator;
                 }
@@ -206,12 +187,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         /// <param name="ruleset"></param>
         /// <param name="memberAccessValidatorBuilderFactory"></param>
         /// <returns></returns>
-        public static Validator GetPropertyValidatorFromConfiguration(Type type, PropertyInfo propertyInfo,
-            string ruleset, MemberAccessValidatorBuilderFactory memberAccessValidatorBuilderFactory)
+        public static Validator GetPropertyValidatorFromConfiguration(
+            Type type,
+            PropertyInfo propertyInfo,
+            string ruleset,
+            MemberAccessValidatorBuilderFactory memberAccessValidatorBuilderFactory)
         {
             Validator validator = null;
 
-            lock (defaultConfigurationOnlyPropertyValidatorsCacheLock)
+            lock (defaultConfigurationOnlyPropertyValidatorsCache)
             {
                 PropertyValidatorCacheKey key = new PropertyValidatorCacheKey(type, propertyInfo.Name, ruleset);
                 if (!defaultConfigurationOnlyPropertyValidatorsCache.TryGetValue(key, out validator))
@@ -219,7 +203,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
                     using (var configurationSource = ConfigurationSourceFactory.Create())
                     {
                         ConfigurationValidatorBuilder builder =
-                            ConfigurationValidatorBuilder.FromConfiguration(configurationSource, memberAccessValidatorBuilderFactory);
+                            ConfigurationValidatorBuilder.FromConfiguration(
+                                configurationSource,
+                                memberAccessValidatorBuilderFactory,
+                                ValidationFactory.DefaultCompositeValidatorFactory);
 
                         ValidatedPropertyReference propertyReference =
                             GetValidatedPropertyReference(type, ruleset, propertyInfo.Name, configurationSource);
@@ -236,7 +223,39 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
             return validator;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="propertyInfo"></param>
+        /// <param name="ruleset"></param>
+        /// <param name="memberAccessValidatorBuilderFactory"></param>
+        /// <returns></returns>
+        public static Validator GetPropertyValidatorFromValidationAttributes(
+            Type type,
+            PropertyInfo propertyInfo,
+            string ruleset,
+            MemberAccessValidatorBuilderFactory memberAccessValidatorBuilderFactory)
+        {
+            Validator validator = null;
 
+            lock (validationAttributeOnlyPropertyValidatorsCache)
+            {
+                var key = new PropertyValidatorCacheKey(type, propertyInfo.Name, ruleset);
+                if (!validationAttributeOnlyPropertyValidatorsCache.TryGetValue(key, out validator))
+                {
+                    validator =
+                        string.IsNullOrEmpty(ruleset)
+                            ? new ValidationAttributeValidatorBuilder(memberAccessValidatorBuilderFactory, ValidationFactory.DefaultCompositeValidatorFactory)
+                                .CreateValidatorForProperty(propertyInfo)
+                            : new AndCompositeValidator();
+
+                    validationAttributeOnlyPropertyValidatorsCache[key] = validator;
+                }
+            }
+
+            return validator;
+        }
 
         private static ValidatedPropertyReference GetValidatedPropertyReference(Type type,
             string ruleset,

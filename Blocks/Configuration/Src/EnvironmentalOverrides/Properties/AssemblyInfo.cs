@@ -13,7 +13,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.Permissions;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design;
+
 using Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides;
 
 [assembly : ReflectionPermission(SecurityAction.RequestMinimum)]
@@ -22,6 +22,5 @@ using Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides
 [assembly : AssemblyTitle("Enterprise Library Configuration Application Block Environmental Overrides Extension")]
 [assembly : AssemblyDescription("Enterprise Library Configuration Application Block Environmental Overrides Extension")]
 [assembly : AssemblyVersion("4.1.0.0")]
-[assembly : ConfigurationDesignManager(typeof(EnvironmentalOverridesConfigurationDesignManager))]
 [assembly : AllowPartiallyTrustedCallers]
 [assembly : SecurityTransparent]

@@ -17,20 +17,21 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Globalization;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 {
 	/// <summary>
 	/// Configuration object to describe an instance of class <see cref="DomainValidatorData"/>.
 	/// </summary>
-	public class DomainValidatorData : ValueValidatorData
+    [ResourceDescription(typeof(DesignResources), "DomainValidatorDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "DomainValidatorDataDisplayName")]
+    public class DomainValidatorData : ValueValidatorData
 	{
 		/// <summary>
 		/// <para>Initializes a new instance of the <see cref="DomainValidatorData"/> class.</para>
 		/// </summary>
-		public DomainValidatorData()
-		{
-		}
+        public DomainValidatorData() { Type = typeof(DomainValidator<object>); }
 
 		/// <summary>
 		/// <para>Initializes a new instance of the <see cref="DomainValidatorData"/> class with a name.</para>
@@ -46,6 +47,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 		/// </summary>
 		[ConfigurationProperty(DomainPropertyName)]
         [ConfigurationCollection(typeof(DomainConfigurationElement))]
+        [ResourceDescription(typeof(DesignResources), "DomainValidatorDataDomainDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "DomainValidatorDataDomainDisplayName")]
+        [System.ComponentModel.Editor(CommonDesignTime.EditorTypes.CollectionEditor, CommonDesignTime.EditorTypes.FrameworkElement)]
+        [CollectionEditorTemplate("DomainConfigurationElementHeader", "DomainConfigurationElementItem")]
+        [EnvironmentalOverrides(false)]
+        [DesignTimeReadOnly(false)]
 		public NamedElementCollection<DomainConfigurationElement> Domain
 		{
 			get { return (NamedElementCollection<DomainConfigurationElement>)this[DomainPropertyName]; }

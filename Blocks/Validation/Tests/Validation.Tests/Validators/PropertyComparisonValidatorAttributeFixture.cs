@@ -10,6 +10,7 @@
 //===============================================================================
 
 using System;
+using System.ComponentModel.DataAnnotations;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -34,7 +35,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
 
             validatorAttribute.CreateValidator(typeof(PropertyComparisonValidatorAttributeFixtureTestClass),
                                                typeof(PropertyComparisonValidatorAttributeFixtureTestClass),
-                                               builder);
+                                               builder,
+                                               null);
         }
 
         [TestMethod]
@@ -46,7 +48,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
 
             PropertyComparisonValidator validator = ((IValidatorDescriptor)validatorAttribute).CreateValidator(typeof(PropertyComparisonValidatorAttributeFixtureTestClass),
                                                                                                                typeof(PropertyComparisonValidatorAttributeFixtureTestClass),
-                                                                                                               builder) as PropertyComparisonValidator;
+                                                                                                               builder,
+                                                                                                               null) as PropertyComparisonValidator;
 
             Assert.IsNotNull(validator);
             Assert.AreEqual("PublicProperty", ((PropertyValueAccess)validator.ValueAccess).PropertyInfo.Name);
@@ -63,6 +66,34 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
                 get { return publicProperty; }
                 set { publicProperty = value; }
             }
+        }
+
+        [TestMethod]
+        public void AttributeWithNullRulesetCannotBeUsedAsValidationAttribute()
+        {
+            ValidationAttribute attribute =
+                new PropertyComparisonValidatorAttribute("proeprty", ComparisonOperator.NotEqual);
+
+            try
+            {
+                attribute.IsValid("");
+                Assert.Fail("should have thrown");
+            }
+            catch (NotSupportedException)
+            {
+            }
+        }
+
+        [TestMethod]
+        public void AttributeWithNonNullRulesetReturnsValid()
+        {
+            ValidationAttribute attribute =
+                new PropertyComparisonValidatorAttribute("proeprty", ComparisonOperator.NotEqual)
+                {
+                    Ruleset = "ruleset"
+                };
+
+            Assert.IsTrue(attribute.IsValid(""));
         }
     }
 }

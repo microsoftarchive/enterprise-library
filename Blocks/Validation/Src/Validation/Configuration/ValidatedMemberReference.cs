@@ -11,6 +11,7 @@
 
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 {
@@ -40,6 +41,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 		/// Gets the collection of validators configured for the member.
 		/// </summary>
 		[ConfigurationProperty(ValidatorsPropertyName, IsDefaultCollection = true)]
+        [ResourceDescription(typeof(DesignResources), "ValidatedMemberReferenceValidatorsDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "ValidatedMemberReferenceValidatorsDisplayName")]
+        [PromoteCommands]
 		public ValidatorDataCollection Validators
 		{
 			get { return (ValidatorDataCollection)this[ValidatorsPropertyName]; }

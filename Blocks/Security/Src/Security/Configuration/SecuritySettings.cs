@@ -26,8 +26,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration
     /// Represents the configuration data for the 
     /// security providers.
     /// </summary>
-    [ResourceDisplayName(typeof(Resources), "SecuritySettingsDisplayName")]
-    [ViewModel("Console.Wpf.ViewModel.HierarchicalSectionViewModel, Console.Wpf")]
+    [ViewModel(SecurityDesignTime.ViewModelTypeNames.SecuritySectionViewModel)]
+    [ResourceDescription(typeof(DesignResources), "SecuritySettingsDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "SecuritySettingsDisplayName")]
     public class SecuritySettings : SerializableConfigurationSection, ITypeRegistrationsProvider
     {
 		/// <summary>
@@ -53,8 +54,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration
         /// <summary>
         /// The instance name of the default <see cref="IAuthorizationProvider"/> instance.
         /// </summary>
-		[ConfigurationProperty(defaultAuthorizationProviderNameProperty, IsRequired= false)]   
-        [Reference(typeof(SecuritySettings), typeof(AuthorizationProviderData))]
+		[ConfigurationProperty(defaultAuthorizationProviderNameProperty, IsRequired= false)]
+        [Reference(typeof(NameTypeConfigurationElementCollection<AuthorizationProviderData, CustomAuthorizationProviderData>), typeof(AuthorizationProviderData))]
+        [ResourceDescription(typeof(DesignResources), "SecuritySettingsDefaultAuthorizationProviderNameDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "SecuritySettingsDefaultAuthorizationProviderNameDisplayName")]
 		public string DefaultAuthorizationProviderName
 		{
 			get
@@ -71,7 +74,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration
         /// The instance name of the default <see cref="ISecurityCacheProvider"/> instance.
         /// </summary>
 		[ConfigurationProperty(defaultSecurityCacheProviderNameProperty, IsRequired= false)]
-        [Reference(typeof(SecuritySettings), typeof(SecurityCacheProviderData))]
+        [Reference(typeof(NameTypeConfigurationElementCollection<SecurityCacheProviderData, CustomSecurityCacheProviderData>), typeof(SecurityCacheProviderData))]
+        [ResourceDescription(typeof(DesignResources), "SecuritySettingsDefaultSecurityCacheProviderNameDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "SecuritySettingsDefaultSecurityCacheProviderNameDisplayName")]
 		public string DefaultSecurityCacheProviderName
 		{
 			get
@@ -94,8 +99,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration
         /// <para>This property maps to the <c>authorizationProviders</c> element in configuration.</para>
         /// </remarks>
 		[ConfigurationProperty(authorizationProvidersProperty, IsRequired= false)]
-        [ResourceDisplayName(typeof(Resources), "AuthorizationProvidersDisplayName")]
         [ConfigurationCollection(typeof(AuthorizationProviderData))]
+        [ResourceDescription(typeof(DesignResources), "SecuritySettingsAuthorizationProvidersDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "SecuritySettingsAuthorizationProvidersDisplayName")]
         public NameTypeConfigurationElementCollection<AuthorizationProviderData, CustomAuthorizationProviderData> AuthorizationProviders
 		{
 			get
@@ -114,7 +120,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration
         /// <para>This property maps to the <c>securityCacheProviders</c> element in configuration.</para>
         /// </remarks>
 		[ConfigurationProperty(securityCacheProvidersProperty, IsRequired= false)]
-        [ResourceDisplayName(typeof(Resources), "SecurityCacheProvidersDisplayName")]
+        [ResourceDescription(typeof(DesignResources), "SecuritySettingsSecurityCacheProvidersDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "SecuritySettingsSecurityCacheProvidersDisplayName")]
         [ConfigurationCollection(typeof(SecurityCacheProviderData))]
 		public NameTypeConfigurationElementCollection<SecurityCacheProviderData, CustomSecurityCacheProviderData> SecurityCacheProviders
 		{

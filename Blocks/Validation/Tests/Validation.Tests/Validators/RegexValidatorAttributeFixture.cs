@@ -10,11 +10,11 @@
 //===============================================================================
 
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TestProperties = Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
 {
@@ -60,7 +60,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
         {
             ValidatorAttribute attribute = new RegexValidatorAttribute("pattern");
 
-            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null, null);
             Assert.IsNotNull(validator);
 
             RegexValidator regexValidator = validator as RegexValidator;
@@ -79,7 +79,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
         {
             ValidatorAttribute attribute = new RegexValidatorAttribute(RegexResourceName1, typeof(Properties.Resources));
 
-            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null, null);
             Assert.IsNotNull(validator);
 
             RegexValidator regexValidator = validator as RegexValidator;
@@ -99,7 +99,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             ValueValidatorAttribute attribute = new RegexValidatorAttribute("pattern");
             attribute.Negated = true;
 
-            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null, null);
             Assert.IsNotNull(validator);
 
             RegexValidator regexValidator = validator as RegexValidator;
@@ -117,7 +117,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             ValueValidatorAttribute attribute = new RegexValidatorAttribute(RegexResourceName1, typeof(Properties.Resources));
             attribute.Negated = true;
 
-            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null, null);
             Assert.IsNotNull(validator);
 
             RegexValidator regexValidator = validator as RegexValidator;
@@ -137,7 +137,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             ValidatorAttribute attribute = new RegexValidatorAttribute("pattern");
             attribute.MessageTemplate = "overriden message template";
 
-            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null, null);
             Assert.IsNotNull(validator);
 
             RegexValidator regexValidator = validator as RegexValidator;
@@ -155,7 +155,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             ValidatorAttribute attribute = new RegexValidatorAttribute(RegexResourceName1, typeof(Properties.Resources));
             attribute.MessageTemplate = "overriden message template";
 
-            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null, null);
             Assert.IsNotNull(validator);
 
             RegexValidator regexValidator = validator as RegexValidator;
@@ -176,7 +176,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             attribute.Negated = true;
             attribute.MessageTemplate = "overriden message template";
 
-            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null, null);
             Assert.IsNotNull(validator);
 
             RegexValidator regexValidator = validator as RegexValidator;
@@ -195,7 +195,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             attribute.Negated = true;
             attribute.MessageTemplate = "overriden message template";
 
-            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null, null);
             Assert.IsNotNull(validator);
 
             RegexValidator regexValidator = validator as RegexValidator;
@@ -214,7 +214,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
         {
             ValidatorAttribute attribute = new RegexValidatorAttribute("pattern", RegexOptions.Multiline);
 
-            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null, null);
             Assert.IsNotNull(validator);
 
             RegexValidator regexValidator = validator as RegexValidator;
@@ -231,7 +231,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
         {
             ValidatorAttribute attribute = new RegexValidatorAttribute(RegexResourceName1, typeof(Properties.Resources), RegexOptions.Multiline);
 
-            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null, null);
             Assert.IsNotNull(validator);
 
             RegexValidator regexValidator = validator as RegexValidator;
@@ -251,7 +251,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             ValueValidatorAttribute attribute = new RegexValidatorAttribute("pattern", RegexOptions.Multiline);
             attribute.Negated = true;
 
-            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null, null);
             Assert.IsNotNull(validator);
 
             RegexValidator regexValidator = validator as RegexValidator;
@@ -269,7 +269,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             ValueValidatorAttribute attribute = new RegexValidatorAttribute(RegexResourceName1, typeof(Properties.Resources), RegexOptions.Multiline);
             attribute.Negated = true;
 
-            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null, null);
             Assert.IsNotNull(validator);
 
             RegexValidator regexValidator = validator as RegexValidator;
@@ -289,7 +289,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             ValidatorAttribute attribute = new RegexValidatorAttribute("pattern", RegexOptions.Multiline);
             attribute.MessageTemplate = "overriden message template";
 
-            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null, null);
             Assert.IsNotNull(validator);
 
             RegexValidator regexValidator = validator as RegexValidator;
@@ -307,7 +307,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             ValidatorAttribute attribute = new RegexValidatorAttribute(RegexResourceName1, typeof(Properties.Resources), RegexOptions.Multiline);
             attribute.MessageTemplate = "overriden message template";
 
-            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null, null);
             Assert.IsNotNull(validator);
 
             RegexValidator regexValidator = validator as RegexValidator;
@@ -328,7 +328,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             attribute.Negated = true;
             attribute.MessageTemplate = "overriden message template";
 
-            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null, null);
             Assert.IsNotNull(validator);
 
             RegexValidator regexValidator = validator as RegexValidator;
@@ -338,6 +338,44 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             Assert.AreEqual(RegexOptions.Multiline, regexValidator.Options.Value);
             Assert.AreEqual("overriden message template", regexValidator.MessageTemplate);
             Assert.AreEqual(true, regexValidator.Negated);
+        }
+
+        [TestMethod]
+        public void CanUseAttributeAsValidationAttributeForValidValue()
+        {
+            ValidationAttribute attribute =
+                new RegexValidatorAttribute("^a*$")
+                {
+                    MessageTemplate = "template {1}"
+                };
+
+            Assert.IsTrue(attribute.IsValid("aaaaaaaaaa"));
+        }
+
+        [TestMethod]
+        public void CanUseAttributeAsValidationAttribute()
+        {
+            ValidationAttribute attribute =
+                new RegexValidatorAttribute("^a*$")
+                {
+                    MessageTemplate = "template {1}"
+                };
+
+            Assert.IsFalse(attribute.IsValid("bbbbbb"));
+            Assert.AreEqual("template name", attribute.FormatErrorMessage("name"));
+        }
+
+        [TestMethod]
+        public void ValidatingWithValidatorAttributeWithARulesetSkipsValidation()
+        {
+            ValidationAttribute attribute =
+                new RegexValidatorAttribute("^a*$")
+                {
+                    MessageTemplate = "template {1}",
+                    Ruleset = "some ruleset"
+                };
+
+            Assert.IsTrue(attribute.IsValid("bbbbbb"));
         }
     }
 }

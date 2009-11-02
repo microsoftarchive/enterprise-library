@@ -24,56 +24,63 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
     /// </summary>
     public class ConfigurationValidatorBuilder : ValidatorBuilderBase
     {
+        private static readonly Validator EmptyValidator = new AndCompositeValidator();
 
         private readonly ValidationSettings validationSettings;
-        private IValidationInstrumentationProvider instrumentationProvider;
-
-
-        private static readonly Validator EmptyValidator = new AndCompositeValidator();
+        private readonly IValidationInstrumentationProvider instrumentationProvider;
 
         ///<summary>
         ///</summary>
         ///<param name="configurationSource"></param>
         ///<param name="memberAccessValidatorBuilderFactory"></param>
+        ///<param name="validatorFactory"></param>
         ///<returns></returns>
         public static ConfigurationValidatorBuilder FromConfiguration(
-            IConfigurationSource configurationSource, 
-            MemberAccessValidatorBuilderFactory memberAccessValidatorBuilderFactory)
+            IConfigurationSource configurationSource,
+            MemberAccessValidatorBuilderFactory memberAccessValidatorBuilderFactory,
+            ValidatorFactory validatorFactory)
         {
             var instrumentationProvider = ValidationInstrumentationProvider.FromConfigurationSource(configurationSource);
             var settings = ValidationSettings.TryGet(configurationSource, instrumentationProvider);
-            
-            return new ConfigurationValidatorBuilder(settings, instrumentationProvider,
-                                                     memberAccessValidatorBuilderFactory);
+
+            return
+                new ConfigurationValidatorBuilder(
+                    settings,
+                    instrumentationProvider,
+                    memberAccessValidatorBuilderFactory,
+                    validatorFactory);
         }
+
+        ///<summary>
+        ///</summary>
+        ///<param name="validationSettings"></param>
+        ///<param name="instrumentationProvider"></param>
+        public ConfigurationValidatorBuilder(
+            ValidationSettings validationSettings,
+            IValidationInstrumentationProvider instrumentationProvider)
+            : this(
+                validationSettings,
+                instrumentationProvider,
+                MemberAccessValidatorBuilderFactory.Default,
+                ValidationFactory.DefaultCompositeValidatorFactory)
+        { }
 
         ///<summary>
         ///</summary>
         ///<param name="validationSettings"></param>
         ///<param name="instrumentationProvider"></param>
         ///<param name="memberAccessValidatorFactory"></param>
+        ///<param name="validatorFactory"></param>
         public ConfigurationValidatorBuilder(
-                ValidationSettings validationSettings, 
-                IValidationInstrumentationProvider instrumentationProvider,
-                MemberAccessValidatorBuilderFactory memberAccessValidatorFactory
-            ) : base(memberAccessValidatorFactory)
+            ValidationSettings validationSettings,
+            IValidationInstrumentationProvider instrumentationProvider,
+            MemberAccessValidatorBuilderFactory memberAccessValidatorFactory,
+            ValidatorFactory validatorFactory)
+            : base(memberAccessValidatorFactory, validatorFactory)
         {
             this.validationSettings = validationSettings;
             this.instrumentationProvider = instrumentationProvider;
         }
-
-        ///<summary>
-        ///</summary>
-        ///<param name="validationSettings"></param>
-        ///<param name="instrumentationProvider"></param>
-        public ConfigurationValidatorBuilder(
-                    ValidationSettings validationSettings, 
-                    IValidationInstrumentationProvider instrumentationProvider)
-        {
-            this.validationSettings = validationSettings;
-            this.instrumentationProvider = instrumentationProvider;
-        }
-
 
         /// <summary>
         /// 
@@ -130,35 +137,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
             return this.CreateValidator(new ConfigurationValidatedType(ruleData, type));
         }
 
-        #region test only methods
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="type"></param>
-        /// <param name="ruleData"></param>
-        /// <returns></returns>
-        public Validator CreateValidatorForRule(Type type, ValidationRulesetData ruleData)
-        {
-            return CreateValidator(new ConfigurationValidatedType(ruleData, type));
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="type"></param>
-        /// <param name="ruleData"></param>
-        /// <returns></returns>
-        public Validator CreateValidatorForType(Type type, ValidationRulesetData ruleData)
-        {
-            if (ruleData.Validators.Count == 0)
-                return null;
-
-            ConfigurationValidatedType validatedElement = new ConfigurationValidatedType(ruleData, type);
-
-            return CreateValidatorForValidatedElement(validatedElement, this.GetCompositeValidatorBuilderForType);
-        }
-
         /// <summary>
         /// 
         /// </summary>
@@ -179,12 +157,32 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
             return CreateValidatorForValidatedElement(validatedElement, this.GetCompositeValidatorBuilderForProperty);
         }
 
+        #region test only methods
+
         /// <summary>
-        /// 
+        /// This member supports the Enterprise Library infrastructure and is not intended to be used directly from your code.
         /// </summary>
-        /// <param name="type"></param>
-        /// <param name="fieldReference"></param>
-        /// <returns></returns>
+        public Validator CreateValidatorForRule(Type type, ValidationRulesetData ruleData)
+        {
+            return CreateValidator(new ConfigurationValidatedType(ruleData, type));
+        }
+
+        /// <summary>
+        /// This member supports the Enterprise Library infrastructure and is not intended to be used directly from your code.
+        /// </summary>
+        public Validator CreateValidatorForType(Type type, ValidationRulesetData ruleData)
+        {
+            if (ruleData.Validators.Count == 0)
+                return null;
+
+            ConfigurationValidatedType validatedElement = new ConfigurationValidatedType(ruleData, type);
+
+            return CreateValidatorForValidatedElement(validatedElement, this.GetCompositeValidatorBuilderForType);
+        }
+
+        /// <summary>
+        /// This member supports the Enterprise Library infrastructure and is not intended to be used directly from your code.
+        /// </summary>
         public Validator CreateValidatorForField(Type type, ValidatedFieldReference fieldReference)
         {
             if (fieldReference.Validators.Count == 0)
@@ -200,11 +198,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         }
 
         /// <summary>
-        /// 
+        /// This member supports the Enterprise Library infrastructure and is not intended to be used directly from your code.
         /// </summary>
-        /// <param name="type"></param>
-        /// <param name="methodReference"></param>
-        /// <returns></returns>
         public Validator CreateValidatorForMethod(Type type, ValidatedMethodReference methodReference)
         {
             if (methodReference.Validators.Count == 0)

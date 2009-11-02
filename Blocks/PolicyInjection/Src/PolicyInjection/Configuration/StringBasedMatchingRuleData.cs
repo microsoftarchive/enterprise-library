@@ -11,6 +11,7 @@
 
 using System;
 using System.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
 {
@@ -49,7 +50,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// </summary>
         /// <value>The "match" configuration attribute.</value>
         [ConfigurationProperty(MatchPropertyName, IsRequired = true)]
-        public string Match
+        [ResourceDescription(typeof(DesignResources), "StringBasedMatchingRuleDataMatchDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "StringBasedMatchingRuleDataMatchDisplayName")]
+        public virtual string Match
         {
             get { return (string)base[MatchPropertyName]; }
             set { base[MatchPropertyName] = value; }
@@ -61,6 +64,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// <value>The "ignoreCase" configuration attribute. If false, comparison is
         /// case sensitive. If true, comparison is case insensitive.</value>
         [ConfigurationProperty(IgnoreCasePropertyName, DefaultValue = false, IsRequired = false)]
+        [ResourceDescription(typeof(DesignResources), "StringBasedMatchingRuleDataIgnoreCaseDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "StringBasedMatchingRuleDataIgnoreCaseDisplayName")]
         public bool IgnoreCase
         {
             get { return (bool)base[IgnoreCasePropertyName]; }

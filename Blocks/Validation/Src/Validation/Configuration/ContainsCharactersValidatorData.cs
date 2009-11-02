@@ -12,19 +12,21 @@
 using System;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 {
 	/// <summary>
 	/// Configuration object to describe an instance of class <see cref="ContainsCharactersValidatorData"/>.
 	/// </summary>
+    [ResourceDescription(typeof(DesignResources), "ContainsCharactersValidatorDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "ContainsCharactersValidatorDataDisplayName")]
 	public class ContainsCharactersValidatorData : ValueValidatorData
 	{
 		/// <summary>
 		/// <para>Initializes a new instance of the <see cref="ContainsCharactersValidatorData"/> class.</para>
 		/// </summary>
-		public ContainsCharactersValidatorData()
-		{ }
+        public ContainsCharactersValidatorData() { Type = typeof(ContainsCharactersValidator); }
 
 		/// <summary>
 		/// <para>Initializes a new instance of the <see cref="ContainsCharactersValidatorData"/> class with a name.</para>
@@ -39,7 +41,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 		/// Gets or sets the string containing the characters to use by the represented 
 		/// <see cref="ContainsCharactersValidator"/>.
 		/// </summary>
-		[ConfigurationProperty(CharacterSetPropertyName, IsRequired=true)]
+        [ConfigurationProperty(CharacterSetPropertyName, IsRequired = true)]
+        [ResourceDescription(typeof(DesignResources), "ContainsCharactersValidatorDataCharacterSetDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "ContainsCharactersValidatorDataCharacterSetDisplayName")]
 		public string CharacterSet
 		{
 			get { return (string)this[CharacterSetPropertyName]; }
@@ -52,6 +56,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 		/// the represented <see cref="ContainsCharactersValidator"/>.
 		/// </summary>
 		[ConfigurationProperty(ContainsCharactersPropertyName, DefaultValue=ContainsCharacters.Any, IsRequired=true)]
+        [ResourceDescription(typeof(DesignResources), "ContainsCharactersValidatorDataContainsCharactersDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "ContainsCharactersValidatorDataContainsCharactersDisplayName")]
 		public ContainsCharacters ContainsCharacters
 		{
 			get { return (ContainsCharacters)this[ContainsCharactersPropertyName]; }

@@ -10,13 +10,11 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests.Configuration.Fluent
 {
@@ -199,6 +197,28 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests.Configuration.Flue
         public void Then_ConfigurationHasCacheStorageSetToSharedStore()
         {
             Assert.AreEqual("shared Store", GetCacheManager().CacheStorage);
+        }
+    }
+
+    [TestClass]
+    public class When_SpecifyingNullSharedBackingStore : Given_CachgeManagerInConfigurationSource
+    {
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void Then_ThrowsArgumentException()
+        {
+            ConfigureCacheManager.StoreInSharedBackingStore(null);
+        }
+    }
+
+    [TestClass]
+    public class When_SpecifyingEmptyIsolatedStorageBackingStore : Given_CachgeManagerInConfigurationSource
+    {
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void Then_ThrowsArgumentException()
+        {
+            ConfigureCacheManager.StoreInIsolatedStorage("");
         }
     }
 }

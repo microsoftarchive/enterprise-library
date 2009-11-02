@@ -19,6 +19,7 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using System.ComponentModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 {
@@ -125,6 +126,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// the fully qualified name of the actual <see cref="TraceListenerData"/> type.
         /// </value>
         [ConfigurationProperty(listenerDataTypeProperty, IsRequired = true)]
+        [Browsable(false)]
         public string ListenerDataTypeName
         {
             get { return (string)this[listenerDataTypeProperty]; }
@@ -134,6 +136,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// Gets or sets the <see cref="TraceOptions"/> for the represented <see cref="TraceListener"/>.
         /// </summary>
         [ConfigurationProperty(traceOutputOptionsProperty, IsRequired = false, DefaultValue=TraceOptions.None)]
+        [ResourceDescription(typeof(DesignResources), "TraceListenerDataTraceOutputOptionsDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "TraceListenerDataTraceOutputOptionsDisplayName")]
         public TraceOptions TraceOutputOptions
         {
             get
@@ -150,6 +154,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// Gets or sets the <see cref="Filter"/> for the represented <see cref="TraceListener"/>
         /// </summary>
         [ConfigurationProperty(filterProperty, IsRequired = false, DefaultValue = SourceLevels.All)]
+        [ResourceDescription(typeof(DesignResources), "TraceListenerDataFilterDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "TraceListenerDataFilterDisplayName")]
         public SourceLevels Filter
         {
             get { return (SourceLevels)this[filterProperty]; }
@@ -274,8 +280,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
             return
                 new TypeRegistration<TraceListener>(() =>
                     new ReconfigurableTraceListenerWrapper(
-                        Container.Resolved<TraceListener>(this.WrappedTraceListenerName),
-                        Container.Resolved<ILoggingUpdateCoordinator>())
+                        Common.Configuration.ContainerModel.Container.Resolved<TraceListener>(this.WrappedTraceListenerName),
+                        Common.Configuration.ContainerModel.Container.Resolved<ILoggingUpdateCoordinator>())
                     {
                         Name = this.Name
                     })

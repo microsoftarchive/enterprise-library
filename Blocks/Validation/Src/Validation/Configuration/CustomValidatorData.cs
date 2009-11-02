@@ -15,6 +15,8 @@ using System.Collections.Specialized;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
+using System.ComponentModel;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 {
@@ -24,6 +26,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 	/// <remarks>
 	/// Custom <see cref="Validator"/> classes must implement a constructor with with name and value collection parameters.
 	/// </remarks>
+    [ResourceDescription(typeof(DesignResources), "CustomValidatorDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "CustomValidatorDataDisplayName")]
+    [TypePickingCommand(Title = "Custom Validator (using type picker)")]
 	public class CustomValidatorData : ValidatorData,
 		IHelperAssistedCustomConfigurationData<CustomValidatorData>
 	{
@@ -66,6 +71,22 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 		{
 			helper.HandleSetAttributeValue(key, value);
 		}
+
+
+        /// <summary>
+        /// Overridden in order to apply <see cref="BrowsableAttribute"/>.
+        /// </summary>
+        [Browsable(true)]
+        [Editor(CommonDesignTime.EditorTypes.TypeSelector, CommonDesignTime.EditorTypes.UITypeEditor)]
+        [BaseType(typeof(Validator), typeof(CustomValidatorData))]
+        [ResourceDescription(typeof(DesignResources), "CustomValidatorDataTypeNameDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "CustomValidatorDataTypeNameDisplayName")]
+        public override string TypeName
+        {
+            get { return base.TypeName; }
+            set { base.TypeName = value; }
+        }
+
 
 		/// <summary>
 		/// Gets or sets custom configuration attributes.

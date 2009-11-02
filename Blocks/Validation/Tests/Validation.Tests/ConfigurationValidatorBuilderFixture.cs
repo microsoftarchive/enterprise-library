@@ -32,7 +32,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         {
             mockFactory = new MockMemberAccessValidatorBuilderFactory();
             configurationSource = new DictionaryConfigurationSource();
-            builder = ConfigurationValidatorBuilder.FromConfiguration(configurationSource, mockFactory);
+            builder =
+                ConfigurationValidatorBuilder.FromConfiguration(
+                    configurationSource,
+                    mockFactory,
+                    ValidationFactory.DefaultCompositeValidatorFactory);
         }
 
         [TestMethod]
@@ -582,7 +586,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
 
             // Note: Use a local builder here since the assumption was made about how and when the
             //       the builder uses the configuration source....
-            var localBuilder = ConfigurationValidatorBuilder.FromConfiguration(configurationSource,mockFactory);
+            var localBuilder =
+                ConfigurationValidatorBuilder.FromConfiguration(
+                    configurationSource,
+                    mockFactory,
+                    ValidationFactory.DefaultCompositeValidatorFactory);
             Validator validator = localBuilder.CreateValidator(typeof(TestClass), "ruleset1");
 
             Assert.IsNotNull(validator);
@@ -613,7 +621,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
 
             // Note: Use a local builder here since the assumption was made about how and when the
             //       the builder uses the configuration source....
-            var localBuilder = ConfigurationValidatorBuilder.FromConfiguration(configurationSource, mockFactory);
+            var localBuilder =
+                ConfigurationValidatorBuilder.FromConfiguration(
+                    configurationSource,
+                    mockFactory,
+                    ValidationFactory.DefaultCompositeValidatorFactory);
             Validator validator = localBuilder.CreateValidator(typeof(TestClass), string.Empty);
 
             Assert.IsNotNull(validator);
@@ -643,7 +655,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
 
             // Note: Use a local builder here since the assumption was made about how and when the
             //       the builder uses the configuration source....
-            var localBuilder = ConfigurationValidatorBuilder.FromConfiguration(configurationSource, mockFactory);
+            var localBuilder =
+                ConfigurationValidatorBuilder.FromConfiguration(
+                    configurationSource,
+                    mockFactory,
+                    ValidationFactory.DefaultCompositeValidatorFactory);
             Validator validator = localBuilder.CreateValidator(typeof(TestClass), "ruleset1");
 
             Assert.IsNotNull(validator);
@@ -712,7 +728,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
 
             // Note: Use a local builder here since the assumption was made about how and when the
             //       the builder uses the configuration source....
-            var localBuilder = ConfigurationValidatorBuilder.FromConfiguration(configurationSource, mockFactory);
+            var localBuilder =
+                ConfigurationValidatorBuilder.FromConfiguration(
+                    configurationSource,
+                    mockFactory,
+                    ValidationFactory.DefaultCompositeValidatorFactory);
             Validator validator = localBuilder.CreateValidator(typeof(TestClass), "RuleA");
             Assert.IsNotNull(validator);
             CompositeValidatorBuilder compositeValidatorBuilder = mockFactory.requestedTypes["TestClass"];

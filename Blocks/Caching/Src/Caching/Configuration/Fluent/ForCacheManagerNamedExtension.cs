@@ -10,15 +10,13 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Microsoft.Practices.EnterpriseLibrary.Caching.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Caching;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent;
-using Microsoft.Practices.EnterpriseLibrary.Caching.Configuration.Fluent;
 using Microsoft.Practices.EnterpriseLibrary.Caching.BackingStoreImplementations;
+using Microsoft.Practices.EnterpriseLibrary.Caching.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Caching.Configuration.Fluent;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Properties;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 {
@@ -37,7 +35,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         /// <seealso cref="CacheManagerData"/>
         public static ICachingConfigurationCacheManager ForCacheManagerNamed(this ICachingConfiguration context, string cacheManagerName)
         {
-            if (string.IsNullOrEmpty(cacheManagerName)) 
+            if (string.IsNullOrEmpty(cacheManagerName))
                 throw new ArgumentException(Resources.EmptyParameterName, "cacheManagerName");
 
             return new ForCacheManagerNamedBuilder(context, cacheManagerName);
@@ -47,7 +45,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         {
             CacheManagerData cacheManagerData;
             public ForCacheManagerNamedBuilder(ICachingConfiguration context, string cacheManagerName)
-                :base(context)
+                : base(context)
             {
                 cacheManagerData = new CacheManagerData
                 {
@@ -60,7 +58,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
             public ICachingConfigurationCacheManager UseAsDefaultCache()
             {
                 base.CachingSettings.DefaultCacheManager = cacheManagerData.Name;
-                
+
                 return this;
             }
 
@@ -88,6 +86,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 
             public ICachingConfiguration StoreInSharedBackingStore(string backingStoreName)
             {
+                if (string.IsNullOrEmpty(backingStoreName))
+                    throw new ArgumentException(Resources.EmptyParameterName, "backingStoreName");
+
                 cacheManagerData.CacheStorage = backingStoreName;
 
                 return this;
@@ -120,8 +121,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
             {
                 get { return this; }
             }
-
-            
         }
     }
 }

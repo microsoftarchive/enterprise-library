@@ -17,12 +17,15 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 {
     /// <summary>
     /// Represents the configuration settings that describe a <see cref="FormattedEventLogTraceListener"/>.
     /// </summary>
+    [ResourceDescription(typeof(DesignResources), "FormattedEventLogTraceListenerDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "FormattedEventLogTraceListenerDataDisplayName")]
     public class FormattedEventLogTraceListenerData : TraceListenerData
     {
         private const string sourceProperty = "source";
@@ -99,6 +102,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// Gets or sets the event log source of the <see cref="FormattedEventLogTraceListenerData"/>.
         /// </summary>
         [ConfigurationProperty(sourceProperty, IsRequired = true, DefaultValue = "Enterprise Library Logging")]
+        [ResourceDescription(typeof(DesignResources), "FormattedEventLogTraceListenerDataSourceDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "FormattedEventLogTraceListenerDataSourceDisplayName")]
         public string Source
         {
             get { return (string)base[sourceProperty]; }
@@ -109,7 +114,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// Gets or sets the name of the formatter for the <see cref="FormattedEventLogTraceListenerData"/>.
         /// </summary>
         [ConfigurationProperty(formatterNameProperty, IsRequired = false)]
-        [Reference(typeof(LoggingSettings), typeof(FormatterData))]
+        [Reference(typeof(NameTypeConfigurationElementCollection<FormatterData, CustomFormatterData>), typeof(FormatterData))]
+        [ResourceDescription(typeof(DesignResources), "FormattedEventLogTraceListenerDataFormatterDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "FormattedEventLogTraceListenerDataFormatterDisplayName")]
         public string Formatter
         {
             get { return (string)base[formatterNameProperty]; }
@@ -120,6 +127,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// Gets or sets the name of the log for the <see cref="FormattedEventLogTraceListenerData"/>.
         /// </summary>
         [ConfigurationProperty(logNameProperty, IsRequired = false, DefaultValue = FormattedEventLogTraceListener.DefaultLogName)]
+        [ResourceDescription(typeof(DesignResources), "FormattedEventLogTraceListenerDataLogDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "FormattedEventLogTraceListenerDataLogDisplayName")]
         public string Log
         {
             get { return (string)base[logNameProperty]; }
@@ -130,6 +139,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// Gets or sets the name of the machine for the <see cref="FormattedEventLogTraceListenerData"/>.
         /// </summary>
         [ConfigurationProperty(machineNameProperty, IsRequired = false, DefaultValue = FormattedEventLogTraceListener.DefaultMachineName)]
+        [ResourceDescription(typeof(DesignResources), "FormattedEventLogTraceListenerDataMachineNameDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "FormattedEventLogTraceListenerDataMachineNameDisplayName")]
         public string MachineName
         {
             get { return (string)base[machineNameProperty]; }

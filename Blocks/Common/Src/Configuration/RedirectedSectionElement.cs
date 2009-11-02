@@ -19,8 +19,8 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 {
     /// <summary/>
-    [ResourceDisplayName(typeof(Resources), "RedirectedSectionElementDisplayName")]
-    [ResourceDescription(typeof(Resources), "RedirectedSectionElementDescription")]
+    [ResourceDescription(typeof(DesignResources), "RedirectedSectionElementDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "RedirectedSectionElementDisplayName")]
     public class RedirectedSectionElement : NamedConfigurationElement
     {
         /// <summary/>
@@ -28,9 +28,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 
         /// <summary/>
         [ConfigurationProperty(sourceNameProperty, IsRequired = true)]
-        [ResourceDisplayName(typeof(Resources), "RedirectedSectionElementSourceNameDisplayName")]
-        [ResourceDescription(typeof(Resources), "RedirectedSectionElementSourceNameDescription")]
-        [Reference(typeof(ConfigurationSourceSection), typeof(ConfigurationSourceElement))]
+        [ResourceDescription(typeof(DesignResources), "RedirectedSectionElementSourceNameDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "RedirectedSectionElementSourceNameDisplayName")]
+        [Reference(typeof(NameTypeConfigurationElementCollection<ConfigurationSourceElement, ConfigurationSourceElement>), typeof(ConfigurationSourceElement))]
         public string SourceName
         {
             get { return (string)this[sourceNameProperty]; }

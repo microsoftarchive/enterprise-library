@@ -55,17 +55,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         /// </summary>
         /// <param name="targetType">The <see cref="Type"/>to validate.</param>
         /// <param name="ruleset">The ruleset to use when validating</param>
+        /// <param name="mainValidatorFactory">Factory to use when building nested validators.</param>
         /// <returns>A <see cref="Validator"/></returns>
-        protected internal override Validator InnerCreateValidator(Type targetType, string ruleset)
+        protected internal override Validator InnerCreateValidator(Type targetType, string ruleset, ValidatorFactory mainValidatorFactory)
         {
             ConfigurationValidatorBuilder builder =
-                        new ConfigurationValidatorBuilder(
-                            ValidationSettings.TryGet(ConfigurationSource, InstrumentationProvider),
-                            InstrumentationProvider
-                            );
-            Validator validator = builder.CreateValidator(targetType, ruleset);
+                new ConfigurationValidatorBuilder(
+                    ValidationSettings.TryGet(ConfigurationSource, InstrumentationProvider),
+                    InstrumentationProvider,
+                    MemberAccessValidatorBuilderFactory.Default,
+                    mainValidatorFactory);
 
-            return validator;
+            return builder.CreateValidator(targetType, ruleset);
         }
     }
 }

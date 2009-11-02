@@ -90,7 +90,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             rwValidatorData.UpperBound = "24";
             rwValidatorData.UpperBoundType = RangeBoundaryType.Inclusive;
 
-            Validator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(typeof(int), null, null);
+            Validator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(typeof(int), null, null, null);
 
             Assert.IsNotNull(validator);
             Assert.AreSame(typeof(RangeValidator), validator.GetType());
@@ -113,7 +113,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             rwValidatorData.UpperBound = "24";
             rwValidatorData.UpperBoundType = RangeBoundaryType.Inclusive;
 
-            Validator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(typeof(string), null, null);
+            Validator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(typeof(string), null, null, null);
 
             Assert.IsNotNull(validator);
             Assert.AreSame(typeof(RangeValidator), validator.GetType());

@@ -13,6 +13,7 @@ using Microsoft.Practices.EnterpriseLibrary.Caching.BackingStoreImplementations;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Cryptography.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography;
+using System.ComponentModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.Cryptography
 {
@@ -20,7 +21,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Cryptography
     /// Implementation of Symmetric Storage Encryption used by the Caching Application Block
 	/// </summary>
 	[ConfigurationElementType(typeof(SymmetricStorageEncryptionProviderData))]
-	public class SymmetricStorageEncryptionProvider : IStorageEncryptionProvider
+    public class SymmetricStorageEncryptionProvider : IStorageEncryptionProvider
 	{
 		private ISymmetricCryptoProvider symmetricCrytoProvider;
 

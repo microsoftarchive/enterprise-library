@@ -16,12 +16,15 @@ using System.Text;
 using System.Configuration;
 using System.ComponentModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 {
     /// <summary>
     /// Contains settings specific to the registration of a <see cref="TypeRegistrationsProvider"/>.
     /// </summary>
+    [ResourceDescription(typeof(DesignResources), "TypeRegistrationProviderElementDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "TypeRegistrationProviderElementDisplayName")]
     public class TypeRegistrationProviderElement : NamedConfigurationElement
     {
         private const string sectionNameProperty = "sectionName";
@@ -31,6 +34,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         /// The section name used to retrieve the <see cref="ITypeRegistrationsProvider"/> if available.
         /// </summary>
         [ConfigurationProperty(sectionNameProperty)]
+        [ResourceDescription(typeof(DesignResources), "TypeRegistrationProviderElementSectionNameDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "TypeRegistrationProviderElementSectionNameDisplayName")]
         public string SectionName
         {
             get
@@ -47,6 +52,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         /// The name of the type that implements <see cref="ITypeRegistrationsProvider"/>. 
         /// </summary>
         [ConfigurationProperty(providerTypeNameProperty)]
+        [ResourceDescription(typeof(DesignResources), "TypeRegistrationProviderElementProviderTypeNameDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "TypeRegistrationProviderElementProviderTypeNameDisplayName")]
         public string ProviderTypeName
         {
             get

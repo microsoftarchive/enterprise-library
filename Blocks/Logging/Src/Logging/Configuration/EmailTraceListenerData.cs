@@ -17,12 +17,15 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 {
     /// <summary>
     /// Represents the configuration settings that describe a <see cref="EmailTraceListener"/>.
     /// </summary>
+    [ResourceDescription(typeof(DesignResources), "EmailTraceListenerDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "EmailTraceListenerDataDisplayName")]
     public class EmailTraceListenerData : TraceListenerData
     {
         private const string toAddressProperty = "toAddress";
@@ -152,6 +155,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// Gets and sets the ToAddress.  One or more email semicolon separated addresses.
         /// </summary>
         [ConfigurationProperty(toAddressProperty, IsRequired = true)]
+        [ResourceDescription(typeof(DesignResources), "EmailTraceListenerDataToAddressDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "EmailTraceListenerDataToAddressDisplayName")]
         public string ToAddress
         {
             get { return (string)base[toAddressProperty]; }
@@ -162,6 +167,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// Gets and sets the FromAddress. Email address that messages will be sent from.
         /// </summary>
         [ConfigurationProperty(fromAddressProperty, IsRequired = true)]
+        [ResourceDescription(typeof(DesignResources), "EmailTraceListenerDataFromAddressDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "EmailTraceListenerDataFromAddressDisplayName")]
         public string FromAddress
         {
             get { return (string)base[fromAddressProperty]; }
@@ -172,6 +179,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// Gets and sets the Subject prefix.
         /// </summary>
         [ConfigurationProperty(subjectLineStarterProperty)]
+        [ResourceDescription(typeof(DesignResources), "EmailTraceListenerDataSubjectLineStarterDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "EmailTraceListenerDataSubjectLineStarterDisplayName")]
         public string SubjectLineStarter
         {
             get { return (string)base[subjectLineStarterProperty]; }
@@ -182,6 +191,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// Gets and sets the Subject suffix.
         /// </summary>
         [ConfigurationProperty(subjectLineEnderProperty)]
+        [ResourceDescription(typeof(DesignResources), "EmailTraceListenerDataSubjectLineEnderDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "EmailTraceListenerDataSubjectLineEnderDisplayName")]
         public string SubjectLineEnder
         {
             get { return (string)base[subjectLineEnderProperty]; }
@@ -192,6 +203,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// Gets and sets the SMTP server to use to send messages.
         /// </summary>
         [ConfigurationProperty(smtpServerProperty, DefaultValue="127.0.0.1")]
+        [ResourceDescription(typeof(DesignResources), "EmailTraceListenerDataSmtpServerDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "EmailTraceListenerDataSmtpServerDisplayName")]
         public string SmtpServer
         {
             get { return (string)base[smtpServerProperty]; }
@@ -202,6 +215,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// Gets and sets the SMTP port.
         /// </summary>
         [ConfigurationProperty(smtpPortProperty, DefaultValue=25)]
+        [ResourceDescription(typeof(DesignResources), "EmailTraceListenerDataSmtpPortDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "EmailTraceListenerDataSmtpPortDisplayName")]
         public int SmtpPort
         {
             get { return (int)base[smtpPortProperty]; }
@@ -212,7 +227,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// Gets and sets the formatter name.
         /// </summary>
         [ConfigurationProperty(formatterNameProperty, IsRequired = false)]
-        [Reference(typeof(LoggingSettings), typeof(FormatterData))]
+        [Reference(typeof(NameTypeConfigurationElementCollection<FormatterData, CustomFormatterData>), typeof(FormatterData))]
+        [ResourceDescription(typeof(DesignResources), "EmailTraceListenerDataFormatterDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "EmailTraceListenerDataFormatterDisplayName")]
         public string Formatter
         {
             get { return (string)base[formatterNameProperty]; }

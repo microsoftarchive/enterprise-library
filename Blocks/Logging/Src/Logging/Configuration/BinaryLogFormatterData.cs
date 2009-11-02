@@ -12,19 +12,21 @@
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 using System.Collections.Generic;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 {
     /// <summary>
     /// Represents the configuration settings that describe a <see cref="BinaryLogFormatter"/>.
     /// </summary>
+    [ResourceDescription(typeof(DesignResources), "BinaryLogFormatterDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "BinaryLogFormatterDataDisplayName")]
     public class BinaryLogFormatterData : FormatterData
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="BinaryLogFormatterData"/> class with default values.
         /// </summary>
-        public BinaryLogFormatterData()
-        { }
+        public BinaryLogFormatterData() { Type = typeof(BinaryLogFormatter); }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BinaryLogFormatterData"/> class with a name.

@@ -286,4 +286,25 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
         }
     }
 
+    [TestClass]
+    public class WhenMapperIsBuiltForTypeWithCollection : ArrangeActAssert
+    {
+        private ReflectionRowMapper<Order> mapper;
+
+        public class Order
+        {
+            public int OrderId { get; set; }
+            public List<int> OrderLines { get; set; }
+        }
+
+        [TestMethod]
+        public void ThenBuildAllPropertiesIgnoresCollectionProperties()
+        {
+            mapper = (ReflectionRowMapper<Order>)MapBuilder<Order>.BuildAllProperties();
+            Assert.AreEqual(1, mapper.GetPropertyMappings().Count());
+            Assert.AreEqual("OrderId", mapper.GetPropertyMappings().First().Property.Name);
+        }
+
+    }
+
 }

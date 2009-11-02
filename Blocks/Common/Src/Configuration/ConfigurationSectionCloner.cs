@@ -46,11 +46,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 
         private static ConfigurationElement CloneElement(ConfigurationElement sourceElement, ConfigurationElement targetElement)
         {
+            if (sourceElement is ICustomProviderData)
+            {
+                var targetAttributes = ((ICustomProviderData)targetElement).Attributes;
+                var sourceAttributes = ((ICustomProviderData)sourceElement).Attributes;
+                foreach (string key in sourceAttributes)
+                {
+                    targetAttributes.Add(key, sourceAttributes[key]);
+                }
+            }
+
             foreach (PropertyInformation property in sourceElement.ElementInformation.Properties)
             {
                 if (property.ValueOrigin == PropertyValueOrigin.Default) continue;
                 if (property.Value == null) continue;
-
 
                 PropertyInformation targetProperty = targetElement.ElementInformation.Properties[property.Name];
 
@@ -82,8 +91,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         private static ConfigurationElementCollection CloneCollection(ConfigurationElementCollection sourceCollection, ConfigurationElementCollection targetCollection)
         {
             targetCollection = (ConfigurationElementCollection)CloneElement(sourceCollection, targetCollection);
-            targetCollection.EmitClear = sourceCollection.EmitClear;
-
+            
             IMergeableConfigurationElementCollection mergeableSource = MergeableConfigurationCollectionFactory.GetCreateMergeableCollection(sourceCollection);
             IMergeableConfigurationElementCollection mergeableTarget = MergeableConfigurationCollectionFactory.GetCreateMergeableCollection(targetCollection);
 
@@ -102,22 +110,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 
             mergeableTarget.ResetCollection(targetCollectionContents);
 
+            targetCollection.EmitClear = sourceCollection.EmitClear;
             return targetCollection;
         }
 
         private static ConfigurationElement CreateCopyOfCollectionElement(IMergeableConfigurationElementCollection mergeableSource, ConfigurationElement sourceElement)
         {
             ConfigurationElement targetElement;
+            Type sourceType = sourceElement.GetType();
 
-
-            if (sourceElement.GetType().GetConstructor(new Type[0]) != null)
-            {
-                targetElement = (ConfigurationElement)Activator.CreateInstance(sourceElement.GetType());
-            }
-            else
-            {
-                targetElement = mergeableSource.CreateNewElement();
-            }
+            targetElement = mergeableSource.CreateNewElement(sourceType);
+            
             return targetElement;
         }
     }

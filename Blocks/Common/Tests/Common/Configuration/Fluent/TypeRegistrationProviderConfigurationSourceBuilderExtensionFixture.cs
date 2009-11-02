@@ -12,11 +12,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
 {
@@ -46,6 +45,35 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
             TypeRegistrationProvidersConfigurationSection section = (TypeRegistrationProvidersConfigurationSection)source.GetSection(TypeRegistrationProvidersConfigurationSection.SectionName);
 
             Assert.AreEqual(9, section.TypeRegistrationProviders.Count);
+        }
+    }
+
+    [TestClass]
+    public class When_ConfiguringEmptyTypeRegistrationsForConfigurationSourceBuilder : Given_EmptyConfigurationSourceBuilder
+    {
+        protected override void Act()
+        {
+            base.ConfigurationSourceBuilder.ConfigureEmptyTypeRegistrations();
+        }
+
+        [TestMethod]
+        public void Then_ConfigurationSourceContainsTypeRegistrationProviderSettings()
+        {
+            IConfigurationSource source = new DictionaryConfigurationSource();
+            base.ConfigurationSourceBuilder.UpdateConfigurationWithReplace(source);
+
+            Assert.IsNotNull(source.GetSection(TypeRegistrationProvidersConfigurationSection.SectionName));
+        }
+
+        [TestMethod]
+        public void Then_ThereAreNoTypeRegistrations()
+        {
+            IConfigurationSource source = new DictionaryConfigurationSource();
+            base.ConfigurationSourceBuilder.UpdateConfigurationWithReplace(source);
+
+            TypeRegistrationProvidersConfigurationSection section = (TypeRegistrationProvidersConfigurationSection)source.GetSection(TypeRegistrationProvidersConfigurationSection.SectionName);
+
+            Assert.AreEqual(0, section.TypeRegistrationProviders.Count);
         }
     }
 

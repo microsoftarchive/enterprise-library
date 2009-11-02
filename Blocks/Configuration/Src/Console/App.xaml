@@ -1,0 +1,16 @@
+﻿<Application x:Class="Console.Wpf.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    StartupUri="Shell.xaml">
+    <Application.Resources>
+         
+    	<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Microsoft.Practices.EnterpriseLibrary.Configuration.Design;component/Resources/CollectionEditorTemplates.xaml" />
+				<ResourceDictionary Source="/Microsoft.Practices.EnterpriseLibrary.Configuration.Design;component/Resources/ExpanderDictionary.xaml" />
+				<ResourceDictionary Source="/Microsoft.Practices.EnterpriseLibrary.Configuration.Design;component/Resources/ViewModelDataTemplates.xaml" />
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
+         
+    </Application.Resources>
+</Application>

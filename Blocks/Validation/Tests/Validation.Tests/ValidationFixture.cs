@@ -118,6 +118,30 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         }
 
         [TestMethod]
+        public void CanValidateObjectWithDefaultRulesetFromAttributesAndConfigurationForTheActualType()
+        {
+            ValidationResults validationResults =
+                Validation.Validate<TestObjectWithFailingAttributesOnProperties>(
+                    new DerivedTestObjectWithFailingAttributesOnProperties());
+
+            Assert.IsFalse(validationResults.IsValid);
+            IDictionary<string, ValidationResult> resultsMapping = ValidationTestHelper.GetResultsMapping(validationResults);
+            Assert.AreEqual(3, resultsMapping.Count);
+            Assert.IsTrue(resultsMapping.ContainsKey("message1"));
+            Assert.IsTrue(resultsMapping.ContainsKey("message2"));
+            Assert.IsTrue(resultsMapping.ContainsKey("message-derived"));
+        }
+
+        [TestMethod]
+        public void CanValidateNullReferenceDefaultRulesetFromAttributesAndConfiguration()
+        {
+            ValidationResults validationResults
+                = Validation.Validate<TestObjectWithFailingAttributesOnProperties>(null);
+
+            Assert.IsFalse(validationResults.IsValid);
+        }
+
+        [TestMethod]
         public void CanValidateObjectWithRulesetFromAttributesAndConfiguration()
         {
             ValidationResults validationResults
@@ -149,6 +173,36 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         }
 
         [TestMethod]
+        public void CanValidateObjectFromAttributesAndConfigurationWithMultipleRulesetsForTheActualType()
+        {
+            ValidationResults validationResults =
+                Validation.Validate<TestObjectWithFailingAttributesOnProperties>(
+                    new DerivedTestObjectWithFailingAttributesOnProperties(),
+                    "RuleA",
+                    "RuleB");
+
+            Assert.IsFalse(validationResults.IsValid);
+            IDictionary<string, ValidationResult> resultsMapping = ValidationTestHelper.GetResultsMapping(validationResults);
+            Assert.AreEqual(3, resultsMapping.Count);
+            Assert.IsTrue(resultsMapping.ContainsKey("message1-RuleA"));
+            Assert.IsTrue(resultsMapping.ContainsKey("message1-RuleB"));
+            Assert.IsTrue(resultsMapping.ContainsKey("message-derived-RuleA"));
+        }
+
+        [TestMethod]
+        public void CanValidateNullReferenceFromAttributesAndConfigurationWithMultipleRulesets()
+        {
+            ValidationResults validationResults =
+                Validation.Validate<TestObjectWithFailingAttributesOnProperties>(
+                    null,
+                    "RuleA",
+                    "RuleB");
+
+            Assert.IsFalse(validationResults.IsValid);
+            // TODO improve test when fixing #3419
+        }
+
+        [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
         public void ValidationRequestForNullRuleThrows()
         {
@@ -169,9 +223,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
             Validation.ValidateFromAttributes("", null);
         }
 
-
         [TestMethod]
-        public void CanBuildValidationInstnceFactoryFromGivenConfiguration()
+        public void CanBuildValidationInstanceFactoryFromGivenConfiguration()
         {
             DictionaryConfigurationSource configurationSource = new DictionaryConfigurationSource();
             ValidationSettings settings = new ValidationSettings();
@@ -188,7 +241,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
             validator11.MessageTemplate = "message-from-config1-RuleA";
 
             CompositeValidatorFactory factory
-                =EnterpriseLibraryContainer.CreateDefaultContainer(configurationSource)
+                = EnterpriseLibraryContainer.CreateDefaultContainer(configurationSource)
                         .GetInstance<CompositeValidatorFactory>();
 
             var validator = factory.CreateValidator<BaseTestDomainObject>("RuleA");
@@ -196,6 +249,38 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
             Assert.IsNotNull(factory);
             Assert.IsFalse(results.IsValid);
             Assert.AreEqual(validator11.MessageTemplate, results.ElementAt(0).Message);
+        }
+
+        [TestMethod]
+        public void CanValidateObjectWithValidationAttributes()
+        {
+            ValidationResults validationResults =
+                Validation.Validate(
+                    new TestObjectWithMultipleSourceValidationAttributesOnProperties
+                    {
+                        PropertyWithDataAnnotationsAttributes = "invalid",
+                        PropertyWithMixedAttributes = "invalid"
+                    },
+                    ValidationSpecificationSource.DataAnnotations);
+
+            Assert.IsFalse(validationResults.IsValid);
+            Assert.AreEqual(2, validationResults.Count);
+            Assert.IsTrue(
+                validationResults.Any(vr =>
+                    vr.Message == "data annotations-only" && vr.Key == "PropertyWithDataAnnotationsAttributes"));
+            Assert.IsTrue(
+                validationResults.Any(vr =>
+                    vr.Message == "data annotations-mixed" && vr.Key == "PropertyWithMixedAttributes"));
+        }
+
+        public class DerivedTestObjectWithFailingAttributesOnProperties : TestObjectWithFailingAttributesOnProperties
+        {
+            [MockValidator(true, MessageTemplate = "message-derived")]
+            [MockValidator(true, MessageTemplate = "message-derived-RuleA", Ruleset = "RuleA")]
+            public string DerivedFailingProperty
+            {
+                get { return "failing2"; }
+            }
         }
     }
 }

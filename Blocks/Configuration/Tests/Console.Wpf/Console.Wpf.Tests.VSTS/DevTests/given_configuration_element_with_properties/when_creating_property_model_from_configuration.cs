@@ -19,16 +19,20 @@ using System.ComponentModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Console.Wpf.ViewModel;
 using System.ComponentModel.Design;
+using Console.Wpf.Tests.VSTS.DevTests.Contexts;
+using Microsoft.Practices.Unity;
+
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_configuration_element_with_properties
 {
-    public abstract class given_configuration_element_with_properties : ArrangeActAssert
+    public abstract class given_configuration_element_with_properties : ContainerContext
     {
-        protected ServiceContainer ServiceProvider = new ServiceContainer();
         protected ConfigurationElementWithSimpleProperties SectionWithSimpleProperties = new ConfigurationElementWithSimpleProperties();
 
         protected override void Arrange()
         {
+            base.Arrange();
+
             SectionWithSimpleProperties = new ConfigurationElementWithSimpleProperties();
         }
 
@@ -115,7 +119,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_configuration_element_with_prope
 
         protected override void Act()
         {
-            var sectionModel = SectionViewModel.CreateSection(ServiceProvider, SectionWithSimpleProperties);
+            var sectionModel = SectionViewModel.CreateSection(Container, "mock section", SectionWithSimpleProperties);
             properties = sectionModel.Properties;
         }
 
@@ -123,7 +127,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_configuration_element_with_prope
         [TestMethod]
         public void can_create_property_wihtout_pd()
         {
-            var property = new Property(ServiceProvider, null, null);
+            var property = new Property(Container.Resolve<IServiceProvider>(), null, null);
             Assert.IsNotNull(property);
         }
 
@@ -223,7 +227,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_configuration_element_with_prope
 
         protected override void Act()
         {
-            var sectionModel = SectionViewModel.CreateSection(ServiceProvider, SectionWithSimpleProperties);
+            var sectionModel = SectionViewModel.CreateSection(Container, "mock section", SectionWithSimpleProperties);
 
             configurationElement = (ConfigurationElementWithSimpleProperties)sectionModel.ConfigurationElement;
             properties = sectionModel.Properties;
@@ -262,7 +266,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_configuration_element_with_prope
 
         protected override void Act()
         {
-            var sectionModel = SectionViewModel.CreateSection(ServiceProvider, SectionWithSimpleProperties);
+            var sectionModel = SectionViewModel.CreateSection(Container, "mock section", SectionWithSimpleProperties);
 
             configurationElement = (ConfigurationElementWithSimpleProperties)sectionModel.ConfigurationElement;
             properties = sectionModel.Properties.OfType<ElementProperty>();
@@ -277,7 +281,6 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_configuration_element_with_prope
         }
     }
 
-
     [TestClass]
     public class when_disovering_property_with_designtime_readonly : given_configuration_element_with_properties
     {
@@ -286,7 +289,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_configuration_element_with_prope
 
         protected override void Act()
         {
-            var sectionModel = SectionViewModel.CreateSection(ServiceProvider, SectionWithSimpleProperties);
+            var sectionModel = SectionViewModel.CreateSection(Container, "mock section", SectionWithSimpleProperties);
 
             configurationElement = (ConfigurationElementWithSimpleProperties)sectionModel.ConfigurationElement;
             properties = sectionModel.Properties.OfType<ElementProperty>();
@@ -313,53 +316,5 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_configuration_element_with_prope
             Assert.AreEqual(property.ReadOnly, property.DesignTimeReadOnly);
         }
     }
-    //[TestClass]
-    //public class when_disovering_property_with_validation_attribute : given_configuration_element_with_properties
-    //{
-    //    IEnumerable<ConfigElementPropertyModel> properties;
-    //    ConfigurationElementWithSimpleProperties simpleElement;
 
-    //    protected override void Act()
-    //    {
-    //        simpleElement = new ConfigurationElementWithSimpleProperties();
-    //        properties = DiscoverPropertyModel(simpleElement);
-    //    }
-
-    //    [TestMethod]
-    //    public void then_property_model_contains_configuration_validation_rule()
-    //    {
-    //        var validatedProperty = properties.Where(x => x.PropertyName == "PropertyWithConfigurationValidator").First();
-    //        Assert.AreEqual(1, validatedProperty.ValidationRules.Count());
-    //        Assert.IsInstanceOfType(validatedProperty.ValidationRules.First(), typeof(ConfigurationValidatorRule));
-    //        Assert.IsInstanceOfType(validatedProperty.ValidationRules.OfType<ConfigurationValidatorRule>().First().ConfigurationValidator, typeof(StringValidator));
-    //    }
-    //}
-
-    //[TestClass]
-    //public class when_changing_monitored_property_values : given_configuration_element_with_properties
-    //{
-    //    private string lastPropertyChanged;
-    //    private ConfigElementModel elementModel;
-
-
-    //    protected override void Arrange()
-    //    {
-    //        base.Arrange();
-    //        var simpleElement = new ConfigurationElementWithSimpleProperties();
-    //        elementModel = ElementFactory.Create(null, null, simpleElement);
-    //        elementModel.PropertyChanged += (s, e) => { lastPropertyChanged = e.PropertyName;  };
-    //        lastPropertyChanged = String.Empty;
-    //    }
-
-    //    protected override void Act()
-    //    {
-    //        elementModel.Properties.First(p => p.PropertyName == "Name").Value = "SomeNewValue";
-    //    }
-
-    //    [TestMethod]
-    //    public void then_property_change_notification_is_raised_for_name_change()
-    //    {
-    //        Assert.AreEqual("Name", lastPropertyChanged);
-    //    }
-    //}
 }

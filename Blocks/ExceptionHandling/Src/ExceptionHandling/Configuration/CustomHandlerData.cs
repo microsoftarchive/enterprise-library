@@ -18,15 +18,15 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Properties;
 using System.ComponentModel;
-using System.Drawing.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
 {
     /// <summary>
     /// Configuration object for Custom Providers.
     /// </summary>
-    [ResourceDisplayName(typeof(Resources), "AddCustomHandlerData")]
-    [ResourceDescription(typeof(Resources), "AddCustomHandlerDataDescription")]
+    [ResourceDescription(typeof(DesignResources), "CustomHandlerDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "CustomHandlerDataDisplayName")]
+    [TypePickingCommand(Title = "Custom Handler (using type picker)")]
     public class CustomHandlerData
         : ExceptionHandlerData, IHelperAssistedCustomConfigurationData<CustomHandlerData>
     {
@@ -66,10 +66,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
 		/// <value>
 		/// the fully qualified name of the <see cref="Type"/> the element is the configuration for.
 		/// </value>
-        [Editor("Console.Wpf.ComponentModel.Editors.TypeSelectorEditor, Console.Wpf", typeof(UITypeEditor))]
+        [Editor(CommonDesignTime.EditorTypes.TypeSelector, CommonDesignTime.EditorTypes.UITypeEditor)]
         [BaseType(typeof(IExceptionHandler), typeof(CustomHandlerData))]
-        [ResourceDescription(typeof(Resources), "ExceptionHandlerTypeDescription")]
-        [ResourceDisplayName(typeof(Resources), "ExceptionHandlerTypeDisplayName")]
+        [ResourceDescription(typeof(DesignResources), "CustomHandlerDataTypeNameDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "CustomHandlerDataTypeNameDisplayName")]
         [Browsable(true)]
         public override string TypeName
         {
@@ -86,8 +86,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
         /// <summary>
         /// Gets the custom configuration attributes.
         /// </summary>        		
-        [ResourceDescription(typeof(Resources), "AttributesDescription")]
-        [ResourceDisplayName(typeof(Resources), "AttributesDisplayName")]
         public NameValueCollection Attributes
         {
             get { return helper.Attributes; }

@@ -17,7 +17,7 @@ using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 namespace Microsoft.Practices.EnterpriseLibrary.Validation
 {
     /// <summary>
-    /// 
+    /// Describes how validation must be performed on a parameter as defined by attributes.
     /// </summary>
     public class MetadataValidatedParameterElement : IValidatedElement
     {
@@ -26,9 +26,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         private ValidatorCompositionAttribute validatorCompositionAttribute;
 
         /// <summary>
-        /// 
+        /// Gets the validator descriptors for the validated element.
         /// </summary>
-        /// <returns></returns>
         public IEnumerable<IValidatorDescriptor> GetValidatorDescriptors()
         {
             if (parameterInfo != null)
@@ -41,7 +40,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         }
 
         /// <summary>
-        /// 
+        /// Gets the value indicating how the validators for the validated element.
         /// </summary>
         public CompositionType CompositionType
         {
@@ -54,7 +53,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         }
 
         /// <summary>
-        /// 
+        /// Gets the message to use for the validator composing the validators for element.
         /// </summary>
         public string CompositionMessageTemplate
         {
@@ -67,7 +66,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         }
 
         /// <summary>
-        /// 
+        /// Gets the tag to use for the validator composing the validators for the element.
         /// </summary>
         public string CompositionTag
         {
@@ -80,7 +79,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         }
 
         /// <summary>
-        /// 
+        /// Gets the flag indicating whether null values should be ignored.
         /// </summary>
         public bool IgnoreNulls
         {
@@ -91,7 +90,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         }
 
         /// <summary>
-        /// 
+        /// Gets the message for null failures.
         /// </summary>
         public string IgnoreNullsMessageTemplate
         {
@@ -104,7 +103,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         }
 
         /// <summary>
-        /// 
+        /// Gets the tag for null failures.
         /// </summary>
         public string IgnoreNullsTag
         {
@@ -117,7 +116,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         }
 
         /// <summary>
-        /// 
+        /// Gets the validated member.
         /// </summary>
         public MemberInfo MemberInfo
         {
@@ -125,7 +124,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         }
 
         /// <summary>
-        /// 
+        /// Gets the type of the validated member.
         /// </summary>
         public Type TargetType
         {
@@ -133,9 +132,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         }
 
         /// <summary>
-        /// 
+        /// Updates the flyweight for a parameter.
         /// </summary>
-        /// <param name="parameterInfo"></param>
+        /// <param name="parameterInfo">The parameter.</param>
         public void UpdateFlyweight(ParameterInfo parameterInfo)
         {
             this.parameterInfo = parameterInfo;

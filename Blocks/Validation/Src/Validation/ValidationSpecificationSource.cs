@@ -10,6 +10,7 @@
 //===============================================================================
 
 using System;
+using System.ComponentModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation
@@ -34,16 +35,25 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         /// <summary>
         /// Validation information is to be retrieved from both attributes and configuration.
         /// </summary>
+        [EditorBrowsable(EditorBrowsableState.Advanced)]
         Both = 3,
 
         /// <summary>
-        /// 
+        /// Validation information is to be retrieved from Data Annotations Validation Attributes.
         /// </summary>
         DataAnnotations = 4,
 
         /// <summary>
-        /// 
+        /// Validation information is to be retrieved from all possible sources.
         /// </summary>
         All = 7
+    }
+
+    internal static class ValidationSpecificationSourceExtension
+    {
+        public static bool IsSet(this ValidationSpecificationSource source, ValidationSpecificationSource value)
+        {
+            return value == (source & value);
+        }
     }
 }

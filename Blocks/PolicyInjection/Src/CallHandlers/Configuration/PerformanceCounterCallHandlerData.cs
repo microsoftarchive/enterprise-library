@@ -16,12 +16,15 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Configuration
 {
     /// <summary>
     /// A configuration element that stores information for the <see cref="PerformanceCounterCallHandler"/>.
     /// </summary>
+    [ResourceDescription(typeof(DesignResources), "PerformanceCounterCallHandlerDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "PerformanceCounterCallHandlerDataDisplayName")]
     public class PerformanceCounterCallHandlerData : CallHandlerData
     {
         private const string CategoryNamePropertyName = "categoryName";
@@ -39,6 +42,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
         public PerformanceCounterCallHandlerData()
             : base()
         {
+            Type = typeof(PerformanceCounterCallHandler);
         }
 
         /// <summary>
@@ -66,6 +70,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
         /// </summary>
         /// <value>The "categoryName" config attribute.</value>
         [ConfigurationProperty(CategoryNamePropertyName, IsRequired = true)]
+        [ResourceDescription(typeof(DesignResources), "PerformanceCounterCallHandlerDataCategoryNameDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "PerformanceCounterCallHandlerDataCategoryNameDisplayName")]
         public string CategoryName
         {
             get { return (string)base[CategoryNamePropertyName]; }
@@ -79,6 +85,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
         /// for the list of tokens.</remarks>
         /// <value>The "instanceName" config attribute.</value>
         [ConfigurationProperty(InstanceNamePropertyName, IsRequired = true)]
+        [ResourceDescription(typeof(DesignResources), "PerformanceCounterCallHandlerDataInstanceNameDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "PerformanceCounterCallHandlerDataInstanceNameDisplayName")]
         public string InstanceName
         {
             get { return (string)base[InstanceNamePropertyName]; }
@@ -92,6 +100,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
         [ConfigurationProperty(UseTotalCounterPropertyName,
             IsRequired = false,
             DefaultValue = PerformanceCounterCallHandlerDefaults.UseTotalCounter)]
+        [ResourceDescription(typeof(DesignResources), "PerformanceCounterCallHandlerDataUseTotalCounterDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "PerformanceCounterCallHandlerDataUseTotalCounterDisplayName")]
         public bool UseTotalCounter
         {
             get { return (bool)base[UseTotalCounterPropertyName]; }
@@ -105,6 +115,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
         [ConfigurationProperty(IncrementNumberOfCallsPropertyName,
             IsRequired = false,
             DefaultValue = PerformanceCounterCallHandlerDefaults.IncrementNumberOfCalls)]
+        [ResourceDescription(typeof(DesignResources), "PerformanceCounterCallHandlerDataIncrementNumberOfCallsDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "PerformanceCounterCallHandlerDataIncrementNumberOfCallsDisplayName")]
         public bool IncrementNumberOfCalls
         {
             get { return (bool)base[IncrementNumberOfCallsPropertyName]; }
@@ -118,6 +130,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
         [ConfigurationProperty(IncrementCallsPerSecondPropertyName,
             IsRequired = false,
             DefaultValue = PerformanceCounterCallHandlerDefaults.IncrementCallsPerSecond)]
+        [ResourceDescription(typeof(DesignResources), "PerformanceCounterCallHandlerDataIncrementCallsPerSecondDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "PerformanceCounterCallHandlerDataIncrementCallsPerSecondDisplayName")]
         public bool IncrementCallsPerSecond
         {
             get { return (bool)base[IncrementCallsPerSecondPropertyName]; }
@@ -131,6 +145,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
         [ConfigurationProperty(IncrementAverageCallDurationPropertyName,
             IsRequired = false,
             DefaultValue = PerformanceCounterCallHandlerDefaults.IncrementAverageCallDuration)]
+        [ResourceDescription(typeof(DesignResources), "PerformanceCounterCallHandlerDataIncrementAverageCallDurationDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "PerformanceCounterCallHandlerDataIncrementAverageCallDurationDisplayName")]
         public bool IncrementAverageCallDuration
         {
             get { return (bool)base[IncrementAverageCallDurationPropertyName]; }
@@ -144,6 +160,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
         [ConfigurationProperty(IncrementTotalExceptionsPropertyName,
             IsRequired = false,
             DefaultValue = PerformanceCounterCallHandlerDefaults.IncrementTotalExceptions)]
+        [ResourceDescription(typeof(DesignResources), "PerformanceCounterCallHandlerDataIncrementTotalExceptionsDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "PerformanceCounterCallHandlerDataIncrementTotalExceptionsDisplayName")]
         public bool IncrementTotalExceptions
         {
             get { return (bool)base[IncrementTotalExceptionsPropertyName]; }
@@ -157,6 +175,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
         [ConfigurationProperty(IncrementExceptionsPerSecondPropertyName,
             IsRequired = false,
             DefaultValue = PerformanceCounterCallHandlerDefaults.IncrementExceptionsPerSecond)]
+        [ResourceDescription(typeof(DesignResources), "PerformanceCounterCallHandlerDataIncrementExceptionsPerSecondDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "PerformanceCounterCallHandlerDataIncrementExceptionsPerSecondDisplayName")]
         public bool IncrementExceptionsPerSecond
         {
             get { return (bool)base[IncrementExceptionsPerSecondPropertyName]; }

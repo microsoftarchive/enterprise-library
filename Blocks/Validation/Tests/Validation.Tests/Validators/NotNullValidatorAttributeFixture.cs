@@ -9,6 +9,7 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using System.ComponentModel.DataAnnotations;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -23,7 +24,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
         {
             ValidatorAttribute validatorAttribute = new NotNullValidatorAttribute();
 
-            Validator validator = ((IValidatorDescriptor)validatorAttribute).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)validatorAttribute).CreateValidator(null, null, null, null);
 
             Assert.IsNotNull(validator);
             Assert.AreSame(typeof(NotNullValidator), validator.GetType());
@@ -37,7 +38,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             ValueValidatorAttribute validatorAttribute = new NotNullValidatorAttribute();
             validatorAttribute.Negated = true;
 
-            Validator validator = ((IValidatorDescriptor)validatorAttribute).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)validatorAttribute).CreateValidator(null, null, null, null);
 
             Assert.IsNotNull(validator);
             Assert.AreSame(typeof(NotNullValidator), validator.GetType());
@@ -53,7 +54,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             ValueValidatorAttribute validatorAttribute = new NotNullValidatorAttribute();
             validatorAttribute.MessageTemplate = messageTemplateOverride;
 
-            Validator validator = ((IValidatorDescriptor)validatorAttribute).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)validatorAttribute).CreateValidator(null, null, null, null);
 
             Assert.IsNotNull(validator);
             Assert.AreSame(typeof(NotNullValidator), validator.GetType());
@@ -70,12 +71,50 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             validatorAttribute.Negated = true;
             validatorAttribute.MessageTemplate = messageTemplateOverride;
 
-            Validator validator = ((IValidatorDescriptor)validatorAttribute).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)validatorAttribute).CreateValidator(null, null, null, null);
 
             Assert.IsNotNull(validator);
             Assert.AreSame(typeof(NotNullValidator), validator.GetType());
             Assert.AreEqual(messageTemplateOverride, validator.MessageTemplate);
             Assert.AreEqual(true, ((NotNullValidator)validator).Negated);
+        }
+
+        [TestMethod]
+        public void CanUseAttributeAsValidationAttributeForValidValue()
+        {
+            ValidationAttribute attribute =
+                new NotNullValidatorAttribute()
+                {
+                    MessageTemplate = "template {1}"
+                };
+
+            Assert.IsTrue(attribute.IsValid(new object()));
+        }
+
+        [TestMethod]
+        public void CanUseAttributeAsValidationAttribute()
+        {
+            ValidationAttribute attribute =
+                new NotNullValidatorAttribute()
+                {
+                    MessageTemplate = "template {1}"
+                };
+
+            Assert.IsFalse(attribute.IsValid(null));
+            Assert.AreEqual("template name", attribute.FormatErrorMessage("name"));
+        }
+
+        [TestMethod]
+        public void ValidatingWithValidatorAttributeWithARulesetSkipsValidation()
+        {
+            ValidationAttribute attribute =
+                new NotNullValidatorAttribute()
+                {
+                    MessageTemplate = "template {1}",
+                    Ruleset = "some ruleset"
+                };
+
+            Assert.IsTrue(attribute.IsValid(null));
         }
     }
 }

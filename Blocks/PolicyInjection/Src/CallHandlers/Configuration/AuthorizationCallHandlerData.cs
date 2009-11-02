@@ -17,6 +17,8 @@ using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Security;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Security.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Configuration
 {
@@ -24,6 +26,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
     /// Call handler data describing the information for the authorization call handler
     /// in configuration.
     /// </summary>
+    [ResourceDescription(typeof(DesignResources), "AuthorizationCallHandlerDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "AuthorizationCallHandlerDataDisplayName")]
+    [AddSateliteProviderCommand(SecuritySettings.SectionName)]
     public class AuthorizationCallHandlerData : CallHandlerData
     {
         private const string AuthorizationProviderPropertyName = "authorizationProvider";
@@ -35,6 +40,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
         public AuthorizationCallHandlerData()
             : base()
         {
+            Type = typeof(AuthorizationCallHandler);
         }
 
         /// <summary>
@@ -62,6 +68,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
         /// </summary>
         /// <value>The "authorizationProvider" attribute.</value>
         [ConfigurationProperty(AuthorizationProviderPropertyName)]
+        [ResourceDescription(typeof(DesignResources), "AuthorizationCallHandlerDataAuthorizationProviderDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "AuthorizationCallHandlerDataAuthorizationProviderDisplayName")]
+        [Reference("Microsoft.Practices.EnterpriseLibrary.Security.Configuration.AuthorizationProviderData, Microsoft.Practices.EnterpriseLibrary.Security")]
         public string AuthorizationProvider
         {
             get { return (string)base[AuthorizationProviderPropertyName]; }
@@ -73,6 +82,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
         /// </summary>
         /// <value>The "operationName" attribute.</value>
         [ConfigurationProperty(OperationNamePropertyName, IsRequired = true)]
+        [ResourceDescription(typeof(DesignResources), "AuthorizationCallHandlerDataOperationNameDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "AuthorizationCallHandlerDataOperationNameDisplayName")]
         public string OperationName
         {
             get { return (string)base[OperationNamePropertyName]; }

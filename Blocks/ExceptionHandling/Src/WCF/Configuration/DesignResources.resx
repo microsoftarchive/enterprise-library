@@ -1,0 +1,186 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ExceptionShieldingElementDescription" xml:space="preserve">
+    <value>321 - The configuration element that specifies exception shielding features for a Windows Communication Foundation (WCF) service.</value>
+  </data>
+  <data name="ExceptionShieldingElementDisplayName" xml:space="preserve">
+    <value>Exception Shielding Element</value>
+  </data>
+  <data name="ExceptionShieldingElementExceptionPolicyNameDescription" xml:space="preserve">
+    <value>323 - The name of the Exception Policy to use in the WCF service when sending exception to this policy.</value>
+  </data>
+  <data name="ExceptionShieldingElementExceptionPolicyNameDisplayName" xml:space="preserve">
+    <value>Exception Policy Name</value>
+  </data>
+  <data name="FaultContractExceptionHandlerDataDescription" xml:space="preserve">
+    <value>325 - Provides exception shielding for WCF services by allowing the service to execute a policy and return an appropriate fault message.</value>
+  </data>
+  <data name="FaultContractExceptionHandlerDataDisplayName" xml:space="preserve">
+    <value>Fault Contract Exception Handler</value>
+  </data>
+  <data name="FaultContractExceptionHandlerDataExceptionMessageDescription" xml:space="preserve">
+    <value>327 - The message for the fault contract exception.</value>
+  </data>
+  <data name="FaultContractExceptionHandlerDataExceptionMessageDisplayName" xml:space="preserve">
+    <value>Exception Message</value>
+  </data>
+  <data name="FaultContractExceptionHandlerDataFaultContractTypeDescription" xml:space="preserve">
+    <value>329 - The fully qualified type name of the Fault Contract to use with this handler.</value>
+  </data>
+  <data name="FaultContractExceptionHandlerDataFaultContractTypeDisplayName" xml:space="preserve">
+    <value>Fault Contract Type</value>
+  </data>
+  <data name="FaultContractExceptionHandlerDataNameDescription" xml:space="preserve">
+    <value>331 - The name of this Fault Contract Handler.</value>
+  </data>
+  <data name="FaultContractExceptionHandlerDataNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="FaultContractExceptionHandlerDataPropertyMappingsDescription" xml:space="preserve">
+    <value>333 - Mappings from the properties of the source exception to the properties of the Fault Contract.</value>
+  </data>
+  <data name="FaultContractExceptionHandlerDataPropertyMappingsDisplayName" xml:space="preserve">
+    <value>Property Mappings</value>
+  </data>
+  <data name="FaultContractExceptionHandlerDataTypeNameDescription" xml:space="preserve">
+    <value>335 - The fully qualified type name of the Fault Contract Exception Handler.</value>
+  </data>
+  <data name="FaultContractExceptionHandlerDataTypeNameDisplayName" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="FaultContractExceptionHandlerMappingDataDescription" xml:space="preserve">
+    <value>337 - An individual mapping between a property of the source exception (or a GUID) and a property of the Fault Contract.</value>
+  </data>
+  <data name="FaultContractExceptionHandlerMappingDataDisplayName" xml:space="preserve">
+    <value>Fault Contract Mapping</value>
+  </data>
+  <data name="FaultContractExceptionHandlerMappingDataNameDescription" xml:space="preserve">
+    <value>339 - The name of the Fault Contract Mapping.</value>
+  </data>
+  <data name="FaultContractExceptionHandlerMappingDataNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="FaultContractExceptionHandlerMappingDataSourceDescription" xml:space="preserve">
+    <value>341 - The source property of a Fault Contract Mapping.</value>
+  </data>
+  <data name="FaultContractExceptionHandlerMappingDataSourceDisplayName" xml:space="preserve">
+    <value>Source</value>
+  </data>
+</root>

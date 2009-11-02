@@ -82,7 +82,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             rwValidatorData.Attributes.Add("returnFailure", "true");
             rwValidatorData.Attributes.Add("foo", "bar");
 
-            Validator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(null, null, null, null);
 
             Assert.IsNotNull(validator);
             Assert.AreSame(typeof(MockCustomValidator), validator.GetType());
@@ -98,7 +98,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             rwValidatorData.Attributes.Add("foo", "bar");
             rwValidatorData.MessageTemplate = "message template override";
 
-            Validator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(null, null, null, null);
 
             Assert.IsNotNull(validator);
             Assert.AreSame(typeof(MockCustomValidator), validator.GetType());

@@ -17,6 +17,8 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
 using FakeRules = Microsoft.Practices.EnterpriseLibrary.PolicyInjection.MatchingRules;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using System.ComponentModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
 {
@@ -24,6 +26,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
     /// Configuration element that stores the configuration information for an instance
     /// of <see cref="NamespaceMatchingRule"/>.
     /// </summary>
+    [ResourceDescription(typeof(DesignResources), "NamespaceMatchingRuleDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "NamespaceMatchingRuleDataDisplayName")]
     public class NamespaceMatchingRuleData : MatchingRuleData
     {
         private const string MatchesPropertyName = "matches";
@@ -33,6 +37,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// </summary>
         public NamespaceMatchingRuleData()
         {
+            Type = typeof(FakeRules.NamespaceMatchingRule);
         }
 
         /// <summary>
@@ -75,6 +80,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// <value>The "matches" child element.</value>
         [ConfigurationProperty(MatchesPropertyName)]
         [ConfigurationCollection(typeof(MatchData))]
+        [ResourceDescription(typeof(DesignResources), "NamespaceMatchingRuleDataMatchesDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "NamespaceMatchingRuleDataMatchesDisplayName")]
+        [System.ComponentModel.Editor(CommonDesignTime.EditorTypes.CollectionEditor, CommonDesignTime.EditorTypes.FrameworkElement)]
+        [CollectionEditorTemplate("PiabNamespaceMatchHeader", "PiabNamespaceMatchItem")]
+        [EnvironmentalOverrides(false)]
         public MatchDataCollection<MatchData> Matches
         {
             get { return (MatchDataCollection<MatchData>)base[MatchesPropertyName]; }

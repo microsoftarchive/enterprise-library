@@ -11,19 +11,21 @@
 
 using System;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 {
 	/// <summary>
 	/// Configuration object to describe an instance of class <see cref="NotNullValidator"/>.
 	/// </summary>
+    [ResourceDescription(typeof(DesignResources), "NotNullValidatorDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "NotNullValidatorDataDisplayName")]
 	public class NotNullValidatorData : ValueValidatorData
 	{
 		/// <summary>
 		/// <para>Initializes a new instance of the <see cref="NotNullValidatorData"/> class.</para>
 		/// </summary>
-		public NotNullValidatorData()
-		{ }
+        public NotNullValidatorData() { Type = typeof(NotNullValidator); }
 
 		/// <summary>
 		/// <para>Initializes a new instance of the <see cref="NotNullValidatorData"/> class with a name.</para>

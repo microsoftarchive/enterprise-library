@@ -18,6 +18,7 @@ using System.Security.Permissions;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using System.Configuration;
 
 [assembly : SecurityPermission(SecurityAction.RequestMinimum)]
 [assembly : ReliabilityContract(Consistency.WillNotCorruptState, Cer.None)]
@@ -30,6 +31,15 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 [assembly : AllowPartiallyTrustedCallers]
 [assembly : SecurityTransparent]
 
-[assembly: HandlesSectionName(InstrumentationConfigurationSection.SectionName)]
-[assembly: HandlesSectionName(ConfigurationSourceSection.SectionName)]
-[assembly: HandlesSectionName(TypeRegistrationProvidersConfigurationSection.SectionName)]
+[assembly: HandlesSection(InstrumentationConfigurationSection.SectionName)]
+[assembly: HandlesSection(ConfigurationSourceSection.SectionName)]
+[assembly: HandlesSection("appSettings")]
+//TODO: should we include this?
+//[assembly: HandlesSection(typeof(TypeRegistrationProvidersConfigurationSection.SectionName)]
+
+[assembly: AddApplicationBlockCommand("Add Instrumentation Settings", InstrumentationConfigurationSection.SectionName, typeof(InstrumentationConfigurationSection))]
+[assembly: AddApplicationBlockCommand("Add Application Settings", "appSettings", typeof(AppSettingsSection))]
+[assembly: AddApplicationBlockCommand("Add Configuration Settings", 
+            ConfigurationSourceSection.SectionName, 
+            typeof(ConfigurationSourceSection),
+            CommandModelTypeName = ConfigurationSourcesDesignTime.CommandTypeNames.AddConfigurationSourcesBlockCommand)]

@@ -93,7 +93,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             rwValidatorData.UpperBound = 20;
             rwValidatorData.UpperBoundType = RangeBoundaryType.Inclusive;
 
-            Validator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(null, null, null, null);
 
             Assert.IsNotNull(validator);
             Assert.AreSame(typeof(StringLengthValidator), validator.GetType());
@@ -115,7 +115,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             rwValidatorData.UpperBoundType = RangeBoundaryType.Inclusive;
             rwValidatorData.Negated = true;
 
-            Validator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(null, null, null, null);
 
             Assert.IsNotNull(validator);
             Assert.AreSame(typeof(StringLengthValidator), validator.GetType());
@@ -137,7 +137,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             rwValidatorData.UpperBoundType = RangeBoundaryType.Inclusive;
             rwValidatorData.MessageTemplate = "message template override";
 
-            Validator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(null, null, null, null);
 
             Assert.IsNotNull(validator);
             Assert.AreSame(typeof(StringLengthValidator), validator.GetType());
@@ -160,7 +160,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             rwValidatorData.MessageTemplate = "message template override";
             rwValidatorData.Negated = true;
 
-            Validator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(null, null, null, null);
 
             Assert.IsNotNull(validator);
             Assert.AreSame(typeof(StringLengthValidator), validator.GetType());

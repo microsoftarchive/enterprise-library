@@ -23,6 +23,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
     /// <summary>
     /// Configuration settings for the <c>HashAlgorithm</c> hash provider.
     /// </summary>	
+    [TypePickingCommand("AlgorithmTypeName", Replace=CommandReplacement.DefaultAddCommandReplacement)]
+    [ResourceDescription(typeof(DesignResources), "HashAlgorithmProviderDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "HashAlgorithmProviderDataDisplayName")]
     public class HashAlgorithmProviderData : HashProviderData
     {
         private AssemblyQualifiedTypeNameConverter typeConverter = new AssemblyQualifiedTypeNameConverter();
@@ -87,9 +90,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         /// The fully qualified type name of the type of <see cref="System.Security.Cryptography.HashAlgorithm"/>.
         /// </value>
         [ConfigurationProperty(algorithmTypeProperty, IsRequired = true)]
-        [System.ComponentModel.Editor(EditorTypes.TypeSelector, EditorTypes.UITypeEditor)]
+        [System.ComponentModel.Editor(CommonDesignTime.EditorTypes.TypeSelector, CommonDesignTime.EditorTypes.UITypeEditor)]
         [BaseType(typeof(HashAlgorithm))]
-        public string AlgorithmTypeName
+        [ResourceDescription(typeof(DesignResources), "HashAlgorithmProviderDataAlgorithmTypeNameDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "HashAlgorithmProviderDataAlgorithmTypeNameDisplayName")]
+        public virtual string AlgorithmTypeName
         {
             get { return (string)this[algorithmTypeProperty]; }
             set { this[algorithmTypeProperty] = value; }
@@ -99,6 +104,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         /// Gets or sets the salt enabled flag.
         /// </summary>
         [ConfigurationProperty(saltEnabledProperty, IsRequired = true, DefaultValue=true)]
+        [ResourceDescription(typeof(DesignResources), "HashAlgorithmProviderDataSaltEnabledDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "HashAlgorithmProviderDataSaltEnabledDisplayName")]
         public bool SaltEnabled
         {
             get { return (bool)this[saltEnabledProperty]; }

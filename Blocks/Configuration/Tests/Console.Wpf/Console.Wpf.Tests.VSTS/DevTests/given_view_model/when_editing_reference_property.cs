@@ -21,6 +21,7 @@ using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Configurat
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Console.Wpf.Tests.VSTS.TestSupport;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging;
+using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model
 {
@@ -56,22 +57,21 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model
 
         protected override void Act()
         {
-            viewModel = SectionViewModel.CreateSection(ServiceProvider, Section);
-            loggingModel = SectionViewModel.CreateSection(ServiceProvider, LogginSettings);
+            viewModel = SectionViewModel.CreateSection(Container, ExceptionHandlingSettings.SectionName, Section);
+            loggingModel = SectionViewModel.CreateSection(Container, LoggingSettings.SectionName, LogginSettings);
 
             numberOfLogCategories = loggingModel.DescendentElements(x => x.ConfigurationType == typeof(TraceSourceData)).Count();
             numberOfLogCategories -= 3; //3 special sources
         }
 
         [TestMethod]
-        public void then_property_value_is_element_view_model()
+        public void then_property_value_is_element_reference_property()
         {
             var logExceptionHandler = viewModel.DescendentElements(x => x.ConfigurationType == typeof(LoggingExceptionHandlerData)).First();
             var logCategoryProperty = logExceptionHandler.Property("LogCategory");
 
-            Assert.AreEqual(typeof(ElementViewModel), logCategoryProperty.Type);
-            Assert.IsNotNull(logCategoryProperty.Value);
-            Assert.IsInstanceOfType(logCategoryProperty.Value, typeof(ElementViewModel));
+            Assert.IsInstanceOfType(logCategoryProperty, typeof(ElementReferenceProperty));
+            Assert.IsNotNull(((ElementReferenceProperty)logCategoryProperty).ReferencedElement);
         }
 
         [TestMethod]
@@ -84,16 +84,16 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model
 
             var suggestedValues = logCategoryProperty.SuggestedValues;
             Assert.AreEqual(numberOfLogCategories, suggestedValues.Count());
-            Assert.IsTrue(suggestedValues.Cast<ElementViewModel>().Any(x => x.Name == "General"));
+            Assert.IsTrue(suggestedValues.Any(x => ((string)x) == "General"));
         }
 
         [TestMethod]
-        public void then_property_changed_if_refferred_element_name_changed_configuration_element_is_updated()
+        public void then_property_changed_if_referred_element_name_changed_configuration_element_is_updated()
         {
             var logExceptionHandler = viewModel.DescendentElements(x => x.ConfigurationType == typeof(LoggingExceptionHandlerData)).First();
             var logCategoryProperty = logExceptionHandler.Property("LogCategory");
 
-            var logCategoryElement = (ElementViewModel)logCategoryProperty.Value;
+            var logCategoryElement = ((ElementReferenceProperty)logCategoryProperty).ReferencedElement;
             var logCategoryNameProperty = logCategoryElement.Property("Name");
 
             logCategoryNameProperty.Value = "new name";
@@ -114,8 +114,8 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model
         {
             base.Arrange();
 
-            var viewModel = SectionViewModel.CreateSection(ServiceProvider, Section);
-            var loggingModel = SectionViewModel.CreateSection(ServiceProvider, LogginSettings);
+            var viewModel = SectionViewModel.CreateSection(Container, ExceptionHandlingSettings.SectionName, Section);
+            var loggingModel = SectionViewModel.CreateSection(Container, LoggingSettings.SectionName, LogginSettings);
 
             var logExceptionHandler = viewModel.DescendentElements(x => x.ConfigurationType == typeof(LoggingExceptionHandlerData)).First();
             logCategoryProperty = logExceptionHandler.Property("LogCategory");
@@ -126,23 +126,21 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model
         {
             base.Act();
 
-            var referredElement = logCategoryProperty.Value as CollectionElementViewModel;
+            var referredElement = ((ElementReferenceProperty)logCategoryProperty).ReferencedElement as ElementViewModel;
             referredElement.DeleteCommand.Execute(null);
         }
 
         [TestMethod]
-        public void then_reference_property_returns_null()
+        public void then_reference_property_returns_previous_value()
         {
-            Assert.IsNull(logCategoryProperty.Value);
+            Assert.AreEqual("ArithmicExceptions", logCategoryProperty.Value);
         }
 
         [TestMethod]
-        public void then_reference_property_signals_change()
+        public void then_reference_property_returns_null_element_reference()
         {
-            Assert.IsTrue(logCategoryPropertyChangeListener.ChangedProperties.Contains("Value"));
+            Assert.IsNull(((ElementReferenceProperty)logCategoryProperty).ReferencedElement);
         }
-
-
     }
 
     [TestClass]
@@ -152,17 +150,27 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model
         protected override void Act()
         {
             //not loading logging breaks reference
-            viewModel = SectionViewModel.CreateSection(ServiceProvider, Section);
+            viewModel = SectionViewModel.CreateSection(Container, ExceptionHandlingSettings.SectionName, Section);
 
         }
 
         [TestMethod]
-        public void then_property_returns_null()
+        public void then_property_returns_null_element_reference()
         {
             var logExceptionHandler = viewModel.DescendentElements(x => x.ConfigurationType == typeof(LoggingExceptionHandlerData)).First();
             var logCategoryProperty = logExceptionHandler.Property("LogCategory");
 
-            Assert.IsNull(logCategoryProperty.Value);
+            Assert.IsNull(((ElementReferenceProperty)logCategoryProperty).ReferencedElement);
         }
+
+        [TestMethod]
+        public void then_property_returns_value()
+        {
+            var logExceptionHandler = viewModel.DescendentElements(x => x.ConfigurationType == typeof(LoggingExceptionHandlerData)).First();
+            var logCategoryProperty = logExceptionHandler.Property("LogCategory");
+
+            Assert.AreEqual("ArithmicExceptions", logCategoryProperty.Value);
+        }
+
     }
 }

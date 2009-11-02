@@ -179,7 +179,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
         {
             ValidatorData rwValidatorData = new MockValidatorData("validator1", false);
 
-            Validator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(null, null, null, null);
 
             Assert.AreEqual(string.Empty, rwValidatorData.Tag);
             Assert.IsNotNull(validator);
@@ -193,7 +193,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             ValidatorData rwValidatorData = new MockValidatorData("validator1", false);
             rwValidatorData.Tag = tag;
 
-            Validator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(null, null, null, null);
 
             Assert.IsNotNull(validator);
             Assert.AreSame(tag, validator.Tag);
@@ -206,7 +206,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             rwValidatorData.MessageTemplateResourceName = "TestMessageTemplate";
             rwValidatorData.MessageTemplateResourceTypeName = typeof(Resources).AssemblyQualifiedName;
 
-            Validator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(null, null, null, null);
 
             Assert.IsNotNull(validator);
             Assert.AreEqual(Resources.TestMessageTemplate, validator.MessageTemplate);

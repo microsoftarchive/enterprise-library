@@ -24,11 +24,6 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_configuration_validator_rule
 {
     public abstract class given_configuration_validator_and_validator_rule : ArrangeActAssert
     {
-        protected override void Arrange()
-        {
-            
-        }
-
         protected ConfigurationValidatorRule CreateRule(ConfigurationValidatorAttribute attribute)
         {
             ConfigurationValidatorRule rule = new ConfigurationValidatorRule(attribute.ValidatorInstance);

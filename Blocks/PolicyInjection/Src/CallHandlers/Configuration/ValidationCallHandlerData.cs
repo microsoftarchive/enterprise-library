@@ -17,6 +17,8 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation;
 using Microsoft.Practices.Unity.InterceptionExtension;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Configuration
 {
@@ -24,6 +26,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
     /// A configuration element class that stores the configuration data for
     /// the <see cref="ValidationCallHandler"/>.
     /// </summary>
+    [ResourceDescription(typeof(DesignResources), "ValidationCallHandlerDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "ValidationCallHandlerDataDisplayName")]
+    [AddSateliteProviderCommand(ValidationSettings.SectionName)]
     public class ValidationCallHandlerData : CallHandlerData
     {
         private const string RuleSetPropertyName = "ruleSet";
@@ -62,6 +67,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
         /// </summary>
         /// <value>The "ruleSet" configuration property.</value>
         [ConfigurationProperty(RuleSetPropertyName)]
+        [Reference(typeof(ValidationSettings), typeof(ValidationRulesetData))]
         public string RuleSet
         {
             get { return (string)base[RuleSetPropertyName]; }
@@ -73,6 +79,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
         /// </summary>
         /// <value>The "specificationSource" configuration attribute.</value>
         [ConfigurationProperty(SpecificationSourcePropertyName, IsRequired = true, DefaultValue = SpecificationSource.Both)]
+        [ResourceDescription(typeof(DesignResources), "ValidationCallHandlerDataSpecificationSourceDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "ValidationCallHandlerDataSpecificationSourceDisplayName")]
         public SpecificationSource SpecificationSource
         {
             get { return (SpecificationSource)base[SpecificationSourcePropertyName]; }

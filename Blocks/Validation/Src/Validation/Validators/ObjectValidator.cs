@@ -23,9 +23,56 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
     [ConfigurationElementType(typeof(ObjectValidatorData))]
     public class ObjectValidator : Validator
     {
-        private Type targetType;
-        private string targetRuleset;
-        private Validator targetTypeValidator;
+        private readonly Type targetType;
+        private readonly string targetRuleset;
+        private readonly Validator targetTypeValidator;
+        private readonly ValidatorFactory validatorFactory;
+
+        /// <summary>
+        /// <para>Initializes a new instance of the <see cref="ObjectValidator"/> for a target type
+        /// using the supplied ruleset.</para>
+        /// </summary>
+        public ObjectValidator()
+            : this(ValidationFactory.DefaultCompositeValidatorFactory)
+        { }
+
+        /// <summary>
+        /// <para>Initializes a new instance of the <see cref="ObjectValidator"/> for a target type
+        /// using the supplied ruleset.</para>
+        /// </summary>
+        /// <param name="validatorFactory">Factory to use when building nested validators.</param>
+        /// <exception cref="ArgumentNullException">when <paramref name="targetType"/> is <see langword="null"/>.</exception>
+        /// <exception cref="ArgumentNullException">when <paramref name="targetRuleset"/> is <see langword="null"/>.</exception>
+        /// <exception cref="ArgumentNullException">when <paramref name="validatorFactory"/> is <see langword="null"/>.</exception>
+        public ObjectValidator(ValidatorFactory validatorFactory)
+            : this(validatorFactory, string.Empty)
+        { }
+
+        /// <summary>
+        /// <para>Initializes a new instance of the <see cref="ObjectValidator"/> for a target type
+        /// using the supplied ruleset.</para>
+        /// </summary>
+        /// <param name="targetRuleset">The ruleset to use.</param>
+        /// <param name="validatorFactory">Factory to use when building nested validators.</param>
+        /// <exception cref="ArgumentNullException">when <paramref name="validatorFactory"/> is <see langword="null"/>.</exception>
+        /// <exception cref="ArgumentNullException">when <paramref name="targetRuleset"/> is <see langword="null"/>.</exception>
+        public ObjectValidator(ValidatorFactory validatorFactory, string targetRuleset)
+            : base(null, null)
+        {
+            if (validatorFactory == null)
+            {
+                throw new ArgumentNullException("validatorFactory");
+            }
+            if (targetRuleset == null)
+            {
+                throw new ArgumentNullException("targetRuleset");
+            }
+
+            this.targetType = null;
+            this.targetTypeValidator = null;
+            this.targetRuleset = targetRuleset;
+            this.validatorFactory = validatorFactory;
+        }
 
         /// <summary>
         /// <para>Initializes a new instance of the <see cref="ObjectValidator"/> for a target type.</para>
@@ -48,11 +95,29 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         /// <exception cref="ArgumentNullException">when <paramref name="targetType"/> is <see langword="null"/>.</exception>
         /// <exception cref="ArgumentNullException">when <paramref name="targetRuleset"/> is <see langword="null"/>.</exception>
         public ObjectValidator(Type targetType, string targetRuleset)
+            : this(targetType, ValidationFactory.DefaultCompositeValidatorFactory, targetRuleset)
+        { }
+
+        /// <summary>
+        /// <para>Initializes a new instance of the <see cref="ObjectValidator"/> for a target type
+        /// using the supplied ruleset.</para>
+        /// </summary>
+        /// <param name="targetType">The target type</param>
+        /// <param name="targetRuleset">The ruleset to use.</param>
+        /// <param name="validatorFactory">Factory to use when building nested validators.</param>
+        /// <exception cref="ArgumentNullException">when <paramref name="targetType"/> is <see langword="null"/>.</exception>
+        /// <exception cref="ArgumentNullException">when <paramref name="targetRuleset"/> is <see langword="null"/>.</exception>
+        /// <exception cref="ArgumentNullException">when <paramref name="validatorFactory"/> is <see langword="null"/>.</exception>
+        public ObjectValidator(Type targetType, ValidatorFactory validatorFactory, string targetRuleset)
             : base(null, null)
         {
             if (targetType == null)
             {
                 throw new ArgumentNullException("targetType");
+            }
+            if (validatorFactory == null)
+            {
+                throw new ArgumentNullException("validatorFactory");
             }
             if (targetRuleset == null)
             {
@@ -60,8 +125,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
             }
 
             this.targetType = targetType;
+            this.targetTypeValidator = validatorFactory.CreateValidator(targetType, targetRuleset);
             this.targetRuleset = targetRuleset;
-            this.targetTypeValidator = ValidationFactory.CreateValidator(this.targetType, this.targetRuleset);
+            this.validatorFactory = null;
         }
 
         /// <summary>
@@ -84,16 +150,29 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         {
             if (objectToValidate != null)
             {
-                if (this.targetType.IsAssignableFrom(objectToValidate.GetType()))
+                Type objectToValidateType = objectToValidate.GetType();
+                if (this.targetType == null || this.targetType.IsAssignableFrom(objectToValidateType))
                 {
                     // reset the current target and the key
-                    this.targetTypeValidator.DoValidate(objectToValidate, objectToValidate, null, validationResults);
+                    this.GetValidator(objectToValidateType).DoValidate(objectToValidate, objectToValidate, null, validationResults);
                 }
                 else
                 {
                     // unlikely
                     this.LogValidationResult(validationResults, Resources.ObjectValidatorInvalidTargetType, currentTarget, key);
                 }
+            }
+        }
+
+        private Validator GetValidator(Type objectToValidateType)
+        {
+            if (this.targetTypeValidator != null)
+            {
+                return this.targetTypeValidator;
+            }
+            else
+            {
+                return this.validatorFactory.CreateValidator(objectToValidateType, this.targetRuleset);
             }
         }
 

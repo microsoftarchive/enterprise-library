@@ -26,8 +26,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 		/// <summary>
 		/// <para>Initializes a new instance of the <see cref="RangeValidatorData"/> class.</para>
 		/// </summary>
-		public RangeValidatorData()
-		{ }
+		public RangeValidatorData() { Type = typeof(RangeValidator); }
 
 		/// <summary>
 		/// <para>Initializes a new instance of the <see cref="RangeValidatorData"/> class with a name.</para>

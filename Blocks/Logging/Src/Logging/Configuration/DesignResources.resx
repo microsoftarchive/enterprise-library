@@ -1,0 +1,1014 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="BasicCustomTraceListenerDataDescription" xml:space="preserve">
+    <value>343 - A class that writes log messages to a custom logging target, and added to the Logging Applicaton Block.</value>
+  </data>
+  <data name="BasicCustomTraceListenerDataDisplayName" xml:space="preserve">
+    <value>Basic Custom Trace Listener</value>
+  </data>
+  <data name="BasicCustomTraceListenerDataFilterDescription" xml:space="preserve">
+    <value>345 - The minimum severity of messages that will be sent to the logging target. Valid values are All (the default), Off, Critical, Error, Warning, Information, Verbose, and Activity Tracing. The behavior is for messages with the selected severity and all higher severities to be included. For example, the Warning setting will allow warning, error, and critical mesages tobe written to the logging target.</value>
+  </data>
+  <data name="BasicCustomTraceListenerDataFilterDisplayName" xml:space="preserve">
+    <value>Severity Filter</value>
+  </data>
+  <data name="BasicCustomTraceListenerDataListenerDataTypeNameDescription" xml:space="preserve">
+    <value>347 - The fully qualified type name of the Listener.</value>
+  </data>
+  <data name="BasicCustomTraceListenerDataListenerDataTypeNameDisplayName" xml:space="preserve">
+    <value>Listener Data Type</value>
+  </data>
+  <data name="BasicCustomTraceListenerDataNameDescription" xml:space="preserve">
+    <value>349 - The name of the Listener.</value>
+  </data>
+  <data name="BasicCustomTraceListenerDataNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="BasicCustomTraceListenerDataTraceOutputOptionsDescription" xml:space="preserve">
+    <value>351 - Listeners that do not output to a Text Formatter use this property to determine which options, or elements, should be included in the trace output. Possible values are: CallStack, DateTime, LogicalOperationStack, None, ProcessId, ThreadId, and Timestamp. The default is None. This property is optional.</value>
+  </data>
+  <data name="BasicCustomTraceListenerDataTraceOutputOptionsDisplayName" xml:space="preserve">
+    <value>Trace Output Options</value>
+  </data>
+  <data name="BasicCustomTraceListenerDataTypeNameDescription" xml:space="preserve">
+    <value>353 - The fully qualified type name of the Custom Trace Listener.</value>
+  </data>
+  <data name="BasicCustomTraceListenerDataTypeNameDisplayName" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="BinaryLogFormatterDataDescription" xml:space="preserve">
+    <value>355 - A Log Message Formatter that generates the output for a log message in a binary format suitable for use with listeners such as the Message Queuing (MSMQ) Trace Listener. </value>
+  </data>
+  <data name="BinaryLogFormatterDataDisplayName" xml:space="preserve">
+    <value>Binary Log Message Formatter</value>
+  </data>
+  <data name="BinaryLogFormatterDataNameDescription" xml:space="preserve">
+    <value>357 - The name of the Binary Log Message Formatter.</value>
+  </data>
+  <data name="BinaryLogFormatterDataNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="BinaryLogFormatterDataTypeNameDescription" xml:space="preserve">
+    <value>359 - The fully qualified type name of the Binary Log Message Formatter.</value>
+  </data>
+  <data name="BinaryLogFormatterDataTypeNameDisplayName" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="CategoryFilterDataCategoryFilterModeDescription" xml:space="preserve">
+    <value>363 - Specifies if the filter will allow only messages that match one of the configured categories to pass to the logging target (DenyAllExceptAllowed), or will allow all message except those that match one of the configured categories to pass to the logging target (AllowAllExceptDenied) .</value>
+  </data>
+  <data name="CategoryFilterDataCategoryFilterModeDisplayName" xml:space="preserve">
+    <value>Filter Mode</value>
+  </data>
+  <data name="CategoryFilterDataCategoryFiltersDescription" xml:space="preserve">
+    <value>365 - The list of all the Categories defined for this Category Filter.</value>
+  </data>
+  <data name="CategoryFilterDataCategoryFiltersDisplayName" xml:space="preserve">
+    <value>Categories</value>
+  </data>
+  <data name="CategoryFilterDataDescription" xml:space="preserve">
+    <value>361 - A Logging Filter that blocks log messages or allows them to pass to the configured logging target listener(s) based on the categories assigned to the log message. Each Category Filter can be confgured for one or more categories, and can eb set ot allow or block messages assigned to any of these categories.</value>
+  </data>
+  <data name="CategoryFilterDataDisplayName" xml:space="preserve">
+    <value>Category Filter</value>
+  </data>
+  <data name="CategoryFilterDataNameDescription" xml:space="preserve">
+    <value>367 - The name of the Category Filter.</value>
+  </data>
+  <data name="CategoryFilterDataNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="CategoryFilterDataTypeNameDescription" xml:space="preserve">
+    <value>369 - The fully qualified type name of the Category Filter.</value>
+  </data>
+  <data name="CategoryFilterDataTypeNameDisplayName" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="CategoryFilterEntryDescription" xml:space="preserve">
+    <value>371 - A single  category in the collection of filtes for a Category Filter.</value>
+  </data>
+  <data name="CategoryFilterEntryDisplayName" xml:space="preserve">
+    <value>Category</value>
+  </data>
+  <data name="CategoryFilterEntryNameDescription" xml:space="preserve">
+    <value>373 - The name of the Category Filter Entry.</value>
+  </data>
+  <data name="CategoryFilterEntryNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="CustomFormatterDataDescription" xml:space="preserve">
+    <value>375 - A class that implements custom formatting for log messages, and added to the Logging Applicaton Block.</value>
+  </data>
+  <data name="CustomFormatterDataDisplayName" xml:space="preserve">
+    <value>Custom Log Message Formatter</value>
+  </data>
+  <data name="CustomFormatterDataNameDescription" xml:space="preserve">
+    <value>377 - The name of the Custom Log Message Formatter.</value>
+  </data>
+  <data name="CustomFormatterDataNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="CustomFormatterDataTypeNameDescription" xml:space="preserve">
+    <value>379 - The fully qualified type name of the Custom Log Message Formatter.</value>
+  </data>
+  <data name="CustomFormatterDataTypeNameDisplayName" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="CustomLogFilterDataDescription" xml:space="preserve">
+    <value>381 - A class that implements custom filtering for log messages, and added to the Logging Applicaton Block.</value>
+  </data>
+  <data name="CustomLogFilterDataDisplayName" xml:space="preserve">
+    <value>Custom Logging Filter</value>
+  </data>
+  <data name="CustomLogFilterDataNameDescription" xml:space="preserve">
+    <value>383 - The name of the Custom Logging Filter.</value>
+  </data>
+  <data name="CustomLogFilterDataNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="CustomLogFilterDataTypeNameDescription" xml:space="preserve">
+    <value>385 - The fully qualified type name of the Custom Logging Filter.</value>
+  </data>
+  <data name="CustomLogFilterDataTypeNameDisplayName" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="CustomTraceListenerDataDescription" xml:space="preserve">
+    <value>387 - A class that writes log messages to a custom logging target, and added to the Logging Applicaton Block.</value>
+  </data>
+  <data name="CustomTraceListenerDataDisplayName" xml:space="preserve">
+    <value>Custom Trace Listener</value>
+  </data>
+  <data name="CustomTraceListenerDataFilterDescription" xml:space="preserve">
+    <value>389 - The minimum severity of messages that will be sent to the logging target. Valid values are All (the default), Off, Critical, Error, Warning, Information, Verbose, and Activity Tracing. The behavior is for messages with the selected severity and all higher severities to be included. For example, the Warning setting will allow warning, error, and critical mesages tobe written to the logging target.</value>
+  </data>
+  <data name="CustomTraceListenerDataFilterDisplayName" xml:space="preserve">
+    <value>Severity Filter</value>
+  </data>
+  <data name="CustomTraceListenerDataListenerDataTypeNameDescription" xml:space="preserve">
+    <value>391 - The fully qualified type name of the Listener.</value>
+  </data>
+  <data name="CustomTraceListenerDataListenerDataTypeNameDisplayName" xml:space="preserve">
+    <value>Listener Data Type</value>
+  </data>
+  <data name="CustomTraceListenerDataNameDescription" xml:space="preserve">
+    <value>393 - The name of the Custom Trace Listener.</value>
+  </data>
+  <data name="CustomTraceListenerDataNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="CustomTraceListenerDataTraceOutputOptionsDescription" xml:space="preserve">
+    <value>395 - Listeners that do not output to a Text Formatter use this property to determine which options, or elements, should be included in the trace output. Possible values are: CallStack, DateTime, LogicalOperationStack, None, ProcessId, ThreadId, and Timestamp. The default is None. This property is optional.</value>
+  </data>
+  <data name="CustomTraceListenerDataTraceOutputOptionsDisplayName" xml:space="preserve">
+    <value>Trace Output Options</value>
+  </data>
+  <data name="CustomTraceListenerDataTypeNameDescription" xml:space="preserve">
+    <value>397 - The fully qualified type name of the Custom Trace Listener.</value>
+  </data>
+  <data name="CustomTraceListenerDataTypeNameDisplayName" xml:space="preserve">
+    <value>Type Name</value>
+  </data>
+  <data name="EmailTraceListenerDataDescription" xml:space="preserve">
+    <value>399 - A logging target listener that sends log messages to a specified email server.</value>
+  </data>
+  <data name="EmailTraceListenerDataDisplayName" xml:space="preserve">
+    <value>Email Trace Listener</value>
+  </data>
+  <data name="EmailTraceListenerDataFilterDescription" xml:space="preserve">
+    <value>401 - The minimum severity of messages that will be sent to the logging target. Valid values are All (the default), Off, Critical, Error, Warning, Information, Verbose, and Activity Tracing. The behavior is for messages with the selected severity and all higher severities to be included. For example, the Warning setting will allow warning, error, and critical mesages tobe written to the logging target.</value>
+  </data>
+  <data name="EmailTraceListenerDataFilterDisplayName" xml:space="preserve">
+    <value>Severity Filter</value>
+  </data>
+  <data name="EmailTraceListenerDataFormatterDescription" xml:space="preserve">
+    <value>403 - The name of the Log Message Formatter to use for formatting the log message before sending it to the logging target.</value>
+  </data>
+  <data name="EmailTraceListenerDataFormatterDisplayName" xml:space="preserve">
+    <value>Formatter Name</value>
+  </data>
+  <data name="EmailTraceListenerDataFromAddressDescription" xml:space="preserve">
+    <value>405 - The 'From' address to use for the email message created for each log entry.</value>
+  </data>
+  <data name="EmailTraceListenerDataFromAddressDisplayName" xml:space="preserve">
+    <value>From Address</value>
+  </data>
+  <data name="EmailTraceListenerDataListenerDataTypeNameDescription" xml:space="preserve">
+    <value>407 - The fully qualified type name of the Email Trace Listener.</value>
+  </data>
+  <data name="EmailTraceListenerDataListenerDataTypeNameDisplayName" xml:space="preserve">
+    <value>Listener Type</value>
+  </data>
+  <data name="EmailTraceListenerDataNameDescription" xml:space="preserve">
+    <value>409 - The name of the Email Trace Listener.</value>
+  </data>
+  <data name="EmailTraceListenerDataNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="EmailTraceListenerDataSmtpPortDescription" xml:space="preserve">
+    <value>411 - The port to use to send the email message to the server that will despatch it. The default if not specified is the SMTP port 25.</value>
+  </data>
+  <data name="EmailTraceListenerDataSmtpPortDisplayName" xml:space="preserve">
+    <value>Smtp Port</value>
+  </data>
+  <data name="EmailTraceListenerDataSmtpServerDescription" xml:space="preserve">
+    <value>413 - The name or IP address of the server that will send the email message. The default if not specified is the local host (127.0.0.1).</value>
+  </data>
+  <data name="EmailTraceListenerDataSmtpServerDisplayName" xml:space="preserve">
+    <value>Smtp Server</value>
+  </data>
+  <data name="EmailTraceListenerDataSubjectLineEnderDescription" xml:space="preserve">
+    <value>415 - The suffix to add to the end of the Subject for this email message.</value>
+  </data>
+  <data name="EmailTraceListenerDataSubjectLineEnderDisplayName" xml:space="preserve">
+    <value>Subject Line Suffix</value>
+  </data>
+  <data name="EmailTraceListenerDataSubjectLineStarterDescription" xml:space="preserve">
+    <value>417 - The prefix to add at the start of the Subject for this email message.</value>
+  </data>
+  <data name="EmailTraceListenerDataSubjectLineStarterDisplayName" xml:space="preserve">
+    <value>Subject Line Prefix</value>
+  </data>
+  <data name="EmailTraceListenerDataToAddressDescription" xml:space="preserve">
+    <value>419 - The 'To' address to use for the email message created for each log entry.</value>
+  </data>
+  <data name="EmailTraceListenerDataToAddressDisplayName" xml:space="preserve">
+    <value>To Address</value>
+  </data>
+  <data name="EmailTraceListenerDataTraceOutputOptionsDescription" xml:space="preserve">
+    <value>421 - Listeners that do not output to a Text Formatter use this property to determine which options, or elements, should be included in the trace output. Possible values are: CallStack, DateTime, LogicalOperationStack, None, ProcessId, ThreadId, and Timestamp. The default is None. This property is optional.</value>
+  </data>
+  <data name="EmailTraceListenerDataTraceOutputOptionsDisplayName" xml:space="preserve">
+    <value>Trace Output Options</value>
+  </data>
+  <data name="EmailTraceListenerDataTypeNameDescription" xml:space="preserve">
+    <value>423 - The fully qualified type name of the Email Trace Listener.</value>
+  </data>
+  <data name="EmailTraceListenerDataTypeNameDisplayName" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="FlatFileTraceListenerDataDescription" xml:space="preserve">
+    <value>425 - A logging target listener that writes log messages to a specified text file. Header and footer text can be specified, and the format of the message defined though a template.</value>
+  </data>
+  <data name="FlatFileTraceListenerDataDisplayName" xml:space="preserve">
+    <value>Flat File Trace Listener</value>
+  </data>
+  <data name="FlatFileTraceListenerDataFileNameDescription" xml:space="preserve">
+    <value>427 - The path and file name for the log file. It can include environment variables such as %WINDIR%, %TEMP%, and %USERPROFILE%.</value>
+  </data>
+  <data name="FlatFileTraceListenerDataFileNameDisplayName" xml:space="preserve">
+    <value>File Name</value>
+  </data>
+  <data name="FlatFileTraceListenerDataFilterDescription" xml:space="preserve">
+    <value>429 - The minimum severity of messages that will be sent to the logging target. Valid values are All (the default), Off, Critical, Error, Warning, Information, Verbose, and Activity Tracing. The behavior is for messages with the selected severity and all higher severities to be included. For example, the Warning setting will allow warning, error, and critical mesages tobe written to the logging target.</value>
+  </data>
+  <data name="FlatFileTraceListenerDataFilterDisplayName" xml:space="preserve">
+    <value>Severity Filter</value>
+  </data>
+  <data name="FlatFileTraceListenerDataFooterDescription" xml:space="preserve">
+    <value>431 - The text of the footer to add to the log message.</value>
+  </data>
+  <data name="FlatFileTraceListenerDataFooterDisplayName" xml:space="preserve">
+    <value>Message Footer</value>
+  </data>
+  <data name="FlatFileTraceListenerDataFormatterDescription" xml:space="preserve">
+    <value>433 - The name of the Log Message Formatter to use for formatting the log message before sending it to the logging target.</value>
+  </data>
+  <data name="FlatFileTraceListenerDataFormatterDisplayName" xml:space="preserve">
+    <value>Formatter Name</value>
+  </data>
+  <data name="FlatFileTraceListenerDataHeaderDescription" xml:space="preserve">
+    <value>435 - The text of the header to add to the log message.</value>
+  </data>
+  <data name="FlatFileTraceListenerDataHeaderDisplayName" xml:space="preserve">
+    <value>Message Header</value>
+  </data>
+  <data name="FlatFileTraceListenerDataListenerDataTypeNameDescription" xml:space="preserve">
+    <value>437 - The fully qualified type name of the Listener.</value>
+  </data>
+  <data name="FlatFileTraceListenerDataListenerDataTypeNameDisplayName" xml:space="preserve">
+    <value>Listener Data Type</value>
+  </data>
+  <data name="FlatFileTraceListenerDataNameDescription" xml:space="preserve">
+    <value>439 - The name of the Listener.</value>
+  </data>
+  <data name="FlatFileTraceListenerDataNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="FlatFileTraceListenerDataTraceOutputOptionsDescription" xml:space="preserve">
+    <value>441 - Listeners that do not output to a Text Formatter use this property to determine which options, or elements, should be included in the trace output. Possible values are: CallStack, DateTime, LogicalOperationStack, None, ProcessId, ThreadId, and Timestamp. The default is None. This property is optional.</value>
+  </data>
+  <data name="FlatFileTraceListenerDataTraceOutputOptionsDisplayName" xml:space="preserve">
+    <value>Trace Output Options</value>
+  </data>
+  <data name="FlatFileTraceListenerDataTypeNameDescription" xml:space="preserve">
+    <value>443 - The fully qualified type name of the Flat File Trace Listener.</value>
+  </data>
+  <data name="FlatFileTraceListenerDataTypeNameDisplayName" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="FormattedEventLogTraceListenerDataDescription" xml:space="preserve">
+    <value>445 - A logging target listener that sends log messages to a specified Windows Event Log such as the Application or System log.</value>
+  </data>
+  <data name="FormattedEventLogTraceListenerDataDisplayName" xml:space="preserve">
+    <value>Event Log Trace Listener</value>
+  </data>
+  <data name="FormattedEventLogTraceListenerDataFilterDescription" xml:space="preserve">
+    <value>447 - The minimum severity of messages that will be sent to the logging target. Valid values are All (the default), Off, Critical, Error, Warning, Information, Verbose, and Activity Tracing. The behavior is for messages with the selected severity and all higher severities to be included. For example, the Warning setting will allow warning, error, and critical mesages tobe written to the logging target.</value>
+  </data>
+  <data name="FormattedEventLogTraceListenerDataFilterDisplayName" xml:space="preserve">
+    <value>Severity Filter</value>
+  </data>
+  <data name="FormattedEventLogTraceListenerDataFormatterDescription" xml:space="preserve">
+    <value>449 - The name of the Log Message Formatter to use for formatting the log message before sending it to the logging target.</value>
+  </data>
+  <data name="FormattedEventLogTraceListenerDataFormatterDisplayName" xml:space="preserve">
+    <value>Formatter Name</value>
+  </data>
+  <data name="FormattedEventLogTraceListenerDataListenerDataTypeNameDescription" xml:space="preserve">
+    <value>451 - The fully qualified type name of the Listener.</value>
+  </data>
+  <data name="FormattedEventLogTraceListenerDataListenerDataTypeNameDisplayName" xml:space="preserve">
+    <value>Listener Data Type</value>
+  </data>
+  <data name="FormattedEventLogTraceListenerDataLogDescription" xml:space="preserve">
+    <value>453 - The name of the Windows Event Log to write the log messages to, such as Application or System.</value>
+  </data>
+  <data name="FormattedEventLogTraceListenerDataLogDisplayName" xml:space="preserve">
+    <value>Log Name</value>
+  </data>
+  <data name="FormattedEventLogTraceListenerDataMachineNameDescription" xml:space="preserve">
+    <value>455 - The name of the machine on which the log messages should be written. The default is the local machine.</value>
+  </data>
+  <data name="FormattedEventLogTraceListenerDataMachineNameDisplayName" xml:space="preserve">
+    <value>Machine Name</value>
+  </data>
+  <data name="FormattedEventLogTraceListenerDataNameDescription" xml:space="preserve">
+    <value>457 - The name of the Event Log Listener</value>
+  </data>
+  <data name="FormattedEventLogTraceListenerDataNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="FormattedEventLogTraceListenerDataSourceDescription" xml:space="preserve">
+    <value>459 - The source name to use when writing to the Event Log. The default is 'Enterprise Library Logging'.</value>
+  </data>
+  <data name="FormattedEventLogTraceListenerDataSourceDisplayName" xml:space="preserve">
+    <value>Source Name</value>
+  </data>
+  <data name="FormattedEventLogTraceListenerDataTraceOutputOptionsDescription" xml:space="preserve">
+    <value>461 - Listeners that do not output to a Text Formatter use this property to determine which options, or elements, should be included in the trace output. Possible values are: CallStack, DateTime, LogicalOperationStack, None, ProcessId, ThreadId, and Timestamp. The default is None. This property is optional.</value>
+  </data>
+  <data name="FormattedEventLogTraceListenerDataTraceOutputOptionsDisplayName" xml:space="preserve">
+    <value>Trace Output Options</value>
+  </data>
+  <data name="FormattedEventLogTraceListenerDataTypeNameDescription" xml:space="preserve">
+    <value>463 - The fully qualified type name of the Event Log Trace Listener.</value>
+  </data>
+  <data name="FormattedEventLogTraceListenerDataTypeNameDisplayName" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="FormatterDataDescription" xml:space="preserve">
+    <value>465 - Formats the contants of a log message based on the Listener type and logging target. Built-in formatters support text formatting through a template and binary formatting.</value>
+  </data>
+  <data name="FormatterDataDisplayName" xml:space="preserve">
+    <value>Formatter</value>
+  </data>
+  <data name="FormatterDataNameDescription" xml:space="preserve">
+    <value>467 - The name of the Formatter.</value>
+  </data>
+  <data name="FormatterDataNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="FormatterDataTypeNameDescription" xml:space="preserve">
+    <value>469 - The fully qualified type name of the Formatter.</value>
+  </data>
+  <data name="FormatterDataTypeNameDisplayName" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="LogEnabledFilterDataDescription" xml:space="preserve">
+    <value>471 - A filter that allows all logging actions to be turned on and off through one setting.</value>
+  </data>
+  <data name="LogEnabledFilterDataDisplayName" xml:space="preserve">
+    <value>Logging Enabled Filter</value>
+  </data>
+  <data name="LogEnabledFilterDataEnabledDescription" xml:space="preserve">
+    <value>473 - Specifies if all logging is enabled or disabled. Allows all logging actions to be turned on and off through one setting.</value>
+  </data>
+  <data name="LogEnabledFilterDataEnabledDisplayName" xml:space="preserve">
+    <value>All Logging Enabled</value>
+  </data>
+  <data name="LogEnabledFilterDataNameDescription" xml:space="preserve">
+    <value>475 - The name of the Logging Enabled Filter.</value>
+  </data>
+  <data name="LogEnabledFilterDataNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="LogEnabledFilterDataTypeNameDescription" xml:space="preserve">
+    <value>477 - The fully qualified type name of the Logging Enabled Filter.</value>
+  </data>
+  <data name="LogEnabledFilterDataTypeNameDisplayName" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="LogFilterDataDescription" xml:space="preserve">
+    <value>479 - Base class for  configuration objects.</value>
+  </data>
+  <data name="LogFilterDataDisplayName" xml:space="preserve">
+    <value>Log Filter</value>
+  </data>
+  <data name="LogFilterDataNameDescription" xml:space="preserve">
+    <value>481 - The name of the Log Filter.</value>
+  </data>
+  <data name="LogFilterDataNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="LogFilterDataTypeNameDescription" xml:space="preserve">
+    <value>483 - The fully qualified type name of the Logging Filter.</value>
+  </data>
+  <data name="LogFilterDataTypeNameDisplayName" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="LoggingSettingsDefaultCategoryDescription" xml:space="preserve">
+    <value>487 - The default Logging Category to use for messages sent to the block that do not specify a Category. Categories allow log messages to be handled and processed in different ways, and sent to different logging targets. Log messages can be assigned to one or more categories.</value>
+  </data>
+  <data name="LoggingSettingsDefaultCategoryDisplayName" xml:space="preserve">
+    <value>Default Logging Category</value>
+  </data>
+  <data name="LoggingSettingsDescription" xml:space="preserve">
+    <value>485 - Configuration settings for the Logging Application Block.</value>
+  </data>
+  <data name="LoggingSettingsDisplayName" xml:space="preserve">
+    <value>Logging Settings</value>
+  </data>
+  <data name="LoggingSettingsFormattersDescription" xml:space="preserve">
+    <value>489 - Configuration settings for the formatters that can be used with Listeners that generate text or binary output.</value>
+  </data>
+  <data name="LoggingSettingsFormattersDisplayName" xml:space="preserve">
+    <value>Log Message Formatters</value>
+  </data>
+  <data name="LoggingSettingsLogFiltersDescription" xml:space="preserve">
+    <value>491 - Filters that block or allow specific or all log messages to be written to the configured logging target based on the Category, Priority, or a custom action. </value>
+  </data>
+  <data name="LoggingSettingsLogFiltersDisplayName" xml:space="preserve">
+    <value>Logging Filters</value>
+  </data>
+  <data name="LoggingSettingsLogWarningWhenNoCategoriesMatchDescription" xml:space="preserve">
+    <value>493 - Specifies whether the block will write a Warning message to the logging target(s) specified in the Logging Errors and Warnings special category when a log message is received that does not match any of the defined Logging Categories.</value>
+  </data>
+  <data name="LoggingSettingsLogWarningWhenNoCategoriesMatchDisplayName" xml:space="preserve">
+    <value>Warn If No Category Match</value>
+  </data>
+  <data name="LoggingSettingsNameDescription" xml:space="preserve">
+    <value>495 - Configuration settings for the Logging Application Block.</value>
+  </data>
+  <data name="LoggingSettingsNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="LoggingSettingsRevertImpersonationDescription" xml:space="preserve">
+    <value>497 - By default, log messages are written using impersonation. This provides some perfromance advantage for logging. This setting allows impersonation to revert to the caller. </value>
+  </data>
+  <data name="LoggingSettingsRevertImpersonationDisplayName" xml:space="preserve">
+    <value>Revert Impersonation</value>
+  </data>
+  <data name="LoggingSettingsSpecialTraceSourcesDescription" xml:space="preserve">
+    <value>499 - Configuration settings for built-in Categories that handle all events, events that do not match any other Category, and errors that  occur when logging.</value>
+  </data>
+  <data name="LoggingSettingsSpecialTraceSourcesDisplayName" xml:space="preserve">
+    <value>Special Category Filters</value>
+  </data>
+  <data name="LoggingSettingsTraceListenersDescription" xml:space="preserve">
+    <value>501 - The Trace Listeners available to direct log messages to specific logging targets such as Windows Event Log or a database.</value>
+  </data>
+  <data name="LoggingSettingsTraceListenersDisplayName" xml:space="preserve">
+    <value>Logging Target Listeners</value>
+  </data>
+  <data name="LoggingSettingsTraceSourcesDescription" xml:space="preserve">
+    <value>503 - A list of Category Filters to which log messages can be assigned. Log messages can be assigned to one or more Categories. Each Category defines how log messages assigned that category will be handled.</value>
+  </data>
+  <data name="LoggingSettingsTraceSourcesDisplayName" xml:space="preserve">
+    <value>Category Filters</value>
+  </data>
+  <data name="LoggingSettingsTracingEnabledDescription" xml:space="preserve">
+    <value>505 - Specifies whether activity tracing is enabled. When enabled, code can use Tracer instances to trace individual activites and associate the resulting log messages through an Activity ID.</value>
+  </data>
+  <data name="LoggingSettingsTracingEnabledDisplayName" xml:space="preserve">
+    <value>Activity Tracing Enabled</value>
+  </data>
+  <data name="MsmqTraceListenerDataDescription" xml:space="preserve">
+    <value>507 - A logging target listener that writes log messages to a specified Windows Message Queuing queue. A wide range of options can be specified for the queues, priority, transaction, adn encryption.</value>
+  </data>
+  <data name="MsmqTraceListenerDataDisplayName" xml:space="preserve">
+    <value>Message Queuing Trace Listener</value>
+  </data>
+  <data name="MsmqTraceListenerDataFilterDescription" xml:space="preserve">
+    <value>509 - The minimum severity of messages that will be sent to the logging target. Valid values are All (the default), Off, Critical, Error, Warning, Information, Verbose, and Activity Tracing. The behavior is for messages with the selected severity and all higher severities to be included. For example, the Warning setting will allow warning, error, and critical mesages tobe written to the logging target.</value>
+  </data>
+  <data name="MsmqTraceListenerDataFilterDisplayName" xml:space="preserve">
+    <value>Severity Filter</value>
+  </data>
+  <data name="MsmqTraceListenerDataListenerDataTypeNameDescription" xml:space="preserve">
+    <value>511 - The fully qualified type name of the Listener.</value>
+  </data>
+  <data name="MsmqTraceListenerDataListenerDataTypeNameDisplayName" xml:space="preserve">
+    <value>Listener Data Type</value>
+  </data>
+  <data name="MsmqTraceListenerDataNameDescription" xml:space="preserve">
+    <value>513 - The name of the Message Queueing (MSMQ) Trace Listener.</value>
+  </data>
+  <data name="MsmqTraceListenerDataNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="MsmqTraceListenerDataTraceOutputOptionsDescription" xml:space="preserve">
+    <value>515 - Listeners that do not output to a Text Formatter use this property to determine which options, or elements, should be included in the trace output. Possible values are: CallStack, DateTime, LogicalOperationStack, None, ProcessId, ThreadId, and Timestamp. The default is None. This property is optional.</value>
+  </data>
+  <data name="MsmqTraceListenerDataTraceOutputOptionsDisplayName" xml:space="preserve">
+    <value>Trace Output Options</value>
+  </data>
+  <data name="MsmqTraceListenerDataTypeNameDescription" xml:space="preserve">
+    <value>517 - The fully qualified type name of the Message Queueing (MSMQ) Trace Listener.</value>
+  </data>
+  <data name="MsmqTraceListenerDataTypeNameDisplayName" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="PriorityFilterDataDescription" xml:space="preserve">
+    <value>519 - A filter that blocks log messages or allows them to pass based on the priority specified in the log message. </value>
+  </data>
+  <data name="PriorityFilterDataDisplayName" xml:space="preserve">
+    <value>Priority Filter</value>
+  </data>
+  <data name="PriorityFilterDataMaximumPriorityDescription" xml:space="preserve">
+    <value>521 - The maximum priority value for messages to be passed to the logging target listener(s).  Messages with a priority above this value are not sent to the logging target. </value>
+  </data>
+  <data name="PriorityFilterDataMaximumPriorityDisplayName" xml:space="preserve">
+    <value>Maximum Priority</value>
+  </data>
+  <data name="PriorityFilterDataMinimumPriorityDescription" xml:space="preserve">
+    <value>523 - The minimum priority value for messages to be passed to the logging target listener(s).  Messages with a priority below this value are not sent to the logging target.</value>
+  </data>
+  <data name="PriorityFilterDataMinimumPriorityDisplayName" xml:space="preserve">
+    <value>Minimum Priority</value>
+  </data>
+  <data name="PriorityFilterDataNameDescription" xml:space="preserve">
+    <value>525 - The name of the Priority Filter.</value>
+  </data>
+  <data name="PriorityFilterDataNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="PriorityFilterDataTypeNameDescription" xml:space="preserve">
+    <value>527 - The fully qualified type name of the Priority Logging Filter.</value>
+  </data>
+  <data name="PriorityFilterDataTypeNameDisplayName" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="RollingFlatFileTraceListenerDataDescription" xml:space="preserve">
+    <value>529 - A logging target listener that writes log messages to a series of text files. The listener can start a new file at specified intervals, use a specified file naming pattern, and optionally overwrite existingt files. Header and footer text can be specified, and the format of the message defined though a template.</value>
+  </data>
+  <data name="RollingFlatFileTraceListenerDataDisplayName" xml:space="preserve">
+    <value>Rolling Flat File Trace Listener</value>
+  </data>
+  <data name="RollingFlatFileTraceListenerDataFileNameDescription" xml:space="preserve">
+    <value>531 - The path and name of the disk file to write log message to. It can include environment variables such as %WINDIR%, %TEMP%, and %USERPROFILE%.</value>
+  </data>
+  <data name="RollingFlatFileTraceListenerDataFileNameDisplayName" xml:space="preserve">
+    <value>File Name</value>
+  </data>
+  <data name="RollingFlatFileTraceListenerDataFilterDescription" xml:space="preserve">
+    <value>533 - The minimum severity of messages that will be sent to the logging target. Valid values are All (the default), Off, Critical, Error, Warning, Information, Verbose, and Activity Tracing. The behavior is for messages with the selected severity and all higher severities to be included. For example, the Warning setting will allow warning, error, and critical mesages tobe written to the logging target.</value>
+  </data>
+  <data name="RollingFlatFileTraceListenerDataFilterDisplayName" xml:space="preserve">
+    <value>Severity Filter</value>
+  </data>
+  <data name="RollingFlatFileTraceListenerDataFooterDescription" xml:space="preserve">
+    <value>535 - The text of the footer to add to the log message.</value>
+  </data>
+  <data name="RollingFlatFileTraceListenerDataFooterDisplayName" xml:space="preserve">
+    <value>Message Footer</value>
+  </data>
+  <data name="RollingFlatFileTraceListenerDataFormatterDescription" xml:space="preserve">
+    <value>537 - The name of the Log Message Formatter to use for formatting the log message before sending it to the logging target.</value>
+  </data>
+  <data name="RollingFlatFileTraceListenerDataFormatterDisplayName" xml:space="preserve">
+    <value>Formatter Name</value>
+  </data>
+  <data name="RollingFlatFileTraceListenerDataHeaderDescription" xml:space="preserve">
+    <value>539 - The text of the header to add to the log message.</value>
+  </data>
+  <data name="RollingFlatFileTraceListenerDataHeaderDisplayName" xml:space="preserve">
+    <value>Message Header</value>
+  </data>
+  <data name="RollingFlatFileTraceListenerDataListenerDataTypeNameDescription" xml:space="preserve">
+    <value>541 - The fully qualified type name of the Listener.</value>
+  </data>
+  <data name="RollingFlatFileTraceListenerDataListenerDataTypeNameDisplayName" xml:space="preserve">
+    <value>Listener Data Type</value>
+  </data>
+  <data name="RollingFlatFileTraceListenerDataMaxArchivedFilesDescription" xml:space="preserve">
+    <value>543 - The maximum number of log files to retain. When set to an numeric value, the listener will purge old files based on the file creation date when the number exceeds the specified value.</value>
+  </data>
+  <data name="RollingFlatFileTraceListenerDataMaxArchivedFilesDisplayName" xml:space="preserve">
+    <value>Max Archived Files</value>
+  </data>
+  <data name="RollingFlatFileTraceListenerDataNameDescription" xml:space="preserve">
+    <value>545 - The name of the Rolling Flat File Trace Listener.</value>
+  </data>
+  <data name="RollingFlatFileTraceListenerDataNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="RollingFlatFileTraceListenerDataRollFileExistsBehaviorDescription" xml:space="preserve">
+    <value>547 - Determines what occurs to an existing file when it rolls over. Increment means that the listener will create a new file using a name created by incrementing the timestamp. Overwrite means that, if a value for the Timestamp Pattern is not specified, the existing file is overwritten.</value>
+  </data>
+  <data name="RollingFlatFileTraceListenerDataRollFileExistsBehaviorDisplayName" xml:space="preserve">
+    <value>File Exists Behavior</value>
+  </data>
+  <data name="RollingFlatFileTraceListenerDataRollIntervalDescription" xml:space="preserve">
+    <value>549 - Determines when the log file rolls over. The default is None. Other options are intervals of Midnight, Minute, Hour, Day, Month, or Year. If required, both a maximun file size and a roll interval can be specified.</value>
+  </data>
+  <data name="RollingFlatFileTraceListenerDataRollIntervalDisplayName" xml:space="preserve">
+    <value>Roll Interval</value>
+  </data>
+  <data name="RollingFlatFileTraceListenerDataRollSizeKBDescription" xml:space="preserve">
+    <value>551 - The maximum size of the log file, in kilobytes, before it rolls over. If required, both a maximun file size and a roll interval can be specified.</value>
+  </data>
+  <data name="RollingFlatFileTraceListenerDataRollSizeKBDisplayName" xml:space="preserve">
+    <value>Roll Size K B</value>
+  </data>
+  <data name="RollingFlatFileTraceListenerDataTimeStampPatternDescription" xml:space="preserve">
+    <value>553 - The date/time format used to create the suffix for the file name, such as 'yyyy-MM-dd'.</value>
+  </data>
+  <data name="RollingFlatFileTraceListenerDataTimeStampPatternDisplayName" xml:space="preserve">
+    <value>Timestamp Pattern</value>
+  </data>
+  <data name="RollingFlatFileTraceListenerDataTraceOutputOptionsDescription" xml:space="preserve">
+    <value>555 - Listeners that do not output to a Text Formatter use this property to determine which options, or elements, should be included in the trace output. Possible values are: CallStack, DateTime, LogicalOperationStack, None, ProcessId, ThreadId, and Timestamp. The default is None. This property is optional.</value>
+  </data>
+  <data name="RollingFlatFileTraceListenerDataTraceOutputOptionsDisplayName" xml:space="preserve">
+    <value>Trace Output Options</value>
+  </data>
+  <data name="RollingFlatFileTraceListenerDataTypeNameDescription" xml:space="preserve">
+    <value>557 - The fully qualified type name of the Rolling Flat File Trace Listener.</value>
+  </data>
+  <data name="RollingFlatFileTraceListenerDataTypeNameDisplayName" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="SpecialTraceSourcesDataAllEventsTraceSourceDescription" xml:space="preserve">
+    <value>561 - A filter that can be used to specify a logging target for all log messages  sent to the Logging Application Block.</value>
+  </data>
+  <data name="SpecialTraceSourcesDataAllEventsTraceSourceDisplayName" xml:space="preserve">
+    <value>All Events Category Filter</value>
+  </data>
+  <data name="SpecialTraceSourcesDataDescription" xml:space="preserve">
+    <value>559 - Filters that allow all events, unprocessed events, and logging and working messages to be sent to specified logging target listeners.</value>
+  </data>
+  <data name="SpecialTraceSourcesDataDisplayName" xml:space="preserve">
+    <value>Special Category Filters</value>
+  </data>
+  <data name="SpecialTraceSourcesDataErrorsTraceSourceDescription" xml:space="preserve">
+    <value>563 - A filter that can be used to specify a logging target for log messages  when a logging error occurs.</value>
+  </data>
+  <data name="SpecialTraceSourcesDataErrorsTraceSourceDisplayName" xml:space="preserve">
+    <value>Errors Category Filter</value>
+  </data>
+  <data name="SpecialTraceSourcesDataNotProcessedTraceSourceDescription" xml:space="preserve">
+    <value>565 - A filter that can be used to specify a logging target for log messages that do not match any configured category.</value>
+  </data>
+  <data name="SpecialTraceSourcesDataNotProcessedTraceSourceDisplayName" xml:space="preserve">
+    <value>Unprocessed Category Filter</value>
+  </data>
+  <data name="SystemDiagnosticsTraceListenerDataDescription" xml:space="preserve">
+    <value>567 - An abstract base class for trace listeners that monitor trace and debug output.</value>
+  </data>
+  <data name="SystemDiagnosticsTraceListenerDataDisplayName" xml:space="preserve">
+    <value>System Diagnostics Trace Listener</value>
+  </data>
+  <data name="SystemDiagnosticsTraceListenerDataFilterDescription" xml:space="preserve">
+    <value>569 - The minimum severity of messages that will be sent to the logging target. Valid values are All (the default), Off, Critical, Error, Warning, Information, Verbose, and Activity Tracing. The behavior is for messages with the selected severity and all higher severities to be included. For example, the Warning setting will allow warning, error, and critical mesages tobe written to the logging target.</value>
+  </data>
+  <data name="SystemDiagnosticsTraceListenerDataFilterDisplayName" xml:space="preserve">
+    <value>Severity Filter</value>
+  </data>
+  <data name="SystemDiagnosticsTraceListenerDataListenerDataTypeNameDescription" xml:space="preserve">
+    <value>571 - The fully qualified type name of the Listener.</value>
+  </data>
+  <data name="SystemDiagnosticsTraceListenerDataListenerDataTypeNameDisplayName" xml:space="preserve">
+    <value>Listener Data Type</value>
+  </data>
+  <data name="SystemDiagnosticsTraceListenerDataNameDescription" xml:space="preserve">
+    <value>573 - The name of the System Diagnostics Trace Listener.</value>
+  </data>
+  <data name="SystemDiagnosticsTraceListenerDataNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="SystemDiagnosticsTraceListenerDataTraceOutputOptionsDescription" xml:space="preserve">
+    <value>575 - Listeners that do not output to a Text Formatter use this property to determine which options, or elements, should be included in the trace output. Possible values are: CallStack, DateTime, LogicalOperationStack, None, ProcessId, ThreadId, and Timestamp. The default is None. This property is optional.</value>
+  </data>
+  <data name="SystemDiagnosticsTraceListenerDataTraceOutputOptionsDisplayName" xml:space="preserve">
+    <value>Trace Output Options</value>
+  </data>
+  <data name="SystemDiagnosticsTraceListenerDataTypeNameDescription" xml:space="preserve">
+    <value>577 - The fully qualified type name of the System Diagnostics Trace Listener.</value>
+  </data>
+  <data name="SystemDiagnosticsTraceListenerDataTypeNameDisplayName" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="TextFormatterDataDescription" xml:space="preserve">
+    <value>579 - A Log Message Formatter that generates the output for a log message in a text format suitable for use with listeners such as the FlatFile, Rolling Flat File, Email, and Event Log Trace Listeners. </value>
+  </data>
+  <data name="TextFormatterDataDisplayName" xml:space="preserve">
+    <value>Text Log Message Formatter</value>
+  </data>
+  <data name="TextFormatterDataNameDescription" xml:space="preserve">
+    <value>581 - The name of the Text Log Message Formatter.</value>
+  </data>
+  <data name="TextFormatterDataNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="TextFormatterDataTemplateDescription" xml:space="preserve">
+    <value>583 - The template used to format the log message. It contains tokens that are replaced by values from the log message. Use the editor to edit the default template and insert tokens and text.</value>
+  </data>
+  <data name="TextFormatterDataTemplateDisplayName" xml:space="preserve">
+    <value>Template</value>
+  </data>
+  <data name="TextFormatterDataTypeNameDescription" xml:space="preserve">
+    <value>585 - The fully qualified type name of the Text Log Message Formatter.</value>
+  </data>
+  <data name="TextFormatterDataTypeNameDisplayName" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="TraceListenerDataCollectionDescription" xml:space="preserve">
+    <value>599 - A collection of Trace Listeners.</value>
+  </data>
+  <data name="TraceListenerDataCollectionDisplayName" xml:space="preserve">
+    <value>Trace Listener Data Collection</value>
+  </data>
+  <data name="TraceListenerDataDescription" xml:space="preserve">
+    <value>587 - An abstract base class for all trace listeners.</value>
+  </data>
+  <data name="TraceListenerDataDisplayName" xml:space="preserve">
+    <value>Trace Listener</value>
+  </data>
+  <data name="TraceListenerDataFilterDescription" xml:space="preserve">
+    <value>589 - The minimum severity of messages that will be sent to the logging target. Valid values are All (the default), Off, Critical, Error, Warning, Information, Verbose, and Activity Tracing. The behavior is for messages with the selected severity and all higher severities to be included. For example, the Warning setting will allow warning, error, and critical mesages tobe written to the logging target.</value>
+  </data>
+  <data name="TraceListenerDataFilterDisplayName" xml:space="preserve">
+    <value>Severity Filter</value>
+  </data>
+  <data name="TraceListenerDataListenerDataTypeNameDescription" xml:space="preserve">
+    <value>591 - The fully qualified type name of the Listener.</value>
+  </data>
+  <data name="TraceListenerDataListenerDataTypeNameDisplayName" xml:space="preserve">
+    <value>Listener Data Type</value>
+  </data>
+  <data name="TraceListenerDataNameDescription" xml:space="preserve">
+    <value>593 - The name of the Trace Listener.</value>
+  </data>
+  <data name="TraceListenerDataNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="TraceListenerDataTraceOutputOptionsDescription" xml:space="preserve">
+    <value>595 - Listeners that do not output to a Text Formatter use this property to determine which options, or elements, should be included in the trace output. Possible values are: CallStack, DateTime, LogicalOperationStack, None, ProcessId, ThreadId, and Timestamp. The default is None. This property is optional.</value>
+  </data>
+  <data name="TraceListenerDataTraceOutputOptionsDisplayName" xml:space="preserve">
+    <value>Trace Output Options</value>
+  </data>
+  <data name="TraceListenerDataTypeNameDescription" xml:space="preserve">
+    <value>597 - The fully qualified type name of the Trace Listener.</value>
+  </data>
+  <data name="TraceListenerDataTypeNameDisplayName" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="TraceListenerReferenceDataDescription" xml:space="preserve">
+    <value>601 - The Logging Target Listener to which log entries will be sent.</value>
+  </data>
+  <data name="TraceListenerReferenceDataDisplayName" xml:space="preserve">
+    <value>Trace Listener</value>
+  </data>
+  <data name="TraceListenerReferenceDataNameDescription" xml:space="preserve">
+    <value>603 - The name of the Logging Target Listener to which log entries will be sent.</value>
+  </data>
+  <data name="TraceListenerReferenceDataNameDisplayName" xml:space="preserve">
+    <value>Trace Listener Name</value>
+  </data>
+  <data name="TraceSourceDataAutoFlushDescription" xml:space="preserve">
+    <value>607 - Specifies if the Logging Target Listeners will automatically flush messages to the target as soon as they are received. When set to False, the Listener buffers the messages and sends them to the target in batches or when significant events occur such as the machine shutting down.</value>
+  </data>
+  <data name="TraceSourceDataAutoFlushDisplayName" xml:space="preserve">
+    <value>Auto Flush</value>
+  </data>
+  <data name="TraceSourceDataDefaultLevelDescription" xml:space="preserve">
+    <value>609 - The severity level for messages that will be logged. Messages sent to the block for this category, and with a lower severity than that specified, will not be logged for this category.</value>
+  </data>
+  <data name="TraceSourceDataDefaultLevelDisplayName" xml:space="preserve">
+    <value>Minimum Severity</value>
+  </data>
+  <data name="TraceSourceDataDescription" xml:space="preserve">
+    <value>605 - Defines the settings for a Category to which log messages can be assigned. Log messages can be assigned to one or more Categories. Each Category defines how log messages assigned that category will be handled.</value>
+  </data>
+  <data name="TraceSourceDataDisplayName" xml:space="preserve">
+    <value>Logging Category Filter</value>
+  </data>
+  <data name="TraceSourceDataNameDescription" xml:space="preserve">
+    <value>611 - The name of the Trace Source.</value>
+  </data>
+  <data name="TraceSourceDataNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="TraceSourceDataTraceListenersDescription" xml:space="preserve">
+    <value>613 - The list of Logging Target Listeners for this Category or Special Filter.</value>
+  </data>
+  <data name="TraceSourceDataTraceListenersDisplayName" xml:space="preserve">
+    <value>Listeners</value>
+  </data>
+  <data name="WmiTraceListenerDataDescription" xml:space="preserve">
+    <value>615 - A logging target listener that raises a WMI event for each log message.</value>
+  </data>
+  <data name="WmiTraceListenerDataDisplayName" xml:space="preserve">
+    <value>WMI Trace Listener</value>
+  </data>
+  <data name="WmiTraceListenerDataFilterDescription" xml:space="preserve">
+    <value>617 - The minimum severity of messages that will be sent to the logging target. Valid values are All (the default), Off, Critical, Error, Warning, Information, Verbose, and Activity Tracing. The behavior is for messages with the selected severity and all higher severities to be included. For example, the Warning setting will allow warning, error, and critical mesages tobe written to the logging target.</value>
+  </data>
+  <data name="WmiTraceListenerDataFilterDisplayName" xml:space="preserve">
+    <value>Severity Filter</value>
+  </data>
+  <data name="WmiTraceListenerDataListenerDataTypeNameDescription" xml:space="preserve">
+    <value>619 - The fully qualified type name of the Listener.</value>
+  </data>
+  <data name="WmiTraceListenerDataListenerDataTypeNameDisplayName" xml:space="preserve">
+    <value>Listener Data Type</value>
+  </data>
+  <data name="WmiTraceListenerDataNameDescription" xml:space="preserve">
+    <value>621 - The name of the WMI Trace Listener.</value>
+  </data>
+  <data name="WmiTraceListenerDataNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="WmiTraceListenerDataTraceOutputOptionsDescription" xml:space="preserve">
+    <value>623 - Listeners that do not output to a Text Formatter use this property to determine which options, or elements, should be included in the trace output. Possible values are: CallStack, DateTime, LogicalOperationStack, None, ProcessId, ThreadId, and Timestamp. The default is None. This property is optional.</value>
+  </data>
+  <data name="WmiTraceListenerDataTraceOutputOptionsDisplayName" xml:space="preserve">
+    <value>Trace Output Options</value>
+  </data>
+  <data name="WmiTraceListenerDataTypeNameDescription" xml:space="preserve">
+    <value>625 - The fully qualified type name of theWMI Trace Listener.</value>
+  </data>
+  <data name="WmiTraceListenerDataTypeNameDisplayName" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="XmlTraceListenerDataDescription" xml:space="preserve">
+    <value>627 - A logging target listener that writes log messages in XML format to a specified text file.</value>
+  </data>
+  <data name="XmlTraceListenerDataDisplayName" xml:space="preserve">
+    <value>XML Trace Listener</value>
+  </data>
+  <data name="XmlTraceListenerDataFileNameDescription" xml:space="preserve">
+    <value>629 - The path and name of the disk file to write the log messages to. It can include environment variables such as %WINDIR%, %TEMP%, and %USERPROFILE%.</value>
+  </data>
+  <data name="XmlTraceListenerDataFileNameDisplayName" xml:space="preserve">
+    <value>File Name</value>
+  </data>
+  <data name="XmlTraceListenerDataFilterDescription" xml:space="preserve">
+    <value>631 - The minimum severity of messages that will be sent to the logging target. Valid values are All (the default), Off, Critical, Error, Warning, Information, Verbose, and Activity Tracing. The behavior is for messages with the selected severity and all higher severities to be included. For example, the Warning setting will allow warning, error, and critical mesages tobe written to the logging target.</value>
+  </data>
+  <data name="XmlTraceListenerDataFilterDisplayName" xml:space="preserve">
+    <value>Severity Filter</value>
+  </data>
+  <data name="XmlTraceListenerDataListenerDataTypeNameDescription" xml:space="preserve">
+    <value>633 - The fully qualified type name of the Listener.</value>
+  </data>
+  <data name="XmlTraceListenerDataListenerDataTypeNameDisplayName" xml:space="preserve">
+    <value>Listener Data Type</value>
+  </data>
+  <data name="XmlTraceListenerDataNameDescription" xml:space="preserve">
+    <value>635 - The name of the XML Trace Listener.</value>
+  </data>
+  <data name="XmlTraceListenerDataNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="XmlTraceListenerDataTraceOutputOptionsDescription" xml:space="preserve">
+    <value>637 - Listeners that do not output to a Text Formatter use this property to determine which options, or elements, should be included in the trace output. Possible values are: CallStack, DateTime, LogicalOperationStack, None, ProcessId, ThreadId, and Timestamp. The default is None. This property is optional.</value>
+  </data>
+  <data name="XmlTraceListenerDataTraceOutputOptionsDisplayName" xml:space="preserve">
+    <value>Trace Output Options</value>
+  </data>
+  <data name="XmlTraceListenerDataTypeNameDescription" xml:space="preserve">
+    <value>639 - The fully qualified type name of the XML Trace Listener.</value>
+  </data>
+  <data name="XmlTraceListenerDataTypeNameDisplayName" xml:space="preserve">
+    <value>Type</value>
+  </data>
+</root>

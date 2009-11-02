@@ -20,6 +20,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration.Tests
 {
     [TestClass]
+    [DeploymentItem("test.exe.config")]
     public class SymmetricConfigurationSerializationFixture
     {
         [TestMethod]

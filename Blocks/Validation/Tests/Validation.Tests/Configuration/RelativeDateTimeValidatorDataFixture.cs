@@ -97,7 +97,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             rwValidatorData.UpperBoundType = RangeBoundaryType.Ignore;
             rwValidatorData.UpperUnit = DateTimeUnit.Month;
 
-            Validator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(null, null, null, null);
 
             Assert.IsNotNull(validator);
             Assert.AreSame(typeof(RelativeDateTimeValidator), validator.GetType());
@@ -126,7 +126,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             rwValidatorData.UpperBoundType = RangeBoundaryType.Ignore;
             rwValidatorData.UpperUnit = DateTimeUnit.Month;
 
-            Validator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(null, null, null, null);
 
             Assert.IsNotNull(validator);
             Assert.AreSame(typeof(RelativeDateTimeValidator), validator.GetType());

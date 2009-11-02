@@ -13,12 +13,16 @@ using System;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using System.ComponentModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 {
 	/// <summary>
 	/// Configuration object to describe an instance of class <see cref="TypeConversionValidatorData"/>.
 	/// </summary>
+    [ResourceDescription(typeof(DesignResources), "TypeConversionValidatorDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "TypeConversionValidatorDataDisplayName")]
 	public class TypeConversionValidatorData : ValueValidatorData
 	{
 		private static readonly AssemblyQualifiedTypeNameConverter typeConverter = new AssemblyQualifiedTypeNameConverter();
@@ -26,8 +30,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 		/// <summary>
 		/// <para>Initializes a new instance of the <see cref="TypeConversionValidatorData"/> class.</para>
 		/// </summary>
-		public TypeConversionValidatorData()
-		{ }
+        public TypeConversionValidatorData() { Type = typeof(TypeConversionValidator); }
 
 		/// <summary>
 		/// <para>Initializes a new instance of the <see cref="TypeConversionValidatorData"/> class with a name.</para>
@@ -42,6 +45,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 		/// Gets or sets name of the type the represented <see cref="TypeConversionValidator"/> must use for testing conversion.
 		/// </summary>
 		[ConfigurationProperty(TargetTypeNamePropertyName, IsRequired=true)]
+        [Editor(CommonDesignTime.EditorTypes.TypeSelector, CommonDesignTime.EditorTypes.UITypeEditor)]
+        [BaseType(typeof(object))]
+        [ResourceDescription(typeof(DesignResources), "TypeConversionValidatorDataTargetTypeNameDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "TypeConversionValidatorDataTargetTypeNameDisplayName")]
 		public string TargetTypeName
 		{
 			get { return (string)this[TargetTypeNamePropertyName]; }

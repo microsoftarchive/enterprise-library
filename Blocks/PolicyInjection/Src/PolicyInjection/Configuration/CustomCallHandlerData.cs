@@ -19,6 +19,8 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
+using System.ComponentModel;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
 {
@@ -26,6 +28,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
     /// A configuration element that allows you to configure arbitrary
     /// call handlers that don't otherwise have configuration support.
     /// </summary>
+    [ResourceDescription(typeof(DesignResources), "CustomCallHandlerDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "CustomCallHandlerDataDisplayName")]
+    [TypePickingCommand(Title = "Custom Call Handler (using type picker)")]
     public class CustomCallHandlerData : CallHandlerData, IHelperAssistedCustomConfigurationData<CustomCallHandlerData>
     {
         CustomProviderDataHelper<CustomCallHandlerData> helper;
@@ -84,6 +89,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         public void SetAttributeValue(string key, string value)
         {
             helper.HandleSetAttributeValue(key, value);
+        }
+
+        /// <summary>
+        /// Overridden in order to apply <see cref="BrowsableAttribute"/>.
+        /// </summary>
+        [Browsable(true)]
+        [Editor(CommonDesignTime.EditorTypes.TypeSelector, CommonDesignTime.EditorTypes.UITypeEditor)]
+        [BaseType(typeof(ICallHandler), typeof(CustomCallHandlerData))]
+        [ResourceDescription(typeof(DesignResources), "CustomCallHandlerDataTypeNameDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "CustomCallHandlerDataTypeNameDisplayName")]
+        public override string TypeName
+        {
+            get { return base.TypeName; }
+            set { base.TypeName = value; }
         }
 
         /// <summary>

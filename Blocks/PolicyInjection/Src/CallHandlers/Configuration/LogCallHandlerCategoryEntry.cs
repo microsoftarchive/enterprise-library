@@ -13,6 +13,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Configuration
 {
@@ -20,6 +22,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
     /// A configuration element that handles the entries for the &lt;categories&gt; element
     /// for the Log Call handler.
     /// </summary>
+    [ResourceDescription(typeof(DesignResources), "LogCallHandlerCategoryEntryDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "LogCallHandlerCategoryEntryDisplayName")]
+    [ViewModel(PolicyInjectionCallHandlersDesignTime.ViewModelTypes.LogCallHandlerCategoryEntryViewModel)]
     public class LogCallHandlerCategoryEntry : NamedConfigurationElement
     {
         /// <summary>
@@ -36,6 +41,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
         /// <param name="name">Category string.</param>
         public LogCallHandlerCategoryEntry(string name) : base(name)
         {
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [ResourceDescription(typeof(DesignResources), "LogCallHandlerCategoryEntryNameDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "LogCallHandlerCategoryEntryNameDisplayName")]
+        [Reference(typeof(NamedElementCollection<TraceSourceData>), typeof(TraceSourceData))]
+        public override string Name
+        {
+            get { return base.Name; }
+            set { base.Name = value; }
         }
     }
 }

@@ -1,0 +1,15 @@
+﻿<UserControl x:Class="Console.Wpf.ComponentModel.Editors.FlagsEditor"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    
+    <UserControl.Resources>
+        <DataTemplate x:Key="FlagItem">
+            <CheckBox IsChecked="{Binding Selected}">
+                <TextBlock Text="{Binding Value}" />
+            </CheckBox>
+        </DataTemplate>
+    </UserControl.Resources>
+    
+    <ItemsControl x:Name="Flags" ItemTemplate="{StaticResource FlagItem}" />   
+    
+</UserControl>

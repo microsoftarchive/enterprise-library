@@ -86,6 +86,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 
             config.Sections.Remove(sectionName);
             config.Save();
+            ConfigurationManager.RefreshSection(sectionName);
         }
 
         /// <summary>
@@ -106,6 +107,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
             config.Sections.Add(section, configurationSection);
 
             config.Save();
+            ConfigurationManager.RefreshSection(section);
         }
 
         /// <summary>

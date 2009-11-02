@@ -59,15 +59,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
                     availableConfigurationSource,
                     Container.Resolved<IValidationInstrumentationProvider>())) { IsDefault = true };
 
+            yield return new TypeRegistration<ValidationAttributeValidatorFactory>(
+                () => new ValidationAttributeValidatorFactory(
+                          Container.Resolved<IValidationInstrumentationProvider>())) { IsDefault = true };
+
             yield return new TypeRegistration<ValidatorFactory>(
                 () =>
                 new CompositeValidatorFactory(
                     Container.Resolved<IValidationInstrumentationProvider>(),
                     Container.Resolved<AttributeValidatorFactory>(),
-                    Container.Resolved<ConfigurationValidatorFactory>()
-                    )
-                )
-                { IsDefault = true };
+                    Container.Resolved<ConfigurationValidatorFactory>(),
+                    Container.Resolved<ValidationAttributeValidatorFactory>())
+                ) { IsDefault = true };
         }
 
         /// <summary>

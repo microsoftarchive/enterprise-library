@@ -386,4 +386,46 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
             }
         }
     }
+
+    [TestClass]
+    public class WhenSqlStringAccessorIsMappingToNullableFields : SqlStringAccessorContext
+    {
+        private const string cleanupQuery = "Delete from products where ProductName='Test'";
+        private const string insertQuery = "INSERT INTO [Northwind].[dbo].[Products]([ProductName],[SupplierID],[CategoryID],[QuantityPerUnit],[UnitPrice],[UnitsInStock],[UnitsOnOrder],[ReorderLevel],[Discontinued]) VALUES('Test',null,null,null,null,null,null,null,53)";
+
+        private IDataAccessor<ProductSupplier> accessor;
+
+        public class ProductSupplier
+        {
+
+            public string ProductName { get; set; }
+            public int? SupplierID { get; set; }
+        }
+
+        protected override void Arrange()
+        {
+            base.Arrange();
+
+            Database.ExecuteNonQuery(CommandType.Text, cleanupQuery);
+            Database.ExecuteNonQuery(CommandType.Text, insertQuery);
+
+            accessor = Database.CreateSqlStringAccessor("Select ProductName,SupplierID from Products WHERE ProductName='Test'", 
+                MapBuilder<ProductSupplier>.BuildAllProperties());
+        }
+
+        protected override void Teardown()
+        {
+            Database.ExecuteNonQuery(CommandType.Text, cleanupQuery);
+            base.Teardown();
+        }
+
+        [TestMethod]
+        public void ThenNullableFieldIsProperlyMappedWhenRowContainsNull()
+        {
+            var suppliers = accessor.Execute().ToList();
+            Assert.AreEqual(1, suppliers.Count);
+
+            Assert.IsFalse(suppliers[0].SupplierID.HasValue);
+        }
+    }
 }

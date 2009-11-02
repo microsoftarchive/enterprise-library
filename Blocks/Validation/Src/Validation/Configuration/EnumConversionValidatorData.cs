@@ -13,12 +13,16 @@ using System;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using System.ComponentModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 {
 	/// <summary>
 	/// Configuration object to describe an instance of class <see cref="EnumConversionValidatorData"/>.
 	/// </summary>
+    [ResourceDescription(typeof(DesignResources), "EnumConversionValidatorDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "EnumConversionValidatorDataDisplayName")]
 	public class EnumConversionValidatorData : ValueValidatorData
 	{
 		private static readonly AssemblyQualifiedTypeNameConverter typeConverter = new AssemblyQualifiedTypeNameConverter();
@@ -28,8 +32,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 		/// <summary>
 		/// <para>Initializes a new instance of the <see cref="EnumConversionValidatorData"/> class.</para>
 		/// </summary>
-		public EnumConversionValidatorData()
-		{ }
+		public EnumConversionValidatorData() { Type = typeof(EnumConversionValidator);}
 
 		/// <summary>
 		/// <para>Initializes a new instance of the <see cref="EnumConversionValidatorData"/> class with a name.</para>
@@ -53,6 +56,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 		/// Gets or sets the name of the target element type for the represented validator.
 		/// </summary>
 		[ConfigurationProperty(EnumTypeNamePropertyName, IsRequired=true)]
+        [ResourceDescription(typeof(DesignResources), "EnumConversionValidatorDataEnumTypeNameDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "EnumConversionValidatorDataEnumTypeNameDisplayName")]
+        [Editor(CommonDesignTime.EditorTypes.TypeSelector, CommonDesignTime.EditorTypes.UITypeEditor)]
+        [BaseType(typeof(Enum))] //TODO : check, does this work?
 		public string EnumTypeName
 		{
 			get { return (string)this[EnumTypeNamePropertyName]; }

@@ -66,7 +66,6 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_configuration_element_with_prope
         }
 	}
 
-
     [TestClass]
     public class when_discovering_properties_with_child_properties_on_configuration_element : given_configuration_properties_decorated_with_component_model_attributes_and_child_properties
     {
@@ -74,7 +73,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_configuration_element_with_prope
 
         protected override void Act()
         {
-            var sectionModel = SectionViewModel.CreateSection(ServiceProvider, new ConfigurationElementWithComponentModelAttributesAndChildProperties());
+            var sectionModel = SectionViewModel.CreateSection(Container, "mockSection", new ConfigurationElementWithComponentModelAttributesAndChildProperties());
             properties = sectionModel.Properties;
         }
 

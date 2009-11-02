@@ -11,6 +11,10 @@
 
 using System.Collections.Generic;
 using System.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using System.Linq;
+using System;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
 {
@@ -19,6 +23,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
     /// matchable item. Specifically, the string to match, and whether it is case
     /// sensitive or not.
     /// </summary>
+    [ResourceDescription(typeof(DesignResources), "MatchDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "MatchDataDisplayName")]
+    [ViewModel(PolicyInjectionDesignTime.ViewModelTypeNames.PiabMemberNameViewModel)]
     public class MatchData : ConfigurationElement
     {
         private const string MatchPropertyName = "match";
@@ -56,6 +63,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// </summary>
         /// <value>The "match" attribute value out of the configuration file.</value>
         [ConfigurationProperty(MatchPropertyName, IsRequired = true)]
+        [ResourceDescription(typeof(DesignResources), "MatchDataMatchDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "MatchDataMatchDisplayName")]
         public string Match
         {
             get { return (string)base[MatchPropertyName]; }
@@ -67,6 +76,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// </summary>
         /// <value>The "ignoreCase" attribute value out of the configuration file.</value>
         [ConfigurationProperty(IgnoreCasePropertyName, DefaultValue = false, IsRequired = false)]
+        [ResourceDescription(typeof(DesignResources), "MatchDataIgnoreCaseDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "MatchDataIgnoreCaseDisplayName")]
         public bool IgnoreCase
         {
             get { return (bool)base[IgnoreCasePropertyName]; }
@@ -79,7 +90,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
     /// or elements derived from <see cref="MatchData"/>.
     /// </summary>
     /// <typeparam name="T">Type of element contained in the collection. Must be <see cref="MatchData"/> or derived from <see cref="MatchData"/>.</typeparam>
-    public class MatchDataCollection<T> : ConfigurationElementCollection, IEnumerable<T>
+    public class MatchDataCollection<T> : ConfigurationElementCollection, IEnumerable<T>, IMergeableConfigurationElementCollection
         where T : MatchData, new()
     {
         /// <summary>
@@ -166,6 +177,24 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
             {
                 yield return this[i];
             }
+        }
+
+        void IMergeableConfigurationElementCollection.ResetCollection(IEnumerable<ConfigurationElement> configurationElements)
+        {
+            while (Count > 0)
+            {
+                RemoveAt(0);
+            }
+
+            foreach (T element in configurationElements.Reverse())
+            {
+                base.BaseAdd(0, element);
+            }
+        }
+
+        ConfigurationElement IMergeableConfigurationElementCollection.CreateNewElement(Type configurationType)
+        {
+            return CreateNewElement();
         }
     }
 }

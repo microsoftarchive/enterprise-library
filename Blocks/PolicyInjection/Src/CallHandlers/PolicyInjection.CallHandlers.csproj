@@ -71,10 +71,16 @@
     <Compile Include="CachingCallHandlerAttribute.cs" />
     <Compile Include="Configuration\AuthorizationCallHandlerData.cs" />
     <Compile Include="Configuration\CachingCallHandlerData.cs" />
+    <Compile Include="Configuration\DesignResources.Designer.cs">
+      <DependentUpon>DesignResources.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
     <Compile Include="Configuration\ExceptionCallHandlerData.cs" />
     <Compile Include="Configuration\LogCallHandlerCategoryEntry.cs" />
     <Compile Include="Configuration\LogCallHandlerData.cs" />
     <Compile Include="Configuration\PerformanceCounterCallHandlerData.cs" />
+    <Compile Include="Configuration\PolicyInjectionCalllHandlersDesignTime.cs" />
     <Compile Include="Configuration\ValidationCallHandlerData.cs" />
     <Compile Include="ExceptionCallHandler.cs" />
     <Compile Include="ExceptionCallHandlerAttribute.cs" />
@@ -128,6 +134,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Configuration\DesignResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>DesignResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>

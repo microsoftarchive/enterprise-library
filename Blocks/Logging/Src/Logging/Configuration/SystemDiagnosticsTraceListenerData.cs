@@ -11,12 +11,15 @@
 
 using System;
 using System.Diagnostics;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 {
     /// <summary>
     /// Represents the configuration settings for any trace listener.
     /// </summary>
+    [ResourceDescription(typeof(DesignResources), "SystemDiagnosticsTraceListenerDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "SystemDiagnosticsTraceListenerDataDisplayName")]
     public class SystemDiagnosticsTraceListenerData
         : BasicCustomTraceListenerData
     {
@@ -62,6 +65,24 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
                                                   TraceOptions traceOutputOptions)
             : base(name, type, initData, traceOutputOptions)
         {
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [System.ComponentModel.Editor(CommonDesignTime.EditorTypes.TypeSelector, CommonDesignTime.EditorTypes.UITypeEditor)]
+        [BaseType(typeof(System.Diagnostics.TraceListener))]
+        [System.ComponentModel.Browsable(true)]
+        public override string TypeName
+        {
+            get
+            {
+                return base.TypeName;
+            }
+            set
+            {
+                base.TypeName = value;
+            }
         }
     }
 }

@@ -15,12 +15,15 @@ using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Filters;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 {
     /// <summary>
     /// Represents a single category filter configuration settings.
     /// </summary>
+    [ResourceDescription(typeof(DesignResources), "CategoryFilterDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "CategoryFilterDataDisplayName")]
     public class CategoryFilterData : LogFilterData
     {
         private const string categoryFilterModeProperty = "categoryFilterMode";
@@ -63,6 +66,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// One of <see cref="CategoryFilterMode"/> enumeration.
         /// </summary>
         [ConfigurationProperty(categoryFilterModeProperty)]
+        [ResourceDescription(typeof(DesignResources), "CategoryFilterDataCategoryFilterModeDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "CategoryFilterDataCategoryFilterModeDisplayName")]
         public CategoryFilterMode CategoryFilterMode
         {
             get { return (CategoryFilterMode)this[categoryFilterModeProperty]; }
@@ -73,6 +78,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// Collection of <see cref="CategoryFilterData"/>.
         /// </summary>
         [ConfigurationProperty(categoryFiltersProperty)]
+        [ConfigurationCollection(typeof(CategoryFilterEntry))]
+        [ResourceDescription(typeof(DesignResources), "CategoryFilterDataCategoryFiltersDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "CategoryFilterDataCategoryFiltersDisplayName")]
+        [System.ComponentModel.Editor(CommonDesignTime.EditorTypes.CollectionEditor, CommonDesignTime.EditorTypes.FrameworkElement)]
+        [CollectionEditorTemplate("CategoryFilterEntryHeader", "CategoryFilterEntryItem")]
+        [EnvironmentalOverrides(false)]
+        [DesignTimeReadOnly(false)]
         public NamedElementCollection<CategoryFilterEntry> CategoryFilters
         {
             get { return (NamedElementCollection<CategoryFilterEntry>)base[categoryFiltersProperty]; }

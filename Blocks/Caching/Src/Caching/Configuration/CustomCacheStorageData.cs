@@ -15,12 +15,17 @@ using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using System.Collections.Generic;
+using System.ComponentModel;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
 {
 	/// <summary>
 	/// Configuration object for Custom Providers.
 	/// </summary>
+    [ResourceDescription(typeof(DesignResources), "CustomCacheStorageDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "CustomCacheStorageDataDisplayName")]
+    [TypePickingCommand(Title = "Custom Cache Store (using type picker)")]
 	public class CustomCacheStorageData
 		: CacheStorageData, IHelperAssistedCustomConfigurationData<CustomCacheStorageData>
 	{
@@ -52,6 +57,21 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
             helper = new CustomProviderDataHelper<CustomCacheStorageData>(this);
             Name = name;
             TypeName = typeName;
+        }
+
+
+        /// <summary>
+        /// Overridden in order to apply <see cref="BrowsableAttribute"/>.
+        /// </summary>
+        [Browsable(true)]
+        [Editor(CommonDesignTime.EditorTypes.TypeSelector, CommonDesignTime.EditorTypes.UITypeEditor)]
+        [BaseType(typeof(IBackingStore), typeof(CustomCacheStorageData))]
+        [ResourceDescription(typeof(DesignResources), "CustomCacheStorageDataTypeNameDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "CustomCacheStorageDataTypeNameDisplayName")]
+        public override string TypeName
+        {
+            get { return base.TypeName; }
+            set { base.TypeName = value; }
         }
 
 		/// <summary>

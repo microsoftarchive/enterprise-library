@@ -52,7 +52,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
         {
             NotNullValidatorData rwValidatorData = new NotNullValidatorData("validator1");
 
-            Validator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(null, null, null, null);
 
             Assert.IsNotNull(validator);
             Assert.AreSame(typeof(NotNullValidator), validator.GetType());
@@ -66,7 +66,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             NotNullValidatorData rwValidatorData = new NotNullValidatorData("validator1");
             rwValidatorData.Negated = true;
 
-            Validator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(null, null, null, null);
 
             Assert.IsNotNull(validator);
             Assert.AreSame(typeof(NotNullValidator), validator.GetType());
@@ -80,7 +80,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             NotNullValidatorData rwValidatorData = new NotNullValidatorData("validator1");
             rwValidatorData.MessageTemplate = "message template override";
 
-            Validator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(null, null, null, null);
 
             Assert.IsNotNull(validator);
             Assert.AreSame(typeof(NotNullValidator), validator.GetType());

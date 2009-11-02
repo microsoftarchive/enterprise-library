@@ -12,6 +12,7 @@
 using System;
 using System.Configuration;
 using System.ComponentModel;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 {
@@ -65,6 +66,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 		/// </value>
 		[ConfigurationProperty(typeProperty, IsRequired = true)]
         [Browsable(false)]
+        [ResourceDescription(typeof(DesignResources), "NameTypeConfigurationElementTypeNameDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "NameTypeConfigurationElementTypeNameDisplayName")]
 		public virtual string TypeName
 		{
 			get { return (string)this[typeProperty]; }

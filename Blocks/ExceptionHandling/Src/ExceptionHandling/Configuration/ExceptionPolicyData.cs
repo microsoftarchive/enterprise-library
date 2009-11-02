@@ -24,8 +24,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
     /// <summary>
     /// Represents the configuration for an <see cref="ExceptionPolicy"/>.
     /// </summary> 
-    [ResourceDisplayName(typeof(Resources), "AddPolicyDisplayName")]		
-    [ResourceDescription(typeof(Resources), "AddPolicyDsiplayDescription")]
+    [ResourceDescription(typeof(DesignResources), "ExceptionPolicyDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "ExceptionPolicyDataDisplayName")]
 	public class ExceptionPolicyData : NamedConfigurationElement
     {
 		private const string exceptionTypesProperty = "exceptionTypes";
@@ -55,8 +55,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
 		/// A collection of <see cref="ExceptionTypeData"/> objects.
 		/// </value>
 		[ConfigurationProperty(exceptionTypesProperty)]
-        [ResourceDisplayName(typeof(Resources), "ExceptionTypesDisplayName")]
+        [ResourceDescription(typeof(DesignResources), "ExceptionPolicyDataExceptionTypesDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "ExceptionPolicyDataExceptionTypesDisplayName")]
         [ConfigurationCollection(typeof(ExceptionTypeData))]
+        [PromoteCommands]
 		public NamedElementCollection<ExceptionTypeData> ExceptionTypes
 		{
 			get

@@ -10,44 +10,43 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
-using System.Text;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
-using System.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 {
-	/// <summary>
-	/// Describes a <see cref="DateTimeRangeValidator"/>.
-	/// </summary>
-	public class DateTimeRangeValidatorData : RangeValidatorData<DateTime>
-	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="DateTimeRangeValidatorData"/> class.
-		/// </summary>
-		public DateTimeRangeValidatorData()
-		{ }
+    /// <summary>
+    /// Describes a <see cref="DateTimeRangeValidator"/>.
+    /// </summary>
+    [ResourceDescription(typeof(DesignResources), "DateTimeRangeValidatorDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "DateTimeRangeValidatorDataDisplayName")]
+    public class DateTimeRangeValidatorData : RangeValidatorData<DateTime>
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DateTimeRangeValidatorData"/> class.
+        /// </summary>
+        public DateTimeRangeValidatorData() { Type = typeof(DateTimeRangeValidator); }
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="DateTimeRangeValidatorData"/> class.
-		/// </summary>
-		/// <param name="name">The configuration object name.</param>
-		public DateTimeRangeValidatorData(string name)
-			: base(name, typeof(DateTimeRangeValidator))
-		{ }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DateTimeRangeValidatorData"/> class.
+        /// </summary>
+        /// <param name="name">The configuration object name.</param>
+        public DateTimeRangeValidatorData(string name)
+            : base(name, typeof(DateTimeRangeValidator))
+        { }
 
-		/// <summary>
-		/// Creates the <see cref="DateTimeRangeValidator"/> described by the configuration object.
-		/// </summary>
-		/// <param name="targetType">The type of object that will be validated by the validator.</param>
-		/// <returns>The created <see cref="DateTimeRangeValidator"/>.</returns>	
-		protected override Validator DoCreateValidator(Type targetType)
-		{
-			return new DateTimeRangeValidator(this.LowerBound,
-				this.LowerBoundType,
-				this.UpperBound,
-				this.UpperBoundType,
-				Negated);
-		}
-	}
+        /// <summary>
+        /// Creates the <see cref="DateTimeRangeValidator"/> described by the configuration object.
+        /// </summary>
+        /// <param name="targetType">The type of object that will be validated by the validator.</param>
+        /// <returns>The created <see cref="DateTimeRangeValidator"/>.</returns>	
+        protected override Validator DoCreateValidator(Type targetType)
+        {
+            return new DateTimeRangeValidator(this.LowerBound,
+                this.LowerBoundType,
+                this.UpperBound,
+                this.UpperBoundType,
+                Negated);
+        }
+    }
 }

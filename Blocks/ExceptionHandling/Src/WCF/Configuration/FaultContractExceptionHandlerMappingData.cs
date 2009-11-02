@@ -14,12 +14,17 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using System.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using System.ComponentModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.Configuration
 {
 	/// <summary>
 	/// Represents a mapping for a fault contract property from either an exception property or a GUID.
 	/// </summary>
+    [ResourceDescription(typeof(DesignResources), "FaultContractExceptionHandlerMappingDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "FaultContractExceptionHandlerMappingDataDisplayName")]
+    [ViewModel(WcfExceptionHandlingDesignTime.ViewModelTypes.FaultContractExceptionHandlerMappingDataViewModel)]
 	public class FaultContractExceptionHandlerMappingData : NamedConfigurationElement
 	{
 		/// <summary>
@@ -45,6 +50,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.Configurat
 		/// </summary>
 		/// <value>Either the name of the source property in the exception or a GUID.</value>
 		[ConfigurationProperty(SourcePropertyName)]
+        [ResourceDescription(typeof(DesignResources), "FaultContractExceptionHandlerMappingDataSourceDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "FaultContractExceptionHandlerMappingDataSourceDisplayName")]
 		public string Source
 		{
 			get { return (string)this[SourcePropertyName]; }

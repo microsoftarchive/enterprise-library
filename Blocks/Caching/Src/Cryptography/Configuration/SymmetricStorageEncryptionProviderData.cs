@@ -18,12 +18,17 @@ using System;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.Cryptography.Configuration
 {
 	/// <summary>
 	/// Configuration data for Symmetric Storage Encryption
 	/// </summary>
+    [ResourceDescription(typeof(DesignResources), "SymmetricStorageEncryptionProviderDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "SymmetricStorageEncryptionProviderDataDisplayName")]
+    [AddSateliteProviderCommand(CryptographySettings.SectionName)]
+    [System.ComponentModel.Browsable(true)]
 	public class SymmetricStorageEncryptionProviderData : StorageEncryptionProviderData
 	{
 		private const string symmetricInstanceProperty = "symmetricInstance";
@@ -50,7 +55,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Cryptography.Configurati
 		/// Name of symmetric instance
 		/// </summary>       
         [ConfigurationProperty(symmetricInstanceProperty, IsRequired = true)]
-        [Reference(typeof(CryptographySettings), typeof(SymmetricAlgorithmProviderData))]
+        [Reference(typeof(NameTypeConfigurationElementCollection<SymmetricProviderData, CustomSymmetricCryptoProviderData>), typeof(SymmetricAlgorithmProviderData))]
+        [ResourceDescription(typeof(DesignResources), "SymmetricStorageEncryptionProviderDataSymmetricInstanceDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "SymmetricStorageEncryptionProviderDataSymmetricInstanceDisplayName")]
 		public string SymmetricInstance
 		{
 			get { return (string) base[symmetricInstanceProperty]; }

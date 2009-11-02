@@ -16,6 +16,7 @@ using System.Security;
 using System.Security.Permissions;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Microsoft.Practices.EnterpriseLibrary.Data.Configuration;
+using System.Configuration;
 
 [assembly : SecurityPermission(SecurityAction.RequestMinimum)]
 [assembly : ReliabilityContract(Consistency.WillNotCorruptState, Cer.None)]
@@ -27,4 +28,10 @@ using Microsoft.Practices.EnterpriseLibrary.Data.Configuration;
 [assembly : AllowPartiallyTrustedCallers]
 [assembly : SecurityTransparent]
 
-[assembly: HandlesSectionName(DatabaseSettings.SectionName)]
+[assembly: HandlesSection(DataAccessDesignTime.ConnectionStringSettingsSectionName)]
+
+[assembly: AddApplicationBlockCommand(
+            "Add Data Settings",
+            DataAccessDesignTime.ConnectionStringSettingsSectionName, 
+            typeof(ConnectionStringsSection), 
+            CommandModelTypeName = DataAccessDesignTime.CommandTypeNames.AddDataAccessBlockCommand)]

@@ -26,7 +26,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
     /// <summary>
     /// Configuration settings for client-side logging applications.
     /// </summary>
-    [ViewModel(ViewModels.LogggingSectionViewModel)]
+    [ViewModel(LoggingDesignTime.ViewModelTypeNames.LogggingSectionViewModel)]
+    [ResourceDescription(typeof(DesignResources), "LoggingSettingsDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "LoggingSettingsDisplayName")]
     public class LoggingSettings : SerializableConfigurationSection, ITypeRegistrationsProvider
     {
         private const string ErrorsTraceSourceKey = "___ERRORS";
@@ -93,6 +95,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// Enable or disable trace logging.
         /// </summary>
         [ConfigurationProperty(tracingEnabledProperty, DefaultValue=true)]
+        [ResourceDescription(typeof(DesignResources), "LoggingSettingsTracingEnabledDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "LoggingSettingsTracingEnabledDisplayName")]
         public bool TracingEnabled
         {
             get
@@ -109,6 +113,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// Gets or sets the name of the configuration node.
         /// </summary>
         [ConfigurationProperty(nameProperty)]
+        [Browsable(false)]
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         public string Name
         {
@@ -126,7 +131,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// Gets or sets the default logging category.
         /// </summary>
         [ConfigurationProperty(defaultCategoryProperty, IsRequired = true)]
-        [Reference(typeof(LoggingSettings), typeof(TraceSourceData))]
+        [Reference(typeof(NamedElementCollection<TraceSourceData>), typeof(TraceSourceData))]
+        [ResourceDescription(typeof(DesignResources), "LoggingSettingsDefaultCategoryDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "LoggingSettingsDefaultCategoryDisplayName")]
         public string DefaultCategory
         {
             get
@@ -144,8 +151,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// the available <see cref="System.Diagnostics.TraceListener"/>s.
         /// </summary>
         [ConfigurationProperty(traceListenerDataCollectionProperty)]
-        [ViewModel(ViewModels.TraceListenerElementCollectionViewModel)]
+        [ViewModel(LoggingDesignTime.ViewModelTypeNames.TraceListenerElementCollectionViewModel)]
         [ConfigurationCollection(typeof(TraceListenerData))]
+        [ResourceDescription(typeof(DesignResources), "LoggingSettingsTraceListenersDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "LoggingSettingsTraceListenersDisplayName")]
         public TraceListenerDataCollection TraceListeners
         {
             get
@@ -160,6 +169,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// </summary>
         [ConfigurationProperty(formatterDataCollectionProperty)]
         [ConfigurationCollection(typeof(FormatterData))]
+        [ResourceDescription(typeof(DesignResources), "LoggingSettingsFormattersDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "LoggingSettingsFormattersDisplayName")]
         public NameTypeConfigurationElementCollection<FormatterData, CustomFormatterData> Formatters
         {
             get
@@ -174,6 +185,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// </summary>
         [ConfigurationProperty(logFiltersProperty)]
         [ConfigurationCollection(typeof(LogFilterData))]
+        [ResourceDescription(typeof(DesignResources), "LoggingSettingsLogFiltersDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "LoggingSettingsLogFiltersDisplayName")]
         public NameTypeConfigurationElementCollection<LogFilterData, CustomLogFilterData> LogFilters
         {
             get
@@ -188,6 +201,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// </summary>
         [ConfigurationProperty(traceSourcesProrperty)]
         [ConfigurationCollection(typeof(TraceSourceData))]
+        [ResourceDescription(typeof(DesignResources), "LoggingSettingsTraceSourcesDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "LoggingSettingsTraceSourcesDisplayName")]
         public NamedElementCollection<TraceSourceData> TraceSources
         {
             get
@@ -201,6 +216,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// for all events. for missing categories, and for errors and warnings.
         /// </summary>
         [ConfigurationProperty(specialTraceSourcesProperty, IsRequired = true)]
+        [ResourceDescription(typeof(DesignResources), "LoggingSettingsSpecialTraceSourcesDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "LoggingSettingsSpecialTraceSourcesDisplayName")]
         public SpecialTraceSourcesData SpecialTraceSources
         {
             get
@@ -218,6 +235,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// dispatching a log entry.
         /// </summary>
         [ConfigurationProperty(logWarningsWhenNoCategoriesMatchProperty, DefaultValue=true)]
+        [ResourceDescription(typeof(DesignResources), "LoggingSettingsLogWarningWhenNoCategoriesMatchDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "LoggingSettingsLogWarningWhenNoCategoriesMatchDisplayName")]
         public bool LogWarningWhenNoCategoriesMatch
         {
             get
@@ -234,6 +253,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// Gets or sets the indication that impersonation should be reverted temporarily while logging, if enabled.
         /// </summary>
         [ConfigurationProperty(revertImpersonationProperty, DefaultValue = true, IsRequired = false)]
+        [ResourceDescription(typeof(DesignResources), "LoggingSettingsRevertImpersonationDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "LoggingSettingsRevertImpersonationDisplayName")]
         public bool RevertImpersonation
         {
             get

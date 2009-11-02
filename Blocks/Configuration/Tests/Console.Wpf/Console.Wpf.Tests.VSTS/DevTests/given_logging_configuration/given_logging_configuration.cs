@@ -20,15 +20,19 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Console.Wpf.ViewModel;
 using System.ComponentModel.Design;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
+using Console.Wpf.ViewModel.Services;
+using Microsoft.Practices.Unity;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_logging_configuration
 {
-    public abstract class given_logging_configuration : ArrangeActAssert
+    public abstract class given_logging_configuration : Contexts.ContainerContext
     {
         protected LoggingSettings LoggingSection;
 
         protected override void Arrange()
         {
+            base.Arrange();
 
             IConfigurationSource source = new DictionaryConfigurationSource();
             ConfigurationSourceBuilder sourceBuiler = new ConfigurationSourceBuilder();
@@ -36,16 +40,30 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_logging_configuration
             sourceBuiler.ConfigureLogging()
                 .WithOptions.DisableTracing()
                             .DoNotRevertImpersonation()
-                            .FilterOnPriority("prio filter").StartingWithPriority(10)
+                .FilterOnPriority("prio filter").StartingWithPriority(10)
                 .LogToCategoryNamed("General")
                         .SendTo.EventLog("Event Log Listener")
                                     .FormatWith(new FormatterBuilder().TextFormatterNamed("Default"))
                 .LogToCategoryNamed("Critial")
                         .SendTo.SharedListenerNamed("Event Log Listener")
+                        .SendTo.Custom<MyCustomListener>("Custom Listener")
                         .SendTo.Email("Email Listener");
 
             sourceBuiler.UpdateConfigurationWithReplace(source);
             LoggingSection = (LoggingSettings)source.GetSection(LoggingSettings.SectionName);
+        }
+
+        private class MyCustomListener : CustomTraceListener
+        {
+            public override void Write(string message)
+            {
+                throw new NotImplementedException();
+            }
+
+            public override void WriteLine(string message)
+            {
+                throw new NotImplementedException();
+            }
         }
     }
 
@@ -53,18 +71,45 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_logging_configuration
     public class when_creating_logging_view_model : given_logging_configuration
     {
         SectionViewModel loggingViewModel;
-        ServiceContainer serviceProvider;
 
         protected override void Arrange()
         {
             base.Arrange();
-            serviceProvider = new ServiceContainer();
+
+            var elementLookup = Container.Resolve<ElementLookup>();
+            elementLookup.AddCustomElement(new CustomAttributesPropertyExtender(base.Container.Resolve<IServiceProvider>()));
         }
 
         protected override void Act()
         {
-            loggingViewModel = SectionViewModel.CreateSection(serviceProvider, LoggingSection);
+            loggingViewModel = SectionViewModel.CreateSection(base.Container, LoggingSettings.SectionName, LoggingSection);
             loggingViewModel.UpdateLayout();
+        }
+
+        [TestMethod]
+        public void then_trace_listener_collection_has_custom_trace_listener_types()
+        {
+            var tracelistenerCollection =  (ElementCollectionViewModel) loggingViewModel.DescendentElements().Where(x => typeof(TraceListenerDataCollection) == x.ConfigurationType).First();
+            Assert.IsTrue(tracelistenerCollection.PolymorphicCollectionElementTypes.Contains(typeof(SystemDiagnosticsTraceListenerData)));
+            Assert.IsTrue(tracelistenerCollection.PolymorphicCollectionElementTypes.Contains(typeof(CustomTraceListenerData)));
+        }
+
+        [TestMethod]
+        public void then_view_model_has_category_with_name_AllEvents()
+        {
+            Assert.IsTrue(loggingViewModel.DescendentElements().Where(x => x.Name == "All Events").Any());
+        }
+
+        [TestMethod]
+        public void then_view_model_has_category_with_name_ErrorsAndWarnings()
+        {
+            Assert.IsTrue(loggingViewModel.DescendentElements().Where(x => x.Name == "Logging Errors & Warnings").Any());
+        }
+
+        [TestMethod]
+        public void then_view_model_has_category_with_name_UnProcessed()
+        {
+            Assert.IsTrue(loggingViewModel.DescendentElements().Where(x => x.Name == "Unprocessed Category").Any());
         }
 
         [TestMethod]
@@ -79,26 +124,60 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_logging_configuration
         [TestMethod]
         public void then_trace_sources_header_is_at_row_0_col_0()
         {
-            var trListenersHeader = loggingViewModel.GetAdditionalGridVisuals()
+            var trListenersHeader = loggingViewModel.GetGridVisuals()
                                                     .Where(x => x.Column == 0 && x.Row == 0)
-                                                    .OfType<ElementViewModelWrappingHeaderViewModel>()
+                                                    .OfType<ElementHeaderViewModel>()
                                                     .FirstOrDefault();
 
             Assert.IsNotNull(trListenersHeader);
-            Assert.AreEqual("TraceSources", trListenersHeader.Name);
+            Assert.AreEqual("Category Filters", trListenersHeader.Name);
+        }
+
+        [TestMethod]
+        public void then_custom_trace_listener_has_attributes_property()
+        {
+            var customListener = loggingViewModel.DescendentElements(x => x.Name == "Custom Listener").First();
+            Assert.IsNotNull(customListener.Property("Attributes"));
         }
 
         [TestMethod]
         public void then_trace_source_rows_increment_from_row_1()
         {
             var traceSources = loggingViewModel.DescendentElements().Where(x => typeof(TraceSourceData).IsAssignableFrom(x.ConfigurationType));
+            
+            int numberOfHeaders = 1;
+            int numberOfTracesourcesThatDoesntMatch = 0;
 
             Assert.AreNotEqual(0, traceSources.Count());
-            for (int i = 1; i <= traceSources.Count(); i++)
+            for (int i = 1; i <= traceSources.Count() + numberOfHeaders; i++)
             {
-                Assert.IsTrue(traceSources.Where(x => x.Row == i).Any());
+                if (!traceSources.Where(x => x.Row == i).Any()) numberOfTracesourcesThatDoesntMatch++;
             }
+
+            Assert.AreEqual(numberOfHeaders, numberOfTracesourcesThatDoesntMatch);
         }
+        
+        [TestMethod]
+        public void then_filters_collection_is_positioned_after_last_trace_source()
+        {
+            var traceSources = loggingViewModel.DescendentElements().Where(x => typeof(TraceSourceData).IsAssignableFrom(x.ConfigurationType));
+            var filtersCollection = loggingViewModel.GetGridVisuals().OfType<HeaderViewModel>().Where(x => x.Name == "Logging Filters").Single();
+
+            Assert.AreEqual(traceSources.Max(x => x.Row + x.RowSpan) + 3, filtersCollection.Row);
+            Assert.AreEqual(0, filtersCollection.Column);
+        }
+
+        [TestMethod]
+        public void then_filters_are_positioned_after_filters_collection()
+        {
+            var filters = loggingViewModel.DescendentElements().Where(x => typeof(LogFilterData).IsAssignableFrom(x.ConfigurationType));
+            var filtersCollection = loggingViewModel.GetGridVisuals().OfType<HeaderViewModel>().Where(x => x.Name == "Logging Filters").Single();
+
+            Assert.IsTrue(filters.Any());
+            Assert.IsFalse(filters.Where(x=>x.Column != 0).Any());
+            Assert.IsFalse(filters.Where(x => x.Row <= filtersCollection.Row).Any());
+        }
+
 
         [TestMethod]
         public void then_trace_listeners_are_contained_in_second_column()
@@ -112,13 +191,13 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_logging_configuration
         [TestMethod]
         public void then_tracelisteners_header_is_at_row_0_col_1()
         {
-            var trListenersHeader = loggingViewModel.GetAdditionalGridVisuals()
+            var trListenersHeader = loggingViewModel.GetGridVisuals()
                                                     .Where(x => x.Column == 1 && x.Row == 0)
-                                                    .OfType<ElementViewModelWrappingHeaderViewModel>()
+                                                    .OfType<ElementHeaderViewModel>()
                                                     .FirstOrDefault();
 
             Assert.IsNotNull(trListenersHeader);
-            Assert.AreEqual("TraceListeners", trListenersHeader.Name);
+            Assert.AreEqual("Logging Target Listeners", trListenersHeader.Name);
         }
 
         [TestMethod]
@@ -146,13 +225,13 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_logging_configuration
         [TestMethod]
         public void then_formatters_header_is_at_row_0_col_2()
         {
-            var formatterHeader = loggingViewModel.GetAdditionalGridVisuals()
+            var formatterHeader = loggingViewModel.GetGridVisuals()
                                                     .Where(x => x.Column == 2 && x.Row == 0)
-                                                    .OfType<ElementViewModelWrappingHeaderViewModel>()
+                                                    .OfType<ElementHeaderViewModel>()
                                                     .FirstOrDefault();
 
             Assert.IsNotNull(formatterHeader);
-            Assert.AreEqual("Formatters", formatterHeader.Name);
+            Assert.AreEqual("Log Message Formatters", formatterHeader.Name);
         }
 
         [TestMethod]
@@ -317,24 +396,18 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_logging_configuration
     [TestClass]
     public class when_clearing_listener_reference_extension_property : given_logging_configuration
     {
-        ServiceContainer serviceProvider;
         private ElementViewModel traceSourceData;
         private string referencedTraceListenerName;
 
-        protected override void Arrange()
-        {
-            base.Arrange();
-            serviceProvider = new ServiceContainer();
-        }
-
         protected override void Act()
         {
-            var loggingViewModel = SectionViewModel.CreateSection(serviceProvider, LoggingSection);
+            var loggingViewModel = SectionViewModel.CreateSection(Container, LoggingSettings.SectionName, LoggingSection);
             traceSourceData = loggingViewModel.GetDescendentsOfType<TraceSourceData>()
                     .Where(
                         e => e.Properties.Any(
                             p => p.PropertyName.StartsWith("SendTo"))
                             ).Last();
+
             var referenceProperty = traceSourceData.Properties.Where(p => p.PropertyName.StartsWith("SendTo")).Last();
             referencedTraceListenerName = referenceProperty.Value.ToString();
             referenceProperty.Value = string.Empty;
@@ -360,7 +433,6 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_logging_configuration
     [TestClass]
     public class when_referenced_trace_listener_name_changes : given_logging_configuration
     {
-        ServiceContainer serviceProvider;
         private ElementViewModel traceListener;
         private readonly string NewNameValue = "SomeUnexpectedName";
         private Property referenceProperty;
@@ -368,16 +440,15 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_logging_configuration
         protected override void Arrange()
         {
             base.Arrange();
-            serviceProvider = new ServiceContainer();
 
-            var loggingViewModel = SectionViewModel.CreateSection(serviceProvider, LoggingSection);
+            var loggingViewModel = SectionViewModel.CreateSection(Container, LoggingSettings.SectionName, LoggingSection);
             var traceSourceData = loggingViewModel.GetDescendentsOfType<TraceSourceData>()
                     .Where(
                         e => e.Properties.Any(
                             p => p.PropertyName.StartsWith("SendTo"))
                             ).Last();
             referenceProperty = traceSourceData.Properties.Where(p => p.PropertyName.StartsWith("SendTo")).Last();
-            traceListener = loggingViewModel.GetDescendentsOfType<TraceListenerData>().Where(e => e.Name == referenceProperty.Value).Single();
+            traceListener = loggingViewModel.GetDescendentsOfType<TraceListenerData>().Where(e => e.Name == (string)referenceProperty.Value).Single();
         }
 
         protected override void Act()
@@ -395,7 +466,6 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_logging_configuration
     [TestClass]
     public class when_referenced_trace_listener_cant_find_tracelistener : given_logging_configuration
     {
-        ServiceContainer serviceProvider;
         SectionViewModel loggingViewModel;
 
         protected override void Arrange()
@@ -405,8 +475,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_logging_configuration
             var traceListenerRef = base.LoggingSection.TraceSources.Get("General").TraceListeners.First();
             traceListenerRef.Name = "Broken reference";
 
-            serviceProvider = new ServiceContainer();
-            loggingViewModel = SectionViewModel.CreateSection(serviceProvider, base.LoggingSection);
+            loggingViewModel = SectionViewModel.CreateSection(Container, LoggingSettings.SectionName, base.LoggingSection);
         }
 
 
@@ -421,7 +490,6 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_logging_configuration
     [TestClass]
     public class when_trace_listener_reference_is_updated_to_random_Value : given_logging_configuration
     {
-        ServiceContainer serviceProvider;
         SectionViewModel loggingViewModel;
         ElementViewModel traceSourceModel;
 
@@ -429,9 +497,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_logging_configuration
         {
             base.Arrange();
 
-            serviceProvider = new ServiceContainer();
-            loggingViewModel = SectionViewModel.CreateSection(serviceProvider, base.LoggingSection);
-
+            loggingViewModel = SectionViewModel.CreateSection(Container, LoggingSettings.SectionName, base.LoggingSection);
             traceSourceModel = loggingViewModel.GetDescendentsOfType<TraceSourceData>().Where(x=>x.Name == "General").First();
         }
 
@@ -452,7 +518,6 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_logging_configuration
     [TestClass]
     public class when_new_listener_is_selected_reference_is_added : given_logging_configuration
     {
-        ServiceContainer serviceProvider;
         SectionViewModel loggingViewModel;
         private ElementViewModel traceSource;
         private Property newTraceListenerProperty;
@@ -462,8 +527,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_logging_configuration
         {
             base.Arrange();
 
-            serviceProvider = new ServiceContainer();
-            loggingViewModel = SectionViewModel.CreateSection(serviceProvider, base.LoggingSection);
+            loggingViewModel = SectionViewModel.CreateSection(Container, LoggingSettings.SectionName, base.LoggingSection);
             traceSource = loggingViewModel.GetDescendentsOfType<TraceSourceData>().Where(e => e.Name == "General").First();
             newTraceListenerProperty = traceSource.Properties.Where(p => p.PropertyName == "NewTraceListener").First();
             originalPropertyValue = newTraceListenerProperty.Value;
@@ -471,7 +535,6 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_logging_configuration
 
         protected override void Act()
         {
-            
             newTraceListenerProperty.Value = "Email Listener";
         }
 
@@ -487,7 +550,6 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_logging_configuration
         {
             Assert.AreEqual(originalPropertyValue, newTraceListenerProperty.Value);
         }
-    }
-    // when drop down is selected -> new TraceListenerReferenceData created.
+    }   
    
 }

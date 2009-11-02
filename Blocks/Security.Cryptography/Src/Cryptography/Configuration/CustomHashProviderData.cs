@@ -15,12 +15,17 @@ using System.Collections.Specialized;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using System.ComponentModel;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration
 {
     /// <summary>
     /// Configuration object for Custom Providers.
     /// </summary>
+    [ResourceDescription(typeof(DesignResources), "CustomHashProviderDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "CustomHashProviderDataDisplayName")]
+    [TypePickingCommand(Title = "Custom Hash Provider (using type picker)")]
     public class CustomHashProviderData
         : HashProviderData, IHelperAssistedCustomConfigurationData<CustomHashProviderData>
     {
@@ -66,6 +71,21 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         {
             get { return helper.Properties; }
         }
+
+        /// <summary>
+        /// Overridden in order to apply <see cref="BrowsableAttribute"/>.
+        /// </summary>
+        [Browsable(true)]
+        [Editor(CommonDesignTime.EditorTypes.TypeSelector, CommonDesignTime.EditorTypes.UITypeEditor)]
+        [BaseType(typeof(IHashProvider), typeof(CustomHashProviderData))]
+        [ResourceDescription(typeof(DesignResources), "CustomHashProviderDataTypeNameDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "CustomHashProviderDataTypeNameDisplayName")]
+        public override string TypeName
+        {
+            get { return base.TypeName; }
+            set { base.TypeName = value; }
+        }
+
 
         #region IHelperAssistedCustomConfigurationData<CustomHashProviderData> Members
 

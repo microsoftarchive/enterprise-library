@@ -10,56 +10,89 @@
 //===============================================================================
 
 using System;
+using Microsoft.Practices.EnterpriseLibrary.Validation.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
 {
-	/// <summary>
-	/// Represents an <see cref="ObjectValidator"/>.
-	/// </summary>
-	[AttributeUsage(AttributeTargets.Property
-		| AttributeTargets.Field
-		| AttributeTargets.Method
-		| AttributeTargets.Parameter,
-		AllowMultiple = true,
-		Inherited = false)]
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1019",
-		Justification = "Fields are used internally")]
-	public sealed class ObjectValidatorAttribute : ValidatorAttribute
-	{
-		private string targetRuleset;
+    /// <summary>
+    /// Represents an <see cref="ObjectValidator"/>.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Property
+        | AttributeTargets.Field
+        | AttributeTargets.Method
+        | AttributeTargets.Parameter,
+        AllowMultiple = true,
+        Inherited = false)]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1019",
+        Justification = "Fields are used internally")]
+    public sealed class ObjectValidatorAttribute : ValidatorAttribute
+    {
+        private string targetRuleset;
 
-		/// <summary>
-		/// <para>Initializes a new instance of the <see cref="ObjectValidatorAttribute"/> class.</para>
-		/// </summary>
-		public ObjectValidatorAttribute()
-			: this(string.Empty)
-		{ }
+        /// <summary>
+        /// <para>Initializes a new instance of the <see cref="ObjectValidatorAttribute"/> class.</para>
+        /// </summary>
+        public ObjectValidatorAttribute()
+            : this(string.Empty)
+        { }
 
-		/// <summary>
-		/// <para>Initializes a new instance of the <see cref="ObjectValidatorAttribute"/> class with
-		/// a specific ruleset.</para>
-		/// </summary>
-		/// <param name="targetRuleset">The target ruleset.</param>
-		/// <exception cref="ArgumentNullException">when <paramref name="targetRuleset"/> is <see langword="null"/>.</exception>
-		/// <seealso cref="ObjectValidator(Type, string)"/>
-		public ObjectValidatorAttribute(string targetRuleset)
-		{
-			if (targetRuleset == null)
-			{
-				throw new ArgumentNullException("targetRuleset");
-			}
+        /// <summary>
+        /// <para>Initializes a new instance of the <see cref="ObjectValidatorAttribute"/> class with
+        /// a specific ruleset.</para>
+        /// </summary>
+        /// <param name="targetRuleset">The target ruleset.</param>
+        /// <exception cref="ArgumentNullException">when <paramref name="targetRuleset"/> is <see langword="null"/>.</exception>
+        /// <seealso cref="ObjectValidator(Type, string)"/>
+        public ObjectValidatorAttribute(string targetRuleset)
+        {
+            if (targetRuleset == null)
+            {
+                throw new ArgumentNullException("targetRuleset");
+            }
 
-			this.targetRuleset = targetRuleset;
-		}
+            this.targetRuleset = targetRuleset;
+        }
 
-		/// <summary>
-		/// Creates the <see cref="ObjectValidator"/> described by attribute.
-		/// </summary>
-		/// <param name="targetType">The type of object that will be validated by the validator.</param>
-		/// <returns>The created <see cref="ObjectValidator"/>.</returns>
-		protected override Validator DoCreateValidator(Type targetType)
-		{
-			return new ObjectValidator(targetType, targetRuleset);
-		}
-	}
+        /// <summary>
+        /// Creates the <see cref="Validator"/> described by the attribute object providing validator specific
+        /// information.
+        /// </summary>
+        /// <param name="targetType">The type of object that will be validated by the validator.</param>
+        /// <remarks>This method must not be called on this class. Call 
+        /// <see cref="ObjectValidatorAttribute.DoCreateValidator(Type, Type, MemberValueAccessBuilder, ValidatorFactory)"/>.</remarks>
+        protected override Validator DoCreateValidator(Type targetType)
+        {
+            throw new NotImplementedException(Resources.ExceptionShouldNotCall);
+        }
+
+        /// <summary>
+        /// Creates the <see cref="ObjectValidator"/> described by the configuration object.
+        /// </summary>
+        /// <param name="targetType">The type of object that will be validated by the validator.</param>
+        /// <param name="ownerType">The type of the object from which the value to validate is extracted.</param>
+        /// <param name="memberValueAccessBuilder">The <see cref="MemberValueAccessBuilder"/> to use for validators that
+        /// require access to properties.</param>
+        /// <param name="validatorFactory">Factory to use when building nested validators.</param>
+        /// <returns>The created <see cref="Validator"/>.</returns>
+        protected override Validator DoCreateValidator(
+            Type targetType,
+            Type ownerType,
+            MemberValueAccessBuilder memberValueAccessBuilder,
+            ValidatorFactory validatorFactory)
+        {
+            if (this.ValidateActualType)
+            {
+                return new ObjectValidator(validatorFactory, targetRuleset);
+            }
+            else
+            {
+                return new ObjectValidator(targetType, validatorFactory, targetRuleset);
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the value indicating whether to validate based on the static type or the actual type.
+        /// </summary>
+        public bool ValidateActualType { get; set; }
+    }
 }

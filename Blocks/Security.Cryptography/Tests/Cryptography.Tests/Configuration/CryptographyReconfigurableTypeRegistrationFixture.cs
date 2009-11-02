@@ -34,7 +34,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests.Conf
         protected ConfigurationSourceUpdatable updatableConfigurationSource;
         protected CryptographySettings cryptoSettings;
         protected HashAlgorithmProviderData hashProvider;
-        protected SymmetricAlgorithmProviderData symmetricAlgorithmProvider;
+        protected SymmetricProviderData symmetricAlgorithmProvider;
 
         protected override void Arrange()
         {

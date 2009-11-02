@@ -21,6 +21,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration
 	/// <remarks>
 	/// <para>The class maps to the <c>databaseSettings</c> element in configuration.</para>
 	/// </remarks>
+    [ResourceDescription(typeof(DesignResources), "DatabaseSettingsDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "DatabaseSettingsDisplayName")]
 	public class DatabaseSettings : SerializableConfigurationSection
 	{
 		private const string defaultDatabaseProperty = "defaultDatabase";
@@ -60,7 +62,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration
 		/// <para>This property maps to the <c>defaultInstance</c> element in configuration.</para>
 		/// </remarks>
 		[ConfigurationProperty(defaultDatabaseProperty, IsRequired = false)]
-        [Reference(typeof(ConnectionStringSettings))]
+        [Reference(typeof(ConnectionStringSettingsCollection), typeof(ConnectionStringSettings))]
+        [ResourceDescription(typeof(DesignResources), "DatabaseSettingsDefaultDatabaseDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "DatabaseSettingsDefaultDatabaseDisplayName")]
 		public string DefaultDatabase
 		{
 			get
@@ -78,6 +82,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration
 		/// </summary>
 		/// <seealso cref="DbProviderMapping"/>
 		[ConfigurationProperty(dbProviderMappingsProperty, IsRequired = false)]
+        [ConfigurationCollection(typeof(DbProviderMapping))]
+        [ResourceDescription(typeof(DesignResources), "DatabaseSettingsProviderMappingsDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "DatabaseSettingsProviderMappingsDisplayName")]
 		public NamedElementCollection<DbProviderMapping> ProviderMappings
 		{
 			get

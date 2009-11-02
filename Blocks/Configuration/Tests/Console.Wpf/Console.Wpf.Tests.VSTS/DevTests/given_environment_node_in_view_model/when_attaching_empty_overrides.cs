@@ -21,6 +21,7 @@ using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides;
 using Console.Wpf.ViewModel.BlockSpecifics;
 using Console.Wpf.Tests.VSTS.TestSupport;
+using Microsoft.Practices.Unity;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_environment_node_in_view_model
 {
@@ -46,8 +47,8 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_environment_node_in_view_model
                 EnvironmentName = "environment"
             };
 
-            EhabModel = SectionViewModel.CreateSection(ServiceProvider, Section);
-            EnvironmentViewModel = SectionViewModel.CreateSection(ServiceProvider, EnvironmentSection);
+            EhabModel = SectionViewModel.CreateSection(Container, ExceptionHandlingSettings.SectionName, Section);
+            EnvironmentViewModel = SectionViewModel.CreateSection(Container, EnvironmentMergeSection.EnvironmentMergeData, EnvironmentSection);
 
             WrapHandler = EhabModel.DescendentElements().Where(x => x.ConfigurationType == typeof(WrapHandlerData)).First();
 
@@ -63,9 +64,6 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_environment_node_in_view_model
     [TestClass]
     public class when_attaching_empty_overrides : given_environmental_overrides_and_ehab
     {
-
-
-
         [TestMethod]
         public void then_environment_model_is_extended_property_provider()
         {
@@ -97,7 +95,6 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_environment_node_in_view_model
         {
             string displayValueInGrid = OverridesProperty.Converter.ConvertToString(OverridesProperty.Value);
             Assert.AreEqual("Dont Override Properties", displayValueInGrid);
-
         }
 
         [TestMethod]

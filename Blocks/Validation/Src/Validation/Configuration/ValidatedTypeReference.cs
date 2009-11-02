@@ -13,13 +13,17 @@ using System;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using System.ComponentModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 {
 	/// <summary>
 	/// Represents validation information for a type and its members.
 	/// </summary>
-	/// <seealso cref="ValidationRulesetData"/>
+    /// <seealso cref="ValidationRulesetData"/>
+    [TypePickingCommand("Name", Replace = CommandReplacement.DefaultAddCommandReplacement, CommandModelTypeName = ValidationDesignTime.CommandTypeNames.AddValidatedTypeCommand)]
+    [ResourceDescription(typeof(DesignResources), "ValidatedTypeReferenceDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "ValidatedTypeReferenceDisplayName")]
 	public class ValidatedTypeReference : NamedConfigurationElement
 	{
 		/// <summary>
@@ -41,17 +45,23 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 		/// Gets the collection with the validation rulesets configured the represented type.
 		/// </summary>
 		[ConfigurationProperty(RulesetsPropertyName, IsDefaultCollection = true)]
+        [ResourceDescription(typeof(DesignResources), "ValidatedTypeReferenceRulesetsDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "ValidatedTypeReferenceRulesetsDisplayName")]
+        [PromoteCommands]
 		public ValidationRulesetDataCollection Rulesets
 		{
 			get { return (ValidationRulesetDataCollection)this[RulesetsPropertyName]; }
 		}
 
 		private const string DefaultRulePropertyName = "defaultRuleset";
+
 		/// <summary>
 		/// Gets or sets the default ruleset for the represented type.
 		/// </summary>
 		[ConfigurationProperty(DefaultRulePropertyName)]
-        [Reference(typeof(ValidationSettings), typeof(ValidationRulesetData))]
+        [Reference(typeof(ValidationRulesetData), ScopeIsDeclaringElement = true)]
+        [ResourceDescription(typeof(DesignResources), "ValidatedTypeReferenceDefaultRulesetDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "ValidatedTypeReferenceDefaultRulesetDisplayName")]
 		public string DefaultRuleset
 		{
 			get { return (string)this[DefaultRulePropertyName]; }
@@ -63,6 +73,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 		/// Used to resolve the reference type in designtime. This property is ignored at runtime.
 		/// </summary>
 		[ConfigurationProperty(AssemblyNamePropertyName)]
+        [ResourceDescription(typeof(DesignResources), "ValidatedTypeReferenceAssemblyNameDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "ValidatedTypeReferenceAssemblyNameDisplayName")]
+        [Browsable(false)]
         public string AssemblyName
         {
             get { return (string)this[AssemblyNamePropertyName]; }

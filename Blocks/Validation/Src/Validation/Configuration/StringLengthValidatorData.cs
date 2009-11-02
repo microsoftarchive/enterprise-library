@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 {
@@ -22,13 +23,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 	/// </summary>
 	/// <seealso cref="StringLengthValidator"/>
 	/// <seealso cref="ValidatorData"/>
+    [ResourceDescription(typeof(DesignResources), "StringLengthValidatorDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "StringLengthValidatorDataDisplayName")]
 	public class StringLengthValidatorData : RangeValidatorData<int>
 	{
 		/// <summary>
 		/// <para>Initializes a new instance of the <see cref="StringLengthValidatorData"/> class.</para>
 		/// </summary>
-		public StringLengthValidatorData()
-		{ }
+		public StringLengthValidatorData() { Type = typeof(StringLengthValidator); }
 
 		/// <summary>
 		/// <para>Initializes a new instance of the <see cref="StringLengthValidatorData"/> class with a name.</para>

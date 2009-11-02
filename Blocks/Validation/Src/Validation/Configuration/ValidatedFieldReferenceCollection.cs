@@ -11,6 +11,7 @@
 
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using System.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 {

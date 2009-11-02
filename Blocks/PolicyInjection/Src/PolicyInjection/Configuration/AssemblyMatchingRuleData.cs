@@ -16,12 +16,15 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
 using FakeRules = Microsoft.Practices.EnterpriseLibrary.PolicyInjection.MatchingRules;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
 {
     /// <summary>
     /// Configuration element for the <see cref="AssemblyMatchingRule"/>.
     /// </summary>
+    [ResourceDescription(typeof(DesignResources), "AssemblyMatchingRuleDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "AssemblyMatchingRuleDataDisplayName")]
     public class AssemblyMatchingRuleData : MatchingRuleData
     {
         private const string MatchPropertyName = "match";
@@ -51,6 +54,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// </summary>
         /// <value>Assembly name to match.</value>
         [ConfigurationProperty(MatchPropertyName)]
+        [ResourceDescription(typeof(DesignResources), "AssemblyMatchingRuleDataMatchDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "AssemblyMatchingRuleDataMatchDisplayName")]
         public string Match
         {
             get { return (string)base[MatchPropertyName]; }

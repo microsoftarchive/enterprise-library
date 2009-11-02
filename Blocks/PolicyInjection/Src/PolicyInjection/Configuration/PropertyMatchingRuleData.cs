@@ -18,6 +18,8 @@ using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
 using FakeRules = Microsoft.Practices.EnterpriseLibrary.PolicyInjection.MatchingRules;
 using PropertyMatchingOption = Microsoft.Practices.Unity.InterceptionExtension.PropertyMatchingOption;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using System.ComponentModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
 {
@@ -25,6 +27,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
     /// A configuration element class that stores configuration information for instances
     /// of <see cref="PropertyMatchingRule"/>.
     /// </summary>
+    [ResourceDescription(typeof(DesignResources), "PropertyMatchingRuleDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "PropertyMatchingRuleDataDisplayName")]
     public class PropertyMatchingRuleData : MatchingRuleData
     {
         private const string MatchesPropertyName = "matches";
@@ -34,6 +38,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// </summary>
         public PropertyMatchingRuleData()
         {
+            Type = typeof(FakeRules.PropertyMatchingRule);
         }
 
         /// <summary>
@@ -66,6 +71,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// <value>The "matches" config subelement.</value>
         [ConfigurationProperty(MatchesPropertyName)]
         [ConfigurationCollection(typeof(PropertyMatchData))]
+        [ResourceDescription(typeof(DesignResources), "PropertyMatchingRuleDataMatchesDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "PropertyMatchingRuleDataMatchesDisplayName")]
+        [System.ComponentModel.Editor(CommonDesignTime.EditorTypes.CollectionEditor, CommonDesignTime.EditorTypes.FrameworkElement)]
+        [CollectionEditorTemplate("PiabPropertyMatchHeader", "PiabPropertyMatchItem")]
+        [EnvironmentalOverrides(false)]
         public MatchDataCollection<PropertyMatchData> Matches
         {
             get { return (MatchDataCollection<PropertyMatchData>)base[MatchesPropertyName]; }
@@ -96,6 +106,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
     /// A derived <see cref="MatchData"/> which adds storage for which methods
     /// on the property to match.
     /// </summary>
+    [ResourceDescription(typeof(DesignResources), "PropertyMatchDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "PropertyMatchDataDisplayName")]
+    [ViewModel(PolicyInjectionDesignTime.ViewModelTypeNames.PiabPropertyMatchDataViewModel)]
     public class PropertyMatchData : MatchData
     {
         private const string OptionPropertyName = "matchOption";
@@ -148,6 +161,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// </summary>
         /// <value>The "matchOption" config attribute.</value>
         [ConfigurationProperty(OptionPropertyName, DefaultValue = PropertyMatchingOption.GetOrSet, IsRequired = false)]
+        [ResourceDescription(typeof(DesignResources), "PropertyMatchDataMatchOptionDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "PropertyMatchDataMatchOptionDisplayName")]
         public PropertyMatchingOption MatchOption
         {
             get { return (PropertyMatchingOption)base[OptionPropertyName]; }

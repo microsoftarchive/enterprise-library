@@ -17,6 +17,8 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
 using FakeRules = Microsoft.Practices.EnterpriseLibrary.PolicyInjection.MatchingRules;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using System.ComponentModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
 {
@@ -24,6 +26,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
     /// Configuration element that stores the configuration information for an instance
     /// of <see cref="MethodSignatureMatchingRule"/>.
     /// </summary>
+    [ResourceDescription(typeof(DesignResources), "MethodSignatureMatchingRuleDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "MethodSignatureMatchingRuleDataDisplayName")]
     public class MethodSignatureMatchingRuleData : StringBasedMatchingRuleData
     {
         private const string ParametersPropertyName = "parameters";
@@ -34,6 +38,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         public MethodSignatureMatchingRuleData()
             : base()
         {
+            Type = typeof(FakeRules.MethodSignatureMatchingRule);
         }
 
         /// <summary>
@@ -51,6 +56,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// </summary>
         /// <value>The "parameters" child element.</value>
         [ConfigurationProperty(ParametersPropertyName)]
+        [ResourceDescription(typeof(DesignResources), "MethodSignatureMatchingRuleDataParametersDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "MethodSignatureMatchingRuleDataParametersDisplayName")]
+        [System.ComponentModel.Editor(CommonDesignTime.EditorTypes.CollectionEditor, CommonDesignTime.EditorTypes.FrameworkElement)]
+        [CollectionEditorTemplate("PiabMethodSignatureTypesHeader", "PiabMethodSignatureTypesItem")]
+        [EnvironmentalOverrides(false)]
         public ParameterTypeElementDataCollection Parameters
         {
             get { return (ParameterTypeElementDataCollection)base[ParametersPropertyName]; }
@@ -84,8 +94,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
     /// <summary>
     /// A configuration element that stores a collection of <see cref="ParameterTypeElement"/> objects.
     /// </summary>
-    [ConfigurationCollection(typeof(ParameterTypeElement), AddItemName = "parameter")]
-    public class ParameterTypeElementDataCollection : ConfigurationElementCollection
+    [ConfigurationCollection(typeof(ParameterTypeElement), AddItemName = "parameter", ClearItemsName="clear", RemoveItemName="remove")]
+    public class ParameterTypeElementDataCollection : ConfigurationElementCollection, IMergeableConfigurationElementCollection
     {
         /// <summary>
         /// Creates a new element to store in the collection.
@@ -147,11 +157,32 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
             base.BaseRemoveAt(index);
         }
 
+
+        void IMergeableConfigurationElementCollection.ResetCollection(IEnumerable<ConfigurationElement> configurationElements)
+        {
+            while (Count > 0)
+            {
+                base.BaseRemoveAt(0);
+            }
+
+            foreach (ParameterTypeElement child in configurationElements)
+            {
+                base.BaseAdd(child);
+            }
+        }
+
+        ConfigurationElement IMergeableConfigurationElementCollection.CreateNewElement(Type configurationType)
+        {
+            return new ParameterTypeElement();
+        }
     }
 
     /// <summary>
     /// A configuration element representing a single parameter in a method signature.
     /// </summary>
+    [ResourceDescription(typeof(DesignResources), "ParameterTypeElementDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "ParameterTypeElementDisplayName")]
+    [ViewModel(PolicyInjectionDesignTime.ViewModelTypeNames.PiabParameterTypeMatchDataViewModel)]
     public class ParameterTypeElement : ConfigurationElement
     {
         private const string NamePropertyName = "name";
@@ -183,6 +214,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// </summary>
         /// <value>A name for this property that is unique in this rule's configuration.</value>
         [ConfigurationProperty(NamePropertyName, IsKey = true, IsRequired = true)]
+        [ResourceDescription(typeof(DesignResources), "ParameterTypeElementNameDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "ParameterTypeElementNameDisplayName")]
         public string Name
         {
             get { return (string)base[NamePropertyName]; }
@@ -194,6 +227,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// </summary>
         /// <value>The "typeName" config attribute.</value>
         [ConfigurationProperty(ParameterTypeNamePropertyName, IsKey = true, IsRequired = true, DefaultValue = "")]
+        [ResourceDescription(typeof(DesignResources), "ParameterTypeElementParameterTypeNameDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "ParameterTypeElementParameterTypeNameDisplayName")]
+        [Editor(CommonDesignTime.EditorTypes.TypeSelector, CommonDesignTime.EditorTypes.UITypeEditor)]
         public string ParameterTypeName
         {
             get { return (string)base[ParameterTypeNamePropertyName]; }

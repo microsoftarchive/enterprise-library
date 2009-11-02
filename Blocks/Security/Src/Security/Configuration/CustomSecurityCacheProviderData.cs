@@ -17,12 +17,17 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Unity;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Security.Properties;
 using System.Collections.Generic;
+using System.ComponentModel;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration
 {
 	/// <summary>
 	/// Configuration object for Custom Providers.
 	/// </summary>
+    [ResourceDescription(typeof(DesignResources), "CustomSecurityCacheProviderDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "CustomSecurityCacheProviderDataDisplayName")]
+    [TypePickingCommand(Title = "Custom Security Cache Provider (using type picker)")]
 	public class CustomSecurityCacheProviderData
 		: SecurityCacheProviderData, IHelperAssistedCustomConfigurationData<CustomSecurityCacheProviderData>
 	{
@@ -64,6 +69,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration
 		{
 			helper.HandleSetAttributeValue(key, value);
 		}
+
+        /// <summary>
+        /// Overridden in order to apply <see cref="BrowsableAttribute"/>.
+        /// </summary>
+        [Browsable(true)]
+        [Editor(CommonDesignTime.EditorTypes.TypeSelector, CommonDesignTime.EditorTypes.UITypeEditor)]
+        [BaseType(typeof(ISecurityCacheProvider), typeof(CustomSecurityCacheProviderData))]
+        [ResourceDescription(typeof(DesignResources), "CustomSecurityCacheProviderDataTypeNameDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "CustomSecurityCacheProviderDataTypeNameDisplayName")]
+        public override string TypeName
+        {
+            get { return base.TypeName; }
+            set { base.TypeName = value; }
+        }
 
 		/// <summary>
 		/// Gets or sets custom configuration attributes.

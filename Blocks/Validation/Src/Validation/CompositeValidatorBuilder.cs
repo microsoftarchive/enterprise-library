@@ -25,9 +25,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         private Validator builtValidator;
 
         /// <summary>
-        /// 
+        /// Initializes a new instance of the <see cref="CompositeValidatorBuilder"/> class.
         /// </summary>
-        /// <param name="validatedElement"></param>
+        /// <param name="validatedElement">The element for which a composite validator will be created.</param>
         public CompositeValidatorBuilder(IValidatedElement validatedElement)
         {
             this.validatedElement = validatedElement;
@@ -88,9 +88,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         }
 
         /// <summary>
-        /// 
+        /// Adds a value validator to the composite validator.
         /// </summary>
-        /// <param name="valueValidator"></param>
+        /// <param name="valueValidator">The validator to add.</param>
         public void AddValueValidator(Validator valueValidator)
         {
             this.valueValidators.Add(valueValidator);
@@ -99,7 +99,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         #region test only properties
 
         /// <summary>
-        /// 
+        /// This member supports the Enterprise Library infrastructure and is not intended to be used directly from your code.
         /// </summary>
         public bool IgnoreNulls
         {
@@ -107,7 +107,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         }
 
         /// <summary>
-        /// 
+        /// This member supports the Enterprise Library infrastructure and is not intended to be used directly from your code.
         /// </summary>
         public CompositionType CompositionType
         {
@@ -115,7 +115,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         }
 
         /// <summary>
-        /// 
+        /// This member supports the Enterprise Library infrastructure and is not intended to be used directly from your code.
         /// </summary>
         public Validator BuiltValidator
         {
@@ -123,7 +123,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         }
 
         /// <summary>
-        /// 
+        /// This member supports the Enterprise Library infrastructure and is not intended to be used directly from your code.
         /// </summary>
         public IList<Validator> ValueValidators
         {

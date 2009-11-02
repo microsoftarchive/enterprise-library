@@ -16,12 +16,16 @@ using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Filters;
+using System.ComponentModel;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 {
     /// <summary>
     /// Configuration data for custom log filters. 
     /// </summary>
+    [ResourceDescription(typeof(DesignResources), "CustomLogFilterDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "CustomLogFilterDataDisplayName")]
     public class CustomLogFilterData
         : LogFilterData, IHelperAssistedCustomConfigurationData<CustomLogFilterData>
     {
@@ -35,6 +39,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         public CustomLogFilterData()
         {
             helper = new CustomProviderDataHelper<CustomLogFilterData>(this);
+        }
+
+        /// <summary>
+        /// Overridden in order to apply <see cref="BrowsableAttribute"/>.
+        /// </summary>
+        [Browsable(true)]
+        [Editor(CommonDesignTime.EditorTypes.TypeSelector, CommonDesignTime.EditorTypes.UITypeEditor)]
+        [BaseType(typeof(ILogFilter), typeof(CustomLogFilterData))]
+        [ResourceDescription(typeof(DesignResources), "CustomLogFilterDataTypeNameDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "CustomLogFilterDataTypeNameDisplayName")]
+        public override string TypeName
+        {
+            get { return base.TypeName; }
+            set { base.TypeName = value; }
         }
 
         /// <summary>

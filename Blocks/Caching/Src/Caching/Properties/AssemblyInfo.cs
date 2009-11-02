@@ -27,4 +27,8 @@ using Microsoft.Practices.EnterpriseLibrary.Caching.Configuration;
 [assembly : AllowPartiallyTrustedCallers]
 [assembly : SecurityTransparent]
 
-[assembly: HandlesSectionName(CacheManagerSettings.SectionName)]
+[assembly: HandlesSection(CacheManagerSettings.SectionName)]
+[assembly: AddApplicationBlockCommand("Add Caching Settings", 
+            CacheManagerSettings.SectionName,
+            typeof(CacheManagerSettings),
+            CommandModelTypeName = CachingDesignTime.CommandTypeNames.AddCachingBlockCommand)]

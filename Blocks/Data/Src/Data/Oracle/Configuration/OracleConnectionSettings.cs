@@ -15,12 +15,15 @@ using System.Text;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Data.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Data.Oracle.Configuration
 {
 	/// <summary>
 	/// Oracle-specific configuration section.
 	/// </summary>
+    [ResourceDescription(typeof(DesignResources), "OracleConnectionSettingsDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "OracleConnectionSettingsDisplayName")]
 	public class OracleConnectionSettings : SerializableConfigurationSection
 	{
 		private const string oracleConnectionDataCollectionProperty = "";
@@ -52,7 +55,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Oracle.Configuration
 		/// Collection of Oracle-specific connection information.
 		/// </summary>
 		[ConfigurationProperty(oracleConnectionDataCollectionProperty, IsRequired=false, IsDefaultCollection=true)]
-		public NamedElementCollection<OracleConnectionData> OracleConnectionsData
+		[ConfigurationCollection(typeof(OracleConnectionData))]
+        [ResourceDescription(typeof(DesignResources), "OracleConnectionSettingsOracleConnectionsDataDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "OracleConnectionSettingsOracleConnectionsDataDisplayName")]
+        public NamedElementCollection<OracleConnectionData> OracleConnectionsData
 		{
 			get { return (NamedElementCollection<OracleConnectionData>)base[oracleConnectionDataCollectionProperty]; }
 		}

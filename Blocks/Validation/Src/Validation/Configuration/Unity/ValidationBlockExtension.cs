@@ -33,7 +33,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.Unity
         {
             base.Initialize();
 
-            Context.Strategies.Add(new ValidationCreationStrategy(), UnityBuildStage.PreCreation);
+            Context.Strategies.Add(new ValidatorCreationStrategy(), UnityBuildStage.PreCreation);
         }
     }
 }

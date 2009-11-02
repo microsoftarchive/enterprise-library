@@ -25,7 +25,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
     /// <summary>
     /// A <see cref="ConfigurationSection"/> that stores the policy set in configuration.
     /// </summary>
-    [ViewModel(ViewModels.HierarchicalViewModel)]
+    [ViewModel(PolicyInjectionDesignTime.ViewModelTypeNames.PiabSectionViewModel)]
+    [ResourceDescription(typeof(DesignResources), "PolicyInjectionSettingsDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "PolicyInjectionSettingsDisplayName")]
     public class PolicyInjectionSettings : SerializableConfigurationSection, ITypeRegistrationsProvider
     {
         //private const string InjectorsPropertyName = "injectors";
@@ -42,6 +44,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// <value>The <see cref="PolicyData"/> collection.</value>
         [ConfigurationProperty(PoliciesPropertyName)]
         [ConfigurationCollection(typeof(PolicyData))]
+        [ResourceDescription(typeof(DesignResources), "PolicyInjectionSettingsPoliciesDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "PolicyInjectionSettingsPoliciesDisplayName")]
         public NamedElementCollection<PolicyData> Policies
         {
             get { return (NamedElementCollection<PolicyData>)base[PoliciesPropertyName]; }

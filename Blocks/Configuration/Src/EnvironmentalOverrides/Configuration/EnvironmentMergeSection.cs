@@ -15,6 +15,7 @@ using System.Text;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using System.ComponentModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides.Configuration
 {
@@ -24,7 +25,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverr
     /// <remarks>
     /// This configuration section is used by the Environmental Overrides extension to the configuration tool at designtime.
     /// </remarks>
-    [ViewModel("Console.Wpf.ViewModel.BlockSpecifics.EnvironmentalOverridesViewModel, Console.Wpf")]
+    [ViewModel(EnvironmentalOverridesDesignTime.ViewModelTypeNames.EnvironmentalOverridesViewModel)]
+    [ResourceDescription(typeof(DesignResources), "EnvironmentMergeSectionDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "EnvironmentMergeSectionDisplayName")]
+    [NameProperty("EnvironmentName")]
     public class EnvironmentMergeSection : ConfigurationSection
     {
         /// <summary>
@@ -39,6 +43,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverr
         /// Gets or sets a collection of <see cref="EnvironmentNodeMergeElement"/>.
         /// </summary>
         [ConfigurationProperty(MergeElementsPropertyName, IsDefaultCollection=true)]
+        [Browsable(false)]
         public EnvironmentNodeMergeElementCollection MergeElements
         {
             get { return (EnvironmentNodeMergeElementCollection)base[MergeElementsPropertyName]; }
@@ -49,6 +54,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverr
         /// Gets or sets the name of the environment.
         /// </summary>
         [ConfigurationProperty(EnvironmentNamePropertyName)]
+        [ResourceDescription(typeof(DesignResources), "EnvironmentMergeSectionEnvironmentNameDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "EnvironmentMergeSectionEnvironmentNameDisplayName")]
+        [EnvironmentalOverrides(false)]
         public string EnvironmentName
         {
             get { return (string)base[EnvironmentNamePropertyName]; }
@@ -59,6 +67,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverr
         /// Gets or sets the path to the deployable configuration that can be generated from this configuration.
         /// </summary>
         [ConfigurationProperty(EnvironmentDeltaFilePropertyName)]
+        [ResourceDescription(typeof(DesignResources), "EnvironmentMergeSectionEnvironmentDeltaFileDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "EnvironmentMergeSectionEnvironmentDeltaFileDisplayName")]
+        [FilteredFileNameEditor(typeof(DesignResources), "EnvironmentMergeSectionEnvironmentDeltaFileFilter")]
+        [Editor(CommonDesignTime.EditorTypes.FilteredFilePath, CommonDesignTime.EditorTypes.UITypeEditor)]
+        [EnvironmentalOverrides(false)]
         public string EnvironmentDeltaFile
         {
             get { return (string)base[EnvironmentDeltaFilePropertyName]; }

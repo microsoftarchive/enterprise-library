@@ -17,11 +17,14 @@ using System.Linq;
 using System.Text;
 using System.Windows.Input;
 using Console.Wpf.Tests.VSTS.DevTests.Contexts;
+using Console.Wpf.Tests.VSTS.TestSupport;
 using Console.Wpf.ViewModel;
+using Console.Wpf.ViewModel.Commands;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model
 {
@@ -32,7 +35,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model
 
         protected override void Act()
         {
-            sectionViewModel = SectionViewModel.CreateSection(ServiceProvider, Section);
+            sectionViewModel = SectionViewModel.CreateSection(Container, ExceptionHandlingSettings.SectionName, Section);
             sectionViewModel.UpdateLayout();
         }
 
@@ -135,21 +138,21 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model
         [TestMethod]
         public void then_visual_contain_headers()
         {
-            var headerNames = sectionViewModel.GetAllGridVisuals().OfType<HeaderViewModel>().Select(h => h.Name);
+            var headerNames = sectionViewModel.GetGridVisuals().OfType<HeaderViewModel>().Select(h => h.Name);
             CollectionAssert.AreEqual(new []{"Policies","Exception Types", "Handlers"}, headerNames.ToArray());
         }
 
         [TestMethod]
         public void then_headers_are_in_the_zeroth_row()
         {
-            var headers = sectionViewModel.GetAllGridVisuals().OfType<HeaderViewModel>().ToArray();
+            var headers = sectionViewModel.GetGridVisuals().OfType<HeaderViewModel>().ToArray();
             Assert.IsTrue(headers.All(h => h.Row == 0));
         }
 
         [TestMethod]
         public void then_headers_are_in_correct_columns()
         {
-            var headers = sectionViewModel.GetAllGridVisuals().OfType<HeaderViewModel>();
+            var headers = sectionViewModel.GetGridVisuals().OfType<HeaderViewModel>();
             
             for(int i = 0; i < headers.Count(); i++)
             {
@@ -160,24 +163,24 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model
         [TestMethod]
         public void then_returns_only_visible_elements()
         {
-            var collectionElements = sectionViewModel.GetAllGridVisuals().OfType<ElementCollectionViewModel>().ToArray();
+            var collectionElements = sectionViewModel.GetGridVisuals().OfType<ElementCollectionViewModel>().ToArray();
             Assert.IsFalse(collectionElements.Any());
         }
 
         [TestMethod]
-        public void then_child_adders_returns_collections_adders()
+        public void then_child_adders_returns_collections_add_commands()
         {
             var policyElement = ElementsFromType<ExceptionPolicyData>().First();
 
             var childAdders =
-                policyElement.ChildElements.SelectMany(x => x.ChildAdders)
-                        .OfType<CollectionElementAddCommand>()
-                        .Select(x => x.DisplayName);
+                policyElement.ChildElements.SelectMany(x => x.Commands)
+                        .OfType<DefaultCollectionElementAddCommand>()
+                        .Select(x => x.Title);
 
 
-            var policyAdders = policyElement.ChildAdders
-                                .OfType<CollectionElementAddCommand>()
-                                .Select(x => x.DisplayName);
+            var policyAdders = policyElement.Commands                                
+                                .OfType<DefaultCollectionElementAddCommand>()
+                                .Select(x => x.Title);
 
             CollectionAssert.AreEquivalent(childAdders.ToArray(), 
                                             policyAdders.ToArray());            
@@ -187,24 +190,32 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model
         public void then_top_level_headers_offer_add_commands()
         {
             var topLevelHeaders =
-                sectionViewModel.GetAllGridVisuals().OfType<ElementViewModelWrappingHeaderViewModel>().Where(
+                sectionViewModel.GetGridVisuals().OfType<ElementHeaderViewModel>().Where(
                     x => x.Column == 0);
-            Assert.IsTrue(topLevelHeaders.All(x => x.ChildAdders.Count() > 0));
+            Assert.IsTrue(topLevelHeaders.All(x => x.Commands.Count() > 0));
         }
 
         [TestMethod]
         public void then_non_top_level_headers_do_not_offer_add_commands()
         {
             var nonTopLevelHeaders =
-               sectionViewModel.GetAllGridVisuals().OfType<ElementViewModelWrappingHeaderViewModel>().Where(
+               sectionViewModel.GetGridVisuals().OfType<ElementHeaderViewModel>().Where(
                    x => x.Column != 0);
-            Assert.IsTrue(nonTopLevelHeaders.All(x => x.ChildAdders.Count() == 0));
+            Assert.IsTrue(nonTopLevelHeaders.All(x => x.Commands.Count() == 0));
         }
+
+        [TestMethod]
+        public void then_has_add_command()
+        {
+            var exceptionPolicy = sectionViewModel.GetDescendentsOfType<ExceptionPolicyData>().First();
+            Assert.IsTrue(exceptionPolicy.Commands.Where(x=>x.Placement == CommandPlacement.ContextAdd).Any());
+        }
+
 
 
         private IEnumerable<ElementViewModel> ElementsFromType<T>()
         {
-            return sectionViewModel.GetAllGridVisuals().OfType<ElementViewModel>().Where(x => typeof (T).IsAssignableFrom(x.ConfigurationType));
+            return sectionViewModel.GetDescendentsOfType<T>();
         }
     }
 }

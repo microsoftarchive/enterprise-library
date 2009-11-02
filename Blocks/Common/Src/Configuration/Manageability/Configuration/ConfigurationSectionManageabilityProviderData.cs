@@ -14,12 +14,15 @@ using System.Collections.Generic;
 using System.Configuration;
 
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability.Configuration
 {
 	/// <summary>
 	/// Represents the configuration settings that describe an <see cref="ConfigurationSectionManageabilityProvider"/>.
 	/// </summary>
+    [ResourceDescription(typeof(DesignResources), "ConfigurationSectionManageabilityProviderDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "ConfigurationSectionManageabilityProviderDataDisplayName")]
 	public class ConfigurationSectionManageabilityProviderData : NameTypeConfigurationElement
 	{
 		private const String manageabilityProvidersCollectionPropertyName = "manageabilityProviders";
@@ -47,6 +50,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
 		/// </summary>
 		[ConfigurationProperty(manageabilityProvidersCollectionPropertyName)]
         [ConfigurationCollection(typeof(ConfigurationElementManageabilityProviderData))]
+        [ResourceDescription(typeof(DesignResources), "ConfigurationSectionManageabilityProviderDataManageabilityProvidersDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "ConfigurationSectionManageabilityProviderDataManageabilityProvidersDisplayName")]
 		public NamedElementCollection<ConfigurationElementManageabilityProviderData> ManageabilityProviders
 		{
 			get { return (NamedElementCollection<ConfigurationElementManageabilityProviderData>)base[manageabilityProvidersCollectionPropertyName]; }

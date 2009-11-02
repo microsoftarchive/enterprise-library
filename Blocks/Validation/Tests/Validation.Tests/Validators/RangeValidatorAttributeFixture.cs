@@ -10,6 +10,7 @@
 //===============================================================================
 
 using System;
+using System.ComponentModel.DataAnnotations;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -133,7 +134,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
                                                                        "0.0", RangeBoundaryType.Inclusive,
                                                                        "200.10", RangeBoundaryType.Exclusive);
 
-            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(typeof(Decimal), null, null);
+            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(typeof(Decimal), null, null, null);
             Assert.IsNotNull(validator);
 
             RangeValidator typedValidator = validator as RangeValidator;
@@ -155,7 +156,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
                                                                             "2006-01-20T00:00:00", RangeBoundaryType.Exclusive);
             attribute.Negated = true;
 
-            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(typeof(DateTime), null, null);
+            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(typeof(DateTime), null, null, null);
             Assert.IsNotNull(validator);
 
             RangeValidator typedValidator = validator as RangeValidator;
@@ -175,7 +176,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             ValidatorAttribute attribute = new RangeValidatorAttribute(2, RangeBoundaryType.Inclusive, 5, RangeBoundaryType.Exclusive);
             attribute.MessageTemplate = "my message template";
 
-            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(typeof(int), null, null);
+            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(typeof(int), null, null, null);
             Assert.IsNotNull(validator);
 
             RangeValidator typedValidator = validator as RangeValidator;
@@ -196,7 +197,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             attribute.Negated = true;
             attribute.MessageTemplate = "my message template";
 
-            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(typeof(Double), null, null);
+            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(typeof(Double), null, null, null);
             Assert.IsNotNull(validator);
 
             RangeValidator typedValidator = validator as RangeValidator;
@@ -208,6 +209,62 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             Assert.AreEqual(RangeBoundaryType.Inclusive, typedValidator.LowerBoundType);
             Assert.AreEqual(5.6d, typedValidator.UpperBound);
             Assert.AreEqual(RangeBoundaryType.Exclusive, typedValidator.UpperBoundType);
+        }
+
+        [TestMethod]
+        public void CanUseAttributeAsValidationAttributeForValidValue()
+        {
+            ValidationAttribute attribute =
+                new RangeValidatorAttribute(0, RangeBoundaryType.Ignore, 10, RangeBoundaryType.Inclusive)
+                {
+                    MessageTemplate = "template {1}"
+                };
+
+            Assert.IsTrue(attribute.IsValid(5));
+        }
+
+        [TestMethod]
+        public void CanUseAttributeAsValidationAttribute()
+        {
+            ValidationAttribute attribute =
+                new RangeValidatorAttribute(0, RangeBoundaryType.Ignore, 10, RangeBoundaryType.Inclusive)
+                {
+                    MessageTemplate = "template {1}"
+                };
+
+            Assert.IsFalse(attribute.IsValid(100));
+            Assert.AreEqual("template name", attribute.FormatErrorMessage("name"));
+        }
+
+        [TestMethod]
+        public void ValidatingValueOfWrongTypeThrows()
+        {
+            ValidationAttribute attribute =
+                new RangeValidatorAttribute(0, RangeBoundaryType.Ignore, 10, RangeBoundaryType.Inclusive)
+                {
+                    MessageTemplate = "template {1}"
+                };
+
+            try
+            {
+                attribute.IsValid("a string");
+                Assert.Fail();
+            }
+            catch (ArgumentException)
+            { }
+        }
+
+        [TestMethod]
+        public void ValidatingWithValidatorAttributeWithARulesetSkipsValidation()
+        {
+            ValidationAttribute attribute =
+                new RangeValidatorAttribute(0, RangeBoundaryType.Ignore, 10, RangeBoundaryType.Inclusive)
+                {
+                    MessageTemplate = "template {1}",
+                    Ruleset = "some ruleset"
+                };
+
+            Assert.IsTrue(attribute.IsValid(100));
         }
     }
 }

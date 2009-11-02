@@ -86,7 +86,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             rwValidatorData.Domain.Add(new DomainConfigurationElement("2"));
             rwValidatorData.Domain.Add(new DomainConfigurationElement("3"));
 
-            Validator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(null, null, null, null);
 
             Assert.IsNotNull(validator);
             Assert.AreSame(typeof(DomainValidator<object>), validator.GetType());
@@ -105,7 +105,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             rwValidatorData.Domain.Add(new DomainConfigurationElement("2"));
             rwValidatorData.Domain.Add(new DomainConfigurationElement("3"));
 
-            Validator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(typeof(int), null, null);
+            Validator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(typeof(int), null, null, null);
 
             Assert.IsNotNull(validator);
             Assert.AreSame(typeof(DomainValidator<object>), validator.GetType());
@@ -125,7 +125,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             rwValidatorData.Domain.Add(new DomainConfigurationElement("2"));
             rwValidatorData.Domain.Add(new DomainConfigurationElement("3"));
 
-            Validator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(null, null, null, null);
 
             Assert.IsNotNull(validator);
             Assert.AreSame(typeof(DomainValidator<object>), validator.GetType());

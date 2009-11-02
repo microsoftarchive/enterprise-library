@@ -12,12 +12,15 @@
 using System;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 {
 	/// <summary>
 	/// Configuration object to describe an instance of class <see cref="RelativeDateTimeValidatorData"/>.
 	/// </summary>
+    [ResourceDescription(typeof(DesignResources), "RelativeDateTimeValidatorDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "RelativeDateTimeValidatorDataDisplayName")]
 	public class RelativeDateTimeValidatorData : RangeValidatorData<int>
 	{
 		/// <summary>
@@ -38,7 +41,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 		/// <summary>
 		/// Gets or sets the unit to use when calculating the relative lower bound for the represented <see cref="RelativeDateTimeValidator"/>.
 		/// </summary>
-		[ConfigurationProperty(LowerUnitPropertyName, DefaultValue=DateTimeUnit.None)]
+        [ConfigurationProperty(LowerUnitPropertyName, DefaultValue = DateTimeUnit.None)]
+        [ResourceDescription(typeof(DesignResources), "RelativeDateTimeValidatorDataLowerUnitDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "RelativeDateTimeValidatorDataLowerUnitDisplayName")]
 		public DateTimeUnit LowerUnit
 		{
 			get { return (DateTimeUnit)this[LowerUnitPropertyName]; }
@@ -50,6 +55,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 		/// Gets or sets the unit to use when calculating the relative upper bound for the represented <see cref="RelativeDateTimeValidator"/>.
 		/// </summary>
 		[ConfigurationProperty(UpperUnitPropertyName, DefaultValue = DateTimeUnit.None)]
+        [ResourceDescription(typeof(DesignResources), "RelativeDateTimeValidatorDataUpperUnitDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "RelativeDateTimeValidatorDataUpperUnitDisplayName")]
 		public DateTimeUnit UpperUnit
 		{
 			get { return (DateTimeUnit)this[UpperUnitPropertyName]; }

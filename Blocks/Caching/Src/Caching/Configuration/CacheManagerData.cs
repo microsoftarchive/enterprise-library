@@ -26,6 +26,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
 	/// Configuration data defining CacheManagerData. Defines the information needed to properly configure
 	/// a CacheManager instance.
 	/// </summary>
+    [ResourceDescription(typeof(DesignResources), "CacheManagerDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "CacheManagerDataDisplayName")]
 	public class CacheManagerData : CacheManagerDataBase
 	{
 		private const string expirationPollFrequencyInSecondsProperty = "expirationPollFrequencyInSeconds";
@@ -73,6 +75,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
 		/// Frequency in seconds of expiration polling cycle
 		/// </summary>
 		[ConfigurationProperty(expirationPollFrequencyInSecondsProperty, IsRequired = true, DefaultValue=60)]
+        [ResourceDescription(typeof(DesignResources), "CacheManagerDataExpirationPollFrequencyInSecondsDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "CacheManagerDataExpirationPollFrequencyInSecondsDisplayName")]
 		public int ExpirationPollFrequencyInSeconds
 		{
 			get { return (int)base[expirationPollFrequencyInSecondsProperty]; }
@@ -83,6 +87,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
 		/// Maximum number of items in cache before an add causes scavenging to take place
 		/// </summary>
 		[ConfigurationProperty(maximumElementsInCacheBeforeScavengingProperty, IsRequired = true, DefaultValue=1000)]
+        [ResourceDescription(typeof(DesignResources), "CacheManagerDataMaximumElementsInCacheBeforeScavengingDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "CacheManagerDataMaximumElementsInCacheBeforeScavengingDisplayName")]
 		public int MaximumElementsInCacheBeforeScavenging
 		{
 			get { return (int)base[maximumElementsInCacheBeforeScavengingProperty]; }
@@ -93,6 +99,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
 		/// Number of items to remove from cache when scavenging
 		/// </summary>
 		[ConfigurationProperty(numberToRemoveWhenScavengingProperty, IsRequired = true, DefaultValue=10)]
+        [ResourceDescription(typeof(DesignResources), "CacheManagerDataNumberToRemoveWhenScavengingDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "CacheManagerDataNumberToRemoveWhenScavengingDisplayName")]
 		public int NumberToRemoveWhenScavenging
 		{
 			get { return (int)base[numberToRemoveWhenScavengingProperty]; }
@@ -104,7 +112,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
 		/// in the cache.
 		/// </summary>
 		[ConfigurationProperty(backingStoreNameProperty, IsRequired = true)]
-        [Reference(typeof(CacheManagerSettings), typeof(CacheStorageData))]
+        [Reference(typeof(NameTypeConfigurationElementCollection<CacheStorageData, CustomCacheStorageData>), typeof(CacheStorageData))]
+        [ResourceDescription(typeof(DesignResources), "CacheManagerDataCacheStorageDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "CacheManagerDataCacheStorageDisplayName")]
 		public string CacheStorage
 		{
 			get { return (string)base[backingStoreNameProperty]; }

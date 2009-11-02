@@ -26,25 +26,26 @@ using System.ComponentModel.Design;
 using System.Configuration;
 using Console.Wpf.Tests.VSTS.TestSupport;
 using Console.Wpf.Tests.VSTS.Mocks;
+using Console.Wpf.Tests.VSTS.DevTests.Contexts;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model
 {
     [TestClass]
-    public class when_creating_extended_view_model : ArrangeActAssert
+    public class when_creating_extended_view_model : ContainerContext
     {
         SectionWithExtendedViewModel sectionWithExtendedViewmodel;
         SectionViewModel viewModel;
-        ServiceContainer container;
 
         protected override void Arrange()
         {
+            base.Arrange();
+
             sectionWithExtendedViewmodel = new SectionWithExtendedViewModel();
-            container = new ServiceContainer();
         }
 
         protected override void Act()
         {
-            viewModel = SectionViewModel.CreateSection(container, sectionWithExtendedViewmodel);
+            viewModel = SectionViewModel.CreateSection(Container, "sectionName", sectionWithExtendedViewmodel);
         }
 
         [TestMethod]
@@ -84,14 +85,5 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model
             var element = viewModel.DescendentElements().OfType<ElementViewModelEx>().First();
             Assert.AreEqual(typeof(UIElement), element.CustomVisualType);
         }
-
-        [TestMethod]
-        public void then_custom_add_commands_attached()
-        {
-            var element = viewModel.DescendentElements().OfType<ElementCollectionViewModel>().Where(x => x.ConfigurationType == typeof(ElementCollectionWithExtendedViewModel)).First();
-            Assert.IsNotNull(element.ChildAdders.OfType<CustomElementCollectionAddCommand>().Single());
-            Assert.IsNotNull(element.ChildAdders.OfType<AnotherCustomElementCollectionAddCommand>().Single());
-        }
-
     }
 }

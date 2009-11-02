@@ -14,12 +14,15 @@ using System.Configuration;
 using System.Diagnostics;
 using System.Linq.Expressions;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 {
     /// <summary>
     /// Represents the configuration settings that describe a <see cref="XmlTraceListener"/>.
     /// </summary>
+    [ResourceDescription(typeof(DesignResources), "XmlTraceListenerDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "XmlTraceListenerDataDisplayName")]
     public class XmlTraceListenerData : TraceListenerData
     {
         private const string fileNameProperty = "fileName";
@@ -48,6 +51,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// Gets and sets the file name.
         /// </summary>
         [ConfigurationProperty(fileNameProperty, IsRequired = true, DefaultValue="trace-xml.log")]
+        [ResourceDescription(typeof(DesignResources), "XmlTraceListenerDataFileNameDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "XmlTraceListenerDataFileNameDisplayName")]
         public string FileName
         {
             get { return (string)base[fileNameProperty]; }

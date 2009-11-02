@@ -17,7 +17,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 	/// <summary>
 	/// Configuration for a reference to named <see cref="TraceListenerData"/>.
 	/// </summary>
-    [ViewModel(ViewModels.TraceListenerReferenceElementViewModel)]
+    [ViewModel(LoggingDesignTime.ViewModelTypeNames.TraceListenerReferenceElementViewModel)]
 	public class TraceListenerReferenceData : NamedConfigurationElement
 	{
 		/// <summary>

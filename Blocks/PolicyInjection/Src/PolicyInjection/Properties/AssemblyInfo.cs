@@ -27,4 +27,6 @@ using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
 [assembly: AllowPartiallyTrustedCallers]
 [assembly: SecurityTransparent]
 
-[assembly: HandlesSectionName(PolicyInjectionSettings.SectionName)]
+[assembly: HandlesSection(PolicyInjectionSettings.SectionName)]
+
+[assembly: AddApplicationBlockCommand("Add Policy Injection Settings", PolicyInjectionSettings.SectionName, typeof(PolicyInjectionSettings))]

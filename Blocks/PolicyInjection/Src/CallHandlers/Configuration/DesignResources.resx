@@ -1,0 +1,420 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AuthorizationCallHandlerDataAuthorizationProviderDescription" xml:space="preserve">
+    <value>835 - The name of the authorization provider instance to use. This must map to a configured Authorization Provider instance in the Security Application Block.</value>
+  </data>
+  <data name="AuthorizationCallHandlerDataAuthorizationProviderDisplayName" xml:space="preserve">
+    <value>Authorization Provider</value>
+  </data>
+  <data name="AuthorizationCallHandlerDataDescription" xml:space="preserve">
+    <value>833 - A Call Handler that checks if the current user (the security principal for the current thread) has the requisite permission to access the selected object method or property. This handler uses the Security Application Block to check permissions.</value>
+  </data>
+  <data name="AuthorizationCallHandlerDataDisplayName" xml:space="preserve">
+    <value>Authorization Call Handler</value>
+  </data>
+  <data name="AuthorizationCallHandlerDataNameDescription" xml:space="preserve">
+    <value>837 - The name of the Authorization Call Handler.</value>
+  </data>
+  <data name="AuthorizationCallHandlerDataNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="AuthorizationCallHandlerDataOperationNameDescription" xml:space="preserve">
+    <value>839 - The name of the authorization operation, which may include the tokens {method}, {type}, {namespace}, {assembly}, and {appdomain}.</value>
+  </data>
+  <data name="AuthorizationCallHandlerDataOperationNameDisplayName" xml:space="preserve">
+    <value>Operation Name</value>
+  </data>
+  <data name="AuthorizationCallHandlerDataOrderDescription" xml:space="preserve">
+    <value>841 - The position of the handler within the policy handler chain, starting from 1. The default value is zero, which means that there is no explicit order specified for the handler in relation to other handlers in the same handler chain.</value>
+  </data>
+  <data name="AuthorizationCallHandlerDataOrderDisplayName" xml:space="preserve">
+    <value>Order</value>
+  </data>
+  <data name="AuthorizationCallHandlerDataTypeNameDescription" xml:space="preserve">
+    <value>843 - The fully qualified type name of the Authorization Call Handler.</value>
+  </data>
+  <data name="AuthorizationCallHandlerDataTypeNameDisplayName" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="CachingCallHandlerDataDescription" xml:space="preserve">
+    <value>845 - A Call Handler that caches the value or object instance returned from the selected method, or the value of the selected property. </value>
+  </data>
+  <data name="CachingCallHandlerDataDisplayName" xml:space="preserve">
+    <value>Caching Call Handler</value>
+  </data>
+  <data name="CachingCallHandlerDataExpirationTimeDescription" xml:space="preserve">
+    <value>847 - The length of time from the point when the handler first adds the data to the cache until it expires.</value>
+  </data>
+  <data name="CachingCallHandlerDataExpirationTimeDisplayName" xml:space="preserve">
+    <value>Expiration Time</value>
+  </data>
+  <data name="CachingCallHandlerDataNameDescription" xml:space="preserve">
+    <value>849 - The name of the Caching Call Handler.</value>
+  </data>
+  <data name="CachingCallHandlerDataNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="CachingCallHandlerDataOrderDescription" xml:space="preserve">
+    <value>851 - The position of the handler within the policy handler chain, starting from 1. The default value is zero, which means that there is no explicit order specified for the handler in relation to other handlers in the same handler chain.</value>
+  </data>
+  <data name="CachingCallHandlerDataOrderDisplayName" xml:space="preserve">
+    <value>Order</value>
+  </data>
+  <data name="CachingCallHandlerDataTypeNameDescription" xml:space="preserve">
+    <value>853 - The fully qualified type name of the Caching Call Handler.</value>
+  </data>
+  <data name="CachingCallHandlerDataTypeNameDisplayName" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="ExceptionCallHandlerDataDescription" xml:space="preserve">
+    <value>855 - A Call Handler that provides the capability to manage and process exceptions in a standard way. This handler uses the Exception Handling Application Block to handle exceptions raised by the target object.</value>
+  </data>
+  <data name="ExceptionCallHandlerDataDisplayName" xml:space="preserve">
+    <value>Exception Handling Call Handler</value>
+  </data>
+  <data name="ExceptionCallHandlerDataExceptionPolicyNameDescription" xml:space="preserve">
+    <value>857 - The name of the exception handling policy to use, as configured in the Exception Handling Application Block.</value>
+  </data>
+  <data name="ExceptionCallHandlerDataExceptionPolicyNameDisplayName" xml:space="preserve">
+    <value>Exception Policy Name</value>
+  </data>
+  <data name="ExceptionCallHandlerDataNameDescription" xml:space="preserve">
+    <value>859 - The name of the Exception Handling Call Handler.</value>
+  </data>
+  <data name="ExceptionCallHandlerDataNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="ExceptionCallHandlerDataOrderDescription" xml:space="preserve">
+    <value>861 - The position of the handler within the policy handler chain, starting from 1. The default value is zero, which means that there is no explicit order specified for the handler in relation to other handlers in the same handler chain.</value>
+  </data>
+  <data name="ExceptionCallHandlerDataOrderDisplayName" xml:space="preserve">
+    <value>Order</value>
+  </data>
+  <data name="ExceptionCallHandlerDataTypeNameDescription" xml:space="preserve">
+    <value>863 - The fully qualified type name of the Exception Handling Call Handler.</value>
+  </data>
+  <data name="ExceptionCallHandlerDataTypeNameDisplayName" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="LogCallHandlerCategoryEntryDescription" xml:space="preserve">
+    <value>865 - A single Category in the list of Categories for the log message.</value>
+  </data>
+  <data name="LogCallHandlerCategoryEntryDisplayName" xml:space="preserve">
+    <value>Category Entry</value>
+  </data>
+  <data name="LogCallHandlerCategoryEntryNameDescription" xml:space="preserve">
+    <value>867 - The name of the Category Entry.</value>
+  </data>
+  <data name="LogCallHandlerCategoryEntryNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="LogCallHandlerDataAfterMessageDescription" xml:space="preserve">
+    <value>871 - The message that the Logging Handler will add to the log entry after the target method executes.</value>
+  </data>
+  <data name="LogCallHandlerDataAfterMessageDisplayName" xml:space="preserve">
+    <value>After Message</value>
+  </data>
+  <data name="LogCallHandlerDataBeforeMessageDescription" xml:space="preserve">
+    <value>873 - The message that the Logging Handler will add to the log entry before the target method executes.</value>
+  </data>
+  <data name="LogCallHandlerDataBeforeMessageDisplayName" xml:space="preserve">
+    <value>Before Message</value>
+  </data>
+  <data name="LogCallHandlerDataCategoriesDescription" xml:space="preserve">
+    <value>875 - The list of categories to which the Logging Handler will write events. Each category can be a literal value, and/or include the tokens {method}, {type}, {namespace}, and {assembly}.</value>
+  </data>
+  <data name="LogCallHandlerDataCategoriesDisplayName" xml:space="preserve">
+    <value>Categories</value>
+  </data>
+  <data name="LogCallHandlerDataDescription" xml:space="preserve">
+    <value>869 - A Call Handler that provides the capability to write log messages and trace messages as the client code invokes the selected method or accesses the selected property of the target object. This handler uses the Logging Application Block to create and write log messages.</value>
+  </data>
+  <data name="LogCallHandlerDataDisplayName" xml:space="preserve">
+    <value>Logging Call Handler</value>
+  </data>
+  <data name="LogCallHandlerDataEventIdDescription" xml:space="preserve">
+    <value>877 - The ID of the event to include in the log message.</value>
+  </data>
+  <data name="LogCallHandlerDataEventIdDisplayName" xml:space="preserve">
+    <value>Event Id</value>
+  </data>
+  <data name="LogCallHandlerDataIncludeCallStackDescription" xml:space="preserve">
+    <value>879 - Determines whether the call stack will be included in the log message. </value>
+  </data>
+  <data name="LogCallHandlerDataIncludeCallStackDisplayName" xml:space="preserve">
+    <value>Include Call Stack</value>
+  </data>
+  <data name="LogCallHandlerDataIncludeCallTimeDescription" xml:space="preserve">
+    <value>881 - Determines whether the duration of the call will be included in After Message section of the log message. </value>
+  </data>
+  <data name="LogCallHandlerDataIncludeCallTimeDisplayName" xml:space="preserve">
+    <value>Include Call Time</value>
+  </data>
+  <data name="LogCallHandlerDataIncludeParameterValuesDescription" xml:space="preserve">
+    <value>883 - Determines whether the values of the parameters passed to the target method will be included in the log message. </value>
+  </data>
+  <data name="LogCallHandlerDataIncludeParameterValuesDisplayName" xml:space="preserve">
+    <value>Include Parameter Values</value>
+  </data>
+  <data name="LogCallHandlerDataLogBehaviorDescription" xml:space="preserve">
+    <value>885 - Determines if the handler will write log messages before, after, or both before and after the call to the target object. A value from the HandlerLogBehavior enumeration. Valid values are Before, After, and BeforeAndAfter.</value>
+  </data>
+  <data name="LogCallHandlerDataLogBehaviorDisplayName" xml:space="preserve">
+    <value>Log Behavior</value>
+  </data>
+  <data name="LogCallHandlerDataNameDescription" xml:space="preserve">
+    <value>887 - The name of the Logging Call Handler.</value>
+  </data>
+  <data name="LogCallHandlerDataNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="LogCallHandlerDataOrderDescription" xml:space="preserve">
+    <value>889 - The position of the handler within the policy handler chain, starting from 1. The default value is zero, which means that there is no explicit order specified for the handler in relation to other handlers in the same handler chain.</value>
+  </data>
+  <data name="LogCallHandlerDataOrderDisplayName" xml:space="preserve">
+    <value>Order</value>
+  </data>
+  <data name="LogCallHandlerDataPriorityDescription" xml:space="preserve">
+    <value>891 - The priority value of the exception  to include in the log message.</value>
+  </data>
+  <data name="LogCallHandlerDataPriorityDisplayName" xml:space="preserve">
+    <value>Priority</value>
+  </data>
+  <data name="LogCallHandlerDataSeverityDescription" xml:space="preserve">
+    <value>893 - The severity value of the exception to include in the log message; using values from the TraceEventType enumeration such as Critical, Error, and Warning.</value>
+  </data>
+  <data name="LogCallHandlerDataSeverityDisplayName" xml:space="preserve">
+    <value>Severity</value>
+  </data>
+  <data name="LogCallHandlerDataTypeNameDescription" xml:space="preserve">
+    <value>895 - The fully qualified type name of the Logging Call Handler.</value>
+  </data>
+  <data name="LogCallHandlerDataTypeNameDisplayName" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="PerformanceCounterCallHandlerDataCategoryNameDescription" xml:space="preserve">
+    <value>899 - The name of the category of the target performance counter.</value>
+  </data>
+  <data name="PerformanceCounterCallHandlerDataCategoryNameDisplayName" xml:space="preserve">
+    <value>Category Name</value>
+  </data>
+  <data name="PerformanceCounterCallHandlerDataDescription" xml:space="preserve">
+    <value>897 - A Call Handler that increments a specific counter each time it executes in response to invocation of the selected method or setting of the selected property. This handler uses the instrumentation features that are part of the Enterprise Library Core. </value>
+  </data>
+  <data name="PerformanceCounterCallHandlerDataDisplayName" xml:space="preserve">
+    <value>Performance Counter Call Handler</value>
+  </data>
+  <data name="PerformanceCounterCallHandlerDataIncrementAverageCallDurationDescription" xml:space="preserve">
+    <value>901 - Whether to increment an 'Average duration of each call' counter each time.</value>
+  </data>
+  <data name="PerformanceCounterCallHandlerDataIncrementAverageCallDurationDisplayName" xml:space="preserve">
+    <value>Increment Average Call Duration</value>
+  </data>
+  <data name="PerformanceCounterCallHandlerDataIncrementCallsPerSecondDescription" xml:space="preserve">
+    <value>903 - Whether to increment a 'Number of calls per second' counter each time.</value>
+  </data>
+  <data name="PerformanceCounterCallHandlerDataIncrementCallsPerSecondDisplayName" xml:space="preserve">
+    <value>Increment Calls Per Second</value>
+  </data>
+  <data name="PerformanceCounterCallHandlerDataIncrementExceptionsPerSecondDescription" xml:space="preserve">
+    <value>905 - Whether to increment a 'Number of exceptions per second' counter each time.</value>
+  </data>
+  <data name="PerformanceCounterCallHandlerDataIncrementExceptionsPerSecondDisplayName" xml:space="preserve">
+    <value>Increment Exceptions Per Second</value>
+  </data>
+  <data name="PerformanceCounterCallHandlerDataIncrementNumberOfCallsDescription" xml:space="preserve">
+    <value>907 - Whether to increment a 'Total number of calls' counter each time.</value>
+  </data>
+  <data name="PerformanceCounterCallHandlerDataIncrementNumberOfCallsDisplayName" xml:space="preserve">
+    <value>Increment Number Of Calls</value>
+  </data>
+  <data name="PerformanceCounterCallHandlerDataIncrementTotalExceptionsDescription" xml:space="preserve">
+    <value>909 - Whether to increment a 'Total number of exceptions' counter each time.</value>
+  </data>
+  <data name="PerformanceCounterCallHandlerDataIncrementTotalExceptionsDisplayName" xml:space="preserve">
+    <value>Increment Total Exceptions</value>
+  </data>
+  <data name="PerformanceCounterCallHandlerDataInstanceNameDescription" xml:space="preserve">
+    <value>911 - The name of the instance of the target performance counter. Can include the tokens {method}, {type}, {namespace}, {assembly}, and {appdomain}.</value>
+  </data>
+  <data name="PerformanceCounterCallHandlerDataInstanceNameDisplayName" xml:space="preserve">
+    <value>Instance Name</value>
+  </data>
+  <data name="PerformanceCounterCallHandlerDataNameDescription" xml:space="preserve">
+    <value>913 - The name of the Performance Counter Call Handler.</value>
+  </data>
+  <data name="PerformanceCounterCallHandlerDataNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="PerformanceCounterCallHandlerDataOrderDescription" xml:space="preserve">
+    <value>915 - The position of the handler within the policy handler chain, starting from 1. The default value is zero, which means that there is no explicit order specified for the handler in relation to other handlers in the same handler chain.</value>
+  </data>
+  <data name="PerformanceCounterCallHandlerDataOrderDisplayName" xml:space="preserve">
+    <value>Order</value>
+  </data>
+  <data name="PerformanceCounterCallHandlerDataTypeNameDescription" xml:space="preserve">
+    <value>917 - The fully qualified type name of the Performance Counter Call Handler.</value>
+  </data>
+  <data name="PerformanceCounterCallHandlerDataTypeNameDisplayName" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="PerformanceCounterCallHandlerDataUseTotalCounterDescription" xml:space="preserve">
+    <value>919 - Whether to increment a 'Total' counter each time.</value>
+  </data>
+  <data name="PerformanceCounterCallHandlerDataUseTotalCounterDisplayName" xml:space="preserve">
+    <value>Use Total Counter</value>
+  </data>
+  <data name="ValidationCallHandlerDataDescription" xml:space="preserve">
+    <value>921 - A Call Handler that provides the capability to test whether the value provided for the selected property, or the values specified for the parameters of the selected method, are valid against specific rules. This handler uses the Validation Application Block to perform teh validation.</value>
+  </data>
+  <data name="ValidationCallHandlerDataDisplayName" xml:space="preserve">
+    <value>Validation Call Handler</value>
+  </data>
+  <data name="ValidationCallHandlerDataNameDescription" xml:space="preserve">
+    <value>923 - The name of the Validation Call Handler.</value>
+  </data>
+  <data name="ValidationCallHandlerDataNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="ValidationCallHandlerDataOrderDescription" xml:space="preserve">
+    <value>925 - The position of the handler within the policy handler chain, starting from 1. The default value is zero, which means that there is no explicit order specified for the handler in relation to other handlers in the same handler chain.</value>
+  </data>
+  <data name="ValidationCallHandlerDataOrderDisplayName" xml:space="preserve">
+    <value>Order</value>
+  </data>
+  <data name="ValidationCallHandlerDataRuleSetDescription" xml:space="preserve">
+    <value>927 - The name of the rule set to use for all target object types, as configured in the Validation Application Block. An empty string causes the handler to use the default rule set.</value>
+  </data>
+  <data name="ValidationCallHandlerDataRuleSetDisplayName" xml:space="preserve">
+    <value>Rule Set</value>
+  </data>
+  <data name="ValidationCallHandlerDataSpecificationSourceDescription" xml:space="preserve">
+    <value>929 - A value from the SpecificationSource enumeration that defines the locations where the handler will look for validation rules. Valid values are Attributes, Configuration, ParameterAttributesOnly, and Both.</value>
+  </data>
+  <data name="ValidationCallHandlerDataSpecificationSourceDisplayName" xml:space="preserve">
+    <value>Rule Source</value>
+  </data>
+  <data name="ValidationCallHandlerDataTypeNameDescription" xml:space="preserve">
+    <value>931 - The fully qualified type name of the Validation Call Handler.</value>
+  </data>
+  <data name="ValidationCallHandlerDataTypeNameDisplayName" xml:space="preserve">
+    <value>Type</value>
+  </data>
+</root>

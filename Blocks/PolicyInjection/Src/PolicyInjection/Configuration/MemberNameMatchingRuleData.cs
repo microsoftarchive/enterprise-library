@@ -17,12 +17,16 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
 using FakeRules = Microsoft.Practices.EnterpriseLibrary.PolicyInjection.MatchingRules;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using System.ComponentModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
 {
     /// <summary>
     /// A configuration element that supports the <see cref="MemberNameMatchingRule"/>.
     /// </summary>
+    [ResourceDescription(typeof(DesignResources), "MemberNameMatchingRuleDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "MemberNameMatchingRuleDataDisplayName")]
     public class MemberNameMatchingRuleData : MatchingRuleData
     {
         private const string MatchesPropertyName = "matches";
@@ -32,6 +36,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// </summary>
         public MemberNameMatchingRuleData()
         {
+            Type = typeof(FakeRules.MemberNameMatchingRule);
         }
 
         /// <summary>
@@ -75,6 +80,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// <value>The "matches" child element in config.</value>
         [ConfigurationProperty(MatchesPropertyName)]
         [ConfigurationCollection(typeof(MatchData))]
+        [ResourceDescription(typeof(DesignResources), "MemberNameMatchingRuleDataMatchesDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "MemberNameMatchingRuleDataMatchesDisplayName")]
+        [System.ComponentModel.Editor(CommonDesignTime.EditorTypes.CollectionEditor, CommonDesignTime.EditorTypes.FrameworkElement)]
+        [CollectionEditorTemplate("PiabMemberNameHeader", "PiabMemberNameItem")]
+        [EnvironmentalOverrides(false)]
         public MatchDataCollection<MatchData> Matches
         {
             get { return (MatchDataCollection<MatchData>)base[MatchesPropertyName]; }

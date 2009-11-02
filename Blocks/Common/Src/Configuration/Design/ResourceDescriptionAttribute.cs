@@ -73,7 +73,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
             if (resourceLoaded) return;
 
             var rm = new ResourceManager(ResourceType);
-            DescriptionValue = rm.GetString(ResourceName);
+
+            try
+            {
+                DescriptionValue = rm.GetString(ResourceName);
+            }
+            catch (MissingManifestResourceException)
+            {
+                DescriptionValue = ResourceName;
+            }
             DescriptionValue = DescriptionValue == null ? String.Empty : DescriptionValue;
 
             resourceLoaded = true;

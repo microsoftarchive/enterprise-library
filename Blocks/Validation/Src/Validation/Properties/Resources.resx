@@ -322,4 +322,16 @@
   <data name="ExceptionContainsNullElements" xml:space="preserve">
     <value>Enumerable contains null elements.</value>
   </data>
+  <data name="ExceptionValidationAttributeNotSupported" xml:space="preserve">
+    <value>A validation attribute of type {0} cannot be used to validate values.</value>
+  </data>
+  <data name="IllegalUseOfInjectionValidationSource" xml:space="preserve">
+    <value>The InjectionValidationSource may only be used to configure generic Enterprise Library validator classes.</value>
+  </data>
+  <data name="InvalidValidationSpecificationSource" xml:space="preserve">
+    <value>The Validation Specification Source {0} is invalid.</value>
+  </data>
+  <data name="IllegalUseOfValidationDependencyAttribute" xml:space="preserve">
+    <value>The ValidationDependencyAttribute was applied to a dependency of type {0}, which is a generic Enterprise Library validator class.</value>
+  </data>
 </root>

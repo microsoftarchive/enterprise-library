@@ -26,4 +26,9 @@ using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
 [assembly : WmiConfiguration(@"root\EnterpriseLibrary", HostingModel = ManagementHostingModel.Decoupled, IdentifyLevel = false)]
 [assembly : AllowPartiallyTrustedCallers]
 [assembly : SecurityTransparent]
-[assembly: HandlesSectionName(ExceptionHandlingSettings.SectionName)]
+
+[assembly: HandlesSection(ExceptionHandlingSettings.SectionName)]
+[assembly: AddApplicationBlockCommand("Add Exception Handling Settings", 
+            ExceptionHandlingSettings.SectionName, 
+            typeof(ExceptionHandlingSettings),
+            CommandModelTypeName = ExceptionHandlingDesignTime.CommandTypeNames.AddExceptionHandlingBlockCommand)]

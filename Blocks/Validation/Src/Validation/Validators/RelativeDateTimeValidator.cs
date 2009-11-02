@@ -23,12 +23,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
     [ConfigurationElementType(typeof(RelativeDateTimeValidatorData))]
     public class RelativeDateTimeValidator : ValueValidator<DateTime>
     {
-        private RangeChecker<DateTime> rangeChecker;
         private int lowerBound;
         private DateTimeUnit lowerUnit;
+        private RangeBoundaryType lowerBoundType;
         private int upperBound;
         private DateTimeUnit upperUnit;
-        private RelativeDateTimeGenerator generator;
+        private RangeBoundaryType upperBoundType;
 
         /// <summary>
         /// <para>Initializes a new instance of the <see cref="RelativeDateTimeValidator"/>.</para>
@@ -203,14 +203,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
 
             this.lowerBound = lowerBound;
             this.lowerUnit = lowerUnit;
+            this.lowerBoundType = lowerBoundType;
             this.upperBound = upperBound;
             this.upperUnit = upperUnit;
+            this.upperBoundType = upperBoundType;
 
-            generator = new RelativeDateTimeGenerator();
-            DateTime nowDateTime = DateTime.Now;
-            DateTime lowerDateTime = generator.GenerateBoundDateTime(lowerBound, lowerUnit, nowDateTime);
-            DateTime upperDateTime = generator.GenerateBoundDateTime(upperBound, upperUnit, nowDateTime);
-            this.rangeChecker = new RangeChecker<DateTime>(lowerDateTime, lowerBoundType, upperDateTime, upperBoundType);
+            BuildRangeChecker();    // force validation of parameters
         }
 
         /// <summary>
@@ -249,7 +247,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         /// <param name="validationResults">The validation results to which the outcome of the validation should be stored.</param>
         protected override void DoValidate(DateTime objectToValidate, object currentTarget, string key, ValidationResults validationResults)
         {
-            if (this.rangeChecker.IsInRange(objectToValidate) == Negated)
+            if (BuildRangeChecker().IsInRange(objectToValidate) == Negated)
             {
                 this.LogValidationResult(validationResults,
                     GetMessage(objectToValidate, key),
@@ -258,13 +256,30 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
             }
         }
 
+        private RangeChecker<DateTime> BuildRangeChecker()
+        {
+            var generator = new RelativeDateTimeGenerator();
+            var nowDateTime = DateTime.Now;
+            var lowerDateTime =
+                this.lowerBoundType != RangeBoundaryType.Ignore
+                    ? generator.GenerateBoundDateTime(lowerBound, lowerUnit, nowDateTime)
+                    : default(DateTime);
+            var upperDateTime =
+                this.upperBoundType != RangeBoundaryType.Ignore
+                    ? generator.GenerateBoundDateTime(upperBound, upperUnit, nowDateTime)
+                    : default(DateTime);
+            var rangeChecker = new RangeChecker<DateTime>(lowerDateTime, lowerBoundType, upperDateTime, upperBoundType);
+
+            return rangeChecker;
+        }
+
         /// <summary>
         /// Gets the message representing a failed validation.
         /// </summary>
         /// <param name="objectToValidate">The object for which validation was performed.</param>
         /// <param name="key">The key representing the value being validated for <paramref name="objectToValidate"/>.</param>
         /// <returns>The message representing the validation failure.</returns>
-        protected override string GetMessage(object objectToValidate, string key)
+        protected internal override string GetMessage(object objectToValidate, string key)
         {
             return string.Format(
                 CultureInfo.CurrentCulture,
@@ -317,7 +332,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         /// </summary>
         public RangeBoundaryType LowerBoundType
         {
-            get { return rangeChecker.LowerBoundType; }
+            get { return this.lowerBoundType; }
         }
 
         /// <summary>
@@ -341,15 +356,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         /// </summary>
         public RangeBoundaryType UpperBoundType
         {
-            get { return rangeChecker.UpperBoundType; }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public RelativeDateTimeGenerator Generator
-        {
-            get { return generator; }
+            get { return this.upperBoundType; }
         }
 
         #endregion

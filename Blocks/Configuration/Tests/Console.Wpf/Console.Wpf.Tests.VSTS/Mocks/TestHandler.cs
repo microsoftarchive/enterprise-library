@@ -11,6 +11,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
@@ -20,5 +22,14 @@ namespace Console.Wpf.Tests.VSTS.Mocks
     [ConfigurationElementType(typeof(TestHandlerAnotherDerivedData))]
     public class TestHandler
     {}
+
+    public class ADerivedHandler : TestHandler
+    {
+
+    }
+
+    [ConfigurationElementType(typeof(TestHandlerSonOfDerivedData))]
+    public class YetAnotherTestHandler
+    { }
 }
 

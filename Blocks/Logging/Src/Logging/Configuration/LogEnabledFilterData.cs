@@ -13,12 +13,15 @@ using System.Collections.Generic;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Filters;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 {
     /// <summary>
     /// Represents the configuration settings that describe a <see cref="LogEnabledFilter"/>.
     /// </summary>
+    [ResourceDescription(typeof(DesignResources), "LogEnabledFilterDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "LogEnabledFilterDataDisplayName")]
     public class LogEnabledFilterData : LogFilterData
     {
         private const string enabledProperty = "enabled";
@@ -56,6 +59,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// Gets or sets the enabled value.
         /// </summary>
         [ConfigurationProperty(enabledProperty, IsRequired = true, DefaultValue=false)]
+        [ResourceDescription(typeof(DesignResources), "LogEnabledFilterDataEnabledDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "LogEnabledFilterDataEnabledDisplayName")]
         public bool Enabled
         {
             get { return (bool)base[enabledProperty]; }

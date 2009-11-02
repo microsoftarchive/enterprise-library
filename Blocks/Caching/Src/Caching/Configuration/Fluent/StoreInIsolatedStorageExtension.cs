@@ -10,14 +10,11 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Microsoft.Practices.EnterpriseLibrary.Caching;
 using Microsoft.Practices.EnterpriseLibrary.Caching.BackingStoreImplementations;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent;
-using Microsoft.Practices.EnterpriseLibrary.Caching;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Properties;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 {
@@ -37,7 +34,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         /// <seealso cref="IsolatedStorageCacheStorageData"/>
         public static IStoreInIsolatedStorage StoreInIsolatedStorage(this ICachingConfigurationCacheManager context, string backingStoreName)
         {
-            if (backingStoreName == null) throw new ArgumentException(Resources.EmptyParameterName, "backingStoreName");
+            if (string.IsNullOrEmpty(backingStoreName)) throw new ArgumentException(Resources.EmptyParameterName, "backingStoreName");
             return new StoreInIsolatedStorageBuilder(context, backingStoreName);
         }
 
@@ -46,7 +43,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
             IsolatedStorageCacheStorageData isolatedStorageData;
 
             public StoreInIsolatedStorageBuilder(ICachingConfigurationCacheManager context, string backingStoreName)
-                :base(context)
+                : base(context)
             {
                 isolatedStorageData = new IsolatedStorageCacheStorageData
                 {

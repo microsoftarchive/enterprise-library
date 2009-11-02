@@ -30,4 +30,5 @@ using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration;
 [assembly: AllowPartiallyTrustedCallers]
 [assembly: SecurityTransparent]
 
-[assembly: HandlesSectionName(ValidationSettings.SectionName)]
+[assembly: HandlesSection(ValidationSettings.SectionName)]
+[assembly: AddApplicationBlockCommand("Add Validation Settings", ValidationSettings.SectionName, typeof(ValidationSettings))]

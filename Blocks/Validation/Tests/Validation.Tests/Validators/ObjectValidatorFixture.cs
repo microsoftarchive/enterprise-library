@@ -25,7 +25,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
         [ExpectedException(typeof(ArgumentNullException))]
         public void ValidatorCreatedWithNullTypeThrows()
         {
-            new ObjectValidator(null);
+            new ObjectValidator((Type)null);
         }
 
         [TestMethod]
@@ -109,7 +109,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
         [TestMethod]
         public void ValidatorCanValidateSubclassOfTargetTypeUsingTargetTypeValidation()
         {
-            object target = new ObjectValidatorFixtureReferencedTestClassSublcass();
+            object target = new ObjectValidatorFixtureReferencedTestClassSubclass();
             Validator validator = new ObjectValidator(typeof(ObjectValidatorFixtureReferencedTestClass), "RuleB");
 
             ValidationResults validationResults = new ValidationResults();
@@ -123,6 +123,33 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             Assert.AreEqual(null, resultsMapping["PropertyInReferencedObject-RuleB"].Tag);
             Assert.AreSame(target, resultsMapping["PropertyInReferencedObject-RuleB"].Target);
             Assert.AreSame(typeof(MockValidator<object>), resultsMapping["PropertyInReferencedObject-RuleB"].Validator.GetType());
+        }
+
+        [TestMethod]
+        public void ValidatorCanValidateSubclassOfTargetTypeUsingSubclassValidationRulesIfConfiguredToDoSo()
+        {
+            object target = new ObjectValidatorFixtureReferencedTestClassSubclass();
+            ValidatorFactory factory = new AttributeValidatorFactory(new MockValidationInstrumentationProvider());
+            Validator validator = new ObjectValidator(factory, "RuleB");
+
+            ValidationResults validationResults = new ValidationResults();
+            validator.DoValidate(target, this, "key", validationResults); // setting the currentTarget and the key
+
+            Assert.IsFalse(validationResults.IsValid);
+            IDictionary<string, ValidationResult> resultsMapping = ValidationTestHelper.GetResultsMapping(validationResults);
+            Assert.AreEqual(2, resultsMapping.Count);
+
+            Assert.IsTrue(resultsMapping.ContainsKey("PropertyInReferencedObject-RuleB"));
+            Assert.AreEqual("PropertyInReferencedObject", resultsMapping["PropertyInReferencedObject-RuleB"].Key);
+            Assert.AreEqual(null, resultsMapping["PropertyInReferencedObject-RuleB"].Tag);
+            Assert.AreSame(target, resultsMapping["PropertyInReferencedObject-RuleB"].Target);
+            Assert.AreSame(typeof(MockValidator<object>), resultsMapping["PropertyInReferencedObject-RuleB"].Validator.GetType());
+
+            Assert.IsTrue(resultsMapping.ContainsKey("PropertyInReferencedObjectSubclass"));
+            Assert.AreEqual("PropertyInReferencedObjectSubclass", resultsMapping["PropertyInReferencedObjectSubclass"].Key);
+            Assert.AreEqual(null, resultsMapping["PropertyInReferencedObjectSubclass"].Tag);
+            Assert.AreSame(target, resultsMapping["PropertyInReferencedObjectSubclass"].Target);
+            Assert.AreSame(typeof(MockValidator<object>), resultsMapping["PropertyInReferencedObjectSubclass"].Validator.GetType());
         }
 
         public class ObjectValidatorFixtureTestClass
@@ -144,7 +171,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             }
         }
 
-        public class ObjectValidatorFixtureReferencedTestClassSublcass : ObjectValidatorFixtureReferencedTestClass
+        public class ObjectValidatorFixtureReferencedTestClassSubclass : ObjectValidatorFixtureReferencedTestClass
         {
             [MockValidator(true, MessageTemplate = "PropertyInReferencedObjectSubclass", Ruleset = "RuleB")]
             public string PropertyInReferencedObjectSubclass

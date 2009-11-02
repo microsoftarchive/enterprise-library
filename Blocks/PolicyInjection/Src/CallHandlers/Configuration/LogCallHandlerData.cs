@@ -19,12 +19,18 @@ using Microsoft.Practices.EnterpriseLibrary.Logging;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
+
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Configuration
 {
     /// <summary>
     /// A configuration element for the data for the LogCallHandler.
     /// </summary>
+    [ResourceDescription(typeof(DesignResources), "LogCallHandlerDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "LogCallHandlerDataDisplayName")]
+    [AddSateliteProviderCommand(LoggingSettings.SectionName)]
     public class LogCallHandlerData : CallHandlerData
     {
         private const string LogBehaviorPropertyName = "logBehavior";
@@ -43,6 +49,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
         /// </summary>
         public LogCallHandlerData()
         {
+            Type = typeof(LogCallHandler);
         }
 
         /// <summary>
@@ -70,6 +77,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
         /// </summary>
         /// <value>The "logBehavior" config attribute.</value>
         [ConfigurationProperty(LogBehaviorPropertyName, DefaultValue = HandlerLogBehavior.BeforeAndAfter)]
+        [ResourceDescription(typeof(DesignResources), "LogCallHandlerDataLogBehaviorDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "LogCallHandlerDataLogBehaviorDisplayName")]
         public HandlerLogBehavior LogBehavior
         {
             get { return (HandlerLogBehavior)base[LogBehaviorPropertyName]; }
@@ -81,7 +90,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
         /// </summary>
         /// <value>The "categories" nested element.</value>
         [ConfigurationProperty(CategoriesPropertyName)]
-        [ConfigurationCollectionAttribute(typeof(NamedElementCollection<LogCallHandlerCategoryEntry>))]
+        [ConfigurationCollectionAttribute(typeof(LogCallHandlerCategoryEntry))]
+        [ResourceDescription(typeof(DesignResources), "LogCallHandlerDataCategoriesDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "LogCallHandlerDataCategoriesDisplayName")]
+        [System.ComponentModel.Editor(CommonDesignTime.EditorTypes.CollectionEditor, CommonDesignTime.EditorTypes.FrameworkElement)]
+        [CollectionEditorTemplate("ValidationLogHandlerCollectionEditorHeader", "ValidationLogHandlerCollectionEditorItem" )]
+        [EnvironmentalOverrides(false)]
         public NamedElementCollection<LogCallHandlerCategoryEntry> Categories
         {
             get { return (NamedElementCollection<LogCallHandlerCategoryEntry>)base[CategoriesPropertyName]; }
@@ -93,6 +107,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
         /// </summary>
         /// <value>The "beforeMessage" config attribute.</value>
         [ConfigurationProperty(BeforeMessagePropertyName, DefaultValue = "")]
+        [ResourceDescription(typeof(DesignResources), "LogCallHandlerDataBeforeMessageDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "LogCallHandlerDataBeforeMessageDisplayName")]
         public string BeforeMessage
         {
             get { return (string)base[BeforeMessagePropertyName]; }
@@ -104,6 +120,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
         /// </summary>
         /// <value>The "afterMessage" config attribute.</value>
         [ConfigurationProperty(AfterMessagePropertyName, DefaultValue = "")]
+        [ResourceDescription(typeof(DesignResources), "LogCallHandlerDataAfterMessageDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "LogCallHandlerDataAfterMessageDisplayName")]
         public string AfterMessage
         {
             get { return (string)base[AfterMessagePropertyName]; }
@@ -115,6 +133,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
         /// </summary>
         /// <value>The "eventId" config attribute.</value>
         [ConfigurationProperty(EventIdPropertyName, DefaultValue = LogCallHandlerDefaults.EventId)]
+        [ResourceDescription(typeof(DesignResources), "LogCallHandlerDataEventIdDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "LogCallHandlerDataEventIdDisplayName")]
         public int EventId
         {
             get { return (int)base[EventIdPropertyName]; }
@@ -126,6 +146,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
         /// </summary>
         /// <value>The "includeParameterValues" config attribute.</value>
         [ConfigurationProperty(IncludeParameterValuesPropertyName, DefaultValue = LogCallHandlerDefaults.IncludeParameters)]
+        [ResourceDescription(typeof(DesignResources), "LogCallHandlerDataIncludeParameterValuesDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "LogCallHandlerDataIncludeParameterValuesDisplayName")]
         public bool IncludeParameterValues
         {
             get { return (bool)base[IncludeParameterValuesPropertyName]; }
@@ -138,6 +160,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
         /// <remarks>Setting this to true requires UnmanagedCode permissions.</remarks>
         /// <value>The "includeCallStack" config attribute.</value>
         [ConfigurationProperty(IncludeCallStackPropertyName, DefaultValue = LogCallHandlerDefaults.IncludeCallStack)]
+        [ResourceDescription(typeof(DesignResources), "LogCallHandlerDataIncludeCallStackDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "LogCallHandlerDataIncludeCallStackDisplayName")]
         public bool IncludeCallStack
         {
             get { return (bool)base[IncludeCallStackPropertyName]; }
@@ -149,6 +173,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
         /// </summary>
         /// <value>The "includeCallTime" config attribute.</value>
         [ConfigurationProperty(IncludeCallTimePropertyName, DefaultValue = LogCallHandlerDefaults.IncludeCallTime)]
+        [ResourceDescription(typeof(DesignResources), "LogCallHandlerDataIncludeCallTimeDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "LogCallHandlerDataIncludeCallTimeDisplayName")]
         public bool IncludeCallTime
         {
             get { return (bool)base[IncludeCallTimePropertyName]; }
@@ -160,6 +186,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
         /// </summary>
         /// <value>the "priority" config attribute.</value>
         [ConfigurationProperty(PriorityPropertyName, DefaultValue = LogCallHandlerDefaults.Priority)]
+        [ResourceDescription(typeof(DesignResources), "LogCallHandlerDataPriorityDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "LogCallHandlerDataPriorityDisplayName")]
         public int Priority
         {
             get { return (int)base[PriorityPropertyName]; }
@@ -171,6 +199,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
         /// </summary>
         /// <value>the "severity" config attribute.</value>
         [ConfigurationProperty(SeverityPropertyName, DefaultValue = LogCallHandlerDefaults.Severity, IsRequired = false)]
+        [ResourceDescription(typeof(DesignResources), "LogCallHandlerDataSeverityDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "LogCallHandlerDataSeverityDisplayName")]
         public TraceEventType Severity
         {
             get { return (TraceEventType)base[SeverityPropertyName]; }

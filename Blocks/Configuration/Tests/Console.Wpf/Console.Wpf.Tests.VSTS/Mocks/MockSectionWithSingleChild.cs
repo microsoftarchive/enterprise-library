@@ -15,7 +15,7 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Console.Wpf.Tests.VSTS.Mocks
 {
-    [ViewModel("Console.Wpf.ViewModel.HierarchicalSectionViewModel, Console.Wpf")]
+    [ViewModel(CommonDesignTime.ViewModelTypeNames.HierarchicalViewModel)]
     public class MockSectionWithSingleChild : ConfigurationSection
     {
         private const string childrenProperty = "children";

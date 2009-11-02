@@ -25,4 +25,6 @@ using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration;
 [assembly : AllowPartiallyTrustedCallers]
 [assembly : SecurityTransparent]
 
-[assembly: HandlesSectionName(CryptographySettings.SectionName)]
+[assembly: HandlesSection(CryptographySettings.SectionName)]
+
+[assembly: AddApplicationBlockCommand("Add Cryptography Settings", CryptographySettings.SectionName, typeof(CryptographySettings))]

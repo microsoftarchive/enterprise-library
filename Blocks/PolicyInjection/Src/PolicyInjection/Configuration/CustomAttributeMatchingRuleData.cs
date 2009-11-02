@@ -17,12 +17,16 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
 using FakeRules = Microsoft.Practices.EnterpriseLibrary.PolicyInjection.MatchingRules;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using System.ComponentModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
 {
     /// <summary>
     /// Configuration element for the <see cref="CustomAttributeMatchingRule"/> configuration.
     /// </summary>
+    [ResourceDescription(typeof(DesignResources), "CustomAttributeMatchingRuleDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "CustomAttributeMatchingRuleDataDisplayName")]
     public class CustomAttributeMatchingRuleData : MatchingRuleData
     {
         private static AssemblyQualifiedTypeNameConverter typeConverter = new AssemblyQualifiedTypeNameConverter();
@@ -75,6 +79,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// </summary>
         /// <value>The "searchInheritanceChain" config attribute.</value>
         [ConfigurationProperty(SearchInheritanceChainPropertyName)]
+        [ResourceDescription(typeof(DesignResources), "CustomAttributeMatchingRuleDataSearchInheritanceChainDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "CustomAttributeMatchingRuleDataSearchInheritanceChainDisplayName")]
         public bool SearchInheritanceChain
         {
             get { return (bool)base[SearchInheritanceChainPropertyName]; }
@@ -86,6 +92,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// </summary>
         /// <value>The "attributeType" config attribute.</value>
         [ConfigurationProperty(AttributeTypePropertyName, IsRequired = true)]
+        [ResourceDescription(typeof(DesignResources), "CustomAttributeMatchingRuleDataAttributeTypeNameDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "CustomAttributeMatchingRuleDataAttributeTypeNameDisplayName")]
+        [Editor(CommonDesignTime.EditorTypes.TypeSelector, CommonDesignTime.EditorTypes.UITypeEditor)]
+        [BaseType(typeof(Attribute), TypeSelectorIncludes.BaseType | TypeSelectorIncludes.AbstractTypes)]
         public string AttributeTypeName
         {
             get { return (string)base[AttributeTypePropertyName]; }

@@ -17,6 +17,8 @@ using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Configuration
 {
@@ -24,6 +26,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
     /// Configuration element storing configuration information for the
     /// <see cref="ExceptionCallHandler"/> class.
     /// </summary>
+    [ResourceDescription(typeof(DesignResources), "ExceptionCallHandlerDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "ExceptionCallHandlerDataDisplayName")]
+    [AddSateliteProviderCommand(ExceptionHandlingSettings.SectionName)]
     public class ExceptionCallHandlerData : CallHandlerData
     {
         private const string ExceptionPolicyNamePropertyName = "exceptionPolicyName";
@@ -33,6 +38,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
         /// </summary>
         public ExceptionCallHandlerData()
         {
+            Type = typeof(ExceptionCallHandler);
         }
 
         /// <summary>
@@ -71,6 +77,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
         /// </summary>
         /// <value>The "exceptionPolicyName" attribute in configuration</value>
         [ConfigurationProperty(ExceptionPolicyNamePropertyName, IsRequired = true)]
+        [ResourceDescription(typeof(DesignResources), "ExceptionCallHandlerDataExceptionPolicyNameDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "ExceptionCallHandlerDataExceptionPolicyNameDisplayName")]
+        [Reference("Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.ExceptionPolicyData, Microsoft.Practices.EnterpriseLibrary.ExceptionHandling")]
         public string ExceptionPolicyName
         {
             get { return (string)base[ExceptionPolicyNamePropertyName]; }

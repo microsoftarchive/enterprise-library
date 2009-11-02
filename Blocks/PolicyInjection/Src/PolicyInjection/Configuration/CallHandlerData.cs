@@ -15,6 +15,7 @@ using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.Unity.InterceptionExtension;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
 {
@@ -59,6 +60,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// Gets or sets the Order in which the call handler will be executed
         /// </summary>
         [ConfigurationProperty(orderProperty, DefaultValue = 0, IsRequired = false)]
+        [ResourceDescription(typeof(DesignResources), "CallHandlerDataOrderDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "CallHandlerDataOrderDisplayName")]
         public int Order
         {
             get { return (int)this[orderProperty]; }

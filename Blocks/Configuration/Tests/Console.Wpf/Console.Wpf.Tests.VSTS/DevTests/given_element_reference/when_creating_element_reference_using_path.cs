@@ -18,6 +18,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Console.Wpf.ViewModel.Services;
 using Console.Wpf.ViewModel;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
+using Microsoft.Practices.Unity;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_element_reference
 {
@@ -29,9 +30,8 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_element_reference
 
         protected override void Act()
         {
-            ehabModel = SectionViewModel.CreateSection(ServiceProvider, base.Section);
-            lookup = (ElementLookup)ServiceProvider.GetService(typeof(ElementLookup));
-            
+            ehabModel = SectionViewModel.CreateSection(Container, ExceptionHandlingSettings.SectionName, base.Section);
+            lookup = Container.Resolve<ElementLookup>();
         }
 
         [TestMethod]
@@ -57,9 +57,9 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_element_reference
             var anyHandler = ehabModel.DescendentElements().Where(x => typeof(ExceptionHandlerData).IsAssignableFrom(x.ConfigurationType)).First();
             var parentForHandler = anyHandler.ParentElement as ElementCollectionViewModel;
 
-            ElementReference reference = lookup.CreateReference(anyHandler.Path + "2");
+            ElementReference reference = lookup.CreateReference(anyHandler.Path.Replace(anyHandler.Name,  anyHandler.Name + "2"));
 
-            var newChild = parentForHandler.CreateNewChildElement(anyHandler.ConfigurationType);
+            var newChild = parentForHandler.AddNewCollectionElement(anyHandler.ConfigurationType);
             newChild.Property("Name").Value = anyHandler.Name + "2";
 
             Assert.IsNotNull(reference.Element);
@@ -75,14 +75,13 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_element_reference
             string newPath = string.Empty;
             reference.PathChanged += (sender, args) =>
                 {
-                    newPath = ((ElementViewModel)sender).Path;
-                    Assert.AreEqual("Path", args.PropertyName);
+                    newPath = args.Value;
                 };
 
             anyHandler.Property("Name").Value = "new name";
 
             Assert.IsFalse(string.IsNullOrEmpty(newPath));
-            Assert.IsTrue(newPath.EndsWith("new name"));
+            Assert.IsTrue(newPath.Contains("new name"));
         }
 
         [TestMethod]
@@ -94,8 +93,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_element_reference
             string newName = string.Empty;
             reference.NameChanged += (sender, args) =>
                 {
-                    newName = ((ElementViewModel)sender).Name;
-                    Assert.AreEqual("Name", args.PropertyName);
+                    newName = args.Value;
                 };
 
             anyHandler.Property("Name").Value = "new name";
@@ -143,7 +141,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_element_reference
 
             Assert.IsNull(reference.Element);
 
-            var NewHandler = containingCollection.CreateNewChildElement(anyHandler.ConfigurationType);
+            var NewHandler = containingCollection.AddNewCollectionElement(anyHandler.ConfigurationType);
             NewHandler.Property("Name").Value = "new name";
 
             Assert.AreEqual(NewHandler, reference.Element);
@@ -157,11 +155,10 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_element_reference
         [TestMethod]
         public void then_reference_can_be_fixed_by_loading_section()
         {
-            ElementLookup elementLookup = new ElementLookup();
-            var reference = elementLookup.CreateReference("/ExceptionHandlingSettings:Exception Handling Settings");
+            ElementLookup elementLookup = Container.Resolve<ElementLookup>();
+            var reference = elementLookup.CreateReference("/configuration/" + ExceptionHandlingSettings.SectionName);
 
-            ServiceProvider.AddService(typeof(ElementLookup), elementLookup);
-            SectionViewModel.CreateSection(ServiceProvider, base.Section);
+            SectionViewModel.CreateSection(Container, ExceptionHandlingSettings.SectionName, base.Section);
 
             Assert.IsNotNull(reference.Element);
         }
@@ -171,13 +168,12 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_element_reference
         {
             bool elementFoundSignalled = false;
 
-            ElementLookup elementLookup = new ElementLookup();
-            var reference = elementLookup.CreateReference("/ExceptionHandlingSettings:Exception Handling Settings");
+            ElementLookup elementLookup = Container.Resolve<ElementLookup>();
+            var reference = elementLookup.CreateReference("/configuration/" + ExceptionHandlingSettings.SectionName);
 
             reference.ElementFound += (s, a) => elementFoundSignalled = true;
 
-            ServiceProvider.AddService(typeof(ElementLookup), elementLookup);
-            SectionViewModel.CreateSection(ServiceProvider, base.Section);
+            SectionViewModel.CreateSection(Container, ExceptionHandlingSettings.SectionName, base.Section);
 
             Assert.IsTrue(elementFoundSignalled);
 

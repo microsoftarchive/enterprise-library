@@ -23,8 +23,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 	/// <remarks>
 	/// This configuration must reside in the application's default configuration file.
 	/// </remarks>
-    [ResourceDisplayName(typeof(Resources), "ConfigurationSourceSectionDisplayName")]
-    [ViewModel(ViewModels.TabularViewModel)]
+    [ViewModel(ConfigurationSourcesDesignTime.ViewModelTypeNames.ConfigurationSourceSectionViewModel)]
+    [ResourceDescription(typeof(DesignResources), "ConfigurationSourceSectionDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "ConfigurationSourceSectionDisplayName")]
+
     public class ConfigurationSourceSection : SerializableConfigurationSection
     {
         private const string selectedSourceProperty = "selectedSource";
@@ -50,9 +52,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         /// Gets or sets the name for the default configuration source.
         /// </summary>
         [ConfigurationProperty(selectedSourceProperty, IsRequired=true)]
-        [ResourceDisplayName(typeof(Resources), "ConfigurationSourceSectionSelectedSourceDisplayName")]
-        [ResourceDescription(typeof(Resources), "ConfigurationSourceSectionSelectedSourceDescription")]
-        [Reference(typeof(ConfigurationSourceSection), typeof(ConfigurationSourceElement))]
+        [ResourceDescription(typeof(DesignResources), "ConfigurationSourceSectionSelectedSourceDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "ConfigurationSourceSectionSelectedSourceDisplayName")]
+        [Reference(typeof(NameTypeConfigurationElementCollection<ConfigurationSourceElement, ConfigurationSourceElement>), typeof(ConfigurationSourceElement))]
         public string SelectedSource
         {
             get
@@ -67,9 +69,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 
         /// <summary/>
         [ConfigurationProperty(parentSourceProperty)]
-        [ResourceDisplayName(typeof(Resources), "ConfigurationSourceSectionParentSourceDisplayName")]
-        [ResourceDescription(typeof(Resources), "ConfigurationSourceSectionParentSourceDescription")]
-        [Reference(typeof(ConfigurationSourceSection), typeof(ConfigurationSourceElement))]
+        [ResourceDescription(typeof(DesignResources), "ConfigurationSourceSectionParentSourceDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "ConfigurationSourceSectionParentSourceDisplayName")]
+        [Reference(typeof(NameTypeConfigurationElementCollection<ConfigurationSourceElement, ConfigurationSourceElement>), typeof(ConfigurationSourceElement))]
         public string ParentSource
         {
             get
@@ -87,7 +89,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         /// </summary>
         [ConfigurationProperty(sourcesProperty, IsRequired = true)]
         [ConfigurationCollection(typeof(ConfigurationSourceElement))]
-        [ResourceDisplayName(typeof(Resources), "ConfigurationSourceSectionSourcesDisplayName")]
+        [ResourceDescription(typeof(DesignResources), "ConfigurationSourceSectionSourcesDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "ConfigurationSourceSectionSourcesDisplayName")]
         public NameTypeConfigurationElementCollection<ConfigurationSourceElement, ConfigurationSourceElement> Sources
         {
             get
@@ -99,7 +102,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 
         /// <summary/>
         [ConfigurationProperty(redirectSectionsProperty)]
-        [ResourceDisplayName(typeof(Resources), "ConfigurationSourceSectionRedirectedSectionsDisplayName")]
+        [ResourceDescription(typeof(DesignResources), "ConfigurationSourceSectionRedirectedSectionsDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "ConfigurationSourceSectionRedirectedSectionsDisplayName")]
         [ConfigurationCollection(typeof(RedirectedSectionElement))]
         public NamedElementCollection<RedirectedSectionElement> RedirectedSections
         {

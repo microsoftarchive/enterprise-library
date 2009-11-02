@@ -24,7 +24,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         public void Setup()
         {
             this.validator =
-                new ValidationAttributeValidatorBuilder().CreateValidator(typeof(TypeWithValidationAttributes));
+                new ValidationAttributeValidatorBuilder(
+                    new MemberAccessValidatorBuilderFactory(),
+                    ValidationFactory.DefaultCompositeValidatorFactory)
+                    .CreateValidator(typeof(TypeWithValidationAttributes));
         }
 
         [TestMethod]
@@ -96,7 +99,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         public void Setup()
         {
             this.validator =
-                new ValidationAttributeValidatorBuilder().CreateValidator(typeof(TypeWithValidationAttributes));
+                new ValidationAttributeValidatorBuilder(
+                    new MemberAccessValidatorBuilderFactory(),
+                    ValidationFactory.DefaultCompositeValidatorFactory)
+                    .CreateValidator(typeof(TypeWithValidationAttributes));
         }
 
         [TestMethod]

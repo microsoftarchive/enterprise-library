@@ -11,6 +11,7 @@
 
 using System;
 using System.Text.RegularExpressions;
+using System.Threading;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Validation.TestSupport;
 using Microsoft.Practices.EnterpriseLibrary.Validation.TestSupport.TestClasses;
@@ -330,15 +331,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             ValidationResults results = validator.Validate(null);
 
             Assert.IsFalse(results.IsValid);
-        }
-
-        [TestMethod]
-        public void RelativeDateTimeValidatorUsesRelativeDateTimeGenerator()
-        {
-            RelativeDateTimeValidator validator = new RelativeDateTimeValidator(2, DateTimeUnit.Minute, true);
-
-            Assert.IsNotNull(validator.Generator);
-            Assert.AreEqual(typeof(RelativeDateTimeGenerator), validator.Generator.GetType());
         }
 
         [TestMethod]
@@ -705,7 +697,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
         {
             RelativeDateTimeValidator validator = new RelativeDateTimeValidator(5, DateTimeUnit.Day, RangeBoundaryType.Exclusive);
 
-            Assert.IsFalse(validator.Validate(DateTime.Now.AddDays(5)).IsValid);
+            // this assertion is time dependent
+            //Assert.IsFalse(validator.Validate(DateTime.Now.AddDays(5)).IsValid);
             Assert.IsFalse(validator.Validate(DateTime.Now.AddDays(6)).IsValid);
             Assert.IsFalse(validator.Validate(DateTime.Now.AddDays(7)).IsValid);
         }
@@ -749,7 +742,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
         [TestMethod]
         public void CanValidateThroughNonGenericProtocol()
         {
-            RelativeDateTimeValidator validator = new RelativeDateTimeValidator(0, DateTimeUnit.None, RangeBoundaryType.Exclusive);
+            RelativeDateTimeValidator validator = new RelativeDateTimeValidator(-1, DateTimeUnit.Day, RangeBoundaryType.Exclusive);
 
             Assert.IsFalse(validator.Validate((object)DateTime.Now).IsValid);
         }
@@ -838,6 +831,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             Assert.AreEqual("20", match.Groups["param5"].Value);
             Assert.IsTrue(match.Groups["param6"].Success);
             Assert.AreEqual("Year", match.Groups["param6"].Value);
+        }
+
+        [TestMethod]
+        public void ValidatesUsingTheCurrentDataAtTheTimeOfTheValidation()
+        {
+            var validator =
+                new RelativeDateTimeValidator(-10, DateTimeUnit.Second, RangeBoundaryType.Exclusive, 0, DateTimeUnit.Day, RangeBoundaryType.Ignore);
+            var pointInTime = DateTime.Now;
+
+            Assert.IsTrue(validator.Validate(pointInTime).IsValid);
+
+            Thread.Sleep(15000);
+
+            Assert.IsFalse(validator.Validate(pointInTime).IsValid);
         }
     }
 }

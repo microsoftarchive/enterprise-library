@@ -17,6 +17,7 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 {
@@ -24,6 +25,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
     /// <summary>
     /// Represents the configuration data for a <see cref="RollingFlatFileTraceListener"/>.
     /// </summary>	
+    [ResourceDescription(typeof(DesignResources), "RollingFlatFileTraceListenerDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "RollingFlatFileTraceListenerDataDisplayName")]
     public class RollingFlatFileTraceListenerData : TraceListenerData
     {
         const string FileNamePropertyName = "fileName";
@@ -122,6 +125,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// FileName
         /// </summary>
         [ConfigurationProperty(FileNamePropertyName, DefaultValue="rolling.log")]
+        [ResourceDescription(typeof(DesignResources), "RollingFlatFileTraceListenerDataFileNameDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "RollingFlatFileTraceListenerDataFileNameDisplayName")]
         public string FileName
         {
             get { return (string)this[FileNamePropertyName]; }
@@ -132,6 +137,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// Gets and sets the footer.
         /// </summary>
         [ConfigurationProperty(footerProperty, IsRequired = false)]
+        [ResourceDescription(typeof(DesignResources), "RollingFlatFileTraceListenerDataFooterDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "RollingFlatFileTraceListenerDataFooterDisplayName")]
         public string Footer
         {
             get { return (string)base[footerProperty]; }
@@ -142,7 +149,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// Gets and sets the formatter name.
         /// </summary>
         [ConfigurationProperty(formatterNameProperty, IsRequired = false)]
-        [Reference(typeof(LoggingSettings), typeof(FormatterData))]
+        [Reference(typeof(NameTypeConfigurationElementCollection<FormatterData, CustomFormatterData>), typeof(FormatterData))]
+        [ResourceDescription(typeof(DesignResources), "RollingFlatFileTraceListenerDataFormatterDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "RollingFlatFileTraceListenerDataFormatterDisplayName")]
         public string Formatter
         {
             get { return (string)base[formatterNameProperty]; }
@@ -153,6 +162,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// Gets and sets the header.
         /// </summary>
         [ConfigurationProperty(headerProperty, IsRequired = false)]
+        [ResourceDescription(typeof(DesignResources), "RollingFlatFileTraceListenerDataHeaderDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "RollingFlatFileTraceListenerDataHeaderDisplayName")]
         public string Header
         {
             get { return (string)base[headerProperty]; }
@@ -163,6 +174,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// Exists Behavior
         /// </summary>
         [ConfigurationProperty(RollFileExistsBehaviorPropertyName)]
+        [ResourceDescription(typeof(DesignResources), "RollingFlatFileTraceListenerDataRollFileExistsBehaviorDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "RollingFlatFileTraceListenerDataRollFileExistsBehaviorDisplayName")]
         public RollFileExistsBehavior RollFileExistsBehavior
         {
             get { return (RollFileExistsBehavior)this[RollFileExistsBehaviorPropertyName]; }
@@ -173,6 +186,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// Roll Intervall
         /// </summary>
         [ConfigurationProperty(RollIntervalPropertyName)]
+        [ResourceDescription(typeof(DesignResources), "RollingFlatFileTraceListenerDataRollIntervalDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "RollingFlatFileTraceListenerDataRollIntervalDisplayName")]
         public RollInterval RollInterval
         {
             get { return (RollInterval)this[RollIntervalPropertyName]; }
@@ -183,6 +198,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// Roll Size KB 
         /// </summary>
         [ConfigurationProperty(RollSizeKBPropertyName)]
+        [ResourceDescription(typeof(DesignResources), "RollingFlatFileTraceListenerDataRollSizeKBDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "RollingFlatFileTraceListenerDataRollSizeKBDisplayName")]
         public int RollSizeKB
         {
             get { return (int)this[RollSizeKBPropertyName]; }
@@ -193,6 +210,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// Time stamp
         /// </summary>
         [ConfigurationProperty(TimeStampPatternPropertyName)]
+        [ResourceDescription(typeof(DesignResources), "RollingFlatFileTraceListenerDataTimeStampPatternDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "RollingFlatFileTraceListenerDataTimeStampPatternDisplayName")]
         public string TimeStampPattern
         {
             get { return (string)this[TimeStampPatternPropertyName]; }
@@ -203,6 +222,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// Max rolled files
         /// </summary>
         [ConfigurationProperty(MaxArchivedFilesPropertyName)]
+        [ResourceDescription(typeof(DesignResources), "RollingFlatFileTraceListenerDataMaxArchivedFilesDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "RollingFlatFileTraceListenerDataMaxArchivedFilesDisplayName")]
         public int MaxArchivedFiles
         {
             get { return (int)this[MaxArchivedFilesPropertyName]; }

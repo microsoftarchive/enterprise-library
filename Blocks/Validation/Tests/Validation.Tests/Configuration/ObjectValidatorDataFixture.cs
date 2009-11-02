@@ -78,7 +78,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             ObjectValidatorData rwValidatorData = new ObjectValidatorData("validator1");
             rwValidatorData.TargetRuleset = "ruleset";
 
-            Validator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(typeof(ObjectValidatorDataFixture), null, null);
+            Validator validator =
+                ((IValidatorDescriptor)rwValidatorData)
+                    .CreateValidator(
+                        typeof(ObjectValidatorDataFixture),
+                        null,
+                        null,
+                        ValidationFactory.DefaultCompositeValidatorFactory);
 
             Assert.IsNotNull(validator);
             Assert.AreSame(typeof(ObjectValidator), validator.GetType());

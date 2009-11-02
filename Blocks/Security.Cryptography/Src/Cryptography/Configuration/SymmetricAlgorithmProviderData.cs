@@ -23,6 +23,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
     /// <summary>
     /// <para>Configuration data for the <c>SymmetricAlgorithm</c> provider.</para>
     /// </summary>	
+    [TypePickingCommand("AlgorithmTypeName", Replace = CommandReplacement.DefaultAddCommandReplacement, CommandModelTypeName = CryptographyDesignTime.CommandTypeNames.AddSymmetricAlgorithmProviderCommand)]
+    [ResourceDescription(typeof(DesignResources), "SymmetricAlgorithmProviderDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "SymmetricAlgorithmProviderDataDisplayName")]
+    [ViewModel(CryptographyDesignTime.ViewModelTypeNames.SymmetricAlgorithmProviderDataViewModel)]
     public class SymmetricAlgorithmProviderData : SymmetricProviderData
     {
         private AssemblyQualifiedTypeNameConverter typeConverter = new AssemblyQualifiedTypeNameConverter();
@@ -72,8 +76,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         /// The fully qualified name of the type of <see cref="System.Security.Cryptography.SymmetricAlgorithm"/>.
         /// </value>
         [ConfigurationProperty(algorithmTypeProperty)]
-        [System.ComponentModel.Editor(EditorTypes.TypeSelector, EditorTypes.UITypeEditor)]
+        [System.ComponentModel.Editor(CommonDesignTime.EditorTypes.TypeSelector, CommonDesignTime.EditorTypes.UITypeEditor)]
         [BaseType(typeof(SymmetricAlgorithm))]
+        [ResourceDescription(typeof(DesignResources), "SymmetricAlgorithmProviderDataAlgorithmTypeNameDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "SymmetricAlgorithmProviderDataAlgorithmTypeNameDisplayName")]
         public string AlgorithmTypeName
         {
             get { return (string)this[algorithmTypeProperty]; }
@@ -83,6 +89,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         /// 
         /// </summary>	
         [ConfigurationProperty(protectedKeyFilename)]
+        [ResourceDescription(typeof(DesignResources), "SymmetricAlgorithmProviderDataProtectedKeyFilenameDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "SymmetricAlgorithmProviderDataProtectedKeyFilenameDisplayName")]
+        [System.ComponentModel.Browsable(false)]
         public string ProtectedKeyFilename
         {
             get { return (string)this[protectedKeyFilename]; }
@@ -93,6 +102,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         /// 
         /// </summary>
         [ConfigurationProperty(protectedKeyProtectionScope)]
+        [ResourceDescription(typeof(DesignResources), "SymmetricAlgorithmProviderDataProtectedKeyProtectionScopeDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "SymmetricAlgorithmProviderDataProtectedKeyProtectionScopeDisplayName")]
+        [System.ComponentModel.Browsable(false)]
         public DataProtectionScope ProtectedKeyProtectionScope
         {
             get { return (DataProtectionScope)this[protectedKeyProtectionScope]; }

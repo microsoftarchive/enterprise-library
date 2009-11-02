@@ -134,11 +134,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.AspNet
 			set { rulesetName = value; }
 		}
 
-		private ValidationSpecificationSource specificationSource = ValidationSpecificationSource.Both;
+		private ValidationSpecificationSource specificationSource = ValidationSpecificationSource.All;
 		/// <summary>
 		/// Gets or sets the <see cref="ValidationSpecificationSource"/> indicating where to get validation specifications from.
 		/// </summary>
-		[DefaultValue(ValidationSpecificationSource.Both)]
+		[DefaultValue(ValidationSpecificationSource.All)]
 		public ValidationSpecificationSource SpecificationSource
 		{
 			get { return specificationSource; }

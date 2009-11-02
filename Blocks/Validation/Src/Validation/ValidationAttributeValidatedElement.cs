@@ -60,7 +60,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         IEnumerable<IValidatorDescriptor> IValidatedElement.GetValidatorDescriptors()
         {
             var attributes =
-                ValidationReflectionHelper.GetCustomAttributes(this.memberInfo, typeof(ValidationAttribute), true);
+                ValidationReflectionHelper
+                    .GetCustomAttributes(this.memberInfo, typeof(ValidationAttribute), true)
+                    .Cast<ValidationAttribute>()
+                    .Where(a => !typeof(BaseValidationAttribute).IsAssignableFrom(a.GetType()))
+                    .ToArray();
             if (attributes.Length == 0)
             {
                 return new IValidatorDescriptor[0];
@@ -69,7 +73,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
             {
                 return new IValidatorDescriptor[]
                 {
-                    new ValidationAttributeValidatorDescriptor(attributes.Cast<ValidationAttribute>())
+                    new ValidationAttributeValidatorDescriptor(attributes)
                 };
             }
         }
@@ -123,7 +127,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
                 this.attributes = attributes;
             }
 
-            public Validator CreateValidator(Type targetType, Type ownerType, MemberValueAccessBuilder memberValueAccessBuilder)
+            public Validator CreateValidator(Type targetType, Type ownerType, MemberValueAccessBuilder memberValueAccessBuilder, ValidatorFactory ignored)
             {
                 return new ValidationAttributeValidator(this.attributes);
             }

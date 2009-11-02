@@ -10,78 +10,77 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
-using Microsoft.Practices.EnterpriseLibrary.Validation.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration;
-using System.ComponentModel;
+using Microsoft.Practices.EnterpriseLibrary.Validation.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
 {
-	/// <summary>
-	/// Validates a string by checking it represents a value for a given type.
-	/// </summary>
-	[ConfigurationElementType(typeof(TypeConversionValidatorData))]
-	public class TypeConversionValidator : ValueValidator<string>
-	{
-		private Type targetType;
+    /// <summary>
+    /// Validates a string by checking it represents a value for a given type.
+    /// </summary>
+    [ConfigurationElementType(typeof(TypeConversionValidatorData))]
+    public class TypeConversionValidator : ValueValidator<string>
+    {
+        private Type targetType;
 
-		/// <summary>
-		/// <para>Initializes a new instance of the <see cref="TypeConversionValidator"/>.</para>
-		/// </summary>
-		/// <param name="targetType">The supplied type to used to determine if the string can be converted to it.</param>
-		public TypeConversionValidator(Type targetType)
-			: this(targetType, false)
-		{ }
+        /// <summary>
+        /// <para>Initializes a new instance of the <see cref="TypeConversionValidator"/>.</para>
+        /// </summary>
+        /// <param name="targetType">The supplied type to used to determine if the string can be converted to it.</param>
+        public TypeConversionValidator(Type targetType)
+            : this(targetType, false)
+        { }
 
-		/// <summary>
-		/// <para>Initializes a new instance of the <see cref="TypeConversionValidator"/>.</para>
-		/// </summary>
-		/// <param name="negated">True if the validator must negate the result of the validation.</param>
-		/// <param name="targetType">The supplied type to used to determine if the string can be converted to it.</param>
-		public TypeConversionValidator(Type targetType, bool negated)
-			: this(targetType, null, negated)
-		{ }
+        /// <summary>
+        /// <para>Initializes a new instance of the <see cref="TypeConversionValidator"/>.</para>
+        /// </summary>
+        /// <param name="negated">True if the validator must negate the result of the validation.</param>
+        /// <param name="targetType">The supplied type to used to determine if the string can be converted to it.</param>
+        public TypeConversionValidator(Type targetType, bool negated)
+            : this(targetType, null, negated)
+        { }
 
-		/// <summary>
-		/// <para>Initializes a new instance of the <see cref="TypeConversionValidator"/>.</para>
-		/// </summary>
-		/// <param name="messageTemplate">The message template to use when logging results.</param>
-		/// <param name="targetType">The supplied type to used to determine if the string can be converted to it.</param>
-		public TypeConversionValidator(Type targetType, string messageTemplate)
-			: this(targetType, messageTemplate, false)
-		{ }
+        /// <summary>
+        /// <para>Initializes a new instance of the <see cref="TypeConversionValidator"/>.</para>
+        /// </summary>
+        /// <param name="messageTemplate">The message template to use when logging results.</param>
+        /// <param name="targetType">The supplied type to used to determine if the string can be converted to it.</param>
+        public TypeConversionValidator(Type targetType, string messageTemplate)
+            : this(targetType, messageTemplate, false)
+        { }
 
-		/// <summary>
-		/// <para>Initializes a new instance of the <see cref="TypeConversionValidator"/>.</para>
-		/// </summary>
-		/// <param name="negated">True if the validator must negate the result of the validation.</param>
-		/// <param name="messageTemplate">The message template to use when logging results.</param>
-		/// <param name="targetType">The supplied type to used to determine if the string can be converted to it.</param>
-		public TypeConversionValidator(Type targetType, string messageTemplate, bool negated)
-			: base(messageTemplate, null, negated)
-		{
-			ValidatorArgumentsValidatorHelper.ValidateTypeConversionValidator(targetType);
+        /// <summary>
+        /// <para>Initializes a new instance of the <see cref="TypeConversionValidator"/>.</para>
+        /// </summary>
+        /// <param name="negated">True if the validator must negate the result of the validation.</param>
+        /// <param name="messageTemplate">The message template to use when logging results.</param>
+        /// <param name="targetType">The supplied type to used to determine if the string can be converted to it.</param>
+        public TypeConversionValidator(Type targetType, string messageTemplate, bool negated)
+            : base(messageTemplate, null, negated)
+        {
+            ValidatorArgumentsValidatorHelper.ValidateTypeConversionValidator(targetType);
 
-			this.targetType = targetType;
-		}
+            this.targetType = targetType;
+        }
 
-		/// <summary>
-		/// Implements the validation logic for the receiver.
-		/// </summary>
-		/// <param name="objectToValidate">The object to validate.</param>
-		/// <param name="currentTarget">The object on the behalf of which the validation is performed.</param>
-		/// <param name="key">The key that identifies the source of <paramref name="objectToValidate"/>.</param>
-		/// <param name="validationResults">The validation results to which the outcome of the validation should be stored.</param>
-		protected override void DoValidate(string objectToValidate, object currentTarget, string key, ValidationResults validationResults)
-		{
-			bool logError = false;
-			bool isObjectToValidateNull = objectToValidate == null;
+        /// <summary>
+        /// Implements the validation logic for the receiver.
+        /// </summary>
+        /// <param name="objectToValidate">The object to validate.</param>
+        /// <param name="currentTarget">The object on the behalf of which the validation is performed.</param>
+        /// <param name="key">The key that identifies the source of <paramref name="objectToValidate"/>.</param>
+        /// <param name="validationResults">The validation results to which the outcome of the validation should be stored.</param>
+        protected override void DoValidate(string objectToValidate, object currentTarget, string key, ValidationResults validationResults)
+        {
+            bool logError = false;
+            bool isObjectToValidateNull = objectToValidate == null;
 
-			if (!isObjectToValidateNull)
-			{
-                if (string.Empty.Equals(objectToValidate) && IsTheTargetTypeAValueTypeDifferentFromString() )
+            if (!isObjectToValidateNull)
+            {
+                if (string.Empty.Equals(objectToValidate) && IsTheTargetTypeAValueTypeDifferentFromString())
                 {
                     logError = true;
                 }
@@ -101,69 +100,69 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
                         logError = true;
                     }
                 }
-			}
+            }
 
-			if (isObjectToValidateNull || (logError != Negated))
-			{
-				this.LogValidationResult(validationResults,
-					GetMessage(objectToValidate, key),
-					currentTarget,
-					key);
-				return;
-			}
-		}
+            if (isObjectToValidateNull || (logError != Negated))
+            {
+                this.LogValidationResult(validationResults,
+                    GetMessage(objectToValidate, key),
+                    currentTarget,
+                    key);
+                return;
+            }
+        }
 
         private bool IsTheTargetTypeAValueTypeDifferentFromString()
         {
             TypeCode targetTypeCode = Type.GetTypeCode(targetType);
-            return targetTypeCode != TypeCode.Object && targetTypeCode != TypeCode.String;                
+            return targetTypeCode != TypeCode.Object && targetTypeCode != TypeCode.String;
         }
 
 
-		/// <summary>
-		/// Gets the message representing a failed validation.
-		/// </summary>
-		/// <param name="objectToValidate">The object for which validation was performed.</param>
-		/// <param name="key">The key representing the value being validated for <paramref name="objectToValidate"/>.</param>
-		/// <returns>The message representing the validation failure.</returns>
-		protected override string GetMessage(object objectToValidate, string key)
-		{
-			return string.Format(
-				CultureInfo.CurrentCulture,
-				this.MessageTemplate,
-				objectToValidate,
-				key,
-				this.Tag,
-				this.targetType.FullName);
-		}
+        /// <summary>
+        /// Gets the message representing a failed validation.
+        /// </summary>
+        /// <param name="objectToValidate">The object for which validation was performed.</param>
+        /// <param name="key">The key representing the value being validated for <paramref name="objectToValidate"/>.</param>
+        /// <returns>The message representing the validation failure.</returns>
+        protected internal override string GetMessage(object objectToValidate, string key)
+        {
+            return string.Format(
+                CultureInfo.CurrentCulture,
+                this.MessageTemplate,
+                objectToValidate,
+                key,
+                this.Tag,
+                this.targetType.FullName);
+        }
 
-		/// <summary>
-		/// Gets the Default Message Template when the validator is non negated.
-		/// </summary>
-		protected override string DefaultNonNegatedMessageTemplate
-		{
-			get { return Resources.TypeConversionNonNegatedDefaultMessageTemplate; }
-		}
+        /// <summary>
+        /// Gets the Default Message Template when the validator is non negated.
+        /// </summary>
+        protected override string DefaultNonNegatedMessageTemplate
+        {
+            get { return Resources.TypeConversionNonNegatedDefaultMessageTemplate; }
+        }
 
-		/// <summary>
-		/// Gets the Default Message Template when the validator is negated.
-		/// </summary>
-		protected override string DefaultNegatedMessageTemplate
-		{
-			get { return Resources.TypeConversionNegatedDefaultMessageTemplate; }
-		}
+        /// <summary>
+        /// Gets the Default Message Template when the validator is negated.
+        /// </summary>
+        protected override string DefaultNegatedMessageTemplate
+        {
+            get { return Resources.TypeConversionNegatedDefaultMessageTemplate; }
+        }
 
-		#region test only properties
+        #region test only properties
 
         /// <summary>
         /// 
         /// </summary>
-		public Type TargetType
-		{
-			get { return this.targetType; }
-		}
+        public Type TargetType
+        {
+            get { return this.targetType; }
+        }
 
-		#endregion
-	}
+        #endregion
+    }
 }
 

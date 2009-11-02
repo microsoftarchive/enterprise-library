@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Validation.TestSupport.TestClasses;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -203,6 +204,68 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
                                                            "",
                                                            ValidationSpecificationSource.Attributes,
                                                            new MemberAccessValidatorBuilderFactory());
+        }
+
+        [TestMethod]
+        public void CanCreateValidatorForValidationAttributes()
+        {
+            var validator =
+                PropertyValidationFactory.GetPropertyValidator(
+                    typeof(TestObjectWithMultipleSourceValidationAttributesOnProperties),
+                    StaticReflection.GetPropertyInfo((TestObjectWithMultipleSourceValidationAttributesOnProperties t)
+                        => t.PropertyWithMixedAttributes),
+                    "",
+                    ValidationSpecificationSource.DataAnnotations,
+                    new MemberAccessValidatorBuilderFactory());
+
+            var validResults =
+                validator.Validate(
+                    new TestObjectWithMultipleSourceValidationAttributesOnProperties
+                    {
+                        PropertyWithMixedAttributes = "v"
+                    });
+            var invalidResults =
+                    validator.Validate(
+                    new TestObjectWithMultipleSourceValidationAttributesOnProperties
+                    {
+                        PropertyWithMixedAttributes = "invalid"
+                    });
+
+            Assert.IsTrue(validResults.IsValid);
+            Assert.IsFalse(invalidResults.IsValid);
+            Assert.AreEqual(1, invalidResults.Count);
+            Assert.IsTrue(
+                invalidResults.Any(vr =>
+                    vr.Key == "PropertyWithMixedAttributes" && vr.Message == "data annotations-mixed"));
+        }
+
+        [TestMethod]
+        public void CanCreateValidatorForValidatorAndValidationAttributes()
+        {
+            var validator =
+                PropertyValidationFactory.GetPropertyValidator(
+                    typeof(TestObjectWithMultipleSourceValidationAttributesOnProperties),
+                    StaticReflection.GetPropertyInfo((TestObjectWithMultipleSourceValidationAttributesOnProperties t)
+                        => t.PropertyWithMixedAttributes),
+                    "",
+                    ValidationSpecificationSource.DataAnnotations | ValidationSpecificationSource.Attributes,
+                    new MemberAccessValidatorBuilderFactory());
+
+            var invalidResults =
+                    validator.Validate(
+                    new TestObjectWithMultipleSourceValidationAttributesOnProperties
+                    {
+                        PropertyWithMixedAttributes = "invalid"
+                    });
+
+            Assert.IsFalse(invalidResults.IsValid);
+            Assert.AreEqual(2, invalidResults.Count);
+            Assert.IsTrue(
+                invalidResults.Any(vr =>
+                    vr.Key == "PropertyWithMixedAttributes" && vr.Message == "data annotations-mixed"));
+            Assert.IsTrue(
+                invalidResults.Any(vr =>
+                    vr.Key == "PropertyWithMixedAttributes" && vr.Message == "vab-mixed"));
         }
     }
 }

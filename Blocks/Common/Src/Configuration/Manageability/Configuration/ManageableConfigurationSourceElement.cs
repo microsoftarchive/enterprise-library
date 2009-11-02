@@ -20,8 +20,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
 	/// <summary>
 	/// Represents the configuration settings that describe a <see cref="ManageableConfigurationSource"/>.
 	/// </summary>
-    [ResourceDisplayName(typeof(Resources), "ManageableConfigurationSourceElementDisplayName")]
-    [ResourceDescription(typeof(Resources), "ManageableConfigurationSourceElementDescription")]
+    [ResourceDescription(typeof(DesignResources), "ManageableConfigurationSourceElementDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "ManageableConfigurationSourceElementDisplayName")]
+    [Browsable(true)]
 	public class ManageableConfigurationSourceElement : ConfigurationSourceElement
 	{
 		private const String filePathPropertyName = "filePath";
@@ -45,7 +46,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
 		/// Initializes a new instance of the <see cref="ManageableConfigurationSourceElement"/> class with default values.
 		/// </summary>
 		public ManageableConfigurationSourceElement()
-			: base(Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability.Properties.Resources.ManageableConfigurationSourceName, typeof(ManageableConfigurationSource))
+			: base(Manageability.Properties.Resources.ManageableConfigurationSourceName, typeof(ManageableConfigurationSource))
 		{ }
 
 		/// <summary>
@@ -82,10 +83,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
 		/// Gets or sets the file path.
 		/// </summary>
         [ConfigurationProperty(filePathPropertyName, IsRequired = true)]
-        [ResourceDisplayName(typeof(Resources), "ManageableConfigurationSourceElementFilePathDisplayName")]
-        [ResourceDescription(typeof(Resources), "ManageableConfigurationSourceElementFilePathDescription")]
-        [Editor(EditorTypes.FilteredFilePath, EditorTypes.UITypeEditor)]
-        [FilteredFileNameEditor(typeof(Resources), "ManageableConfigurationSourceElementFilePathFilter")]
+        [ResourceDescription(typeof(DesignResources), "ManageableConfigurationSourceElementFilePathDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "ManageableConfigurationSourceElementFilePathDisplayName")]
+        [Editor(CommonDesignTime.EditorTypes.FilteredFilePath, CommonDesignTime.EditorTypes.UITypeEditor)]
+        [FilteredFileNameEditor(typeof(DesignResources), "ManageableConfigurationSourceElementFilePathFilter")]
 		public String FilePath
 		{
 			get { return (String)this[filePathPropertyName]; }
@@ -97,8 +98,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
 		/// </summary>
 		[ConfigurationProperty(applicationNamePropertyName, IsRequired = true, DefaultValue = "Application")]
         [StringValidator(MinLength = MinimumApplicationNameLength, MaxLength = MaximumApplicationNameLength)]
-        [ResourceDisplayName(typeof(Resources), "ManageableConfigurationSourceElementApplicationNameDisplayName")]
-        [ResourceDescription(typeof(Resources), "ManageableConfigurationSourceElementApplicationNameDescription")]
+        [ResourceDescription(typeof(DesignResources), "ManageableConfigurationSourceElementApplicationNameDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "ManageableConfigurationSourceElementApplicationNameDisplayName")]
 		public String ApplicationName
 		{
 			get { return (String)this[applicationNamePropertyName]; }
@@ -109,8 +110,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
 		/// Gets or sets the value for Wmi enablement.
 		/// </summary>
         [ConfigurationProperty(enableWmiPropertyName, DefaultValue = true)]
-        [ResourceDisplayName(typeof(Resources), "ManageableConfigurationSourceElementEnableWmiDisplayName")]
-        [ResourceDescription(typeof(Resources), "ManageableConfigurationSourceElementEnableWmiDescription")]
+        [ResourceDescription(typeof(DesignResources), "ManageableConfigurationSourceElementEnableWmiDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "ManageableConfigurationSourceElementEnableWmiDisplayName")]
 		public bool EnableWmi
 		{
 			get { return (bool)this[enableWmiPropertyName]; }
@@ -121,8 +122,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
 		/// Gets or sets the value for GP enablement.
 		/// </summary>
         [ConfigurationProperty(enableGroupPoliciesPropertyName, DefaultValue = true)]
-        [ResourceDisplayName(typeof(Resources), "ManageableConfigurationSourceElementEnableGroupPoliciesDisplayName")]
-        [ResourceDescription(typeof(Resources), "ManageableConfigurationSourceElementEnableGroupPoliciesDescription")]
+        [ResourceDescription(typeof(DesignResources), "ManageableConfigurationSourceElementEnableGroupPoliciesDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "ManageableConfigurationSourceElementEnableGroupPoliciesDisplayName")]
 		public bool EnableGroupPolicies
 		{
 			get { return (bool)this[enableGroupPoliciesPropertyName]; }

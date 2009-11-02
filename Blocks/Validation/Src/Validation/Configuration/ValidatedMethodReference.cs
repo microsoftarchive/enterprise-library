@@ -11,6 +11,7 @@
 
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 {
@@ -20,6 +21,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 	/// <seealso cref="ValidatedTypeReference"/>
 	/// <seealso cref="ValidationRulesetData"/>
 	/// <seealso cref="ValidatedMemberReference"/>
+    [ResourceDescription(typeof(DesignResources), "ValidatedMethodReferenceDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "ValidatedMethodReferenceDisplayName")]
+    [NameProperty("Name", NamePropertyDisplayFormat="Method: {0}")]
 	public sealed class ValidatedMethodReference : ValidatedMemberReference
 	{
 		/// <summary>

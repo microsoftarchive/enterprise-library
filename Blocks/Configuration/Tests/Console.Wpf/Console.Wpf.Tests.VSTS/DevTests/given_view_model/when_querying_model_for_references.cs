@@ -16,6 +16,7 @@ using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
 using Console.Wpf.ViewModel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Console.Wpf.ViewModel.Services;
+using Microsoft.Practices.Unity;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model
 {
@@ -27,8 +28,8 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model
 
         protected override void Act()
         {
-            viewModel = SectionViewModel.CreateSection(ServiceProvider, Section);
-            lookup = (ElementLookup)ServiceProvider.GetService(typeof(ElementLookup));
+            viewModel = SectionViewModel.CreateSection(Container, ExceptionHandlingSettings.SectionName, Section);
+            lookup = Container.Resolve<ElementLookup>();
         }
 
         [TestMethod]

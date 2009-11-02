@@ -25,7 +25,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         private static readonly object currentContainerLock = new object();
 
         /// <summary>
-        /// Get the current container used to resolve Entlib objects (for use by the
+        /// Get or set the current container used to resolve Entlib objects (for use by the
         /// various static factories).
         /// </summary>
         public static IServiceLocator Current
@@ -38,7 +38,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 
             set
             {
-                lock(currentContainerLock)
+                lock (currentContainerLock)
                 {
                     currentContainer = value;
                 }
@@ -60,7 +60,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 
             ConfigureContainer(
                 TypeRegistrationsProvider.CreateDefaultProvider(configSource, reconfiguringEventSource),
-                configurator, 
+                configurator,
                 configSource);
         }
 

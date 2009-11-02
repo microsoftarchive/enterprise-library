@@ -18,12 +18,15 @@ using System;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Security.Instrumentation;
 using System.Collections.Generic;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.AzMan.Configuration
 {
     /// <summary>
     /// Represents the configuration settings for the <see cref="AzManAuthorizationProvider"/>.
     /// </summary>
+    [ResourceDescription(typeof(DesignResources), "AzManAuthorizationProviderDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "AzManAuthorizationProviderDataDisplayName")]
     public class AzManAuthorizationProviderData : AuthorizationProviderData
     {
         private const string storeLocationProperty = "storeLocation";
@@ -81,6 +84,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.AzMan.Configuration
         /// <remarks>Absolute file paths are required for xml storage.  
         /// View this link for more information about the expected format http://msdn.microsoft.com/library/default.asp?url=/library/en-us/security/security/azauthorizationstore_initialize.asp.</remarks>
         [ConfigurationProperty(storeLocationProperty)]
+        [ResourceDescription(typeof(DesignResources), "AzManAuthorizationProviderDataStoreLocationDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "AzManAuthorizationProviderDataStoreLocationDisplayName")]
         public string StoreLocation
         {
             get { return (string)this[storeLocationProperty]; }
@@ -91,6 +96,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.AzMan.Configuration
         /// Name of the AzMan application.
         /// </summary>
         [ConfigurationProperty(applicationNameProperty)]
+        [ResourceDescription(typeof(DesignResources), "AzManAuthorizationProviderDataApplicationDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "AzManAuthorizationProviderDataApplicationDisplayName")]
         public string Application
         {
             get { return (string)this[applicationNameProperty]; }
@@ -101,6 +108,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.AzMan.Configuration
         /// Optional name of the application scope.
         /// </summary>
         [ConfigurationProperty(scopeNameProperty)]
+        [ResourceDescription(typeof(DesignResources), "AzManAuthorizationProviderDataScopeDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "AzManAuthorizationProviderDataScopeDisplayName")]
         public string Scope
         {
             get { return (string)this[scopeNameProperty]; }
@@ -114,6 +123,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.AzMan.Configuration
         /// The audit identifier is generated to be "prefix username:operation"
         /// </remarks>
         [ConfigurationProperty(auditIdentifierPrefixProperty)]
+        [ResourceDescription(typeof(DesignResources), "AzManAuthorizationProviderDataAuditIdentifierPrefixDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "AzManAuthorizationProviderDataAuditIdentifierPrefixDisplayName")]
         public string AuditIdentifierPrefix
         {
             get { return (string)this[auditIdentifierPrefixProperty]; }

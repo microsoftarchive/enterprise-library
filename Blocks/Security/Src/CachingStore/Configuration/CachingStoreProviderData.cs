@@ -27,6 +27,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cache.CachingStore.Conf
 	/// <summary>
 	/// Configuration data for the Security Cache.
 	/// </summary>
+    [ResourceDescription(typeof(DesignResources), "CachingStoreProviderDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "CachingStoreProviderDataDisplayName")]
+    [AddSateliteProviderCommand(CacheManagerSettings.SectionName)]
 	public class CachingStoreProviderData : SecurityCacheProviderData
 	{
 		private const string cacheManagerProperty = "cacheManagerInstanceName";
@@ -62,7 +65,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cache.CachingStore.Conf
 		/// </summary>
         /// <value>Caching Application Block Cache Instance Name.</value>
         [ConfigurationProperty(cacheManagerProperty, IsRequired = true)]
-        [Reference(typeof(CacheManagerSettings), typeof(CacheManagerDataBase))]
+        [Reference(typeof(NameTypeConfigurationElementCollection<CacheManagerDataBase, CustomCacheManagerData>), typeof(CacheManagerDataBase))]
+        [ResourceDescription(typeof(DesignResources), "CachingStoreProviderDataCacheManagerDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "CachingStoreProviderDataCacheManagerDisplayName")]
 		public string CacheManager
 		{
 			get { return (string)this[cacheManagerProperty]; }
@@ -74,6 +79,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cache.CachingStore.Conf
 		/// </summary>
 		/// <value>Sliding Session Expiration duration</value>
         [ConfigurationProperty(slidingExpirationProperty, IsRequired = true, DefaultValue = 10)]
+        [ResourceDescription(typeof(DesignResources), "CachingStoreProviderDataSlidingExpirationDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "CachingStoreProviderDataSlidingExpirationDisplayName")]
 		public int SlidingExpiration
 		{
 			get { return (int)this[slidingExpirationProperty]; }
@@ -85,6 +92,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cache.CachingStore.Conf
 		/// </summary>
 		/// <value>Absolute Session Expiration duration</value>
 		[ConfigurationProperty(absoluteExpirationProperty, IsRequired = true, DefaultValue=60)]
+        [ResourceDescription(typeof(DesignResources), "CachingStoreProviderDataAbsoluteExpirationDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "CachingStoreProviderDataAbsoluteExpirationDisplayName")]
 		public int AbsoluteExpiration
 		{
 			get { return (int)this[absoluteExpirationProperty]; }

@@ -1,0 +1,312 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="CacheManagerDataBaseDescription" xml:space="preserve">
+    <value>11 - Persists the cached data in memory, and optionaly interacts with a persistent backing store.</value>
+  </data>
+  <data name="CacheManagerDataBaseDisplayName" xml:space="preserve">
+    <value>Cache Manager</value>
+  </data>
+  <data name="CacheManagerDataBaseNameDescription" xml:space="preserve">
+    <value>13 - The name of the Cache Manager.</value>
+  </data>
+  <data name="CacheManagerDataBaseNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="CacheManagerDataBaseTypeNameDescription" xml:space="preserve">
+    <value>15 - The fully qualified type name of the Cache Manager.</value>
+  </data>
+  <data name="CacheManagerDataBaseTypeNameDisplayName" xml:space="preserve">
+    <value>Type Name</value>
+  </data>
+  <data name="CacheManagerDataCacheStorageDescription" xml:space="preserve">
+    <value>3 - The name of the Backing Store to use for this Cache Manager.</value>
+  </data>
+  <data name="CacheManagerDataCacheStorageDisplayName" xml:space="preserve">
+    <value>Backing Store</value>
+  </data>
+  <data name="CacheManagerDataDescription" xml:space="preserve">
+    <value>1 - Persists the cached data in memory, and optionaly interacts with a persistent backing store.</value>
+  </data>
+  <data name="CacheManagerDataDisplayName" xml:space="preserve">
+    <value>Cache Manager</value>
+  </data>
+  <data name="CacheManagerDataExpirationPollFrequencyInSecondsDescription" xml:space="preserve">
+    <value>5 - Time in seconds between each cycle that removes expired cached items.</value>
+  </data>
+  <data name="CacheManagerDataExpirationPollFrequencyInSecondsDisplayName" xml:space="preserve">
+    <value>Expiration Polling Frequency (seconds)</value>
+  </data>
+  <data name="CacheManagerDataMaximumElementsInCacheBeforeScavengingDescription" xml:space="preserve">
+    <value>7 - Maximum number of items in the cache before adding another causes scavenging to occur.</value>
+  </data>
+  <data name="CacheManagerDataMaximumElementsInCacheBeforeScavengingDisplayName" xml:space="preserve">
+    <value>Max. Elements In Cache Before Scavenging</value>
+  </data>
+  <data name="CacheManagerDataNumberToRemoveWhenScavengingDescription" xml:space="preserve">
+    <value>9 - Number of items to remove from the cache during each scavenging cycle.</value>
+  </data>
+  <data name="CacheManagerDataNumberToRemoveWhenScavengingDisplayName" xml:space="preserve">
+    <value>Number to Remove when Scavenging</value>
+  </data>
+  <data name="CacheManagerSettingsBackingStoresDescription" xml:space="preserve">
+    <value>19 - Persist the cached items to a store such as a database or Insolated Storage.</value>
+  </data>
+  <data name="CacheManagerSettingsBackingStoresDisplayName" xml:space="preserve">
+    <value>Backing Stores</value>
+  </data>
+  <data name="CacheManagerSettingsCacheManagersDescription" xml:space="preserve">
+    <value>21 - The Cache Managers configured for the Caching Application Block</value>
+  </data>
+  <data name="CacheManagerSettingsCacheManagersDisplayName" xml:space="preserve">
+    <value>Cache Managers</value>
+  </data>
+  <data name="CacheManagerSettingsDefaultCacheManagerDescription" xml:space="preserve">
+    <value>23 - The default Cache Manager to use when code does not specify a named Cache Manager.</value>
+  </data>
+  <data name="CacheManagerSettingsDefaultCacheManagerDisplayName" xml:space="preserve">
+    <value>Default Cache Manager</value>
+  </data>
+  <data name="CacheManagerSettingsDescription" xml:space="preserve">
+    <value>17 - Configuration settings for the Caching Application Block</value>
+  </data>
+  <data name="CacheManagerSettingsDisplayName" xml:space="preserve">
+    <value>Caching Settings</value>
+  </data>
+  <data name="CacheManagerSettingsEncryptionProvidersDescription" xml:space="preserve">
+    <value>25 - Provide encryption of the data persisted in a backing store, but not in memory.</value>
+  </data>
+  <data name="CacheManagerSettingsEncryptionProvidersDisplayName" xml:space="preserve">
+    <value>Encryption Providers</value>
+  </data>
+  <data name="CacheStorageDataDescription" xml:space="preserve">
+    <value>27 - The name of the referenced Backing Store for this Cache Manager.</value>
+  </data>
+  <data name="CacheStorageDataDisplayName" xml:space="preserve">
+    <value>Cache Storage</value>
+  </data>
+  <data name="CacheStorageDataNameDescription" xml:space="preserve">
+    <value>29 - The name of the backing store.</value>
+  </data>
+  <data name="CacheStorageDataNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="CacheStorageDataStorageEncryptionDescription" xml:space="preserve">
+    <value>31 - The name of the Encryption Provider to use for this Backing Store.</value>
+  </data>
+  <data name="CacheStorageDataStorageEncryptionDisplayName" xml:space="preserve">
+    <value>Encryption Provider</value>
+  </data>
+  <data name="CacheStorageDataTypeNameDescription" xml:space="preserve">
+    <value>33 - The fully qualified type name of the Backing Store.</value>
+  </data>
+  <data name="CacheStorageDataTypeNameDisplayName" xml:space="preserve">
+    <value>Type Name</value>
+  </data>
+  <data name="CustomCacheManagerDataDescription" xml:space="preserve">
+    <value>35 - Custom implementation that persists the cached data in memory, and optionaly interacts with a persistent backing store.</value>
+  </data>
+  <data name="CustomCacheManagerDataDisplayName" xml:space="preserve">
+    <value>Custom Cache Manager</value>
+  </data>
+  <data name="CustomCacheManagerDataNameDescription" xml:space="preserve">
+    <value>37 - The name of the Custom Cache Manager.</value>
+  </data>
+  <data name="CustomCacheManagerDataNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="CustomCacheManagerDataTypeNameDescription" xml:space="preserve">
+    <value>39 - The fully qualified type name of the Custom Cache Manager.</value>
+  </data>
+  <data name="CustomCacheManagerDataTypeNameDisplayName" xml:space="preserve">
+    <value>Type Name</value>
+  </data>
+  <data name="CustomCacheStorageDataDescription" xml:space="preserve">
+    <value>41 - A Backing Store implementated as a custom class that persists the cached data, and added to Enterprise Library.</value>
+  </data>
+  <data name="CustomCacheStorageDataDisplayName" xml:space="preserve">
+    <value>Custom Cache Storage</value>
+  </data>
+  <data name="CustomCacheStorageDataNameDescription" xml:space="preserve">
+    <value>43 - The name of the Custom Backing Store.</value>
+  </data>
+  <data name="CustomCacheStorageDataNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="CustomCacheStorageDataStorageEncryptionDescription" xml:space="preserve">
+    <value>45 - The name of the Encryption Provider for this Backing Store.</value>
+  </data>
+  <data name="CustomCacheStorageDataStorageEncryptionDisplayName" xml:space="preserve">
+    <value>Encryption Provider</value>
+  </data>
+  <data name="CustomCacheStorageDataTypeNameDescription" xml:space="preserve">
+    <value>47 - The fully qualified type name of the Custom Backing Store.</value>
+  </data>
+  <data name="CustomCacheStorageDataTypeNameDisplayName" xml:space="preserve">
+    <value>Type Name</value>
+  </data>
+  <data name="IsolatedStorageCacheStorageDataDescription" xml:space="preserve">
+    <value>49 - Stores the cached data in a persistant Isolated Storage store on the local machine.</value>
+  </data>
+  <data name="IsolatedStorageCacheStorageDataDisplayName" xml:space="preserve">
+    <value>Isolated Storage Cache Store</value>
+  </data>
+  <data name="IsolatedStorageCacheStorageDataNameDescription" xml:space="preserve">
+    <value>51 - The name of the Isolated Storage Cache Store</value>
+  </data>
+  <data name="IsolatedStorageCacheStorageDataNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="IsolatedStorageCacheStorageDataPartitionNameDescription" xml:space="preserve">
+    <value>53 - The section or partition of the Isolated Storage area for the cached data.This allows different users to cache data on the same machine safely, and prevents different users accessing the same cached data.</value>
+  </data>
+  <data name="IsolatedStorageCacheStorageDataPartitionNameDisplayName" xml:space="preserve">
+    <value>Partition Name</value>
+  </data>
+  <data name="IsolatedStorageCacheStorageDataStorageEncryptionDescription" xml:space="preserve">
+    <value>55 - The name of the Encryption Provider to use for this Isolated Storage Cache Store.</value>
+  </data>
+  <data name="IsolatedStorageCacheStorageDataStorageEncryptionDisplayName" xml:space="preserve">
+    <value>Encryption Provider</value>
+  </data>
+  <data name="IsolatedStorageCacheStorageDataTypeNameDescription" xml:space="preserve">
+    <value>57 - The fully qualified type name of the Isolated Storage Cache Store.</value>
+  </data>
+  <data name="IsolatedStorageCacheStorageDataTypeNameDisplayName" xml:space="preserve">
+    <value>Type Name</value>
+  </data>
+  <data name="StorageEncryptionProviderDataDescription" xml:space="preserve">
+    <value>59 - Encrypts the data in the bacing store (but not in memory) using a Cryptography Provider defined in the Cryptography Application Block.</value>
+  </data>
+  <data name="StorageEncryptionProviderDataDisplayName" xml:space="preserve">
+    <value>Encryption Provider</value>
+  </data>
+  <data name="StorageEncryptionProviderDataNameDescription" xml:space="preserve">
+    <value>61 - The name of the Encryption Provider.</value>
+  </data>
+  <data name="StorageEncryptionProviderDataNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="StorageEncryptionProviderDataTypeNameDescription" xml:space="preserve">
+    <value>63 - The fully qualified type name of the Encryption Provider.</value>
+  </data>
+  <data name="StorageEncryptionProviderDataTypeNameDisplayName" xml:space="preserve">
+    <value>Type Name</value>
+  </data>
+</root>

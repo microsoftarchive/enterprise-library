@@ -23,4 +23,7 @@ using Microsoft.Practices.EnterpriseLibrary.Security.Configuration;
 [assembly : WmiConfiguration(@"root\EnterpriseLibrary", HostingModel = ManagementHostingModel.Decoupled, IdentifyLevel = false)]
 [assembly : AllowPartiallyTrustedCallers]
 [assembly : SecurityTransparent]
-[assembly: HandlesSectionName(SecuritySettings.SectionName)]
+
+
+[assembly: HandlesSection(SecuritySettings.SectionName)]
+[assembly: AddApplicationBlockCommand("Add Security Settings", SecuritySettings.SectionName, typeof(SecuritySettings))]

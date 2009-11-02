@@ -63,7 +63,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WinForms
         string rulesetName;
         Type sourceType;
         string sourceTypeName;
-        ValidationSpecificationSource specificationSource = ValidationSpecificationSource.Both;
+        ValidationSpecificationSource specificationSource = ValidationSpecificationSource.All;
         string validationResultFormat = @"{0}";
 
         /// <summary>
@@ -190,7 +190,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WinForms
         /// <summary>
         /// Gets or sets the <see cref="ValidationSpecificationSource"/> indicating where to get validation specifications from.
         /// </summary>
-        [DefaultValue(ValidationSpecificationSource.Both)]
+        [DefaultValue(ValidationSpecificationSource.All)]
         [SRDescription("DescriptionSpecificationSource")]
         [SRCategory("CategoryValidation")]
         public ValidationSpecificationSource SpecificationSource

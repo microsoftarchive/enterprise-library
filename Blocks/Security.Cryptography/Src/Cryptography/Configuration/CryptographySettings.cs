@@ -24,7 +24,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
     /// <summary>
     /// <para>Configuration settings for cryptography.</para>
     /// </summary>
-    [ViewModel(ViewModels.TabularViewModel)]
+    [ViewModel(CryptographyDesignTime.ViewModelTypeNames.CryptographySectionViewModel)]
+    [ResourceDescription(typeof(DesignResources), "CryptographySettingsDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "CryptographySettingsDisplayName")]
+
     public class CryptographySettings : SerializableConfigurationSection, ITypeRegistrationsProvider
     {       
 		private const string hashProvidersProperty = "hashProviders";
@@ -48,7 +51,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
 		/// The instance name of the default <see cref="IHashProvider"/> instance.
 		/// </summary>
 		[ConfigurationProperty(defaultHashProviderNameProperty, IsRequired= false)]
-        [Reference(typeof(CryptographySettings), typeof(HashProviderData))]
+        [Reference(typeof(NameTypeConfigurationElementCollection<HashProviderData, CustomHashProviderData>), typeof(HashProviderData))]
+        [ResourceDescription(typeof(DesignResources), "CryptographySettingsDefaultHashProviderNameDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "CryptographySettingsDefaultHashProviderNameDisplayName")]
 		public string DefaultHashProviderName
 		{
 			get { return (string)this[defaultHashProviderNameProperty]; }
@@ -66,6 +71,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
 		/// </remarks>
 		[ConfigurationProperty(hashProvidersProperty, IsRequired= false)]
         [ConfigurationCollection(typeof(HashProviderData))]
+        [ResourceDescription(typeof(DesignResources), "CryptographySettingsHashProvidersDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "CryptographySettingsHashProvidersDisplayName")]
 		public NameTypeConfigurationElementCollection<HashProviderData, CustomHashProviderData> HashProviders
 		{
             get { return (NameTypeConfigurationElementCollection<HashProviderData, CustomHashProviderData>)base[hashProvidersProperty]; }
@@ -76,7 +83,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
 		/// The instance name of the default <see cref="ISymmetricCryptoProvider"/> instance.
 		/// </summary>
 		[ConfigurationProperty(defaultSymmetricCryptoProviderNameProperty, IsRequired= false)]
-        [Reference(typeof(CryptographySettings), typeof(SymmetricProviderData))]
+        [Reference(typeof(NameTypeConfigurationElementCollection<SymmetricProviderData, CustomSymmetricCryptoProviderData>), typeof(SymmetricProviderData))]
+        [ResourceDescription(typeof(DesignResources), "CryptographySettingsDefaultSymmetricCryptoProviderNameDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "CryptographySettingsDefaultSymmetricCryptoProviderNameDisplayName")]
 		public string DefaultSymmetricCryptoProviderName
 		{
 			get { return (string)this[defaultSymmetricCryptoProviderNameProperty]; }
@@ -84,16 +93,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
 		}
 
 		/// <summary>
-		/// <para>Gets the <see cref="HashProviders"/>.</para>
+		/// TODOC
 		/// </summary>
-		/// <value>
-		/// <para>The hash providers available in configuration. The default is an empty collection.</para>
-		/// </value>
-		/// <remarks>
-		/// <para>This property maps to the <c>hashProviders</c> element in configuration.</para>
-		/// </remarks>
         [ConfigurationProperty(symmetricCryptoProvidersProperty, IsRequired = false)]
         [ConfigurationCollection(typeof(SymmetricProviderData))]
+        [ResourceDescription(typeof(DesignResources), "CryptographySettingsSymmetricCryptoProvidersDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "CryptographySettingsSymmetricCryptoProvidersDisplayName")]
         public NameTypeConfigurationElementCollection<SymmetricProviderData, CustomSymmetricCryptoProviderData> SymmetricCryptoProviders
 		{
             get { return (NameTypeConfigurationElementCollection<SymmetricProviderData, CustomSymmetricCryptoProviderData>)base[symmetricCryptoProvidersProperty]; }

@@ -12,6 +12,8 @@
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Data.Oracle;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Data.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Data.Oracle.Configuration
 {
@@ -25,6 +27,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Oracle.Configuration
     /// in a more database independent fashion.
     /// </para>
     /// </remarks>
+    [ResourceDescription(typeof(DesignResources), "OraclePackageDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "OraclePackageDataDisplayName")]
+    [ViewModel(DataAccessDesignTime.ViewModelTypeNames.OraclePackageDataViewModel)]
     public class OraclePackageData : NamedConfigurationElement, IOraclePackage
     {
 		private const string prefixProperty = "prefix";
@@ -58,6 +63,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Oracle.Configuration
         /// <para>The prefix of the stored procedures that are in the package in Oracle.</para>
         /// </value>
 		[ConfigurationProperty(prefixProperty, IsRequired= true)]
+        [ResourceDescription(typeof(DesignResources), "OraclePackageDataPrefixDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "OraclePackageDataPrefixDisplayName")]
 		public string Prefix
 		{
 			get

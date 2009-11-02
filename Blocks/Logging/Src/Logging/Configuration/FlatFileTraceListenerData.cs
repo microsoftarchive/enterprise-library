@@ -19,12 +19,15 @@ using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
 using System.Linq.Expressions;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 {
     /// <summary>
     /// Represents the configuration settings that describe a <see cref="FlatFileTraceListener"/>.
     /// </summary>
+    [ResourceDescription(typeof(DesignResources), "FlatFileTraceListenerDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "FlatFileTraceListenerDataDisplayName")]
     public class FlatFileTraceListenerData : TraceListenerData
     {
         private const string fileNameProperty = "fileName";
@@ -124,6 +127,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// Gets and sets the file name.
         /// </summary>
         [ConfigurationProperty(fileNameProperty, IsRequired = true, DefaultValue = "trace.log")]
+        [ResourceDescription(typeof(DesignResources), "FlatFileTraceListenerDataFileNameDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "FlatFileTraceListenerDataFileNameDisplayName")]
         public string FileName
         {
             get { return (string)base[fileNameProperty]; }
@@ -134,6 +139,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// Gets and sets the header.
         /// </summary>
         [ConfigurationProperty(headerProperty, IsRequired = false)]
+        [ResourceDescription(typeof(DesignResources), "FlatFileTraceListenerDataHeaderDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "FlatFileTraceListenerDataHeaderDisplayName")]
         public string Header
         {
             get { return (string)base[headerProperty]; }
@@ -144,6 +151,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// Gets and sets the footer.
         /// </summary>
         [ConfigurationProperty(footerProperty, IsRequired = false)]
+        [ResourceDescription(typeof(DesignResources), "FlatFileTraceListenerDataFooterDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "FlatFileTraceListenerDataFooterDisplayName")]
         public string Footer
         {
             get { return (string)base[footerProperty]; }
@@ -154,7 +163,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// Gets and sets the formatter name.
         /// </summary>
         [ConfigurationProperty(formatterNameProperty, IsRequired = false)]
-        [Reference(typeof(LoggingSettings), typeof(FormatterData))]
+        [Reference(typeof(NameTypeConfigurationElementCollection<FormatterData, CustomFormatterData>), typeof(FormatterData))]
+        [ResourceDescription(typeof(DesignResources), "FlatFileTraceListenerDataFormatterDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "FlatFileTraceListenerDataFormatterDisplayName")] 
         public string Formatter
         {
             get { return (string)base[formatterNameProperty]; }

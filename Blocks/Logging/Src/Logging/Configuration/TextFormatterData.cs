@@ -14,15 +14,22 @@ using System.Collections.Generic;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using System.ComponentModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 {
     /// <summary>
     /// Represents the configuration settings for a <see cref="TextFormatter"/>.
     /// </summary>
+    [ResourceDescription(typeof(DesignResources), "TextFormatterDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "TextFormatterDataDisplayName")]
     public class TextFormatterData : FormatterData
     {
-        private const string defaultTemplate = "Timestamp: {timestamp}{newline}Message: {message}{newline}Category: {category}{newline}Priority: {priority}{newline}EventId: {eventid}{newline}Severity: {severity}{newline}Title:{title}{newline}Machine: {localMachine}{newline}App Domain: {localAppDomain}{newline}ProcessId: {localProcessId}{newline}Process Name: {localProcessName}{newline}Thread Name: {threadName}{newline}Win32 ThreadId:{win32ThreadId}{newline}Extended Properties: {dictionary({key} - {value}{newline})}";
+        /// <summary>
+        /// TODO: once designtime is refactored, make internal or store in resources...
+        /// </summary>
+        public const string DefaultTemplate = "Timestamp: {timestamp}{newline}\nMessage: {message}{newline}\nCategory: {category}{newline}\nPriority: {priority}{newline}\nEventId: {eventid}{newline}\nSeverity: {severity}{newline}\nTitle:{title}{newline}\nMachine: {localMachine}{newline}\nApp Domain: {localAppDomain}{newline}\nProcessId: {localProcessId}{newline}\nProcess Name: {localProcessName}{newline}\nThread Name: {threadName}{newline}\nWin32 ThreadId:{win32ThreadId}{newline}\nExtended Properties: {dictionary({key} - {value}{newline})}";
         private const string templateProperty = "template";
 
         /// <summary>
@@ -80,7 +87,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// <summary>
         /// Gets or sets the template containing tokens to replace.
         /// </summary>
-        [ConfigurationProperty(templateProperty, IsRequired = true, DefaultValue = defaultTemplate)]
+        [ConfigurationProperty(templateProperty, IsRequired = true, DefaultValue = DefaultTemplate)]
+        [ResourceDescription(typeof(DesignResources), "TextFormatterDataTemplateDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "TextFormatterDataTemplateDisplayName")]
+        [Editor(CommonDesignTime.EditorTypes.TemplateEditor, CommonDesignTime.EditorTypes.UITypeEditor)]
         public string Template
         {
             get

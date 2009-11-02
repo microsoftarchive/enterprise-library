@@ -11,14 +11,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests;
 using System.Configuration;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Linq;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests;
 using Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.TestObjects;
+using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
 {
@@ -54,13 +53,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
         }
 
         protected DummySectionWithCollections GetMergedSection()
-        {   
+        {
             ConfigurationSection localSection = LocalSource.GetSection(SectionName);
             return HierarchicalSourceHandler.CheckGetSection(SectionName, localSection) as DummySectionWithCollections;
         }
 
         #region test support classes
-       
+
         #endregion
 
     }
@@ -301,7 +300,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
     }
 
     [TestClass]
-    public class When_SectionHasLeafThatExstsInParentButNotInLocal: Given_HierarchicalConfigurationSourceHandler
+    public class When_SectionHasLeafThatExstsInParentButNotInLocal : Given_HierarchicalConfigurationSourceHandler
     {
         DummySectionWithCollections section;
         Guid leafId = Guid.NewGuid();
@@ -367,13 +366,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
 
         protected override IEnumerable<TestLeafConfigurationElement> GetParentSourceCollection()
         {
-           yield return new TestLeafConfigurationElement
-           { 
-               ID = Guid.NewGuid(),
-               OtherKeyPart = "p1"
-           };
+            yield return new TestLeafConfigurationElement
+            {
+                ID = Guid.NewGuid(),
+                OtherKeyPart = "p1"
+            };
         }
-        
+
         protected override void Act()
         {
             section = GetMergedSection();
@@ -625,7 +624,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
 
         }
     }
-    
+
     [TestClass]
     public class When_HierarchicalConfigurationSourceNeedsToMergeLocallyClearedConnectionStringSettingsCollection : Given_HierarchicalConfigurationSourceHandler
     {
@@ -673,7 +672,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
             Assert.AreEqual("name3", connectionStrings.Skip(1).First().Name);
         }
     }
-    
+
     [TestClass]
     public class When_HierarchicalConfigurationSourceNeedsToMergeKeyValueSettingsCollection : Given_HierarchicalConfigurationSourceHandler
     {
@@ -792,8 +791,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
     {
         protected override ConfigurationSection Arrange_GetParentSourceSection()
         {
-            PolymorphicElementCollection collection =  new PolymorphicElementCollection();
-            collection.Add(new OtherDerivedPolymorphicElement(){ Name = "el1" });
+            PolymorphicElementCollection collection = new PolymorphicElementCollection();
+            collection.Add(new OtherDerivedPolymorphicElement() { Name = "el1" });
             return new DummySectionWithCollections
             {
                 PolymorphicCollection = collection
@@ -863,7 +862,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
                 base.GetMergedSection();
                 Assert.Fail("sould have cought exception");
             }
-            catch (ConfigurationSourceErrorsException ex)
+            catch (ConfigurationSourceErrorsException)
             {
                 //TODO: pick right exception, and assert on data
             }

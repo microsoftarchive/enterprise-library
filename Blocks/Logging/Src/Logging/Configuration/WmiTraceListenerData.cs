@@ -13,12 +13,15 @@ using System;
 using System.Diagnostics;
 using System.Linq.Expressions;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 {
     /// <summary>
     /// Represents the configuration settings that describe a <see cref="WmiTraceListener"/>.
     /// </summary>
+    [ResourceDescription(typeof(DesignResources), "WmiTraceListenerDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "WmiTraceListenerDataDisplayName")]
     public class WmiTraceListenerData : TraceListenerData
     {
         /// <summary>

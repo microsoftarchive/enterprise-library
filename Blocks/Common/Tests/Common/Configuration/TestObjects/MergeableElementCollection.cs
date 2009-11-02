@@ -12,6 +12,7 @@
 using System.Collections.Generic;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using System;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.TestObjects
 {
@@ -50,7 +51,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.TestO
         }
 
 
-        ConfigurationElement IMergeableConfigurationElementCollection.CreateNewElement()
+        ConfigurationElement IMergeableConfigurationElementCollection.CreateNewElement(Type configurationType)
         {
             return new TestLeafConfigurationElement();
         }

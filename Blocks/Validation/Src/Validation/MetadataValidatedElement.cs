@@ -31,19 +31,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         private string ruleset;
 
         /// <summary>
-        /// 
+        /// Initializes a new instance of the <see cref="MetadataValidatedElement"/> class for a ruleset..
         /// </summary>
-        /// <param name="ruleset"></param>
+        /// <param name="ruleset">The ruleset.</param>
         public MetadataValidatedElement(string ruleset)
         {
             this.ruleset = ruleset;
         }
 
         /// <summary>
-        /// 
+        /// Initializes a new instance of the <see cref="MetadataValidatedElement"/> class for a field and a ruleset.
         /// </summary>
-        /// <param name="fieldInfo"></param>
-        /// <param name="ruleset"></param>
+        /// <param name="fieldInfo">The field.</param>
+        /// <param name="ruleset">The ruleset.</param>
         public MetadataValidatedElement(FieldInfo fieldInfo, string ruleset)
             : this(ruleset)
         {
@@ -51,10 +51,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         }
 
         /// <summary>
-        /// 
+        /// Initializes a new instance of the <see cref="MetadataValidatedElement"/> class for a method and a ruleset.
         /// </summary>
-        /// <param name="methodInfo"></param>
-        /// <param name="ruleset"></param>
+        /// <param name="methodInfo">The method.</param>
+        /// <param name="ruleset">The ruleset.</param>
         public MetadataValidatedElement(MethodInfo methodInfo, string ruleset)
             : this(ruleset)
         {
@@ -62,10 +62,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         }
 
         /// <summary>
-        /// 
+        /// Initializes a new instance of the <see cref="MetadataValidatedElement"/> class for a property and a ruleset.
         /// </summary>
-        /// <param name="propertyInfo"></param>
-        /// <param name="ruleset"></param>
+        /// <param name="propertyInfo">The property.</param>
+        /// <param name="ruleset">The ruleset.</param>
         public MetadataValidatedElement(PropertyInfo propertyInfo, string ruleset)
             : this(ruleset)
         {
@@ -73,10 +73,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         }
 
         /// <summary>
-        /// 
+        /// Initializes a new instance of the <see cref="MetadataValidatedElement"/> class for a type and a ruleset.
         /// </summary>
-        /// <param name="type"></param>
-        /// <param name="ruleset"></param>
+        /// <param name="type">The property.</param>
+        /// <param name="ruleset">The ruleset.</param>
         public MetadataValidatedElement(Type type, string ruleset)
             : this(ruleset)
         {
@@ -84,36 +84,36 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         }
 
         /// <summary>
-        /// 
+        /// Updates the flyweight for a field.
         /// </summary>
-        /// <param name="fieldInfo"></param>
+        /// <param name="fieldInfo">The field.</param>
         public void UpdateFlyweight(FieldInfo fieldInfo)
         {
             this.UpdateFlyweight(fieldInfo, fieldInfo.FieldType);
         }
 
         /// <summary>
-        /// 
+        /// Updates the flyweight for a method.
         /// </summary>
-        /// <param name="methodInfo"></param>
+        /// <param name="methodInfo">The method.</param>
         public void UpdateFlyweight(MethodInfo methodInfo)
         {
             this.UpdateFlyweight(methodInfo, methodInfo.ReturnType);
         }
 
         /// <summary>
-        /// 
+        /// Updates the flyweight for a property.
         /// </summary>
-        /// <param name="propertyInfo"></param>
+        /// <param name="propertyInfo">The property.</param>
         public void UpdateFlyweight(PropertyInfo propertyInfo)
         {
             this.UpdateFlyweight(propertyInfo, propertyInfo.PropertyType);
         }
 
         /// <summary>
-        /// 
+        /// Updates the flyweight for a type.
         /// </summary>
-        /// <param name="type"></param>
+        /// <param name="type">The type.</param>
         public void UpdateFlyweight(Type type)
         {
             this.UpdateFlyweight(type, type);
@@ -130,7 +130,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         }
 
         /// <summary>
-        /// 
+        /// Gets the ruleset.
         /// </summary>
         protected string Ruleset
         {
@@ -138,7 +138,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         }
 
         /// <summary>
-        /// 
+        /// Gets the target type.
         /// </summary>
         protected Type TargetType
         {

@@ -114,6 +114,11 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Configuration\ConfigurationSourceBuilderExtensions.cs" />
+    <Compile Include="Configuration\DesignResources.Designer.cs">
+      <DependentUpon>DesignResources.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
     <Compile Include="Configuration\IExceptionConfigurationLoggingProvider.cs" />
     <Compile Include="Configuration\LoggingExceptionHandlerData.cs">
       <SubType>Code</SubType>
@@ -134,6 +139,10 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Configuration\DesignResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>DesignResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

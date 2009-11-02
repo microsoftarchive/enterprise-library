@@ -117,59 +117,37 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AssemblyResolveFailed" xml:space="preserve">
-    <value>Unable to load assembly '{0}'. Please copy the assembly file to the tools rundirectory at '{1}' and reload the configuration.</value>
+  <data name="NewCollectionElementNameFormat" xml:space="preserve">
+    <value>New {0} {1}</value>
   </data>
-  <data name="CaptionError" xml:space="preserve">
-    <value>Error</value>
+  <data name="OpenConfigurationFileDialogFilter" xml:space="preserve">
+    <value>Configuration files (*.config)|*.config|All Files (*.*)|*.*</value>
   </data>
-  <data name="ConfigurationFileFilter" xml:space="preserve">
-    <value>Configuration Files(web.config, *.exe.config, app.config)|web.config;*.exe.config;app.config|All Files(*.*)|*.*.</value>
+  <data name="OpenConfigurationFileDialogTitle" xml:space="preserve">
+    <value>Open Configuration File</value>
   </data>
-  <data name="DefaultStatusBarText" xml:space="preserve">
-    <value>Ready</value>
+  <data name="PromptContinueOperationDiscardChangesWarningMessage" xml:space="preserve">
+    <value>Continuing will discard changes made to the current configuration. Do you want save the current changes prior?</value>
   </data>
-  <data name="InvalidSaveHierarchyMessage" xml:space="preserve">
-    <value>Could not save {0}.</value>
+  <data name="PromptContinueOperationDiscardChangesWarningTitle" xml:space="preserve">
+    <value>Enterprise Library Configuration</value>
   </data>
-  <data name="NewApplicationStatusBarText" xml:space="preserve">
-    <value>Create a new configuration application</value>
+  <data name="PromptOverwriteReadonlyFileMessage" xml:space="preserve">
+    <value>File is Read Only, Would you like to Overwride the file?</value>
   </data>
-  <data name="NodeLabelEditCaption" xml:space="preserve">
-    <value>Node Label Edit</value>
+  <data name="PromptOverwriteReadonlyFiletitle" xml:space="preserve">
+    <value>Save Configuration File</value>
   </data>
-  <data name="NodeLabelEditFailedText" xml:space="preserve">
-    <value>Unable to rename the TreeNode -&gt; </value>
+  <data name="PromptSaveOverFileThatCannotBeReadFromWarningMessage" xml:space="preserve">
+    <value>The file '{0}' cannot be read from, it might not a valid configuration file or contain errors. Proceeding with save will overwrite the file.</value>
   </data>
-  <data name="NodeLabelEditText" xml:space="preserve">
-    <value>Invalid tree node label.
-The label cannot be blank.</value>
+  <data name="PromptSaveOverFileThatCannotBeReadFromWarningTitle" xml:space="preserve">
+    <value>Save Configuration File</value>
   </data>
-  <data name="OpenApplicationStatusBarText" xml:space="preserve">
-    <value>Open an existing configuration application</value>
+  <data name="SaveConfigurationFileDialogFilter" xml:space="preserve">
+    <value>Configuration files (*.config)|*.config|All Files (*.*)|*.*</value>
   </data>
-  <data name="SaveAllStatusBarText" xml:space="preserve">
-    <value>Save all the application configuration</value>
-  </data>
-  <data name="SaveApplicationCaption" xml:space="preserve">
-    <value>Save Application</value>
-  </data>
-  <data name="SaveApplicationsMessage" xml:space="preserve">
-    <value>One or more of the applications could not be saved. Please correct the errors and try again.</value>
-  </data>
-  <data name="SaveApplicationStatusBarText" xml:space="preserve">
-    <value>Save the current application configuration.</value>
-  </data>
-  <data name="SaveAsApplicationStatusBarText" xml:space="preserve">
-    <value>Save the current application in another file.</value>
-  </data>
-  <data name="SaveAsDialogTitle" xml:space="preserve">
-    <value>Save As</value>
-  </data>
-  <data name="TypeResolveFailed" xml:space="preserve">
-    <value>Unable to load type '{0}'. Please copy the assembly that contains this type to the tools rundirectory at '{1}' and reload the configuration.</value>
-  </data>
-  <data name="UnhandledExceptionFormText" xml:space="preserve">
-    <value>Unhandled Exception</value>
+  <data name="SaveConfigurationFileDialogTitle" xml:space="preserve">
+    <value>Save Configuration File</value>
   </data>
 </root>

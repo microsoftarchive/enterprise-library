@@ -23,7 +23,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         /// 
         /// </summary>
         public MetadataValidatorBuilder()
-            : base()
+            : this(MemberAccessValidatorBuilderFactory.Default)
         { }
 
         /// <summary>
@@ -31,7 +31,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         /// </summary>
         /// <param name="memberAccessValidatorFactory"></param>
         public MetadataValidatorBuilder(MemberAccessValidatorBuilderFactory memberAccessValidatorFactory)
-            : base(memberAccessValidatorFactory)
+            : this(memberAccessValidatorFactory, ValidationFactory.DefaultCompositeValidatorFactory)
+        { }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="memberAccessValidatorFactory"></param>
+        /// <param name="validatorFactory"></param>
+        public MetadataValidatorBuilder(
+            MemberAccessValidatorBuilderFactory memberAccessValidatorFactory,
+            ValidatorFactory validatorFactory)
+            : base(memberAccessValidatorFactory, validatorFactory)
         { }
 
         /// <summary>
@@ -55,7 +66,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         /// <returns></returns>
         public Validator CreateValidatorForType(Type type, string ruleset)
         {
-            return CreateValidatorForValidatedElement(new MetadataValidatedType(type, ruleset),
+            return CreateValidatorForValidatedElement(
+                new MetadataValidatedType(type, ruleset),
                 this.GetCompositeValidatorBuilderForType);
         }
 

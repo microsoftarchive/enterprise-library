@@ -13,6 +13,7 @@ using System;
 using Microsoft.Practices.EnterpriseLibrary.Validation.TestSupport.TestClasses;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Practices.Unity;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
 {
@@ -129,7 +130,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         {
             MockValidatorAttribute validatorAttribute = new MockValidatorAttribute(false);
 
-            Validator validator = ((IValidatorDescriptor)validatorAttribute).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)validatorAttribute).CreateValidator(null, null, null, null);
 
             Assert.IsNotNull(validator);
             Assert.AreEqual(MockValidator.DefaultMockValidatorMessageTemplate, validator.MessageTemplate);
@@ -142,7 +143,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
             MockValidatorAttribute validatorAttribute = new MockValidatorAttribute(false);
             validatorAttribute.Tag = "tag";
 
-            Validator validator = ((IValidatorDescriptor)validatorAttribute).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)validatorAttribute).CreateValidator(null, null, null, null);
 
             Assert.IsNotNull(validator);
             Assert.AreEqual(MockValidator.DefaultMockValidatorMessageTemplate, validator.MessageTemplate);
@@ -156,7 +157,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
             MockValidatorAttribute validatorAttribute = new MockValidatorAttribute(false);
             validatorAttribute.MessageTemplate = "message override";
 
-            Validator validator = ((IValidatorDescriptor)validatorAttribute).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)validatorAttribute).CreateValidator(null, null, null, null);
 
             Assert.IsNotNull(validator);
             Assert.AreEqual("message override", validator.MessageTemplate);

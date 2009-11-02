@@ -17,6 +17,8 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
 using FakeRules = Microsoft.Practices.EnterpriseLibrary.PolicyInjection.MatchingRules;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using System.ComponentModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
 {
@@ -24,6 +26,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
     /// Configuration element that stores configuration information for
     /// an instance of <see cref="TypeMatchingRule"/>.
     /// </summary>
+    [ResourceDescription(typeof(DesignResources), "TypeMatchingRuleDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "TypeMatchingRuleDataDisplayName")]
     public class TypeMatchingRuleData : MatchingRuleData
     {
         private const string MatchesPropertyName = "matches";
@@ -33,6 +37,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// </summary>
         public TypeMatchingRuleData()
         {
+            Type = typeof(FakeRules.TypeMatchingRule);
         }
 
         /// <summary>
@@ -75,6 +80,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// <value>The "matches" configuration subelement.</value>
         [ConfigurationProperty(MatchesPropertyName)]
         [ConfigurationCollection(typeof(MatchData))]
+        [ResourceDescription(typeof(DesignResources), "TypeMatchingRuleDataMatchesDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "TypeMatchingRuleDataMatchesDisplayName")]
+        [System.ComponentModel.Editor(CommonDesignTime.EditorTypes.CollectionEditor, CommonDesignTime.EditorTypes.FrameworkElement)]
+        [CollectionEditorTemplate("PiabTypeMatchHeader", "PiabTypeMatchItem")]
+        [EnvironmentalOverrides(false)]
         public MatchDataCollection<MatchData> Matches
         {
             get { return (MatchDataCollection<MatchData>)base[MatchesPropertyName]; }

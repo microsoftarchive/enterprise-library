@@ -16,12 +16,16 @@ using System.Linq.Expressions;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Configuration
 {
     /// <summary>
     /// Configuration object for a <see cref="FormattedDatabaseTraceListener"/>.
     /// </summary>
+    [ResourceDescription(typeof(DesignResources), "FormattedDatabaseTraceListenerDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "FormattedDatabaseTraceListenerDataDisplayName")]
+    [AddSateliteProviderCommand("connectionStrings")]
     public class FormattedDatabaseTraceListenerData : TraceListenerData
     {
         private const string addCategoryStoredProcNameProperty = "addCategoryStoredProcName";
@@ -92,6 +96,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Configuration
         /// Gets and sets the database instance name.
         /// </summary>
         [ConfigurationProperty(databaseInstanceNameProperty, IsRequired = false)]
+        [ResourceDescription(typeof(DesignResources), "FormattedDatabaseTraceListenerDataDatabaseInstanceNameDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "FormattedDatabaseTraceListenerDataDatabaseInstanceNameDisplayName")]
+        [Reference(typeof(ConnectionStringSettingsCollection), typeof(ConnectionStringSettings))]
         public string DatabaseInstanceName
         {
             get { return (string)base[databaseInstanceNameProperty]; }
@@ -102,6 +109,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Configuration
         /// Gets and sets the stored procedure name for writing the log.
         /// </summary>
         [ConfigurationProperty(writeLogStoredProcNameProperty, IsRequired = true, DefaultValue = "WriteLog")]
+        [ResourceDescription(typeof(DesignResources), "FormattedDatabaseTraceListenerDataWriteLogStoredProcNameDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "FormattedDatabaseTraceListenerDataWriteLogStoredProcNameDisplayName")]
         public string WriteLogStoredProcName
         {
             get { return (string)base[writeLogStoredProcNameProperty]; }
@@ -112,6 +121,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Configuration
         /// Gets and sets the stored procedure name for adding a category for this log.
         /// </summary>
         [ConfigurationProperty(addCategoryStoredProcNameProperty, IsRequired = true, DefaultValue="AddCategory")]
+        [ResourceDescription(typeof(DesignResources), "FormattedDatabaseTraceListenerDataAddCategoryStoredProcNameDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "FormattedDatabaseTraceListenerDataAddCategoryStoredProcNameDisplayName")]
         public string AddCategoryStoredProcName
         {
             get { return (string)base[addCategoryStoredProcNameProperty]; }
@@ -122,6 +133,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Configuration
         /// Gets and sets the formatter name.
         /// </summary>
         [ConfigurationProperty(formatterNameProperty, IsRequired = false)]
+        [ResourceDescription(typeof(DesignResources), "FormattedDatabaseTraceListenerDataFormatterDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "FormattedDatabaseTraceListenerDataFormatterDisplayName")]
         public string Formatter
         {
             get { return (string)base[formatterNameProperty]; }

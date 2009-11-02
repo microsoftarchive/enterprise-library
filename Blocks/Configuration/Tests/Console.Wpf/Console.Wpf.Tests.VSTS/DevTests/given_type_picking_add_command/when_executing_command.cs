@@ -21,19 +21,19 @@ using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
 using Moq;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Console.Wpf.Tests.VSTS.DevTests.Contexts;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_type_picking_add_command
 {
-    public abstract class SectionAndTestableTypePickingAddCommandContext : ServiceProviderContext
+    public abstract class SectionAndTestableTypePickingAddCommandContext : ContainerContext
     {
         protected override void Arrange()
         {
             base.Arrange();
 
             var section = new ConfigurationSectionWithANamedElementCollection();
-            var sectionViewModel = SectionViewModel.CreateSection(base.ServiceProvider, section);
-            CollectionViewModel =
-                sectionViewModel.DescendentElements().OfType<ElementCollectionViewModel>().Single();
+            var sectionViewModel = SectionViewModel.CreateSection(base.Container, "sectionName", section);
+            CollectionViewModel = sectionViewModel.DescendentElements().OfType<ElementCollectionViewModel>().Single();
         }
 
         public ANamedElementWithTypeProperty AddedElement
@@ -53,17 +53,26 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_type_picking_add_command
             public static Type ExceptionTypeUsed = typeof(InvalidOperationException);
 
             public TestableTypePickingCollectionElementAddCommand(Type configurationElementType, ElementCollectionViewModel elementCollectionModel)
-                : base(configurationElementType, elementCollectionModel)
+                : base(new TypePickingCommandAttribute(), new ConfigurationElementType(configurationElementType), elementCollectionModel)
             {
             }
 
-            public TestableTypePickingCollectionElementAddCommand(Type configurationElementType, ElementCollectionViewModel elementCollectionModel, PropertyInfo propertyToSet)
-                : base(configurationElementType, elementCollectionModel, propertyToSet)
+            public TestableTypePickingCollectionElementAddCommand(Type configurationElementType, ElementCollectionViewModel elementCollectionModel, string propertyToSet)
+                : base(new TypePickingCommandAttribute(propertyToSet) , new ConfigurationElementType(configurationElementType), elementCollectionModel)
             {
             }
 
-            protected override Type GetSelectedType()
+            public Type BaseTypeRequested { get; set; }
+
+            public Type SelectedTypeRequested { get; set; }
+
+            public TypeSelectorIncludes SelectedTypeIncludes { get; set; }
+
+            protected override Type GetSelectedType(Type selectedType, Type baseType, TypeSelectorIncludes selectorIncludes, Type configurationType)
             {
+                BaseTypeRequested = baseType;
+                SelectedTypeRequested = selectedType;
+                SelectedTypeIncludes = selectorIncludes;
                 return ExceptionTypeUsed;
             }
         }
@@ -99,7 +108,9 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_type_picking_add_command
                 this[typeNameProperty] = null;
                 this[someOtherTypeNameProperty] = null;
             }
+
             [ConfigurationProperty(typeNameProperty)]
+            [BaseType(typeof(ArgumentException), TypeSelectorIncludes.NonpublicTypes)]
             public string TypeName
             {
                 get { return (string) this[typeNameProperty]; }
@@ -118,7 +129,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_type_picking_add_command
     [TestClass]
     public class when_executing_with_default_property_names : SectionAndTestableTypePickingAddCommandContext
     {
-        private TypePickingCollectionElementAddCommand addCommand;
+        private TestableTypePickingCollectionElementAddCommand addCommand;
         private ANamedElementWithTypeProperty configurationElement;
 
         protected override void Arrange()
@@ -147,6 +158,24 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_type_picking_add_command
         {
             Assert.AreEqual(TestableTypePickingCollectionElementAddCommand.ExceptionTypeUsed.AssemblyQualifiedName, AddedElement.TypeName);
         }
+
+        [TestMethod]
+        public void then_type_picker_invoked_with_base_type_from_attribute()
+        {
+            Assert.AreEqual(typeof (ArgumentException), addCommand.BaseTypeRequested);
+        }
+
+        [TestMethod]
+        public void then_selected_type_starts_with_base_type()
+        {
+            Assert.AreEqual(typeof(ArgumentException), addCommand.SelectedTypeRequested);
+        }
+
+        [TestMethod]
+        public void then_selector_includes_provided_from_attribute()
+        {
+            Assert.AreEqual(TypeSelectorIncludes.NonpublicTypes, addCommand.SelectedTypeIncludes);
+        }
     }
 
     [TestClass]
@@ -159,8 +188,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_type_picking_add_command
             base.Arrange();
             addCommand = new TestableTypePickingCollectionElementAddCommand(typeof(ANamedElementWithTypeProperty),
                                                                             CollectionViewModel,
-                                                                            typeof(ANamedElementWithTypeProperty).
-                                                                                GetProperty("SomeOtherTypeName"));
+                                                                            "SomeOtherTypeName");
         }
 
         protected override void Act()

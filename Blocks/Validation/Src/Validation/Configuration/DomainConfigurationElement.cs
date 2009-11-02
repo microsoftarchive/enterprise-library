@@ -13,13 +13,17 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 {
 	/// <summary>
 	/// Represents an individual domain element for a <see cref="Microsoft.Practices.EnterpriseLibrary.Validation.Validators.DomainValidator{T}"/>.
 	/// </summary>
-	public class DomainConfigurationElement : NamedConfigurationElement
+    [ResourceDescription(typeof(DesignResources), "DomainConfigurationElementDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "DomainConfigurationElementDisplayName")]
+    [ViewModel(ValidationDesignTime.ViewModelTypeNames.DomainConfigurationElementViewModel)]
+    public class DomainConfigurationElement : NamedConfigurationElement
 	{
 		/// <summary>
 		/// Initialize a new instance of a <see cref="DomainConfigurationElement"/> class.

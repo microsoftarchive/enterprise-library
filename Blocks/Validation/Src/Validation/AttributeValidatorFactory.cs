@@ -10,10 +10,6 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation
@@ -26,24 +22,28 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         ///<summary>
         /// Initializes an AttributeValidatorFactory
         ///</summary>
-        /// <param name="instrumentationProvider">The <see cref="IValidationInstrumentationProvider"/> to provide to validators for instrumentation purposes.</param>
+        /// <param name="instrumentationProvider">The <see cref="IValidationInstrumentationProvider"/> 
+        /// to provide to validators for instrumentation purposes.</param>
         public AttributeValidatorFactory(IValidationInstrumentationProvider instrumentationProvider)
             : base(instrumentationProvider)
-        {
-        }
+        { }
 
         /// <summary>
         /// Creates the validator for the specified target and ruleset.
         /// </summary>
         /// <param name="targetType">The <see cref="Type"/>to validate.</param>
         /// <param name="ruleset">The ruleset to use when validating</param>
+        /// <param name="mainValidatorFactory">Factory to use when building nested validators.</param>
         /// <returns>A <see cref="Validator"/></returns>
-        protected internal override Validator InnerCreateValidator(Type targetType, string ruleset)
+        protected internal override Validator InnerCreateValidator(
+            Type targetType, 
+            string ruleset, 
+            ValidatorFactory mainValidatorFactory)
         {
-            MetadataValidatorBuilder builder = new MetadataValidatorBuilder();
-            Validator validator = builder.CreateValidator(targetType, ruleset);
+            MetadataValidatorBuilder builder =
+                new MetadataValidatorBuilder(MemberAccessValidatorBuilderFactory.Default, mainValidatorFactory);
 
-            return validator;
+            return builder.CreateValidator(targetType, ruleset);
         }
     }
 }

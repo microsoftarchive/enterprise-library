@@ -13,6 +13,8 @@ using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Caching.BackingStoreImplementations;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using System.Collections.Generic;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
 {
@@ -20,6 +22,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
     /// Configuration data defining IsolatedStorageCacheStorageData. This configuration section adds the name
     /// of the Isolated Storage area to use to store data.
     /// </summary>    
+    [ResourceDescription(typeof(DesignResources), "IsolatedStorageCacheStorageDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "IsolatedStorageCacheStorageDataDisplayName")]
+    [System.ComponentModel.Browsable(true)]
 	public class IsolatedStorageCacheStorageData : CacheStorageData
     {
 		private const string partitionNameProperty = "partitionName";
@@ -52,6 +57,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
         /// Name of the Isolated Storage area to use.
         /// </summary>
         [ConfigurationProperty(partitionNameProperty, IsRequired= true)]
+        [ResourceDescription(typeof(DesignResources), "IsolatedStorageCacheStorageDataPartitionNameDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "IsolatedStorageCacheStorageDataPartitionNameDisplayName")]
         public string PartitionName
         {
             get { return (string)base[partitionNameProperty]; }

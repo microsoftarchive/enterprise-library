@@ -11,16 +11,16 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration.ContainerModel;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel.Unity;
+using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration.ContainerModel;
+using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Validation.TestSupport.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.TestSupport.TestClasses;
 using Microsoft.Practices.Unity;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel.Unity;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
 {
@@ -71,9 +71,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
                registrations.Single(r => r.ServiceType == typeof(AttributeValidatorFactory));
 
             attributeFactoryRegistration
-                .AssertForServiceType(typeof (AttributeValidatorFactory))
+                .AssertForServiceType(typeof(AttributeValidatorFactory))
                 .IsDefault()
-                .ForImplementationType(typeof (AttributeValidatorFactory));
+                .ForImplementationType(typeof(AttributeValidatorFactory));
         }
 
         [TestMethod]
@@ -85,7 +85,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             attributeFactoryRegistration
                 .AssertConstructor()
                 .WithContainerResolvedParameter<IValidationInstrumentationProvider>(null)
-                .VerifyConstructorParameters();   
+                .VerifyConstructorParameters();
         }
 
         [TestMethod]
@@ -134,10 +134,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
                 .WithContainerResolvedParameter<IValidationInstrumentationProvider>(null)
                 .WithContainerResolvedParameter<AttributeValidatorFactory>(null)
                 .WithContainerResolvedParameter<ConfigurationValidatorFactory>(null)
+                .WithContainerResolvedParameter<ValidationAttributeValidatorFactory>(null)
                 .VerifyConstructorParameters();
         }
     }
-    
+
     [TestClass]
     public class GivenUpdatedTypeRegistrationsBasedOnEmptyConfigurationSource
     {
@@ -248,6 +249,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
                 .WithContainerResolvedParameter<IValidationInstrumentationProvider>(null)
                 .WithContainerResolvedParameter<AttributeValidatorFactory>(null)
                 .WithContainerResolvedParameter<ConfigurationValidatorFactory>(null)
+                .WithContainerResolvedParameter<ValidationAttributeValidatorFactory>(null)
                 .VerifyConstructorParameters();
         }
     }

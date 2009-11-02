@@ -17,12 +17,15 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Configuration
 {
     /// <summary>
     /// Configuration element class that manages the configuration data for the <see cref="CachingCallHandler"/>.
     /// </summary>
+    [ResourceDescription(typeof(DesignResources), "CachingCallHandlerDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "CachingCallHandlerDataDisplayName")]
     public class CachingCallHandlerData : CallHandlerData
     {
         private const string ExpirationTimePropertyName = "expirationTime";
@@ -32,6 +35,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
         /// </summary>
         public CachingCallHandlerData()
         {
+            Type = typeof(CachingCallHandler);
             ExpirationTime = CachingCallHandler.DefaultExpirationTime;
         }
 
@@ -61,6 +65,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
         /// </summary>
         /// <value>The "expirationTime" attribute</value>
         [ConfigurationProperty(ExpirationTimePropertyName)]
+        [ResourceDescription(typeof(DesignResources), "CachingCallHandlerDataExpirationTimeDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "CachingCallHandlerDataExpirationTimeDisplayName")]
         public TimeSpan ExpirationTime
         {
             get { return (TimeSpan)base[ExpirationTimePropertyName]; }

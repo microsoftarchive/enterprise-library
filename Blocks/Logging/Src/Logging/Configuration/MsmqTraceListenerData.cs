@@ -18,12 +18,15 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 {
     /// <summary>
     /// Represents the configuration settings that describe a <see cref="MsmqTraceListener"/>.
     /// </summary>
+    [ResourceDescription(typeof(DesignResources), "MsmqTraceListenerDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "MsmqTraceListenerDataDisplayName")]
     public class MsmqTraceListenerData : TraceListenerData
     {
         private const string queuePathProperty = "queuePath";
@@ -237,7 +240,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// <summary>
         /// Gets or sets formatter name.
         /// </summary>
-        [Reference(typeof(LoggingSettings), typeof(FormatterData))]
+        [Reference(typeof(NameTypeConfigurationElementCollection<FormatterData, CustomFormatterData>), typeof(FormatterData))]
         public string Formatter
         {
             get

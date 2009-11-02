@@ -93,7 +93,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_configuration_element_with_prope
 
         protected override void Act()
         {
-            var sectionModel = SectionViewModel.CreateSection(ServiceProvider, new ConfigurationElementWithComponentModelAttributes());
+            var sectionModel = SectionViewModel.CreateSection(Container, "mock section", new ConfigurationElementWithComponentModelAttributes());
             properties = sectionModel.Properties;
         }
 
@@ -137,12 +137,12 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_configuration_element_with_prope
         }
 
         [TestMethod]
-        public void then_property_model_is_implictly_readonly_if_suggested_values_are_exclusive()
+        public void then_property_model_has_suggested_values_are_exlcusive()
         {
             var Prop1 = properties.Where(x => x.PropertyName == "Prop1").FirstOrDefault();
 
             Assert.IsNotNull(Prop1);
-            Assert.IsTrue(Prop1.DesignTimeReadOnly);
+            Assert.IsFalse(Prop1.SuggestedValuesEditable);
         }
 
         [TestMethod]

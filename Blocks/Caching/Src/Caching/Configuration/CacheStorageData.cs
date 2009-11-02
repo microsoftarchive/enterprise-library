@@ -18,6 +18,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Collections.Generic;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using System.ComponentModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
 {
@@ -25,6 +26,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
 	/// Configuration data defining CacheStorageData. This configuration section defines the name and type
 	/// of the IBackingStore used by a CacheManager
 	/// </summary>
+    [ResourceDescription(typeof(DesignResources), "CacheStorageDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "CacheStorageDataDisplayName")]
+    [Browsable(false)]
 	public class CacheStorageData : NameTypeConfigurationElement
 	{
 		private const string encryptionProviderNameProperty = "encryptionProviderName";
@@ -71,8 +75,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
 		/// Gets the name of the referenced <see cref="IStorageEncryptionProvider"/>.
 		/// </summary>
         [ConfigurationProperty(encryptionProviderNameProperty, IsRequired = false)]
-        [Reference(typeof(CacheManagerSettings), typeof(StorageEncryptionProviderData))]
-		public string StorageEncryption
+        [Reference(typeof(NameTypeConfigurationElementCollection<StorageEncryptionProviderData, StorageEncryptionProviderData>), typeof(StorageEncryptionProviderData))]
+        [ResourceDescription(typeof(DesignResources), "CacheStorageDataStorageEncryptionDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "CacheStorageDataStorageEncryptionDisplayName")]
+		public virtual string StorageEncryption
 		{
 			get { return (string)base[encryptionProviderNameProperty]; }
 			set { base[encryptionProviderNameProperty] = value; }

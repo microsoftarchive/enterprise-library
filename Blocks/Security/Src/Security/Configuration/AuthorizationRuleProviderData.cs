@@ -40,8 +40,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration
     /// Represents the configuration data for an
     /// <see cref="Microsoft.Practices.EnterpriseLibrary.Security.AuthorizationRuleProvider"/>.
     /// </summary>
-    [ResourceDisplayName(typeof(Resources), "AddAuthorizationRuleProviderData")]
-    [ResourceDescription(typeof(Resources), "AddAuthorizationRuleProviderDataDescription")]
+    [ResourceDescription(typeof(DesignResources), "AuthorizationRuleProviderDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "AuthorizationRuleProviderDataDisplayName")]
 	public class AuthorizationRuleProviderData : AuthorizationProviderData
     {
         private const string rulesProperty = "rules";
@@ -73,6 +73,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration
 		/// <value>A collection of <see cref="AuthorizationRuleData"/>.</value>
 		[ConfigurationProperty(rulesProperty, IsRequired= false)]
         [ConfigurationCollection(typeof(AuthorizationRuleData))]
+        [ResourceDescription(typeof(DesignResources), "AuthorizationRuleProviderDataRulesDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "AuthorizationRuleProviderDataRulesDisplayName")]
+        [PromoteCommands]
 		public NamedElementCollection<AuthorizationRuleData> Rules
 		{
 			get

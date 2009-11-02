@@ -115,6 +115,11 @@
     <Compile Include="Configuration\AzManAuthorizationProviderData.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Configuration\DesignResources.Designer.cs">
+      <DependentUpon>DesignResources.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
     <Compile Include="Configuration\Fluent\AuthorizeUsingAzManExtension.cs" />
     <Compile Include="Configuration\Fluent\IAuthorizeUsingAzManProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -123,6 +128,10 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Configuration\DesignResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>DesignResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

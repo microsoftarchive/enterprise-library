@@ -32,7 +32,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         {
             valueAccessBuilder = new ReflectionMemberValueAccessBuilder();
             mockFactory = new MockMemberAccessValidatorBuilderFactory(valueAccessBuilder);
-            builder = new MetadataValidatorBuilder(mockFactory);
+            builder = new MetadataValidatorBuilder(mockFactory, ValidationFactory.DefaultCompositeValidatorFactory);
         }
 
         #region test cases for individual properties
@@ -1189,12 +1189,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
             public MockValueAccessBuilderCapturingAttribute()
                 : base(false) { }
 
-            protected override Validator DoCreateValidator(Type targetType,
-                                                           Type ownerType,
-                                                           MemberValueAccessBuilder memberValueAccessBuilder)
+            protected override Validator DoCreateValidator(
+                Type targetType,
+                Type ownerType,
+                MemberValueAccessBuilder memberValueAccessBuilder,
+                ValidatorFactory validatorFactory)
             {
                 suppliedValueAccessBuilders.Add(memberValueAccessBuilder);
-                return base.DoCreateValidator(targetType, ownerType, memberValueAccessBuilder);
+                return base.DoCreateValidator(targetType, ownerType, memberValueAccessBuilder, validatorFactory);
             }
         }
 

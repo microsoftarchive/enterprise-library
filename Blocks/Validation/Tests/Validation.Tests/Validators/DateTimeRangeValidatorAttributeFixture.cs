@@ -10,6 +10,7 @@
 //===============================================================================
 
 using System;
+using System.ComponentModel.DataAnnotations;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -25,7 +26,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             DateTime upperBound = new DateTime(2006, 1, 10);
             ValidatorAttribute attribute = new DateTimeRangeValidatorAttribute(upperBound);
 
-            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null, null);
             Assert.IsNotNull(validator);
 
             RangeValidator<DateTime> rangeValidator = validator as RangeValidator<DateTime>;
@@ -44,7 +45,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             ValueValidatorAttribute attribute = new DateTimeRangeValidatorAttribute(upperBound);
             attribute.Negated = true;
 
-            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null, null);
             Assert.IsNotNull(validator);
 
             RangeValidator<DateTime> rangeValidator = validator as RangeValidator<DateTime>;
@@ -62,7 +63,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             DateTime upperBound = new DateTime(2006, 1, 10);
             ValidatorAttribute attribute = new DateTimeRangeValidatorAttribute("2006-01-10T00:00:00");
 
-            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null, null);
             Assert.IsNotNull(validator);
 
             RangeValidator<DateTime> rangeValidator = validator as RangeValidator<DateTime>;
@@ -81,7 +82,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             ValueValidatorAttribute attribute = new DateTimeRangeValidatorAttribute("2006-01-10T00:00:00");
             attribute.Negated = true;
 
-            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null, null);
             Assert.IsNotNull(validator);
 
             RangeValidator<DateTime> rangeValidator = validator as RangeValidator<DateTime>;
@@ -100,7 +101,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             DateTime upperBound = new DateTime(2006, 1, 10);
             ValidatorAttribute attribute = new DateTimeRangeValidatorAttribute(lowerBound, upperBound);
 
-            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null, null);
             Assert.IsNotNull(validator);
 
             RangeValidator<DateTime> rangeValidator = validator as RangeValidator<DateTime>;
@@ -121,7 +122,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             ValueValidatorAttribute attribute = new DateTimeRangeValidatorAttribute(lowerBound, upperBound);
             attribute.Negated = true;
 
-            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null, null);
             Assert.IsNotNull(validator);
 
             RangeValidator<DateTime> rangeValidator = validator as RangeValidator<DateTime>;
@@ -141,7 +142,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             DateTime upperBound = new DateTime(2006, 1, 20);
             ValidatorAttribute attribute = new DateTimeRangeValidatorAttribute("2006-01-01T00:00:00", "2006-01-20T00:00:00");
 
-            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null, null);
             Assert.IsNotNull(validator);
 
             RangeValidator<DateTime> rangeValidator = validator as RangeValidator<DateTime>;
@@ -162,7 +163,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             ValueValidatorAttribute attribute = new DateTimeRangeValidatorAttribute("2006-01-01T00:00:00", "2006-01-20T00:00:00");
             attribute.Negated = true;
 
-            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null, null);
             Assert.IsNotNull(validator);
 
             RangeValidator<DateTime> rangeValidator = validator as RangeValidator<DateTime>;
@@ -183,7 +184,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             ValidatorAttribute attribute = new DateTimeRangeValidatorAttribute(lowerBound, upperBound);
             attribute.MessageTemplate = "overriden message template";
 
-            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null, null);
             Assert.IsNotNull(validator);
 
             RangeValidator<DateTime> rangeValidator = validator as RangeValidator<DateTime>;
@@ -205,7 +206,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             attribute.Negated = true;
             attribute.MessageTemplate = "overriden message template";
 
-            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null, null);
             Assert.IsNotNull(validator);
 
             RangeValidator<DateTime> rangeValidator = validator as RangeValidator<DateTime>;
@@ -225,7 +226,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             DateTime upperBound = default(DateTime);
             ValidatorAttribute attribute = new DateTimeRangeValidatorAttribute(lowerBound, RangeBoundaryType.Exclusive, upperBound, RangeBoundaryType.Ignore);
 
-            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null, null);
             Assert.IsNotNull(validator);
 
             RangeValidator<DateTime> rangeValidator = validator as RangeValidator<DateTime>;
@@ -246,7 +247,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             ValueValidatorAttribute attribute = new DateTimeRangeValidatorAttribute(lowerBound, RangeBoundaryType.Exclusive, upperBound, RangeBoundaryType.Ignore);
             attribute.Negated = true;
 
-            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null, null);
             Assert.IsNotNull(validator);
 
             RangeValidator<DateTime> rangeValidator = validator as RangeValidator<DateTime>;
@@ -266,7 +267,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             DateTime upperBound = default(DateTime);
             ValidatorAttribute attribute = new DateTimeRangeValidatorAttribute("2006-01-01T00:00:00", RangeBoundaryType.Exclusive, "", RangeBoundaryType.Ignore);
 
-            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null, null);
             Assert.IsNotNull(validator);
 
             RangeValidator<DateTime> rangeValidator = validator as RangeValidator<DateTime>;
@@ -287,7 +288,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             ValueValidatorAttribute attribute = new DateTimeRangeValidatorAttribute("2006-01-01T00:00:00", RangeBoundaryType.Exclusive, "", RangeBoundaryType.Ignore);
             attribute.Negated = true;
 
-            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null, null);
             Assert.IsNotNull(validator);
 
             RangeValidator<DateTime> rangeValidator = validator as RangeValidator<DateTime>;
@@ -308,7 +309,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             ValidatorAttribute attribute = new DateTimeRangeValidatorAttribute(lowerBound, RangeBoundaryType.Exclusive, upperBound, RangeBoundaryType.Ignore);
             attribute.MessageTemplate = "my message template";
 
-            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null, null);
             Assert.IsNotNull(validator);
 
             RangeValidator<DateTime> rangeValidator = validator as RangeValidator<DateTime>;
@@ -330,7 +331,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             attribute.Negated = true;
             attribute.MessageTemplate = "my message template";
 
-            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null, null);
             Assert.IsNotNull(validator);
 
             RangeValidator<DateTime> rangeValidator = validator as RangeValidator<DateTime>;
@@ -348,7 +349,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
         {
             ValidatorAttribute attribute = new DateTimeRangeValidatorAttribute((string)null);
 
-            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null, null);
             RangeValidator<DateTime> rangeValidator = validator as RangeValidator<DateTime>;
 
             Assert.AreEqual(default(DateTime), rangeValidator.UpperBound);
@@ -359,7 +360,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
         {
             ValidatorAttribute attribute = new DateTimeRangeValidatorAttribute("");
 
-            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null, null);
             RangeValidator<DateTime> rangeValidator = validator as RangeValidator<DateTime>;
 
             Assert.AreEqual(default(DateTime), rangeValidator.UpperBound);
@@ -376,6 +377,44 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
         {
             [DateTimeRangeValidator("2006-01-01T00:00:00", "2006-01-01T00:00:00")]
             public DateTime DateTime;
+        }
+
+        [TestMethod]
+        public void CanUseAttributeAsValidationAttributeForValidValue()
+        {
+            ValidationAttribute attribute =
+                new DateTimeRangeValidatorAttribute(new DateTime(2000, 1, 1), new DateTime(2000, 1, 31))
+                {
+                    MessageTemplate = "template {1}"
+                };
+
+            Assert.IsTrue(attribute.IsValid(new DateTime(2000, 1, 15)));
+        }
+
+        [TestMethod]
+        public void CanUseAttributeAsValidationAttribute()
+        {
+            ValidationAttribute attribute =
+                new DateTimeRangeValidatorAttribute(new DateTime(2000, 1, 1), new DateTime(2000, 1, 31))
+                {
+                    MessageTemplate = "template {1}"
+                };
+
+            Assert.IsFalse(attribute.IsValid(new DateTime(2001, 1, 15)));
+            Assert.AreEqual("template name", attribute.FormatErrorMessage("name"));
+        }
+
+        [TestMethod]
+        public void ValidatingWithValidatorAttributeWithARulesetSkipsValidation()
+        {
+            ValidationAttribute attribute =
+                new DateTimeRangeValidatorAttribute(new DateTime(2000, 1, 1), new DateTime(2000, 1, 31))
+                {
+                    MessageTemplate = "template {1}",
+                    Ruleset = "some ruleset"
+                };
+
+            Assert.IsTrue(attribute.IsValid(new DateTime(2001, 1, 15)));
         }
     }
 }

@@ -122,9 +122,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="Configuration\Design\Resources.resx">
+    <EmbeddedResource Include="Configuration\DesignResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <LastGenOutput>DesignResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Configuration\Manageability\Properties\Resources.resx">
       <SubType>Designer</SubType>
@@ -155,24 +155,32 @@
     <Compile Include="Configuration\ContainerModel\IContainerReconfiguringEventSource.cs" />
     <Compile Include="Configuration\ContainerModel\NullContainerReconfiguringEventSource.cs" />
     <Compile Include="Configuration\ContainerModel\ParameterValueVisitor.cs" />
+    <Compile Include="Configuration\DesignResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DesignResources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Design\AddApplicationBlockCommandAttribute.cs" />
+    <Compile Include="Configuration\Design\AddSateliteProviderCommandAttribute.cs" />
+    <Compile Include="Configuration\Design\AppSettingsDesignTime.cs" />
     <Compile Include="Configuration\Design\BaseTypeAttribute.cs" />
-    <Compile Include="Configuration\Design\CollectionElementAddCommandAttribute.cs" />
+    <Compile Include="Configuration\Design\CollectionEditorTemplateAttribute.cs" />
+    <Compile Include="Configuration\Design\ConfigurationSourcesDesignTime.cs" />
+    <Compile Include="Configuration\Design\NamePropertyAttribute.cs" />
+    <Compile Include="Configuration\Design\PromoteCommandsAttribute.cs" />
+    <Compile Include="Configuration\Design\TypePickingCollectionElementAddCommandAttribute.cs" />
+    <Compile Include="Configuration\Design\CommandAttribute.cs" />
     <Compile Include="Configuration\Design\DesignTimeReadOnly.cs" />
     <Compile Include="Configuration\Design\EnvironmentalOverridesAttribute.cs" />
     <Compile Include="Configuration\Design\FilteredFileNameEditorAttribute.cs" />
     <Compile Include="Configuration\Design\ResourceCategoryAttribute.cs" />
     <Compile Include="Configuration\Design\DesignTimeTypeAttribute.cs" />
-    <Compile Include="Configuration\Design\EditorTypes.cs" />
+    <Compile Include="Configuration\Design\CommonDesignTime.cs" />
     <Compile Include="Configuration\Design\ReferenceAttribute.cs" />
     <Compile Include="Configuration\Design\OrderableCollectionAttribute.cs" />
     <Compile Include="Configuration\Design\ResourceDescriptionAttribute.cs" />
     <Compile Include="Configuration\Design\ResourceDisplayNameAttribute.cs" />
-    <Compile Include="Configuration\Design\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Configuration\Design\SectionName.cs" />
+    <Compile Include="Configuration\Design\HandlesSectionAttribute.cs" />
     <Compile Include="Configuration\Design\TypeSelectorIncludes.cs" />
     <Compile Include="Configuration\Design\ViewModelAttribute.cs" />
     <Compile Include="Configuration\Fluent\IConfigureTypeRegistrations.cs" />

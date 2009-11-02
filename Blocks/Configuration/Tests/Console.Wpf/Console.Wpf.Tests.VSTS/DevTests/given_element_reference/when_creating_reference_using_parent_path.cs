@@ -18,6 +18,8 @@ using Console.Wpf.ViewModel;
 using Console.Wpf.ViewModel.Services;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
 using Console.Wpf.Tests.VSTS.DevTests.Contexts;
+using Microsoft.Practices.Unity;
+using System.Configuration;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_element_reference
 {
@@ -29,15 +31,15 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_element_reference
 
         protected override void Act()
         {
-            ehabModel = SectionViewModel.CreateSection(ServiceProvider, base.Section);
-            lookup = (ElementLookup)ServiceProvider.GetService(typeof(ElementLookup));
+            ehabModel = SectionViewModel.CreateSection(Container, ExceptionHandlingSettings.SectionName, base.Section);
+            lookup = Container.Resolve<ElementLookup>();
 
         }
 
         [TestMethod]
         public void then_has_no_element_if_reference_cannot_be_found()
         {
-            ElementReference reference = lookup.CreateReference("/path/to/unknown/collection", "element");
+            ElementReference reference = lookup.CreateReference("/path/to/unknown/collection", typeof(ConfigurationElement), "element");
 
             Assert.IsNull(reference.Element);
         }
@@ -46,7 +48,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_element_reference
         public void then_has_element_if_reference_can_be_found()
         {
             var anyHandler = ehabModel.DescendentElements().Where(x => typeof(ExceptionHandlerData).IsAssignableFrom(x.ConfigurationType)).First();
-            ElementReference reference = lookup.CreateReference(anyHandler.ParentElement.Path, anyHandler.Name);
+            ElementReference reference = lookup.CreateReference(anyHandler.ParentElement.Path, typeof(ExceptionHandlerData), anyHandler.Name);
 
             Assert.IsNotNull(reference.Element);
         }
@@ -57,9 +59,9 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_element_reference
             var anyHandler = ehabModel.DescendentElements().Where(x => typeof(ExceptionHandlerData).IsAssignableFrom(x.ConfigurationType)).First();
             var parentForHandler = anyHandler.ParentElement as ElementCollectionViewModel;
 
-            ElementReference reference = lookup.CreateReference(anyHandler.ParentElement.Path, anyHandler.Name + "2");
+            ElementReference reference = lookup.CreateReference(anyHandler.ParentElement.Path, typeof(ExceptionHandlerData), anyHandler.Name + "2");
 
-            var newChild = parentForHandler.CreateNewChildElement(anyHandler.ConfigurationType);
+            var newChild = parentForHandler.AddNewCollectionElement(anyHandler.ConfigurationType);
             newChild.Property("Name").Value = anyHandler.Name + "2";
 
             Assert.IsNotNull(reference.Element);
@@ -70,32 +72,30 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_element_reference
         public void then_element_reference_signals_path_change()
         {
             var anyHandler = ehabModel.DescendentElements().Where(x => typeof(ExceptionHandlerData).IsAssignableFrom(x.ConfigurationType)).First();
-            ElementReference reference = lookup.CreateReference(anyHandler.ParentElement.Path, anyHandler.Name);
+            ElementReference reference = lookup.CreateReference(anyHandler.ParentElement.Path, typeof(ExceptionHandlerData), anyHandler.Name);
 
             string newPath = string.Empty;
             reference.PathChanged += (sender, args) =>
             {
-                newPath = ((ElementViewModel)sender).Path;
-                Assert.AreEqual("Path", args.PropertyName);
+                newPath = args.Value;
             };
 
             anyHandler.Property("Name").Value = "new name";
 
             Assert.IsFalse(string.IsNullOrEmpty(newPath));
-            Assert.IsTrue(newPath.EndsWith("new name"));
+            Assert.IsTrue(newPath.Contains("new name"));
         }
 
         [TestMethod]
         public void then_element_reference_signals_name_change()
         {
             var anyHandler = ehabModel.DescendentElements().Where(x => typeof(ExceptionHandlerData).IsAssignableFrom(x.ConfigurationType)).First();
-            ElementReference reference = lookup.CreateReference(anyHandler.ParentElement.Path, anyHandler.Name);
+            ElementReference reference = lookup.CreateReference(anyHandler.ParentElement.Path, typeof(ExceptionHandlerData), anyHandler.Name);
 
             string newName = string.Empty;
             reference.NameChanged += (sender, args) =>
             {
-                newName = ((ElementViewModel)sender).Name;
-                Assert.AreEqual("Name", args.PropertyName);
+                newName = args.Value;
             };
 
             anyHandler.Property("Name").Value = "new name";
@@ -109,7 +109,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_element_reference
         public void then_reference_is_broken_if_referred_element_is_deleted()
         {
             var anyHandler = ehabModel.DescendentElements().Where(x => typeof(ExceptionHandlerData).IsAssignableFrom(x.ConfigurationType)).First();
-            ElementReference reference = lookup.CreateReference(anyHandler.ParentElement.Path, anyHandler.Name);
+            ElementReference reference = lookup.CreateReference(anyHandler.ParentElement.Path, typeof(ExceptionHandlerData), anyHandler.Name);
             Assert.IsNotNull(reference.Element);
 
             ((ElementCollectionViewModel)anyHandler.ParentElement).Delete(anyHandler as CollectionElementViewModel);
@@ -122,7 +122,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_element_reference
             bool deletedWasCalled = false;
 
             var anyHandler = ehabModel.DescendentElements().Where(x => typeof(ExceptionHandlerData).IsAssignableFrom(x.ConfigurationType)).First();
-            ElementReference reference = lookup.CreateReference(anyHandler.ParentElement.Path, anyHandler.Name);
+            ElementReference reference = lookup.CreateReference(anyHandler.ParentElement.Path, typeof(ExceptionHandlerData), anyHandler.Name);
 
             reference.ElementDeleted += (s, a) => deletedWasCalled = true;
 
@@ -135,7 +135,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_element_reference
         public void then_reference_uses_updated_path_to_reconnect()
         {
             var anyHandler = ehabModel.DescendentElements().Where(x => typeof(ExceptionHandlerData).IsAssignableFrom(x.ConfigurationType)).First();
-            ElementReference reference = lookup.CreateReference(anyHandler.ParentElement.Path, anyHandler.Name);
+            ElementReference reference = lookup.CreateReference(anyHandler.ParentElement.Path, typeof(ExceptionHandlerData), anyHandler.Name);
 
             anyHandler.Property("Name").Value = "new name"; //path changes;
             ElementCollectionViewModel containingCollection = (ElementCollectionViewModel)anyHandler.ParentElement;
@@ -143,7 +143,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_element_reference
 
             Assert.IsNull(reference.Element);
 
-            var NewHandler = containingCollection.CreateNewChildElement(anyHandler.ConfigurationType);
+            var NewHandler = containingCollection.AddNewCollectionElement(anyHandler.ConfigurationType);
             NewHandler.Property("Name").Value = "new name";
 
             Assert.AreEqual(NewHandler, reference.Element);
@@ -157,11 +157,10 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_element_reference
         [TestMethod]
         public void then_reference_can_be_fixed_by_loading_section()
         {
-            ElementLookup elementLookup = new ElementLookup();
-            var reference = elementLookup.CreateReference("/ExceptionHandlingSettings:Exception Handling Settings", "Policies");
+            ElementLookup elementLookup = Container.Resolve<ElementLookup>();
+            var reference = elementLookup.CreateReference("/configuration/" + ExceptionHandlingSettings.SectionName, typeof(ConfigurationElement), "Policies");
 
-            ServiceProvider.AddService(typeof(ElementLookup), elementLookup);
-            SectionViewModel.CreateSection(ServiceProvider, base.Section);
+            SectionViewModel.CreateSection(Container, ExceptionHandlingSettings.SectionName, base.Section);
 
             Assert.IsNotNull(reference.Element);
         }
@@ -171,13 +170,12 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_element_reference
         {
             bool elementFoundSignalled = false;
 
-            ElementLookup elementLookup = new ElementLookup();
-            var reference = elementLookup.CreateReference("/ExceptionHandlingSettings:Exception Handling Settings");
+            ElementLookup elementLookup = Container.Resolve<ElementLookup>();
+            var reference = elementLookup.CreateReference("/configuration/" + ExceptionHandlingSettings.SectionName);
 
             reference.ElementFound += (s, a) => elementFoundSignalled = true;
 
-            ServiceProvider.AddService(typeof(ElementLookup), elementLookup);
-            SectionViewModel.CreateSection(ServiceProvider, base.Section);
+            SectionViewModel.CreateSection(Container, ExceptionHandlingSettings.SectionName, base.Section);
 
             Assert.IsTrue(elementFoundSignalled);
 

@@ -76,7 +76,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WinForms.
             Assert.AreEqual(null, validationProvider.ErrorProvider);
             Assert.AreEqual("", validationProvider.RulesetName);
             Assert.AreEqual(null, validationProvider.SourceTypeName);
-            Assert.AreEqual(ValidationSpecificationSource.Both, validationProvider.SpecificationSource);
+            Assert.AreEqual(ValidationSpecificationSource.All, validationProvider.SpecificationSource);
             Assert.AreEqual(@"{0}", validationProvider.ValidationResultFormat);
             Assert.AreEqual(false, validationProvider.GetPerformValidation(control));
             Assert.AreEqual(null, validationProvider.GetSourcePropertyName(control));

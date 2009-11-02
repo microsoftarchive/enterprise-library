@@ -176,7 +176,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
 
             connection = database.CreateConnection();
             connection.Open();
-
+            
             //reset number of connections
             numberOfConnectionsCreated = 0;
 
@@ -187,6 +187,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
         {
             transaction.Rollback();
             connection.Close();
+        }
+
+        protected void EnsureParametersCached(string procName)
+        {
+            using (var command = database.GetStoredProcCommand(procName, new object[] { }))
+            {
+            }
         }
     }
 
@@ -462,8 +469,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
         protected override void Arrange()
         {
             base.Arrange();
+            string procName = "Ten Most Expensive Products";
+            EnsureParametersCached(procName);
 
-            asyncResult = database.BeginExecuteNonQuery(transaction, "Ten Most Expensive Products", null, null);
+            numberOfConnectionsCreated = 0;
+            asyncResult = database.BeginExecuteNonQuery(transaction, procName, null, null);
         }
 
         [TestMethod]
@@ -1259,7 +1269,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
             Assert.AreEqual(ConnectionState.Closed, lastConnectionStateChange);
         }
     }
-
+    
     [TestClass]
     public class WhenAsynchronouslyInvokingExecuteScalarOnSprocWithinTransaction : TransactionalAsynchronousConnectionWithRollback
     {
@@ -1269,7 +1279,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
         {
             base.Arrange();
 
-            asyncResult = database.BeginExecuteScalar(transaction, "Ten Most Expensive Products", null, null);
+            string procName = "Ten Most Expensive Products";
+            EnsureParametersCached(procName);
+
+            numberOfConnectionsCreated = 0;
+
+            asyncResult = database.BeginExecuteScalar(transaction, procName, null, null);
         }
 
         [TestMethod]

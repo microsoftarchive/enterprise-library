@@ -29,7 +29,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model
 
         protected override void Act()
         {
-            viewModel = SectionViewModel.CreateSection(ServiceProvider, Section);
+            viewModel = SectionViewModel.CreateSection(Container, ExceptionHandlingSettings.SectionName, Section);
         }
 
         [TestMethod]

@@ -10,6 +10,7 @@
 //===============================================================================
 
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
@@ -122,16 +123,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 
         void IMergeableConfigurationElementCollection.ResetCollection(IEnumerable<ConfigurationElement> configurationElements)
         {
-            BaseClear();
-            foreach (T element in configurationElements)
+            foreach (T element in this)
             {
-                Add(element);
+                Remove(element.Name);
+            }
+
+            foreach (T element in configurationElements.Reverse())
+            {
+                base.BaseAdd(0, element);
             }
         }
 
-        ConfigurationElement IMergeableConfigurationElementCollection.CreateNewElement()
+        ConfigurationElement IMergeableConfigurationElementCollection.CreateNewElement(Type configurationType)
         {
-            return CreateNewElement();
+            return (ConfigurationElement)Activator.CreateInstance(configurationType);
         }
     }
 }

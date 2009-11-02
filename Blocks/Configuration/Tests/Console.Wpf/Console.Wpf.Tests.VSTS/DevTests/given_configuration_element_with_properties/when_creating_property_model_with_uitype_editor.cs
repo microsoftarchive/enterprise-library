@@ -21,6 +21,8 @@ using System.Drawing.Design;
 using System.Windows.Forms.Design;
 using Moq;
 using Console.Wpf.ViewModel;
+using Microsoft.Practices.Unity;
+
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_configuration_element_with_properties
 {
@@ -72,10 +74,10 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_configuration_element_with_prope
 
         protected override void Act()
         {
-            ServiceProvider.AddService(typeof(IWindowsFormsEditorService), new Mock<IWindowsFormsEditorService>().Object);
-            ServiceProvider.AddService(typeof(IUIService), new Mock<IUIService>().Object);
+            Container.RegisterInstance<IWindowsFormsEditorService>(new Mock<IWindowsFormsEditorService>().Object);
+            Container.RegisterInstance<IUIService>(new Mock<IUIService>().Object);
 
-            var sectionModel = SectionViewModel.CreateSection(ServiceProvider, new ConfigurationElementWithComponentModelEditor());
+            var sectionModel = SectionViewModel.CreateSection(Container, "mockSection", new ConfigurationElementWithComponentModelEditor());
 
             properties = sectionModel.Properties;
         }

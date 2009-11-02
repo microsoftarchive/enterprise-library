@@ -1,0 +1,149 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{85032C2A-91D2-40C8-BE83-D7002FE58AC7}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides.Console</RootNamespace>
+    <AssemblyName>MergeConfiguration</AssemblyName>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>2.0</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\..\bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRules>-Microsoft.Design#CA2210;-Microsoft.Performance#CA1812;-Microsoft.Usage#CA1806;-Microsoft.Usage#CA2201;-Microsoft.Design#CA1017;-Microsoft.Performance#CA1824;-Microsoft.Performance#CA1822;-Microsoft.Usage#CA2232;-Microsoft.Naming#CA1701;-Microsoft.Globalization#CA1305;-Microsoft.Maintainability#CA1500</CodeAnalysisRules>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\..\bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRules>-Microsoft.Design#CA2210;-Microsoft.Performance#CA1812;-Microsoft.Usage#CA1806;-Microsoft.Usage#CA2201;-Microsoft.Design#CA1017;-Microsoft.Performance#CA1824;-Microsoft.Performance#CA1822;-Microsoft.Usage#CA2232;-Microsoft.Naming#CA1701;-Microsoft.Globalization#CA1305;-Microsoft.Maintainability#CA1500</CodeAnalysisRules>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\..\GlobalAssemblyInfo.cs">
+      <Link>GlobalAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="ConfigurationMergeTool.cs" />
+    <Compile Include="ConsoleUIService.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Caching\Src\Configuration.Design\Caching.Configuration.Design.csproj">
+      <Project>{5D0720A3-A4A1-49CB-9E46-8C6CDD321514}</Project>
+      <Name>Caching.Configuration.Design</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Caching\Src\Cryptography.Configuration.Design\Caching.Cryptography.Configuration.Design.csproj">
+      <Project>{8E175354-2764-459E-8B63-772E63F922E7}</Project>
+      <Name>Caching.Cryptography.Configuration.Design</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Caching\Src\Database.Configuration.Design\Caching.Database.Configuration.Design.csproj">
+      <Project>{E32223CC-B10C-4D3A-83F5-9CEA12469364}</Project>
+      <Name>Caching.Database.Configuration.Design</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Data\Src\Configuration.Design\Data.Configuration.Design.csproj">
+      <Project>{CAFC0505-DC56-4E86-A335-D8EB2B23325A}</Project>
+      <Name>Data.Configuration.Design</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\ExceptionHandling\Src\Configuration.Design\ExceptionHandling.Configuration.Design.csproj">
+      <Project>{3D0BE7D5-585F-4549-8490-B8E864298456}</Project>
+      <Name>ExceptionHandling.Configuration.Design</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\ExceptionHandling\Src\Logging.Configuration.Design\ExceptionHandling.Logging.Configuration.Design.csproj">
+      <Project>{629381BA-FF3D-4DE1-8FE1-62FC75F0F1BD}</Project>
+      <Name>ExceptionHandling.Logging.Configuration.Design</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Logging\Src\Configuration.Design\Logging.Configuration.Design.csproj">
+      <Project>{F80ABB9A-56C5-4FC8-82F2-0DFEAAAC97A3}</Project>
+      <Name>Logging.Configuration.Design</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Logging\Src\DatabaseTraceListener.Configuration.Design\Logging.Database.Configuration.Design.csproj">
+      <Project>{FCD01AB3-FFD9-4C57-A9A5-BDEE9AFBB12D}</Project>
+      <Name>Logging.Database.Configuration.Design</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\PolicyInjection\Src\CallHandlers.Configuration.Design\PolicyInjection.CallHandlers.Configuration.Design.csproj">
+      <Project>{2C050B72-B237-4509-9739-9DB54C62168A}</Project>
+      <Name>PolicyInjection.CallHandlers.Configuration.Design</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\PolicyInjection\Src\Configuration.Design\PolicyInjection.Configuration.Design.csproj">
+      <Project>{6C74F26F-41D6-4A94-BED8-D29DFDBD9914}</Project>
+      <Name>PolicyInjection.Configuration.Design</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Security\Src\CachingStore.Configuration.Design\Security.Cache.CachingStore.Configuration.Design.csproj">
+      <Project>{028EE3EB-DF29-40D3-AD49-448B2DADAA1B}</Project>
+      <Name>Security.Cache.CachingStore.Configuration.Design</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Security\Src\Configuration.Design\Security.Configuration.Design.csproj">
+      <Project>{69FE71D7-F198-4B7D-9715-E0FC04EC5660}</Project>
+      <Name>Security.Configuration.Design</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Security.Cryptography\Src\Configuration.Design\Security.Cryptography.Configuration.Design.csproj">
+      <Project>{D28C4099-8B9B-4A75-94C1-0B34D598FD8E}</Project>
+      <Name>Security.Cryptography.Configuration.Design</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Validation\Src\Configuration.Design\Validation.Configuration.Design.csproj">
+      <Project>{7B0BBC65-71C5-4F0D-8114-1794CC70F62E}</Project>
+      <Name>Validation.Configuration.Design</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AppSettings.Configuration.Design\AppSettings.Configuration.Design.csproj">
+      <Project>{6802DE8C-4BBD-4C2C-9166-7A5303F9DD18}</Project>
+      <Name>AppSettings.Configuration.Design</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Design\Configuration.Design.csproj">
+      <Project>{D6AAB55A-8C43-46B7-9EE4-EB8D1E1BFC17}</Project>
+      <Name>Configuration.Design</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

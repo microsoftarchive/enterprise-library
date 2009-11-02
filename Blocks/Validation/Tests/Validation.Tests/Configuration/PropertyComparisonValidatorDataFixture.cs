@@ -86,7 +86,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
 
             ((IValidatorDescriptor)rwValidatorData).CreateValidator(typeof(string),
                                                                     typeof(PropertyComparisonValidatorDataFixtureTestClass),
-                                                                    new ReflectionMemberValueAccessBuilder());
+                                                                    new ReflectionMemberValueAccessBuilder(),
+                                                                    null);
         }
 
         [TestMethod]
@@ -98,7 +99,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
 
             PropertyComparisonValidator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(typeof(string),
                                                                                                             typeof(PropertyComparisonValidatorDataFixtureTestClass),
-                                                                                                            new ReflectionMemberValueAccessBuilder()) as PropertyComparisonValidator;
+                                                                                                            new ReflectionMemberValueAccessBuilder(),
+                                                                                                            null) as PropertyComparisonValidator;
 
             Assert.IsNotNull(validator);
             Assert.AreEqual("PublicProperty", ((PropertyValueAccess)validator.ValueAccess).PropertyInfo.Name);
@@ -116,7 +118,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
 
             PropertyComparisonValidator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(typeof(string),
                                                                                                             typeof(PropertyComparisonValidatorDataFixtureTestClass),
-                                                                                                            new ReflectionMemberValueAccessBuilder()) as PropertyComparisonValidator;
+                                                                                                            new ReflectionMemberValueAccessBuilder(),
+                                                                                                            null) as PropertyComparisonValidator;
 
             Assert.IsNotNull(validator);
             Assert.AreEqual("PublicProperty", ((PropertyValueAccess)validator.ValueAccess).PropertyInfo.Name);

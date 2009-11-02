@@ -114,6 +114,11 @@
     <Compile Include="..\..\..\GlobalAssemblyInfo.cs">
       <Link>GlobalAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Configuration\DesignResources.Designer.cs">
+      <DependentUpon>DesignResources.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
     <Compile Include="Configuration\Fluent\EncryptItemsWithSharedSymmetricProviderExtension.cs" />
     <Compile Include="Configuration\Fluent\IEncryptItemsWithSharedSymmetricProvider.cs" />
     <Compile Include="Configuration\Manageability\Installer.cs">
@@ -140,6 +145,10 @@
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Configuration\DesignResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>DesignResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Configuration\Manageability\Properties\Resources.resx">
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>

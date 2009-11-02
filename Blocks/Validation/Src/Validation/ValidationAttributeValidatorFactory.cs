@@ -21,7 +21,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
     /// <seealso cref="ValidatorFactory"/>
     public class ValidationAttributeValidatorFactory : ValidatorFactory
     {
-        private static readonly ValidationAttributeValidatorBuilder builder = new ValidationAttributeValidatorBuilder();
         private static readonly Validator EmptyValidator = new AndCompositeValidator();
 
         /// <summary>
@@ -37,11 +36,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         /// </summary>
         /// <param name="targetType">The <see cref="Type"/>to validate.</param>
         /// <param name="ruleset">The ruleset to use when validating.</param>
+        /// <param name="mainValidatorFactory">Factory to use when building nested validators.</param>
         /// <returns>A <see cref="Validator"/>.</returns>
-        protected internal override Validator InnerCreateValidator(Type targetType, string ruleset)
+        protected internal override Validator InnerCreateValidator(Type targetType, string ruleset, ValidatorFactory mainValidatorFactory)
         {
             if (string.IsNullOrEmpty(ruleset))
             {
+                ValidationAttributeValidatorBuilder builder =
+                    new ValidationAttributeValidatorBuilder(MemberAccessValidatorBuilderFactory.Default, mainValidatorFactory);
+
                 return builder.CreateValidator(targetType);
             }
             else

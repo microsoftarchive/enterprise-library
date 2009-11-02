@@ -12,6 +12,8 @@
 using System;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using System.ComponentModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration
 {
@@ -36,6 +38,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration
     /// </remarks>
     /// <seealso cref="DatabaseSyntheticConfigSettings.GetProviderMapping(string)"/>
     /// <seealso cref="System.Data.Common.DbProviderFactory"/>
+    [ResourceDescription(typeof(DesignResources), "DbProviderMappingDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "DbProviderMappingDisplayName")]
     public class DbProviderMapping : NamedConfigurationElement
     {
         private static AssemblyQualifiedTypeNameConverter typeConverter = new AssemblyQualifiedTypeNameConverter();
@@ -94,6 +98,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration
         /// The fully qualified type name of the database to use for the mapped ADO.NET provider.
         /// </value>
         [ConfigurationProperty(databaseTypeProperty)]
+        [ResourceDescription(typeof(DesignResources), "DbProviderMappingDatabaseTypeNameDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "DbProviderMappingDatabaseTypeNameDisplayName")]
+        [Editor(CommonDesignTime.EditorTypes.TypeSelector, CommonDesignTime.EditorTypes.UITypeEditor)]
+        [BaseType(typeof(Database))]
         public string DatabaseTypeName
         {
             get { return (string)this[databaseTypeProperty]; }
@@ -106,6 +114,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration
         public string DbProviderName
         {
             get { return Name; }
+        }
+
+        /// <summary/>
+        // TODO : make this a designtime converter. normal converter gets in the wat of system.configuration
+        //[TypeConverter("Console.Wpf.ComponentModel.Converters.SystemDataProviderConverter, Console.Wpf")]
+        public override string Name
+        {
+            get{ return base.Name; }
+            set{ base.Name = value; }
         }
     }
 }

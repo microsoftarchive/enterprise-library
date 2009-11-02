@@ -29,7 +29,6 @@ using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Properties;
 using Container = Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel.Container;
 using System.ComponentModel;
-using System.Drawing.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
 {
@@ -37,9 +36,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
     /// Represents the configuration for an <see cref="System.Exception"/>
     /// that will be handled by an exception policy. 
     /// </summary>
-    [ResourceDisplayName(typeof(Resources), "AddExceptionTypeDisplayName")]		
-    [ResourceDescription(typeof(Resources), "AddExceptionTypeHelpText")]
-    [CollectionElementAddCommand("Console.Wpf.ViewModel.TypePickingCollectionElementAddCommand, Console.Wpf")]
+    [ResourceDescription(typeof(DesignResources), "ExceptionTypeDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "ExceptionTypeDataDisplayName")]
+    [TypePickingCommand(Replace=CommandReplacement.DefaultAddCommandReplacement)]
     public class ExceptionTypeData : NamedConfigurationElement
     {
         private static readonly AssemblyQualifiedTypeNameConverter typeConverter = new AssemblyQualifiedTypeNameConverter();
@@ -85,18 +84,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
         /// The name of the element.
         /// </value>
         [DesignTimeReadOnly(true)]
-        [ResourceDescription(typeof(Resources), "NameDescription")]
-        [ResourceDisplayName(typeof(Resources), "NameDisplayName")]
+        [ResourceDescription(typeof(DesignResources), "ExceptionTypeDataNameDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "ExceptionTypeDataNameDisplayName")]
         public override string Name
         {
-            get
-            {
-                return base.Name;
-            }
-            set
-            {
-                base.Name = value;
-            }
+            get { return base.Name; }
+            set { base.Name =value; }
         }
 
 
@@ -118,9 +111,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
         /// <value>
         /// The fully qualified type name of the <see cref="Exception"/> type.
         /// </value>
+        [DesignTimeReadOnly(true)]
         [ConfigurationProperty(typeProperty, IsRequired = true)]
-        [ResourceDescription(typeof(Resources), "TypeNameDescription")]
-        [ResourceDisplayName(typeof(Resources), "TypeNameDisplayName")]
+        [ResourceDescription(typeof(DesignResources), "ExceptionTypeDataTypeNameDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "ExceptionTypeDataTypeNameDisplayName")]
         [BaseType(typeof(Exception), TypeSelectorIncludes.BaseType | TypeSelectorIncludes.AbstractTypes)]
         public string TypeName
         {
@@ -135,8 +129,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
         /// One of the <see cref="PostHandlingAction"/> values.
         /// </value>
         [ConfigurationProperty(postHandlingActionProperty, IsRequired = true, DefaultValue = PostHandlingAction.NotifyRethrow)]
-        [ResourceDescription(typeof(Resources), "ExceptionTypePostHandlingActionDescription")]
-        [ResourceDisplayName(typeof(Resources), "PostHandlingActionDisplayName")]
+        [ResourceDescription(typeof(DesignResources), "ExceptionTypeDataPostHandlingActionDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "ExceptionTypeDataPostHandlingActionDisplayName")]
         public PostHandlingAction PostHandlingAction
         {
             get { return (PostHandlingAction)this[postHandlingActionProperty]; }
@@ -150,9 +144,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
         /// A collection of <see cref="ExceptionHandlerData"/> objects.
         /// </value>
         [ConfigurationProperty(exceptionHandlersProperty)]
-        [ResourceDisplayName(typeof(Resources), "ExceptionHandlersDisplayName")]
+        [ResourceDescription(typeof(DesignResources), "ExceptionTypeDataExceptionHandlersDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "ExceptionTypeDataExceptionHandlersDisplayName")]
         [OrderableCollection(true)]
         [ConfigurationCollection(typeof(ExceptionHandlerData))]
+        [PromoteCommands]
         public NameTypeConfigurationElementCollection<ExceptionHandlerData, CustomHandlerData> ExceptionHandlers
         {
             get

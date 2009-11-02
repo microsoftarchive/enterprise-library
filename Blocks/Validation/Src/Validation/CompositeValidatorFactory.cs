@@ -12,8 +12,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Utility;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
@@ -45,10 +43,28 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         ///<param name="attributeValidatorFactory">The <see cref="AttributeValidatorFactory"/> to composite.</param>
         ///<param name="configurationValidatorFactory">The <see cref="ConfigurationValidatorFactory"/> to composite.</param>
         public CompositeValidatorFactory(
-            IValidationInstrumentationProvider instrumentationProvider, 
-            AttributeValidatorFactory attributeValidatorFactory, 
-            ConfigurationValidatorFactory configurationValidatorFactory) 
-            : this(instrumentationProvider, new ValidatorFactory[] { attributeValidatorFactory, configurationValidatorFactory})
+            IValidationInstrumentationProvider instrumentationProvider,
+            AttributeValidatorFactory attributeValidatorFactory,
+            ConfigurationValidatorFactory configurationValidatorFactory)
+            : this(instrumentationProvider, new ValidatorFactory[] { attributeValidatorFactory, configurationValidatorFactory })
+        {
+        }
+
+        ///<summary>
+        /// Initializes a composite validator factory from attribute and configuration validator factories
+        ///</summary>
+        ///<param name="instrumentationProvider">The <see cref="IValidationInstrumentationProvider"/> to use when instrumenting validators.</param>
+        ///<param name="attributeValidatorFactory">The <see cref="AttributeValidatorFactory"/> to composite.</param>
+        ///<param name="configurationValidatorFactory">The <see cref="ConfigurationValidatorFactory"/> to composite.</param>
+        ///<param name="validationAttributeValidatorFactory">The <see cref="ValidationAttributeValidatorFactory"/> to composite.</param>
+        public CompositeValidatorFactory(
+            IValidationInstrumentationProvider instrumentationProvider,
+            AttributeValidatorFactory attributeValidatorFactory,
+            ConfigurationValidatorFactory configurationValidatorFactory,
+            ValidationAttributeValidatorFactory validationAttributeValidatorFactory)
+            : this(
+                instrumentationProvider,
+                new ValidatorFactory[] { attributeValidatorFactory, configurationValidatorFactory, validationAttributeValidatorFactory })
         {
         }
 
@@ -57,10 +73,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         /// </summary>
         /// <param name="targetType">The <see cref="Type"/>to validate.</param>
         /// <param name="ruleset">The ruleset to use when validating</param>
+        /// <param name="mainValidatorFactory">Factory to use when building nested validators.</param>
         /// <returns>A <see cref="Validator"/></returns>
-        protected internal override Validator InnerCreateValidator(Type targetType, string ruleset)
+        protected internal override Validator InnerCreateValidator(Type targetType, string ruleset, ValidatorFactory mainValidatorFactory)
         {
-            Validator validator = GetValidator(validatorFactories.Select(f=>f.InnerCreateValidator(targetType, ruleset)));
+            Validator validator =
+                GetValidator(validatorFactories.Select(f => f.InnerCreateValidator(targetType, ruleset, mainValidatorFactory)));
 
             return validator;
         }
@@ -82,7 +100,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
             {
                 return validValidators.First();
             }
-            
+
             return new AndCompositeValidator(validValidators.ToArray());
         }
 

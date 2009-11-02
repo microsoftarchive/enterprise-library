@@ -23,37 +23,38 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
 using Moq;
 using System.ComponentModel.Design;
+using Microsoft.Practices.Unity;
+using Console.Wpf.Tests.VSTS.Mocks;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_configuration_source
 {
 
     [TestClass]
-    public class when_creating_configurationsourceviewmodel : ArrangeActAssert
+    public class when_creating_configurationsourceviewmodel : Contexts.ContainerContext
     {
-        private DictionaryConfigurationSource configSource;
-        private ConfigurationSourceViewModel configurationSourceViewModel;
+        private DesignDictionaryConfigurationSource configSource;
+        private ConfigurationSourceModel configurationSourceViewModel;
 
         protected override void Arrange()
         {
+            base.Arrange();
 
             var builder = new TestConfigurationBuilder();
-            configSource = new DictionaryConfigurationSource();
+            configSource = new DesignDictionaryConfigurationSource();
             builder.AddExceptionSettings()
                 .Build(configSource);
-
-            ServiceContainer container = new ServiceContainer();
 
             var mockLocator = new Mock<ConfigurationSectionLocator>();
             mockLocator.Setup(x => x.ConfigurationSectionNames).Returns(new[] { ExceptionHandlingSettings.SectionName });
 
-            container.AddService(typeof (ConfigurationSectionLocator), mockLocator.Object);
+            Container.RegisterInstance<ConfigurationSectionLocator>(mockLocator.Object);
 
-            configurationSourceViewModel = new ConfigurationSourceViewModel(container);
+            configurationSourceViewModel = Container.Resolve<ConfigurationSourceModel>();
         }
 
         protected override void Act()
         {
-            configurationSourceViewModel.Open(configSource);
+            configurationSourceViewModel.Load(configSource);
         }
 
         [TestMethod]

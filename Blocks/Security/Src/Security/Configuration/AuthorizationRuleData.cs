@@ -13,6 +13,7 @@ using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Microsoft.Practices.EnterpriseLibrary.Security.Properties;
+using System.ComponentModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration
 {
@@ -21,8 +22,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration
     /// rule that is governed by an 
     /// <see cref="AuthorizationRuleProvider"/>.
     /// </summary>
-    [ResourceDisplayName(typeof(Resources), "AddAuthorizationRuleData")]
-    [ResourceDescription(typeof(Resources), "AddAuthorizationRuleDataDescription")]
+    [ResourceDescription(typeof(DesignResources), "AuthorizationRuleDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "AuthorizationRuleDataDisplayName")]
     public class AuthorizationRuleData : NamedConfigurationElement, IAuthorizationRule
     {
         private const string expressionProperty = "expression";
@@ -50,6 +51,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration
         /// this rule.
         /// </summary>
 		[ConfigurationProperty(expressionProperty, IsRequired= false)]
+        [ResourceDescription(typeof(DesignResources), "AuthorizationRuleDataExpressionDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "AuthorizationRuleDataExpressionDisplayName")]
+        [Editor(SecurityDesignTime.EditorTypeNames.SecurityExpressionEditor, CommonDesignTime.EditorTypes.UITypeEditor)]
 		public string Expression
 		{
 			get

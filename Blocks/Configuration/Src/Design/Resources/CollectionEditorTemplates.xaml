@@ -1,0 +1,362 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <DataTemplate x:Key="OraclePackageDataViewModelItem">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition SharedSizeGroup="PrefixCol" MinWidth="60" Width="*" />
+                <ColumnDefinition SharedSizeGroup="NameCol" MinWidth="60" Width="*" />
+                <ColumnDefinition SharedSizeGroup="DeleteCol" Width="16"/>
+            </Grid.ColumnDefinitions>
+
+            <ContentControl Grid.Column="0" >
+                <ContentPresenter Content="{Binding PrefixProperty}"  ContentTemplate="{DynamicResource TextPropertyEditingTemplate}" />
+            </ContentControl>
+            
+            <ContentControl Grid.Column="1" >
+                <ContentPresenter Content="{Binding NameProperty}"  ContentTemplate="{DynamicResource TextPropertyEditingTemplate}" />
+            </ContentControl>
+
+            <Button Grid.Column="2" x:Name="DeleteButton"  Command="{Binding DeleteCommand}" Style="{DynamicResource DeleteButtonStyle}" Margin="0,0,0,8" VerticalAlignment="Top" Width="7" Height="7" />
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="OraclePackageDataViewModelHeader">
+        <Grid ShowGridLines="True">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition SharedSizeGroup="PrefixCol" MinWidth="60" Width="*" />
+                <ColumnDefinition SharedSizeGroup="NameCol" MinWidth="60" Width="*" />
+                <ColumnDefinition SharedSizeGroup="DeleteCol" Width="16"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0">Prefix</TextBlock>
+            <TextBlock Grid.Column="1">Name</TextBlock>
+        </Grid>
+    </DataTemplate>
+    
+    <DataTemplate x:Key="CategoryFilterEntryItem">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition SharedSizeGroup="NameCol" MinWidth="60" Width="*" />
+                <ColumnDefinition SharedSizeGroup="DeleteCol" Width="16"/>
+            </Grid.ColumnDefinitions>
+
+            <ContentControl Grid.Column="0" >
+                <ContentPresenter Content="{Binding NameProperty}"  ContentTemplate="{DynamicResource SuggestedValuePropertyEditingTemplate}" />
+            </ContentControl>
+
+            <Button Grid.Column="1" x:Name="DeleteButton"  Command="{Binding DeleteCommand}" Style="{DynamicResource DeleteButtonStyle}" Margin="0,0,0,8" VerticalAlignment="Top" Width="7" Height="7" />
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CategoryFilterEntryHeader">
+        <Grid ShowGridLines="True">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition SharedSizeGroup="NameCol" MinWidth="60" Width="*" />
+                <ColumnDefinition SharedSizeGroup="DeleteCol" Width="16"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0">Category</TextBlock>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="DomainConfigurationElementItem">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition SharedSizeGroup="NameCol" MinWidth="60" Width="*" />
+                <ColumnDefinition SharedSizeGroup="DeleteCol" Width="16"/>
+            </Grid.ColumnDefinitions>
+
+            <ContentControl Grid.Column="0" >
+                <ContentPresenter Content="{Binding NameProperty}"  ContentTemplate="{DynamicResource TextPropertyEditingTemplate}" />
+            </ContentControl>
+
+            <Button Grid.Column="1" x:Name="DeleteButton"  Command="{Binding DeleteCommand}" Style="{DynamicResource DeleteButtonStyle}" Margin="0,0,0,8" VerticalAlignment="Top" Width="7" Height="7" />
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="DomainConfigurationElementHeader">
+        <Grid ShowGridLines="True">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition SharedSizeGroup="NameCol" MinWidth="60" Width="*" />
+                <ColumnDefinition SharedSizeGroup="DeleteCol" Width="16"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0">Value</TextBlock>
+        </Grid>
+    </DataTemplate>
+
+    
+    <DataTemplate x:Key="ValidationLogHandlerCollectionEditorItem">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition SharedSizeGroup="NameCol" MinWidth="60" Width="*" />
+                <ColumnDefinition SharedSizeGroup="DeleteCol" Width="16"/>
+            </Grid.ColumnDefinitions>
+
+            <ContentControl Grid.Column="0" >
+                <ContentPresenter Content="{Binding NameProperty}"  ContentTemplate="{DynamicResource SuggestedValuePropertyEditingTemplate}" />
+            </ContentControl>
+
+            <Button Grid.Column="1" x:Name="DeleteButton"  Command="{Binding DeleteCommand}" Style="{DynamicResource DeleteButtonStyle}" Margin="0,0,0,8" VerticalAlignment="Top" Width="7" Height="7" />
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ValidationLogHandlerCollectionEditorHeader">
+        <Grid ShowGridLines="True">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition SharedSizeGroup="NameCol" MinWidth="60" Width="*" />
+                <ColumnDefinition SharedSizeGroup="DeleteCol" Width="16"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0">Log Category</TextBlock>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="FaultContractExceptionHandlerMappingDataItem">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition SharedSizeGroup="SourceCol" MinWidth="60" Width="*" />
+                <ColumnDefinition SharedSizeGroup="NameCol" MinWidth="60" Width="*" />
+                <ColumnDefinition SharedSizeGroup="DeleteCol" Width="16"/>
+            </Grid.ColumnDefinitions>
+
+
+            <ContentControl Grid.Column="0" >
+                <ContentPresenter Content="{Binding SourceProperty}"  ContentTemplate="{DynamicResource TextPropertyEditingTemplate}" />
+            </ContentControl>
+
+            <ContentControl Grid.Column="1" >
+                <ContentPresenter Content="{Binding NameProperty}" ContentTemplate="{DynamicResource TextPropertyEditingTemplate}" />
+            </ContentControl>
+
+            <Button Grid.Column="2" x:Name="DeleteButton"  Command="{Binding DeleteCommand}" Style="{DynamicResource DeleteButtonStyle}" Margin="0,0,0,8" VerticalAlignment="Top" Width="7" Height="7" />
+
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="FaultContractExceptionHandlerMappingDataItemHeader">
+        <Grid ShowGridLines="True">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition SharedSizeGroup="SourceCol" MinWidth="60" Width="*" />
+                <ColumnDefinition SharedSizeGroup="NameCol" MinWidth="60" Width="*" />
+                <ColumnDefinition SharedSizeGroup="DeleteCol" Width="16"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0">Source Property</TextBlock>
+            <TextBlock Grid.Column="1">Target Property</TextBlock>
+        </Grid>
+    </DataTemplate>
+    
+    <DataTemplate x:Key="ParameterTypeCollectionItem">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition SharedSizeGroup="IgnoreCaseCol" MinWidth="60" Width="*" />
+                <ColumnDefinition SharedSizeGroup="KindCol" MinWidth="60" Width="*" />
+                <ColumnDefinition SharedSizeGroup="ValueCol" MinWidth="60" Width="*"/>
+                <ColumnDefinition SharedSizeGroup="DeleteCol" Width="16"/>
+            </Grid.ColumnDefinitions>
+
+
+            <ContentControl Grid.Column="0" >
+                <ContentPresenter Content="{Binding IgnoreCaseProperty}"  ContentTemplate="{DynamicResource SuggestedValuePropertyEditingTemplate}" />
+            </ContentControl>
+
+            <ContentControl Grid.Column="1" >
+                <ContentPresenter Content="{Binding KindProperty}" ContentTemplate="{DynamicResource SuggestedValuePropertyEditingTemplate}" />
+            </ContentControl>
+
+            <ContentControl Grid.Column="2" >
+                <ContentPresenter Content="{Binding MatchProperty}"  ContentTemplate="{DynamicResource TextPropertyEditingTemplate}" />
+            </ContentControl>
+
+            <Button Grid.Column="3" x:Name="DeleteButton"  Command="{Binding DeleteCommand}" Style="{DynamicResource DeleteButtonStyle}" Margin="0,0,0,8" VerticalAlignment="Top" Width="7" Height="7" />
+
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ParameterTypeCollectionHeader">
+        <Grid ShowGridLines="True">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition SharedSizeGroup="IgnoreCaseCol" MinWidth="60" Width="*" />
+                <ColumnDefinition SharedSizeGroup="KindCol" MinWidth="60" Width="*" />
+                <ColumnDefinition SharedSizeGroup="ValueCol" MinWidth="60" Width="*"/>
+                <ColumnDefinition SharedSizeGroup="DeleteCol" Width="16"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0">Ignore Case</TextBlock>
+            <TextBlock Grid.Column="1">Kind</TextBlock>
+            <TextBlock Grid.Column="2">Value</TextBlock>
+        </Grid>
+    </DataTemplate>
+    
+    <DataTemplate x:Key="PiabMemberNameItem">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition SharedSizeGroup="IgnoreCaseCol" MinWidth="60" Width="*" />
+                <ColumnDefinition SharedSizeGroup="MemberCol" MinWidth="60" Width="*"/>
+                <ColumnDefinition SharedSizeGroup="DeleteCol" Width="16"/>
+            </Grid.ColumnDefinitions>
+
+            <ContentControl Grid.Column="0" >
+                <ContentPresenter Content="{Binding IgnoreCaseProperty}"  ContentTemplate="{DynamicResource SuggestedValuePropertyEditingTemplate}" />
+            </ContentControl>
+
+            <ContentControl Grid.Column="1" >
+                <ContentPresenter Content="{Binding MatchProperty}"  ContentTemplate="{DynamicResource TextPropertyEditingTemplate}" />
+            </ContentControl>
+
+            <Button Grid.Column="2" x:Name="DeleteButton"  Command="{Binding DeleteCommand}" Style="{DynamicResource DeleteButtonStyle}" Margin="0,0,0,8" VerticalAlignment="Top" Width="7" Height="7" />
+
+        </Grid>
+    </DataTemplate>
+    
+    <DataTemplate x:Key="PiabMemberNameHeader">
+        <Grid ShowGridLines="True">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition SharedSizeGroup="IgnoreCaseCol" MinWidth="60" Width="*" />
+                <ColumnDefinition SharedSizeGroup="MemberCol" MinWidth="60" Width="*"/>
+                <ColumnDefinition SharedSizeGroup="DeleteCol" Width="16"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0">Ignore Case</TextBlock>
+            <TextBlock Grid.Column="1">Member Name</TextBlock>
+        </Grid>
+    </DataTemplate>
+    
+    <DataTemplate x:Key="PiabMethodSignatureTypesItem">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition SharedSizeGroup="TypeCol" MinWidth="60" Width="*" />
+                <ColumnDefinition SharedSizeGroup="NameCol" MinWidth="60" Width="*"/>
+                <ColumnDefinition SharedSizeGroup="DeleteCol" Width="16"/>
+            </Grid.ColumnDefinitions>
+
+
+            <ContentControl Grid.Column="0" >
+                <ContentPresenter Content="{Binding ParameterTypeNameProperty}"  ContentTemplate="{DynamicResource TextPropertyEditingTemplate}" />
+            </ContentControl>
+
+            <ContentControl Grid.Column="1" >
+                <ContentPresenter Content="{Binding NameProperty}"  ContentTemplate="{DynamicResource TextPropertyEditingTemplate}" />
+            </ContentControl>
+
+            <Button Grid.Column="2" x:Name="DeleteButton"  Command="{Binding DeleteCommand}" Style="{DynamicResource DeleteButtonStyle}" Margin="0,0,0,8" VerticalAlignment="Top" Width="7" Height="7" />
+
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="PiabMethodSignatureTypesHeader">
+        <Grid ShowGridLines="True">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition SharedSizeGroup="TypeCol" MinWidth="60" Width="*" />
+                <ColumnDefinition SharedSizeGroup="NameCol" MinWidth="60" Width="*"/>
+                <ColumnDefinition SharedSizeGroup="DeleteCol" Width="16"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0">Type</TextBlock>
+            <TextBlock Grid.Column="1">Member Name</TextBlock>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="PiabNamespaceMatchItem">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition SharedSizeGroup="IgnoreCaseCol" MinWidth="60" Width="*" />
+                <ColumnDefinition SharedSizeGroup="NamespaceCol" MinWidth="60" Width="*"/>
+                <ColumnDefinition SharedSizeGroup="DeleteCol" Width="16"/>
+            </Grid.ColumnDefinitions>
+
+
+            <ContentControl Grid.Column="0" >
+                <ContentPresenter Content="{Binding IgnoreCaseProperty}"  ContentTemplate="{DynamicResource SuggestedValuePropertyEditingTemplate}" />
+            </ContentControl>
+
+            <ContentControl Grid.Column="1" >
+                <ContentPresenter Content="{Binding MatchProperty}"  ContentTemplate="{DynamicResource TextPropertyEditingTemplate}" />
+            </ContentControl>
+
+            <Button Grid.Column="2" x:Name="DeleteButton"  Command="{Binding DeleteCommand}" Style="{DynamicResource DeleteButtonStyle}" Margin="0,0,0,8" VerticalAlignment="Top" Width="7" Height="7" />
+
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="PiabNamespaceMatchHeader">
+        <Grid ShowGridLines="True">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition SharedSizeGroup="IgnoreCaseCol" MinWidth="60" Width="*" />
+                <ColumnDefinition SharedSizeGroup="NamespaceCol" MinWidth="60" Width="*"/>
+                <ColumnDefinition SharedSizeGroup="DeleteCol" Width="16"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0">Ignore Case</TextBlock>
+            <TextBlock Grid.Column="1">Namespace</TextBlock>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="PiabPropertyMatchItem">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition SharedSizeGroup="IgnoreCaseCol" MinWidth="60" Width="*" />
+                <ColumnDefinition SharedSizeGroup="OptionCol" MinWidth="60" Width="*"/>
+                <ColumnDefinition SharedSizeGroup="MemberCol" MinWidth="60" Width="*"/>
+                <ColumnDefinition SharedSizeGroup="DeleteCol" Width="16"/>
+            </Grid.ColumnDefinitions>
+
+
+            <ContentControl Grid.Column="0" >
+                <ContentPresenter Content="{Binding IgnoreCaseProperty}"  ContentTemplate="{DynamicResource SuggestedValuePropertyEditingTemplate}" />
+            </ContentControl>
+
+            <ContentControl Grid.Column="1" >
+                <ContentPresenter Content="{Binding MatchOptionProperty}"  ContentTemplate="{DynamicResource SuggestedValuePropertyEditingTemplate}" />
+            </ContentControl>
+
+            <ContentControl Grid.Column="2" >
+                <ContentPresenter Content="{Binding MatchProperty}"  ContentTemplate="{DynamicResource TextPropertyEditingTemplate}" />
+            </ContentControl>
+
+            <Button Grid.Column="3" x:Name="DeleteButton"  Command="{Binding DeleteCommand}" Style="{DynamicResource DeleteButtonStyle}" Margin="0,0,0,8" VerticalAlignment="Top" Width="7" Height="7" />
+
+        </Grid>
+    </DataTemplate>
+    
+    <DataTemplate x:Key="PiabPropertyMatchHeader">
+        <Grid ShowGridLines="True">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition SharedSizeGroup="IgnoreCaseCol" MinWidth="60" Width="*" />
+                <ColumnDefinition SharedSizeGroup="MemberCol" MinWidth="60" Width="*"/>
+                <ColumnDefinition SharedSizeGroup="OptionCol" MinWidth="60" Width="*"/>
+                <ColumnDefinition SharedSizeGroup="DeleteCol" Width="16"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0">Ignore Case</TextBlock>
+            <TextBlock Grid.Column="1">Option</TextBlock>
+            <TextBlock Grid.Column="2">Property Name</TextBlock>
+        </Grid>
+    </DataTemplate>
+    
+    <DataTemplate x:Key="PiabTypeMatchItem">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition SharedSizeGroup="IgnoreCaseCol" MinWidth="60" Width="*" />
+                <ColumnDefinition SharedSizeGroup="TypeCol" MinWidth="60" Width="*"/>
+                <ColumnDefinition SharedSizeGroup="DeleteCol" Width="16"/>
+            </Grid.ColumnDefinitions>
+
+
+            <ContentControl Grid.Column="0" >
+                <ContentPresenter Content="{Binding IgnoreCaseProperty}"  ContentTemplate="{DynamicResource SuggestedValuePropertyEditingTemplate}" />
+            </ContentControl>
+
+            <ContentControl Grid.Column="1" >
+                <ContentPresenter Content="{Binding MatchProperty}"  ContentTemplate="{DynamicResource TextPropertyEditingTemplate}" />
+            </ContentControl>
+
+            <Button Grid.Column="2" x:Name="DeleteButton"  Command="{Binding DeleteCommand}" Style="{DynamicResource DeleteButtonStyle}" Margin="0,0,0,8" VerticalAlignment="Top" Width="7" Height="7" />
+
+        </Grid>
+    </DataTemplate>
+    
+    <DataTemplate x:Key="PiabTypeMatchHeader">
+        <Grid ShowGridLines="True">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition SharedSizeGroup="IgnoreCaseCol" MinWidth="60" Width="*" />
+                <ColumnDefinition SharedSizeGroup="TypeCol" MinWidth="60" Width="*"/>
+                <ColumnDefinition SharedSizeGroup="DeleteCol" Width="16"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0">Ignore Case</TextBlock>
+            <TextBlock Grid.Column="1">Type</TextBlock>
+        </Grid>
+    </DataTemplate>
+</ResourceDictionary>

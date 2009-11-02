@@ -1,136 +1,97 @@
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <ProjectType>Local</ProjectType>
-    <ProductVersion>9.0.21022</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{3C6BB980-EA8F-4C2C-A72B-60C3BCE7515E}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ApplicationIcon>App.ico</ApplicationIcon>
-    <AssemblyKeyContainerName>
-    </AssemblyKeyContainerName>
-    <AssemblyName>EntLibConfig</AssemblyName>
-    <AssemblyOriginatorKeyFile>
-    </AssemblyOriginatorKeyFile>
-    <DefaultClientScript>JScript</DefaultClientScript>
-    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
-    <DefaultTargetSchema>IE50</DefaultTargetSchema>
-    <DelaySign>false</DelaySign>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{241CC28C-B5B3-4F9F-A8CA-A85BB0F52D23}</ProjectGuid>
     <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Microsoft.Practices.EnterpriseLibrary.Configuration.Console</RootNamespace>
-    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
-    <StartupObject>
-    </StartupObject>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
-    <UpgradeBackupLocation>
-    </UpgradeBackupLocation><OldToolsVersion>2.0</OldToolsVersion>
+    <AssemblyName>EntLibConfig</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel><ExpressionBlendVersion>3.0.1921.0</ExpressionBlendVersion>
+    <StartupObject>Console.Wpf.App</StartupObject>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <OutputPath>..\..\..\bin\Debug\</OutputPath>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
-    <BaseAddress>285212672</BaseAddress>
-    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
-    <ConfigurationOverrideFile>
-    </ConfigurationOverrideFile>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DocumentationFile>
-    </DocumentationFile>
     <DebugSymbols>true</DebugSymbols>
-    <FileAlignment>4096</FileAlignment>
-    <NoStdLib>false</NoStdLib>
-    <NoWarn>
-    </NoWarn>
-    <Optimize>false</Optimize>
-    <RegisterForComInterop>false</RegisterForComInterop>
-    <RemoveIntegerChecks>false</RemoveIntegerChecks>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <WarningLevel>4</WarningLevel>
     <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\..\bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRules>-Microsoft.Design#CA2210;-Microsoft.Maintainability#CA1506;-Microsoft.Performance#CA1811;-Microsoft.Performance#CA1812;-Microsoft.Performance#CA1823;-Microsoft.Naming#CA1704;-Microsoft.Design#CA1017;-Microsoft.Performance#CA1824;-Microsoft.Performance#CA1822;-Microsoft.Naming#CA1701;-Microsoft.Globalization#CA1305;-Microsoft.Globalization#CA1300;-Microsoft.Globalization#CA1307;-Microsoft.Design#CA1001;-Microsoft.Maintainability#CA1500</CodeAnalysisRules>
+    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <OutputPath>..\..\..\bin\Release\</OutputPath>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
-    <BaseAddress>285212672</BaseAddress>
-    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
-    <ConfigurationOverrideFile>
-    </ConfigurationOverrideFile>
-    <DefineConstants>TRACE</DefineConstants>
-    <DocumentationFile>
-    </DocumentationFile>
-    <DebugSymbols>true</DebugSymbols>
-    <FileAlignment>4096</FileAlignment>
-    <NoStdLib>false</NoStdLib>
-    <NoWarn>
-    </NoWarn>
+    <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <RegisterForComInterop>false</RegisterForComInterop>
-    <RemoveIntegerChecks>false</RemoveIntegerChecks>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <WarningLevel>4</WarningLevel>
-    <DebugType>full</DebugType>
+    <OutputPath>..\..\..\bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRules>-Microsoft.Design#CA2210;-Microsoft.Maintainability#CA1506;-Microsoft.Performance#CA1811;-Microsoft.Performance#CA1812;-Microsoft.Performance#CA1823;-Microsoft.Naming#CA1704;-Microsoft.Design#CA1017;-Microsoft.Performance#CA1824;-Microsoft.Performance#CA1822;-Microsoft.Naming#CA1701;-Microsoft.Globalization#CA1305;-Microsoft.Globalization#CA1300;-Microsoft.Globalization#CA1307;-Microsoft.Design#CA1001;-Microsoft.Maintainability#CA1500</CodeAnalysisRules>
+    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System">
-      <Name>System</Name>
+    <Reference Include="Microsoft.Practices.Unity, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Lib\Microsoft.Practices.Unity.dll</HintPath>
     </Reference>
+    <Reference Include="PresentationFramework.Aero">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
-    <Reference Include="System.Data">
-      <Name>System.Data</Name>
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
-    <Reference Include="System.Design">
-      <Name>System.Design</Name>
+    <Reference Include="System.Xml" />
+    <Reference Include="UIAutomationProvider">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
-    <Reference Include="System.Drawing">
-      <Name>System.Drawing</Name>
+    <Reference Include="WindowsBase">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
-    <Reference Include="System.Messaging" />
-    <Reference Include="System.Windows.Forms">
-      <Name>System.Windows.Forms</Name>
+    <Reference Include="PresentationCore">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
-    <Reference Include="System.Xml">
-      <Name>System.XML</Name>
+    <Reference Include="PresentationFramework">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\..\GlobalAssemblyInfo.cs">
-      <Link>GlobalAssemblyInfo.cs</Link>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Page Include="Shell.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Simple Styles.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="AboutForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="App.cs">
+    <Compile Include="Shell.xaml.cs">
+      <DependentUpon>Shell.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="AppDomainBasePluginDirectoryProvider.cs" />
-    <Compile Include="FormSerializer.cs" />
-    <Compile Include="MainForm2.cs">
-      <SubType>Form</SubType>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Command\CommandReference.cs">
+      <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MainForm2.Designer.cs">
-      <DependentUpon>MainForm2.cs</DependentUpon>
-    </Compile>
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ConfigurationErrorListViewItem.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ConfigurationNodeListViewItem.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="MainForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="MenuItemComparer.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Properties\Resources.Designer.cs">
@@ -138,123 +99,51 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="SaveChangesDialog.cs">
-      <SubType>Form</SubType>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="UnhandledExceptionForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ValidationErrorListViewItem.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <EmbeddedResource Include="AboutForm.resx">
-      <DependentUpon>AboutForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MainForm.resx">
-      <DependentUpon>MainForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MainForm2.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>MainForm2.cs</DependentUpon>
-    </EmbeddedResource>
+    <Compile Include="StandAloneApplicationViewModel.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
-      <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="SaveChangesDialog.resx">
-      <DependentUpon>SaveChangesDialog.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UnhandledExceptionForm.resx">
-      <DependentUpon>UnhandledExceptionForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <Content Include="App.ico" />
+    <None Include="App.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Caching\Src\Cryptography.Configuration.Design\Caching.Cryptography.Configuration.Design.csproj">
-      <Project>{8E175354-2764-459E-8B63-772E63F922E7}</Project>
-      <Name>Caching.Cryptography.Configuration.Design</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Caching\Src\Database.Configuration.Design\Caching.Database.Configuration.Design.csproj">
-      <Project>{E32223CC-B10C-4D3A-83F5-9CEA12469364}</Project>
-      <Name>Caching.Database.Configuration.Design</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Data\Src\Configuration.Design\Data.Configuration.Design.csproj">
-      <Project>{CAFC0505-DC56-4E86-A335-D8EB2B23325A}</Project>
-      <Name>Data.Configuration.Design</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\ExceptionHandling\Src\Configuration.Design\ExceptionHandling.Configuration.Design.csproj">
-      <Project>{3D0BE7D5-585F-4549-8490-B8E864298456}</Project>
-      <Name>ExceptionHandling.Configuration.Design</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\ExceptionHandling\Src\Logging.Configuration.Design\ExceptionHandling.Logging.Configuration.Design.csproj">
-      <Project>{629381BA-FF3D-4DE1-8FE1-62FC75F0F1BD}</Project>
-      <Name>ExceptionHandling.Logging.Configuration.Design</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Logging\Src\Configuration.Design\Logging.Configuration.Design.csproj">
-      <Project>{F80ABB9A-56C5-4FC8-82F2-0DFEAAAC97A3}</Project>
-      <Name>Logging.Configuration.Design</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Logging\Src\DatabaseTraceListener.Configuration.Design\Logging.Database.Configuration.Design.csproj">
-      <Project>{FCD01AB3-FFD9-4C57-A9A5-BDEE9AFBB12D}</Project>
-      <Name>Logging.Database.Configuration.Design</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\PolicyInjection\Src\CallHandlers.Configuration.Design\PolicyInjection.CallHandlers.Configuration.Design.csproj">
-      <Project>{2C050B72-B237-4509-9739-9DB54C62168A}</Project>
-      <Name>PolicyInjection.CallHandlers.Configuration.Design</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\PolicyInjection\Src\Configuration.Design\PolicyInjection.Configuration.Design.csproj">
-      <Project>{6C74F26F-41D6-4A94-BED8-D29DFDBD9914}</Project>
-      <Name>PolicyInjection.Configuration.Design</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Security\Src\CachingStore.Configuration.Design\Security.Cache.CachingStore.Configuration.Design.csproj">
-      <Project>{028EE3EB-DF29-40D3-AD49-448B2DADAA1B}</Project>
-      <Name>Security.Cache.CachingStore.Configuration.Design</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Security\Src\Configuration.Design\Security.Configuration.Design.csproj">
-      <Project>{69FE71D7-F198-4B7D-9715-E0FC04EC5660}</Project>
-      <Name>Security.Configuration.Design</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Security.Cryptography\Src\Configuration.Design\Security.Cryptography.Configuration.Design.csproj">
-      <Project>{D28C4099-8B9B-4A75-94C1-0B34D598FD8E}</Project>
-      <Name>Security.Cryptography.Configuration.Design</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Validation\Src\Configuration.Design\Validation.Configuration.Design.csproj">
-      <Project>{7B0BBC65-71C5-4F0D-8114-1794CC70F62E}</Project>
-      <Name>Validation.Configuration.Design</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\AppSettings.Configuration.Design\AppSettings.Configuration.Design.csproj">
-      <Project>{6802DE8C-4BBD-4C2C-9166-7A5303F9DD18}</Project>
-      <Name>AppSettings.Configuration.Design</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Design.UI\Configuration.Design.UI.csproj">
-      <Project>{F72E73CB-1A02-4C0E-B15F-DF8661979A6B}</Project>
-      <Name>Configuration.Design.UI</Name>
+    <ProjectReference Include="..\..\..\Common\Src\Common.csproj">
+      <Project>{A09297C8-2C40-470B-8856-D856676DDFFA}</Project>
+      <Name>Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\Design\Configuration.Design.csproj">
-      <Project>{D6AAB55A-8C43-46B7-9EE4-EB8D1E1BFC17}</Project>
+      <Project>{C7E21FE1-53B4-4355-AB4A-834DA21B2607}</Project>
       <Name>Configuration.Design</Name>
     </ProjectReference>
-    <ProjectReference Include="..\EnvironmentalOverrides\Configuration.EnvironmentalOverrides.csproj">
-      <Project>{9CC92B51-39D9-4622-BE1D-57257C894FA7}</Project>
-      <Name>Configuration.EnvironmentalOverrides</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <Resource Include="Images\delete.ico" />
   </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PreBuildEvent>
-    </PreBuildEvent>
-    <PostBuildEvent>
-    </PostBuildEvent>
-  </PropertyGroup>
+  <ItemGroup>
+    <Resource Include="Images\add.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Extensions\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
 </Project>

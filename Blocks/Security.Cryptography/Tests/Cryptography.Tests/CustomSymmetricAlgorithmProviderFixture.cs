@@ -19,6 +19,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests
 {
     [TestClass]
+    [DeploymentItem("test.exe.config")]
     public class CustomSymmetricAlgorithmProviderFixture
     {
         [TestMethod]

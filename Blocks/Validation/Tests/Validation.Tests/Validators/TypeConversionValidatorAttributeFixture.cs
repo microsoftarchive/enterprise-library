@@ -12,6 +12,7 @@
 using System;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.ComponentModel.DataAnnotations;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
 {
@@ -30,7 +31,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
         {
             ValidatorAttribute attribute = new TypeConversionValidatorAttribute(typeof(double));
 
-            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null, null);
             Assert.IsNotNull(validator);
 
             TypeConversionValidator typedValidator = validator as TypeConversionValidator;
@@ -46,7 +47,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             ValueValidatorAttribute attribute = new TypeConversionValidatorAttribute(typeof(double));
             attribute.Negated = true;
 
-            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null);
+            Validator validator = ((IValidatorDescriptor)attribute).CreateValidator(null, null, null, null);
             Assert.IsNotNull(validator);
 
             TypeConversionValidator typedValidator = validator as TypeConversionValidator;
@@ -54,6 +55,44 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
 
             Assert.AreEqual(true, typedValidator.Negated);
             Assert.AreEqual(typeof(double), typedValidator.TargetType);
+        }
+
+        [TestMethod]
+        public void CanUseAttributeAsValidationAttributeForValidValue()
+        {
+            ValidationAttribute attribute =
+                new TypeConversionValidatorAttribute(typeof(double))
+                {
+                    MessageTemplate = "template {1}"
+                };
+
+            Assert.IsTrue(attribute.IsValid("2.0"));
+        }
+
+        [TestMethod]
+        public void CanUseAttributeAsValidationAttribute()
+        {
+            ValidationAttribute attribute =
+                new TypeConversionValidatorAttribute(typeof(double))
+                {
+                    MessageTemplate = "template {1}"
+                };
+
+            Assert.IsFalse(attribute.IsValid("abcdefghijklm"));
+            Assert.AreEqual("template name", attribute.FormatErrorMessage("name"));
+        }
+
+        [TestMethod]
+        public void ValidatingWithValidatorAttributeWithARulesetSkipsValidation()
+        {
+            ValidationAttribute attribute =
+                new TypeConversionValidatorAttribute(typeof(double))
+                {
+                    MessageTemplate = "template {1}",
+                    Ruleset = "some ruleset"
+                };
+
+            Assert.IsTrue(attribute.IsValid("abcdefghijklm"));
         }
     }
 }

@@ -29,7 +29,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         void ResetCollection(IEnumerable<ConfigurationElement> configurationElements);
 
         /// <summary/>
-        ConfigurationElement CreateNewElement();
+        ConfigurationElement CreateNewElement(Type configurationType);
     }
 
 

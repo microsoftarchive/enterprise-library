@@ -11,8 +11,6 @@
 
 using System;
 using System.Collections.Generic;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 
@@ -23,6 +21,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
     ///</summary>
     /// <seealso cref="AttributeValidatorFactory"/>
     /// <seealso cref="ConfigurationValidatorFactory"/>    
+    /// <seealso cref="ValidationAttributeValidatorFactory"/>
     /// <seealso cref="CompositeValidatorFactory"/>
     public abstract class ValidatorFactory
     {
@@ -60,9 +59,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         {
             var validatorWrapperType = typeof(GenericValidatorWrapper<>).MakeGenericType(type);
             var validatorWrapper = (Validator)Activator.CreateInstance(
-                validatorWrapperType, 
+                validatorWrapperType,
                 new object[] { validator, InstrumentationProvider });
-            
+
             return validatorWrapper;
         }
 
@@ -105,7 +104,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
                     return cachedValidator;
                 }
 
-                Validator validator = InnerCreateValidator(cacheKey.SourceType, cacheKey.Ruleset);
+                Validator validator = InnerCreateValidator(cacheKey.SourceType, cacheKey.Ruleset, this);
                 wrapperValidator = wrapAndInstrument(validator, cacheKey.SourceType);
 
                 validatorCache[cacheKey] = wrapperValidator;
@@ -165,8 +164,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         /// </summary>
         /// <param name="targetType">The <see cref="Type"/>to validate.</param>
         /// <param name="ruleset">The ruleset to use when validating</param>
+        /// <param name="mainValidatorFactory">Factory to use when building nested validators.</param>
         /// <returns>A <see cref="Validator"/></returns>
-        protected internal abstract Validator InnerCreateValidator(Type targetType, string ruleset);
+        protected internal abstract Validator InnerCreateValidator(Type targetType, string ruleset, ValidatorFactory mainValidatorFactory);
 
         ///<summary>
         /// Clears the internal validator cache.

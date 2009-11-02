@@ -49,6 +49,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Lib\Microsoft.Practices.Unity.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Practices.Unity.Configuration, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Lib\Microsoft.Practices.Unity.Configuration.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -68,10 +72,23 @@
     </Compile>
     <Compile Include="AttributeValidatorFactory.cs" />
     <Compile Include="ConfigurationValidatorFactory.cs" />
+    <Compile Include="Configuration\DesignResources.Designer.cs">
+      <DependentUpon>DesignResources.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
     <Compile Include="Configuration\PropertyComparisonValidatorData.cs" />
+    <Compile Include="Configuration\Unity\InjectionValidationSource.cs" />
     <Compile Include="Configuration\Unity\ValidationBlockExtension.cs" />
-    <Compile Include="Configuration\Unity\ValidationCreationStrategy.cs" />
+    <Compile Include="Configuration\Unity\ValidationSourceElement.cs" />
+    <Compile Include="Configuration\Unity\ValidationSpecificationSourcePolicy.cs" />
+    <Compile Include="Configuration\Unity\ValidatorCreationStrategy.cs" />
+    <Compile Include="Configuration\Unity\ValidatorDependencyAttribute.cs" />
+    <Compile Include="Configuration\Unity\ValidatorParameter.cs" />
+    <Compile Include="Configuration\Unity\ValidatorResolver.cs" />
+    <Compile Include="Configuration\ValidationDesignTime.cs" />
     <Compile Include="Configuration\ValidationTypeRegistrationProvider.cs" />
+    <Compile Include="DataErrorInfoHelper.cs" />
     <Compile Include="ValidationAttributeValidatedElement.cs" />
     <Compile Include="ValidationAttributeValidatedType.cs" />
     <Compile Include="ValidationAttributeValidatorBuilder.cs" />
@@ -222,6 +239,10 @@
     <Compile Include="ValueAccessValidatorBuilder.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Configuration\DesignResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>DesignResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <SubType>Designer</SubType>
       <Generator>PublicResXFileCodeGenerator</Generator>

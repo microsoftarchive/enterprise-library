@@ -13,12 +13,15 @@ using System.Collections.Generic;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Filters;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 {
     /// <summary>
     /// Represents the configuration for a priority filter.
     /// </summary>    
+    [ResourceDescription(typeof(DesignResources), "PriorityFilterDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "PriorityFilterDataDisplayName")]
     public class PriorityFilterData : LogFilterData
     {
         private const string minimumPriorityProperty = "minimumPriority";
@@ -57,6 +60,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// below the minimum are dropped immediately on the client.
         /// </summary>
         [ConfigurationProperty(minimumPriorityProperty)]
+        [ResourceDescription(typeof(DesignResources), "PriorityFilterDataMinimumPriorityDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "PriorityFilterDataMinimumPriorityDisplayName")]
         public int MinimumPriority
         {
             get
@@ -74,6 +79,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// above the maximum are dropped immediately on the client.
         /// </summary>		
         [ConfigurationProperty(maximumPriorityProperty, DefaultValue = int.MaxValue)]
+        [ResourceDescription(typeof(DesignResources), "PriorityFilterDataMaximumPriorityDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "PriorityFilterDataMaximumPriorityDisplayName")]
         public int MaximumPriority
         {
             get

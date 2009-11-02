@@ -23,6 +23,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 	/// <remarks>
 	/// This class is used in conjunction with a <see cref="Configuration.NamedElementCollection&lt;T&gt;"/>.
 	/// </remarks>
+    
+    [NameProperty("Name")]
 	public class NamedConfigurationElement : ConfigurationElement, IObjectWithName
 	{
 		/// <summary>
@@ -53,7 +55,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 		/// </value>
 		[ConfigurationProperty(nameProperty, IsKey = true, DefaultValue = "Name", IsRequired= true)]				
 		[StringValidator(MinLength=1)]
-        [ResourceDescription(typeof(Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design.Resources), "NodeNameDescription")]
+        [ResourceDescription(typeof(DesignResources), "NamedConfigurationElementNameDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "NamedConfigurationElementNameDisplayName")]
         [ResourceCategory(typeof(ResourceCategoryAttribute), "CategoryName")]
         [EnvironmentalOverrides(false)]
         public virtual string Name

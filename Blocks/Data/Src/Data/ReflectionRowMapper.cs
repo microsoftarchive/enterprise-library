@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Reflection;
@@ -105,6 +106,45 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
         /// </summary>
         protected static object ConvertValue(object value, Type conversionType)
         {
+            if(IsNullableType(conversionType))
+            {
+                return ConvertNullableValue(value, conversionType);
+            }
+            return ConvertNonNullableValue(value, conversionType);
+        }
+
+        private static bool IsNullableType(Type t)
+        {
+            return t.IsGenericType &&
+                   t.GetGenericTypeDefinition() == typeof (Nullable<>);
+        }
+
+        /// <summary>
+        /// Converts the database value <paramref name="value"/> to <paramref name="conversionType"/>,
+        /// where <paramref name="conversionType"/> is a nullable value.
+        /// </summary>
+        /// <param name="value">Value from the database.</param>
+        /// <param name="conversionType">Type to convert to.</param>
+        /// <returns>The converted value.</returns>
+        protected static object ConvertNullableValue(object value, Type conversionType)
+        {
+            var converter = new NullableConverter(conversionType);
+            if(value == DBNull.Value)
+            {
+                return converter.ConvertFrom(null);
+            }
+            return converter.ConvertFrom(value);
+        }
+
+        /// <summary>
+        /// Converts the database value <paramref name="value"/> to <paramref name="conversionType"/>.
+        /// Will throw an exception if <paramref name="conversionType"/> is a nullable value.
+        /// </summary>
+        /// <param name="value">Value from the database.</param>
+        /// <param name="conversionType">Type to convert to.</param>
+        /// <returns>The converted value.</returns>
+        protected static object ConvertNonNullableValue(object value, Type conversionType)
+        {
             object convertedValue = null;
 
             if (value != DBNull.Value)
@@ -113,6 +153,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
             }
             return convertedValue;
         }
+
+
+
     }
 
     /// <summary>

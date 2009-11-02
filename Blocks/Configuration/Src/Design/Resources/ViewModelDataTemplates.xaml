@@ -1,0 +1,414 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+					xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+					xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                    xmlns:ViewModel="clr-namespace:Console.Wpf.ViewModel"
+					xmlns:Controls="clr-namespace:Console.Wpf.Controls"
+                    xmlns:Converters="clr-namespace:Console.Wpf.Converters"
+					mc:Ignorable="d" xmlns:Microsoft_Windows_Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero">
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/Microsoft.Practices.EnterpriseLibrary.Configuration.Design;component/Resources/Converters.xaml" />
+        <ResourceDictionary Source="/Microsoft.Practices.EnterpriseLibrary.Configuration.Design;component/Resources/Brushes.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
+    <Controls:PropertyContentTemplateSelector x:Key="propertyContentTemplateSelector" />
+
+    <ControlTemplate x:Key="NoAdornerErrorTemplate">
+        <AdornedElementPlaceholder />
+    </ControlTemplate>
+
+    <Canvas x:Key="AddButtonVisual" x:Shared="False"
+            Width="15"
+		    Height="15"
+		    Clip="F1 M 0,0L 25,0L 25,25L 0,25L 0,0">
+
+        <Path Width="12.2426" Height="2" Canvas.Left="1.37475" Canvas.Top="6.5529" Stretch="Fill" StrokeThickness="2" StrokeLineJoin="Round" Data="F1 M 2.37475,7.5529L 12.6174,7.5529">
+            <Path.Stroke>
+                <SolidColorBrush Color="{DynamicResource ElementCommandNormal}"/>
+            </Path.Stroke>
+        </Path>
+        <Path Width="2.00001" Height="12.2426" Canvas.Left="6.49606" Canvas.Top="1.43157" Stretch="Fill" StrokeThickness="2" StrokeLineJoin="Round" Data="F1 M 7.49606,2.43157L 7.49607,12.6742">
+            <Path.Stroke>
+                <SolidColorBrush Color="{DynamicResource ElementCommandNormal}"/>
+            </Path.Stroke>
+        </Path>
+        <Path Width="14.7058" Height="14.7058" Canvas.Left="0.14318" Canvas.Top="0.199996" Stretch="Fill" StrokeLineJoin="Round" Data="F1 M 3.64318,0.699996L 11.349,0.699996C 13.0058,0.699996 14.349,2.04314 14.349,3.7L 14.349,11.4058C 14.349,13.0626 13.0058,14.4058 11.349,14.4058L 3.64318,14.4058C 1.98633,14.4058 0.64318,13.0626 0.64318,11.4058L 0.64318,3.7C 0.64318,2.04314 1.98633,0.699996 3.64318,0.699996 Z ">
+            <Path.Stroke>
+                <SolidColorBrush Color="{DynamicResource ElementCommandNormal}"/>
+            </Path.Stroke>
+        </Path>
+    </Canvas>
+
+    <Style x:Key="ContextAdderButtonMenuStyle" TargetType="{x:Type Controls:ContextMenuButton}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <ContentControl Content="{StaticResource AddButtonVisual}" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="ContextMenuStyle">
+        <Style.Resources>
+            <HierarchicalDataTemplate DataType="{x:Type ViewModel:DefaultElementCollectionAddCommand}" ItemsSource="{Binding ChildCommands}">
+                <MenuItem Header="_Add..." />
+            </HierarchicalDataTemplate>
+
+            <DataTemplate DataType="{x:Type ViewModel:CommandModel}">
+                <Controls:SelectionNotifyingMenuItem Header="{Binding Title}" Command="{Binding}" />
+            </DataTemplate>
+        </Style.Resources>
+    </Style>
+
+    <DataTemplate DataType="{x:Type ViewModel:HeaderViewModel}">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="{Binding Name}"
+					   FontStyle="Italic"
+					   HorizontalAlignment="Stretch" FontWeight="Bold" />
+            <Controls:ContextMenuButton x:Name="AddButton" 
+                            Grid.Column="1" 
+                            VerticalAlignment="Top" 
+                            HorizontalAlignment="Right" 
+                            Width="15"
+                            Height="15"
+                            Margin="0,0,-4,0"
+                            Visibility="{Binding Commands, Converter={StaticResource EnumerableToVisibilityConverter}, FallbackValue=Hidden}"                            
+                            Style="{StaticResource ContextAdderButtonMenuStyle}"
+                            >
+                <Controls:ContextMenuButton.ContextMenu>
+                    <Controls:SelectionNotifyingContextMenu ItemsSource="{Binding Commands}" Style="{StaticResource ContextMenuStyle}"  />
+                </Controls:ContextMenuButton.ContextMenu>
+            </Controls:ContextMenuButton>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type ViewModel:Property}"
+				  x:Key="ChildPropertyTemplate">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"
+								  SharedSizeGroup="Column1" />
+                <ColumnDefinition Width="Auto"
+								  SharedSizeGroup="Column2" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="1"
+					   Text="{Binding DisplayName}"
+					   ToolTip="{Binding Description}"
+					   Margin="0,0,5,0"
+					   HorizontalAlignment="Left" />
+            <ContentControl Grid.Column="2">
+                <ContentPresenter ContentTemplateSelector="{StaticResource propertyContentTemplateSelector}" />
+            </ContentControl>
+        </Grid>
+        <DataTemplate.Triggers>
+            <DataTrigger Binding="{Binding Hidden}"
+						 Value="True">
+                <Setter Property="Visibility"
+						Value="Collapsed" />
+            </DataTrigger>
+        </DataTemplate.Triggers>
+    </DataTemplate>
+
+    <DataTemplate x:Key="SuggestedValuePropertyEditingTemplate">
+        <Grid HorizontalAlignment="Stretch">
+            <ComboBox ItemsSource="{Binding BindableSuggestedValues}"
+							  Text="{Binding BindableValue}"
+							  x:Name="propertyDropdown"
+							  Grid.Column="0"
+                              HorizontalAlignment="Stretch"
+							  IsEditable="{Binding SuggestedValuesEditable}"
+                              IsEnabled="{Binding DesignTimeReadOnly, Converter={StaticResource BooleanInverseConverter}}"
+							  Visibility="Visible" 
+                              AutomationProperties.Name="{Binding DisplayName}"/>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="DropDownEditorPropertyTemplate">
+        <Expander x:Name="propertyDropDownEditor" Visibility="Visible" Header="{Binding BindableValue}" Content="{Binding Editor}" Focusable="True" Style="{DynamicResource DropDownEditorExpander}" AutomationProperties.Name="{Binding DisplayName}" 
+            IsEnabled="{Binding DesignTimeReadOnly, Converter={StaticResource BooleanInverseConverter}}"/>
+        <DataTemplate.Triggers>
+            <Trigger Property="IsFocused" Value="False" SourceName="propertyDropDownEditor">
+                <Setter Property="IsExpanded" TargetName="propertyDropDownEditor" Value="False"/>
+            </Trigger>
+        </DataTemplate.Triggers>
+    </DataTemplate>
+
+    <DataTemplate x:Key="TextPropertyEditingTemplate">
+        <DockPanel>
+            <Button Content="..."
+						DockPanel.Dock="Right"
+						Width="15"
+						Height="20"
+						Command="{Binding LaunchEditor}"
+						CommandParameter="{Binding}"
+						x:Name="propertyPopupButton"
+						HorizontalAlignment="Right"
+						IsEnabled="{Binding DesignTimeReadOnly, Converter={StaticResource BooleanInverseConverter}}"
+						Visibility="Collapsed" />
+            <Grid HorizontalAlignment="Stretch">
+                <Border BorderBrush="Red"
+							BorderThickness="1"
+							Margin="-1"
+							x:Name="ErrorAdorner"
+							Visibility="Collapsed" />
+                <TextBox IsEnabled="{Binding DesignTimeReadOnly, Converter={StaticResource BooleanInverseConverter}}"
+							 Validation.ErrorTemplate="{StaticResource NoAdornerErrorTemplate}"
+							 HorizontalAlignment="Stretch"
+							 x:Name="valueTextBox"
+                            IsReadOnly="{Binding TextReadOnly}"
+                             AutomationProperties.Name="{Binding DisplayName}">
+                    <TextBox.Text>
+                        <Binding Path="BindableValue" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <ExceptionValidationRule />
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
+            </Grid>
+        </DockPanel>
+        <DataTemplate.Triggers>
+            <Trigger Property="IsFocused" Value="True" SourceName="valueTextBox">
+                <Setter Property="FontWeight" TargetName="valueTextBox" Value="Bold"/>
+            </Trigger>
+            <Trigger Property="Validation.HasError"
+					 Value="true"
+					 SourceName="valueTextBox">
+                <Setter Property="ToolTip"
+						Value="{Binding (Validation.Errors)[0].ErrorContent, RelativeSource={x:Static RelativeSource.Self}}" />
+                <Setter Property="Visibility"
+						Value="Visible"
+						TargetName="ErrorAdorner" />
+            </Trigger>
+            <Trigger Property="Validation.HasError"
+					 Value="false"
+					 SourceName="valueTextBox">
+                <Setter Property="ToolTip"
+						Value="{Binding Value}" />
+            </Trigger>
+            <DataTrigger Binding="{Binding EditorBehavior}"
+						 Value="ModalPopup">
+                <Setter Property="Visibility"
+						Value="Visible"
+						TargetName="propertyPopupButton" />
+            </DataTrigger>
+        </DataTemplate.Triggers>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type ViewModel:Property}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"
+								  SharedSizeGroup="Column1" />
+                <ColumnDefinition Width="Auto"
+								  SharedSizeGroup="Column2" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <!--Child Properties -->
+            <ToggleButton Visibility="{Binding HasChildProperties, Converter={StaticResource BooleanToVisibilityConverter}}"
+						  Margin="1,2,0,0"
+						  Grid.Column="0"
+						  x:Name="ShowChildProperties"
+						  VerticalAlignment="Top"
+						  Background="{DynamicResource NormalBrush}"
+						  Template="{DynamicResource PropertiesExpandToggleButton}"
+						  HorizontalAlignment="Left" />
+            <ItemsControl ItemsSource="{Binding ChildProperties}"
+						  ItemTemplate="{StaticResource ChildPropertyTemplate}"
+						  Visibility="{Binding IsChecked, Converter={StaticResource BooleanToVisibilityConverter}, ElementName=ShowChildProperties, Mode=TwoWay}"
+						  Grid.Column="0"
+						  Grid.Row="1"
+						  Grid.ColumnSpan="4"
+						  Margin="0,0,10,0" />
+            <!--End Child Properties -->
+            <TextBlock Grid.Column="1"
+					   Text="{Binding DisplayName}"
+					   ToolTip="{Binding Description}"
+					   Margin="5,0,5,0"
+					   HorizontalAlignment="Left" VerticalAlignment="Center" />
+            <ContentControl Grid.Column="2">
+                <ContentPresenter ContentTemplateSelector="{StaticResource propertyContentTemplateSelector}" />
+            </ContentControl>
+        </Grid>
+        <DataTemplate.Triggers>
+            <DataTrigger Binding="{Binding Hidden}"
+						 Value="True">
+                <Setter Property="Visibility"
+						Value="Collapsed" />
+            </DataTrigger>
+        </DataTemplate.Triggers>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type ViewModel:ElementViewModel}">
+        <TextBlock Text="{Binding Name, Mode=OneWay}"
+				   HorizontalAlignment="Left"
+				   VerticalAlignment="Center"
+				   Background="{x:Null}"
+				   Margin="5,0,0,0" />
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type ViewModel:CommandModel}">
+        <Button Content="{Binding Title}"
+				Command="{Binding}"
+				Margin="0,0,10,5">
+            <Button.Template>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Grid x:Name="grid">
+                        <TextBlock HorizontalAlignment="Stretch"
+								   VerticalAlignment="Stretch"
+								   Text="{TemplateBinding Content}"
+								   TextWrapping="Wrap" />
+                    </Grid>
+                </ControlTemplate>
+            </Button.Template>
+        </Button>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type ViewModel:CollectionElementViewModel}">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="{Binding Name, Mode=OneWay}"
+					   HorizontalAlignment="Left"
+					   VerticalAlignment="Center"
+					   Background="{x:Null}"
+					   Margin="5,0,15,0"
+					   Grid.Column="0"/>
+
+            <StackPanel Orientation="Horizontal"
+						HorizontalAlignment="Right"
+						Margin="0,0,0,0"
+						d:LayoutOverrides="HorizontalAlignment"
+						Grid.Column="1">
+                <StackPanel x:Name="reorderButtons">
+                    <Button Content="Up"
+							Command="{Binding MoveUp}"
+							CommandParameter="{Binding}"
+							Template="{DynamicResource ReorderUpButton}"
+							Margin="0,2,0,-2"
+							HorizontalAlignment="Center"
+							Visibility="{Binding IsEnabled, Converter={StaticResource BooleanToVisibilityConverter}, RelativeSource={RelativeSource Self}}" />
+                    <Button Content="Down"
+							Command="{Binding MoveDown}"
+							CommandParameter="{Binding}"
+							Template="{DynamicResource ReorderDownButton}"
+							Margin="0,6,0,0"
+							HorizontalAlignment="Center"
+							Visibility="{Binding IsEnabled, Converter={StaticResource BooleanToVisibilityConverter}, RelativeSource={RelativeSource Self}}" />
+                </StackPanel>
+                <Button Command="{Binding DeleteCommand}" 
+                                        Style="{DynamicResource DeleteButtonStyle}" 
+                                        Margin="0,3,3,0" 
+                                        VerticalAlignment="Top" 
+                                        Width="7" Height="7" 
+                                        AutomationProperties.Name="DeleteButton" />
+            </StackPanel>
+            <Grid.ContextMenu>
+                <Controls:SelectionNotifyingContextMenu ItemsSource="{Binding Commands}" Style="{StaticResource ContextMenuStyle}"  />
+            </Grid.ContextMenu>
+        </Grid>
+        <DataTemplate.Triggers>
+            <DataTrigger Binding="{Binding ChildElements.Count, Converter={StaticResource ChildCountToVisibility}, FallbackValue=False}"
+						 Value="True">
+                <Setter Property="Visibility"
+						Value="Visible"
+						TargetName="reorderButtons" />
+            </DataTrigger>
+        </DataTemplate.Triggers>
+
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type ViewModel:SectionViewModel}">
+        <Expander Style="{StaticResource SectionExpander}" >
+            <Expander.Header>
+                <DockPanel>
+                    <TextBlock DockPanel.Dock="Left" Text="{Binding Name}" />
+                </DockPanel>
+            </Expander.Header>
+
+            <Controls:BlockVisualizer />
+
+        </Expander>
+    </DataTemplate>
+
+    <Style x:Key="ButtonFocusVisual">
+        <Setter Property="Control.Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Rectangle Stroke="Black" StrokeDashArray="1 2" StrokeThickness="1" Margin="2" SnapsToDevicePixels="true"/>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    
+    <LinearGradientBrush x:Key="ButtonNormalBackground" EndPoint="0,1" StartPoint="0,0">
+        <GradientStop Color="#F3F3F3" Offset="0"/>
+        <GradientStop Color="#EBEBEB" Offset="0.5"/>
+        <GradientStop Color="#DDDDDD" Offset="0.5"/>
+        <GradientStop Color="#CDCDCD" Offset="1"/>
+    </LinearGradientBrush>
+    <SolidColorBrush x:Key="ButtonNormalBorder" Color="#FF707070"/>
+    <Style x:Key="DeleteButtonStyle" TargetType="{x:Type Button}">
+        <Setter Property="FocusVisualStyle" Value="{StaticResource ButtonFocusVisual}"/>
+        <Setter Property="Background" Value="{StaticResource ButtonNormalBackground}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource ButtonNormalBorder}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Padding" Value="1"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Grid Width="Auto" Height="Auto" d:DesignWidth="28" d:DesignHeight="28" IsHitTestVisible="True">
+                        <Path x:Name="PathA" Stretch="Fill" StrokeEndLineCap="Triangle" StrokeStartLineCap="Triangle" StrokeThickness="1" Data="M0,0 L28,28" Fill="Black">
+                            <Path.Stroke>
+                                <SolidColorBrush Color="{DynamicResource ElementCommandNormal}"/>
+                            </Path.Stroke>
+                        </Path>
+                        <Path x:Name="PathB" Stretch="Fill" StrokeEndLineCap="Triangle" StrokeStartLineCap="Triangle" StrokeThickness="1" Data="M0,28 L28,0">
+                            <Path.Stroke>
+                                <SolidColorBrush Color="{DynamicResource ElementCommandNormal}"/>
+                            </Path.Stroke>
+                        </Path>
+                    </Grid>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter Property="Foreground" Value="#ADADAD"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="PathA" Property="Stroke">
+                                <Setter.Value>
+                                    <SolidColorBrush Color="{DynamicResource ElementCommandMouseOver}"/>
+                                </Setter.Value>
+                            </Setter>
+                            <Setter TargetName="PathB" Property="Stroke">
+                                <Setter.Value>
+                                    <SolidColorBrush Color="{DynamicResource ElementCommandMouseOver}"/>
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

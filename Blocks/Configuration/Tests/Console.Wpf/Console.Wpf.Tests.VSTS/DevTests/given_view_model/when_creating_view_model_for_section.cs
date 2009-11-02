@@ -25,6 +25,9 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.ComponentModel.Design;
 using System.Configuration;
 using Console.Wpf.Tests.VSTS.TestSupport;
+using Console.Wpf.ViewModel.BlockSpecifics;
+using Console.Wpf.ViewModel.Services;
+using Console.Wpf.Tests.VSTS.Mocks;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model
 {
@@ -35,7 +38,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model
 
         protected override void Act()
         {
-            viewModel = SectionViewModel.CreateSection(ServiceProvider, Section);
+            viewModel = SectionViewModel.CreateSection(Container, ExceptionHandlingSettings.SectionName, Section);
         }
 
         [TestMethod]
@@ -99,7 +102,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model
         public void then_exception_policy_collection_contains_adders()
         {
             ElementCollectionViewModel policyCollection = (ElementCollectionViewModel)viewModel.ChildElements.Where(x => x.ConfigurationType == typeof(NamedElementCollection<ExceptionPolicyData>)).First();
-            Assert.IsTrue(policyCollection.ChildAdders.OfType<CollectionElementAddCommand>().Any(a => a.DisplayName == "Policy"));
+            Assert.IsTrue(policyCollection.Commands.OfType<DefaultCollectionElementAddCommand>().Any(a => a.Title == "Add Policy"));
         }
 
         [TestMethod]
@@ -111,11 +114,13 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model
                     x => typeof(NamedElementCollection<ExceptionHandlerData>).IsAssignableFrom(x.ConfigurationType)).
                     First();
 
-            var adders = handlerCollection.ChildAdders.OfType<CollectionElementAddCommand>();
-            Assert.IsNotNull(adders.Single(a => a.DisplayName == "Wrap Handler"));
-            Assert.IsNotNull(adders.Single(a => a.DisplayName == "Replace Handler"));
-            Assert.IsNotNull(adders.Single(a => a.DisplayName == "Custom"));
-            Assert.IsFalse(adders.Any(a => a.DisplayName == "ExceptionHandlerData"));
+            var adders =
+                handlerCollection.Commands.OfType<DefaultElementCollectionAddCommand>()
+                .SelectMany(x => x.ChildCommands);
+            Assert.IsNotNull(adders.Single(a => a.Title == "Add Wrap Handler"));
+            Assert.IsNotNull(adders.Single(a => a.Title == "Add Replace Handler"));
+            Assert.IsNotNull(adders.Single(a => a.Title == "Add Custom Exception Handler."));
+            Assert.IsFalse(adders.Any(a => a.Title == "Add ExceptionHandlerData"));
         }
 
 
@@ -197,24 +202,26 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model
     }
 
     [TestClass]
-    public class when_creating_connection_strings_collection : ArrangeActAssert
+    public class when_creating_connection_strings_collection : ContainerContext
     {
-        ServiceContainer serviceProvider;
         ConnectionStringsSection section;
         SectionViewModel connectionStringsModel;
 
         protected override void Arrange()
         {
-            serviceProvider = new ServiceContainer();
+            base.Arrange();
 
             section = new ConnectionStringsSection();
             section.ConnectionStrings.Add(new ConnectionStringSettings("name", "conn1"));
             section.ConnectionStrings.Add(new ConnectionStringSettings("name2", "conn2"));
+
+            ConnectionStringsDecorator.DecorateConnectionStringsSection(new AnnotationService());
         }
 
         protected override void Act()
         {
-            connectionStringsModel = SectionViewModel.CreateSection(serviceProvider, section);
+            connectionStringsModel = SectionViewModel.CreateSection(Container, "connectionStrings", section);
+            connectionStringsModel.AfterOpen(new DesignDictionaryConfigurationSource());
         }
 
         [TestMethod]
@@ -239,7 +246,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model
         {
             base.Arrange();
 
-            var viewModel = SectionViewModel.CreateSection(ServiceProvider, Section);
+            var viewModel = SectionViewModel.CreateSection(Container, ExceptionHandlingSettings.SectionName, Section);
 
             handlerCollection = viewModel.DescendentElements(
                       e => e.ConfigurationType ==
@@ -253,7 +260,10 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model
 
         protected override void Act()
         {
-            var command = handlerCollection.ChildAdders.OfType<CollectionElementAddCommand>().Where(a => a.DisplayName == "Wrap Handler").First();
+            var command =
+                handlerCollection.Commands.OfType<DefaultElementCollectionAddCommand>().SelectMany(a => a.ChildCommands)
+                    .Where(c => c.Title == "Add Wrap Handler").First();
+
             command.Execute(null);
         }
 

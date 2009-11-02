@@ -28,7 +28,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_property_grid_consuming_view_mod
 
         protected override void Act()
         {
-            model = SectionViewModel.CreateSection(ServiceProvider, Section);
+            model = SectionViewModel.CreateSection(Container, "section", Section);
         }
 
         private void AssertForAllProperties(Action<PropertyDescriptor, Property> assertion)

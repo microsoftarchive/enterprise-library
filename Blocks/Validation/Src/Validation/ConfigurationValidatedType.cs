@@ -26,10 +26,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         private static readonly MethodInfo[] NoSelfValidationMethods = new MethodInfo[0];
 
         /// <summary>
-        /// 
+        /// Initializes a new instance of the <see cref="ConfigurationValidatedType"/> class for a ruleset on a 
+        /// target type.
         /// </summary>
-        /// <param name="ruleData"></param>
-        /// <param name="targetType"></param>
+        /// <param name="ruleData">The validation rules corresponding to a ruleset.</param>
+        /// <param name="targetType">The target type.</param>
         public ConfigurationValidatedType(ValidationRulesetData ruleData, Type targetType)
         {
             this.ruleData = ruleData;

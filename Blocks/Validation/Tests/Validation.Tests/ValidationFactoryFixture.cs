@@ -9,8 +9,8 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.TestSupport.Configuration;
@@ -23,7 +23,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
     [TestClass]
     public class ValidationFactoryFixture
     {
-
         [TestMethod]
         public void ShouldCacheGenericValidatorWhenUsingUnspecifiedConfigSource()
         {
@@ -36,8 +35,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         [TestMethod]
         public void ShouldCacheNonGenericValidatorWhenUsingUnspecifiedConfigSource()
         {
-            var firstValidator = ValidationFactory.CreateValidator(typeof (TestObjectWithFailingAttributesOnProperties));
-            var secondValidator = ValidationFactory.CreateValidator(typeof (TestObjectWithFailingAttributesOnProperties));
+            var firstValidator = ValidationFactory.CreateValidator(typeof(TestObjectWithFailingAttributesOnProperties));
+            var secondValidator = ValidationFactory.CreateValidator(typeof(TestObjectWithFailingAttributesOnProperties));
 
             Assert.AreSame(firstValidator, secondValidator);
         }
@@ -145,6 +144,104 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
 
             Assert.AreEqual(typeof(ValueAccessValidator), allValidators[0].GetType());
             Assert.AreEqual(typeof(ValueAccessValidator), allValidators[1].GetType());
+        }
+
+        #endregion
+
+        #region Test adding validators with DataAnnotations validation attributes
+
+        [TestMethod]
+        public void CanGetValidatorFromVABAttributesOnly()
+        {
+            var validator =
+                ValidationFactory.CreateValidator<TestObjectWithMultipleSourceValidationAttributesOnProperties>(
+                    ValidationSpecificationSource.Attributes);
+
+            var instance =
+                new TestObjectWithMultipleSourceValidationAttributesOnProperties
+                {
+                    PropertyWithDataAnnotationsAttributes = "invalid",
+                    PropertyWithMixedAttributes = "invalid",
+                    PropertyWithVABOnlyAttributes = "invalid"
+                };
+
+            var results = validator.Validate(instance);
+
+            Assert.IsFalse(results.IsValid);
+            Assert.AreEqual(2, results.Count);
+            Assert.IsTrue(results.Any(vr => vr.Key == "PropertyWithMixedAttributes" && vr.Message == "vab-mixed"));
+            Assert.IsTrue(results.Any(vr => vr.Key == "PropertyWithVABOnlyAttributes" && vr.Message == "vab-only"));
+        }
+
+        [TestMethod]
+        public void CanGetValidatorFromDataAnnotationsAttributesOnly()
+        {
+            var validator =
+                ValidationFactory.CreateValidator<TestObjectWithMultipleSourceValidationAttributesOnProperties>(
+                    ValidationSpecificationSource.DataAnnotations);
+
+            var instance =
+                new TestObjectWithMultipleSourceValidationAttributesOnProperties
+                {
+                    PropertyWithDataAnnotationsAttributes = "invalid",
+                    PropertyWithMixedAttributes = "invalid",
+                    PropertyWithVABOnlyAttributes = "invalid"
+                };
+
+            var results = validator.Validate(instance);
+
+            Assert.IsFalse(results.IsValid);
+            Assert.AreEqual(2, results.Count);
+            Assert.IsTrue(results.Any(vr => vr.Key == "PropertyWithMixedAttributes" && vr.Message == "data annotations-mixed"));
+            Assert.IsTrue(results.Any(vr => vr.Key == "PropertyWithDataAnnotationsAttributes" && vr.Message == "data annotations-only"));
+        }
+
+        [TestMethod]
+        public void CanGetValidatorFromDataAnnotationsAndVABAttributes()
+        {
+            var validator =
+                ValidationFactory.CreateValidator<TestObjectWithMultipleSourceValidationAttributesOnProperties>(
+                    ValidationSpecificationSource.Attributes | ValidationSpecificationSource.DataAnnotations);
+
+            var instance =
+                new TestObjectWithMultipleSourceValidationAttributesOnProperties
+                {
+                    PropertyWithDataAnnotationsAttributes = "invalid",
+                    PropertyWithMixedAttributes = "invalid",
+                    PropertyWithVABOnlyAttributes = "invalid"
+                };
+
+            var results = validator.Validate(instance);
+
+            Assert.IsFalse(results.IsValid);
+            Assert.AreEqual(4, results.Count);
+            Assert.IsTrue(results.Any(vr => vr.Key == "PropertyWithMixedAttributes" && vr.Message == "vab-mixed"));
+            Assert.IsTrue(results.Any(vr => vr.Key == "PropertyWithMixedAttributes" && vr.Message == "data annotations-mixed"));
+            Assert.IsTrue(results.Any(vr => vr.Key == "PropertyWithVABOnlyAttributes" && vr.Message == "vab-only"));
+            Assert.IsTrue(results.Any(vr => vr.Key == "PropertyWithDataAnnotationsAttributes" && vr.Message == "data annotations-only"));
+        }
+
+        [TestMethod]
+        public void CanGetValidatorFromConfigurationOly()
+        {
+            var validator =
+                ValidationFactory.CreateValidator<TestObjectWithMultipleSourceValidationAttributesOnProperties>(
+                    ValidationSpecificationSource.Configuration);
+
+            var instance =
+                new TestObjectWithMultipleSourceValidationAttributesOnProperties
+                {
+                    PropertyWithDataAnnotationsAttributes = "invalid",
+                    PropertyWithMixedAttributes = "invalid",
+                    PropertyWithVABOnlyAttributes = "invalid"
+                };
+
+            var results = validator.Validate(instance);
+
+            Assert.IsFalse(results.IsValid);
+            Assert.AreEqual(2, results.Count);
+            Assert.IsTrue(results.Any(vr => vr.Key == "PropertyWithDataAnnotationsAttributes" && vr.Message == "configuration1"));
+            Assert.IsTrue(results.Any(vr => vr.Key == "PropertyWithVABOnlyAttributes" && vr.Message == "configuration2"));
         }
 
         #endregion

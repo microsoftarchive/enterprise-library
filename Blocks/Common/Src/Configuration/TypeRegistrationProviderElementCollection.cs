@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 {
@@ -21,6 +22,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
     /// Contains a collection of <see cref="TypeRegistrationProviderElement"/>.
     /// </summary>
     [ConfigurationElementType(typeof(TypeRegistrationProviderElement))]
+    [ResourceDescription(typeof(DesignResources), "TypeRegistrationProviderElementCollectionDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "TypeRegistrationProviderElementCollectionDisplayName")]
     public class TypeRegistrationProviderElementCollection : NamedElementCollection<TypeRegistrationProviderElement>
     {
         /// <summary>

@@ -21,6 +21,7 @@ namespace Console.Wpf.Tests.VSTS.Mocks
 {
     public class MockSectionWithMultipleChildCollections : ConfigurationSection
     {
+        private const string polymorphicChildrenProperty = "polymorphicChildren";
         private const string childrenProperty = "children";
         private const string moreChildrenProperty = "moreChildren";
 
@@ -28,6 +29,8 @@ namespace Console.Wpf.Tests.VSTS.Mocks
         {
             this[childrenProperty] = new NamedElementCollection<TestHandlerData>();
             this[moreChildrenProperty] = new NamedElementCollection<TestHandlerDataWithChildren>();
+            this[polymorphicChildrenProperty] =
+                new NameTypeConfigurationElementCollection<TestHandlerData, CustomTestHandlerData>();
         }
 
         [ConfigurationProperty(childrenProperty)]
@@ -48,6 +51,19 @@ namespace Console.Wpf.Tests.VSTS.Mocks
             get
             {
                 return (NamedElementCollection<TestHandlerDataWithChildren>)this[moreChildrenProperty];
+            }
+        }
+
+        [ConfigurationProperty(polymorphicChildrenProperty)]
+        [DisplayName("Polymorphic Children")]
+        [ConfigurationCollection(typeof(TestHandlerData))]
+        public NameTypeConfigurationElementCollection<TestHandlerData, CustomTestHandlerData> PolymorphicChildren
+        {
+            get
+            {
+                return
+                    (NameTypeConfigurationElementCollection<TestHandlerData, CustomTestHandlerData>)
+                    this[polymorphicChildrenProperty];
             }
         }
     }

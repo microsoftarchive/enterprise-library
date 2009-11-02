@@ -1,0 +1,90 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{C6F21B7E-7528-4939-BBD2-6097B64AB8E2}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides.Tests</RootNamespace>
+    <AssemblyName>Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides.Tests</AssemblyName>
+    <WarningLevel>4</WarningLevel>
+    <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>.\bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugSymbols>false</DebugSymbols>
+    <Optimize>true</Optimize>
+    <OutputPath>.\bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>True</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="APTCAFixture.cs" />
+    <Compile Include="ConfigurationNodeMergeDataFixture.cs" />
+    <Compile Include="EnvironmentalOverridesNodeFixture.cs" />
+    <Compile Include="EnvironmentNodeFixture.cs" />
+    <Compile Include="MergedConfigurationNodeFixture.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="AddEnvironmentNodeCommandFixture.cs" />
+    <Compile Include="SaveMergedEnvironmentCommandFixture.cs" />
+    <Compile Include="SerializationUtilityFixture.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\Src\Common.csproj">
+      <Project>{A09297C8-2C40-470B-8856-D856676DDFFA}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Src\Design\Configuration.Design.csproj">
+      <Project>{D6AAB55A-8C43-46B7-9EE4-EB8D1E1BFC17}</Project>
+      <Name>Configuration.Design</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Src\EnvironmentalOverrides\Configuration.EnvironmentalOverrides.csproj">
+      <Project>{9CC92B51-39D9-4622-BE1D-57257C894FA7}</Project>
+      <Name>Configuration.EnvironmentalOverrides</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Design.TestSupport\Configuration.Design.TestSupport.csproj">
+      <Project>{5F235F22-5C06-41E9-8C24-0F982AB0DDC2}</Project>
+      <Name>Configuration.Design.TestSupport</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="Environment.dconfig">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSHARP.Targets" />
+</Project>

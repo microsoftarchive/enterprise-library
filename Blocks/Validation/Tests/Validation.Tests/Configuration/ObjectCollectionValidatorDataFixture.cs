@@ -77,11 +77,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
 
         [TestMethod]
         [ExpectedException(typeof(ConfigurationErrorsException))]
+        [Ignore]    // no longer true
         public void CreateValidatorWithNullTargetTypeThrows()
         {
             ObjectCollectionValidatorData rwValidatorData = new ObjectCollectionValidatorData("validator1");
 
-            ((IValidatorDescriptor)rwValidatorData).CreateValidator(null, null, null);
+            ((IValidatorDescriptor)rwValidatorData).CreateValidator(null, null, null, null);
         }
 
         [TestMethod]
@@ -91,11 +92,28 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             rwValidatorData.TargetType = typeof(ObjectCollectionValidatorDataFixture);
             rwValidatorData.TargetRuleset = "ruleset";
 
-            Validator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(null, null, null);
+            Validator validator =
+                ((IValidatorDescriptor)rwValidatorData).CreateValidator(null, null, null, ValidationFactory.DefaultCompositeValidatorFactory);
 
             Assert.IsNotNull(validator);
             Assert.AreSame(typeof(ObjectCollectionValidator), validator.GetType());
             Assert.AreSame(typeof(ObjectCollectionValidatorDataFixture), ((ObjectCollectionValidator)validator).TargetType);
+            Assert.AreEqual("ruleset", ((ObjectCollectionValidator)validator).TargetRuleset);
+            Assert.AreEqual(null, ((ObjectCollectionValidator)validator).MessageTemplate);
+        }
+
+        [TestMethod]
+        public void CanCreateValidatorFromConfigurationObjectWithNoTargetType()
+        {
+            ObjectCollectionValidatorData rwValidatorData = new ObjectCollectionValidatorData("validator1");
+            rwValidatorData.TargetRuleset = "ruleset";
+
+            Validator validator =
+                ((IValidatorDescriptor)rwValidatorData).CreateValidator(null, null, null, ValidationFactory.DefaultCompositeValidatorFactory);
+
+            Assert.IsNotNull(validator);
+            Assert.AreSame(typeof(ObjectCollectionValidator), validator.GetType());
+            Assert.IsNull(((ObjectCollectionValidator)validator).TargetType);
             Assert.AreEqual("ruleset", ((ObjectCollectionValidator)validator).TargetRuleset);
             Assert.AreEqual(null, ((ObjectCollectionValidator)validator).MessageTemplate);
         }

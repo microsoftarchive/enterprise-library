@@ -21,23 +21,19 @@ using Console.Wpf.ViewModel.Services;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Practices.Unity;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model_and_config_collection
 {
-    public class SectionWithMultipleChildrenContext : ServiceProviderContext
+    public class SectionWithMultipleChildrenContext : ContainerContext
     {
         protected override void Arrange()
         {
             base.Arrange();
-            
-            ChangedSource = new CollectionChangedSource();
-            ServiceProvider.AddService(typeof(CollectionChangedSource), ChangedSource);
-            ServiceProvider.AddService(typeof(ElementLookup), new ElementLookup());
 
             var section = new MockSectionWithMultipleChildCollections();
             BuildSection(section);
-
-            ViewModel = new SectionViewModel(ServiceProvider, section);
+            ViewModel = new SectionViewModel(Container, "name", section);
         }
 
         protected virtual void BuildSection(MockSectionWithMultipleChildCollections section)
@@ -47,61 +43,49 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model_and_config_collection
             section.Children.Add(new TestHandlerData() { Name = "Three" });
         }
 
-        protected CollectionChangedSource ChangedSource { get; set; }
-
         protected SectionViewModel ViewModel { get; set; }
     }
 
     [TestClass]
     public class when_adding_collection_elements : SectionWithMultipleChildrenContext
     {
-        private NotifyCollectionChangedEventArgs lastCollectionChangedEventArguments;
-        private bool childrenChangedFired;
+        private bool descendentElementsChangedFired;
 
         protected override void Arrange()
         {
             base.Arrange();
 
-            childrenChangedFired = false;
-            ViewModel.ChildrenChangedEvent += (s, e) => {childrenChangedFired = true;};
-
-            lastCollectionChangedEventArguments = null;
-            ChangedSource.CollectionChanged += (s, e) => { lastCollectionChangedEventArguments = e;};
+            ViewModel.DescendentElementsChanged += (s, e) => { descendentElementsChangedFired = true; };
         }
 
         protected override void Act()
         {
             var collectionViewModel =
-                ViewModel.DescendentElements(x => x.ConfigurationType == typeof (NamedElementCollection<TestHandlerData>))
+                ViewModel.DescendentElements(x => x.ConfigurationType == typeof(NamedElementCollection<TestHandlerData>))
                     .OfType<ElementCollectionViewModel>()
                     .First();
 
-            collectionViewModel.ChildAdders.First().Execute(null);
+            var command = collectionViewModel.Commands.OfType<DefaultCollectionElementAddCommand>().Where(c => c.ConfigurationElementType == typeof(TestHandlerData)).First();
+            command.Execute(null);
         }
 
         [TestMethod]
-        public void then_change_notification_is_fired()
-        {
-            Assert.IsNotNull(lastCollectionChangedEventArguments);
-        }
-    
-        [TestMethod]
         public void then_section_raises_change_notification()
         {
-            Assert.IsTrue(childrenChangedFired);
+            Assert.IsTrue(descendentElementsChangedFired);
         }
     }
 
     [TestClass]
     public class when_moving_collection_elements_up : SectionWithMultipleChildrenContext
     {
-        private bool collectionChangedFired;
+        private bool descendentElementsChangedFired;
 
         protected override void Arrange()
         {
             base.Arrange();
-            collectionChangedFired = false;
-            ChangedSource.CollectionChanged += (s, e) => { collectionChangedFired = true; };
+            descendentElementsChangedFired = false;
+            ViewModel.DescendentElementsChanged += (s, e) => { descendentElementsChangedFired = true; };
         }
 
         protected override void Act()
@@ -116,12 +100,15 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model_and_config_collection
         public void then_can_execute_move_up_on_all_but_first_element()
         {
             var handlers =
-                ViewModel.DescendentElements(x => x.ConfigurationType == typeof (TestHandlerData))
+                ViewModel.DescendentElements(x => x.ConfigurationType == typeof(TestHandlerData))
                     .OfType<CollectionElementViewModel>();
 
+            var handlersThatCanMoveUp = handlers.Where(x => x.MoveUp.CanExecute(null)).ToArray();
+            var handlersExceptFirst = handlers.Skip(1).ToArray();
+
             CollectionAssert.AreEquivalent(
-                handlers.Skip(1).ToArray(),
-                handlers.Where(x => x.MoveUp.CanExecute(null)).ToArray());
+                handlersExceptFirst,
+                handlersThatCanMoveUp);
         }
 
         [TestMethod]
@@ -136,12 +123,12 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model_and_config_collection
                 handlers.Where(x => x.MoveDown.CanExecute(null)).ToArray());
         }
 
-      
+
         [TestMethod]
         public void then_elements_are_reordered()
         {
             var handlerNames =
-                ViewModel.DescendentElements(x => x.ConfigurationType == typeof (TestHandlerData)).Select(x => x.Name);
+                ViewModel.DescendentElements(x => x.ConfigurationType == typeof(TestHandlerData)).Select(x => x.Name);
 
             CollectionAssert.AreEqual(new[] { "Two", "One", "Three" }, handlerNames.ToArray());
         }
@@ -149,20 +136,20 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model_and_config_collection
         [TestMethod]
         public void then_change_notification_fires()
         {
-            Assert.IsTrue(collectionChangedFired);
+            Assert.IsTrue(descendentElementsChangedFired);
         }
     }
 
     [TestClass]
     public class when_moving_collection_elements_down : SectionWithMultipleChildrenContext
     {
-        private bool collectionChangedFired;
+        private bool descendentElementsChangedFired;
 
         protected override void Arrange()
         {
             base.Arrange();
-            collectionChangedFired = false;
-            ChangedSource.CollectionChanged += (s, e) => { collectionChangedFired = true; };
+            descendentElementsChangedFired = false;
+            base.ViewModel.DescendentElementsChanged += (s, e) => { descendentElementsChangedFired = true; };
         }
 
         protected override void Act()
@@ -186,7 +173,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model_and_config_collection
         [TestMethod]
         public void then_change_notification_fires()
         {
-            Assert.IsTrue(collectionChangedFired);
+            Assert.IsTrue(descendentElementsChangedFired);
         }
     }
 
@@ -194,18 +181,18 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model_and_config_collection
     public class when_removing_an_element : SectionWithMultipleChildrenContext
     {
         private bool deletedFired;
-        private bool collectionChangedFired;
+        private bool descendentElementsChangedFired;
 
         protected override void Arrange()
         {
             base.Arrange();
-            collectionChangedFired = false;
-            ChangedSource.CollectionChanged += (s, e) => { collectionChangedFired = true; };
+            descendentElementsChangedFired = false;
+            base.ViewModel.DescendentElementsChanged += (s, e) => { descendentElementsChangedFired = true; };
         }
 
         protected override void Act()
         {
-            var handler = ViewModel.DescendentElements(x => x.ConfigurationType == typeof (TestHandlerData))
+            var handler = ViewModel.DescendentElements(x => x.ConfigurationType == typeof(TestHandlerData))
                             .OfType<CollectionElementViewModel>()
                             .First(x => x.Name == "Two");
 
@@ -216,14 +203,14 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model_and_config_collection
         [TestMethod]
         public void then_item_is_removed_from_descendents()
         {
-            Assert.IsFalse(ViewModel.DescendentElements(x => x.ConfigurationType == typeof (TestHandlerData))
+            Assert.IsFalse(ViewModel.DescendentElements(x => x.ConfigurationType == typeof(TestHandlerData))
                                .OfType<CollectionElementViewModel>().Any(x => x.Name == "Two"));
         }
 
         [TestMethod]
         public void then_collection_change_is_raised()
         {
-            Assert.IsTrue(collectionChangedFired);
+            Assert.IsTrue(descendentElementsChangedFired);
         }
 
         [TestMethod]
@@ -235,7 +222,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model_and_config_collection
     }
 
     [TestClass]
-    public class when_executing_adder_on_middle_nodes : ServiceProviderContext
+    public class when_executing_adder_on_middle_nodes : ContainerContext
     {
         private ElementCollectionViewModel childrenCollection;
         private int startingCount;
@@ -249,7 +236,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model_and_config_collection
             section.Children.Add(CreateNewElement("One"));
             section.Children.Add(CreateNewElement("Two"));
 
-            ViewModel = SectionViewModel.CreateSection(ServiceProvider, section);
+            ViewModel = SectionViewModel.CreateSection(Container, "mock section", section);
 
             childrenCollection = ViewModel.DescendentElements(
                       e => e.ConfigurationType ==
@@ -262,15 +249,18 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model_and_config_collection
 
         private static TestHandlerDataWithChildren CreateNewElement(string name)
         {
-            var element = new TestHandlerDataWithChildren() {Name = name};
-            element.Children.Add(new TestHandlerData() {Name = name + ".One"});
-            element.Children.Add(new TestHandlerData() {Name = name + ".Two"});
+            var element = new TestHandlerDataWithChildren() { Name = name };
+            element.Children.Add(new TestHandlerData() { Name = name + ".One" });
+            element.Children.Add(new TestHandlerData() { Name = name + ".Two" });
             return element;
         }
 
         protected override void Act()
         {
-            var command = childrenCollection.ChildAdders.OfType<CollectionElementAddCommand>().First();
+            var command = childrenCollection.Commands
+                            .OfType<DefaultCollectionElementAddCommand>()
+                            .Where(x => x.ConfigurationElementType == typeof(TestHandlerDataWithChildren))
+                            .First();
             command.Execute(null);
         }
 

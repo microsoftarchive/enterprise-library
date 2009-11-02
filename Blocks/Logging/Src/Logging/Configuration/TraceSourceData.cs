@@ -22,6 +22,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
     /// <summary>
     /// Represents the configuration settings that describe a <see cref="LogSource"/>.
     /// </summary>
+    [ResourceDescription(typeof(DesignResources), "TraceSourceDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "TraceSourceDataDisplayName")]
     public class TraceSourceData : NamedConfigurationElement
     {
         private const string defaultLevelProperty = "switchValue";
@@ -62,6 +64,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// Gets or sets the default <see cref="SourceLevels"/> for the trace source.
         /// </summary>
         [ConfigurationProperty(defaultLevelProperty, IsRequired = true, DefaultValue = SourceLevels.All)]
+        [ResourceDescription(typeof(DesignResources), "TraceSourceDataDefaultLevelDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "TraceSourceDataDefaultLevelDisplayName")]
         public SourceLevels DefaultLevel
         {
             get { return (SourceLevels)base[defaultLevelProperty]; }
@@ -72,6 +76,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// Gets or sets the AutoFlush indicating whether Flush should be called on the Listeners after every write.
         /// </summary>
         [ConfigurationProperty(autoFlushProperty, IsRequired = false, DefaultValue = LogSource.DefaultAutoFlushProperty)]
+        [ResourceDescription(typeof(DesignResources), "TraceSourceDataAutoFlushDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "TraceSourceDataAutoFlushDisplayName")]
         public bool AutoFlush
         {
             get { return (bool)base[autoFlushProperty]; }
@@ -83,6 +89,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// </summary>
         [ConfigurationProperty(traceListenersProperty)]        
         [ConfigurationCollection(typeof(TraceListenerReferenceData))]
+        [ResourceDescription(typeof(DesignResources), "TraceSourceDataTraceListenersDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "TraceSourceDataTraceListenersDisplayName")]
         public NamedElementCollection<TraceListenerReferenceData> TraceListeners
         {
             get { return (NamedElementCollection<TraceListenerReferenceData>)base[traceListenersProperty]; }

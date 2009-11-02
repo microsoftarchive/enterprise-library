@@ -14,6 +14,7 @@ using Microsoft.Practices.EnterpriseLibrary.Caching.BackingStoreImplementations;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using System.Collections.Generic;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.Database.Configuration
 {
@@ -21,6 +22,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Database.Configuration
 	/// Configuration information for DataCacheStorageData. This class represents the extra information, over and
     /// above what is defined in <see cref="CacheStorageData" />, needed to connect caching to the Data Access Application Block.
 	/// </summary>
+    [ResourceDescription(typeof(DesignResources), "DataCacheStorageDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "DataCacheStorageDataDisplayName")]
+    [AddSateliteProviderCommand("connectionStrings")]
+    [System.ComponentModel.Browsable(true)]
     public class DataCacheStorageData : CacheStorageData
     {
         private const string databaseInstanceNameProperty = "databaseInstanceName";
@@ -61,6 +66,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Database.Configuration
         /// Name of the database instance to use for storage. Instance must be defined in Data configuration.
         /// </summary>
         [ConfigurationProperty(databaseInstanceNameProperty, IsRequired = true)]
+        [ResourceDescription(typeof(DesignResources), "DataCacheStorageDataDatabaseInstanceNameDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "DataCacheStorageDataDatabaseInstanceNameDisplayName")]
+        [Reference(typeof(ConnectionStringSettingsCollection), typeof(ConnectionStringSettings))]
         public string DatabaseInstanceName
         {
             get { return (string)base[databaseInstanceNameProperty]; }
@@ -73,11 +81,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Database.Configuration
         /// one application's data by a provider from another application.
         /// </summary>
         [ConfigurationProperty(partitionNameProperty, IsRequired = true)]
+        [ResourceDescription(typeof(DesignResources), "DataCacheStorageDataPartitionNameDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "DataCacheStorageDataPartitionNameDisplayName")]
         public string PartitionName
         {
             get { return (string)base[partitionNameProperty]; }
             set { base[partitionNameProperty] = value; }
         }
+
 
         /// <summary>
         /// 

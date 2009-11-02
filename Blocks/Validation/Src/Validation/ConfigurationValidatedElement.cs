@@ -29,7 +29,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         private Type targetType;
 
         /// <summary>
-        /// 
+        /// Initializes a new instance of the <see cref="ConfigurationValidatedElement"/> class.
         /// </summary>
         public ConfigurationValidatedElement()
         { }
@@ -37,30 +37,30 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         #region erase when posible
 
         /// <summary>
-        /// 
+        /// Initializes a new instance of the <see cref="ConfigurationValidatedElement"/> class for a field.
         /// </summary>
-        /// <param name="validatedFieldReference"></param>
-        /// <param name="fieldInfo"></param>
+        /// <param name="validatedFieldReference">The field reference configuration object.</param>
+        /// <param name="fieldInfo">The field.</param>
         public ConfigurationValidatedElement(ValidatedFieldReference validatedFieldReference, FieldInfo fieldInfo)
         {
             UpdateFlyweight(validatedFieldReference, fieldInfo);
         }
 
         /// <summary>
-        /// 
+        /// Initializes a new instance of the <see cref="ConfigurationValidatedElement"/> class for a method.
         /// </summary>
-        /// <param name="validatedMethodReference"></param>
-        /// <param name="methodInfo"></param>
+        /// <param name="validatedMethodReference">The method reference configuration object.</param>
+        /// <param name="methodInfo">The method.</param>
         public ConfigurationValidatedElement(ValidatedMethodReference validatedMethodReference, MethodInfo methodInfo)
         {
             UpdateFlyweight(validatedMethodReference, methodInfo);
         }
 
         /// <summary>
-        /// 
+        /// Initializes a new instance of the <see cref="ConfigurationValidatedElement"/> class for a property.
         /// </summary>
-        /// <param name="validatedPropertyReference"></param>
-        /// <param name="propertyInfo"></param>
+        /// <param name="validatedPropertyReference">The property reference configuration object.</param>
+        /// <param name="propertyInfo">The property.</param>
         public ConfigurationValidatedElement(ValidatedPropertyReference validatedPropertyReference, PropertyInfo propertyInfo)
         {
             UpdateFlyweight(validatedPropertyReference, propertyInfo);
@@ -69,30 +69,30 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         #endregion
 
         /// <summary>
-        /// 
+        /// Updates the flyweight for a field.
         /// </summary>
-        /// <param name="validatedFieldReference"></param>
-        /// <param name="fieldInfo"></param>
+        /// <param name="validatedFieldReference">The field reference configuration object.</param>
+        /// <param name="fieldInfo">The field.</param>
         public void UpdateFlyweight(ValidatedFieldReference validatedFieldReference, FieldInfo fieldInfo)
         {
             this.UpdateFlyweight(validatedFieldReference, fieldInfo, fieldInfo.FieldType);
         }
 
         /// <summary>
-        /// 
+        /// Updates the flyweight for a method.
         /// </summary>
-        /// <param name="validatedMethodReference"></param>
-        /// <param name="methodInfo"></param>
+        /// <param name="validatedMethodReference">The method reference configuration object.</param>
+        /// <param name="methodInfo">The method.</param>
         public void UpdateFlyweight(ValidatedMethodReference validatedMethodReference, MethodInfo methodInfo)
         {
             UpdateFlyweight(validatedMethodReference, methodInfo, methodInfo.ReturnType);
         }
 
         /// <summary>
-        /// 
+        /// Updates the flyweight for a property.
         /// </summary>
-        /// <param name="validatedPropertyReference"></param>
-        /// <param name="propertyInfo"></param>
+        /// <param name="validatedPropertyReference">The property reference configuration object.</param>
+        /// <param name="propertyInfo">The property.</param>
         public void UpdateFlyweight(ValidatedPropertyReference validatedPropertyReference, PropertyInfo propertyInfo)
         {
             UpdateFlyweight(validatedPropertyReference, propertyInfo, propertyInfo.PropertyType);

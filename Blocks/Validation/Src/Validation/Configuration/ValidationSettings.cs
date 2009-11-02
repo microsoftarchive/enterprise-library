@@ -25,7 +25,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
     /// Configuration section for stored validation information.
     /// </summary>
     /// <seealso cref="ValidatedTypeReference"/>
-    [ViewModel(ViewModels.HierarchicalViewModel)]
+    [ViewModel(ValidationDesignTime.ViewModelTypeNames.ValidationSectionViewModel)]
+    [ResourceDescription(typeof(DesignResources), "ValidationSettingsDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "ValidationSettingsDisplayName")]
     public class ValidationSettings : SerializableConfigurationSection
     {
         ///<summary>
@@ -61,6 +63,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
         /// Gets the collection of types for which validation has been configured.
         /// </summary>
         [ConfigurationProperty(TypesPropertyName, IsDefaultCollection = true)]
+        [ResourceDescription(typeof(DesignResources), "ValidationSettingsTypesDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "ValidationSettingsTypesDisplayName")]
         public ValidatedTypeReferenceCollection Types
         {
             get { return (ValidatedTypeReferenceCollection)this[TypesPropertyName]; }

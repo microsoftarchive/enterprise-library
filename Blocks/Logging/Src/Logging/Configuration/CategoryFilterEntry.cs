@@ -10,13 +10,17 @@
 //===============================================================================
 
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 {
     /// <summary>
     /// Represents a single <see cref="CategoryFilterEntry"/> configuration settings.
     /// </summary>
-	public class CategoryFilterEntry : NamedConfigurationElement
+    [ResourceDescription(typeof(DesignResources), "CategoryFilterEntryDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "CategoryFilterEntryDisplayName")]
+    [ViewModel(LoggingDesignTime.ViewModelTypeNames.CategoryFilterViewModel)]
+    public class CategoryFilterEntry : NamedConfigurationElement
     {
         /// <summary>
         /// <para>Initialize a new instance of the <see cref="CategoryFilterData"/> class.</para>
@@ -35,5 +39,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 			: base(name)
     	{
     	}
+
+        /// <summary/>
+        [Reference(typeof(NamedElementCollection<TraceSourceData>), typeof(TraceSourceData))]
+        public override string Name
+        {
+            get
+            {
+                return base.Name;
+            }
+            set
+            {
+                base.Name = value;
+            }
+        }
 	}
 }

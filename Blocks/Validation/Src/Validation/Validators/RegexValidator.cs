@@ -261,7 +261,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         /// <param name="objectToValidate">The object for which validation was performed.</param>
         /// <param name="key">The key representing the value being validated for <paramref name="objectToValidate"/>.</param>
         /// <returns>The message representing the validation failure.</returns>
-        protected override string GetMessage(object objectToValidate, string key)
+        protected internal override string GetMessage(object objectToValidate, string key)
         {
             return string.Format(
                 CultureInfo.CurrentCulture,

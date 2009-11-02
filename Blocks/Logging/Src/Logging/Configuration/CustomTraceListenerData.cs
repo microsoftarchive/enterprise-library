@@ -23,6 +23,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
     /// <summary>
     /// Configuration object for custom trace listenrs.
     /// </summary>
+    [ResourceDescription(typeof(DesignResources), "CustomTraceListenerDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "CustomTraceListenerDataDisplayName")]
     public class CustomTraceListenerData
         : BasicCustomTraceListenerData
     {
@@ -64,13 +66,32 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// <summary>
         /// Gets or sets the name of the formatter. Can be <see langword="null"/>.
         /// </summary>
-        [Reference(typeof(LoggingSettings), typeof(FormatterData))]
+        [Reference(typeof(NameTypeConfigurationElementCollection<FormatterData, CustomFormatterData>), typeof(FormatterData))]
+        [ResourceDescription(typeof(DesignResources), "CustomTraceListenerDataFormatterDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "CustomTraceListenerDataFormatterDisplayName")]
         public string Formatter
         {
             get { return (string)base[formatterNameProperty]; }
             set { base[formatterNameProperty] = value; }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        [System.ComponentModel.Editor(CommonDesignTime.EditorTypes.TypeSelector, CommonDesignTime.EditorTypes.UITypeEditor)]
+        [BaseType(typeof(CustomTraceListener), typeof(CustomTraceListenerData))]
+        [System.ComponentModel.Browsable(true)]
+        public override string TypeName
+        {
+            get
+            {
+                return base.TypeName;
+            }
+            set
+            {
+                base.TypeName = value;
+            }
+        }
         /// <summary>
         /// Creates the helper that enapsulates the configuration properties management.
         /// </summary>

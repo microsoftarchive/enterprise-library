@@ -12,6 +12,7 @@
 using System;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 {
@@ -23,6 +24,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 	/// Self validation is not supported thorugh configuration.
 	/// </remarks>
 	/// <seealso cref="ValidatedTypeReference"/>
+    [ResourceDescription(typeof(DesignResources), "ValidationRulesetDataDescription")]
+    [ResourceDisplayName(typeof(DesignResources), "ValidationRulesetDataDisplayName")]
+    [Command("Console.Wpf.ViewModel.BlockSpecifics.SelectValidatedTypeReferenceMembersCommand, Microsoft.Practices.EnterpriseLibrary.Configuration.Design")]
 	public class ValidationRulesetData : NamedConfigurationElement
 	{
 		/// <summary>
@@ -45,6 +49,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 		/// </summary>
 		[ConfigurationProperty(validatorsPropertyName, IsDefaultCollection = true)]
         [ConfigurationCollection(typeof(ValidatorData))]
+        [ResourceDescription(typeof(DesignResources), "ValidationRulesetDataValidatorsDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "ValidationRulesetDataValidatorsDisplayName")]
 		public ValidatorDataCollection Validators
 		{
 			get { return (ValidatorDataCollection)this[validatorsPropertyName]; }
@@ -55,6 +61,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 		/// Gets the collection of validated fields for the type owning the ruleset.
 		/// </summary>
 		[ConfigurationProperty(FieldsPropertyName)]
+        [ResourceDescription(typeof(DesignResources), "ValidationRulesetDataFieldsDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "ValidationRulesetDataFieldsDisplayName")]
+        [PromoteCommands]
 		public ValidatedFieldReferenceCollection Fields
 		{
 			get { return (ValidatedFieldReferenceCollection)this[FieldsPropertyName]; }
@@ -65,6 +74,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 		/// Gets the collection of validated methods for the type owning the ruleset.
 		/// </summary>
         [ConfigurationProperty(MethodsPropertyName)]
+        [ResourceDescription(typeof(DesignResources), "ValidationRulesetDataMethodsDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "ValidationRulesetDataMethodsDisplayName")]
+        [PromoteCommands]
 		public ValidatedMethodReferenceCollection Methods
 		{
 			get { return (ValidatedMethodReferenceCollection)this[MethodsPropertyName]; }
@@ -75,6 +87,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 		/// Gets the collection of validated properties for the type owning the ruleset.
 		/// </summary>
         [ConfigurationProperty(PropertiesPropertyName)]
+        [ResourceDescription(typeof(DesignResources), "ValidationRulesetDataPropertiesDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "ValidationRulesetDataPropertiesDisplayName")]
+        [PromoteCommands]
 		public new ValidatedPropertyReferenceCollection Properties
 		{
 			get { return (ValidatedPropertyReferenceCollection)this[PropertiesPropertyName]; }
