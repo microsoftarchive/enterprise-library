@@ -20,7 +20,7 @@ using System.Windows.Forms;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors.TypePicker;
 
-namespace Console.Wpf.ComponentModel.Editors
+namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors
 {
     /// <summary>
     /// <para>Represents the UI for the assembly selector dialog.</para>

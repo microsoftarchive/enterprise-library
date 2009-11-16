@@ -129,6 +129,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         [ConfigurationProperty(fileNameProperty, IsRequired = true, DefaultValue = "trace.log")]
         [ResourceDescription(typeof(DesignResources), "FlatFileTraceListenerDataFileNameDescription")]
         [ResourceDisplayName(typeof(DesignResources), "FlatFileTraceListenerDataFileNameDisplayName")]
+        [System.ComponentModel.Editor(CommonDesignTime.EditorTypes.FilteredFilePath, CommonDesignTime.EditorTypes.UITypeEditor)]
         public string FileName
         {
             get { return (string)base[fileNameProperty]; }
@@ -138,7 +139,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// <summary>
         /// Gets and sets the header.
         /// </summary>
-        [ConfigurationProperty(headerProperty, IsRequired = false)]
+        [ConfigurationProperty(headerProperty, IsRequired = false, DefaultValue="----------------------------------------")]
         [ResourceDescription(typeof(DesignResources), "FlatFileTraceListenerDataHeaderDescription")]
         [ResourceDisplayName(typeof(DesignResources), "FlatFileTraceListenerDataHeaderDisplayName")]
         public string Header
@@ -150,7 +151,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// <summary>
         /// Gets and sets the footer.
         /// </summary>
-        [ConfigurationProperty(footerProperty, IsRequired = false)]
+        [ConfigurationProperty(footerProperty, IsRequired = false, DefaultValue = "----------------------------------------")]
         [ResourceDescription(typeof(DesignResources), "FlatFileTraceListenerDataFooterDescription")]
         [ResourceDisplayName(typeof(DesignResources), "FlatFileTraceListenerDataFooterDisplayName")]
         public string Footer

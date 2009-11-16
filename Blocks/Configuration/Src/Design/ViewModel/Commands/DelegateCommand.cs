@@ -12,7 +12,7 @@
 using System;
 using System.Windows.Input;
 
-namespace Console.Wpf.ViewModel
+namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
 {
     /* move to nested protected internal of CommandViewModel later? */
     internal class DelegateCommand : ICommand

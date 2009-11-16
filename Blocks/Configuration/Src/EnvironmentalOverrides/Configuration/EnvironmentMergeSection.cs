@@ -36,7 +36,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverr
         /// </summary>
         public const string EnvironmentMergeData = "EnvironmentMergeData";
         private const string EnvironmentNamePropertyName = "environmentName";
-        private const string EnvironmentDeltaFilePropertyName = "environmentDeltaFile";
+        private const string EnvironmentConfigurationFilePropertyName = "environmentConfigurationFile";
         private const string MergeElementsPropertyName = "mergeElements";
 
         /// <summary>
@@ -66,16 +66,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverr
         /// <summary>
         /// Gets or sets the path to the deployable configuration that can be generated from this configuration.
         /// </summary>
-        [ConfigurationProperty(EnvironmentDeltaFilePropertyName)]
+        [ConfigurationProperty(EnvironmentConfigurationFilePropertyName)]
         [ResourceDescription(typeof(DesignResources), "EnvironmentMergeSectionEnvironmentDeltaFileDescription")]
         [ResourceDisplayName(typeof(DesignResources), "EnvironmentMergeSectionEnvironmentDeltaFileDisplayName")]
         [FilteredFileNameEditor(typeof(DesignResources), "EnvironmentMergeSectionEnvironmentDeltaFileFilter")]
         [Editor(CommonDesignTime.EditorTypes.FilteredFilePath, CommonDesignTime.EditorTypes.UITypeEditor)]
         [EnvironmentalOverrides(false)]
-        public string EnvironmentDeltaFile
+        public string EnvironmentConfigurationFile
         {
-            get { return (string)base[EnvironmentDeltaFilePropertyName]; }
-            set { base[EnvironmentDeltaFilePropertyName] = value; }
+            get { return (string)base[EnvironmentConfigurationFilePropertyName]; }
+            set { base[EnvironmentConfigurationFilePropertyName] = value; }
         }
     }
 

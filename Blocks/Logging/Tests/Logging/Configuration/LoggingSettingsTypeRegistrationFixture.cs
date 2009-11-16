@@ -81,7 +81,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
                 .AssertForServiceType(typeof(LogWriter))
                 .IsDefault()
                 .IsSingleton()
-                .ForImplementationType(typeof(LogWriter));
+                .ForImplementationType(typeof(LogWriterImpl));
         }
 
         [TestMethod]

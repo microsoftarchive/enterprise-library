@@ -20,11 +20,11 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
-using Console.Wpf.Converters;
-using Console.Wpf.ViewModel;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Converters;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
 
 
-namespace Console.Wpf.Controls
+namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls
 {
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Visualizer"),
     TemplatePart(Name = "PART_RootGrid", Type = typeof(Grid))]
@@ -405,7 +405,7 @@ namespace Console.Wpf.Controls
                 theGrid.ColumnDefinitions.Add(new ColumnDefinition
                                                 {
                                                     Width = new GridLength(1, GridUnitType.Auto),
-                                                    MinWidth = 300
+                                                    MinWidth = 60
                                                 });
 
                 //Add a column and splitter in between each column

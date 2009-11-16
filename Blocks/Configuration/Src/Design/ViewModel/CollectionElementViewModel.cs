@@ -19,14 +19,14 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Microsoft.Practices.Unity;
 using System.Diagnostics;
 
-namespace Console.Wpf.ViewModel
+namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
 {
     public class CollectionElementViewModel : ElementViewModel
     {
         readonly ElementCollectionViewModel containingCollection;
         readonly ConfigurationCollectionAttribute configurationCollectionAttribute;
 
-        [InjectionConstructor]
+
         public CollectionElementViewModel(ElementCollectionViewModel containingCollection, ConfigurationElement thisElement)
             : base(containingCollection, thisElement, Enumerable.Empty<Attribute>()) //where do these come from?
         {

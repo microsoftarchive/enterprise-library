@@ -9,7 +9,7 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-namespace Console.Wpf.ComponentModel.Editors
+namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors
 {
     partial class LoadAssemblyFromCacheDialog
     {

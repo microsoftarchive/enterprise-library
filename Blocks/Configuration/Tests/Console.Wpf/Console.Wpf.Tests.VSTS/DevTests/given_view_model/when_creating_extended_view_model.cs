@@ -15,17 +15,17 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Windows;
-using Console.Wpf.ViewModel.Services;
+using Console.Wpf.Tests.VSTS.Mocks;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
-using Console.Wpf.ViewModel;
 using Moq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.ComponentModel.Design;
 using System.Configuration;
 using Console.Wpf.Tests.VSTS.TestSupport;
-using Console.Wpf.Tests.VSTS.Mocks;
+using Console.Wpf.Tests.VSTS.DevTests;
 using Console.Wpf.Tests.VSTS.DevTests.Contexts;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model

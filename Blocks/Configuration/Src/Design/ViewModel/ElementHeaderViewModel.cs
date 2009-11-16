@@ -12,10 +12,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
-using Console.Wpf.Controls;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
-namespace Console.Wpf.ViewModel
+namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
 {
     public class ElementHeaderViewModel : HeaderViewModel
     {

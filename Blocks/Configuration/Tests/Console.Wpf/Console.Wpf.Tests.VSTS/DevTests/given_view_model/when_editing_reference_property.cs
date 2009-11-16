@@ -13,9 +13,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Console.Wpf.Tests.VSTS.DevTests.Contexts;
-using Console.Wpf.ViewModel;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
@@ -83,7 +83,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model
             Assert.IsTrue(logCategoryProperty.HasSuggestedValues);
 
             var suggestedValues = logCategoryProperty.SuggestedValues;
-            Assert.AreEqual(numberOfLogCategories, suggestedValues.Count());
+            Assert.AreEqual(numberOfLogCategories + 1, suggestedValues.Count());
             Assert.IsTrue(suggestedValues.Any(x => ((string)x) == "General"));
         }
 

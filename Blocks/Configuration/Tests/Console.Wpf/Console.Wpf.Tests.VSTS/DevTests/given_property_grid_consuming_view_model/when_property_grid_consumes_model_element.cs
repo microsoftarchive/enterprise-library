@@ -14,9 +14,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Console.Wpf.Tests.VSTS.DevTests.Contexts;
-using Console.Wpf.ViewModel;
 using System.ComponentModel;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_property_grid_consuming_view_model

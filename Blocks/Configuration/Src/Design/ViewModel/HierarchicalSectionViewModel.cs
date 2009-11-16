@@ -15,7 +15,7 @@ using System.Configuration;
 using System.Linq;
 using Microsoft.Practices.Unity;
 
-namespace Console.Wpf.ViewModel
+namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
 {
     public class HierarchicalSectionViewModel : SectionViewModel
     {

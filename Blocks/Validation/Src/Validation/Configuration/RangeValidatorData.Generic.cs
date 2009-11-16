@@ -43,7 +43,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 		[ConfigurationProperty(LowerBoundPropertyName)]
         [ResourceDescription(typeof(DesignResources), "RangeValidatorDataLowerBoundDescription")]
         [ResourceDisplayName(typeof(DesignResources), "RangeValidatorDataLowerBoundDisplayName")]
-		public T LowerBound
+        public virtual T LowerBound
 		{
 			get { return (T)this[LowerBoundPropertyName]; }
 			set { this[LowerBoundPropertyName] = value; }
@@ -69,7 +69,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 		[ConfigurationProperty(UpperBoundPropertyName)]
         [ResourceDescription(typeof(DesignResources), "RangeValidatorDataUpperBoundDescription")]
         [ResourceDisplayName(typeof(DesignResources), "RangeValidatorDataUpperBoundDisplayName")]
-		public T UpperBound
+		public virtual T UpperBound
 		{
 			get { return (T)this[UpperBoundPropertyName]; }
 			set { this[UpperBoundPropertyName] = value; }

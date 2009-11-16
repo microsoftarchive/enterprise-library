@@ -1,4 +1,15 @@
-﻿using System;
+﻿//===============================================================================
+// Microsoft patterns & practices Enterprise Library
+// Core
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,18 +18,25 @@ using System.ComponentModel;
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
 {
 
-    ///<summary/>
+    ///<summary>
+    ///Container class for types and identifiers used to decorate the appSettings configuration schema with designtime information.
+    ///</summary>
     public static class AppSettingsDesignTime
     {
-
-        ///<summary/>
+        ///<summary>
+        ///Name of appSettings section.
+        ///</summary>
         public const string AppSettingsSectionName = "appSettings";
 
-        ///<summary/>
+        ///<summary>
+        ///Container class for View Model Types used to decorate the appSettings configuration schema with designtime information.
+        ///</summary>
         public static class ViewModelTypeNames
         {
-            ///<summary/>
-            public const string AppSettingsSectionViewModel = "Console.Wpf.ViewModel.BlockSpecifics.AppSettingsViewModel, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
+            ///<summary>
+            ///Type Name of the Section View Model used to display application settings.
+            ///</summary>
+            public const string AppSettingsSectionViewModel = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.AppSettingsViewModel, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
         }
 
         ///<summary/>

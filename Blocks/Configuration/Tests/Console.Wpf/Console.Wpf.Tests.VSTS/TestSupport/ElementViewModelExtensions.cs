@@ -13,7 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Console.Wpf.ViewModel;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
 
 namespace Console.Wpf.Tests.VSTS.TestSupport
 {
@@ -21,6 +21,7 @@ namespace Console.Wpf.Tests.VSTS.TestSupport
     {
         public static IEnumerable<ElementViewModel> GetDescendentsOfType<T>(this ElementViewModel model)
         {
+            if (model == null) throw new ArgumentNullException("model");
             return GetDescendentsOfType<T, ElementViewModel>(model);
         }
 

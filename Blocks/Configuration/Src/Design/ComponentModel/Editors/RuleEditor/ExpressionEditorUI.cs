@@ -1,6 +1,6 @@
 ﻿//===============================================================================
 // Microsoft patterns & practices Enterprise Library
-// Security Application Block
+// Core
 //===============================================================================
 // Copyright © Microsoft Corporation.  All rights reserved.
 // THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
@@ -14,7 +14,7 @@ using System.ComponentModel;
 using System.Security.Principal;
 using System.Windows.Forms;
 using Microsoft.Practices.EnterpriseLibrary.Security;
-using Console.Wpf.ComponentModel.Editors.RuleEditor;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors.RuleEditor;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration.Design
 {

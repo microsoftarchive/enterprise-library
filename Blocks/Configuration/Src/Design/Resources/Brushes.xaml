@@ -23,8 +23,8 @@
 					 Color="#FF61A0FF" />
 	<SolidColorBrush x:Key="AdornerFillBrush"
 					 Color="#3F99C2FF" />
-	<Color x:Key="ElementCommandNormal">#FF707070</Color>
-	<Color x:Key="ElementCommandMouseOver">#FFB4B4B4</Color>
-	
-
+    <SolidColorBrush x:Key="ElementCommandNormalBrush" Color="#FF949494" />
+    <SolidColorBrush x:Key="ElementCommandMouseOverBrush" Color="#FFB4B4B4" />
+    <SolidColorBrush x:Key="ElementCommandShadowBrush" Color="#FF000000" />
+    <SolidColorBrush x:Key="ElementCommandBackgroundBrush" Color="#00FFFFFF" />    
 </ResourceDictionary>

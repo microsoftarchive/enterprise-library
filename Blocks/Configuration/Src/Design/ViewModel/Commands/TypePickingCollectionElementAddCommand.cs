@@ -18,12 +18,12 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
-using Console.Wpf.ComponentModel.Editors;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Microsoft.Practices.Unity;
 
-namespace Console.Wpf.ViewModel
+namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
 {
    
 

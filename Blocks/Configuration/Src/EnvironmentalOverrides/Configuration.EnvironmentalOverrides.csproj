@@ -55,6 +55,7 @@
     <Compile Include="..\..\..\GlobalAssemblyInfo.cs">
       <Link>GlobalAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="ConfigurationMerger.cs" />
     <Compile Include="Configuration\DesignResources.Designer.cs">
       <DependentUpon>DesignResources.resx</DependentUpon>
       <AutoGen>True</AutoGen>

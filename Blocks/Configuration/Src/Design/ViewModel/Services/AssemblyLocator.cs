@@ -12,7 +12,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace Console.Wpf.ViewModel.Services
+namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services
 {
     public abstract class AssemblyLocator
     {

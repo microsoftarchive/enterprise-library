@@ -1,21 +1,33 @@
-﻿using System;
+﻿//===============================================================================
+// Microsoft patterns & practices Enterprise Library
+// Core
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Console.Wpf.Tests.VSTS.Mocks;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
 using Microsoft.Practices.EnterpriseLibrary.Data.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.ComponentModel.Design;
-using Console.Wpf.ViewModel;
-using Console.Wpf.ViewModel.BlockSpecifics;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics;
 using Console.Wpf.Tests.VSTS.TestSupport;
 using System.Configuration;
-using Console.Wpf.ViewModel.Services;
 using Microsoft.Practices.EnterpriseLibrary.Data.Oracle.Configuration;
 using Console.Wpf.Tests.VSTS.DevTests.Contexts;
 using Microsoft.Practices.Unity;
-using Console.Wpf.Tests.VSTS.Mocks;
+using Console.Wpf.Tests.VSTS.DevTests;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_data_configuration
 {
@@ -42,20 +54,22 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_data_configuration
 
             source.Remove(DatabaseSettings.SectionName);
             source.Add(DatabaseSettings.SectionName, dbSettings);
+
+
+            AnnotationService annotationService = Container.Resolve<AnnotationService>();
+            ConnectionStringsDecorator.DecorateConnectionStringsSection(annotationService);
+
+            var configurationSection = source.GetSection(DataAccessDesignTime.ConnectionStringSettingsSectionName);
+            var configurationSourceModel = Container.Resolve<ConfigurationSourceModel>();
+            configurationSourceModel.Load(source);
+
+            databaseSectionViewModel = configurationSourceModel.Sections
+                        .Where(x => x.SectionName == DataAccessDesignTime.ConnectionStringSettingsSectionName)
+                        .Single();
         }
 
         protected SectionViewModel databaseSectionViewModel;
 
-        protected override void Act()
-        {
-            AnnotationService annotationService = Container.Resolve<AnnotationService>();
-            ConnectionStringsDecorator.DecorateConnectionStringsSection(annotationService);
-
-            var configurationSection = source.GetSection("connectionStrings");
-            databaseSectionViewModel = SectionViewModel.CreateSection(Container, "connectionStrings", configurationSection);
-            databaseSectionViewModel.AfterOpen(source);
-            databaseSectionViewModel.UpdateLayout();
-        }
     }
 
     [TestClass]

@@ -12,11 +12,13 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Reflection;
 using System.Data;
+using System.Globalization;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Reflection;
 using Microsoft.Practices.EnterpriseLibrary.Data.Properties;
+using Microsoft.Practices.Unity.Utility;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Data
 {
@@ -29,39 +31,59 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
     public class ReflectionRowMapper<TResult> : IRowMapper<TResult>
         where TResult : new()
     {
-        readonly Dictionary<PropertyInfo, PropertyMapping> propertyMappings;
-        
+        private static readonly MethodInfo ConvertValue =
+            StaticReflection.GetMethodInfo<PropertyMapping>(pm => pm.GetPropertyValue(null));
+
+        // The constructor with no parameters is guaranteed to exist because of the "new()" constraint on the 
+        // TResult type parameter.
+        private static readonly NewExpression CreationExpression = Expression.New(typeof(TResult));
+
+        private readonly Func<IDataRecord, TResult> mapping;
+
         /// <summary>
         /// Creates a new instance of <see cref="ReflectionRowMapper{TResult}"/>.
         /// </summary>
         /// <param name="propertyMappings">The <see cref="PropertyMapping"/>'s that specify how each property should be mapped.</param>
-        public ReflectionRowMapper(Dictionary<PropertyInfo, PropertyMapping> propertyMappings)
+        public ReflectionRowMapper(IDictionary<PropertyInfo, PropertyMapping> propertyMappings)
         {
             if (propertyMappings == null) throw new ArgumentNullException("propertyMappings");
 
-            this.propertyMappings = propertyMappings;
+            try
+            {
+                var parameter = Expression.Parameter(typeof(IDataRecord), "reader");
+                var bindings =
+                    propertyMappings.Select(kvp => (MemberBinding)
+                        Expression.Bind(
+                            kvp.Key,
+                            Expression.Convert(
+                                Expression.Call(Expression.Constant(kvp.Value), ConvertValue, new Expression[] { parameter }),
+                                kvp.Key.PropertyType)));
+                Expression<Func<IDataRecord, TResult>> expr =
+                    Expression.Lambda<Func<IDataRecord, TResult>>(
+                        Expression.MemberInit(
+                            CreationExpression,
+                            bindings),
+                        new ParameterExpression[] { parameter });
+
+                this.mapping = expr.Compile();
+            }
+            catch (Exception e)
+            {
+                throw new InvalidOperationException(
+                    string.Format(
+                        CultureInfo.CurrentCulture,
+                        Resources.ExceptionCannotCreateRowMapping,
+                        typeof(TResult).Name),
+                    e);
+            }
         }
 
         /// <summary>Given a record from a data reader, map the contents to a common language runtime object.</summary>
         /// <param name="row">The input data from the database.</param>
         /// <returns>The mapped object.</returns>
-        public TResult MapRow(IDataRecord row) 
+        public TResult MapRow(IDataRecord row)
         {
-            TResult result = new TResult();
-            foreach (PropertyMapping propertyMapping in GetPropertyMappings())
-            {
-                propertyMapping.Map(result, row);
-            }
-            return result;
-        }
-
-        /// <summary>
-        /// Returns the list of <see cref="PropertyMapping"/>s that this <see cref="ReflectionRowMapper{TResult}"/> was initialized with.
-        /// </summary>
-        /// <returns>The list of </returns>
-        public IEnumerable<PropertyMapping> GetPropertyMappings()
-        {
-            return propertyMappings.Values;
+            return this.mapping(row);
         }
     }
 
@@ -69,7 +91,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
     /// Base class for mapping values to properties by the <see cref="ReflectionRowMapper{TResult}"/>.
     /// </summary>
     /// <seealso cref="ColumnNameMapping"/>
-    /// <seealso cref="IgnoreMapping"/>
     /// <seealso cref="FuncMapping"/>
     public abstract class PropertyMapping
     {
@@ -87,9 +108,23 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
         public PropertyInfo Property { get; private set; }
 
         /// <summary>
-        /// When implemented by a class, performs the actual mapping from <paramref name="row"/> to <paramref name="instance"/>.
+        /// When implemented by a class, extracts the value for the mapped property from <paramref name="row"/>.
         /// </summary>
-        public abstract void Map(object instance, IDataRecord row);
+        /// <param name="row">The data record.</param>
+        /// <returns>The properly converted value.</returns>
+        public abstract object GetPropertyValue(IDataRecord row);
+
+        /// <summary>
+        /// Performs the actual mapping from column to property.
+        /// </summary>
+        /// <param name="instance">The object that contains the <see cref="PropertyMapping.Property"/>.</param>
+        /// <param name="row">The row that contains the <see cref="ColumnNameMapping.ColumnName"/>.</param>
+        public void Map(object instance, IDataRecord row)
+        {
+            object convertedValue = GetPropertyValue(row);
+
+            SetValue(instance, convertedValue);
+        }
 
         /// <summary>
         /// Sets the <paramref name="value"/> to <paramref name="instance"/> using <see cref="PropertyMapping.Property"/>.
@@ -106,7 +141,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
         /// </summary>
         protected static object ConvertValue(object value, Type conversionType)
         {
-            if(IsNullableType(conversionType))
+            if (IsNullableType(conversionType))
             {
                 return ConvertNullableValue(value, conversionType);
             }
@@ -116,7 +151,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
         private static bool IsNullableType(Type t)
         {
             return t.IsGenericType &&
-                   t.GetGenericTypeDefinition() == typeof (Nullable<>);
+                   t.GetGenericTypeDefinition() == typeof(Nullable<>);
         }
 
         /// <summary>
@@ -128,12 +163,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
         /// <returns>The converted value.</returns>
         protected static object ConvertNullableValue(object value, Type conversionType)
         {
-            var converter = new NullableConverter(conversionType);
-            if(value == DBNull.Value)
+            if (value != DBNull.Value)
             {
-                return converter.ConvertFrom(null);
+                var converter = new NullableConverter(conversionType);
+                return converter.ConvertFrom(value);
             }
-            return converter.ConvertFrom(value);
+            return null;
         }
 
         /// <summary>
@@ -151,11 +186,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
             {
                 convertedValue = Convert.ChangeType(value, conversionType);
             }
+            else if (conversionType.IsValueType)
+            {
+                convertedValue = Activator.CreateInstance(conversionType);
+            }
+
             return convertedValue;
         }
-
-
-
     }
 
     /// <summary>
@@ -169,7 +206,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
         /// <param name="columnName">The name of the column that will be used for mapping.</param>
         /// <param name="property">The property that will be used to map to.</param>
         public ColumnNameMapping(PropertyInfo property, string columnName)
-            :base(property)
+            : base(property)
         {
             ColumnName = columnName;
         }
@@ -180,20 +217,23 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
         public string ColumnName { get; private set; }
 
         /// <summary>
-        /// Performs the actual mapping from column to property.
+        /// Converts the value for the column in the <paramref name="row"/> with a name matching that of the 
+        /// mapped property to the type of the property.
         /// </summary>
-        /// <param name="instance">The object that contains the <see cref="PropertyMapping.Property"/>.</param>
-        /// <param name="row">The row that contains the <see cref="ColumnNameMapping.ColumnName"/>.</param>
-        public override void Map(object instance, IDataRecord row)
+        /// <param name="row">The data record.</param>
+        /// <returns>The value for the corresponding column converted to the type of the mapped property.</returns>
+        public override object GetPropertyValue(IDataRecord row)
         {
             object value;
             try
             {
                 value = row[ColumnName];
             }
-            catch (IndexOutOfRangeException)
+            catch (IndexOutOfRangeException ex)
             {
-                throw new InvalidOperationException(string.Format(Resources.Culture, Resources.ExceptionColumnNotFoundWhileMapping, ColumnName));
+                throw new InvalidOperationException(
+                    string.Format(CultureInfo.CurrentCulture, Resources.ExceptionColumnNotFoundWhileMapping, ColumnName),
+                    ex);
             }
 
             object convertedValue;
@@ -203,40 +243,28 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
             }
             catch (InvalidCastException castException)
             {
-                string exceptionMessage = string.Format(Resources.Culture, Resources.ExceptionConvertionFailedWhenMappingPropertyToColumn, ColumnName, Property.Name, Property.PropertyType);
+                string exceptionMessage =
+                    string.Format(
+                        CultureInfo.CurrentCulture,
+                        Resources.ExceptionConvertionFailedWhenMappingPropertyToColumn,
+                        ColumnName,
+                        Property.Name,
+                        Property.PropertyType);
                 throw new InvalidCastException(exceptionMessage, castException);
             }
             catch (FormatException formatException)
             {
-                string exceptionMessage = string.Format(Resources.Culture, Resources.ExceptionConvertionFailedWhenMappingPropertyToColumn, ColumnName, Property.Name, Property.PropertyType);
+                string exceptionMessage =
+                    string.Format(
+                        CultureInfo.CurrentCulture,
+                        Resources.ExceptionConvertionFailedWhenMappingPropertyToColumn,
+                        ColumnName,
+                        Property.Name,
+                        Property.PropertyType);
                 throw new InvalidCastException(exceptionMessage, formatException);
             }
 
-            SetValue(instance, convertedValue);
-        }
-
-    }
-
-    /// <summary>
-    /// Represents a property that will be ignored when mapping.
-    /// </summary>
-    public class IgnoreMapping : PropertyMapping
-    {
-        /// <summary>
-        /// Creates a new instance of <see cref="IgnoreMapping"/>.
-        /// </summary>
-        /// <param name="property">The property that will be ignored.</param>
-        public IgnoreMapping(PropertyInfo property)
-            :base(property)
-        {
-        }
-
-        /// <summary>
-        /// Does nothing
-        /// </summary>
-        public override void Map(object instance, IDataRecord row)
-        {
-            //nop
+            return convertedValue;
         }
     }
 
@@ -251,7 +279,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
         /// <param name="func">The func that will be used to map the property.</param>
         /// <param name="property">The property that will be used to map to.</param>
         public FuncMapping(PropertyInfo property, Func<IDataRecord, object> func)
-            :base(property)
+            : base(property)
         {
             Func = func;
         }
@@ -262,17 +290,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
         public Func<IDataRecord, object> Func { get; private set; }
 
         /// <summary>
-        /// Performs the actual mapping from <see cref="IDataRecord"/> to property.
+        /// Gets the value for the mapped property from the <paramref name="row"/>.
         /// </summary>
-        /// <param name="instance">The object that contains the <see cref="PropertyMapping.Property"/>.</param>
-        /// <param name="row">The row that will be used as input for <see cref="FuncMapping.Func"/>.</param>
-        public override void Map(object instance, IDataRecord row)
+        /// <param name="row">The data record.</param>
+        /// <returns>The value for the corresponding column converted to the type of the mapped property.</returns>
+        public override object GetPropertyValue(IDataRecord row)
         {
-            object value = Func(row);
-
-            SetValue(instance, value);
+            return Func(row);
         }
     }
-    
-
 }

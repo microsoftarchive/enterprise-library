@@ -15,12 +15,12 @@ using System.Linq;
 using System.Text;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
-using Console.Wpf.ViewModel.Services;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
 using System.Collections.Specialized;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.Unity;
 
-namespace Console.Wpf.ViewModel.BlockSpecifics
+namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics
 {
     public class LoggingSectionViewModel : PositionedSectionViewModel
     {

@@ -136,7 +136,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// <summary>
         /// Gets and sets the footer.
         /// </summary>
-        [ConfigurationProperty(footerProperty, IsRequired = false)]
+        [ConfigurationProperty(footerProperty, IsRequired = false, DefaultValue = "----------------------------------------")]
         [ResourceDescription(typeof(DesignResources), "RollingFlatFileTraceListenerDataFooterDescription")]
         [ResourceDisplayName(typeof(DesignResources), "RollingFlatFileTraceListenerDataFooterDisplayName")]
         public string Footer
@@ -161,7 +161,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// <summary>
         /// Gets and sets the header.
         /// </summary>
-        [ConfigurationProperty(headerProperty, IsRequired = false)]
+        [ConfigurationProperty(headerProperty, IsRequired = false, DefaultValue = "----------------------------------------")]
         [ResourceDescription(typeof(DesignResources), "RollingFlatFileTraceListenerDataHeaderDescription")]
         [ResourceDisplayName(typeof(DesignResources), "RollingFlatFileTraceListenerDataHeaderDisplayName")]
         public string Header
@@ -209,7 +209,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// <summary>
         /// Time stamp
         /// </summary>
-        [ConfigurationProperty(TimeStampPatternPropertyName)]
+        [ConfigurationProperty(TimeStampPatternPropertyName, DefaultValue="yyyy-MM-dd")]
         [ResourceDescription(typeof(DesignResources), "RollingFlatFileTraceListenerDataTimeStampPatternDescription")]
         [ResourceDisplayName(typeof(DesignResources), "RollingFlatFileTraceListenerDataTimeStampPatternDisplayName")]
         public string TimeStampPattern

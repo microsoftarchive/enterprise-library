@@ -13,9 +13,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Console.Wpf.ViewModel;
-using Console.Wpf.ViewModel.Services;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
 using Console.Wpf.Tests.VSTS.DevTests.Contexts;
 using Microsoft.Practices.Unity;
@@ -33,7 +33,6 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_element_reference
         {
             ehabModel = SectionViewModel.CreateSection(Container, ExceptionHandlingSettings.SectionName, base.Section);
             lookup = Container.Resolve<ElementLookup>();
-
         }
 
         [TestMethod]

@@ -31,15 +31,26 @@ using System.Configuration;
 [assembly : AllowPartiallyTrustedCallers]
 [assembly : SecurityTransparent]
 
+
+
 [assembly: HandlesSection(InstrumentationConfigurationSection.SectionName)]
 [assembly: HandlesSection(ConfigurationSourceSection.SectionName)]
-[assembly: HandlesSection("appSettings")]
-//TODO: should we include this?
-//[assembly: HandlesSection(typeof(TypeRegistrationProvidersConfigurationSection.SectionName)]
+[assembly: HandlesSection(AppSettingsDesignTime.AppSettingsSectionName)]
 
-[assembly: AddApplicationBlockCommand("Add Instrumentation Settings", InstrumentationConfigurationSection.SectionName, typeof(InstrumentationConfigurationSection))]
-[assembly: AddApplicationBlockCommand("Add Application Settings", "appSettings", typeof(AppSettingsSection))]
-[assembly: AddApplicationBlockCommand("Add Configuration Settings", 
-            ConfigurationSourceSection.SectionName, 
+[assembly: AddApplicationBlockCommand(
+                InstrumentationConfigurationSection.SectionName,
+                typeof(InstrumentationConfigurationSection),
+                TitleResourceType = typeof(DesignResources),
+                TitleResourceName = "AddInstrumentationSettingsTitle")]
+
+[assembly: AddApplicationBlockCommand(
+                AppSettingsDesignTime.AppSettingsSectionName,
+                typeof(AppSettingsSection),
+                TitleResourceType = typeof(DesignResources),
+                TitleResourceName = "AddApplicationSettingsTitle")]
+
+[assembly: AddApplicationBlockCommand(ConfigurationSourceSection.SectionName,
             typeof(ConfigurationSourceSection),
+            TitleResourceType = typeof(DesignResources),
+            TitleResourceName = "AddConfigurationSourcesTitle",
             CommandModelTypeName = ConfigurationSourcesDesignTime.CommandTypeNames.AddConfigurationSourcesBlockCommand)]

@@ -14,7 +14,7 @@ using System.GACManagedAccess;
 using System.Reflection;
 using System.Windows.Forms;
 
-namespace Console.Wpf.ComponentModel.Editors
+namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors
 {
     internal partial class LoadAssemblyFromCacheDialog : Form
     {

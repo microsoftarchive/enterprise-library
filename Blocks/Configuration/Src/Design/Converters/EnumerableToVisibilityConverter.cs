@@ -15,9 +15,9 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
-using Console.Wpf.ViewModel;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
 
-namespace Console.Wpf.Converters
+namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Converters
 {
 	public class EnumerableToVisibilityConverter : IValueConverter
 	{

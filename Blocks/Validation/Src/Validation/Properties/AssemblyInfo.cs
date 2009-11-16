@@ -31,4 +31,8 @@ using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration;
 [assembly: SecurityTransparent]
 
 [assembly: HandlesSection(ValidationSettings.SectionName)]
-[assembly: AddApplicationBlockCommand("Add Validation Settings", ValidationSettings.SectionName, typeof(ValidationSettings))]
+[assembly: AddApplicationBlockCommand(
+                ValidationSettings.SectionName, 
+                typeof(ValidationSettings),
+                TitleResourceType = typeof(DesignResources),
+                TitleResourceName = "AddValidationSettings")]

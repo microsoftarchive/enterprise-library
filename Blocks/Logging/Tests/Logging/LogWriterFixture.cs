@@ -91,28 +91,28 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
         [TestMethod]
         public void CanCreateLogWriterUsingConstructor()
         {
-            LogWriter writer = new LogWriter(new List<ILogFilter>(), new Dictionary<string, LogSource>(), new LogSource("errors"), "default");
+            LogWriter writer = new LogWriterImpl(new List<ILogFilter>(), new Dictionary<string, LogSource>(), new LogSource("errors"), "default");
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
         public void CreationOfLogWriterUsingConstructorWithNullFiltersThrows()
         {
-            LogWriter writer = new LogWriter(null, new Dictionary<string, LogSource>(), new LogSource("errors"), "default");
+            LogWriter writer = new LogWriterImpl(null, new Dictionary<string, LogSource>(), new LogSource("errors"), "default");
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
         public void CreationOfLogWriterUsingConstructorWithNullTraceSourcesThrows()
         {
-            LogWriter writer = new LogWriter(new List<ILogFilter>(), (IDictionary<string, LogSource>)null, new LogSource("errors"), "default");
+            LogWriter writer = new LogWriterImpl(new List<ILogFilter>(), (IDictionary<string, LogSource>)null, new LogSource("errors"), "default");
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
         public void CreationOfLogWriterUsingConstructorWithNullErrorsTraceSourceThrows()
         {
-            LogWriter writer = new LogWriter(new List<ILogFilter>(), new Dictionary<string, LogSource>(), null, "default");
+            LogWriter writer = new LogWriterImpl(new List<ILogFilter>(), new Dictionary<string, LogSource>(), null, "default");
         }
 
         [TestMethod]
@@ -136,7 +136,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
             filters.Add(new PriorityFilter("priority", 100));
             filters.Add(new LogEnabledFilter("enable", true));
 
-            LogWriter writer = new LogWriter(filters, new Dictionary<string, LogSource>(), new LogSource("errors"), "default");
+            LogWriter writer = new LogWriterImpl(filters, new Dictionary<string, LogSource>(), new LogSource("errors"), "default");
             CategoryFilter categoryFilter = writer.GetFilter<CategoryFilter>();
             PriorityFilter priorityFilter = writer.GetFilter<PriorityFilter>();
             LogEnabledFilter enabledFilter = writer.GetFilter<LogEnabledFilter>();
@@ -164,7 +164,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
             filters.Add(new LogEnabledFilter("enable", true));
             filters.Add(new PriorityFilter("priority2", 200));
 
-            LogWriter writer = new LogWriter(filters, new Dictionary<string, LogSource>(), new LogSource("errors"), "default");
+            LogWriter writer = new LogWriterImpl(filters, new Dictionary<string, LogSource>(), new LogSource("errors"), "default");
             PriorityFilter priorityFilter1 = writer.GetFilter<PriorityFilter>("priority1");
             PriorityFilter priorityFilter2 = writer.GetFilter<PriorityFilter>("priority2");
 
@@ -221,7 +221,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
             Dictionary<string, LogSource> logSources = new Dictionary<string, LogSource>();
             logSources.Add("foo", badSource);
 
-            LogWriter writer = new LogWriter(new List<ILogFilter>(), logSources, badSource, "foo", new LoggingInstrumentationProvider(false, false, true, "applicationInstanceName"));
+            LogWriter writer = new LogWriterImpl(new List<ILogFilter>(), logSources, badSource, "foo", new LoggingInstrumentationProvider(false, false, true, "applicationInstanceName"));
 
             using (WmiEventWatcher eventListener = new WmiEventWatcher(1))
             {
@@ -248,7 +248,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
             logSources.Add("foo", badSource);
 
             ILoggingInstrumentationProvider instrumentationProvider = new LoggingInstrumentationProvider(false, true, false, "applicationInstanceName");
-            LogWriter writer = new LogWriter(new List<ILogFilter>(), logSources, badSource, "foo", instrumentationProvider);
+            LogWriter writer = new LogWriterImpl(new List<ILogFilter>(), logSources, badSource, "foo", instrumentationProvider);
 
             writer.Write(CommonUtil.GetDefaultLogEntry());
 
@@ -271,7 +271,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
             filters.Add(new LogEnabledFilter("enable", true));
             filters.Add(new PriorityFilter("priority2", 200));
 
-            LogWriter writer = new LogWriter(filters, new Dictionary<string, LogSource>(), new LogSource("errors"), "default");
+            LogWriter writer = new LogWriterImpl(filters, new Dictionary<string, LogSource>(), new LogSource("errors"), "default");
             ILogFilter categoryFilter = writer.GetFilter("category");
             ILogFilter priorityFilter = writer.GetFilter("priority2");
 
@@ -295,7 +295,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
             this.traceListener = new MockTraceListenerAndCoordinator();
             this.instrumentationProvider = new MockLoggingInstrumentationProvider();
             this.logWriter =
-                new LogWriter(
+                new LogWriterImpl(
                     new LogWriterStructureHolder(
                         new ILogFilter[0],
                         new Dictionary<string, LogSource>(),

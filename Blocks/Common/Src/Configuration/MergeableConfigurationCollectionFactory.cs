@@ -80,7 +80,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 
             public void ResetCollection(IEnumerable<ConfigurationElement> configurationElements)
             {
-                keyValueCollection.Clear();
+                foreach (string key in keyValueCollection.AllKeys.ToArray())
+                {
+                    keyValueCollection.Remove(key);
+                }
                 foreach (KeyValueConfigurationElement keyValueElement in configurationElements.OfType<KeyValueConfigurationElement>())
                 {
                     keyValueCollection.Add(keyValueElement.Key, keyValueElement.Value);

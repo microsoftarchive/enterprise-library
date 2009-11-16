@@ -16,6 +16,7 @@ using System.Text;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
 {
+    
 
     /// <summary/>
     public static class CommonDesignTime
@@ -24,13 +25,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
         public static class CommandTypeNames
         {
             /// <summary/>
-            public const string AddSateliteProviderCommand = "Console.Wpf.ViewModel.Commands.AddSateliteProviderCommand, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
+            public const string AddSateliteProviderCommand = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Commands.AddSateliteProviderCommand, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
             
             /// <summary/>
-            public const string AddApplicationBlockCommand = "Console.Wpf.ViewModel.Commands.AddApplicationBlockCommand, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
+            public const string AddApplicationBlockCommand = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Commands.AddApplicationBlockCommand, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
 
             /// <summary/>
-            public const string AddProviderUsingTypePickerCommand = "Console.Wpf.ViewModel.TypePickingCollectionElementAddCommand, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
+            public const string AddProviderUsingTypePickerCommand = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.TypePickingCollectionElementAddCommand, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
         }
 
 
@@ -39,7 +40,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
         {
             ///<summary>
             ///</summary>
-            public const string CollectionEditor = "Console.Wpf.Controls.CollectionElementEditor, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
+            public const string CollectionEditor = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls.CollectionElementEditor, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
 
             /// <summary>
             /// </summary>
@@ -48,12 +49,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
             /// <summary>
             /// 
             /// </summary>
-            public const string TypeSelector = "Console.Wpf.ComponentModel.Editors.TypeSelectorEditor, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
+            public const string TypeSelector = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors.TypeSelectorEditor, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
 
             /// <summary>
             /// 
             /// </summary>
-            public const string FilteredFilePath = "Console.Wpf.ComponentModel.Editors.FilteredFileNameEditor, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
+            public const string FilteredFilePath = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors.FilteredFileNameEditor, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
 
             /// <summary>
             /// 
@@ -63,12 +64,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
             /// <summary>
             /// 
             /// </summary>
-            public const string MultilineText = "Console.Wpf.ComponentModel.Editors.MultilineTextEditor, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
+            public const string MultilineText = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors.MultilineTextEditor, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
 
             /// <summary>
             /// 
             /// </summary>
-            public const string Flags = "Console.Wpf.ComponentModel.Editors.FlagsEditor, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
+            public const string Flags = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors.FlagsEditor, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
 
             /// <summary>
             /// 
@@ -83,7 +84,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
             /// <summary>
             /// 
             /// </summary>
-            public const string TemplateEditor = "Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Design.Formatters.TemplateEditor, Console.Wpf";
+            public const string TemplateEditor = "Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Design.Formatters.TemplateEditor, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public const string OverridesEditor = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.IEnvironmentalOverridesEditor, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
         }
 
 
@@ -93,10 +99,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
 
             ///<summary/>
             public const string ConfigurationPropertyViewModel =
-                "Console.Wpf.ViewModel.ConfigurationProperty, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
+                "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.ConfigurationProperty, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
 
             /// <summary/>
-            public const string HierarchicalViewModel = "Console.Wpf.ViewModel.HierarchicalSectionViewModel, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
+            public const string HierarchicalViewModel = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.HierarchicalSectionViewModel, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
         }
     }
 }

@@ -231,4 +231,7 @@
   <data name="ExceptionArgumentMustInheritFromDatabase" xml:space="preserve">
     <value>Type must inherit from Microsoft.Practices.EnterpriseLibrary.Data.Database</value>
   </data>
+  <data name="ExceptionCannotCreateRowMapping" xml:space="preserve">
+    <value>Cannot create a mapping for type {0}.</value>
+  </data>
 </root>

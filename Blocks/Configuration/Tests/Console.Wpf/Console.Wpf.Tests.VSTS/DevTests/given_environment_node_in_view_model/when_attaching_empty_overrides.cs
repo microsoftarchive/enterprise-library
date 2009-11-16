@@ -14,12 +14,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Console.Wpf.Tests.VSTS.DevTests.Contexts;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides.Configuration;
-using Console.Wpf.ViewModel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides;
-using Console.Wpf.ViewModel.BlockSpecifics;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics;
 using Console.Wpf.Tests.VSTS.TestSupport;
 using Microsoft.Practices.Unity;
 
@@ -41,14 +41,13 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_environment_node_in_view_model
         protected override void Arrange()
         {
             base.Arrange();
-
-            EnvironmentSection = new EnvironmentMergeSection()
-            {
-                EnvironmentName = "environment"
-            };
+            
+            ConfigurationSourceModel sourceModel = Container.Resolve<ConfigurationSourceModel>();
+            sourceModel.NewEnvironment();
 
             EhabModel = SectionViewModel.CreateSection(Container, ExceptionHandlingSettings.SectionName, Section);
-            EnvironmentViewModel = SectionViewModel.CreateSection(Container, EnvironmentMergeSection.EnvironmentMergeData, EnvironmentSection);
+            EnvironmentViewModel = sourceModel.Environments.First();
+            EnvironmentSection = (EnvironmentMergeSection)EnvironmentViewModel.ConfigurationElement;
 
             WrapHandler = EhabModel.DescendentElements().Where(x => x.ConfigurationType == typeof(WrapHandlerData)).First();
 

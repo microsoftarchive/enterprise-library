@@ -25,7 +25,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
     /// </summary>
     [ResourceDescription(typeof(DesignResources), "CustomSymmetricCryptoProviderDataDescription")]
     [ResourceDisplayName(typeof(DesignResources), "CustomSymmetricCryptoProviderDataDisplayName")]
-    [TypePickingCommand(Title = "Custom Symmetric Crypto Provider (using type picker)")]
+    [TypePickingCommand(TitleResourceName = "CustomSymmetricCryptoProviderDataAddCommand", TitleResourceType=typeof(DesignResources))]
     public class CustomSymmetricCryptoProviderData
         : SymmetricProviderData, IHelperAssistedCustomConfigurationData<CustomSymmetricCryptoProviderData>
     {

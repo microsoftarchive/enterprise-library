@@ -19,14 +19,15 @@ using System.Windows;
 using System.Globalization;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using System.Windows.Input;
-using Console.Wpf.ViewModel.ComponentModel;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.ComponentModel;
 using System.Configuration;
 using Microsoft.Practices.Unity;
-using Console.Wpf.ViewModel.Services;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics;
 
-namespace Console.Wpf.ViewModel
+namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
 {
-    public class Property : ViewModel, ITypeDescriptorContext, INotifyPropertyChanged
+    public class Property : ViewModel, ITypeDescriptorContext, INotifyPropertyChanged, INeedInitialization
     {
         private readonly IServiceProvider serviceProvider;
 
@@ -34,21 +35,21 @@ namespace Console.Wpf.ViewModel
         private readonly PropertyDescriptor declaringProperty;
         private readonly MetadataCollection metadata;
         SectionViewModel containingSection;
-        IPropertyDirtyStateListener propertyDirtyStateListener;
+        IApplicationModel appModel;
         
-        private TypeConverter designTimeTypeConverter;
         private string propertyName;
         private string displayName;
         private string description;
         private Type propertyType;
-        private Type designTimeType;
         private bool hidden;
         private bool @readonly;
         private bool? designTimeReadOnly = null;
         private TypeConverter converter;
         private UITypeEditor popupEditor;
         private FrameworkElement dropdownEditor;
+        private FrameworkElement overridesEditor;
         private string category;
+        private string uncommittedValue = null;
 
         [InjectionConstructor]
         public Property(IServiceProvider serviceProvider, object component, PropertyDescriptor declaringProperty)
@@ -87,22 +88,14 @@ namespace Console.Wpf.ViewModel
                 this.displayName = declaringProperty.DisplayName;
                 this.description = declaringProperty.Description;
                 this.propertyType = declaringProperty.PropertyType;
-                this.designTimeType = declaringProperty.PropertyType;
                 this.@readonly = declaringProperty.IsReadOnly;
                 this.hidden = !declaringProperty.IsBrowsable;
                 this.converter = declaringProperty.Converter;
+
                 if (declaringProperty.Category != "Misc") // TODO: check
                 {
                     this.category = declaringProperty.Category;
                 }
-            }
-
-            DesignTimeTypeAttribute designtimeTypeAttributes = attributes.OfType<DesignTimeTypeAttribute>().FirstOrDefault();
-
-            if (designtimeTypeAttributes != null)
-            {
-                designTimeType = designtimeTypeAttributes.DesignTimeType;
-                designTimeTypeConverter = Activator.CreateInstance(designtimeTypeAttributes.DesignTimeTypeConverter) as TypeConverter;
             }
 
             TypeConverterAttribute converterAttribute = attributes.OfType<TypeConverterAttribute>().FirstOrDefault();
@@ -124,13 +117,14 @@ namespace Console.Wpf.ViewModel
             {
                 designTimeReadOnly = designTimeReadOnlyAttribute.ReadOnly;
             }
+
         }
 
         [InjectionMethod]
-        public void PropertyDependencyInitialization(SectionViewModel containingSection, IPropertyDirtyStateListener propertyChangedListener)
+        public virtual void PropertyDependencyInitialization(SectionViewModel containingSection, IApplicationModel applicationModel)
         {
             this.containingSection = containingSection;
-            this.propertyDirtyStateListener = propertyChangedListener;
+            this.appModel = applicationModel;
         }
 
         public SectionViewModel ContainingSection
@@ -158,10 +152,21 @@ namespace Console.Wpf.ViewModel
                     this.dropdownEditor = (FrameworkElement)Activator.CreateInstance(dropdownEditor.GetType());
                     dropdownEditor.DataContext = this;
                 }
+                this.overridesEditor = declaringProperty.GetEditor(typeof(IEnvironmentalOverridesEditor)) as FrameworkElement;
+
+                if (overridesEditor != null)
+                {
+                    //todo: need to figure this out proper, 
+                    //... maybe even moving away from TypeDescriptor, as it seems get in our way.
+                    this.overridesEditor = (FrameworkElement)Activator.CreateInstance(overridesEditor.GetType());
+                }
             }
             editorsAreInitialized = true;
         }
 
+        /// <summary>
+        /// Gets the attributes that where supplied to this <see cref="Property"/> instance.
+        /// </summary>
         public virtual IEnumerable<Attribute> Attributes
         {
             get
@@ -212,7 +217,7 @@ namespace Console.Wpf.ViewModel
         /// </summary>
         public virtual Type Type
         {
-            get { return designTimeType; }
+            get { return propertyType; }
         }
 
         public virtual bool TextReadOnly
@@ -281,6 +286,16 @@ namespace Console.Wpf.ViewModel
             {
                 EnsureEditors();
                 return popupEditor;
+            }
+        }
+
+        public virtual FrameworkElement OverridesEditor
+        {
+            get
+            {
+                EnsureEditors();
+                if (overridesEditor != null) return overridesEditor;
+                return Editor;
             }
         }
 
@@ -381,10 +396,27 @@ namespace Console.Wpf.ViewModel
             }
         }
 
-        public string BindableValue
+        public virtual string BindableValue
         {
-            get { return Converter.ConvertToString(this, CultureInfo.CurrentUICulture, Value); }
-            set { Value = Converter.ConvertFromString(this, CultureInfo.CurrentUICulture, value); }
+            get
+            {
+                return uncommittedValue;
+            }
+            set
+            {
+                uncommittedValue = value;
+                Value = ConvertFromBindableValue(uncommittedValue);
+            }
+        }
+
+        public string ConvertToBindableValue(object value)
+        {
+            return Converter.ConvertToString(this, CultureInfo.CurrentUICulture, value);
+        }
+
+        public object ConvertFromBindableValue(string bindableValue)
+        {
+            return Converter.ConvertFromString(this, CultureInfo.CurrentUICulture, bindableValue);
         }
 
         /// <summary>
@@ -394,46 +426,24 @@ namespace Console.Wpf.ViewModel
         {
             get
             {
-                object value = GetUnConvertedValueDirect();
-
-                return  ConvertValueForRead(value);
+                return GetValue();
             }
             set
             {
-                object v = ConvertValueForWrite(value);
-
-                SetConvertedValueDirect(v);
-
+                SetValue(value);
             }
         }
 
-        protected virtual object GetUnConvertedValueDirect()
+        protected virtual object GetValue()
         {
             return declaringProperty.GetValue(component);
         }
 
-        protected virtual void SetConvertedValueDirect(object value)
+        protected virtual void SetValue(object value)
         {
             declaringProperty.SetValue(component, value);
+            uncommittedValue = ConvertToBindableValue(value);
             OnPropertyChanged("Value");
-        }
-
-        private object ConvertValueForWrite(object value)
-        {
-            if (designTimeType != null && designTimeTypeConverter != null)
-            {
-                value = designTimeTypeConverter.ConvertFrom(this, CultureInfo.CurrentUICulture, value);
-            }
-            return value;
-        }
-
-        private object ConvertValueForRead(object value)
-        {
-            if (designTimeType != null && designTimeTypeConverter != null)
-            {
-                value = designTimeTypeConverter.ConvertTo(this, CultureInfo.CurrentUICulture, value, designTimeType);
-            }
-            return value;
         }
 
         public virtual event PropertyChangedEventHandler PropertyChanged;
@@ -443,9 +453,9 @@ namespace Console.Wpf.ViewModel
             if (propertyName == "Value")
             {
                 OnPropertyChanged("BindableValue");
-                if (propertyDirtyStateListener != null)
+                if (appModel != null)
                 {
-                    propertyDirtyStateListener.SetDirty();
+                    appModel.SetDirty();
                 }
             }
             if (propertyName == "SuggestedValues") OnPropertyChanged("BindableSuggestedValues");
@@ -458,12 +468,9 @@ namespace Console.Wpf.ViewModel
             }
         }
 
-
         //ICommand for ease of Binding
         public LaunchEditorCommand LaunchEditor { get; set; }
-        /// <summary>
-        /// 
-        /// </summary>
+
         public virtual void ShowUITypeEditor()
         {
             if (PopupEditor != null) Value = PopupEditor.EditValue(this, serviceProvider, Value);
@@ -510,7 +517,11 @@ namespace Console.Wpf.ViewModel
 
             return null;
         }
-           
+
+        public virtual void Initialize(InitializeContext context)
+        {
+            uncommittedValue = ConvertToBindableValue(Value);
+        }
     }
 
 

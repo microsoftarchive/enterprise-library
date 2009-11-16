@@ -15,10 +15,10 @@ using System.Linq;
 using System.Text;
 using System.Configuration;
 using System.ComponentModel;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections;
 using System.Drawing.Design;
-using Console.Wpf.ViewModel;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_configuration_element_with_properties
 {

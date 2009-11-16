@@ -321,6 +321,7 @@
     <Compile Include="ILoggingUpdateCoordinator.cs" />
     <Compile Include="Instrumentation\LoggingReconfigurationFailureEvent.cs" />
     <Compile Include="LoggingUpdateCoordinator.cs" />
+    <Compile Include="LogWriterImpl.cs" />
     <Compile Include="TraceListeners\AttributeSettingTraceListenerWrapper.cs" />
     <Compile Include="Formatters\GenericTextFormatter.cs" />
     <Compile Include="Instrumentation\ILoggingInstrumentationProvider.cs" />

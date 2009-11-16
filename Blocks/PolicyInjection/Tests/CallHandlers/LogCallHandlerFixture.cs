@@ -367,7 +367,7 @@ Call Stack: @@BEGIN CALL STACK@@{{property(CallStack)}}@@END CALL STACK@@{{newli
             LogSource logSource = new LogSource("Logging");
             logSource.Listeners.Add(listener);
 
-            log = new LogWriter(new ILogFilter[0], new LogSource[] { logSource },
+            log = new LogWriterImpl(new ILogFilter[0], new LogSource[] { logSource },
                                 logSource, logSource, logSource, "General", true, true);
         }
 

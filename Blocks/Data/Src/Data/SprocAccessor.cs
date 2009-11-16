@@ -11,8 +11,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.Common;
+using System.Globalization;
 using Microsoft.Practices.EnterpriseLibrary.Data.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Data
@@ -68,7 +68,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
             this.procedureName = procedureName;
             this.parameterMapper = parameterMapper;
         }
-        
+
         /// <summary>
         /// Creates a new instance of <see cref="SprocAccessor&lt;TResult&gt;"/> that works for a specific <paramref name="database"/>
         /// and uses <paramref name="resultSetMapper"/> to convert the returned set to an enumerable of clr type <typeparamref name="TResult"/>.
@@ -96,7 +96,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
         /// <returns>An enumerable of <typeparamref name="TResult"/>.</returns>
         public override IEnumerable<TResult> Execute(params object[] parameterValues)
         {
-            using(DbCommand command = Database.GetStoredProcCommand(procedureName))
+            using (DbCommand command = Database.GetStoredProcCommand(procedureName))
             {
                 parameterMapper.AssignParameters(command, parameterValues);
                 return base.Execute(command);
@@ -146,7 +146,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
                 if (!database.SupportsParemeterDiscovery)
                 {
                     throw new InvalidOperationException(
-                        string.Format(Resources.Culture,
+                        string.Format(CultureInfo.CurrentCulture,
                                       Resources.ExceptionParameterDiscoveryNotSupported,
                                       database.GetType().FullName));
                 }

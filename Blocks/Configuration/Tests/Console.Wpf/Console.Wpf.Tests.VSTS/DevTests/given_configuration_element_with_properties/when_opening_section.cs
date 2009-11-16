@@ -1,12 +1,28 @@
-﻿using System;
+﻿//===============================================================================
+// Microsoft patterns & practices Enterprise Library
+// Core
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Console.Wpf.Tests.VSTS.Mocks;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Console.Wpf.Tests.VSTS.DevTests.Contexts;
-using Console.Wpf.Tests.VSTS.Mocks;
-using Console.Wpf.ViewModel;
+using Console.Wpf.Tests.VSTS.DevTests;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.Unity;
+using Moq;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_configuration_element_with_properties
 {
@@ -14,19 +30,37 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_configuration_element_with_prope
     public class when_opening_section : ContainerContext
     {
         SectionViewModel sectionViewModel;
+        private DesignDictionaryConfigurationSource source;
+
+        protected override void Arrange()
+        {
+            base.Arrange();
+
+            var sectionLocator = new Mock<ConfigurationSectionLocator>();
+            sectionLocator.Setup(x => x.ConfigurationSectionNames).Returns(new[] {"section"});
+            Container.RegisterInstance<ConfigurationSectionLocator>(sectionLocator.Object);
+
+            SectionWithExtendedViewModel section = new SectionWithExtendedViewModel();
+            
+            source = new DesignDictionaryConfigurationSource();
+            source.Add("section", section);
+        }
 
         protected override void Act()
         {
-            SectionWithExtendedViewModel section = new SectionWithExtendedViewModel();
-            sectionViewModel = SectionViewModel.CreateSection(Container, "section", section);
-            sectionViewModel.AfterOpen(new DesignDictionaryConfigurationSource());
+            var configSourceModel = Container.Resolve<ConfigurationSourceModel>();
+            configSourceModel.Load(source);
 
+            sectionViewModel = configSourceModel.Sections.OfType<SectionViewModelEx>().First();
         }
 
         [TestMethod]
         public void then_properties_are_initialized()
         {
-            Assert.IsTrue(CustomProperty.WasInitialized);
+            var property =
+                sectionViewModel.DescendentElements().SelectMany(x => x.Properties).OfType<CustomProperty>().First();
+
+            Assert.IsTrue(property.WasInitialized);
         }
         
     }

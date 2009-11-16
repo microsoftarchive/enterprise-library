@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AddSecuritySettings" xml:space="preserve">
+    <value>Add Security Settings</value>
+  </data>
   <data name="AuthorizationProviderDataDescription" xml:space="preserve">
     <value>933 - A base class for all authorization providers.</value>
   </data>
@@ -177,6 +180,9 @@
   <data name="AuthorizationRuleProviderDataTypeNameDisplayName" xml:space="preserve">
     <value>Type</value>
   </data>
+  <data name="CustomAuthorizationProviderDataAddCommand" xml:space="preserve">
+    <value>Custom Authorization Provider (using type picker)</value>
+  </data>
   <data name="CustomAuthorizationProviderDataDescription" xml:space="preserve">
     <value>953 - A custom implementation of an Authorization Provider, added to Enterprise Library.</value>
   </data>
@@ -194,6 +200,9 @@
   </data>
   <data name="CustomAuthorizationProviderDataTypeNameDisplayName" xml:space="preserve">
     <value>Type</value>
+  </data>
+  <data name="CustomSecurityCacheProviderDataAddCommand" xml:space="preserve">
+    <value>Custom Security Cache Provider (using type picker)</value>
   </data>
   <data name="CustomSecurityCacheProviderDataDescription" xml:space="preserve">
     <value>959 - A custom implementation of a Security Cache Provider, added to Enterprise Library.</value>

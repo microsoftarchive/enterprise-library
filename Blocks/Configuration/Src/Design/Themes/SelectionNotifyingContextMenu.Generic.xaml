@@ -2,7 +2,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:s="clr-namespace:System;assembly=mscorlib" 
 	xmlns:mwt="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero" 
-	xmlns:Controls="clr-namespace:Console.Wpf.Controls">
+	xmlns:Controls="clr-namespace:Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls">
     
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="/Microsoft.Practices.EnterpriseLibrary.Configuration.Design;component/Resources/Converters.xaml" />

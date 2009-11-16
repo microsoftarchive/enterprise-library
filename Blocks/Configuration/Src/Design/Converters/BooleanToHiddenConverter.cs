@@ -16,7 +16,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Data;
 
-namespace Console.Wpf.Converters
+namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Converters
 {
     public class BooleanToHiddenConverter : IValueConverter
     {

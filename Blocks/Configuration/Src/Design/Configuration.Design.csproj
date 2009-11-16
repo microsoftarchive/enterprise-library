@@ -69,10 +69,13 @@
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
     <Reference Include="WindowsBase">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
     <Reference Include="PresentationCore">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
     <Reference Include="PresentationFramework">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -120,9 +123,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="ViewModel\BlockSpecifics\OverridenTraceListenerCollectionEditor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ComponentModel\Converters\BackingStoreReferenceConverter.cs" />
     <Compile Include="ComponentModel\Converters\ProtectionProviderConverter.cs" />
+    <Compile Include="ComponentModel\Converters\ReferencePropertyConverter.cs" />
     <Compile Include="ComponentModel\Converters\SystemDataProviderConverter.cs" />
     <Compile Include="ComponentModel\Editors\CustomAttributesEditor.xaml.cs">
       <DependentUpon>CustomAttributesEditor.xaml</DependentUpon>
@@ -266,6 +275,7 @@
     <Compile Include="Converters\ChildCountToVisibility.cs" />
     <Compile Include="Converters\EnumerableToVisibilityConverter.cs" />
     <Compile Include="Converters\GridWidthConverter.cs" />
+    <Compile Include="Converters\MidpointConverter.cs" />
     <Compile Include="Converters\StringToVisibilityConverter.cs" />
     <Compile Include="Converters\SuggestedValueTypeConverter.cs" />
     <Compile Include="Converters\TypeToVisibilityConverter.cs" />
@@ -286,6 +296,12 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="Validation\DefaultPropertyValidator.cs" />
+    <Compile Include="Validation\RequiredFieldValidator.cs" />
+    <Compile Include="Validation\ValidationAttribute.cs" />
+    <Compile Include="Validation\ValidationError.cs" />
+    <Compile Include="Validation\ValidationPropertyExtensions.cs" />
+    <Compile Include="Validation\ValidationService.cs" />
     <Compile Include="ViewModel\BlockSpecifics\AddCachingBlockCommand.cs" />
     <Compile Include="ViewModel\BlockSpecifics\AddConfigurationSourcesBlockCommand.cs" />
     <Compile Include="ViewModel\BlockSpecifics\AddDatabaseBlockCommand.cs" />
@@ -294,12 +310,15 @@
     <Compile Include="ViewModel\BlockSpecifics\AppSettingsDecorator.cs" />
     <Compile Include="ViewModel\BlockSpecifics\AppSettingsViewModel.cs" />
     <Compile Include="ViewModel\BlockSpecifics\CacheManagerSectionViewModel.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\CacheManagerBackingStoreProperty.cs" />
     <Compile Include="ViewModel\BlockSpecifics\CategoryFilterEntryViewModel.cs" />
     <Compile Include="ViewModel\BlockSpecifics\ConfigurationSourceSectionViewModel.cs" />
     <Compile Include="ViewModel\BlockSpecifics\ConnectionStringsDecorator.cs" />
     <Compile Include="ViewModel\BlockSpecifics\CryptographySectionViewModel.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\CustomTraceListenerDataViewModel.cs" />
     <Compile Include="ViewModel\BlockSpecifics\DataSectionViewModel.cs" />
     <Compile Include="ViewModel\BlockSpecifics\DomainConfigurationElementViewModel.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\EnvironmentalOverridesEditor.cs" />
     <Compile Include="ViewModel\BlockSpecifics\EnvironmentMergeSectionViewModel.cs" />
     <Compile Include="ViewModel\BlockSpecifics\ExceptionHandlingSectionViewModel.cs" />
     <Compile Include="ViewModel\BlockSpecifics\FaultContractExceptionHandlerMappingDataViewModel.cs" />
@@ -307,8 +326,12 @@
     <Compile Include="ViewModel\BlockSpecifics\KeyedHashAlgorithmProviderDataViewModel.cs" />
     <Compile Include="ViewModel\BlockSpecifics\LogCallHandlerCategoryEntryViewModel.cs" />
     <Compile Include="ViewModel\BlockSpecifics\LoggingSectionViewModel.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\OpenEnvironmentConfigurationDeltaCommand.cs" />
     <Compile Include="ViewModel\BlockSpecifics\OraclePackageDataViewModel.cs" />
     <Compile Include="ViewModel\BlockSpecifics\OverriddenElementViewModel.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\OverridenTraceListenerCollectionEditor.xaml.cs">
+      <DependentUpon>OverridenTraceListenerCollectionEditor.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ViewModel\BlockSpecifics\PiabMemberNameViewModel.cs" />
     <Compile Include="ViewModel\BlockSpecifics\PiabMethodSignatureTypesViewModel.cs" />
     <Compile Include="ViewModel\BlockSpecifics\PiabNamespaceMatchDataViewModel.cs" />
@@ -316,10 +339,13 @@
     <Compile Include="ViewModel\BlockSpecifics\PiabPropertyMatchDataViewModel.cs" />
     <Compile Include="ViewModel\BlockSpecifics\PiabSectionViewModel.cs" />
     <Compile Include="ViewModel\BlockSpecifics\PiabTypeMatchDataViewModel.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\SaveEnvironmentConfigurationDeltaCommand.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\SaveMergedEnvironmentConfigurationCommand.cs" />
     <Compile Include="ViewModel\BlockSpecifics\SecuritySectionViewModel.cs" />
     <Compile Include="ViewModel\BlockSpecifics\SelectValidatedTypeReferenceMembersCommand.cs" />
     <Compile Include="ViewModel\BlockSpecifics\SymmetricAlgorithmProviderAddCommand.cs" />
     <Compile Include="ViewModel\BlockSpecifics\SymmetricAlgorithmProviderDataViewModel.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\SystemDiagnosticsTraceListenerDataViewModel.cs" />
     <Compile Include="ViewModel\BlockSpecifics\TraceListenerElementCollectionViewModel.cs" />
     <Compile Include="ViewModel\BlockSpecifics\TraceListenerReferenceViewModel.cs" />
     <Compile Include="ViewModel\BlockSpecifics\ValidationSectionViewModel.cs" />
@@ -338,7 +364,7 @@
     <Compile Include="ViewModel\ConfigurationProperty.cs" />
     <Compile Include="ViewModel\ConfigurationSourceModel.cs" />
     <Compile Include="ViewModel\CustomAttributesPropertyExtender.cs" />
-    <Compile Include="ViewModel\CustomPropertry.cs" />
+    <Compile Include="ViewModel\CustomProperty.cs" />
     <Compile Include="ViewModel\ElementCollectionViewModel.cs" />
     <Compile Include="ViewModel\ElementHeaderViewModel.cs" />
     <Compile Include="ViewModel\ElementProperty.cs" />
@@ -349,7 +375,7 @@
     <Compile Include="ViewModel\HeaderViewModel.cs" />
     <Compile Include="ViewModel\HierarchicalSectionViewModel.cs" />
     <Compile Include="ViewModel\IElementExtendedPropertyProvider.cs" />
-    <Compile Include="ViewModel\IPropertyNeedsInitialization.cs" />
+    <Compile Include="ViewModel\INeedInitialization.cs" />
     <Compile Include="ViewModel\MetadataCollection.cs" />
     <Compile Include="ViewModel\PositionedSectionViewModel.cs" />
     <Compile Include="ViewModel\Property.cs" />
@@ -363,7 +389,7 @@
     <Compile Include="ViewModel\Services\ConfigurationSourceDependency.cs" />
     <Compile Include="ViewModel\Services\DiscoverDerivedConfigurationTypesService.cs" />
     <Compile Include="ViewModel\Services\ElementLookup.cs" />
-    <Compile Include="ViewModel\Services\IPropertyChangedListener.cs" />
+    <Compile Include="ViewModel\Services\IApplicationModel.cs" />
     <Compile Include="ViewModel\Services\IUIServiceWpf.cs" />
     <Compile Include="ViewModel\StringHeaderViewModel.cs" />
     <Compile Include="ViewModel\Validation\ConfigurationValidatorRule.cs" />

@@ -1,0 +1,18 @@
+﻿<configuration>
+  <configSections>
+    <section name="EnvironmentMergeData" type="Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides.Configuration.EnvironmentMergeSection, Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null" />
+  </configSections>
+  <EnvironmentMergeData environmentName="Environment" environmentConfigurationFile="environmentoutput.config">
+    <mergeElements>
+      <override nodePath="/LoggingSettings:Logging Settings/NamedElementCollection`1:Trace Sources/TraceSourceData:General"
+          overrideProperties="true">
+        <overridddenProperties>
+          <add key="AutoFlush" value="True" />
+          <add key="DefaultLevel" value="All" />
+          <add key="NewTraceListener" value="Event Log Listener" />
+          <add key="SendTo" value="Event Log Listener" />
+        </overridddenProperties>
+      </override>
+    </mergeElements>
+  </EnvironmentMergeData>
+</configuration>

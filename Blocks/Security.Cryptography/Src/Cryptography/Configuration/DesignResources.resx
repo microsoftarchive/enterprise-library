@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AddCryptographySettings" xml:space="preserve">
+    <value>Add Cryptography Settings</value>
+  </data>
   <data name="CryptographySettingsDefaultHashProviderNameDescription" xml:space="preserve">
     <value>1009 - The name of the Hash Provider to use when code does specify the name of a configured Hash Provider.</value>
   </data>
@@ -147,6 +150,9 @@
   <data name="CryptographySettingsSymmetricCryptoProvidersDisplayName" xml:space="preserve">
     <value>Symmetric Cryptography Providers</value>
   </data>
+  <data name="CustomHashProviderDataAddCommand" xml:space="preserve">
+    <value>Custom Hash Provider (using type picker)</value>
+  </data>
   <data name="CustomHashProviderDataDescription" xml:space="preserve">
     <value>1017 - A Hash Provider implementated as a custom class, and added to Enterprise Library.</value>
   </data>
@@ -164,6 +170,9 @@
   </data>
   <data name="CustomHashProviderDataTypeNameDisplayName" xml:space="preserve">
     <value>Type</value>
+  </data>
+  <data name="CustomSymmetricCryptoProviderDataAddCommand" xml:space="preserve">
+    <value>Custom Symmetric Crypto Provider (using type picker)</value>
   </data>
   <data name="CustomSymmetricCryptoProviderDataAlgorithmTypeNameDescription" xml:space="preserve">
     <value>1025 - The fully qualified type name of of a class that derives from SymmetricAlgorithm and implements the cryptography algorithm for this provider.</value>

@@ -18,7 +18,7 @@ using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using System.ComponentModel;
 
-namespace Console.Wpf.ViewModel.Services
+namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services
 {
     public class AssemblyAttributeSectionLocator : ConfigurationSectionLocator
     {

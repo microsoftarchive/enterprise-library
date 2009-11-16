@@ -17,6 +17,7 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Configuration
 {
@@ -135,6 +136,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Configuration
         [ConfigurationProperty(formatterNameProperty, IsRequired = false)]
         [ResourceDescription(typeof(DesignResources), "FormattedDatabaseTraceListenerDataFormatterDescription")]
         [ResourceDisplayName(typeof(DesignResources), "FormattedDatabaseTraceListenerDataFormatterDisplayName")]
+        [Reference(typeof(NameTypeConfigurationElementCollection<FormatterData, CustomFormatterData>), typeof(FormatterData))]
         public string Formatter
         {
             get { return (string)base[formatterNameProperty]; }

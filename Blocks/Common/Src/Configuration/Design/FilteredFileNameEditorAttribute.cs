@@ -17,8 +17,8 @@ using System.Text;
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
 {
     /// <summary>
+    /// Specifies additional metadata for the FilteredFileNameEditor editor.
     /// </summary>
-    // Specifies the properties for the <see cref="FilteredFileNameEditor"/> to use to change a property.
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1019:DefineAccessorsForAttributeArguments"), AttributeUsage(AttributeTargets.Property)]
     public sealed class FilteredFileNameEditorAttribute : Attribute
     {

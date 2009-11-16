@@ -14,9 +14,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Console.Wpf.Tests.VSTS.DevTests.Contexts;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Console.Wpf.ViewModel.Services;
-using Console.Wpf.ViewModel;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
 using Microsoft.Practices.Unity;
 

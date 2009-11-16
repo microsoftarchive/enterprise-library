@@ -66,6 +66,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         [ConfigurationProperty(defaultLevelProperty, IsRequired = true, DefaultValue = SourceLevels.All)]
         [ResourceDescription(typeof(DesignResources), "TraceSourceDataDefaultLevelDescription")]
         [ResourceDisplayName(typeof(DesignResources), "TraceSourceDataDefaultLevelDisplayName")]
+        //[System.ComponentModel.Editor(CommonDesignTime.EditorTypes.Flags, CommonDesignTime.EditorTypes.FrameworkElement)]
         public SourceLevels DefaultLevel
         {
             get { return (SourceLevels)base[defaultLevelProperty]; }
@@ -91,6 +92,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         [ConfigurationCollection(typeof(TraceListenerReferenceData))]
         [ResourceDescription(typeof(DesignResources), "TraceSourceDataTraceListenersDescription")]
         [ResourceDisplayName(typeof(DesignResources), "TraceSourceDataTraceListenersDisplayName")]
+        [CollectionEditorTemplate("TraceListenerReferenceHeaderTemplate", "TraceListenerReferenceItemTemplate")]
+        [System.ComponentModel.Editor(CommonDesignTime.EditorTypes.CollectionEditor, CommonDesignTime.EditorTypes.FrameworkElement)]
+        [System.ComponentModel.Editor(LoggingDesignTime.EditorTypeNames.OverridenTraceListenerCollectionEditor, CommonDesignTime.EditorTypes.OverridesEditor)]
+        [DesignTimeReadOnly(false)]
         public NamedElementCollection<TraceListenerReferenceData> TraceListeners
         {
             get { return (NamedElementCollection<TraceListenerReferenceData>)base[traceListenersProperty]; }

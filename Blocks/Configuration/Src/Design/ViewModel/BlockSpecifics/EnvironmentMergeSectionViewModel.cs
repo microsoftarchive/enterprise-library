@@ -15,43 +15,59 @@ using System.Linq;
 using System.Text;
 using System.Configuration;
 using System.ComponentModel;
-using Console.Wpf.ViewModel.ComponentModel;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.ComponentModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using System.Collections;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides.Configuration;
-using Console.Wpf.ViewModel.Services;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
 using Microsoft.Practices.Unity;
 using System.Windows;
 
-namespace Console.Wpf.ViewModel.BlockSpecifics
+namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics
 {
     /// <summary>
     /// View model for 1 environment
     /// </summary>
     public class EnvironmentalOverridesViewModel : SectionViewModel, IElementExtendedPropertyProvider
     {
+        ConfigurationSourceModel sourceModel;
+        SaveMergedEnvironmentConfigurationCommand saveMergedConfigurationCommand;
+        SaveEnvironmentConfigurationDeltaCommand saveEnvironmentDeltaCommand;
         ElementLookup elementLookup;
         IUnityContainer builder;
         EnvironmentMergeSection environmentSection;
         List<OverriddenElementViewModel> overriddenElements = new List<OverriddenElementViewModel>();
         
-        [InjectionConstructor]
-        public EnvironmentalOverridesViewModel(IUnityContainer builder, ConfigurationSection section)
-            : base(builder, EnvironmentMergeSection.EnvironmentMergeData, section) 
+        public EnvironmentalOverridesViewModel(IUnityContainer builder, ConfigurationSourceModel sourceModel, ConfigurationSection section)
+            : base(builder, EnvironmentMergeSection.EnvironmentMergeData, section, new Attribute[]{ new EnvironmentalOverridesAttribute(false) } )
         {
-            Initialize(builder, section);
-        }
+            this.builder = builder;
+            this.environmentSection = section as EnvironmentMergeSection;
+            this.elementLookup = builder.Resolve<ElementLookup>();
+            this.sourceModel = sourceModel;
 
-        public EnvironmentalOverridesViewModel(IUnityContainer builder, ConfigurationSection section, IEnumerable<Attribute> additionalAttributes)
-            : base(builder, EnvironmentMergeSection.EnvironmentMergeData, section, additionalAttributes)
-        {
-            Initialize(builder, section);
+            foreach (EnvironmentNodeMergeElement mergeElement in environmentSection.MergeElements)
+            {
+                overriddenElements.Add(new OverriddenElementViewModel(elementLookup, environmentSection, mergeElement));
+            }
+
+            saveMergedConfigurationCommand = CreateCommand<SaveMergedEnvironmentConfigurationCommand>(this);
+            saveEnvironmentDeltaCommand = CreateCommand<SaveEnvironmentConfigurationDeltaCommand>(this);
         }
 
         public override void Delete()
         {
-            ConfigurationSourceModel sourceModel = builder.Resolve<ConfigurationSourceModel>();
             sourceModel.RemoveEnvironment(this);
+        }
+
+        protected override IEnumerable<CommandModel> GetAllCommands()
+        {
+            return base.GetAllCommands().Union(new CommandModel[] { saveMergedConfigurationCommand, saveEnvironmentDeltaCommand });
+        }
+
+        protected override IEnumerable<Property> GetAllProperties()
+        {
+            return base.GetAllProperties().Union(new Property[] { ContainingSection.CreateProperty<EnvironmentDeltaFileProperty>()  }); ;
         }
 
         public string EnvironmentName
@@ -59,32 +75,55 @@ namespace Console.Wpf.ViewModel.BlockSpecifics
             get { return environmentSection.EnvironmentName; }
         }
 
-        private void Initialize(IUnityContainer builder, ConfigurationSection section)
+        public string EnvironmentDeltaFile
         {
-            this.builder = builder;
-            this.environmentSection = section as EnvironmentMergeSection;
-            this.elementLookup = builder.Resolve<ElementLookup>();
-            
-            foreach (EnvironmentNodeMergeElement mergeElement in environmentSection.MergeElements)
-            {
-                overriddenElements.Add(new OverriddenElementViewModel(elementLookup, environmentSection, mergeElement));
-            }
+            get { return (string)Property("EnvironmentDeltaFile").Value; }
+            set { Property("EnvironmentDeltaFile").Value = value; }
+        }
+
+        public string EnvironmentConfigurationFile
+        {
+            get { return (string)Property("EnvironmentConfigurationFile").Value; }
+            set { Property("EnvironmentConfigurationFile").Value = value; }
         }
 
         public bool CanExtend(ElementViewModel subject)
         {
+            if (subject.Attributes.OfType<EnvironmentalOverridesAttribute>().Where(x => !x.CanOverride).Any())
+            {
+                return false;
+            }
+
             return subject.Properties.Where(x => !x.Hidden && !x.Attributes.OfType<EnvironmentalOverridesAttribute>().Where(y=>!y.CanOverride).Any()).Count() > 0;
         }
 
         public IEnumerable<Property> GetExtendedProperties(ElementViewModel subject)
         {
             OverriddenElementViewModel overrides = overriddenElements.Where(x => x.Subject == subject).FirstOrDefault();
-            if (overrides == null) overrides = new OverriddenElementViewModel(elementLookup, environmentSection);
+            if (overrides == null)
+            {
+                overrides = new OverriddenElementViewModel(elementLookup, environmentSection, subject);
+                overriddenElements.Add(overrides);
+            }
 
             yield return ContainingSection.CreateProperty<OverridesProperty>(
                 new ParameterOverride("environmentModel", this),
                 new ParameterOverride("subject", subject),
                 new ParameterOverride("overrides", overrides));
+        }
+
+        public void SaveDelta()
+        {
+            saveEnvironmentDeltaCommand.Execute(null);
+        }
+
+        private class EnvironmentDeltaFileProperty : CustomProperty<string>
+        {
+            public EnvironmentDeltaFileProperty(IServiceProvider serviceProvider)
+                :base(serviceProvider, "EnvironmentDeltaFile")
+            {
+
+            }
         }
 
         /// <summary>
@@ -190,6 +229,7 @@ namespace Console.Wpf.ViewModel.BlockSpecifics
                 {
                     return subject.Properties.Where( x => !x.Hidden)
                                              .Where( x => !x.Attributes.OfType<EnvironmentalOverridesAttribute>().Where(y=>!y.CanOverride).Any())
+                                             .OfType<ElementProperty>()
                                              .Select( x => ContainingSection.CreateProperty(typeof(EnvironmentOverriddenProperty), 
                                                      new ParameterOverride("overridesProperty", this),
                                                      new ParameterOverride("originalProperty", x),
@@ -271,10 +311,10 @@ namespace Console.Wpf.ViewModel.BlockSpecifics
         {
             OverriddenElementViewModel overrides;
             OverridesProperty overridesProperty;
-            Property originalProperty;
+            ElementProperty originalProperty;
             IServiceProvider serviceProvider;
 
-            public EnvironmentOverriddenProperty(IServiceProvider serviceProvider, OverridesProperty overridesProperty, OverriddenElementViewModel overrides, Property originalProperty)
+            public EnvironmentOverriddenProperty(IServiceProvider serviceProvider, OverridesProperty overridesProperty, OverriddenElementViewModel overrides, ElementProperty originalProperty)
                 : base(serviceProvider, null, originalProperty.DeclaringProperty)
             {
                 this.overrides = overrides;
@@ -295,7 +335,7 @@ namespace Console.Wpf.ViewModel.BlockSpecifics
             {
                 if (e.PropertyName == "OverrideProperties")
                 {
-                    overrides.SetValue(this, originalProperty.Value);
+                    overrides.SetValue(originalProperty, originalProperty.Value);
 
                     OnPropertyChanged("ReadOnly");
                     OnPropertyChanged("Value");
@@ -326,9 +366,13 @@ namespace Console.Wpf.ViewModel.BlockSpecifics
             {
                 get
                 {
-                    if (originalProperty.Editor == null) return null;
+                    if (originalProperty.OverridesEditor == null) return null;
 
-                    FrameworkElement editor = (FrameworkElement)Activator.CreateInstance(originalProperty.Editor.GetType());
+                    FrameworkElement editor = (FrameworkElement)Activator.CreateInstance(originalProperty.OverridesEditor.GetType());
+                    if (editor is IEnvironmentalOverridesEditor)
+                    {
+                        ((IEnvironmentalOverridesEditor)editor).Initialize(overrides);
+                    }
                     editor.DataContext = this;
 
                     return editor;
@@ -422,19 +466,33 @@ namespace Console.Wpf.ViewModel.BlockSpecifics
                 if (originalProperty.PopupEditor != null) Value = originalProperty.PopupEditor.EditValue(this, serviceProvider, Value);        
             }
 
+
+            public override string BindableValue
+            {
+                get
+                {
+                    return originalProperty.ConvertToBindableValue(Value);
+                }
+                set
+                {
+                    Value = originalProperty.ConvertFromBindableValue(value);
+                }
+            }
+
             public override object Value
             {
                 get
                 {
                     if (!overrides.OverrideProperties) return originalProperty.Value;
-                    return overrides.GetValue(this, originalProperty.Value);
+                    return overrides.GetValue(originalProperty, originalProperty.Value);
                 }
                 set
                 {
-                    overrides.SetValue(this, value);
+                    overrides.SetValue(originalProperty, value);
                     OnPropertyChanged("Value");
                 }
             }
         }
+
     }
 }

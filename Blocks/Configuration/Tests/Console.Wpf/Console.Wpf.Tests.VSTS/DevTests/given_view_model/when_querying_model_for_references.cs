@@ -12,10 +12,10 @@
 using System;
 using System.Linq;
 using Console.Wpf.Tests.VSTS.DevTests.Contexts;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
-using Console.Wpf.ViewModel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Console.Wpf.ViewModel.Services;
 using Microsoft.Practices.Unity;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model

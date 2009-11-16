@@ -16,9 +16,9 @@ using System.Text;
 using System.Configuration;
 using System.Windows;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
-using Console.Wpf.ViewModel;
 using System.ComponentModel;
 using System.Windows.Controls;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
 using Microsoft.Practices.Unity;
 
 namespace Console.Wpf.Tests.VSTS.Mocks
@@ -31,22 +31,22 @@ namespace Console.Wpf.Tests.VSTS.Mocks
         {
             ElementCollection = new ElementCollectionWithExtendedViewModel();
 
-            ElementCollection.Add(new CollectionElementWithExtendedViewModel()); 
+            ElementCollection.Add(new CollectionElementWithExtendedViewModel());
             ElementCollection.Add(new CollectionElementWithExtendedViewModel());
         }
 
         [ConfigurationProperty("Element")]
         public ElementWithExtendedViewModel Element
         {
-            get { return (ElementWithExtendedViewModel) base["Element"]; }
+            get { return (ElementWithExtendedViewModel)base["Element"]; }
             set { base["Element"] = value; }
         }
-        
+
         [ViewModel(typeof(ElementViewModelEx2))]
         [ConfigurationProperty("Element2")]
         public ElementWithExtendedViewModel ElementWithViewModelOnAttribute
         {
-            get { return (ElementWithExtendedViewModel) base["Element2"]; }
+            get { return (ElementWithExtendedViewModel)base["Element2"]; }
             set { base["Element2"] = value; }
         }
 
@@ -122,13 +122,13 @@ namespace Console.Wpf.Tests.VSTS.Mocks
     public class ElementViewModelEx : ElementViewModel
     {
         public ElementViewModelEx(ElementViewModel parentElementModel, PropertyDescriptor declaringProperty)
-            :base(parentElementModel, declaringProperty)
+            : base(parentElementModel, declaringProperty)
         {
         }
 
         protected override IEnumerable<Property> GetAllProperties()
         {
-            return base.GetAllProperties().Union(new Property[]{ this.ContainingSection.CreateProperty<CustomProperty>() }) ;
+            return base.GetAllProperties().Union(new Property[] { this.ContainingSection.CreateProperty<CustomProperty>() });
         }
     }
 
@@ -141,16 +141,17 @@ namespace Console.Wpf.Tests.VSTS.Mocks
     }
 
 
-    public class CustomProperty : CustomPropertry<string>, IPropertyNeedsInitialization
+    public class CustomProperty : CustomProperty<string>
     {
-        public static bool WasInitialized = false;
+        public bool WasInitialized = false;
 
-        public CustomProperty(IServiceProvider serviceProvider) : base(serviceProvider, "CustomProprty")
+        public CustomProperty(IServiceProvider serviceProvider)
+            : base(serviceProvider, "CustomProprty")
         {
-            
+
         }
 
-        public void Initialize()
+        public override void Initialize(InitializeContext context)
         {
             WasInitialized = true;
         }

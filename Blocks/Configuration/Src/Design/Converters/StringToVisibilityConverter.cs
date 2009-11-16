@@ -14,7 +14,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace Console.Wpf.Converters
+namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Converters
 {
 	public class StringToVisibilityConverter : IValueConverter
 	{

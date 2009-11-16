@@ -1,18 +1,30 @@
-﻿using System;
+﻿//===============================================================================
+// Microsoft patterns & practices Enterprise Library
+// Core
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Console.Wpf.Tests.VSTS.DevTests.Contexts;
+using Console.Wpf.Tests.VSTS.Mocks;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using System.Configuration;
-using Console.Wpf.ViewModel.BlockSpecifics;
-using Console.Wpf.ViewModel.Services;
-using Console.Wpf.ViewModel;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.EnterpriseLibrary.Data.Oracle.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Data.Configuration;
-using Console.Wpf.Tests.VSTS.Mocks;
+using Console.Wpf.Tests.VSTS.DevTests;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_data_configuration
 {
@@ -29,10 +41,16 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_data_configuration
 
             AnnotationService annotationService = Container.Resolve<AnnotationService>();
             ConnectionStringsDecorator.DecorateConnectionStringsSection(annotationService);
-            var dataSection = SectionViewModel.CreateSection(Container, "connectionStrings", section);
-            dataSection.AfterOpen(source);
 
-            dataSection.Save(source);
+            var configurationSection = source.GetSection(DataAccessDesignTime.ConnectionStringSettingsSectionName);
+            var configurationSourceModel = Container.Resolve<ConfigurationSourceModel>();
+            configurationSourceModel.Load(source);
+
+            var databaseSectionViewModel = configurationSourceModel.Sections
+                        .Where(x => x.SectionName == DataAccessDesignTime.ConnectionStringSettingsSectionName)
+                        .Single();
+
+            databaseSectionViewModel.Save(source);
         }
 
 

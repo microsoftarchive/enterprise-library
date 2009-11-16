@@ -20,6 +20,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
     /// </summary>
     [ResourceDescription(typeof(DesignResources), "SystemDiagnosticsTraceListenerDataDescription")]
     [ResourceDisplayName(typeof(DesignResources), "SystemDiagnosticsTraceListenerDataDisplayName")]
+    [ViewModel(LoggingDesignTime.ViewModelTypeNames.SystemDiagnosticsTraceListenerDataViewModel)]
+    [OmitCustomAttributesPropertyAttribute]
     public class SystemDiagnosticsTraceListenerData
         : BasicCustomTraceListenerData
     {

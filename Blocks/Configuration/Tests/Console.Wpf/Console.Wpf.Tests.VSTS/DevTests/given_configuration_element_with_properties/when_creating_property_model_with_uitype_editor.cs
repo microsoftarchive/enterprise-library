@@ -15,12 +15,12 @@ using System.Linq;
 using System.Text;
 using System.Configuration;
 using System.ComponentModel;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections;
 using System.Drawing.Design;
 using System.Windows.Forms.Design;
 using Moq;
-using Console.Wpf.ViewModel;
 using Microsoft.Practices.Unity;
 
 
@@ -103,7 +103,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_configuration_element_with_prope
         public void then_editor_is_popup()
         {
             var Prop3 = properties.Where(x => x.PropertyName == "Prop3").FirstOrDefault();
-            Assert.AreEqual(Console.Wpf.ViewModel.EditorBehavior.ModalPopup, Prop3.EditorBehavior);
+            Assert.AreEqual(EditorBehavior.ModalPopup, Prop3.EditorBehavior);
         }
 
         [TestMethod]

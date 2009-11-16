@@ -14,7 +14,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Configuration;
-using Console.Wpf.ViewModel.Services;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
 using System.ComponentModel.Design;
 using System.ComponentModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
@@ -24,10 +24,10 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.Unity;
 using System.Collections.Specialized;
 using System.Diagnostics;
-using Console.Wpf.ComponentModel.Converters;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Converters;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design;
 
-namespace Console.Wpf.ViewModel
+namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
 {
     public class SectionViewModel : ElementViewModel
     {
@@ -64,8 +64,6 @@ namespace Console.Wpf.ViewModel
             {
                 protectionProviderProperty.Value = section.SectionInformation.ProtectionProvider.Name;
             }
-
-
         }
 
         void SectionViewModel_DescendentElementsChanged(object sender, EventArgs e)
@@ -84,27 +82,6 @@ namespace Console.Wpf.ViewModel
         public string SectionName
         {
             get { return configurationSectionName; }
-        }
-
-        public virtual void InitializeAsNew()
-        {
-            Initialize();
-        }
-
-        public virtual void AfterOpen(IDesignConfigurationSource configurationSource)
-        {
-            Initialize();
-        }
-
-        private void Initialize()
-        {
-            //eagerly load properties
-            var myPropertiesThatNeedInitialization = this.Properties.OfType<IPropertyNeedsInitialization>();
-            var propertiesOfContainedElementsThatNeedInitialization = this.DescendentElements().SelectMany(x => x.Properties).OfType<IPropertyNeedsInitialization>();
-            foreach (var propertyThatNeedsInitialization in myPropertiesThatNeedInitialization.Union(propertiesOfContainedElementsThatNeedInitialization))
-            {
-                propertyThatNeedsInitialization.Initialize();
-            }
         }
 
         public virtual void BeforeSave(ConfigurationSection sectionToSave)
@@ -296,6 +273,11 @@ namespace Console.Wpf.ViewModel
             }
         }
 
+        public TCommandModel CreateCommand<TCommandModel>(ElementViewModel target)
+        {
+            return builder.Resolve<TCommandModel>(new DependencyOverride(typeof(ElementViewModel), target));
+        }
+
         public virtual ElementViewModel CreateChild(ElementViewModel containingViewModel, PropertyDescriptor declaringProperty)
         {
             if (typeof(ConfigurationElementCollection).IsAssignableFrom(declaringProperty.PropertyType))
@@ -353,7 +335,7 @@ namespace Console.Wpf.ViewModel
                 new DependencyOverride(typeof(SectionViewModel), this));
 
         }
-
+        //TODO: possible take Dictionary<String, Object> instead.
         public virtual TPropertyViewModel CreateProperty<TPropertyViewModel>(params ResolverOverride[] overrides)
             where TPropertyViewModel : Property
         {
@@ -504,7 +486,7 @@ namespace Console.Wpf.ViewModel
 
     }
 
-    public class RequirePermissionProperty : CustomPropertry<bool>
+    public class RequirePermissionProperty : CustomProperty<bool>
     {
         public RequirePermissionProperty(IServiceProvider serviceProvider)
             : base(serviceProvider, new BooleanConverter(), "Require Permission")
@@ -513,7 +495,7 @@ namespace Console.Wpf.ViewModel
         }
     }
 
-    public class ProtectionProviderProperty : CustomPropertry<string>
+    public class ProtectionProviderProperty : CustomProperty<string>
     {
         public ProtectionProviderProperty(IServiceProvider serviceProvider)
             : base(serviceProvider, new ProtectionProviderTypeConverter(), "Protection Provider")

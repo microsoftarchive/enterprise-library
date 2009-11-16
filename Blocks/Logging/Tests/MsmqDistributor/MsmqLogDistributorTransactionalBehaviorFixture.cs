@@ -48,7 +48,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Tests
             LogSource distributorSource = new LogSource("unnamed", SourceLevels.All);
             distributorSource.Listeners.Add(new MockTraceListener());
             Dictionary<string, LogSource> traceSources = new Dictionary<string, LogSource>();
-            logWriter = new LogWriter(new List<ILogFilter>(), traceSources, distributorSource, null, new LogSource("errors"), "default", false, false);
+            logWriter = new LogWriterImpl(new List<ILogFilter>(), traceSources, distributorSource, null, new LogSource("errors"), "default", false, false);
             eventLogger = new DistributorEventLogger();
             msmqDistributor = new MsmqLogDistributor(logWriter, CommonUtil.MessageQueuePath, eventLogger);
             msmqDistributor.StopReceiving = false;
@@ -69,7 +69,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Tests
         [TestMethod]
         public void Constructor()
         {
-            msmqDistributor = new MsmqLogDistributor(new LogWriter(new List<ILogFilter>(), new List<LogSource>(), new LogSource("errors"), "default"), CommonUtil.MessageQueuePath, new DistributorEventLogger());
+            msmqDistributor = new MsmqLogDistributor(new LogWriterImpl(new List<ILogFilter>(), new List<LogSource>(), new LogSource("errors"), "default"), CommonUtil.MessageQueuePath, new DistributorEventLogger());
 
             Assert.IsNotNull(msmqDistributor);
         }

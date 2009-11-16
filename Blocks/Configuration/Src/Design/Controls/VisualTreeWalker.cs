@@ -14,7 +14,7 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Media;
 
-namespace Console.Wpf.Controls
+namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls
 {
 	public static class VisualTreeWalker
 	{

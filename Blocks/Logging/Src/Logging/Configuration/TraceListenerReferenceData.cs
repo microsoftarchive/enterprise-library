@@ -17,7 +17,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 	/// <summary>
 	/// Configuration for a reference to named <see cref="TraceListenerData"/>.
 	/// </summary>
-    [ViewModel(LoggingDesignTime.ViewModelTypeNames.TraceListenerReferenceElementViewModel)]
+	[ViewModel(LoggingDesignTime.ViewModelTypeNames.TraceListenerReferenceViewModel)]
+    [ResourceDisplayName(typeof(DesignResources), "TraceListenerReferenceDataDisplayName")]
+    [ResourceDescription(typeof(DesignResources), "TraceListenerReferenceDataDescription")]
 	public class TraceListenerReferenceData : NamedConfigurationElement
 	{
 		/// <summary>
@@ -33,5 +35,25 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 		public TraceListenerReferenceData(string name)
 			: base(name)
 		{ }
+
+	    /// <summary>
+	    /// Gets or sets the name of the element.
+	    /// </summary>
+	    /// <value>
+	    /// The name of the element.
+	    /// </value>
+	    [Reference(typeof(TraceListenerDataCollection), typeof(TraceListenerData))]
+        [ViewModel(LoggingDesignTime.ViewModelTypeNames.TraceListenerReferenceNameProperty)]        
+        public override string Name
+        {
+            get
+            {
+                return base.Name;
+            }
+            set
+            {
+                base.Name = value;
+            }
+        }
 	}
 }

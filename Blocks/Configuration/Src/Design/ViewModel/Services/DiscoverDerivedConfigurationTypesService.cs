@@ -16,7 +16,7 @@ using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using System.ComponentModel;
 
-namespace Console.Wpf.ViewModel.Services
+namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services
 {
     public class DiscoverDerivedConfigurationTypesService
     {

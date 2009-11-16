@@ -1,17 +1,28 @@
-﻿using System;
+﻿//===============================================================================
+// Microsoft patterns & practices Enterprise Library
+// Core
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Console.Wpf.Tests.VSTS.Mocks;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.ComponentModel.Design;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Console.Wpf.ViewModel.Services;
-using Console.Wpf.ViewModel.BlockSpecifics;
-using Console.Wpf.ViewModel;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics;
 using Microsoft.Practices.EnterpriseLibrary.Data.Oracle.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Data.Configuration;
 using Microsoft.Practices.Unity;
-using Console.Wpf.Tests.VSTS.Mocks;
+using Console.Wpf.Tests.VSTS.DevTests;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_data_configuration
 {
@@ -22,9 +33,12 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_data_configuration
 
         protected override void Act()
         {
-            var configurationSection = source.GetSection("connectionStrings");
-            var databaseSectionViewModel = SectionViewModel.CreateSection(Container, "connectionStrings", configurationSection);
-            databaseSectionViewModel.AfterOpen(base.source);
+            var configurationSourceModel = Container.Resolve<ConfigurationSourceModel>();
+            configurationSourceModel.Load(source);
+
+            databaseSectionViewModel = configurationSourceModel.Sections
+                        .Where(x => x.SectionName == DataAccessDesignTime.ConnectionStringSettingsSectionName)
+                        .Single();
 
             databaseSectionViewModel.Save(saveSource);
         }

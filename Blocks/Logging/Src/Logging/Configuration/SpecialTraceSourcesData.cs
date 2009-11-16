@@ -55,7 +55,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 		[ConfigurationProperty(mandatoryTraceSourceProperty, IsRequired=false)]
         [ResourceDescription(typeof(DesignResources), "SpecialTraceSourcesDataAllEventsTraceSourceDescription")]
         [ResourceDisplayName(typeof(DesignResources), "SpecialTraceSourcesDataAllEventsTraceSourceDisplayName")]
-		public TraceSourceData AllEventsTraceSource
+        public TraceSourceData AllEventsTraceSource
 		{
 			get { return (TraceSourceData)base[mandatoryTraceSourceProperty]; }
 			set { base[mandatoryTraceSourceProperty] = value; }
@@ -67,7 +67,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 		[ConfigurationProperty(notProcessedTraceSourceProperty, IsRequired = false)]
         [ResourceDescription(typeof(DesignResources), "SpecialTraceSourcesDataNotProcessedTraceSourceDescription")]
         [ResourceDisplayName(typeof(DesignResources), "SpecialTraceSourcesDataNotProcessedTraceSourceDisplayName")]
-		public TraceSourceData NotProcessedTraceSource
+        public TraceSourceData NotProcessedTraceSource
 		{
 			get { return (TraceSourceData)base[notProcessedTraceSourceProperty]; }
 			set { base[notProcessedTraceSourceProperty] = value; }
@@ -79,7 +79,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 		[ConfigurationProperty(errorsTraceSourceProperty, IsRequired = true)]
         [ResourceDescription(typeof(DesignResources), "SpecialTraceSourcesDataErrorsTraceSourceDescription")]
         [ResourceDisplayName(typeof(DesignResources), "SpecialTraceSourcesDataErrorsTraceSourceDisplayName")]
-		public TraceSourceData ErrorsTraceSource
+        public TraceSourceData ErrorsTraceSource
 		{
 			get { return (TraceSourceData)base[errorsTraceSourceProperty]; }
 			set { base[errorsTraceSourceProperty] = value; }

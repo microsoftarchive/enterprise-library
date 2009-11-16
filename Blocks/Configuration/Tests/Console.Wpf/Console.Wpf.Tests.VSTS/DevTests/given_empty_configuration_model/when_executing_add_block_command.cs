@@ -1,14 +1,24 @@
-﻿using System;
+﻿//===============================================================================
+// Microsoft patterns & practices Enterprise Library
+// Core
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Console.Wpf.Tests.VSTS.DevTests.Contexts;
-using Console.Wpf.ViewModel.Commands;
-using Console.Wpf.ViewModel;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Commands;
 using Microsoft.Practices.Unity;
 using System.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Console.Wpf.Tests.VSTS.TestSupport;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Console.Wpf.Tests.VSTS.DevTests
@@ -29,7 +39,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests
             base.Arrange();
 
             configurationModel = Container.Resolve<ConfigurationSourceModel>();
-            AddApplicationBlockCommandAttribute attribute = new AddApplicationBlockCommandAttribute("Add App Settings", "appSettings", typeof(AppSettingsSection));
+            AddApplicationBlockCommandAttribute attribute = new AddApplicationBlockCommandAttribute("appSettings", typeof(AppSettingsSection));
             addBlockCommand = new AddApplicationBlockCommand(configurationModel, attribute);
             addBlockCommand.CanExecuteChanged += (sender, args) => { commandCanExecuteCalled = true; };
         }

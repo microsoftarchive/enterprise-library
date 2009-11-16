@@ -48,7 +48,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
     /// is set to true, then the logEntry is logged to the "logging errors and warnings" special log source.
     /// </para>
     /// </remarks>
-    public class LogWriter : ILogFilterErrorHandler, IDisposable, ILoggingUpdateHandler
+    public abstract class LogWriter : IDisposable
     {
         /// <summary>
         /// EventID used on LogEntries that occur when internal LogWriter mechanisms fail.
@@ -61,333 +61,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         private const string DefaultTitle = "";
         private static readonly ICollection<string> emptyCategoriesList = new string[0];
 
-        private readonly ILoggingUpdateCoordinator updateCoordinator;
-        private readonly ILoggingInstrumentationProvider instrumentationProvider;
-        LogWriterStructureHolder structureHolder;
-        LogFilterHelper filter;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="LogWriter"/> class.
-        /// </summary>
-        /// <param name="filters">The collection of filters to use when processing an entry.</param>
-        /// <param name="traceSources">The trace sources to dispatch entries to.</param>
-        /// <param name="errorsTraceSource">The special <see cref="LogSource"/> to which internal errors must be logged.</param>
-        /// <param name="defaultCategory">The default category to set when entry categories list is empty.</param>
-        public LogWriter(IEnumerable<ILogFilter> filters,
-                         IDictionary<string, LogSource> traceSources,
-                         LogSource errorsTraceSource,
-                         string defaultCategory)
-            : this(filters, traceSources, null, null, errorsTraceSource, defaultCategory, false, false)
-        { }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="LogWriter"/> class.
-        /// </summary>
-        /// <param name="filters">The collection of filters to use when processing an entry.</param>
-        /// <param name="traceSources">The trace sources to dispatch entries to.</param>
-        /// <param name="errorsTraceSource">The special <see cref="LogSource"/> to which internal errors must be logged.</param>
-        /// <param name="defaultCategory">The default category to set when entry categories list is empty.</param>
-        /// <param name="instrumentationProvider">The instrumentation provider to use.</param>
-        public LogWriter(IEnumerable<ILogFilter> filters,
-                         IDictionary<string, LogSource> traceSources,
-                         LogSource errorsTraceSource,
-                         string defaultCategory,
-                         ILoggingInstrumentationProvider instrumentationProvider)
-            : this(filters, traceSources, null, null, errorsTraceSource, defaultCategory, false, false, true, instrumentationProvider)
-        { }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="LogWriter"/> class.
-        /// </summary>
-        /// <param name="filters">The collection of filters to use when processing an entry.</param>
-        /// <param name="traceSources">The trace sources to dispatch entries to.</param>
-        /// <param name="allEventsTraceSource">The special <see cref="LogSource"/> to which all log entries should be logged.</param>
-        /// <param name="notProcessedTraceSource">The special <see cref="LogSource"/> to which log entries with at least one non-matching category should be logged.</param>
-        /// <param name="errorsTraceSource">The special <see cref="LogSource"/> to which internal errors must be logged.</param>
-        /// <param name="defaultCategory">The default category to set when entry categories list of a log entry is empty.</param>
-        /// <param name="tracingEnabled">The tracing status.</param>
-        /// <param name="logWarningsWhenNoCategoriesMatch">true if warnings should be logged when a non-matching category is found.</param>
-        public LogWriter(
-            IEnumerable<ILogFilter> filters,
-            IDictionary<string, LogSource> traceSources,
-            LogSource allEventsTraceSource,
-            LogSource notProcessedTraceSource,
-            LogSource errorsTraceSource,
-            string defaultCategory,
-            bool tracingEnabled,
-            bool logWarningsWhenNoCategoriesMatch)
-            : this(
-                filters,
-                traceSources,
-                allEventsTraceSource,
-                notProcessedTraceSource,
-                errorsTraceSource,
-                defaultCategory,
-                tracingEnabled,
-                logWarningsWhenNoCategoriesMatch,
-                true)
-        { }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="LogWriter"/> class.
-        /// </summary>
-        /// <param name="filters">The collection of filters to use when processing an entry.</param>
-        /// <param name="traceSources">The trace sources to dispatch entries to.</param>
-        /// <param name="allEventsTraceSource">The special <see cref="LogSource"/> to which all log entries should be logged.</param>
-        /// <param name="notProcessedTraceSource">The special <see cref="LogSource"/> to which log entries with at least one non-matching category should be logged.</param>
-        /// <param name="errorsTraceSource">The special <see cref="LogSource"/> to which internal errors must be logged.</param>
-        /// <param name="defaultCategory">The default category to set when entry categories list of a log entry is empty.</param>
-        /// <param name="tracingEnabled">The tracing status.</param>
-        /// <param name="logWarningsWhenNoCategoriesMatch">true if warnings should be logged when a non-matching category is found.</param>
-        /// <param name="revertImpersonation">true if impersonation should be reverted while logging.</param>
-        public LogWriter(
-            IEnumerable<ILogFilter> filters,
-            IDictionary<string, LogSource> traceSources,
-            LogSource allEventsTraceSource,
-            LogSource notProcessedTraceSource,
-            LogSource errorsTraceSource,
-            string defaultCategory,
-            bool tracingEnabled,
-            bool logWarningsWhenNoCategoriesMatch,
-            bool revertImpersonation)
-            : this(
-                CreateStructureHolder(
-                    filters,
-                    traceSources,
-                    allEventsTraceSource,
-                    notProcessedTraceSource,
-                    errorsTraceSource,
-                    defaultCategory,
-                    tracingEnabled,
-                    logWarningsWhenNoCategoriesMatch,
-                    revertImpersonation),
-                new NullLoggingInstrumentationProvider(),
-                new LoggingUpdateCoordinator(null))
-        { }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="LogWriter"/> class.
-        /// </summary>
-        /// <param name="filters">The collection of filters to use when processing an entry.</param>
-        /// <param name="traceSources">The trace sources to dispatch entries to.</param>
-        /// <param name="allEventsTraceSource">The special <see cref="LogSource"/> to which all log entries should be logged.</param>
-        /// <param name="notProcessedTraceSource">The special <see cref="LogSource"/> to which log entries with at least one non-matching category should be logged.</param>
-        /// <param name="errorsTraceSource">The special <see cref="LogSource"/> to which internal errors must be logged.</param>
-        /// <param name="defaultCategory">The default category to set when entry categories list of a log entry is empty.</param>
-        /// <param name="tracingEnabled">The tracing status.</param>
-        /// <param name="logWarningsWhenNoCategoriesMatch">true if warnings should be logged when a non-matching category is found.</param>
-        /// <param name="revertImpersonation">true if impersonation should be reverted while logging.</param>
-        /// <param name="instrumentationProvider">The instrumentation provider to use.</param>
-        public LogWriter(
-            IEnumerable<ILogFilter> filters,
-            IDictionary<string, LogSource> traceSources,
-            LogSource allEventsTraceSource,
-            LogSource notProcessedTraceSource,
-            LogSource errorsTraceSource,
-            string defaultCategory,
-            bool tracingEnabled,
-            bool logWarningsWhenNoCategoriesMatch,
-            bool revertImpersonation,
-            ILoggingInstrumentationProvider instrumentationProvider)
-            : this(
-                CreateStructureHolder(
-                    filters,
-                    traceSources,
-                    allEventsTraceSource,
-                    notProcessedTraceSource,
-                    errorsTraceSource,
-                    defaultCategory,
-                    tracingEnabled,
-                    logWarningsWhenNoCategoriesMatch,
-                    revertImpersonation),
-                instrumentationProvider,
-                new LoggingUpdateCoordinator(null))
-        { }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="LogWriter"/> class.
-        /// </summary>
-        /// <param name="filters">The collection of filters to use when processing an entry.</param>
-        /// <param name="traceSources">The trace sources to dispatch entries to.</param>
-        /// <param name="errorsTraceSource">The special <see cref="LogSource"/> to which internal errors must be logged.</param>
-        /// <param name="defaultCategory">The default category to set when entry categories list is empty.</param>
-        public LogWriter(IEnumerable<ILogFilter> filters,
-                         IEnumerable<LogSource> traceSources,
-                         LogSource errorsTraceSource,
-                         string defaultCategory)
-            : this(filters, CreateTraceSourcesDictionary(traceSources), errorsTraceSource, defaultCategory)
-        { }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="LogWriter"/> class.
-        /// </summary>
-        /// <param name="filters">The collection of filters to use when processing an entry.</param>
-        /// <param name="traceSources">The trace sources to dispatch entries to.</param>
-        /// <param name="allEventsTraceSource">The special <see cref="LogSource"/> to which all log entries should be logged.</param>
-        /// <param name="notProcessedTraceSource">The special <see cref="LogSource"/> to which log entries with at least one non-matching category should be logged.</param>
-        /// <param name="errorsTraceSource">The special <see cref="LogSource"/> to which internal errors must be logged.</param>
-        /// <param name="defaultCategory">The default category to set when entry categories list is empty.</param>
-        /// <param name="tracingEnabled">The tracing status.</param>
-        /// <param name="logWarningsWhenNoCategoriesMatch">true if warnings should be logged when a non-matching category is found.</param>
-        public LogWriter(IEnumerable<ILogFilter> filters,
-                         IEnumerable<LogSource> traceSources,
-                         LogSource allEventsTraceSource,
-                         LogSource notProcessedTraceSource,
-                         LogSource errorsTraceSource,
-                         string defaultCategory,
-                         bool tracingEnabled,
-                         bool logWarningsWhenNoCategoriesMatch)
-            : this(filters,
-                   CreateTraceSourcesDictionary(traceSources),
-                   allEventsTraceSource,
-                   notProcessedTraceSource,
-                   errorsTraceSource,
-                   defaultCategory,
-                   tracingEnabled,
-                   logWarningsWhenNoCategoriesMatch)
-        { }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="LogWriter"/> class.
-        /// </summary>
-        /// <param name="filters">The collection of filters to use when processing an entry.</param>
-        /// <param name="traceSources">The trace sources to dispatch entries to.</param>
-        /// <param name="allEventsTraceSource">The special <see cref="LogSource"/> to which all log entries should be logged.</param>
-        /// <param name="notProcessedTraceSource">The special <see cref="LogSource"/> to which log entries with at least one non-matching category should be logged.</param>
-        /// <param name="errorsTraceSource">The special <see cref="LogSource"/> to which internal errors must be logged.</param>
-        /// <param name="defaultCategory">The default category to set when entry categories list is empty.</param>
-        /// <param name="tracingEnabled">The tracing status.</param>
-        /// <param name="logWarningsWhenNoCategoriesMatch">true if warnings should be logged when a non-matching category is found.</param>
-        /// <param name="instrumentationProvider">The instrumentation provider to use.</param>
-        public LogWriter(IEnumerable<ILogFilter> filters,
-                         IEnumerable<LogSource> traceSources,
-                         LogSource allEventsTraceSource,
-                         LogSource notProcessedTraceSource,
-                         LogSource errorsTraceSource,
-                         string defaultCategory,
-                         bool tracingEnabled,
-                         bool logWarningsWhenNoCategoriesMatch,
-                         ILoggingInstrumentationProvider instrumentationProvider)
-            : this(filters,
-                   CreateTraceSourcesDictionary(traceSources),
-                   allEventsTraceSource,
-                   notProcessedTraceSource,
-                   errorsTraceSource,
-                   defaultCategory,
-                   tracingEnabled,
-                   logWarningsWhenNoCategoriesMatch,
-                   true,
-                   instrumentationProvider)
-        { }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="LogWriter"/> class.
-        /// </summary>
-        /// <param name="structureHolder">The initial implementation of the logging stack</param>
-        /// <param name="instrumentationProvider">The instrumentation provider to use.</param>
-        /// <param name="updateCoordinator">The coordinator for logging operations.</param>
-        public LogWriter(
-            LogWriterStructureHolder structureHolder,
-            ILoggingInstrumentationProvider instrumentationProvider,
-            ILoggingUpdateCoordinator updateCoordinator)
-        {
-            Guard.ArgumentNotNull(structureHolder, "structureHolder");
-            Guard.ArgumentNotNull(instrumentationProvider, "instrumentationProvider");
-            Guard.ArgumentNotNull(updateCoordinator, "updateCoordinator");
-
-            this.instrumentationProvider = instrumentationProvider;
-            this.ReplaceStructureHolder(structureHolder);
-
-            this.updateCoordinator = updateCoordinator;
-            this.updateCoordinator.RegisterLoggingUpdateHandler(this);
-        }
-
-        ///<summary>
-        /// Prepares to update it's internal state, but does not commit this until <see cref="ILoggingUpdateHandler.CommitUpdate"/>
-        ///</summary>
-        object ILoggingUpdateHandler.PrepareForUpdate(IServiceLocator serviceLocator)
-        {
-            var newStructureHolder = serviceLocator.GetInstance<LogWriterStructureHolder>();
-            return newStructureHolder;
-        }
-
-        ///<summary>
-        /// Commits the update of internal state.
-        ///</summary>
-        void ILoggingUpdateHandler.CommitUpdate(object context)
-        {
-            this.ReplaceStructureHolder((LogWriterStructureHolder)context);
-        }
-
         /// <summary>
         /// Gets the <see cref="LogSource"/> mappings available for the <see cref="LogWriter"/>.
         /// </summary>
-        public IDictionary<string, LogSource> TraceSources
+        public abstract IDictionary<string, LogSource> TraceSources
         {
-            get { return structureHolder.TraceSources; }
-        }
-
-        private static void AddTracingCategories(LogEntry log, Stack logicalOperationStack, bool replacementDone)
-        {
-            if (logicalOperationStack == null)
-            {
-                return;
-            }
-
-            // add tracing categories
-            foreach (object logicalOperation in logicalOperationStack)
-            {
-                // ignore non string objects in the stack
-                string category = logicalOperation as string;
-                if (category != null)
-                {
-                    // must take care of logging categories..
-                    if (!log.Categories.Contains(category))
-                    {
-                        if (!replacementDone)
-                        {
-                            log.Categories = new List<string>(log.Categories);
-                            replacementDone = true;
-                        }
-                        log.Categories.Add(category);
-                    }
-                }
-            }
-        }
-
-        private static LogWriterStructureHolder CreateStructureHolder(
-            IEnumerable<ILogFilter> filters,
-            IDictionary<string, LogSource> traceSources,
-            LogSource allEventsTraceSource,
-            LogSource notProcessedTraceSource,
-            LogSource errorsTraceSource,
-            string defaultCategory,
-            bool tracingEnabled,
-            bool logWarningsWhenNoCategoriesMatch,
-            bool revertImpersonation)
-        {
-            return new LogWriterStructureHolder(
-                filters,
-                traceSources,
-                allEventsTraceSource,
-                notProcessedTraceSource,
-                errorsTraceSource,
-                defaultCategory,
-                tracingEnabled,
-                logWarningsWhenNoCategoriesMatch,
-                revertImpersonation);
-        }
-
-        static IDictionary<string, LogSource> CreateTraceSourcesDictionary(IEnumerable<LogSource> traceSources)
-        {
-            IDictionary<string, LogSource> result = new Dictionary<string, LogSource>();
-
-            foreach (LogSource source in traceSources)
-            {
-                result.Add(source.Name, source);
-            }
-
-            return result;
+            get;
         }
 
         /// <summary>
@@ -395,70 +74,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// </summary>
         public void Dispose()
         {
-            this.structureHolder.Dispose();
-            this.updateCoordinator.UnregisterLoggingUpdateHandler(this);
+            this.Dispose(true);
         }
 
         /// <summary>
-        /// Returns the collection of <see cref="LogSource"/>s that matches the collection of categories provided.
+        /// Releases the resources used by the <see cref="LogWriter"/>.
         /// </summary>
-        /// <param name="logEntry">The log entry.</param>
-        /// <returns>The matching <see cref="LogSource"/>s</returns>
-        IEnumerable<LogSource> DoGetMatchingTraceSources(LogEntry logEntry)
+        /// <param name="disposing"><see langword="true"/> when disposing, <see langword="false"/> otherwise.</param>
+        protected virtual void Dispose(bool disposing)
         {
-            List<LogSource> matchingTraceSources = new List<LogSource>(logEntry.Categories.Count);
-            List<string> missingCategories = new List<string>();
-
-            // match the categories to the receive's trace sources
-            foreach (string category in logEntry.Categories)
-            {
-                LogSource traceSource;
-                structureHolder.TraceSources.TryGetValue(category, out traceSource);
-                if (traceSource != null)
-                {
-                    matchingTraceSources.Add(traceSource);
-                }
-                else
-                {
-                    missingCategories.Add(category);
-                }
-            }
-
-            // add the mandatory trace source, if defined
-            // otherwise, add the not processed trace source if missing categories were detected
-            if (IsValidTraceSource(structureHolder.AllEventsTraceSource))
-            {
-                matchingTraceSources.Add(structureHolder.AllEventsTraceSource);
-            }
-            else if (missingCategories.Count > 0)
-            {
-                if (IsValidTraceSource(structureHolder.NotProcessedTraceSource))
-                {
-                    matchingTraceSources.Add(structureHolder.NotProcessedTraceSource);
-                }
-                else if (structureHolder.LogWarningsWhenNoCategoriesMatch)
-                {
-                    ReportMissingCategories(missingCategories, logEntry);
-                }
-            }
-
-            return matchingTraceSources;
-        }
-
-        /// <summary>
-        /// This method supports the Enterprise Library infrastructure and is not intended to be used directly from your code.
-        /// Performs any action to handle an error during checking.
-        /// </summary>
-        /// <param name="ex">The exception raised during filter evaluation.</param>
-        /// <param name="logEntry">The log entry being evaluated.</param>
-        /// <param name="filter">The fiter that raised the exception.</param>
-        /// <returns>True signaling processing should continue.</returns>
-        public bool FilterCheckingFailed(Exception ex,
-                                         LogEntry logEntry,
-                                         ILogFilter filter)
-        {
-            ReportExceptionCheckingFilters(ex, logEntry, filter);
-            return true;
         }
 
         /// <summary>
@@ -476,11 +100,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// <typeparam name="T">The type of filter requiered.</typeparam>
         /// <returns>The instance of <typeparamref name="T"/> in the filters collection, or <see langword="null"/> 
         /// if there is no such instance.</returns>
-        public T GetFilter<T>()
-            where T : class, ILogFilter
-        {
-            return filter.GetFilter<T>();
-        }
+        public abstract T GetFilter<T>()
+            where T : class, ILogFilter;
 
         /// <summary>
         /// Returns the filter of type <typeparamref name="T"/> named <paramref name="name"/>.
@@ -489,11 +110,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// <param name="name">The name of the filter required.</param>
         /// <returns>The instance of <typeparamref name="T"/> named <paramref name="name"/> in 
         /// the filters collection, or <see langword="null"/> if there is no such instance.</returns>
-        public T GetFilter<T>(string name)
-            where T : class, ILogFilter
-        {
-            return filter.GetFilter<T>(name);
-        }
+        public abstract T GetFilter<T>(string name)
+            where T : class, ILogFilter;
 
         /// <summary>
         /// Returns the filter named <paramref name="name"/>.
@@ -501,234 +119,26 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// <param name="name">The name of the filter required.</param>
         /// <returns>The filter named <paramref name="name"/> in 
         /// the filters collection, or <see langword="null"/> if there is no such filter.</returns>
-        public ILogFilter GetFilter(string name)
-        {
-            return filter.GetFilter(name);
-        }
-
-        private static Stack GetLogicalOperationStack()
-        {
-            if (!Tracer.IsTracingAvailable())
-            {
-                return null;
-            }
-
-            try
-            {
-                return (Stack)Trace.CorrelationManager.LogicalOperationStack.Clone();
-            }
-            catch (SecurityException)
-            {
-                return null;
-            }
-        }
+        public abstract ILogFilter GetFilter(string name);
 
         /// <summary>
         /// Gets a list of <see cref="LogSource"/> objects for the log entry.
         /// </summary>
         /// <param name="logEntry">The <see cref="LogEntry"/> to get the matching trace sources.</param>
         /// <returns>A collection of <see cref="LogSource"/> objects.</returns>
-        public IEnumerable<LogSource> GetMatchingTraceSources(LogEntry logEntry)
-        {
-            return DoGetMatchingTraceSources(logEntry);
-        }
+        public abstract IEnumerable<LogSource> GetMatchingTraceSources(LogEntry logEntry);
 
         /// <summary>
         /// Queries whether logging is enabled.
         /// </summary>
         /// <returns><b>true</b> if logging is enabled.</returns>
-        public bool IsLoggingEnabled()
-        {
-            LogEnabledFilter enabledFilter = filter.GetFilter<LogEnabledFilter>();
-            return enabledFilter == null || enabledFilter.Enabled;
-        }
+        public abstract bool IsLoggingEnabled();
 
         /// <summary>
         /// Queries whether tracing is enabled.
         /// </summary>
         /// <returns><b>true</b> if tracing is enabled.</returns>
-        public bool IsTracingEnabled()
-        {
-            return structureHolder.TracingEnabled;
-        }
-
-        private static bool IsValidTraceSource(LogSource traceSource)
-        {
-            return traceSource != null && traceSource.Listeners.Count > 0;
-        }
-
-        private void ProcessLog(LogEntry log, TraceEventCache traceEventCache)
-        {
-            // revert any outstanding impersonation
-            using (RevertExistingImpersonation())
-            {
-                var items = new ContextItems();
-                items.ProcessContextItems(log);
-
-                var matchingTraceSources = GetMatchingTraceSources(log);
-                var traceListenerFilter = new TraceListenerFilter();
-
-                foreach (LogSource traceSource in matchingTraceSources)
-                {
-                    try
-                    {
-                        traceSource.TraceData(log.Severity, log.EventId, log, traceListenerFilter, traceEventCache);
-                    }
-                    catch (Exception ex)
-                    {
-                        ReportExceptionDuringTracing(ex, log, traceSource);
-                    }
-                }
-            }
-        }
-
-        /// <devdoc>
-        /// Checks to determine whether impersonation is in place, and if it is then it reverts it returning
-        /// the impersonation context that must be used to undo the revert.
-        /// </devdoc>
-        private WindowsImpersonationContext RevertExistingImpersonation()
-        {
-            // noop if reverting impersonation is disabled
-            if (!structureHolder.RevertImpersonation)
-            {
-                return null;
-            }
-
-            try
-            {
-                using (WindowsIdentity impersonatedIdentity = WindowsIdentity.GetCurrent(true))
-                {
-                    if (impersonatedIdentity == null)
-                    {
-                        return null;
-                    }
-                }
-            }
-            catch (SecurityException e)
-            {
-                instrumentationProvider.FireFailureLoggingErrorEvent(Resources.ExceptionCannotCheckImpersonatedIdentity, e);
-                return null;
-            }
-
-            try
-            {
-                return WindowsIdentity.Impersonate(IntPtr.Zero);    // to be undone by caller
-            }
-            catch (SecurityException e)
-            {
-                // this shouldn't happen, as GetCurrent() and Impersonate() demand the same CAS permissions.
-                instrumentationProvider.FireFailureLoggingErrorEvent(Resources.ExceptionCannotRevertImpersonatedIdentity, e);
-                return null;
-            }
-            catch (UnauthorizedAccessException e)
-            {
-                instrumentationProvider.FireFailureLoggingErrorEvent(Resources.ExceptionCannotRevertImpersonatedIdentity, e);
-                return null;
-            }
-        }
-
-        internal void ReplaceStructureHolder(LogWriterStructureHolder newStructureHolder)
-        {
-            structureHolder = newStructureHolder;
-            filter = new LogFilterHelper(structureHolder.Filters, this);
-        }
-
-        void ReportExceptionCheckingFilters(Exception exception,
-                                            LogEntry log,
-                                            ILogFilter logFilter)
-        {
-            try
-            {
-                NameValueCollection additionalInfo = new NameValueCollection();
-                additionalInfo.Add(ExceptionFormatter.Header,
-                                   string.Format(Resources.Culture, Resources.FilterEvaluationFailed, logFilter.Name));
-                additionalInfo.Add(Resources.FilterEvaluationFailed2,
-                                   string.Format(Resources.Culture, Resources.FilterEvaluationFailed3, log));
-                ExceptionFormatter formatter =
-                    new ExceptionFormatter(additionalInfo, Resources.DistributorEventLoggerDefaultApplicationName);
-
-                LogEntry reportingLogEntry = new LogEntry();
-                reportingLogEntry.Severity = TraceEventType.Error;
-                reportingLogEntry.Message = formatter.GetMessage(exception);
-                reportingLogEntry.EventId = LogWriterFailureEventID;
-
-                structureHolder.ErrorsTraceSource.TraceData(reportingLogEntry.Severity, reportingLogEntry.EventId, reportingLogEntry);
-            }
-            catch (Exception ex)
-            {
-                instrumentationProvider.FireFailureLoggingErrorEvent(Resources.FailureWhileCheckingFilters, ex);
-            }
-        }
-
-        void ReportExceptionDuringTracing(Exception exception,
-                                          LogEntry log,
-                                          LogSource traceSource)
-        {
-            try
-            {
-                NameValueCollection additionalInfo = new NameValueCollection();
-                additionalInfo.Add(ExceptionFormatter.Header,
-                                   string.Format(Resources.Culture, Resources.TraceSourceFailed, traceSource.Name));
-                additionalInfo.Add(Resources.TraceSourceFailed2,
-                                   string.Format(Resources.Culture, Resources.TraceSourceFailed3, log));
-                ExceptionFormatter formatter =
-                    new ExceptionFormatter(additionalInfo, Resources.DistributorEventLoggerDefaultApplicationName);
-
-                LogEntry reportingLogEntry = new LogEntry();
-                reportingLogEntry.Severity = TraceEventType.Error;
-                reportingLogEntry.Message = formatter.GetMessage(exception);
-                reportingLogEntry.EventId = LogWriterFailureEventID;
-
-                structureHolder.ErrorsTraceSource.TraceData(reportingLogEntry.Severity, reportingLogEntry.EventId, reportingLogEntry);
-            }
-            catch (Exception ex)
-            {
-                instrumentationProvider.FireFailureLoggingErrorEvent(Resources.FailureWhileTracing, ex);
-            }
-        }
-
-        void ReportMissingCategories(ICollection<string> missingCategories,
-                                     LogEntry logEntry)
-        {
-            try
-            {
-                LogEntry reportingLogEntry = new LogEntry();
-                reportingLogEntry.Severity = TraceEventType.Error;
-                reportingLogEntry.Message = string.Format(Resources.Culture, Resources.MissingCategories, TextFormatter.FormatCategoriesCollection(missingCategories), logEntry);
-                reportingLogEntry.EventId = LogWriterFailureEventID;
-
-                structureHolder.ErrorsTraceSource.TraceData(reportingLogEntry.Severity, reportingLogEntry.EventId, reportingLogEntry);
-            }
-            catch (Exception ex)
-            {
-                instrumentationProvider.FireFailureLoggingErrorEvent(Resources.FailureWhileReportingMissingCategories, ex);
-            }
-        }
-
-        void ReportUnknownException(Exception exception,
-                                    LogEntry log)
-        {
-            try
-            {
-                NameValueCollection additionalInfo = new NameValueCollection();
-                additionalInfo.Add(ExceptionFormatter.Header, Resources.ProcessMessageFailed);
-                additionalInfo.Add(Resources.ProcessMessageFailed2,
-                                   string.Format(Resources.Culture, Resources.ProcessMessageFailed3, log));
-                ExceptionFormatter formatter =
-                    new ExceptionFormatter(additionalInfo, Resources.DistributorEventLoggerDefaultApplicationName);
-
-                LogEntry reportingLogEntry = new LogEntry();
-                reportingLogEntry.Severity = TraceEventType.Error;
-                reportingLogEntry.Message = formatter.GetMessage(exception);
-                reportingLogEntry.EventId = LogWriterFailureEventID;
-
-                structureHolder.ErrorsTraceSource.TraceData(reportingLogEntry.Severity, reportingLogEntry.EventId, reportingLogEntry);
-            }
-            catch (Exception ex)
-            {
-                instrumentationProvider.FireFailureLoggingErrorEvent(Resources.UnknownFailure, ex);
-            }
-        }
+        public abstract bool IsTracingEnabled();
 
         /// <summary>
         /// Reset lock timeouts to thier original values.
@@ -766,15 +176,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// </summary>
         /// <param name="log">The log entry to check.</param>
         /// <returns><b>true</b> if the entry should be logged.</returns>
-        public bool ShouldLog(LogEntry log)
-        {
-            return filter.CheckFilters(log);
-        }
-
-        void TryLogLockAcquisitionFailure(string message)
-        {
-            instrumentationProvider.FireLockAcquisitionError(message);
-        }
+        public abstract bool ShouldLog(LogEntry log);
 
         /// <overloads>
         /// Write a new log entry to the default category.
@@ -1075,44 +477,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// Writes a new log entry as defined in the <see cref="LogEntry"/> parameter.
         /// </summary>
         /// <param name="log">Log entry object to write.</param>
-        public void Write(LogEntry log)
-        {
-            var traceEventCache = new TraceEventCache();
-
-            var ignoredActivityId = log.ActivityId;
-            var ignoredManagedThreadName = log.ManagedThreadName;
-
-            this.updateCoordinator.ExecuteReadOperation(() =>
-                {
-                    try
-                    {
-                        bool replacementDone = false;
-
-                        // set default category if necessary
-                        if (log.Categories.Count == 0)
-                        {
-                            log.Categories = new List<string>(1);
-                            log.Categories.Add(structureHolder.DefaultCategory);
-                            replacementDone = true;
-                        }
-
-                        if (structureHolder.TracingEnabled)
-                        {
-                            var logicalOperationStack = GetLogicalOperationStack();
-                            AddTracingCategories(log, logicalOperationStack, replacementDone);
-                        }
-
-                        if (ShouldLog(log))
-                        {
-                            ProcessLog(log, traceEventCache);
-                            instrumentationProvider.FireLogEventRaised();
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        ReportUnknownException(ex, log);
-                    }
-                });
-        }
+        public abstract void Write(LogEntry log);
     }
 }

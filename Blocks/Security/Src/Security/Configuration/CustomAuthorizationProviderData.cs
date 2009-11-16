@@ -28,7 +28,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration
 	/// </summary>
     [ResourceDescription(typeof(DesignResources), "CustomAuthorizationProviderDataDescription")]
     [ResourceDisplayName(typeof(DesignResources), "CustomAuthorizationProviderDataDisplayName")]
-    [TypePickingCommand(Title = "Custom Authorization Provider (using type picker)")]
+    [TypePickingCommand(TitleResourceName = "CustomAuthorizationProviderDataAddCommand", TitleResourceType=typeof(DesignResources))]
 	public class CustomAuthorizationProviderData
 		: AuthorizationProviderData, IHelperAssistedCustomConfigurationData<CustomAuthorizationProviderData>
 	{

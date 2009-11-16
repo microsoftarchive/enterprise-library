@@ -32,7 +32,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
             source.Listeners.Add(new MockTraceListener());
 
             List<LogSource> traceSources = new List<LogSource>(new LogSource[] { source });
-            LogWriter lg = new LogWriter(new List<ILogFilter>(), new List<LogSource>(), source, null, new LogSource("errors"), "default", true, false);
+            LogWriter lg = new LogWriterImpl(new List<ILogFilter>(), new List<LogSource>(), source, null, new LogSource("errors"), "default", true, false);
 
             TraceManager tm = new TraceManager(lg);
 
@@ -55,7 +55,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
             source.Listeners.Add(new MockTraceListener());
 
             List<LogSource> traceSources = new List<LogSource>(new LogSource[] { source });
-            LogWriter lg = new LogWriter(new List<ILogFilter>(), new List<LogSource>(), source, null, new LogSource("errors"), "default", true, false);
+            LogWriter lg = new LogWriterImpl(new List<ILogFilter>(), new List<LogSource>(), source, null, new LogSource("errors"), "default", true, false);
 
             TracerInstrumentationProvider instrumentationProvider = new TracerInstrumentationProvider(true, false, false, "applicationname");
             TraceManager tm = new TraceManager(lg, instrumentationProvider);

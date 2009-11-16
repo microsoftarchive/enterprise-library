@@ -53,6 +53,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         [ConfigurationProperty(fileNameProperty, IsRequired = true, DefaultValue="trace-xml.log")]
         [ResourceDescription(typeof(DesignResources), "XmlTraceListenerDataFileNameDescription")]
         [ResourceDisplayName(typeof(DesignResources), "XmlTraceListenerDataFileNameDisplayName")]
+        [System.ComponentModel.Editor(CommonDesignTime.EditorTypes.FilteredFilePath, CommonDesignTime.EditorTypes.UITypeEditor)]
         public string FileName
         {
             get { return (string)base[fileNameProperty]; }

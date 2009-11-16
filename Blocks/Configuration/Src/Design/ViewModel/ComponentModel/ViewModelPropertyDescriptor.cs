@@ -15,8 +15,11 @@ using System.Linq;
 using System.Text;
 using System.ComponentModel;
 
-namespace Console.Wpf.ViewModel.ComponentModel
+namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.ComponentModel
 {
+    /// <DevDoc>
+    ///  If we are not integrating back into the property editor, we might not need this at all
+    /// </DevDoc>
     public class ViewModelPropertyDescriptor : PropertyDescriptor
     {
         EventHandler changedHandler;

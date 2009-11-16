@@ -12,7 +12,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace Console.Wpf.ComponentModel.Editors
+namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors
 {
     /// <summary>
     /// Represents an error while building a type from a <see cref="TypeBuildNode"/>.

@@ -16,10 +16,9 @@ using System.Linq;
 using System.Text;
 using Console.Wpf.Tests.VSTS.DevTests.Contexts;
 using Console.Wpf.Tests.VSTS.Mocks;
-using Console.Wpf.ViewModel;
-using Console.Wpf.ViewModel.Services;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Practices.Unity;
 

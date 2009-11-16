@@ -53,6 +53,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Data.OracleClient" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Messaging" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="WindowsBase">
@@ -183,6 +184,10 @@
       <Project>{EC311AD3-0A26-4808-901B-A983E97E5790}</Project>
       <Name>ExceptionHandling.Logging</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Logging\Src\DatabaseTraceListener\Logging.Database.csproj">
+      <Project>{5DC01A57-1DB2-48B9-AEB3-2BFAE9089FD7}</Project>
+      <Name>Logging.Database</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\Logging\Src\Logging\Logging.csproj">
       <Project>{6AC97717-899D-4F72-BC5B-2C37959CD4FF}</Project>
       <Name>Logging</Name>
@@ -225,12 +230,45 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Converters\given_midpoint_value_converter.cs" />
     <Compile Include="DevTests\given_application_model\when_opening_composed_source.cs" />
     <Compile Include="DevTests\given_application_model\when_opening_configuration_source_with_errors.cs" />
+    <Compile Include="DevTests\given_application_model\when_saving_configuration_source.cs" />
+    <Compile Include="DevTests\given_app_settings_configuration\when_adding_new_key_value_element_to_app_settings_view_model.cs" />
+    <Compile Include="DevTests\given_app_settings_configuration\when_saving_application_settings.cs" />
+    <Compile Include="DevTests\given_app_settings_configuration\when_loading_app_settings_view_model.cs" />
+    <Compile Include="DevTests\given_app_settings_configuration\when_saving_application_settings_after_adding_new_settings.cs" />
+    <Compile Include="DevTests\given_a_validation_service\when_validating_a_property.cs" />
+    <Compile Include="DevTests\given_collection_editor\when_creating_collection_editor_for_property.cs" />
+    <Compile Include="DevTests\given_element_reference\when_dropping_down_reference_picker.cs" />
+    <Compile Include="DevTests\given_element_reference\when_reference_scope_is_not_currently_available.cs" />
+    <Compile Include="DevTests\given_element_reference\when_updating_provider_name_in_reference_picker_list.cs" />
+    <Compile Include="DevTests\given_environment_node_in_view_model\when_exporting_merged_configuration.cs" />
+    <Compile Include="DevTests\given_element_reference_with_child_properties\when_requesting_child_properties.cs" />
+    <Compile Include="DevTests\given_environment_node_in_view_model\when_loading_environment_model.cs" />
+    <Compile Include="DevTests\given_environment_node_in_view_model\when_saving_environment_section.cs" />
+    <Compile Include="DevTests\given_environment_node_in_view_model\when_saving_main_configuration.cs" />
+    <Compile Include="DevTests\given_logging_configuration\given_system_diagnostics_trace_listener_data.cs" />
+    <Compile Include="DevTests\given_logging_configuration\given_custom_trace_listener_data.cs" />
+    <Compile Include="DevTests\given_logging_configuration\given_msmq_trace_listener.cs" />
+    <Compile Include="DevTests\given_logging_settings_and_overrides\when_overriding_tracelistener_references.cs" />
+    <Compile Include="DevTests\given_merge_configuration\given_merge_configuration.cs" />
+    <Compile Include="DevTests\given_open_environment_delta_command\when_opening_environment_delta_file.cs" />
+    <Compile Include="DevTests\given_satelite_provider_add_command\when_executing_satelite_provider.cs" />
+    <Compile Include="DevTests\given_save_environment_delta_command\when_saving_environment_delta_file.cs" />
+    <None Include="merge_environment.dconfig">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="configuration_error.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="environment.dconfig">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="hierarchical_config.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="merge_main.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="redirected_sections.config">

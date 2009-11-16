@@ -27,19 +27,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
     public class DesignTimeReadOnlyAttribute : Attribute
     {
         ///<summary>
-        /// Determines if the property is read-only by design-time.
-        /// Returns <see langword="true" /> if the property is read-only at design-time
-        /// and <see langword="false" /> otherwise.
-        ///</summary>
-        public bool ReadOnly { get; private set; }
-
-        ///<summary>
-        /// Initializes a <see cref="DesignTimeReadOnlyAttribute"/> instance.
+        /// Initializes a new instance of the <see cref="DesignTimeReadOnlyAttribute"/> class.
         ///</summary>
         ///<param name="readOnly"><see langword="true"/> if the property should be read-only at designtime.</param>
         public DesignTimeReadOnlyAttribute(bool readOnly)
         {
             ReadOnly = readOnly;
         }
+
+        ///<summary>
+        /// Determines if the property is read-only by design-time.
+        /// Returns <see langword="true" /> if the property is read-only at design-time
+        /// and <see langword="false" /> otherwise.
+        ///</summary>
+        public bool ReadOnly { get; private set; }
+
     }
 }

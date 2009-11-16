@@ -15,8 +15,11 @@ using System.Linq;
 using System.Text;
 using System.ComponentModel;
 
-namespace Console.Wpf.ViewModel.ComponentModel
+namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.ComponentModel
 {
+    /// <DevDoc>
+    ///  If we are not integrating back into the property editor, we might not need this at all
+    /// </DevDoc>
     class ViewModelTypeDescriptorProxy : ICustomTypeDescriptor
     {
         ElementViewModel elementViewModel;
@@ -80,7 +83,6 @@ namespace Console.Wpf.ViewModel.ComponentModel
                 ViewModelPropertyDescriptor propertyDescriptor = ViewModelPropertyDescriptor.CreateProperty(property);
                 properties.Add(propertyDescriptor);
             }
-
 
             return new PropertyDescriptorCollection(properties.ToArray());
         }

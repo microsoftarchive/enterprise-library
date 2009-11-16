@@ -10,13 +10,15 @@
 //===============================================================================
 
 using System.ComponentModel.Design;
-using Console.Wpf.ViewModel.Services;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Console;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
 using Microsoft.Practices.Unity;
 using System;
-using Console.Wpf.ViewModel;
-using Console.Wpf.ViewModel.BlockSpecifics;
 using Moq;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Validation;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.Contexts
 {
@@ -42,11 +44,12 @@ namespace Console.Wpf.Tests.VSTS.DevTests.Contexts
             Container.RegisterType<ConfigurationSourceModel>(new ContainerControlledLifetimeManager());
             Container.RegisterType<ConfigurationSourceDependency>(new ContainerControlledLifetimeManager());
             Container.RegisterType<AnnotationService>(new ContainerControlledLifetimeManager());
-            Container.RegisterType<IPropertyDirtyStateListener, StandAloneApplicationViewModel>(new ContainerControlledLifetimeManager());
-            
+            Container.RegisterType<ValidationService>(new ContainerControlledLifetimeManager());
             Container.RegisterInstance<IServiceProvider>( new ContainerProvider(Container));
             Container.RegisterInstance<IUIServiceWpf>(UIServiceMock.Object);
 
+            Container.RegisterType<IApplicationModel, StandAloneApplicationViewModel>(new ContainerControlledLifetimeManager());
+            
             AppSettingsDecorator.DecorateAppSettingsSection(Container.Resolve<AnnotationService>());
             ConnectionStringsDecorator.DecorateConnectionStringsSection(Container.Resolve<AnnotationService>());
         }

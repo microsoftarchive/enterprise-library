@@ -29,4 +29,8 @@ using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
 
 [assembly: HandlesSection(PolicyInjectionSettings.SectionName)]
 
-[assembly: AddApplicationBlockCommand("Add Policy Injection Settings", PolicyInjectionSettings.SectionName, typeof(PolicyInjectionSettings))]
+[assembly: AddApplicationBlockCommand(
+                PolicyInjectionSettings.SectionName, 
+                typeof(PolicyInjectionSettings),
+                TitleResourceName = "AddPolicyInjectionSettings",
+                TitleResourceType = typeof(DesignResources))]

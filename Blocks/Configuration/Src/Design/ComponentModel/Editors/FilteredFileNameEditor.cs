@@ -19,7 +19,7 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using System.IO;
 
-namespace Console.Wpf.ComponentModel.Editors
+namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors
 {
     /// <summary>
     /// Provides a user interface for selecting a file name.

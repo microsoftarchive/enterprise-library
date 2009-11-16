@@ -26,4 +26,8 @@ using Microsoft.Practices.EnterpriseLibrary.Security.Configuration;
 
 
 [assembly: HandlesSection(SecuritySettings.SectionName)]
-[assembly: AddApplicationBlockCommand("Add Security Settings", SecuritySettings.SectionName, typeof(SecuritySettings))]
+[assembly: AddApplicationBlockCommand(
+                SecuritySettings.SectionName, 
+                typeof(SecuritySettings),
+                TitleResourceName="AddSecuritySettings",
+                TitleResourceType=typeof(DesignResources))]

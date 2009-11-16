@@ -12,14 +12,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
-using System.Text;
-using System.ComponentModel;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Data;
-using Microsoft.Practices.EnterpriseLibrary.Data.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Common;
+using Microsoft.Practices.EnterpriseLibrary.Data.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Data
 {
@@ -53,7 +51,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
             IMapBuilderContext<TResult> context = new MapBuilderContext();
 
             var properties =
-                from property in typeof (TResult).GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                from property in typeof(TResult).GetProperties(BindingFlags.Instance | BindingFlags.Public)
                 where IsAutoMappableProperty(property)
                 select property;
 
@@ -80,7 +78,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
         private static bool IsAutoMappableProperty(PropertyInfo property)
         {
             return property.CanWrite
-              &&  property.GetIndexParameters().Length == 0 
+              && property.GetIndexParameters().Length == 0
               && !IsCollectionType(property.PropertyType)
             ;
         }
@@ -88,20 +86,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
         private static bool IsCollectionType(Type type)
         {
             // string implements IEnumerable, but for our purposes we don't consider it a collection.
-            if(type == typeof(string)) return false;
+            if (type == typeof(string)) return false;
 
             var interfaces = from inf in type.GetInterfaces()
-                where inf == typeof (IEnumerable) ||
-                    (inf.IsGenericType && inf.GetGenericTypeDefinition() == typeof (IEnumerable<>))
-                select inf;
+                             where inf == typeof(IEnumerable) ||
+                                 (inf.IsGenericType && inf.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+                             select inf;
             return interfaces.Count() != 0;
         }
 
-        private class MapBuilderContext : IMapBuilderContext<TResult>
+        private class MapBuilderContext : IMapBuilderContextTest<TResult>
         {
             private Dictionary<PropertyInfo, PropertyMapping> mappings;
 
-            
             public MapBuilderContext()
             {
                 mappings = new Dictionary<PropertyInfo, PropertyMapping>();
@@ -146,7 +143,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
             {
                 PropertyInfo normalizedPropertyInfo = NormalizePropertyInfo(property);
 
-                mappings[normalizedPropertyInfo] = new IgnoreMapping(normalizedPropertyInfo);
+                mappings.Remove(normalizedPropertyInfo);
 
                 return this;
             }
@@ -154,6 +151,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
             public IRowMapper<TResult> Build()
             {
                 return new ReflectionRowMapper<TResult>(mappings);
+            }
+
+            public IEnumerable<PropertyMapping> GetPropertyMappings()
+            {
+                return this.mappings.Values;
             }
 
             private static PropertyInfo ExtractPropertyInfo<TMember>(Expression<Func<TResult, TMember>> propertySelector)
@@ -277,6 +279,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
         /// <param name="f">The user specified function that will map the current property.</param>
         /// <returns>The fluent interface that can be used further specify mappings.</returns>
         IMapBuilderContext<TResult> WithFunc(Func<IDataRecord, TMember> f);
+    }
 
+    /// <summary>
+    /// This type supports the Enterprise Library infrastructure and is not intended to be used directly from your code.
+    /// </summary>
+    /// <seealso cref="IMapBuilderContext{TResult}"/>
+    public interface IMapBuilderContextTest<TResult> : IMapBuilderContext<TResult>
+    {
+        /// <summary>
+        /// Returns the list of <see cref="PropertyMapping"/>s that have been accumulated by the context.
+        /// </summary>
+        /// <returns>The list of <see cref="PropertyMapping"/>.</returns>
+        IEnumerable<PropertyMapping> GetPropertyMappings();
     }
 }

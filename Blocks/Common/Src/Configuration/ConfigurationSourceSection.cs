@@ -26,7 +26,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
     [ViewModel(ConfigurationSourcesDesignTime.ViewModelTypeNames.ConfigurationSourceSectionViewModel)]
     [ResourceDescription(typeof(DesignResources), "ConfigurationSourceSectionDescription")]
     [ResourceDisplayName(typeof(DesignResources), "ConfigurationSourceSectionDisplayName")]
-
     public class ConfigurationSourceSection : SerializableConfigurationSection
     {
         private const string selectedSourceProperty = "selectedSource";

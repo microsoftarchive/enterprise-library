@@ -13,9 +13,10 @@ using System;
 using System.ComponentModel;
 using System.Configuration;
 using System.Reflection;
-using Console.Wpf.ViewModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
 
 namespace Console.Wpf.Tests.VSTS.Mocks
 {

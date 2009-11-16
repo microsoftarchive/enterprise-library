@@ -128,12 +128,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration
         {
             if (connectionStringSettings == null)
             {
-                throw new ConfigurationErrorsException(string.Format(Resources.Culture, Resources.ExceptionNoDatabaseDefined, name));
+                throw new ConfigurationErrorsException(string.Format(CultureInfo.CurrentCulture, Resources.ExceptionNoDatabaseDefined, name));
             }
 
             if (string.IsNullOrEmpty(connectionStringSettings.ProviderName))
             {
-                throw new ConfigurationErrorsException(string.Format(Resources.Culture, Resources.ExceptionNoProviderDefinedForConnectionString, name));
+                throw new ConfigurationErrorsException(string.Format(CultureInfo.CurrentCulture, Resources.ExceptionNoProviderDefinedForConnectionString, name));
             }
         }
 

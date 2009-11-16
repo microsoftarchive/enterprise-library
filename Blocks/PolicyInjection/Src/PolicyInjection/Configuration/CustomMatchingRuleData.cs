@@ -28,7 +28,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
     /// </summary>
     [ResourceDescription(typeof(DesignResources), "CustomMatchingRuleDataDescription")]
     [ResourceDisplayName(typeof(DesignResources), "CustomMatchingRuleDataDisplayName")]
-    [TypePickingCommand(Title = "Custom Matching Rule (using type picker)")]
+    [TypePickingCommand(TitleResourceName = "CustomMatchingRuleDataAddCommand", TitleResourceType=typeof(DesignResources))]
     public class CustomMatchingRuleData : MatchingRuleData, IHelperAssistedCustomConfigurationData<CustomMatchingRuleData>
     {
         CustomProviderDataHelper<CustomMatchingRuleData> helper;

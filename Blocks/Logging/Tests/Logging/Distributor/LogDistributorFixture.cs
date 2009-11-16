@@ -195,7 +195,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Distributor.Tests
             traceSources.Add("newcat2", new LogSource("newcat2"));
             traceSources.Add("newcat3", new LogSource("newcat3"));
             traceSources.Add("newcat4", new LogSource("newcat4"));
-            LogWriter logWriter = new LogWriter(emptyFilters, traceSources, new LogSource("errors"), "default");
+            LogWriter logWriter = new LogWriterImpl(emptyFilters, traceSources, new LogSource("errors"), "default");
 
             string[] categories = new string[] { "newcat1", "newcat2", "newcat5", "newcat6" };
             LogEntry logEntry = new LogEntry();
@@ -227,7 +227,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Distributor.Tests
             LogSource notProcessedTraceSource = new LogSource("default");
             LogSource errorsTraceSource = new LogSource("errors", SourceLevels.All);
             errorsTraceSource.Listeners.Add(new ErrorsMockTraceListener());
-            LogWriter logWriter = new LogWriter(emptyFilters, traceSources, emptyTraceSource, notProcessedTraceSource, errorsTraceSource, "default", false, false);
+            LogWriter logWriter = new LogWriterImpl(emptyFilters, traceSources, emptyTraceSource, notProcessedTraceSource, errorsTraceSource, "default", false, false);
 
             string[] categories = new string[] { "newcat1", "newcat2", "newcat5", "newcat6" };
             LogEntry logEntry = new LogEntry();
@@ -260,7 +260,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Distributor.Tests
             LogSource notProcessedTraceSource = new LogSource("default");
             LogSource errorsTraceSource = new LogSource("errors", SourceLevels.All);
             errorsTraceSource.Listeners.Add(new ErrorsMockTraceListener());
-            LogWriter logWriter = new LogWriter(emptyFilters, traceSources, emptyTraceSource, notProcessedTraceSource, errorsTraceSource, "default", false, false);
+            LogWriter logWriter = new LogWriterImpl(emptyFilters, traceSources, emptyTraceSource, notProcessedTraceSource, errorsTraceSource, "default", false, false);
 
             string[] categories = new string[] { "newcat1", "newcat2" };
             LogEntry logEntry = new LogEntry();
@@ -291,7 +291,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Distributor.Tests
             traceSources.Add("newcat4", new LogSource("newcat4"));
             LogSource errorsTraceSource = new LogSource("errors", SourceLevels.All);
             errorsTraceSource.Listeners.Add(new ErrorsMockTraceListener());
-            LogWriter logWriter = new LogWriter(emptyFilters, traceSources, emptyTraceSource, emptyTraceSource, errorsTraceSource, "default", false, true);
+            LogWriter logWriter = new LogWriterImpl(emptyFilters, traceSources, emptyTraceSource, emptyTraceSource, errorsTraceSource, "default", false, true);
 
             string[] categories = new string[] { "newcat1", "newcat2", "newcat5", "newcat6" };
             LogEntry logEntry = new LogEntry();
@@ -320,7 +320,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Distributor.Tests
             traceSources.Add("newcat4", new LogSource("newcat4"));
             LogSource errorsTraceSource = new LogSource("errors", SourceLevels.All);
             errorsTraceSource.Listeners.Add(new ErrorsMockTraceListener());
-            LogWriter logWriter = new LogWriter(emptyFilters, traceSources, emptyTraceSource, emptyTraceSource, errorsTraceSource, "default", false, false);
+            LogWriter logWriter = new LogWriterImpl(emptyFilters, traceSources, emptyTraceSource, emptyTraceSource, errorsTraceSource, "default", false, false);
 
             string[] categories = new string[] { "newcat1", "newcat2", "newcat5", "newcat6" };
             LogEntry logEntry = new LogEntry();
@@ -348,7 +348,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Distributor.Tests
             traceSources.Add("newcat4", new LogSource("newcat4"));
             LogSource errorsTraceSource = new LogSource("errors", SourceLevels.All);
             errorsTraceSource.Listeners.Add(new ErrorsMockTraceListener());
-            LogWriter logWriter = new LogWriter(emptyFilters, traceSources, emptyTraceSource, emptyTraceSource, errorsTraceSource, "default", false, false);
+            LogWriter logWriter = new LogWriterImpl(emptyFilters, traceSources, emptyTraceSource, emptyTraceSource, errorsTraceSource, "default", false, false);
 
             string[] categories = new string[] { "newcat1", "newcat2" };
             LogEntry logEntry = new LogEntry();
@@ -376,7 +376,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Distributor.Tests
             traceSources.Add("newcat4", new LogSource("newcat4"));
             LogSource mandatoryTraceSource = new LogSource("mandatory");
             LogSource errorsTraceSource = new LogSource("errors", SourceLevels.All);
-            LogWriter logWriter = new LogWriter(emptyFilters, traceSources, mandatoryTraceSource, emptyTraceSource, errorsTraceSource, "default", false, false);
+            LogWriter logWriter = new LogWriterImpl(emptyFilters, traceSources, mandatoryTraceSource, emptyTraceSource, errorsTraceSource, "default", false, false);
 
             string[] categories = new string[] { "newcat1", "newcat2" };
             LogEntry logEntry = new LogEntry();
@@ -408,7 +408,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Distributor.Tests
             LogSource mandatoryTraceSource = new LogSource("mandatory");
             LogSource errorsTraceSource = new LogSource("errors", SourceLevels.All);
             errorsTraceSource.Listeners.Add(new ErrorsMockTraceListener());
-            LogWriter logWriter = new LogWriter(emptyFilters, traceSources, mandatoryTraceSource, emptyTraceSource, errorsTraceSource, "default", false, false);
+            LogWriter logWriter = new LogWriterImpl(emptyFilters, traceSources, mandatoryTraceSource, emptyTraceSource, errorsTraceSource, "default", false, false);
 
             string[] categories = new string[] { "newcat5", "newcat6" };
             LogEntry logEntry = new LogEntry();
@@ -437,7 +437,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Distributor.Tests
             traceSources.Add("newcat4", new LogSource("newcat4"));
             LogSource mandatoryTraceSource = new LogSource("mandatory");
             LogSource errorsTraceSource = new LogSource("errors", SourceLevels.All);
-            LogWriter logWriter = new LogWriter(emptyFilters, traceSources, mandatoryTraceSource, emptyTraceSource, errorsTraceSource, "default", false, false);
+            LogWriter logWriter = new LogWriterImpl(emptyFilters, traceSources, mandatoryTraceSource, emptyTraceSource, errorsTraceSource, "default", false, false);
 
             string[] categories = new string[] { "newcat1", "newcat2", "newcat5", "newcat6" };
             LogEntry logEntry = new LogEntry();
@@ -471,7 +471,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Distributor.Tests
             LogSource errorsTraceSource = new LogSource("errors", SourceLevels.All);
             errorsTraceSource.Listeners.Add(new ErrorsMockTraceListener());
             LogWriter logWriter =
-                new LogWriter(emptyFilters, traceSources, mandatoryTraceSource, defaultTraceSource, errorsTraceSource, "default", false, false);
+                new LogWriterImpl(emptyFilters, traceSources, mandatoryTraceSource, defaultTraceSource, errorsTraceSource, "default", false, false);
 
             string[] categories = new string[] { "newcat1", "newcat2", "newcat5", "newcat6" };
             LogEntry logEntry = new LogEntry();
@@ -505,7 +505,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Distributor.Tests
             LogSource errorsTraceSource = new LogSource("errors", SourceLevels.All);
             errorsTraceSource.Listeners.Add(new ErrorsMockTraceListener());
             LogWriter logWriter =
-                new LogWriter(emptyFilters, traceSources, mandatoryTraceSource, defaultTraceSource, errorsTraceSource, "default", false, false);
+                new LogWriterImpl(emptyFilters, traceSources, mandatoryTraceSource, defaultTraceSource, errorsTraceSource, "default", false, false);
 
             string[] categories = new string[] { "newcat1", "newcat2", "newcat5", "newcat6" };
             LogEntry logEntry = new LogEntry();
@@ -538,7 +538,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Distributor.Tests
             ILogFilter failingFilter = new ExceptionThrowingLogFilter("failing");
 
             LogWriter writer =
-                new LogWriter(new ILogFilter[] { failingFilter },
+                new LogWriterImpl(new ILogFilter[] { failingFilter },
                               new LogSource[] { loggingTraceSource },
                               errorsTraceSource,
                               "default");
@@ -571,7 +571,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Distributor.Tests
             loggingTraceSource.Listeners.Add(new MockTraceListener());
 
             LogWriter writer =
-                new LogWriter(new ILogFilter[0],
+                new LogWriterImpl(new ILogFilter[0],
                               new LogSource[] { failingTraceSource, loggingTraceSource },
                               errorsTraceSource,
                               "default");
@@ -603,7 +603,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Distributor.Tests
             loggingTraceSource.Listeners.Add(new MockTraceListener());
 
             LogWriter writer =
-                new LogWriter(new ILogFilter[0],
+                new LogWriterImpl(new ILogFilter[0],
                               new LogSource[] { failingTraceSource, loggingTraceSource },
                               errorsTraceSource,
                               "default");
@@ -633,7 +633,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Distributor.Tests
             loggingTraceSource.Listeners.Add(new MockTraceListener());
 
             LogWriter writer =
-                new LogWriter(new ILogFilter[0],
+                new LogWriterImpl(new ILogFilter[0],
                               new LogSource[] { failingTraceSource, loggingTraceSource },
                               emptyTraceSource,
                               emptyTraceSource,

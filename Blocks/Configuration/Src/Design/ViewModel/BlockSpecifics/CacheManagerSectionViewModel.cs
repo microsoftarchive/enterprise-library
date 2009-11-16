@@ -1,4 +1,15 @@
-﻿using System;
+﻿//===============================================================================
+// Microsoft patterns & practices Enterprise Library
+// Core
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,18 +20,18 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Caching.BackingStoreImplementations;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design;
 
-namespace Console.Wpf.ViewModel.BlockSpecifics
+namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics
 {
     public class CacheManagerSectionViewModel : PositionedSectionViewModel
     {
-        private const string NullBackingStore = "NullBackingStore";
+        public const string DefaultNullBackingStore = "NullBackingStore";
 
         CacheManagerSettings cacheManagerSettings;
 
         public CacheManagerSectionViewModel(IUnityContainer builder, string sectionName, ConfigurationSection section)
             : base(builder, sectionName, section)
         {
-
+            NullBackingStoreName = DefaultNullBackingStore;
             cacheManagerSettings = (CacheManagerSettings)section;
 
             Positioning.PositionCollection("Cache Managers",
@@ -39,33 +50,32 @@ namespace Console.Wpf.ViewModel.BlockSpecifics
                 new PositioningInstructions { FixedColumn = 2, FixedRow = 0 });
         }
 
-        public override void AfterOpen(IDesignConfigurationSource configurationSource)
+        public override void Initialize(InitializeContext context)
         {
+            base.Initialize(context);
+
             var memoryBackingStores = cacheManagerSettings.BackingStores.Where(x => x.GetType() == typeof(CacheStorageData)).Select(x => x.Name);
-            foreach (ElementViewModel cacheManager in DescendentElements(x => typeof(CacheManagerData).IsAssignableFrom(x.ConfigurationType)))
+            
+            if (memoryBackingStores.Any())
             {
-                string storageProvider = (string)cacheManager.Property("CacheStorage").Value;
-                if (memoryBackingStores.Contains(storageProvider))
-                {
-                    cacheManager.Property("CacheStorage").Value = string.Empty;
-                }
+                NullBackingStoreName = memoryBackingStores.First();
             }
         }
 
         public override void BeforeSave(ConfigurationSection sectionToSave)
         {
             base.BeforeSave(sectionToSave);
-
             CacheManagerSettings cacheManagerToSave = (CacheManagerSettings)sectionToSave;
-            if (!cacheManagerToSave.BackingStores.Any(x => x.Name == NullBackingStore))
+            if (!cacheManagerToSave.BackingStores.Any(x => x.Name == NullBackingStoreName))
             {
-                cacheManagerToSave.BackingStores.Add(new CacheStorageData { Type = typeof(NullBackingStore), Name = NullBackingStore });
+                cacheManagerToSave.BackingStores.Add(new CacheStorageData { Type = typeof(NullBackingStore), Name = NullBackingStoreName });
             }
+        }
 
-            foreach(CacheManagerData cacheManager in cacheManagerToSave.CacheManagers.Where(x=>string.IsNullOrEmpty(x.Name)))
-            {
-                cacheManager.CacheStorage = NullBackingStore;
-            }
+        public string NullBackingStoreName
+        {
+            get;
+            private set;
         }
     }
 }

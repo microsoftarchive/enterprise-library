@@ -28,7 +28,9 @@ using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
 [assembly : SecurityTransparent]
 
 [assembly: HandlesSection(ExceptionHandlingSettings.SectionName)]
-[assembly: AddApplicationBlockCommand("Add Exception Handling Settings", 
+[assembly: AddApplicationBlockCommand(
             ExceptionHandlingSettings.SectionName, 
             typeof(ExceptionHandlingSettings),
+            TitleResourceType = typeof (DesignResources),
+            TitleResourceName = "AddExceptionHandlingSettingsCommandTitle",
             CommandModelTypeName = ExceptionHandlingDesignTime.CommandTypeNames.AddExceptionHandlingBlockCommand)]

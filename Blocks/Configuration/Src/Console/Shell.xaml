@@ -4,39 +4,52 @@
 		x:Class="Microsoft.Practices.EnterpriseLibrary.Configuration.Console.Shell"
 		Title="Enterprise Library Configuration"
 		BorderThickness="0">
-	<ScrollViewer HorizontalScrollBarVisibility="Auto"
+    <ScrollViewer HorizontalScrollBarVisibility="Auto"
 				  VerticalScrollBarVisibility="Auto">
-		<Grid>
-			<Grid.RowDefinitions>
-				<RowDefinition Height="Auto" />
-				<RowDefinition Height="Auto" />
-			</Grid.RowDefinitions>
-			<Menu Grid.Row="0">
-				<MenuItem Header="_File">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Menu Grid.Row="0">
+                <MenuItem Header="_File" AutomationProperties.AutomationId="File">
                     <MenuItem Header="_New..."
-							  Click="FileMenu_New_Click" />
+							  Click="FileMenu_New_Click"
+                              AutomationProperties.AutomationId="New..." />
                     <MenuItem Header="_Open..."
-							  Click="FileMenu_Open_Click" />
-					<MenuItem Header="_Save"
-							  Click="FileMenu_Save_Click" />
+							  Click="FileMenu_Open_Click" AutomationProperties.AutomationId="Open..." />
+                    <MenuItem Header="_Save"
+							  Click="FileMenu_Save_Click" AutomationProperties.AutomationId="Save" />
                     <MenuItem Header="_Save As..."
-							  Click="FileMenu_SaveAs_Click" />
+							  Click="FileMenu_SaveAs_Click" AutomationProperties.AutomationId="Save As..."/>
                     <Separator/>
                     <MenuItem Header="E_xit"
-							  Click="FileMenu_Exit_Click" />
+							  Click="FileMenu_Exit_Click" AutomationProperties.AutomationId="Exit" />
 
                 </MenuItem>
-                
-                <MenuItem Header="_Blocks" x:Name="AddApplicationBlockMenu" />
 
-                <MenuItem Header="_Environments" x:Name="EnvironmentsMenu">
+                <MenuItem Header="_Blocks" x:Name="AddApplicationBlockMenu" AutomationProperties.AutomationId="Blocks">
+                    <!-- This is here as setting MenuItem.AutomatinProperties.AutomationId does not work -->
+                    <MenuItem.ItemContainerStyle>
+                        <Style TargetType="{x:Type MenuItem}">
+                            <Setter Property="AutomationProperties.AutomationId" Value="{Binding Title}" />
+                        </Style>
+                    </MenuItem.ItemContainerStyle>
+                    <MenuItem.ItemTemplate>
+                        <DataTemplate>
+                            <MenuItem Header="{Binding Title}" Command="{Binding}" />
+                        </DataTemplate>
+                    </MenuItem.ItemTemplate>
+                </MenuItem>
+
+                <MenuItem Header="_Environments" x:Name="EnvironmentsMenu" AutomationProperties.AutomationId="Environments" >
 
                     <MenuItem Header="_New Environment..."
-							  Click="EnvironemntMenu_New_Click" />
-                    
+							  Click="EnvironemntMenu_New_Click" AutomationProperties.AutomationId="New Environment..." />
+
                     <MenuItem Header="_Open Delta File..."
-							  Click="EnvironemntMenu_Open_Click" />
-                    
+							  Click="EnvironemntMenu_Open_Click" AutomationProperties.AutomationId="Open Delta File..." />
+
                 </MenuItem>
             </Menu>
             <ItemsControl Grid.Row="1">
@@ -50,14 +63,14 @@
                 <ItemsControl.ItemsSource>
                     <Binding Source="{StaticResource SortedSections}" />
                 </ItemsControl.ItemsSource>
-				
-				<ItemsControl.Template>
-					<ControlTemplate>
-						<ItemsPresenter />
-					</ControlTemplate>
-				</ItemsControl.Template>
-			</ItemsControl>
-		</Grid>
-	</ScrollViewer>
+
+                <ItemsControl.Template>
+                    <ControlTemplate>
+                        <ItemsPresenter />
+                    </ControlTemplate>
+                </ItemsControl.Template>
+            </ItemsControl>
+        </Grid>
+    </ScrollViewer>
 </Window>
 	

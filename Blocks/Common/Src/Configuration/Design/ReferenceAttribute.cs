@@ -13,67 +13,89 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Practices.EnterpriseLibrary.Common.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
 {
-    /// <summary/>
+    /// <summary>
+    /// Attribute class used to indicate that the property is a reference to provider. <br/>
+    /// Reference properties will show an editable dropdown that allows the referred element to be selected.<br/>
+    /// </summary>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple=false)]
     public sealed class ReferenceAttribute : Attribute
     {
         private readonly string scopeTypeName;
         private readonly string targetTypeName;
-        private readonly string propertyToMatch = "Name";
 
 
-        /// <summary/>
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ReferenceAttribute"/> class.
+        /// </summary>
+        /// <param name="targetTypeName">The configuration type name of the provider that used as a reference.</param>
         public ReferenceAttribute(string targetTypeName)
         {
+            if (string.IsNullOrEmpty(targetTypeName)) throw new ArgumentException(Resources.ExceptionStringNullOrEmpty, "targetTypeName");
             this.targetTypeName = targetTypeName;
         }
 
-        /// <summary/>
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ReferenceAttribute"/> class.
+        /// </summary>
+        /// <param name="scopeTypeName">The name of a configuration type that contains the references.</param>
+        /// <param name="targetTypeName">The configuration type name of the provider that used as a reference.</param>
         public ReferenceAttribute(string scopeTypeName, string targetTypeName)
         {
             this.scopeTypeName = scopeTypeName;
             this.targetTypeName = targetTypeName;
         }
 
-        /// <summary/>
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ReferenceAttribute"/> class.
+        /// </summary>
+        /// <param name="targetType">The configuration type of the provider that used as a reference.</param>
         public ReferenceAttribute(Type targetType)
         {
             this.targetTypeName = targetType.AssemblyQualifiedName;
         }
 
-        /// <summary/>
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ReferenceAttribute"/> class.
+        /// </summary>
+        /// <param name="scopeType">The configuration type that contains the references.</param>
+        /// <param name="targetType">The configuration type of the provider that used as a reference.</param>
         public ReferenceAttribute(Type scopeType, Type targetType)
         {
             this.scopeTypeName = scopeType.AssemblyQualifiedName;
             this.targetTypeName = targetType.AssemblyQualifiedName;
         }
 
-        /// <summary/>
+        /// <summary>
+        /// Gets the configuration type that contains the references.
+        /// </summary>
         public Type ScopeType
         {
             get { return string.IsNullOrEmpty(scopeTypeName) ? null : Type.GetType(scopeTypeName); }
         }
 
-        /// <summary/>
+        /// <summary>
+        /// Gets or sets a boolean indicating whether only providers can be used that are contained in the current Element View Model.
+        /// </summary>
+        /// <value>
+        /// <see langword="true"/> if only providers can be used that are contained in the current Element View Model. Otherwise <see langword="false"/>.
+        /// </value>
         public bool ScopeIsDeclaringElement
         {
             get;
             set;
         }
 
-        /// <summary/>
+        /// <summary>
+        /// Gets the configuration type of the provider that used as a reference.
+        /// </summary>
         public Type TargetType
         {
             get { return Type.GetType(targetTypeName); }
-        }
-
-        /// <summary/>
-        public string PropertyToMatch
-        {
-            get { return propertyToMatch; }
         }
     }
 }

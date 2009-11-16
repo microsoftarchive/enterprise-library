@@ -262,7 +262,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
             source.Listeners.Add(new MockTraceListener());
 
             List<LogSource> traceSources = new List<LogSource>(new LogSource[] { source });
-            LogWriter logWriter = new LogWriter(new List<ILogFilter>(), new List<LogSource>(), source, null, new LogSource("errors"), "default", true, false);
+            LogWriter logWriter = new LogWriterImpl(new List<ILogFilter>(), new List<LogSource>(), source, null, new LogSource("errors"), "default", true, false);
 
             using (Tracer tracer = new Tracer("testoperation", logWriter, (IConfigurationSource)null))
             {
@@ -281,7 +281,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
             source.Listeners.Add(new MockTraceListener());
 
             List<LogSource> traceSources = new List<LogSource>(new LogSource[] { source });
-            LogWriter logWriter = new LogWriter(new List<ILogFilter>(), new List<LogSource>(), source, null, new LogSource("errors"), "default", false, false);
+            LogWriter logWriter = new LogWriterImpl(new List<ILogFilter>(), new List<LogSource>(), source, null, new LogSource("errors"), "default", false, false);
 
             using (Tracer tracer = new Tracer("testoperation", logWriter, (IConfigurationSource)null))
             {
@@ -297,7 +297,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
         public void CreatingTracerWithNullIServiceLocatorForInstrumentationThrows()
         {
             LogSource source = new LogSource("tracesource", SourceLevels.All);
-            LogWriter logWriter = new LogWriter(new List<ILogFilter>(), new List<LogSource>(), source, null, new LogSource("errors"), "default", false, false);
+            LogWriter logWriter = new LogWriterImpl(new List<ILogFilter>(), new List<LogSource>(), source, null, new LogSource("errors"), "default", false, false);
             new Tracer("testoperation", logWriter, (IServiceLocator)null).Dispose();
         }
 
@@ -308,7 +308,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
         public void CreatingTracerWithActivityIDAndNullIServiceLocatorForInstrumentationThrows()
         {
             LogSource source = new LogSource("tracesource", SourceLevels.All);
-            LogWriter logWriter = new LogWriter(new List<ILogFilter>(), new List<LogSource>(), source, null, new LogSource("errors"), "default", false, false);
+            LogWriter logWriter = new LogWriterImpl(new List<ILogFilter>(), new List<LogSource>(), source, null, new LogSource("errors"), "default", false, false);
             new Tracer("testoperation", Guid.NewGuid(), logWriter, (IServiceLocator)null).Dispose();
         }
 
@@ -318,7 +318,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
             MockServiceLocator serviceLocator = new MockServiceLocator();
 
             LogSource source = new LogSource("tracesource", SourceLevels.All);
-            LogWriter logWriter = new LogWriter(new List<ILogFilter>(), new List<LogSource>(), source, null, new LogSource("errors"), "default", false, false);
+            LogWriter logWriter = new LogWriterImpl(new List<ILogFilter>(), new List<LogSource>(), source, null, new LogSource("errors"), "default", false, false);
             new Tracer("testoperation", logWriter, serviceLocator).Dispose();
 
             Assert.AreEqual(1, serviceLocator.ServicesRequested.Count);
@@ -332,7 +332,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
             MockServiceLocator serviceLocator = new MockServiceLocator();
 
             LogSource source = new LogSource("tracesource", SourceLevels.All);
-            LogWriter logWriter = new LogWriter(new List<ILogFilter>(), new List<LogSource>(), source, null, new LogSource("errors"), "default", false, false);
+            LogWriter logWriter = new LogWriterImpl(new List<ILogFilter>(), new List<LogSource>(), source, null, new LogSource("errors"), "default", false, false);
             new Tracer("testoperation", Guid.NewGuid(), logWriter, serviceLocator).Dispose();
 
             Assert.AreEqual(1, serviceLocator.ServicesRequested.Count);

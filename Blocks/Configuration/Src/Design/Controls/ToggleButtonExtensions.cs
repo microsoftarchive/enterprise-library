@@ -14,7 +14,7 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 
-namespace Console.Wpf.Controls
+namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls
 {
 	public class ToggleButtonExtensions : DependencyObject
 	{

@@ -146,7 +146,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
         [ConfigurationProperty(exceptionHandlersProperty)]
         [ResourceDescription(typeof(DesignResources), "ExceptionTypeDataExceptionHandlersDescription")]
         [ResourceDisplayName(typeof(DesignResources), "ExceptionTypeDataExceptionHandlersDisplayName")]
-        [OrderableCollection(true)]
         [ConfigurationCollection(typeof(ExceptionHandlerData))]
         [PromoteCommands]
         public NameTypeConfigurationElementCollection<ExceptionHandlerData, CustomHandlerData> ExceptionHandlers

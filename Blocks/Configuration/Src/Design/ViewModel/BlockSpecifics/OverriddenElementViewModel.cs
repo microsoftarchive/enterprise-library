@@ -17,35 +17,38 @@ using System.ComponentModel;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides.Configuration;
 using System.Globalization;
 using System.Configuration;
-using Console.Wpf.ViewModel.Services;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
 
-namespace Console.Wpf.ViewModel.BlockSpecifics
+namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics
 {
     public class OverriddenElementViewModel : INotifyPropertyChanged
     {
         private readonly EnvironmentMergeSection environmentSection;
         private readonly ElementLookup lookup;
         private readonly ReferenceContainer elementReference;
-
+        private ElementViewModel subject;
         private EnvironmentNodeMergeElement mergeElement;
 
         public OverriddenElementViewModel(ElementLookup lookup, EnvironmentMergeSection environmentSection, EnvironmentNodeMergeElement mergeElement)
-            :this(lookup, environmentSection)
         {
+            this.lookup = lookup;
+            this.environmentSection = environmentSection;
             this.mergeElement = mergeElement;
+            this.elementReference = new ReferenceContainer(this);
             this.elementReference.InitializeReference(mergeElement.ConfigurationNodePath, mergeElement);
         }
 
-        public OverriddenElementViewModel(ElementLookup lookup, EnvironmentMergeSection environmentSection)
+        public OverriddenElementViewModel(ElementLookup lookup, EnvironmentMergeSection environmentSection, ElementViewModel subject)
         {
             this.lookup = lookup;
             this.environmentSection = environmentSection;
             this.elementReference = new ReferenceContainer(this);
+            this.subject = subject;
         }
 
         public ElementViewModel Subject
         {
-            get { return elementReference.Subject; }
+            get { return (subject == null) ? subject : elementReference.Subject; }
         }
 
         public void SetOverrideProperties(ElementViewModel element, bool overrideProperties)
@@ -77,25 +80,25 @@ namespace Console.Wpf.ViewModel.BlockSpecifics
             }
         }
 
-        public object GetValue(Property property, object defaultValue)
+        public object GetValue(ElementProperty property, object defaultValue)
         {
             if (mergeElement == null) return defaultValue;
-            if (!mergeElement.OverriddenProperties.AllKeys.Contains(property.PropertyName)) return defaultValue;
+            if (!mergeElement.OverriddenProperties.AllKeys.Contains(property.ConfigurationName)) return defaultValue;
 
-            string overriddenValue = mergeElement.OverriddenProperties[property.PropertyName].Value;
+            string overriddenValue = mergeElement.OverriddenProperties[property.ConfigurationName].Value;
             return property.Converter.ConvertFromString(property, CultureInfo.CurrentUICulture, overriddenValue);
         }
 
-        public void SetValue(Property property, object value)
+        public void SetValue(ElementProperty property, object value)
         {
             if (mergeElement == null) throw new InvalidOperationException("TODO");
 
             string valueToSet = property.Converter.ConvertToString(property, CultureInfo.CurrentUICulture, value);
-            string propertyName = property.PropertyName;
+            string propertyName = property.ConfigurationName;
 
             if (!mergeElement.OverriddenProperties.AllKeys.Contains(propertyName))
             {
-                var overriddenProperty = new NameValueConfigurationElement(property.PropertyName, valueToSet);
+                var overriddenProperty = new KeyValueConfigurationElement(propertyName, valueToSet);
                 this.mergeElement.OverriddenProperties.Add(overriddenProperty);
             }
             else

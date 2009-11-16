@@ -13,12 +13,23 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Console.Wpf.ViewModel.Services;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
 using System.ComponentModel;
-using Console.Wpf.ViewModel;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
 
-namespace Console.Wpf
+namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
 {
+    /// <summary>
+    /// Class that represents a reference to a <see cref="ElementViewModel"/> instance.<br/>
+    /// The referred element will resolve once its loaded to the <see cref="ConfigurationSourceModel"/>. <br/>
+    /// Once the referred element is resolved, a <see cref="ElementFound"/> event is triggered. <br/>
+    /// An instance of <see cref="ElementReference"/> provides basic facilities to keep track of changes to the referred element.<br/>
+    /// </summary>
+    /// <remarks>
+    /// Instances of <see cref="ElementReference"/> can be created by calling the <see cref="ElementLookup.CreateReference(string)"/> or <see cref="ElementLookup.CreateReference(string, Type, string)"/> method.<br/>
+    /// </remarks>
+    /// <seealso cref="ElementLookup.CreateReference(string)"/>
+    /// <seealso cref="ElementLookup.CreateReference(string, Type, string)"/>
     public abstract class ElementReference : IDisposable
     {
         ElementViewModel element;
@@ -37,6 +48,13 @@ namespace Console.Wpf
             }
         }
 
+        /// <summary>
+        /// Gets the referred <see cref="ElementViewModel"/> instance.
+        /// </summary>
+        /// <value>
+        /// If the referred <see cref="ElementViewModel"/> instance is available, returns the referred element.<br/>
+        /// Otherwise returns <see langword="null"/>.
+        /// </value>
         public ElementViewModel Element
         {
             get { return element; }
@@ -87,6 +105,9 @@ namespace Console.Wpf
             }
         }
 
+        /// <summary>
+        /// Occurs when the refered element was resolved. <br/>
+        /// </summary>
         public event EventHandler ElementFound;
 
         protected virtual void OnElementDeleted()
@@ -103,10 +124,20 @@ namespace Console.Wpf
             }
         }
 
+        /// <summary>
+        /// Occurs when the refered element was deleted. <br/>
+        /// </summary>
         public event EventHandler ElementDeleted;
 
+        /// <summary>
+        /// Occurs when the <see cref="ElementViewModel.Name"/> of the refered element changed. <br/>
+        /// </summary>
         public event PropertyValueChangedEventHandler<string> NameChanged;
 
+
+        /// <summary>
+        /// Occurs when the <see cref="ElementViewModel.Path"/> of the refered element changed. <br/>
+        /// </summary>
         public event PropertyValueChangedEventHandler<string> PathChanged;
 
         public virtual void Dispose(bool disposing)

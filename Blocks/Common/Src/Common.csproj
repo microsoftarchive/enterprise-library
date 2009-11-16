@@ -167,6 +167,7 @@
     <Compile Include="Configuration\Design\CollectionEditorTemplateAttribute.cs" />
     <Compile Include="Configuration\Design\ConfigurationSourcesDesignTime.cs" />
     <Compile Include="Configuration\Design\NamePropertyAttribute.cs" />
+    <Compile Include="Configuration\Design\OmitCustomAttributesPropertyAttribute.cs" />
     <Compile Include="Configuration\Design\PromoteCommandsAttribute.cs" />
     <Compile Include="Configuration\Design\TypePickingCollectionElementAddCommandAttribute.cs" />
     <Compile Include="Configuration\Design\CommandAttribute.cs" />
@@ -174,10 +175,8 @@
     <Compile Include="Configuration\Design\EnvironmentalOverridesAttribute.cs" />
     <Compile Include="Configuration\Design\FilteredFileNameEditorAttribute.cs" />
     <Compile Include="Configuration\Design\ResourceCategoryAttribute.cs" />
-    <Compile Include="Configuration\Design\DesignTimeTypeAttribute.cs" />
     <Compile Include="Configuration\Design\CommonDesignTime.cs" />
     <Compile Include="Configuration\Design\ReferenceAttribute.cs" />
-    <Compile Include="Configuration\Design\OrderableCollectionAttribute.cs" />
     <Compile Include="Configuration\Design\ResourceDescriptionAttribute.cs" />
     <Compile Include="Configuration\Design\ResourceDisplayNameAttribute.cs" />
     <Compile Include="Configuration\Design\HandlesSectionAttribute.cs" />

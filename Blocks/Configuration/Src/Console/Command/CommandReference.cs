@@ -1,11 +1,22 @@
-﻿using System;
+﻿//===============================================================================
+// Microsoft patterns & practices Enterprise Library
+// Core
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
 
-namespace Console.Wpf.Command
+namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Console.Command
 {
     /// <summary>
     /// This class facilitates associating a key binding in XAML markup to a command
@@ -73,5 +84,4 @@ namespace Console.Wpf.Command
 
         #endregion
     }
-
 }

@@ -12,6 +12,7 @@
 using System;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
+using System.ComponentModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 {
@@ -48,5 +49,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
                 this.UpperBoundType,
                 Negated);
         }
+        
     }
 }

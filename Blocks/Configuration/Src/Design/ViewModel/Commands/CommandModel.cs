@@ -1,18 +1,37 @@
-﻿using System;
+﻿//===============================================================================
+// Microsoft patterns & practices Enterprise Library
+// Core
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Drawing;
 using System.Windows.Input;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
-namespace Console.Wpf.ViewModel
+namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
 {
-    [TypeConverter(typeof(CommandModelTypeConverter))]
-    public class CommandModel : ICommand, INotifyPropertyChanged
+    /// <summary>
+    /// Represents a bindable command that can be executed from within the designer.<br/>
+    /// </summary>
+    [DebuggerDisplay("Title: {Title}  Placement: {Placement}")]
+    public abstract class CommandModel : ICommand, INotifyPropertyChanged
     {
-        public CommandModel(CommandAttribute commandAttribute)
+        /// <summary>
+        /// Initializes an instance of CommandModel from <see cref="CommandAttribute"/>.
+        /// </summary>
+        /// <param name="commandAttribute"></param>
+        protected CommandModel(CommandAttribute commandAttribute)
         {
             Title = commandAttribute.Title;
             HelpText = string.Empty;
@@ -20,10 +39,16 @@ namespace Console.Wpf.ViewModel
             ChildCommands = Enumerable.Empty<CommandModel>();
         }
 
+        /// <summary>
+        /// Initializes an instance of CommandModel.
+        /// </summary>
         protected CommandModel()
         {
         }
 
+        ///<summary>
+        /// The logical placement of the command.
+        ///</summary>
         public virtual CommandPlacement Placement
         {
             get;
@@ -39,29 +64,50 @@ namespace Console.Wpf.ViewModel
             private set;
         }
 
+        //todo: this is not in use, delete?
+        ///<summary>
+        /// The icon to display for this command.
+        ///</summary>
         public virtual Image Icon
         {
             get;
             private set;
         }
 
+        ///<summary>
+        /// The command's related help text.
+        ///</summary>
         public virtual string HelpText
         {
             get; 
             private set;
         }
 
+        ///<summary>
+        /// Child <see cref="CommandModel"/> commands to this command.
+        ///</summary>
         public virtual IEnumerable<CommandModel> ChildCommands
         {
             get;
             private set;
         }
 
+        /// <summary>
+        /// Defines the method that determines whether the command can execute in its current state.
+        /// </summary>
+        /// <returns>
+        /// true if this command can be executed; otherwise, false.
+        /// </returns>
+        /// <param name="parameter">Data used by the command.  If the command does not require data to be passed, this object can be set to null.
+        ///                 </param>
         public virtual bool CanExecute(object parameter)
         {
             return false;
         }
 
+        ///<summary>
+        /// Invokes the <see cref="CanExecuteChanged"/> event.
+        ///</summary>
         public virtual void OnCanExecuteChanged()
         {
             var handler = CanExecuteChanged;
@@ -71,13 +117,25 @@ namespace Console.Wpf.ViewModel
             }
         }
 
+        /// <summary>
+        /// Occurs when changes occur that affect whether or not the command should execute.
+        /// </summary>
         public event EventHandler CanExecuteChanged;
 
+        /// <summary>
+        /// Defines the method to be called when the command is invoked.
+        /// </summary>
+        /// <param name="parameter">Data used by the command.  If the command does not require data to be passed, this object can be set to null.
+        ///                 </param>
         public virtual void Execute(object parameter)
         {
         }
 
-        protected void DoPropertyChanged(string propertyName)
+        /// <summary>
+        /// Invokes the <see cref="PropertyChanged"/> event for this class
+        /// </summary>
+        /// <param name="propertyName">The name of the property changing</param>
+        protected void OnPropertyChanged(string propertyName)
         {
             var handler = PropertyChanged;
             if (handler != null)
@@ -86,29 +144,9 @@ namespace Console.Wpf.ViewModel
             }
         }
 
-
+        /// <summary>
+        /// Occurs when a property value changes.
+        /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
-    }
-
-    //TODO: why need this? ToString()?
-    public class CommandModelTypeConverter : TypeConverter
-    {
-
-        public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
-        {
-            return (destinationType == typeof (string));
-        }
-
-        public override object ConvertTo(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destinationType)
-        {
-
-            CommandModel command = value as CommandModel;
-            if(command != null && (typeof(string) == destinationType))
-            {
-                return command.Title;
-            }
-
-            return base.ConvertTo(context, culture, value, destinationType);
-        }
     }
 }

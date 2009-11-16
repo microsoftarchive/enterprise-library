@@ -1453,7 +1453,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
         }
 
         [TestMethod]
-        [Ignore]
         public void ThenCommandFailedInstrumentationIsIncremented()
         {
             Assert.AreEqual(1, this.commandFailedEvents.Count);
@@ -1487,7 +1486,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
         }
 
         [TestMethod]
-        [Ignore]
         public void ThenCommandFailedInstrumentationIsIncremented()
         {
             Assert.AreEqual(1, this.commandFailedEvents.Count);
@@ -1528,7 +1526,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
         }
 
         [TestMethod]
-        [Ignore]
         public void ThenCommandFailedInstrumentationIsIncremented()
         {
             Assert.AreEqual(1, this.commandFailedEvents.Count);
@@ -1562,7 +1559,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
         }
 
         [TestMethod]
-        [Ignore]
         public void ThenCommandFailedInstrumentationIsIncremented()
         {
             Assert.AreEqual(1, this.commandFailedEvents.Count);
@@ -1596,7 +1592,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
         }
 
         [TestMethod]
-        [Ignore]
         public void ThenCommandFailedInstrumentationIsIncremented()
         {
             Assert.AreEqual(1, this.commandFailedEvents.Count);
@@ -1638,7 +1633,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
         }
 
         [TestMethod]
-        [Ignore]
         public void ThenCommandFailedInstrumentationIsIncremented()
         {
             Assert.AreEqual(1, this.commandFailedEvents.Count);

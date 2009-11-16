@@ -326,7 +326,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         {
             return
                 new TypeRegistration<LogWriter>(() =>
-                   new LogWriter(
+                   new LogWriterImpl(
                        Container.Resolved<LogWriterStructureHolder>(),
                        Container.Resolved<ILoggingInstrumentationProvider>(),
                        Container.Resolved<ILoggingUpdateCoordinator>()))

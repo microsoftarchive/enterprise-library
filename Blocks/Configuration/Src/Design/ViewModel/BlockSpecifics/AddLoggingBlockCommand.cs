@@ -1,13 +1,24 @@
-﻿using System;
+﻿//===============================================================================
+// Microsoft patterns & practices Enterprise Library
+// Core
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Console.Wpf.ViewModel.Commands;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Commands;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 using System.Diagnostics;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
-namespace Console.Wpf.ViewModel.BlockSpecifics
+namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics
 {
     public class AddLoggingBlockCommand : AddApplicationBlockCommand
     {
@@ -36,7 +47,7 @@ namespace Console.Wpf.ViewModel.BlockSpecifics
 
                 TraceListeners = 
                 {{
-                    new FormattedEventLogTraceListenerData("Event Log Listener", "Application", "Text Formatter")
+                    new FormattedEventLogTraceListenerData("Event Log Listener", "Enterprise Library Logging", "Text Formatter")
                 }},
 
                 Formatters = 

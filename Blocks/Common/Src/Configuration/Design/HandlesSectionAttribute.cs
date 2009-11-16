@@ -26,7 +26,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
         private readonly string sectionName;
 
         /// <summary>
-        /// Initializes the <see cref="HandlesSectionAttribute"/> class.
+        /// Initializes a new instance of the <see cref="HandlesSectionAttribute"/> class.
         /// </summary>
         /// <param name="sectionName"></param>
         public HandlesSectionAttribute(string sectionName)
@@ -40,14 +40,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
         public string SectionName
         {
             get { return sectionName; }
-        }
-
-        /// <summary/>
-        //todo: Should return metadatata provider type.
-        public Type MetadataType
-        {
-            get;
-            set;
         }
     }
 }

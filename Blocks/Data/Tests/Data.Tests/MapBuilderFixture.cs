@@ -12,14 +12,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
-using Microsoft.Practices.EnterpriseLibrary.Data.Sql;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Data.Common;
-using System.Data;
 using System.Reflection;
 using Microsoft.Practices.EnterpriseLibrary.Common;
+using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
 {
@@ -83,9 +79,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
         [TestMethod]
         public void ThenCreatedMapperContains0PropertyMappings()
         {
-            ReflectionRowMapper<Customer> mapper = builder.Build() as ReflectionRowMapper<Customer>;
-
-            var mappings = mapper.GetPropertyMappings();
+            var mappings = ((IMapBuilderContextTest<Customer>)builder).GetPropertyMappings();
             Assert.AreEqual(0, mappings.Count());
         }
 
@@ -93,9 +87,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
         public void ThenMapByNameMatchCreatesPropertyMappingWithAppropriateColumnName()
         {
             IMapBuilderContext<Customer> context = builder.MapByName(x => x.CustomerName);
-            ReflectionRowMapper<Customer> mapper = context.Build() as ReflectionRowMapper<Customer>;
 
-            var mappings = mapper.GetPropertyMappings().OfType<ColumnNameMapping>();
+            var mappings = ((IMapBuilderContextTest<Customer>)builder).GetPropertyMappings().OfType<ColumnNameMapping>();
 
             Assert.AreNotEqual(0, mappings.Count());
             Assert.AreSame(CustomerNameProperty, mappings.First().Property);
@@ -108,11 +101,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
             IMapBuilderContext<Customer> context = MapBuilder<Customer>.MapNoProperties()
                 .Map(x => x.CustomerName).WithFunc(x => "value");
 
-            ReflectionRowMapper<Customer> mapper = context.Build() as ReflectionRowMapper<Customer>;
-
-            var mappings = mapper.GetPropertyMappings().OfType<FuncMapping>();
+            var mappings = ((IMapBuilderContextTest<Customer>)context).GetPropertyMappings().OfType<FuncMapping>();
             Assert.AreNotEqual(0, mappings.Count());
-            
+
             var propertyMapping = mappings.First();
             Assert.AreSame(CustomerNameProperty, propertyMapping.Property);
             Assert.IsNotNull(propertyMapping.Func);
@@ -124,9 +115,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
             IMapBuilderContext<Customer> context = MapBuilder<Customer>.MapNoProperties()
                 .Map(x => x.CustomerName).ToColumn("columnname");
 
-            ReflectionRowMapper<Customer> mapper = context.Build() as ReflectionRowMapper<Customer>;
-
-            var mappings = mapper.GetPropertyMappings().OfType<ColumnNameMapping>();
+            var mappings = ((IMapBuilderContextTest<Customer>)context).GetPropertyMappings().OfType<ColumnNameMapping>();
             Assert.AreNotEqual(0, mappings.Count());
 
             var mapping = mappings.First();
@@ -135,18 +124,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
         }
 
         [TestMethod]
-        public void ThenDoNotMapCreatesPropertyMappingWithIgnoreIsTrue()
+        public void ThenDoNotMapRemovesPropertyMapping()
         {
-            IMapBuilderContext<Customer> context = MapBuilder<Customer>.MapNoProperties()
+            IMapBuilderContext<Customer> context = MapBuilder<Customer>.MapAllProperties()
                 .DoNotMap(x => x.CustomerName);
 
-            ReflectionRowMapper<Customer> mapper = context.Build() as ReflectionRowMapper<Customer>;
-
-            var mappings = mapper.GetPropertyMappings().OfType<IgnoreMapping>();
-            Assert.AreNotEqual(0, mappings.Count());
-
-            var mapping = mappings.First();
-            Assert.AreSame(CustomerNameProperty, mapping.Property);
+            var mappings = 
+                ((IMapBuilderContextTest<Customer>)context).GetPropertyMappings().Where(pm => pm.Property == CustomerNameProperty);
+            Assert.AreEqual(0, mappings.Count());
         }
 
         [TestMethod]
@@ -156,9 +141,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
                 .DoNotMap(x => x.CustomerName)
                 .MapByName(x => x.CustomerName);
 
-            ReflectionRowMapper<Customer> mapper = context.Build() as ReflectionRowMapper<Customer>;
-
-            var mappings = mapper.GetPropertyMappings().OfType<ColumnNameMapping>();
+            var mappings = ((IMapBuilderContextTest<Customer>)context).GetPropertyMappings().OfType<ColumnNameMapping>();
             Assert.AreNotEqual(0, mappings.Count());
 
             var mapping = mappings.First();
@@ -187,10 +170,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
         {
             PropertyInfo maleOrFemale = typeof(Person).GetProperty("MaleOrFemale");
 
-            ReflectionRowMapper<Customer> context = MapBuilder<Customer>.MapAllProperties()
-                .DoNotMap(maleOrFemale).Build() as ReflectionRowMapper<Customer>;
+            var context = MapBuilder<Customer>.MapAllProperties()
+                .DoNotMap(maleOrFemale) as IMapBuilderContextTest<Customer>;
 
-            Assert.AreEqual(2, context.GetPropertyMappings().Count());
+            Assert.AreEqual(1, context.GetPropertyMappings().Count());
         }
 
 
@@ -208,8 +191,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
         {
             PropertyInfo maleOrFemale = typeof(Person).GetProperty("MaleOrFemale");
 
-            ReflectionRowMapper<Customer> context = MapBuilder<Customer>.MapAllProperties()
-                .MapByName(maleOrFemale).Build() as ReflectionRowMapper<Customer>;
+            var context = MapBuilder<Customer>.MapAllProperties()
+                .MapByName(maleOrFemale) as IMapBuilderContextTest<Customer>;
 
             Assert.AreEqual(2, context.GetPropertyMappings().Count());
         }
@@ -219,8 +202,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
         {
             PropertyInfo maleOrFemale = typeof(Person).GetProperty("MaleOrFemale");
 
-            ReflectionRowMapper<Customer> context = MapBuilder<Customer>.MapAllProperties()
-                .Map(maleOrFemale).ToColumn("sourceColum").Build() as ReflectionRowMapper<Customer>;
+            var context = MapBuilder<Customer>.MapAllProperties()
+                .Map(maleOrFemale).ToColumn("sourceColum") as IMapBuilderContextTest<Customer>;
 
             Assert.AreEqual(2, context.GetPropertyMappings().Count());
         }
@@ -231,8 +214,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
         {
             PropertyInfo maleOrFemale = typeof(Person).GetProperty("MaleOrFemale");
 
-            ReflectionRowMapper<Customer> context = MapBuilder<Customer>.MapAllProperties()
-                .Map(maleOrFemale).WithFunc( x => 'm').Build() as ReflectionRowMapper<Customer>;
+            var context = MapBuilder<Customer>.MapAllProperties()
+                .Map(maleOrFemale).WithFunc(x => 'm') as IMapBuilderContextTest<Customer>;
 
             Assert.AreEqual(2, context.GetPropertyMappings().Count());
         }
@@ -241,17 +224,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
         [TestMethod]
         public void ThenCanOverwritePropertyInfoFromBaseClass()
         {
-            ReflectionRowMapper<Customer> context = MapBuilder<Customer>.MapAllProperties()
-                .DoNotMap(x => x.MaleOrFemale).Build() as ReflectionRowMapper<Customer>;
+            var context = MapBuilder<Customer>.MapAllProperties()
+                .DoNotMap(x => x.MaleOrFemale) as IMapBuilderContextTest<Customer>;
 
-            Assert.AreEqual(2, context.GetPropertyMappings().Count());
+            Assert.AreEqual(1, context.GetPropertyMappings().Count());
         }
 
 
         [TestMethod]
         public void ThenNoMappingsAreMadeForIndexedProperty()
         {
-            ReflectionRowMapper<ContainsProperrtyWithIndexer> context = MapBuilder<ContainsProperrtyWithIndexer>.BuildAllProperties() as ReflectionRowMapper<ContainsProperrtyWithIndexer>;
+            var context =
+                MapBuilder<ContainsProperrtyWithIndexer>.MapAllProperties() as IMapBuilderContextTest<ContainsProperrtyWithIndexer>;
 
             Assert.AreEqual(1, context.GetPropertyMappings().Count());
         }
@@ -289,7 +273,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
     [TestClass]
     public class WhenMapperIsBuiltForTypeWithCollection : ArrangeActAssert
     {
-        private ReflectionRowMapper<Order> mapper;
+        private IMapBuilderContextTest<Order> context;
 
         public class Order
         {
@@ -300,9 +284,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
         [TestMethod]
         public void ThenBuildAllPropertiesIgnoresCollectionProperties()
         {
-            mapper = (ReflectionRowMapper<Order>)MapBuilder<Order>.BuildAllProperties();
-            Assert.AreEqual(1, mapper.GetPropertyMappings().Count());
-            Assert.AreEqual("OrderId", mapper.GetPropertyMappings().First().Property.Name);
+            context = (IMapBuilderContextTest<Order>)MapBuilder<Order>.MapAllProperties();
+            Assert.AreEqual(1, context.GetPropertyMappings().Count());
+            Assert.AreEqual("OrderId", context.GetPropertyMappings().First().Property.Name);
         }
 
     }

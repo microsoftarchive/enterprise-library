@@ -24,7 +24,7 @@ using Microsoft.Practices.EnterpriseLibrary.Logging.Properties;
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent
 {
     /// <summary/>
-    public abstract class LoggingConfigurationExtension : ILoggingConfigurationOptions
+    public abstract class LoggingConfigurationExtension : ILoggingConfigurationOptions, ILoggingConfigurationExtension
     {
         ILoggingConfigurationExtension contextExtension;
         
@@ -74,6 +74,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent
         ILoggingConfigurationSpecialSources ILoggingConfigurationContd.SpecialSources
         {
             get { return LoggingOptions.SpecialSources; }
+        }
+
+
+        ILoggingConfigurationOptions ILoggingConfigurationExtension.LoggingOptions
+        {
+            get { return contextExtension.LoggingOptions; }
+        }
+
+        LoggingSettings ILoggingConfigurationExtension.LoggingSettings
+        {
+            get { return contextExtension.LoggingSettings ; }
         }
     }
 }

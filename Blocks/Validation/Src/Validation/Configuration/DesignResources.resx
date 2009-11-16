@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AddValidationSettings" xml:space="preserve">
+    <value>Add Validation Settings</value>
+  </data>
   <data name="AndCompositeValidatorDataDescription" xml:space="preserve">
     <value>1091 - Provides the capability to create complex validation rules using a hierarchy of nested validators. This validator returns True only when all validators it contains return True for the validated type.</value>
   </data>
@@ -224,6 +227,9 @@
   </data>
   <data name="ContainsCharactersValidatorDataTypeNameDisplayName" xml:space="preserve">
     <value>Type</value>
+  </data>
+  <data name="CustomValidatorDataAddCommand" xml:space="preserve">
+    <value>Custom Validator (using type picker)</value>
   </data>
   <data name="CustomValidatorDataDescription" xml:space="preserve">
     <value>1127 - Custom implementation of a Validator, added to the Validation Application Block.</value>

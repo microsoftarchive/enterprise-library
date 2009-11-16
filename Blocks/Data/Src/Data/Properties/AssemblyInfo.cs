@@ -31,7 +31,8 @@ using System.Configuration;
 [assembly: HandlesSection(DataAccessDesignTime.ConnectionStringSettingsSectionName)]
 
 [assembly: AddApplicationBlockCommand(
-            "Add Data Settings",
             DataAccessDesignTime.ConnectionStringSettingsSectionName, 
-            typeof(ConnectionStringsSection), 
+            typeof(ConnectionStringsSection),
+            TitleResourceName = "AddDataSettings",
+            TitleResourceType = typeof(DesignResources),
             CommandModelTypeName = DataAccessDesignTime.CommandTypeNames.AddDataAccessBlockCommand)]

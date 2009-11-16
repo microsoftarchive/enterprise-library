@@ -1,13 +1,24 @@
-﻿using System;
+﻿//===============================================================================
+// Microsoft patterns & practices Enterprise Library
+// Core
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Text;
+using Console.Wpf.Tests.VSTS.Mocks;
+using Console.Wpf.Tests.VSTS.TestSupport;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Console.Wpf.Tests.VSTS.DevTests.Contexts;
-using Console.Wpf.Tests.VSTS.Mocks;
-using Console.Wpf.ViewModel;
-using Console.Wpf.Tests.VSTS.TestSupport;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model_and_config_collection

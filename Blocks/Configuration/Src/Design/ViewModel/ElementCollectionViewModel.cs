@@ -19,7 +19,7 @@ using System.Text;
 using System.Configuration;
 using System.ComponentModel;
 using System.Windows.Input;
-using Console.Wpf.ViewModel.Services;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Utility;
 using System.Reflection;
@@ -27,10 +27,10 @@ using System.Collections.ObjectModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Properties;
 using Microsoft.Practices.Unity;
-using Console.Wpf.ViewModel.Commands;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Commands;
 using System.Diagnostics;
 
-namespace Console.Wpf.ViewModel
+namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
 {
     public class ElementCollectionViewModel : ElementViewModel
     {
@@ -203,8 +203,6 @@ namespace Console.Wpf.ViewModel
             string baseName = displayNameAttribute == null
                                   ? TypeDescriptor.GetClassName(elementType)
                                   : displayNameAttribute.DisplayName;
-
-
 
             return FindUniqueNewName(baseName);
         }

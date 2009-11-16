@@ -11,18 +11,17 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Data;
+using System.Reflection;
+using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
 using Microsoft.Practices.EnterpriseLibrary.Data.Sql;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
 {
 
     [TestClass]
-    public class WhenCreatingReflectionRowMapper: ArrangeActAssert
+    public class WhenCreatingReflectionRowMapper : ArrangeActAssert
     {
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
@@ -33,7 +32,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
     }
 
     public abstract class ReflectionRowMapperContext<T> : ArrangeActAssert
-        where T : new() 
+        where T : new()
     {
         protected IMapBuilderContext<T> mapBuilder;
 
@@ -57,7 +56,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
             base.Arrange();
 
             defaultMapper = (ReflectionRowMapper<T>)BuildMapper();
-            propertyMappings = defaultMapper.GetPropertyMappings();
 
             SqlDatabase database = new SqlDatabase(ConnectionString);
             reader = database.ExecuteReader(CommandType.Text, CommandText);
@@ -71,75 +69,46 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
     }
 
     [TestClass]
-    public class WhenMapBuilderCreatesDefaultReflectionMapper : ReflectionRowMapperContext<Order>
-    {
-        ReflectionRowMapper<Order> defaultMapper;
-        IEnumerable<PropertyMapping> propertyMappings;
-
-        protected override void Arrange()
-        {
-            base.Arrange();
-
-            defaultMapper = (ReflectionRowMapper<Order>)MapBuilder<Order>.BuildAllProperties();
-            propertyMappings = defaultMapper.GetPropertyMappings();
-        }
-
-        [TestMethod]
-        public void ThenMapperDoesntContainsMappingsForStaticProperties()
-        {
-            Assert.IsFalse(propertyMappings.Any(x => x.Property.Name == "StaticProperty"));
-        }
-
-        [TestMethod]
-        public void ThenMapperDoesntContainsMappingsForNonPublicProperties()
-        {
-            Assert.IsFalse(propertyMappings.Any(x => x.Property.Name == "ProtectedProperty"));
-        }
-
-        [TestMethod]
-        public void ThenMapperContainsMappingsForAllPublicProperties()
-        {
-            Assert.IsTrue(propertyMappings.Any(x => x.Property.Name == "CustomerID"));
-            Assert.IsTrue(propertyMappings.Any(x => x.Property.Name == "NotInSource"));
-            Assert.IsTrue(propertyMappings.Any(x => x.Property.Name == "OrderDate"));
-            Assert.IsTrue(propertyMappings.Any(x => x.Property.Name == "ShippedDate"));
-            Assert.IsTrue(propertyMappings.Any(x => x.Property.Name == "ShipAddress"));
-            Assert.IsTrue(propertyMappings.Any(x => x.Property.Name == "ShipRegion"));
-            Assert.IsTrue(propertyMappings.Any(x => x.Property.Name == "ShipRegion"));
-            Assert.IsTrue(propertyMappings.Any(x => x.Property.Name == "Freight"));
-
-        }
-    }
-
-    [TestClass]
     public class WhenReflectionMapperMapsRowToType : ReflectionRowMapperWithReaderContext<Order>
     {
         protected override IRowMapper<Order> BuildMapper()
         {
-            return MapBuilder<Order>.MapNoProperties().MapByName(x => x.CustomerID)
+            return MapBuilder<Order>.MapAllProperties().MapByName(x => x.CustomerID)
                                           .Map(x => x.Freight).ToColumn("SqlNull")
                                           .Map(x => x.ShipAddress).ToColumn("SqlNull")
-                                          .DoNotMap(x => x.NotInSource).Build();
+                                          .Map(x => x.ShippedDate).WithFunc(dr => new DateTime(10000000))
+                                          .DoNotMap(x => x.NotInSource)
+                                          .DoNotMap(x => x.OrderDate)
+                                          .DoNotMap(x => x.ShipCounty)
+                                          .DoNotMap(x => x.ShipRegion)
+                                          .Build();
         }
 
         [TestMethod]
         public void ThenMatchingColumnsAreMapped()
         {
             var order = defaultMapper.MapRow(reader);
+
             Assert.AreEqual("ALKI", order.CustomerID);
+            Assert.AreEqual(new DateTime(10000000), order.ShippedDate);
         }
 
         [TestMethod]
         public void ThenIgnoredPropertiesAreNotSet()
         {
             var order = defaultMapper.MapRow(reader);
-            Assert.AreEqual(0, order.NotInSource);
+
+            Assert.AreEqual(Order.DefaultIntValue, order.NotInSource);
+            Assert.AreEqual(Order.DefaultDateTimeValue, order.OrderDate);
+            Assert.AreEqual(Order.DefaultStringValue, order.ShipCounty);
+            Assert.AreEqual(Order.DefaultStringValue, order.ShipRegion);
         }
 
         [TestMethod]
-        public void ThenDBNullValuesAreConvertedToEmptyString()
+        public void ThenDBNullValuesAreConvertedToNullString()
         {
             var order = defaultMapper.MapRow(reader);
+
             Assert.IsNull(order.ShipAddress);
         }
 
@@ -147,9 +116,33 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
         public void ThenDBNullValuesAreConvertedToDefaultValueType()
         {
             var order = defaultMapper.MapRow(reader);
+
             Assert.AreEqual(0d, order.Freight);
         }
 
+        [TestMethod]
+        public void ThenCollectionPropertiesAreIgnored()
+        {
+            var order = defaultMapper.MapRow(reader);
+
+            Assert.AreSame(Order.DefaultListValue, order.Details);
+        }
+
+        [TestMethod]
+        public void ThenNonPublicPropertiesAreIgnored()
+        {
+            var order = defaultMapper.MapRow(reader);
+
+            Assert.AreSame(Order.DefaultStringValue, order.ProtectedProperty);
+        }
+
+        [TestMethod]
+        public void ThenStaticPropertiesAreIgnored()
+        {
+            var order = defaultMapper.MapRow(reader);
+
+            Assert.AreSame(Order.DefaultStringValue, Order.StaticProperty);
+        }
 
         protected override void Teardown()
         {
@@ -203,8 +196,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
         [TestMethod]
         public void ThenReflectionMapperAssignsDefaultValue()
         {
-            Assert.AreEqual(6, defaultMapper.GetPropertyMappings().OfType<ColumnNameMapping>().Count());
-            
             ValueTypeTest typeTest = defaultMapper.MapRow(reader);
 
             Assert.AreEqual(default(int), typeTest.Int);
@@ -213,7 +204,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
             Assert.AreEqual(default(DateTime), typeTest.DateTime);
             Assert.AreEqual(default(long), typeTest.Long);
             Assert.AreEqual(default(short), typeTest.Short);
-            
         }
     }
 
@@ -241,14 +231,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
                                    .DoNotMap(x => x.Int)
                                    .DoNotMap(x => x.Long)
                                    .DoNotMap(x => x.Short)
-                                   .Build() ;
+                                   .Build();
         }
 
         [TestMethod]
         public void ThenReflectionMapperAssignsDefaultValue()
         {
-            Assert.AreEqual(6, defaultMapper.GetPropertyMappings().OfType<ColumnNameMapping>().Count());
-
             ValueTypeTest typeTest = defaultMapper.MapRow(reader);
 
             Assert.IsNull(typeTest.NullableInt);
@@ -257,7 +245,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
             Assert.IsNull(typeTest.NullableDateTime);
             Assert.IsNull(typeTest.NullableLong);
             Assert.IsNull(typeTest.NullableShort);
-
         }
     }
 
@@ -282,7 +269,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
             Assert.AreNotEqual(default(Guid), typeTest.Guid);
         }
     }
-    
+
     [TestClass]
     public class WhenReflectionMapperMapsPropertyToColumnWithWrongCasing : ReflectionRowMapperWithReaderContext<ValueTypeTest>
     {
@@ -306,7 +293,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
             Assert.AreNotEqual(default(Guid), typeTest.Guid);
         }
     }
-    
+
     [TestClass]
     public class WhenReflectionMapperFailsToConvertType : ReflectionRowMapperWithReaderContext<ValueTypeTest>
     {
@@ -375,7 +362,33 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
 
     public class Order
     {
-        protected string ProtectedProperty {get;set;}
+        public const int DefaultIntValue = 1000000;
+        public const string DefaultStringValue = "default value";
+        public static readonly DateTime DefaultDateTimeValue = DateTime.MaxValue;
+        public const double DefaultDoubleValue = double.PositiveInfinity;
+        public static readonly List<OrderDetail> DefaultListValue = new List<OrderDetail>();
+
+        public Order()
+        {
+            ProtectedProperty = DefaultStringValue;
+            StaticProperty = DefaultStringValue;
+
+            NotInSource = DefaultIntValue;
+
+            CustomerID = DefaultStringValue;
+            OrderDate = DefaultDateTimeValue;
+            ShippedDate = DefaultDateTimeValue;
+
+            ShipAddress = DefaultStringValue;
+            ShipRegion = DefaultStringValue;
+            ShipCounty = DefaultStringValue;
+
+            Freight = DefaultDoubleValue;
+
+            Details = DefaultListValue;
+        }
+
+        protected internal string ProtectedProperty { get; set; }
         public static string StaticProperty { get; set; }
 
         public int NotInSource { get; set; }
@@ -419,6 +432,4 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
         public DateTime DateTime { get; set; }
 
     }
-
-
 }

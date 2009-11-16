@@ -1,4 +1,15 @@
-﻿using System;
+﻿//===============================================================================
+// Microsoft patterns & practices Enterprise Library
+// Data Access Application Block
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,14 +28,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration
         public static class ConverterTypeNames
         {
             /// <summary/>
-            public const string SystemDataConverter = "Console.Wpf.ComponentModel.Converters.SystemDataProviderConverter, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
+            public const string SystemDataConverter = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Converters.SystemDataProviderConverter, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
         }
 
         ///<summary/>
         public static class ViewModelTypeNames
         {
             /// <summary/>
-            public const string DataSectionViewModel = "Console.Wpf.ViewModel.BlockSpecifics.DataSectionViewModel, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
+            public const string DataSectionViewModel = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.DataSectionViewModel, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
 
             /// <summary/>
             public const string OraclePackageDataViewModel = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.OraclePackageDataViewModel, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
@@ -34,7 +45,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration
         public static class CommandTypeNames
         {
             /// <summary/>
-            public const string AddDataAccessBlockCommand = "Console.Wpf.ViewModel.BlockSpecifics.AddDatabaseBlockCommand, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
+            public const string AddDataAccessBlockCommand = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.AddDatabaseBlockCommand, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
         }
 
         /// <summary/>

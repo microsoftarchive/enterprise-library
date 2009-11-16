@@ -13,7 +13,7 @@ using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Media;
 
-namespace Console.Wpf.Controls
+namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls
 {
 	public class RelationshipAdorner : Adorner 
 	{

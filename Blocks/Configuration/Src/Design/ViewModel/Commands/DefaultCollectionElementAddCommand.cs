@@ -19,7 +19,7 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using System.Windows.Input;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
-namespace Console.Wpf.ViewModel
+namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
 {
     /// <summary>
     /// Adds a <see cref="ConfigurationElement"/> type to a <see cref="ElementCollectionViewModel"/>
@@ -29,16 +29,6 @@ namespace Console.Wpf.ViewModel
         private readonly string helpText;
         private readonly CommandPlacement commandPlacement;
 
-        public DefaultCollectionElementAddCommand(CommandAttribute commandAttribute, ConfigurationElementType configurationElementType, ElementCollectionViewModel collection)
-            :base(commandAttribute)
-        {
-            this.ConfigurationElementType = configurationElementType.ElementType;
-            this.ElementCollectionModel = collection;
-
-            helpText = GetHelpText(ConfigurationElementType);
-            commandPlacement = commandAttribute.CommandPlacement;
-        }
-
         public DefaultCollectionElementAddCommand(ConfigurationElementType configurationElementType, ElementCollectionViewModel collection)
         {
             this.ConfigurationElementType = configurationElementType.ElementType;
@@ -46,6 +36,16 @@ namespace Console.Wpf.ViewModel
 
             helpText = GetHelpText(ConfigurationElementType);
             commandPlacement = CommandPlacement.ContextAdd;
+        }
+
+        protected DefaultCollectionElementAddCommand(CommandAttribute commandAttribute, ConfigurationElementType configurationElementType, ElementCollectionViewModel collection)
+            :base(commandAttribute)
+        {
+            this.ConfigurationElementType = configurationElementType.ElementType;
+            this.ElementCollectionModel = collection;
+
+            helpText = GetHelpText(ConfigurationElementType);
+            commandPlacement = commandAttribute.CommandPlacement;
         }
 
         public virtual Type ConfigurationElementType { get; private set; }

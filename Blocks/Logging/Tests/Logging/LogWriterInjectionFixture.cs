@@ -41,7 +41,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
         public void WhenChangeSourceIsInjectedOnLogWriter_ThenGetsRegisteredForChangeNotificationOnTheLoggingSettings()
         {
             var logWriter =
-                new LogWriter(
+                new LogWriterImpl(
                     new LogWriterStructureHolder(
                         new ILogFilter[0],
                         new Dictionary<string, LogSource>(),
@@ -74,7 +74,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
         [ExpectedException(typeof(ArgumentNullException))]
         public void WhenUpdateCoordinateIsInjectedOnLogWriter_ThenArgumentNullExceptionIsThrown()
         {
-                new LogWriter(
+                new LogWriterImpl(
                     new LogWriterStructureHolder(
                         new ILogFilter[0],
                         new Dictionary<string, LogSource>(),
@@ -101,7 +101,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
         {
             coordinator = new MockLoggingUpdateCoordinator();
             logWriter =
-                new LogWriter(
+                new LogWriterImpl(
                     new LogWriterStructureHolder(
                         new ILogFilter[0],
                         new Dictionary<string, LogSource>(),
@@ -139,7 +139,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
             this.traceListener = new MockTraceListener("original");
             this.instrumentationProvider = new MockLoggingInstrumentationProvider();
             this.logWriter =
-                new LogWriter(
+                new LogWriterImpl(
                     new LogWriterStructureHolder(
                         new ILogFilter[0],
                         new Dictionary<string, LogSource>(),

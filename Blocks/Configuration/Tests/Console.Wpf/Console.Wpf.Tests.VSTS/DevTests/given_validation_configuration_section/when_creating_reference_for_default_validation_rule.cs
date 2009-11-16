@@ -1,12 +1,23 @@
-﻿using System;
+﻿//===============================================================================
+// Microsoft patterns & practices Enterprise Library
+// Core
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Console.Wpf.ViewModel;
 using System.ComponentModel.Design;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_validation_configuration_section
@@ -89,7 +100,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_validation_configuration_section
         public void then_suggested_values_doesnt_contain_rules_contained_in_other_types()
         {
             var defaultRuleSetProperty = stringTypeReference.Property("DefaultRuleset");
-            Assert.AreEqual(1, defaultRuleSetProperty.BindableSuggestedValues.Count());
+            Assert.AreEqual(2, defaultRuleSetProperty.BindableSuggestedValues.Count());
             Assert.IsFalse(defaultRuleSetProperty.BindableSuggestedValues.Any( x=> x == "int-rules"));
         }
     }

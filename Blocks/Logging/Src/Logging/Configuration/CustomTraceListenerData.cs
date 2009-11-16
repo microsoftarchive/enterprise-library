@@ -25,6 +25,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
     /// </summary>
     [ResourceDescription(typeof(DesignResources), "CustomTraceListenerDataDescription")]
     [ResourceDisplayName(typeof(DesignResources), "CustomTraceListenerDataDisplayName")]
+    [ViewModel(LoggingDesignTime.ViewModelTypeNames.CustomTraceListenerDataViewModel)]
     public class CustomTraceListenerData
         : BasicCustomTraceListenerData
     {

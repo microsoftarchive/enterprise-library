@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="Console.Wpf.ComponentModel.Editors.CustomAttributesEditor"
+﻿<UserControl x:Class="Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors.CustomAttributesEditor"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" >
     

@@ -16,14 +16,14 @@ using System.ComponentModel.Design;
 using System.Configuration;
 using System.Linq;
 using System.Text;
-using Console.Wpf.ViewModel.Services;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides.Configuration;
-using Console.Wpf.ViewModel.BlockSpecifics;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design;
 
-namespace Console.Wpf.ViewModel
+namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
 {
 
     public class ConfigurationSourceModel
@@ -33,15 +33,17 @@ namespace Console.Wpf.ViewModel
         private readonly ConfigurationSectionLocator sectionLocator;
         private readonly IUnityContainer builder;
         private readonly ObservableCollection<SectionViewModel> sections;
-        private readonly ObservableCollection<SectionViewModel> environments;
+        private readonly ObservableCollection<EnvironmentalOverridesViewModel> environments;
+        private readonly ElementLookup lookup;
 
-        public ConfigurationSourceModel(ConfigurationSourceDependency viewModelDependency, ConfigurationSectionLocator sectionLocator, IUnityContainer builder, IUIServiceWpf uiService)
+        public ConfigurationSourceModel(ElementLookup lookup, ConfigurationSourceDependency viewModelDependency, ConfigurationSectionLocator sectionLocator, IUnityContainer builder, IUIServiceWpf uiService)
         {
             this.uiService = uiService;
             this.sectionLocator = sectionLocator;
             this.builder = builder;
             this.viewModelDependency = viewModelDependency;
-            this.environments = new ObservableCollection<SectionViewModel>();
+            this.lookup = lookup;
+            this.environments = new ObservableCollection<EnvironmentalOverridesViewModel>();
 
             sections = new ObservableCollection<SectionViewModel>();
         }
@@ -65,9 +67,10 @@ namespace Console.Wpf.ViewModel
                     if (section != null)
                     {
                         var sectionViewModel = SectionViewModel.CreateSection(builder, sectionName, section);
-                        sectionViewModel.AfterOpen(configSource);
+                        
+                        InitializeSection(sectionViewModel, new InitializeContext(configSource));
+                        sections.Add(sectionViewModel);
 
-                        AddSectionViewModel(section.SectionInformation.SectionName, sectionViewModel);
                     }
                 }
                 catch (Exception e)
@@ -76,23 +79,55 @@ namespace Console.Wpf.ViewModel
                 }
             }
 
-            Initialize();
+            foreach (var section in sections)
+            {
+                section.UpdateLayout();
+            }
         }
 
         private void Initialize()
         {
-
             //review: this seems tangled
             var elementLookup = builder.Resolve<ElementLookup>();
             elementLookup.AddCustomElement(builder.Resolve<CustomAttributesPropertyExtender>());
+        }
 
+        private void InitializeSection(SectionViewModel section, InitializeContext context)
+        {
+            //first init section
+            INeedInitialization sectionInitialize = section as INeedInitialization;
+            if (sectionInitialize != null)
+            {
+                sectionInitialize.Initialize(context);
+            }
+
+            //then init properties
+            var sectionPropertiesThatNeedInitialization = section.Properties.OfType<INeedInitialization>();
+            var propertiesOfContainedElementsThatNeedInitialization = section.DescendentElements().SelectMany(x => x.Properties).OfType<INeedInitialization>();
+
+            foreach (var propertyThatNeedsInitialization in 
+                    sectionPropertiesThatNeedInitialization.Union(
+                        propertiesOfContainedElementsThatNeedInitialization))
+            {
+                propertyThatNeedsInitialization.Initialize(context);
+            }
         }
 
         public void Save(IDesignConfigurationSource configurationSource)
         {
-            foreach (var section in Sections)
+            var locator = builder.Resolve<ConfigurationSectionLocator>();
+            foreach (string sectionName in locator.ConfigurationSectionNames)
+            {
+                configurationSource.RemoveLocalSection(sectionName);
+            }
+            foreach (var section in Sections.Where( x=>null == x as EnvironmentalOverridesViewModel))
             {
                 section.Save(configurationSource);
+            }
+
+            foreach (EnvironmentalOverridesViewModel envrionment in Environments)
+            {
+                envrionment.SaveDelta();
             }
         }
 
@@ -102,21 +137,27 @@ namespace Console.Wpf.ViewModel
             Initialize();
         }
 
-        public void LoadEnvironment(EnvironmentMergeSection environment)
+        public void LoadEnvironment(EnvironmentMergeSection environment, string environmentDeltaFile)
         {
-            var environmentSection = SectionViewModel.CreateSection(builder, EnvironmentMergeSection.EnvironmentMergeData, environment);
+            EnvironmentalOverridesViewModel environmentSection = (EnvironmentalOverridesViewModel)SectionViewModel.CreateSection(builder, EnvironmentMergeSection.EnvironmentMergeData, environment);
+            environmentSection.EnvironmentDeltaFile = environmentDeltaFile;
+
             environments.Add(environmentSection);
             sections.Add(environmentSection);
+
+            InitializeSection(environmentSection, new InitializeContext(null));
+
         }
 
         public void NewEnvironment()
         {
-            LoadEnvironment(new EnvironmentMergeSection() { EnvironmentName =  "Environment"});
+            LoadEnvironment(new EnvironmentMergeSection() { EnvironmentName =  "Environment"}, string.Empty);
         }
 
         public void RemoveEnvironment(EnvironmentalOverridesViewModel environnment)
         {
             environments.Remove(environnment);
+            lookup.RemoveSection(environnment);
             sections.Remove(environnment);
         }
 
@@ -128,7 +169,7 @@ namespace Console.Wpf.ViewModel
             viewModelDependency.OnCleared();
         }
 
-        public IEnumerable<SectionViewModel> Environments
+        public IEnumerable<EnvironmentalOverridesViewModel> Environments
         {
             get { return environments; }
         }
@@ -138,12 +179,14 @@ namespace Console.Wpf.ViewModel
             return Sections.Where(x=>x.SectionName == sectionName).Any();
         }
 
-        public void AddSection(string sectionName, ConfigurationSection defaultSection)
+        public void AddSection(string sectionName, ConfigurationSection section)
         {
-            var sectionViewModel = SectionViewModel.CreateSection(builder, sectionName, defaultSection);
-            sectionViewModel.InitializeAsNew();
+            var sectionViewModel = SectionViewModel.CreateSection(builder, sectionName, section);
 
-            AddSectionViewModel(sectionName, sectionViewModel);
+            InitializeSection(sectionViewModel, new InitializeContext(null));
+
+            sectionViewModel.UpdateLayout();
+            sections.Add(sectionViewModel);
         }
 
         public void RemoveSection(string sectionName)
@@ -151,14 +194,10 @@ namespace Console.Wpf.ViewModel
             SectionViewModel section = Sections.Where(x=>x.SectionName == sectionName).FirstOrDefault();
             if (section != null)
             {
-                Sections.Remove(section);
+                lookup.RemoveSection(section);
+                sections.Remove(section);
             }
-        }
-
-        private void AddSectionViewModel(string sectionName, SectionViewModel sectionViewModel)
-        {
-            sectionViewModel.UpdateLayout();
-            sections.Add(sectionViewModel);
+            
         }
 
     }

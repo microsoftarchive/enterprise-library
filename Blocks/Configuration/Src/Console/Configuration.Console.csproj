@@ -14,7 +14,7 @@
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel><ExpressionBlendVersion>3.0.1921.0</ExpressionBlendVersion>
-    <StartupObject>Console.Wpf.App</StartupObject>
+    <StartupObject>Microsoft.Practices.EnterpriseLibrary.Configuration.Console.App</StartupObject>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -128,12 +128,6 @@
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\delete.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\add.ico" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Extensions\" />

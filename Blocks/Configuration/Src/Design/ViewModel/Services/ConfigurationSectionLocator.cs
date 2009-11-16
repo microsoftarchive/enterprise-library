@@ -14,7 +14,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Console.Wpf.ViewModel.Services
+namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services
 {
     public abstract class ConfigurationSectionLocator
     {

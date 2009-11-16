@@ -40,8 +40,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         private const string useEncryptionProperty = "useEncryption";
         private const string transactionTypeProperty = "transactionType";
 
-        private static ConfigurationPropertyCollection properties;
-
         /// <summary>
         /// This field supports the Enterprise Library infrastructure and is not intended to be used directly from your code.
         /// The Priority value for the Priority property.
@@ -83,63 +81,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// </summary>
         public const MessageQueueTransactionType DefaultTransactionType = MessageQueueTransactionType.None;
 
-        static MsmqTraceListenerData()
-        {
-            properties = new ConfigurationPropertyCollection();
-            properties.Add(
-                new ConfigurationProperty(
-                    nameProperty,
-                    typeof(string),
-                    "Name",
-                    null,
-                    new StringValidator(1),
-                    ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey));
-            properties.Add(
-                new ConfigurationProperty(
-                    typeProperty,
-                    typeof(string),
-                    null,
-                    null,
-                    null,
-                    ConfigurationPropertyOptions.IsRequired));
-            properties.Add(
-                new ConfigurationProperty(
-                    listenerDataTypeProperty,
-                    typeof(string),
-                    null,
-                    null,
-                    null,
-                    ConfigurationPropertyOptions.IsRequired));
-            properties.Add(
-                new ConfigurationProperty(
-                    traceOutputOptionsProperty,
-                    typeof(TraceOptions)));
-            properties.Add(
-                new ConfigurationProperty(
-                    filterProperty,
-                    typeof(SourceLevels),
-                    SourceLevels.All));
-            properties.Add(
-                new ConfigurationProperty(
-                    queuePathProperty,
-                    typeof(string),
-                    null,
-                    ConfigurationPropertyOptions.IsRequired));
-            properties.Add(
-                new ConfigurationProperty(
-                    formatterNameProperty,
-                    typeof(string),
-                    null,
-                    ConfigurationPropertyOptions.IsRequired));
-            properties.Add(new ConfigurationProperty(messagePriorityProperty, typeof(MessagePriority), DefaultPriority));
-            properties.Add(new ConfigurationProperty(timeToReachQueueProperty, typeof(TimeSpan), DefaultTimeToReachQueue));
-            properties.Add(new ConfigurationProperty(timeToBeReceivedProperty, typeof(TimeSpan), DefaultTimeToBeReceived));
-            properties.Add(new ConfigurationProperty(recoverableProperty, typeof(bool), DefaultRecoverable));
-            properties.Add(new ConfigurationProperty(useAuthenticationProperty, typeof(bool), DefaultUseAuthentication));
-            properties.Add(new ConfigurationProperty(useDeadLetterQueueProperty, typeof(bool), DefaultUseDeadLetter));
-            properties.Add(new ConfigurationProperty(useEncryptionProperty, typeof(bool), DefaultUseEncryption));
-            properties.Add(new ConfigurationProperty(transactionTypeProperty, typeof(MessageQueueTransactionType), DefaultTransactionType));
-        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MsmqTraceListenerData"/> class with default values.
@@ -225,6 +166,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// <summary>
         /// Gets or sets the message queue path.
         /// </summary>
+        [ConfigurationProperty(queuePathProperty, Options=ConfigurationPropertyOptions.IsRequired)]
         public string QueuePath
         {
             get
@@ -241,6 +183,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// Gets or sets formatter name.
         /// </summary>
         [Reference(typeof(NameTypeConfigurationElementCollection<FormatterData, CustomFormatterData>), typeof(FormatterData))]
+        [ConfigurationProperty(formatterNameProperty, Options=ConfigurationPropertyOptions.IsRequired)]
         public string Formatter
         {
             get
@@ -256,6 +199,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// <summary>
         /// Gets or sets the message priority.
         /// </summary>
+        [ConfigurationProperty(messagePriorityProperty, DefaultValue=DefaultPriority)]
         public MessagePriority MessagePriority
         {
             get
@@ -271,6 +215,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// <summary>
         /// Gets or sets the time to reach queue.
         /// </summary>
+        [ConfigurationProperty(timeToReachQueueProperty, DefaultValue = "49710.06:28:15")] //DefaultValue = Message.InfiniteTimeout
         public TimeSpan TimeToReachQueue
         {
             get
@@ -286,6 +231,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// <summary>
         /// Gets or sets the time to be received.
         /// </summary>
+        [ConfigurationProperty(timeToBeReceivedProperty, DefaultValue = "49710.06:28:15")] //DefaultValue = Message.InfiniteTimeout
         public TimeSpan TimeToBeReceived
         {
             get
@@ -301,6 +247,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// <summary>
         /// Gets or sets the recoverable value.
         /// </summary>
+        [ConfigurationProperty(recoverableProperty, DefaultValue=DefaultRecoverable)]
         public bool Recoverable
         {
             get
@@ -316,6 +263,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// <summary>
         /// Gets or sets the use authentication value.
         /// </summary>
+        [ConfigurationProperty(useAuthenticationProperty, DefaultValue=DefaultUseAuthentication)]
         public bool UseAuthentication
         {
             get
@@ -331,6 +279,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// <summary>
         /// Gets or sets the use dead letter value.
         /// </summary>
+        [ConfigurationProperty(useDeadLetterQueueProperty, DefaultValue = DefaultUseDeadLetter)]
         public bool UseDeadLetterQueue
         {
             get
@@ -346,6 +295,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// <summary>
         /// Gets or sets the use encryption value.
         /// </summary>
+        [ConfigurationProperty(useEncryptionProperty, DefaultValue = DefaultUseEncryption)]
         public bool UseEncryption
         {
             get
@@ -361,6 +311,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// <summary>
         /// Gets or sets the transaction type.
         /// </summary>
+        [ConfigurationProperty(transactionTypeProperty, DefaultValue = DefaultTransactionType)]
         public MessageQueueTransactionType TransactionType
         {
             get
@@ -373,21 +324,21 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
             }
         }
 
-        /// <summary>
-        /// This property supports the Enterprise Library infrastructure and is not intended to be used directly from your code.
-        /// Builds a <see cref="EmailTraceListener"/> based on an instance of <see cref="EmailTraceListenerData"/>.
-        /// Gets the collection of properties.
-        /// </summary>
-        /// <remarks>
-        /// The default implementation is overriden to deal with non-constant defaults.
-        /// </remarks>
-        protected override ConfigurationPropertyCollection Properties
-        {
-            get
-            {
-                return properties;
-            }
-        }
+        ///// <summary>
+        ///// This property supports the Enterprise Library infrastructure and is not intended to be used directly from your code.
+        ///// Builds a <see cref="EmailTraceListener"/> based on an instance of <see cref="EmailTraceListenerData"/>.
+        ///// Gets the collection of properties.
+        ///// </summary>
+        ///// <remarks>
+        ///// The default implementation is overriden to deal with non-constant defaults.
+        ///// </remarks>
+        //protected override ConfigurationPropertyCollection Properties
+        //{
+        //    get
+        //    {
+        //        return properties;
+        //    }
+        //}
 
         /// <summary>
         /// Returns a lambda expression that represents the creation of the trace listener described by this

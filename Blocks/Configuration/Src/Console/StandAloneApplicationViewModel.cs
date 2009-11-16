@@ -1,27 +1,40 @@
-﻿using System;
+﻿//===============================================================================
+// Microsoft patterns & practices Enterprise Library
+// Core
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Console.Properties;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
 using Microsoft.Win32;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Xml.Linq;
 using System.Xml;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design;
 using System.Windows;
 
-namespace Console.Wpf.ViewModel.Services
+namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Console
 {
-    public class StandAloneApplicationViewModel : INotifyPropertyChanged, IPropertyDirtyStateListener
+    public class StandAloneApplicationViewModel : INotifyPropertyChanged, IApplicationModel
     {
         ObservableCollection<string> mostRecentlyUsed;
         IUIServiceWpf uiService;
         ConfigurationSourceModel sourceModel;
         ElementLookup lookup;
-        string currentFileName;
+        string configurationFileName;
         bool isDirty;
 
         public StandAloneApplicationViewModel(IUIServiceWpf uiService, ConfigurationSourceModel sourceModel, ElementLookup lookup)
@@ -44,13 +57,13 @@ namespace Console.Wpf.ViewModel.Services
             if (!PromptSaveChangesIfDirtyAndContinue()) return;
 
             var dialog = new OpenFileDialog()
-            {
-                Title = Resources.OpenConfigurationFileDialogTitle,
-                DefaultExt = "*.config",
-                Multiselect = false,
-                Filter = Resources.OpenConfigurationFileDialogFilter,
-                FilterIndex = 0
-            };
+                             {
+                                 Title = Resources.OpenConfigurationFileDialogTitle,
+                                 DefaultExt = "*.config",
+                                 Multiselect = false,
+                                 Filter = Resources.OpenConfigurationFileDialogFilter,
+                                 FilterIndex = 0
+                             };
 
             var result = uiService.ShowFileDialog(dialog);
 
@@ -60,10 +73,10 @@ namespace Console.Wpf.ViewModel.Services
                 {
                     sourceModel.Load(source);
 
-                    CurrentFilePath = result.FileName;
+                    ConfigurationFilePath = result.FileName;
                     IsDirty = false;
                     
-                    mostRecentlyUsed.Add(currentFileName);
+                    mostRecentlyUsed.Add(configurationFileName);
                 }
             }
         }
@@ -73,44 +86,39 @@ namespace Console.Wpf.ViewModel.Services
             if (IsDirty)
             {
                 var confirmationResult = uiService.ShowMessageWpf(
-                            Resources.PromptContinueOperationDiscardChangesWarningMessage,
-                            Resources.PromptContinueOperationDiscardChangesWarningTitle, MessageBoxButton.YesNoCancel);
+                    Resources.PromptContinueOperationDiscardChangesWarningMessage,
+                    Resources.PromptContinueOperationDiscardChangesWarningTitle, MessageBoxButton.YesNoCancel);
                 if (confirmationResult == MessageBoxResult.Cancel)
                 {
                     return false;
                 }
                 if (confirmationResult == MessageBoxResult.Yes)
                 {
-                    Save();
+                    return Save();
                 }
             }
             return true;
         }
 
-        public void New()
+        public bool New()
         {
-            if (!PromptSaveChangesIfDirtyAndContinue()) return;
+            if (!PromptSaveChangesIfDirtyAndContinue()) return false;
 
             sourceModel.New();
             IsDirty = false;
+            return true;
         }
 
-        public void Save()
+        public bool Save()
         {
-            SaveImplementation(CurrentFilePath);
+            return SaveImplementation(ConfigurationFilePath);
         }
-
-        private void SaveImplementation(string fileName)
+        
+        public bool EnsureCanSaveConfigurationFile(string configurationFile)
         {
-            if (String.IsNullOrEmpty(fileName))
+            if (!File.Exists(configurationFile))
             {
-                SaveAs();
-                return;
-            }
-
-            if (!File.Exists(fileName))
-            {
-                using (var textWriter = File.CreateText(fileName))
+                using (var textWriter = File.CreateText(configurationFile))
                 {
                     textWriter.WriteLine("<configuration />");
                     textWriter.Close();
@@ -121,7 +129,7 @@ namespace Console.Wpf.ViewModel.Services
                 bool fileIsInvalidConfigurationFile = false;
                 try
                 {
-                    using (FileConfigurationSource source = new FileConfigurationSource(fileName))
+                    using (FileConfigurationSource source = new FileConfigurationSource(configurationFile))
                     {
                         source.GetSection("applicationSettings");
                     }
@@ -130,79 +138,94 @@ namespace Console.Wpf.ViewModel.Services
                 catch
                 {
                     var warningResults = uiService.ShowMessageWpf(
-                        string.Format(Resources.Culture, Resources.PromptSaveOverFileThatCannotBeReadFromWarningMessage, fileName),
-                        Resources.PromptSaveOverFileThatCannotBeReadFromWarningTitle, 
+                        string.Format(Resources.Culture, Resources.PromptSaveOverFileThatCannotBeReadFromWarningMessage, configurationFile),
+                        Resources.PromptSaveOverFileThatCannotBeReadFromWarningTitle,
                         MessageBoxButton.OKCancel);
 
                     if (warningResults == MessageBoxResult.Cancel)
                     {
-                        return;
+                        return false;
                     }
                     fileIsInvalidConfigurationFile = true;
                 }
 
 
-                var attributes = File.GetAttributes(fileName);
+                var attributes = File.GetAttributes(configurationFile);
                 if ((attributes | FileAttributes.ReadOnly) == attributes)
                 {
                     var overwriteReadonlyDialogResult = uiService.ShowMessageWpf(
-                            Resources.PromptSaveOverFileThatCannotBeReadFromWarningMessage, 
-                            Resources.PromptSaveOverFileThatCannotBeReadFromWarningTitle, 
-                            MessageBoxButton.YesNoCancel);
+                        Resources.PromptSaveOverFileThatCannotBeReadFromWarningMessage,
+                        Resources.PromptSaveOverFileThatCannotBeReadFromWarningTitle,
+                        MessageBoxButton.YesNoCancel);
 
                     switch (overwriteReadonlyDialogResult)
                     {
                         case MessageBoxResult.No:
 
-                            SaveAs();
-                            return;
+                            return SaveAs();
+
 
                         case MessageBoxResult.Yes:
 
-                            File.SetAttributes(currentFileName, attributes ^ FileAttributes.ReadOnly);
+                            File.SetAttributes(configurationFileName, attributes ^ FileAttributes.ReadOnly);
 
                             break;
 
                         default:
 
-                            return;
+                            return false;
                     }
                 }
 
                 if (fileIsInvalidConfigurationFile)
                 {
-                    File.Delete(fileName);
-                    using (var textWriter = File.CreateText(fileName))
+                    File.Delete(configurationFile);
+                    using (var textWriter = File.CreateText(configurationFile))
                     {
                         textWriter.WriteLine("<configuration />");
                     }
                 }
             }
-            using (DesignConfigurationSource configurationSource = new DesignConfigurationSource(fileName))
+            return true;
+        }
+
+        private bool SaveImplementation(string fileName)
+        {
+            if (String.IsNullOrEmpty(fileName))
+            {
+                return SaveAs();
+            }
+
+            if (!EnsureCanSaveConfigurationFile(fileName))
+            {
+                return false;
+            }
+            
+            using (var configurationSource = new DesignConfigurationSource(fileName))
             {
                 sourceModel.Save(configurationSource);
             }
 
-            CurrentFilePath = fileName;
-            
+            ConfigurationFilePath = fileName;
             IsDirty = false;
+            return true;
         }
 
-        public void SaveAs()
+        public bool SaveAs()
         {
             var dialog = new SaveFileDialog()
-            {
-                Title = Resources.SaveConfigurationFileDialogTitle,
-                DefaultExt = "*.config",
-                Filter = Resources.SaveConfigurationFileDialogFilter,
-                FilterIndex = 0
-            };
+                             {
+                                 Title = Resources.SaveConfigurationFileDialogTitle,
+                                 DefaultExt = "*.config",
+                                 Filter = Resources.SaveConfigurationFileDialogFilter,
+                                 FilterIndex = 0
+                             };
 
             var saveDialogResult = uiService.ShowFileDialog(dialog);
 
-            if (saveDialogResult.DialogResult != true) return;
+            if (saveDialogResult.DialogResult != true) return false;
 
-            SaveImplementation(saveDialogResult.FileName);
+            return SaveImplementation(saveDialogResult.FileName);
         }
 
         public IEnumerable<string> MostRecentlyUsed
@@ -213,13 +236,24 @@ namespace Console.Wpf.ViewModel.Services
         public bool IsDirty
         {
             get { return isDirty; }
-            private set { isDirty = value; OnPropertyChanged("IsDirty"); }
+            set { isDirty = value; OnPropertyChanged("IsDirty"); }
         }
 
-        public string CurrentFilePath
+        public string ConfigurationFilePath
         {
-            get { return currentFileName; }
-            private set { currentFileName = value; OnPropertyChanged("CurrentFilePath"); }
+            get { return configurationFileName; }
+            set
+            {
+                if (!Path.IsPathRooted(value))
+                {
+                    configurationFileName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, value);
+                }
+                else
+                {
+                    configurationFileName = value;
+                }
+                OnPropertyChanged("ConfigurationFilePath");
+            }
         }
 
         public string ApplicationTitle
@@ -227,7 +261,7 @@ namespace Console.Wpf.ViewModel.Services
             get
             {
                 return string.Format("Enterprise Library Configuration - {0} {1}",
-                                     string.IsNullOrEmpty(CurrentFilePath) ? "New Configuration" : CurrentFilePath,
+                                     string.IsNullOrEmpty(ConfigurationFilePath) ? "New Configuration" : ConfigurationFilePath,
                                      IsDirty ? "*" : "");
             }
 

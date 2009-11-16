@@ -28,7 +28,9 @@ using Microsoft.Practices.EnterpriseLibrary.Caching.Configuration;
 [assembly : SecurityTransparent]
 
 [assembly: HandlesSection(CacheManagerSettings.SectionName)]
-[assembly: AddApplicationBlockCommand("Add Caching Settings", 
+[assembly: AddApplicationBlockCommand(
             CacheManagerSettings.SectionName,
             typeof(CacheManagerSettings),
+            TitleResourceName = "AddCachingSettings",
+            TitleResourceType = typeof(DesignResources),
             CommandModelTypeName = CachingDesignTime.CommandTypeNames.AddCachingBlockCommand)]

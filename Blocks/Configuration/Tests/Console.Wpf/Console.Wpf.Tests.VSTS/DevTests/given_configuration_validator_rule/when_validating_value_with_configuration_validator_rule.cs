@@ -14,7 +14,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
-using Console.Wpf.Validation;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Validation;
 using System.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Globalization;

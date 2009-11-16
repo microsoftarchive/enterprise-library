@@ -1,4 +1,15 @@
-﻿using System;
+﻿//===============================================================================
+// Microsoft patterns & practices Enterprise Library
+// Core
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,16 +17,19 @@ using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Data.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Data.Oracle.Configuration;
-using Console.Wpf.ViewModel.Services;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
 using Microsoft.Practices.Unity;
 using System.ComponentModel;
 using System.Windows;
-using Console.Wpf.ComponentModel.Editors;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors;
 using System.Collections.Specialized;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design;
 
-namespace Console.Wpf.ViewModel.BlockSpecifics
+namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics
 {
+
+
+
     public class DataSectionViewModel : PositionedSectionViewModel
     {
         SobordinateSectionViewModel dataSettingsViewModel;
@@ -28,22 +42,21 @@ namespace Console.Wpf.ViewModel.BlockSpecifics
             this.builder = builder;
         }
 
-        public override void InitializeAsNew()
-        {
-            InitializeSubordinateSectionViewModels(null, null);
 
-            base.InitializeAsNew();
-        }
-
-        public override void AfterOpen(IDesignConfigurationSource configSource)
+        public override void Initialize(InitializeContext context)
         {
-            InitializeSubordinateSectionViewModels(
-                (DatabaseSettings)configSource.GetLocalSection(DatabaseSettings.SectionName),
-                (OracleConnectionSettings)configSource.GetLocalSection(OracleConnectionSettings.SectionName));
+            if (context.WasLoadedFromSource)
+            {
+                InitializeSubordinateSectionViewModels(
+                    (DatabaseSettings)context.LoadSource.GetLocalSection(DatabaseSettings.SectionName),
+                    (OracleConnectionSettings)context.LoadSource.GetLocalSection(OracleConnectionSettings.SectionName));
+            }
+            else
+            {
+                InitializeSubordinateSectionViewModels(null, null);
+            }
 
             InitializeGridPosition();
-
-            base.AfterOpen(configSource);
         }
 
         public override void Save(IDesignConfigurationSource configurationSource)
@@ -79,8 +92,6 @@ namespace Console.Wpf.ViewModel.BlockSpecifics
             if (oracleSettings == null) oracleSettings = new OracleConnectionSettings();
             oracleSettingsViewModel = new SobordinateSectionViewModel(this, builder, OracleConnectionSettings.SectionName, oracleSettings);
             elementLookup.AddSection(oracleSettingsViewModel);
-
-            InitializeGridPosition();
         }
 
         public override void Delete()

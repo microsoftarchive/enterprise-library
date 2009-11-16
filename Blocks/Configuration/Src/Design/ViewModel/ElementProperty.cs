@@ -22,20 +22,37 @@ using System.Windows.Input;
 using System.Globalization;
 using Microsoft.Practices.Unity;
 
-namespace Console.Wpf.ViewModel
+namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
 {
+    ///<summary>
+    /// A property model from a property discovered on a <see cref="ConfigurationElement"/>.
+    ///</summary>
     public class ElementProperty : Property
     {
         private readonly ConfigurationPropertyAttribute configurationPropertyAttribute;
         private readonly PropertyInformation configurationProperty;
         private readonly ElementViewModel declaringElement;
 
+        ///<summary>
+        /// Initializes an instance of ElementProperty.
+        ///</summary>
+        ///<param name="serviceProvider">Service provider used to locate certain services for the configuration system.</param>
+        ///<param name="parent">The parent <see cref="ElementViewModel"/> owning the property.</param>
+        ///<param name="declaringProperty">The description of the property.</param>
         [InjectionConstructor]
         public ElementProperty(IServiceProvider serviceProvider, ElementViewModel parent, PropertyDescriptor declaringProperty)
             : this(serviceProvider, parent, declaringProperty, new Attribute[0])
         {
         }
 
+        ///<summary>
+        /// Initializes an instance of ElementProperty.
+        ///</summary>
+        ///<param name="serviceProvider">Service provider used to locate certain services for the configuration system.</param>
+        ///<param name="parent">The parent <see cref="ElementViewModel"/> owning the property.</param>
+        ///<param name="declaringProperty">The description of the property.</param>
+        ///<param name="additionalAttributes">Additional attributes made available to the ElementProperty.</param>
+        ///<exception cref="ArgumentNullException"></exception>
         public ElementProperty(IServiceProvider serviceProvider, ElementViewModel parent, PropertyDescriptor declaringProperty, IEnumerable<Attribute> additionalAttributes)
             : base(serviceProvider, parent == null ? null : parent.ConfigurationElement, declaringProperty, additionalAttributes)
         {
@@ -45,12 +62,10 @@ namespace Console.Wpf.ViewModel
             ConfigurationElement parentElement = parent.ConfigurationElement;
 
             configurationPropertyAttribute = declaringProperty.Attributes.OfType<ConfigurationPropertyAttribute>().FirstOrDefault();
-            Debug.Assert(configurationPropertyAttribute != null);
-
-            configurationProperty = parentElement.ElementInformation.Properties[configurationPropertyAttribute.Name];
-            Debug.Assert(configurationProperty != null);
-            
-
+            if (configurationPropertyAttribute != null)
+            {
+                configurationProperty = parentElement.ElementInformation.Properties[configurationPropertyAttribute.Name];
+            }
         }
 
         /// <summary>
@@ -61,17 +76,21 @@ namespace Console.Wpf.ViewModel
             get { return configurationPropertyAttribute != null ? configurationPropertyAttribute.Name : string.Empty; }
         }
 
+        ///<summary>
+        /// Returns true if the property is required.
+        ///</summary>
         public virtual bool IsRequired
         {
-            get { return configurationProperty.IsRequired; }
+            get { return configurationProperty != null ? configurationProperty.IsRequired : false; }
         }
 
+        ///<summary>
+        /// The element that contains the property.
+        ///</summary>
         public ElementViewModel DeclaringElement
         {
             get { return declaringElement; }
         }
-        
+
     }
-
-
 }

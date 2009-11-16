@@ -30,7 +30,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         {
             AppDomain.CurrentDomain.SetData("APPBASE", Environment.CurrentDirectory);
 
-            this.logWriter = new LogWriter(new ILogFilter[0], new LogSource[0], new LogSource("name"), "default");
+            this.logWriter = new LogWriterImpl(new ILogFilter[0], new LogSource[0], new LogSource("name"), "default");
             this.container = new UnityContainer();
             this.container.RegisterInstance(this.logWriter);
         }

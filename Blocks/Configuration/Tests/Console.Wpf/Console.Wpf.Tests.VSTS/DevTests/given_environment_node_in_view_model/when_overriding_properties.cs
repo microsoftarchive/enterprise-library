@@ -13,10 +13,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
-using Console.Wpf.ViewModel.BlockSpecifics;
-using Console.Wpf.ViewModel;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides.Configuration;
 
@@ -36,6 +36,13 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_environment_node_in_view_model
         public void then_child_properties_are_read_write()
         {
             Assert.IsFalse(OverriddenExceptionMessage.ReadOnly);
+        }
+
+
+        [TestMethod]
+        public void then_environmental_merge_node_doesnt_have_overrides()
+        {
+            Assert.IsFalse(base.EnvironmentViewModel.Properties.Where(x => x.PropertyName.Contains("Overrides")).Any());
         }
 
         [TestMethod]
@@ -60,7 +67,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_environment_node_in_view_model
         }
 
         [TestMethod]
-        public void then_overridden_value_is_set_on__environmet_section()
+        public void then_overridden_value_is_set_on_environmet_section()
         {
             OverriddenExceptionMessage.Value = "new exception message";
 
@@ -68,8 +75,8 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_environment_node_in_view_model
             var mergeRecord = mergeElements.Where(x => x.ConfigurationNodePath == base.WrapHandler.Path).FirstOrDefault();
 
             Assert.IsNotNull(mergeRecord);
-            Assert.IsTrue(mergeRecord.OverriddenProperties.AllKeys.Contains("ExceptionMessage"));
-            Assert.AreEqual("new exception message", mergeRecord.OverriddenProperties["ExceptionMessage"].Value);
+            Assert.IsTrue(mergeRecord.OverriddenProperties.AllKeys.Contains("exceptionMessage"));
+            Assert.AreEqual("new exception message", mergeRecord.OverriddenProperties["exceptionMessage"].Value);
         }
 
         [TestMethod]

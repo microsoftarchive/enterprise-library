@@ -12,12 +12,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
 using System.Configuration;
 using System.ComponentModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
-using Console.Wpf.ViewModel;
 using System.ComponentModel.Design;
 using Console.Wpf.Tests.VSTS.DevTests.Contexts;
 using Microsoft.Practices.Unity;
@@ -61,13 +61,13 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_configuration_element_with_prope
                 set { base[numberProperty] = value; }
             }
 
-            [ConfigurationProperty(guidProperty)]
-            [DesignTimeType(typeof(string), typeof(GuidConverter))]
-            public Guid GuidAsString
-            {
-                get { return (Guid)base[guidProperty]; }
-                set { base[guidProperty] = value; }
-            }
+            //[ConfigurationProperty(guidProperty)]
+            //[DesignTimeType(typeof(string), typeof(GuidConverter))]
+            //public Guid GuidAsString
+            //{
+            //    get { return (Guid)base[guidProperty]; }
+            //    set { base[guidProperty] = value; }
+            //}
 
             [ConfigurationProperty(requiredProperty, IsRequired=true)]
             public string RequiredProperty
@@ -219,44 +219,6 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_configuration_element_with_prope
         }
     }
 
-    [TestClass]
-    public class when_disovering_property_with_designtime_attributes : given_configuration_element_with_properties
-    {
-        IEnumerable<Property> properties;
-        ConfigurationElementWithSimpleProperties configurationElement;
-
-        protected override void Act()
-        {
-            var sectionModel = SectionViewModel.CreateSection(Container, "mock section", SectionWithSimpleProperties);
-
-            configurationElement = (ConfigurationElementWithSimpleProperties)sectionModel.ConfigurationElement;
-            properties = sectionModel.Properties;
-        }
-
-        [TestMethod]
-        public void then_property_type_matches_designtime_type()
-        {
-            Property guidProperty = properties.Where(x => x.PropertyName == "GuidAsString").FirstOrDefault();
-            Assert.AreEqual(typeof(string), guidProperty.Type);
-        }
-
-        [TestMethod]
-        public void then_property_value_has_designtime_type()
-        {
-            Property guidProperty = properties.Where(x => x.PropertyName == "GuidAsString").FirstOrDefault();
-            Assert.IsInstanceOfType(guidProperty.Value, typeof(string));
-        }
-
-        [TestMethod]
-        public void then_property_value_can_be_assigned_to_designtime_type()
-        {
-            Guid g = Guid.NewGuid();
-            Property guidProperty = properties.Where(x => x.PropertyName == "GuidAsString").FirstOrDefault();
-            guidProperty.Value = g.ToString();
-
-            Assert.AreEqual(g, configurationElement.GuidAsString);
-        }
-    }
 
     [TestClass]
     public class when_disovering_property_with_required_value : given_configuration_element_with_properties

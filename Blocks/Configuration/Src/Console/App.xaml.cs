@@ -11,9 +11,9 @@
 
 using System.Windows;
 
-namespace Console.Wpf
+namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Console
 {
-    /// <summary>
+    /// <summary> 
     /// Interaction logic for App.xaml
     /// </summary>
     public partial class App : Application

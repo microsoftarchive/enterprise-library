@@ -1,4 +1,15 @@
-﻿using System;
+﻿//===============================================================================
+// Microsoft patterns & practices Enterprise Library
+// Cryptography Application Block
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,17 +27,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
             ///<summary>
             ///</summary>
             public const string CryptographySectionViewModel =
-                "Console.Wpf.ViewModel.BlockSpecifics.CryptographySectionViewModel, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
+                "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.CryptographySectionViewModel, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
 
             ///<summary>
             ///</summary>
             public const string KeyedHashAlgorithmProviderDataViewModel =
-                "Console.Wpf.ViewModel.BlockSpecifics.KeyedHashAlgorithmProviderDataViewModel, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
+                "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.KeyedHashAlgorithmProviderDataViewModel, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
 
             ///<summary>
             ///</summary>
             public const string SymmetricAlgorithmProviderDataViewModel =
-                "Console.Wpf.ViewModel.BlockSpecifics.SymmetricAlgorithmProviderDataViewModel, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
+                "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.SymmetricAlgorithmProviderDataViewModel, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
 
         }
 
@@ -34,10 +45,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         public static class CommandTypeNames
         {
             /// <summary/>
-            public const string AddKeyedHashProviderCommand = "Console.Wpf.ViewModel.BlockSpecifics.KeyedHashAlgorithmProviderAddCommand, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
+            public const string AddKeyedHashProviderCommand = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.KeyedHashAlgorithmProviderAddCommand, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
 
             /// <summary/>
-            public const string AddSymmetricAlgorithmProviderCommand = "Console.Wpf.ViewModel.BlockSpecifics.SymmetricAlgorithmProviderAddCommand, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
+            public const string AddSymmetricAlgorithmProviderCommand = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.SymmetricAlgorithmProviderAddCommand, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
         }
     }
 }

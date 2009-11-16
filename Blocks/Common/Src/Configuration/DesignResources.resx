@@ -489,4 +489,13 @@
   <data name="KeyValueConfigurationElementMetadataValueDisplayName" xml:space="preserve">
     <value>Value</value>
   </data>
+  <data name="AddApplicationSettingsTitle" xml:space="preserve">
+    <value>Add Application Settings</value>
+  </data>
+  <data name="AddConfigurationSourcesTitle" xml:space="preserve">
+    <value>Add Configuration Settings</value>
+  </data>
+  <data name="AddInstrumentationSettingsTitle" xml:space="preserve">
+    <value>Add Instrumentation Settings</value>
+  </data>
 </root>

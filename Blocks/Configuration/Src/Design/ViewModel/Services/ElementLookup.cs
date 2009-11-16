@@ -21,7 +21,7 @@ using System.ComponentModel;
 using System.Collections.ObjectModel;
 
 
-namespace Console.Wpf.ViewModel.Services
+namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services
 {
     public class ElementLookup : INotifyCollectionChanged
     {

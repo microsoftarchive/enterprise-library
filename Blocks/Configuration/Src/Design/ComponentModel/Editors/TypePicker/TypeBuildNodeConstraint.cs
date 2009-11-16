@@ -12,7 +12,7 @@
 using System;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
-namespace Console.Wpf.ComponentModel.Editors
+namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors
 {
     /// <summary>
     /// Represents a constraint on a <see cref="TypeBuildNode"/>.

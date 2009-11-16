@@ -117,7 +117,22 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ExceptionCollectionElementEditorNeedsTemplateAttribute" xml:space="preserve">
+    <value>Property {0} has a CollectionElementEditor specified, but not the required  CollectionEditorTemplateAttribute.</value>
+  </data>
+  <data name="ExceptionStringNullOrEmpty" xml:space="preserve">
+    <value>The value can not be null or an empty string.</value>
+  </data>
   <data name="NewCollectionElementNameFormat" xml:space="preserve">
     <value>New {0} {1}</value>
+  </data>
+  <data name="ReferencePropertyInvalidType" xml:space="preserve">
+    <value>ElementReferenceProperty may only be created for properties of type string.  Check property on which the ReferenceAttribute is supplied.</value>
+  </data>
+  <data name="ValidationErrorToString" xml:space="preserve">
+    <value>The property {0} is invalid for {1}. Message: {2}</value>
+  </data>
+  <data name="ValidationRequiredPropertyValueMissing" xml:space="preserve">
+    <value>The field {0} is missing a required value.</value>
   </data>
 </root>

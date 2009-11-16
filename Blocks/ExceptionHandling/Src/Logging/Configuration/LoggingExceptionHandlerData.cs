@@ -45,7 +45,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Config
         /// <summary>
         /// Initializes with default values.
         /// </summary>
-        public LoggingExceptionHandlerData()
+        public LoggingExceptionHandlerData() : base(typeof(LoggingExceptionHandler))
         {
         }
 
@@ -189,12 +189,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Config
         /// <value>
         /// The formatter fully qualified assembly type name
         /// </value>
-        [ConfigurationProperty(formatterType, IsRequired = true, DefaultValue="Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.TextExceptionFormatter, Microsoft.Practices.EnterpriseLibrary.ExceptionHandling")]
-        //TODO: review default value correct + test.
+        [ConfigurationProperty(formatterType, IsRequired = true)]
         [ResourceDescription(typeof(DesignResources), "LoggingExceptionHandlerDataFormatterTypeNameDescription")]
         [ResourceDisplayName(typeof(DesignResources), "LoggingExceptionHandlerDataFormatterTypeNameDisplayName")]
         [Editor(CommonDesignTime.EditorTypes.TypeSelector, CommonDesignTime.EditorTypes.UITypeEditor)]
-        [BaseType(typeof(TextExceptionFormatter))]
+        [BaseType(typeof(ExceptionFormatter))]
         public string FormatterTypeName
         {
             get { return (string)this[formatterType]; }

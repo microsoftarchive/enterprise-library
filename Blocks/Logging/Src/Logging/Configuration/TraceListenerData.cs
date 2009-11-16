@@ -138,6 +138,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         [ConfigurationProperty(traceOutputOptionsProperty, IsRequired = false, DefaultValue=TraceOptions.None)]
         [ResourceDescription(typeof(DesignResources), "TraceListenerDataTraceOutputOptionsDescription")]
         [ResourceDisplayName(typeof(DesignResources), "TraceListenerDataTraceOutputOptionsDisplayName")]
+        [Editor(CommonDesignTime.EditorTypes.Flags, CommonDesignTime.EditorTypes.FrameworkElement)]
         public TraceOptions TraceOutputOptions
         {
             get

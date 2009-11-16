@@ -1,4 +1,15 @@
-﻿using System;
+﻿//===============================================================================
+// Microsoft patterns & practices Enterprise Library
+// Core
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
@@ -7,7 +18,8 @@ using System.Text;
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
 {
     /// <summary>
-    /// 
+    /// Attribute class that is used to add a custom add command for a Element View Model.<br/>
+    /// The Type Picking Command displays a type picker prior to adding the target element and can use its result to initialize the added element.
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
     public class TypePickingCommandAttribute : CommandAttribute
@@ -15,7 +27,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
         private string property;
 
         /// <summary>
-        /// 
+        /// Initializes a new instance of the <see cref="TypePickingCommandAttribute"/> class.
         /// </summary>
         public TypePickingCommandAttribute()
             :this("TypeName")
@@ -24,7 +36,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
         }
 
         ///<summary>
-        /// Instantiates a new <see cref="TypePickingCommandAttribute"/>
+        /// Initializes a new instance of the <see cref="TypePickingCommandAttribute"/> class.
         ///</summary>
         public TypePickingCommandAttribute(string property)
             :base(CommonDesignTime.CommandTypeNames.AddProviderUsingTypePickerCommand)

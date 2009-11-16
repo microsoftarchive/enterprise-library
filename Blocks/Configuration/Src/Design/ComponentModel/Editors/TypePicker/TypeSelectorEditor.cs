@@ -24,7 +24,7 @@ using System.ComponentModel;
 using System.Security;
 using System.Security.Permissions;
 
-namespace Console.Wpf.ComponentModel.Editors
+namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors
 {
     /// <summary>
     /// Provides a user interface for seleting a <see cref="Type"/>.

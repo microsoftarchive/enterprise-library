@@ -10,10 +10,12 @@
 //===============================================================================
 
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Text;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides.Configuration
 {
@@ -21,7 +23,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverr
     /// Represents a collection of <see cref="EnvironmentNodeMergeElement"/> objects.
     /// </summary>
     [ConfigurationCollection(typeof(EnvironmentNodeMergeElement), AddItemName="override")]
-    public class EnvironmentNodeMergeElementCollection : ConfigurationElementCollection
+    public class EnvironmentNodeMergeElementCollection : ConfigurationElementCollection, IMergeableConfigurationElementCollection
     {
         /// <summary>
         /// Creates a new <see cref="EnvironmentNodeMergeElement"/> instance.
@@ -64,6 +66,24 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverr
         {
             base.BaseRemove(mergeElement.ConfigurationNodePath);
         }
+
+        void IMergeableConfigurationElementCollection.ResetCollection(IEnumerable<ConfigurationElement> configurationElements)
+        {
+            foreach (EnvironmentNodeMergeElement element in this.Cast<ConfigurationElement>().ToArray())
+            {
+                Remove(element);
+            }
+
+            foreach (EnvironmentNodeMergeElement element in configurationElements.Reverse())
+            {
+                base.BaseAdd(0, element);
+            }
+        }
+
+        ConfigurationElement IMergeableConfigurationElementCollection.CreateNewElement(Type configurationType)
+        {
+            return (ConfigurationElement)Activator.CreateInstance(configurationType);
+        }
     }
 
     /// <summary>
@@ -105,9 +125,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverr
         /// Gets or sets a collection of overridden settings, indexed by the name of the setting that should apply at designtime.
         /// </summary>
         [ConfigurationProperty(OverriddenPropertiesPropertyName, IsDefaultCollection = true)]
-        public NameValueConfigurationCollection OverriddenProperties
+        public KeyValueConfigurationCollection OverriddenProperties
         {
-            get { return (NameValueConfigurationCollection)base[OverriddenPropertiesPropertyName]; }
+            get { return (KeyValueConfigurationCollection)base[OverriddenPropertiesPropertyName]; }
             set { base[OverriddenPropertiesPropertyName] = value; }
         }
     }

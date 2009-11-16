@@ -118,7 +118,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration
 
         /// <summary/>
         // TODO : make this a designtime converter. normal converter gets in the wat of system.configuration
-        //[TypeConverter("Console.Wpf.ComponentModel.Converters.SystemDataProviderConverter, Console.Wpf")]
+        //[TypeConverter("Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Converters.SystemDataProviderConverter,  Microsoft.Practices.EnterpriseLibrary.Configuration.Design")]
         public override string Name
         {
             get{ return base.Name; }

@@ -1,11 +1,22 @@
-﻿using System;
+﻿//===============================================================================
+// Microsoft patterns & practices Enterprise Library
+// Core
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.ComponentModel;
 using Microsoft.Practices.Unity;
 
-namespace Console.Wpf.ViewModel
+namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
 {
     public class ConfigurationProperty : ElementProperty
     {
@@ -21,14 +32,14 @@ namespace Console.Wpf.ViewModel
         }
 
 
-        protected override object GetUnConvertedValueDirect()
+        protected override object GetValue()
         {
             var element = this.DeclaringElement.ConfigurationElement;
             var elementProperty = element.ElementInformation.Properties[base.ConfigurationName];
             return elementProperty.Value;
         }
 
-        protected override void SetConvertedValueDirect(object value)
+        protected override void SetValue(object value)
         {
             var element = this.DeclaringElement.ConfigurationElement;
             var elementProperty = element.ElementInformation.Properties[base.ConfigurationName];

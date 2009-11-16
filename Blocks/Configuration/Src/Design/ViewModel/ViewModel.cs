@@ -15,7 +15,7 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 
-namespace Console.Wpf.ViewModel
+namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
 {
 
     //base class for everything that can be rendered in the grid.

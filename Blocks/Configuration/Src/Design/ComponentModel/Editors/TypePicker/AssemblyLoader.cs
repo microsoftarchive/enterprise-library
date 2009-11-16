@@ -16,7 +16,7 @@ using System.Text;
 using System.Reflection;
 using System.IO;
 
-namespace Console.Wpf.ComponentModel.Editors
+namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors
 {
     class AssemblyLoader : IDisposable
     {

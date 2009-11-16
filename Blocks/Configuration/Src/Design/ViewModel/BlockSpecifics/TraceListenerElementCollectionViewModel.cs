@@ -17,24 +17,18 @@ using System.ComponentModel;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
-using Console.Wpf.ViewModel.Services;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
 using Microsoft.Practices.Unity;
 
-namespace Console.Wpf.ViewModel.BlockSpecifics
+namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics
 {
-    public class TraceListenerElementCollectionViewModel : ElementCollectionViewModel, IElementExtendedPropertyProvider
+    public class TraceListenerElementCollectionViewModel : ElementCollectionViewModel
     {
-        
+
         public TraceListenerElementCollectionViewModel(ElementViewModel parentElementModel, PropertyDescriptor declaringProperty)
             : base(parentElementModel, declaringProperty)
         {
         }
-
-        public bool CanExtend(ElementViewModel subject)
-        {
-            return typeof(TraceSourceData).IsAssignableFrom(subject.ConfigurationType);
-        }
-
 
         public override Type[] PolymorphicCollectionElementTypes
         {
@@ -45,98 +39,6 @@ namespace Console.Wpf.ViewModel.BlockSpecifics
                                 typeof(SystemDiagnosticsTraceListenerData), 
                                 typeof(CustomTraceListenerData)
                             }).ToArray();
-            }
-        }
-
-        public IEnumerable<Property> GetExtendedProperties(ElementViewModel subject)
-        {
-            yield return ContainingSection.CreateProperty<NewTraceListenerProperty>( 
-                        new ParameterOverride("component", subject),
-                        new ParameterOverride("listenerCollection", this), 
-                        new ParameterOverride("traceSourceViewModel", subject));
-        }
-
-        private class NewTraceListenerProperty : Property
-        {
-            private readonly TraceListenerElementCollectionViewModel listenerCollection;
-            private readonly ElementViewModel traceSourceViewModel;
-            private readonly string selectEntryText = "[Select Listener]";        // todo: get from resource
-
-            public NewTraceListenerProperty(IServiceProvider serviceProvider, object component, TraceListenerElementCollectionViewModel listenerCollection, ElementViewModel traceSourceViewModel)
-                : base(serviceProvider, component, null)
-            {
-                this.listenerCollection = listenerCollection;
-                this.traceSourceViewModel = traceSourceViewModel;
-            }
-
-            public override string Category
-            {
-                get
-                {
-                    return "Trace Listeners";   //todo: get from resource
-                }
-            }
-
-            public override string PropertyName
-            {
-                get
-                {
-                    return "NewTraceListener";
-                }
-            }
-
-            public override string DisplayName
-            {
-                get
-                {
-                    return "Connect to Listener";
-                }
-            }
-
-            public override bool HasSuggestedValues
-            {
-                get
-                {
-                    return true;
-                }
-            }
-
-            public override IEnumerable<object> SuggestedValues
-            {
-                get
-                {
-                    return new[] { selectEntryText }
-                        .Concat(listenerCollection.ChildElements
-                                .Where(e => typeof(TraceListenerData).IsAssignableFrom(e.ConfigurationType))
-                                .Select(e => e.Name)
-                                .Except(
-                                    traceSourceViewModel.DescendentElements()
-                                        .Where(r => typeof(TraceListenerReferenceData).IsAssignableFrom(r.ConfigurationType))
-                                        .Select(r => r.Name))
-                                        )
-                        .ToArray();
-                }
-            }
-
-            public override object Value
-            {
-                get
-                {
-                    return selectEntryText;
-                }
-                set
-                {
-                    if (value != null && !string.Equals(value.ToString(), selectEntryText, StringComparison.OrdinalIgnoreCase))
-                    {
-                        var referenceCollection =
-                            traceSourceViewModel.ChildElements.OfType<ElementCollectionViewModel>().Where(
-                                e =>
-                                typeof(NamedElementCollection<TraceListenerReferenceData>).IsAssignableFrom(
-                                    e.ConfigurationType)).First();
-                        var newElement = referenceCollection.AddNewCollectionElement(typeof(TraceListenerReferenceData));
-                        newElement.Property("Name").Value = value;
-                    }
-                }
             }
         }
     }

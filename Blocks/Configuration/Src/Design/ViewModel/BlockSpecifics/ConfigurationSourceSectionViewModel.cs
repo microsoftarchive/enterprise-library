@@ -17,7 +17,7 @@ using System.Configuration;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 
-namespace Console.Wpf.ViewModel.BlockSpecifics
+namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics
 {
     public class ConfigurationSourceSectionViewModel : PositionedSectionViewModel
     {

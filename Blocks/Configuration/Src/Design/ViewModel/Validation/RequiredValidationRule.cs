@@ -16,7 +16,7 @@ using System.Text;
 using System.Windows.Controls;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Properties;
 
-namespace Console.Wpf.Validation
+namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Validation
 {
     public class RequiredValidationRule : ValidationRule
     {

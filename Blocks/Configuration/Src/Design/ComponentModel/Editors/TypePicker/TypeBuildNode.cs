@@ -17,7 +17,7 @@ using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors.TypePicker;
 
-namespace Console.Wpf.ComponentModel.Editors
+namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors
 {
     /// <summary>
     /// Represents a type in the data structure used by the <see cref="TypeSelectorUI"/> to specify types.

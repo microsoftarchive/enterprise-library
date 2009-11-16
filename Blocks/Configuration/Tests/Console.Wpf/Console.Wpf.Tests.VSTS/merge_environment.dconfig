@@ -1,0 +1,17 @@
+<configuration><configSections>
+        <section name="EnvironmentMergeData" type="Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides.Configuration.EnvironmentMergeSection, Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null" />
+    </configSections>
+    <EnvironmentMergeData environmentName="Environment">
+        <mergeElements>
+            <override nodePath="/configuration/cachingConfiguration/cacheManagers/add[@name='Cache Manager']"
+                overrideProperties="true">
+                <overridddenProperties>
+                    <add key="backingStoreName" value="NullBackingStore" />
+                    <add key="expirationPollFrequencyInSeconds" value="1" />
+                    <add key="maximumElementsInCacheBeforeScavenging" value="1" />
+                    <add key="numberToRemoveWhenScavenging" value="1" />
+                </overridddenProperties>
+            </override>
+        </mergeElements>
+    </EnvironmentMergeData>
+</configuration>

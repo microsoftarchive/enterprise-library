@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AddCachingSettings" xml:space="preserve">
+    <value>Add Caching Settings</value>
+  </data>
   <data name="CacheManagerDataBaseDescription" xml:space="preserve">
     <value>11 - Persists the cached data in memory, and optionaly interacts with a persistent backing store.</value>
   </data>
@@ -219,6 +222,9 @@
   <data name="CacheStorageDataTypeNameDisplayName" xml:space="preserve">
     <value>Type Name</value>
   </data>
+  <data name="CustomCacheManagerDataAddCommand" xml:space="preserve">
+    <value>Custom Cache Manager (using type picker)</value>
+  </data>
   <data name="CustomCacheManagerDataDescription" xml:space="preserve">
     <value>35 - Custom implementation that persists the cached data in memory, and optionaly interacts with a persistent backing store.</value>
   </data>
@@ -236,6 +242,9 @@
   </data>
   <data name="CustomCacheManagerDataTypeNameDisplayName" xml:space="preserve">
     <value>Type Name</value>
+  </data>
+  <data name="CustomCacheStorageDataAddCommand" xml:space="preserve">
+    <value>Custom Cache Store (using type picker)</value>
   </data>
   <data name="CustomCacheStorageDataDescription" xml:space="preserve">
     <value>41 - A Backing Store implementated as a custom class that persists the cached data, and added to Enterprise Library.</value>

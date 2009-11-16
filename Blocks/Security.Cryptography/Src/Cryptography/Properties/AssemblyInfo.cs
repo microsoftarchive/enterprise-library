@@ -27,4 +27,8 @@ using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration;
 
 [assembly: HandlesSection(CryptographySettings.SectionName)]
 
-[assembly: AddApplicationBlockCommand("Add Cryptography Settings", CryptographySettings.SectionName, typeof(CryptographySettings))]
+[assembly: AddApplicationBlockCommand(
+                CryptographySettings.SectionName, 
+                typeof(CryptographySettings),
+                TitleResourceName = "AddCryptographySettings",
+                TitleResourceType = typeof(DesignResources))]

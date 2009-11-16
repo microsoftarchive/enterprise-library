@@ -16,18 +16,19 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using Console.Wpf.Tests.VSTS.DevTests.Contexts;
+using Console.Wpf.Tests.VSTS.Mocks;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
-using Console.Wpf.ViewModel;
 using Moq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.ComponentModel.Design;
 using System.Configuration;
 using Console.Wpf.Tests.VSTS.TestSupport;
-using Console.Wpf.ViewModel.BlockSpecifics;
-using Console.Wpf.ViewModel.Services;
-using Console.Wpf.Tests.VSTS.Mocks;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics;
+using Console.Wpf.Tests.VSTS.DevTests;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model
 {
@@ -221,7 +222,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model
         protected override void Act()
         {
             connectionStringsModel = SectionViewModel.CreateSection(Container, "connectionStrings", section);
-            connectionStringsModel.AfterOpen(new DesignDictionaryConfigurationSource());
+            connectionStringsModel.Initialize(new InitializeContext(null));
         }
 
         [TestMethod]

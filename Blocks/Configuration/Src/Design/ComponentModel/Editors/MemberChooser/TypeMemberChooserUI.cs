@@ -1,6 +1,6 @@
 ﻿//===============================================================================
 // Microsoft patterns & practices Enterprise Library
-// Validation Application Block
+// Core
 //===============================================================================
 // Copyright © Microsoft Corporation.  All rights reserved.
 // THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
@@ -18,7 +18,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Reflection;
 using System.Windows.Forms.Design;
-using Console.Wpf.ComponentModel.Editors.MemberChooser;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors.MemberChooser;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.Design
 {

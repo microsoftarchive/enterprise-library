@@ -109,6 +109,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
         [ResourceDescription(typeof(DesignResources), "ValidatorDataMessageTemplateResourceTypeNameDescription")]
         [ResourceDisplayName(typeof(DesignResources), "ValidatorDataMessageTemplateResourceTypeNameDisplayName")]
         [Category("CategoryLocalization")]
+        [Editor(CommonDesignTime.EditorTypes.TypeSelector, CommonDesignTime.EditorTypes.UITypeEditor)]
+        [BaseType(typeof(object))]
         public string MessageTemplateResourceTypeName
         {
             get { return (string)this[MessageTemplateResourceTypeNamePropertyName]; }

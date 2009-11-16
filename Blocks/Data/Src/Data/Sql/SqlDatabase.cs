@@ -236,12 +236,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql
             }
         }
 
-        private static IAsyncResult DoBeginExecuteXmlReader(SqlCommand command, AsyncCallback callback, object state)
+        private IAsyncResult DoBeginExecuteXmlReader(SqlCommand command, AsyncCallback callback, object state)
         {
-            return WrappedAsyncOperation.BeginAsyncOperation(
-                callback,
-                cb => command.BeginExecuteXmlReader(cb, state),
-                ar => new DaabAsyncResult(ar, command, false, false, DateTime.Now));
+            try
+            {
+                return WrappedAsyncOperation.BeginAsyncOperation(
+                    callback,
+                    cb => command.BeginExecuteXmlReader(cb, state),
+                    ar => new DaabAsyncResult(ar, command, false, false, DateTime.Now));
+            }
+            catch (Exception e)
+            {
+                instrumentationProvider.FireCommandFailedEvent(command.CommandText, ConnectionStringNoCredentials, e);
+                throw;
+            }
         }
 
         /// <devdoc>
@@ -489,14 +497,22 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql
             };
         }
 
-        private static IAsyncResult DoBeginExecuteNonQuery(SqlCommand command, bool disposeCommand, AsyncCallback callback, object state)
+        private IAsyncResult DoBeginExecuteNonQuery(SqlCommand command, bool disposeCommand, AsyncCallback callback, object state)
         {
             bool closeConnection = command.Transaction == null;
 
-            return WrappedAsyncOperation.BeginAsyncOperation(
-                callback,
-                cb => command.BeginExecuteNonQuery(cb, state),
-                ar => new DaabAsyncResult(ar, command, disposeCommand, closeConnection, DateTime.Now));
+            try
+            {
+                return WrappedAsyncOperation.BeginAsyncOperation(
+                    callback,
+                    cb => command.BeginExecuteNonQuery(cb, state),
+                    ar => new DaabAsyncResult(ar, command, disposeCommand, closeConnection, DateTime.Now));
+            }
+            catch (Exception e)
+            {
+                instrumentationProvider.FireCommandFailedEvent(command.CommandText, ConnectionStringNoCredentials, e);
+                throw;
+            }
         }
 
         /// <summary>
@@ -728,15 +744,23 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql
             }
         }
 
-        private static IAsyncResult DoBeginExecuteReader(SqlCommand command, bool disposeCommand, AsyncCallback callback, object state)
+        private IAsyncResult DoBeginExecuteReader(SqlCommand command, bool disposeCommand, AsyncCallback callback, object state)
         {
             CommandBehavior commandBehavior =
                 command.Transaction == null ? CommandBehavior.CloseConnection : CommandBehavior.Default;
 
-            return WrappedAsyncOperation.BeginAsyncOperation(
-                callback,
-                cb => command.BeginExecuteReader(cb, state, commandBehavior),
-                ar => new DaabAsyncResult(ar, command, disposeCommand, false, DateTime.Now));
+            try
+            {
+                return WrappedAsyncOperation.BeginAsyncOperation(
+                    callback,
+                    cb => command.BeginExecuteReader(cb, state, commandBehavior),
+                    ar => new DaabAsyncResult(ar, command, disposeCommand, false, DateTime.Now));
+            }
+            catch (Exception e)
+            {
+                instrumentationProvider.FireCommandFailedEvent(command.CommandText, ConnectionStringNoCredentials, e);
+                throw;
+            }
         }
 
         /// <summary>

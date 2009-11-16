@@ -28,7 +28,8 @@ using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 
 [assembly : HandlesSection(LoggingSettings.SectionName)]
 [assembly:  AddApplicationBlockCommand(
-                "Add Logging Settings", 
                 LoggingSettings.SectionName, 
                 typeof(LoggingSettings),
-                CommandModelTypeName =LoggingDesignTime.CommandTypeNames.AddLoggingBlockCommand)]
+                TitleResourceName = "AddLoggingSettings",
+                TitleResourceType = typeof(DesignResources),
+                CommandModelTypeName = LoggingDesignTime.CommandTypeNames.AddLoggingBlockCommand)]

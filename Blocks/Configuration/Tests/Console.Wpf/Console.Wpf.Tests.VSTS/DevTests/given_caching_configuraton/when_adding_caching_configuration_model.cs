@@ -13,18 +13,19 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Console.Wpf.Tests.VSTS.Mocks;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Console.Wpf.ViewModel;
 using System.ComponentModel.Design;
 using Console.Wpf.Tests.VSTS.TestSupport;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Cryptography;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Cryptography.Configuration;
 using System.Configuration;
 using System.Configuration.Provider;
-using Console.Wpf.Tests.VSTS.Mocks;
+using Console.Wpf.Tests.VSTS.DevTests;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_caching_configuraton
 {

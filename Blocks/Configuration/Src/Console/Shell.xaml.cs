@@ -13,12 +13,12 @@ using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Forms.Design;
-using Console.Wpf.ViewModel.Services;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
 using Microsoft.Practices.Unity;
 using Microsoft.Win32;
-using Console.Wpf.ViewModel;
-using Console.Wpf.ViewModel.BlockSpecifics;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using System.Collections.ObjectModel;
 using System.Windows.Data;
 
@@ -56,7 +56,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Console
             AnnotationService annotationService = container.Resolve<AnnotationService>();
             AppSettingsDecorator.DecorateAppSettingsSection(annotationService);
             ConnectionStringsDecorator.DecorateConnectionStringsSection(annotationService);
-
+            
             try
             {
                 applicationModel = container.Resolve<StandAloneApplicationViewModel>();
@@ -65,7 +65,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Console
             {
                 throw ex;
             }
-            container.RegisterInstance<IPropertyDirtyStateListener>(applicationModel);
+            container.RegisterInstance<IApplicationModel>(applicationModel);
 
             var commandService = container.Resolve<MenuCommandService>();
 
@@ -99,8 +99,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Console
 
         private void EnvironemntMenu_Open_Click(object sender, RoutedEventArgs e)
         {
-            //var shellService = container.Resolve<IShellService>();
-            //shellService.OpenEnvironment();
+            var openEnvironmentModel = container.Resolve<OpenEnvironmentConfigurationDeltaCommand>();
+            openEnvironmentModel.Execute(null);
         }
 
         private void EnvironemntMenu_New_Click(object sender, RoutedEventArgs e)
@@ -231,6 +231,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Console
         public MessageBoxResult ShowMessageWpf(string message, string caption, MessageBoxButton buttons)
         {
             return MessageBox.Show(message, caption, buttons);
+        }
+
+
+        public bool UIDirty
+        {
+            get { throw new NotImplementedException(); }
         }
     }
 }

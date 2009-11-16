@@ -13,7 +13,7 @@ using System;
 using System.Globalization;
 using System.Windows.Data;
 
-namespace Console.Wpf.Converters
+namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Converters
 {
 	public class ZIndexToBooleanConverter : IValueConverter
 	{

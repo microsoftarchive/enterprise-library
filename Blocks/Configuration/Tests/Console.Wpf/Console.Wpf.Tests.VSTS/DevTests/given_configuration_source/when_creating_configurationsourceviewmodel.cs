@@ -13,10 +13,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Console.Wpf.Tests.VSTS.Mocks;
 using Console.Wpf.Tests.VSTS.TestSupport;
-using Console.Wpf.ViewModel;
-using Console.Wpf.ViewModel.Services;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Properties;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -24,7 +25,7 @@ using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
 using Moq;
 using System.ComponentModel.Design;
 using Microsoft.Practices.Unity;
-using Console.Wpf.Tests.VSTS.Mocks;
+using Console.Wpf.Tests.VSTS.DevTests;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_configuration_source
 {

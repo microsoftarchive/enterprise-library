@@ -115,6 +115,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
         [Reference(typeof(NameTypeConfigurationElementCollection<CacheStorageData, CustomCacheStorageData>), typeof(CacheStorageData))]
         [ResourceDescription(typeof(DesignResources), "CacheManagerDataCacheStorageDescription")]
         [ResourceDisplayName(typeof(DesignResources), "CacheManagerDataCacheStorageDisplayName")]
+        [ViewModel(CachingDesignTime.ViewModelTypeNames.CacheManagerBackingStoreProperty)]
 		public string CacheStorage
 		{
 			get { return (string)base[backingStoreNameProperty]; }
