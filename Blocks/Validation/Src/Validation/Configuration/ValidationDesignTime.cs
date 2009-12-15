@@ -27,6 +27,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
             public const string ValidationSectionViewModel = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.ValidationSectionViewModel, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
 
             ///<summary/>
+            public const string ValidatedTypeReferenceViewModel = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.ValidatedTypeReferenceViewModel, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
+
+            ///<summary/>
+            public const string ValidatorDataViewModel = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.ValidatorDataViewModel, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
+            
+            ///<summary/>
+            public const string ValidationRulesetDataViewModel = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.ValidationRulesetDataViewModel, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
+
+            ///<summary/>
+            public const string ValidatedMemberReferenceViewModel = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.ValidatedMemberReferenceViewModel, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
+
+            ///<summary/>
             public const string DomainConfigurationElementViewModel =
                 "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.DomainConfigurationElementViewModel, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
         }

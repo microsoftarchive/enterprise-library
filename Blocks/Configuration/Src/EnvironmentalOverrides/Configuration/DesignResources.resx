@@ -127,10 +127,10 @@
     <value>197 - The path to the deployable configuration that can be generated from this configuration.</value>
   </data>
   <data name="EnvironmentMergeSectionEnvironmentDeltaFileDisplayName" xml:space="preserve">
-    <value>Environment Delta File</value>
+    <value>Environment Configuration File</value>
   </data>
   <data name="EnvironmentMergeSectionEnvironmentDeltaFileFilter" xml:space="preserve">
-    <value>Delta configuration file (*.dconfig)|*.dconfig|All Files (*.*)|*.*</value>
+    <value>Configuration files (*.config)|*.config|All Files (*.*)|*.*</value>
   </data>
   <data name="EnvironmentMergeSectionEnvironmentNameDescription" xml:space="preserve">
     <value>199 - The name of the environment.</value>

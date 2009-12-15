@@ -40,7 +40,9 @@ namespace Console.Wpf.Tests.VSTS.DevTests
 
             configurationModel = Container.Resolve<ConfigurationSourceModel>();
             AddApplicationBlockCommandAttribute attribute = new AddApplicationBlockCommandAttribute("appSettings", typeof(AppSettingsSection));
-            addBlockCommand = new AddApplicationBlockCommand(configurationModel, attribute);
+            addBlockCommand = Container.Resolve<AddApplicationBlockCommand>(
+                                new DependencyOverride<ConfigurationSourceModel>(configurationModel), 
+                                new DependencyOverride<AddApplicationBlockCommandAttribute>(attribute));
             addBlockCommand.CanExecuteChanged += (sender, args) => { commandCanExecuteCalled = true; };
         }
 

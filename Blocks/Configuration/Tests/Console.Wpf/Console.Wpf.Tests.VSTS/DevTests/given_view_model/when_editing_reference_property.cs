@@ -83,7 +83,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model
             Assert.IsTrue(logCategoryProperty.HasSuggestedValues);
 
             var suggestedValues = logCategoryProperty.SuggestedValues;
-            Assert.AreEqual(numberOfLogCategories + 1, suggestedValues.Count());
+            Assert.AreEqual(numberOfLogCategories, suggestedValues.Count());
             Assert.IsTrue(suggestedValues.Any(x => ((string)x) == "General"));
         }
 
@@ -100,6 +100,28 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model
 
             Assert.AreEqual("new name", ((LoggingExceptionHandlerData)logExceptionHandler.ConfigurationElement).LogCategory);          
         }
+
+        [TestMethod]
+        public void then_property_changed_notifies_bindable_changed()
+        {
+            var logExceptionHandler = viewModel.DescendentElements(x => x.ConfigurationType == typeof(LoggingExceptionHandlerData)).First();
+            var logCategoryProperty = logExceptionHandler.Property("LogCategory");
+
+            bool notifiedBindableChanged = false;
+            logCategoryProperty.BindableProperty.PropertyChanged += (s, e) =>
+                                                       {
+                                                           if (e.PropertyName == "BindableValue")
+                                                               notifiedBindableChanged = true;
+                                                       };
+
+            var logCategoryElement = ((ElementReferenceProperty)logCategoryProperty).ReferencedElement;
+            var logCategoryNameProperty = logCategoryElement.Property("Name");
+
+            logCategoryNameProperty.Value = "new name";
+
+            Assert.IsTrue(notifiedBindableChanged);            
+        }
+
     }
 
 

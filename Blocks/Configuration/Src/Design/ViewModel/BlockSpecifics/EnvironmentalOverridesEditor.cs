@@ -18,6 +18,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
 {
     public interface IEnvironmentalOverridesEditor
     {
-        void Initialize(OverriddenElementViewModel environment);
+        void Initialize(EnvironmentalOverridesViewModel environment);
     }
 }

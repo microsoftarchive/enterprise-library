@@ -21,23 +21,16 @@ using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration.
 using System.IO;
 using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design;
+using System.Windows;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics
 {
-    public class CryptographySectionViewModel: PositionedSectionViewModel
+    public class CryptographySectionViewModel : SectionViewModel
     {
         public CryptographySectionViewModel(IUnityContainer builder, string sectionName, ConfigurationSection section)
             : base(builder, sectionName, section)
         {
-            Positioning.PositionCollection("Hash Providers",
-                            typeof(NameTypeConfigurationElementCollection<HashProviderData, CustomHashProviderData>),
-                            typeof(HashProviderData),
-                            new PositioningInstructions { FixedColumn = 0, FixedRow = 0 });
-
-            Positioning.PositionCollection("Symmetric Crypto Providers",
-                            typeof(NameTypeConfigurationElementCollection<SymmetricProviderData, CustomSymmetricCryptoProviderData>),
-                            typeof(SymmetricProviderData),
-                            new PositioningInstructions { FixedColumn = 1, FixedRow = 0 });
 
         }
 
@@ -68,6 +61,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
             {
                 KeyManager.Write(keyOutput, protectedKeySettings.ProtectedKey.EncryptedKey, protectedKeySettings.Scope);
             }
+        }
+
+
+        protected override object CreateBindable()
+        {
+            var hashProviders = DescendentElements().Where(x => x.ConfigurationType == typeof(NameTypeConfigurationElementCollection<HashProviderData, CustomHashProviderData>)).First();
+            var symmetricProviders = DescendentElements().Where(x => x.ConfigurationType == typeof(NameTypeConfigurationElementCollection<SymmetricProviderData, CustomSymmetricCryptoProviderData>)).First();
+
+            return new HorizontalListViewModel(
+                new HeaderedListViewModel(hashProviders), 
+                new HeaderedListViewModel(symmetricProviders));
         }
     }
 }

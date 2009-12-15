@@ -25,6 +25,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration
     /// <summary>
     /// Represents the common configuration data for all authorization providers.
     /// </summary>
+    [ViewModel(SecurityDesignTime.ViewModelTypeNames.AuthorizationProviderDataViewModel)]
     public class AuthorizationProviderData : NameTypeConfigurationElement
     {
         /// <summary>

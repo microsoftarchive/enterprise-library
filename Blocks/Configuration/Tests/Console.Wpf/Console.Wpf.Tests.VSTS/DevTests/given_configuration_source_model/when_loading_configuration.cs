@@ -19,6 +19,7 @@ using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Practices.Unity;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Validation;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_configuration_source_model
 {
@@ -44,7 +45,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_configuration_source_model
         }
 
         [TestMethod]
-        public void then_depedency_is_refreshed()
+        public void then_dependency_is_refreshed()
         {
             Assert.IsTrue(refreshed);
         }

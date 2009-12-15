@@ -50,7 +50,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
         [ResourceDescription(typeof(DesignResources), "DomainValidatorDataDomainDescription")]
         [ResourceDisplayName(typeof(DesignResources), "DomainValidatorDataDomainDisplayName")]
         [System.ComponentModel.Editor(CommonDesignTime.EditorTypes.CollectionEditor, CommonDesignTime.EditorTypes.FrameworkElement)]
-        [CollectionEditorTemplate("DomainConfigurationElementHeader", "DomainConfigurationElementItem")]
         [EnvironmentalOverrides(false)]
         [DesignTimeReadOnly(false)]
 		public NamedElementCollection<DomainConfigurationElement> Domain

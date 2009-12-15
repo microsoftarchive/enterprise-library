@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Console.Wpf.Tests.VSTS.Mocks;
+using Console.Wpf.Tests.VSTS.TestSupport;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
@@ -61,6 +62,15 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_configuration_element_with_prope
                 sectionViewModel.DescendentElements().SelectMany(x => x.Properties).OfType<CustomProperty>().First();
 
             Assert.IsTrue(property.WasInitialized);
+        }
+
+        [TestMethod]
+        public void then_custom_attribute_property_applied()
+        {
+            Assert.IsTrue(
+                sectionViewModel.GetDescendentsOfType<ElementWithExtendedViewModel>().First()
+                    .Properties.Where(p => p.PropertyName == "Attributes").Any());
+
         }
         
     }

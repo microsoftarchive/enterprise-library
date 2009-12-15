@@ -16,11 +16,13 @@ using System.Linq;
 using System.ComponentModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Properties;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Validation;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.Globalization;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Converters;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design.Validation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
 {
@@ -43,8 +45,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
     /// </remarks>
     public class ElementReferenceProperty : ElementProperty
     {
-        internal static string NoReferenceDisplayName = "<none>";
-
         private readonly ChangeScopePropertyWatcher changeScopePropertyWatcher;
         private ReferenceAttribute referenceAttribute;
         private ElementReference reference;
@@ -63,7 +63,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         ///<param name="declaringProperty">The descriptor declaring this property.</param>
         ///<exception cref="ArgumentException">Thrown if the declaring property <see cref="PropertyDescriptor.PropertyType"/> is not a <see cref="string"/> type.</exception>
         public ElementReferenceProperty(IServiceProvider serviceProvider, ElementLookup lookup, ElementViewModel parent, PropertyDescriptor declaringProperty)
-            : base(serviceProvider, parent, declaringProperty, new Attribute[] { new TypeConverterAttribute(typeof(ReferencePropertyConverter)) })
+            : base(serviceProvider, parent, declaringProperty)
         {
             if (declaringProperty.PropertyType != typeof(string)) throw new ArgumentException(Resources.ReferencePropertyInvalidType);  
 
@@ -116,34 +116,36 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             EnsureReferenceInitialized(true);
         }
 
+        public override TypeConverter Converter
+        {
+            get
+            {
+                if (!IsRequired) return new ReferencePropertyConverter();
+
+                return base.Converter;
+            }
+        }
         void ReferenceNameChanged(object sender, PropertyValueChangedEventArgs<string> args)
         {
             string referenceName = args.Value;
-            SetValue(referenceName);
+            base.Value = referenceName;
         }
 
         void ElementScopeCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             base.OnPropertyChanged("SuggestedValues");
             changeScopePropertyWatcher.Refresh(elementScope);
+            Validate();
         }
 
-        static void reference_ElementDeleted(object sender, EventArgs e)
+        void reference_ElementDeleted(object sender, EventArgs e)
         {
-
+            Validate();
         }
 
-        static void reference_ElementFound(object sender, EventArgs e)
+        void reference_ElementFound(object sender, EventArgs e)
         {
-
-        }
-
-        public override bool SuggestedValuesEditable
-        {
-            get
-            {
-                return true;
-            }
+            Validate();
         }
 
         ///<summary>
@@ -172,22 +174,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             {
                 EnsureReferenceInitialized(false);
 
-                return elementScope
-                        .Select(x => x.Property("Name").Value)
-                        .Union( new []{string.Empty})
-                        .OrderBy(x => x);
-            }
-        }
+                IEnumerable<object> additionalSuggestions =
+                    IsRequired ? Enumerable.Empty<object>() : new[] {string.Empty};
 
-        public override string BindableValue
-        {
-            get
-            {
-                return base.BindableValue;
-            }
-            set
-            {
-                base.BindableValue = value;
+                return elementScope
+                    .Select(x => x.Property("Name").Value)
+                    .Union(additionalSuggestions)
+                    .OrderBy(x => x);
             }
         }
 
@@ -204,11 +197,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
 
                 base.Value = value;
                 EnsureReferenceInitialized(true);
+                Validate();
                 OnPropertyChanged("ChildProperties");
                 OnPropertyChanged("HasChildProperties");
             }
         }
 
+        public override IEnumerable<ValidationError> ValidationErrors
+        {
+            get
+            {
+                return base.InternalErrors;
+            }
+        }
 
         public override bool HasChildProperties
         {
@@ -231,8 +232,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
                 return element.Properties;
             }
         }
-       
-        
+
+        public override IEnumerable<Validator> GetValidators()
+        {
+            return base.GetValidators().Union(new[] {new ElementReferenceValidator()});
+        }
+
+        public virtual ElementViewModel ContainingScopeElement
+        {
+            get { return pathResolver.ScopeElement; }
+        }
+
         private class DeferredPathResolver
         {
             private readonly ReferenceAttribute referenceAttribute;
@@ -255,8 +265,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             {
                 get
                 {
-                    AttemptScopeResolution();
-                    return scopeElement == null ? string.Empty : scopeElement.Path;
+                    return ScopeElement == null ? string.Empty : ScopeElement.Path;
                 }
             }
 
@@ -264,18 +273,32 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             {
                 get
                 {
-                    return scopeElement != null;
+                    return ScopeElement != null;
                 }
             }
 
+            public ElementViewModel ScopeElement
+            {
+                get
+                {
+                    AttemptScopeResolution();
+                    return scopeElement;
+                }
+            }
             private void AttemptScopeResolution()
             {
                 if (scopeElement == null)
                 {
                     scopeElement = referenceAttribute.ScopeIsDeclaringElement ?
                         baseDeclaringElement :
-                        lookup.FindInstancesOfConfigurationType(referenceAttribute.ScopeType).FirstOrDefault();
+                        FindScopeInstance();
                 }
+            }
+
+            private ElementViewModel FindScopeInstance()
+            {
+                if (referenceAttribute.ScopeType == null) throw new InvalidOperationException(string.Format(CultureInfo.CurrentUICulture, Properties.Resources.ExceptionReferenceScopeNotSet, baseDeclaringElement.ConfigurationType.AssemblyQualifiedName));
+                return lookup.FindInstancesOfConfigurationType(referenceAttribute.ScopeType).FirstOrDefault();
             }
         }
     }

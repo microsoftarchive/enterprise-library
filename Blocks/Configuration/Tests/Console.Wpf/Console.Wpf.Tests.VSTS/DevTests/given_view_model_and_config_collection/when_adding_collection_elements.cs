@@ -32,7 +32,8 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model_and_config_collection
 
             var section = new MockSectionWithMultipleChildCollections();
             BuildSection(section);
-            ViewModel = new SectionViewModel(Container, "name", section);
+            ViewModel = SectionViewModel.CreateSection(Container, "name", section);
+            
         }
 
         protected virtual void BuildSection(MockSectionWithMultipleChildCollections section)
@@ -47,6 +48,29 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model_and_config_collection
 
     [TestClass]
     public class when_adding_collection_elements : SectionWithMultipleChildrenContext
+    {
+        private ElementViewModel newCollectionItem;
+
+        protected override void Act()
+        {
+            var collectionViewModel =
+                ViewModel.DescendentElements(x => x.ConfigurationType == typeof(NamedElementCollection<TestHandlerData>))
+                    .OfType<ElementCollectionViewModel>()
+                    .First();
+
+            newCollectionItem = collectionViewModel.AddNewCollectionElement(typeof (TestHandlerData));
+        }
+
+        [TestMethod]
+        public void then_new_items_bindable_property_initialized()
+        {
+            Assert.IsFalse(string.IsNullOrEmpty(newCollectionItem.Property("Name").BindableProperty.BindableValue));
+        }
+     
+    }
+
+    [TestClass]
+    public class when_adding_collection_elements_via_add_commands : SectionWithMultipleChildrenContext
     {
         private bool descendentElementsChangedFired;
 
@@ -270,34 +294,6 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model_and_config_collection
             Assert.AreEqual(startingCount + 1,
                             childrenCollection.ChildElements.Count(
                                 x => typeof(TestHandlerDataWithChildren).IsAssignableFrom(x.ConfigurationType)));
-        }
-
-
-        [TestMethod]
-        public void then_collection_rows_are_recalculated()
-        {
-            ElementViewModel lastElement = childrenCollection.ChildElements.First();
-            foreach (var element in childrenCollection.ChildElements.Skip(1))
-            {
-                var lastElementsLastHandler =
-                    lastElement.DescendentElements().Last(
-                        e => typeof(TestHandlerData).IsAssignableFrom(e.ConfigurationType));
-
-                Assert.AreEqual(lastElementsLastHandler.Row + 1, element.Row);
-                lastElement = element;
-            }
-        }
-
-        [TestMethod]
-        public void then_rowspan_for_nodes_matches_children_count()
-        {
-            Assert.IsTrue(
-                childrenCollection.ChildElements.All(
-                    x =>
-                    x.RowSpan ==
-                    Math.Max(1, x.DescendentElements().Count(
-                                    h => typeof(TestHandlerData).IsAssignableFrom(h.ConfigurationType)))));
-
         }
     }
 }

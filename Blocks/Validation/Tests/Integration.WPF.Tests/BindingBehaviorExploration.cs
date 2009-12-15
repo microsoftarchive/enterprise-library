@@ -84,7 +84,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WPF.Tests
         }
 
         [TestMethod]
-        public void BindingForInvalidPathIsIgnoredIfNotThrowingExceptions()
+        public void BindingForPropertyInvalidPathIsIgnoredIfNotThrowingExceptions()
         {
             var source = new BindingTestSource { SourceProperty = 100 };
             var target = new BindingTestTarget();

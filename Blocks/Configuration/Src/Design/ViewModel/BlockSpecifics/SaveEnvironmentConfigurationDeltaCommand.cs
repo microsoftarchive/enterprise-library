@@ -67,9 +67,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
                 overridesViewModel.EnvironmentDeltaFile = dialogResult.FileName;
             }
 
-            if (applictionModel.EnsureCanSaveConfigurationFile(overridesViewModel.EnvironmentDeltaFile))
+            string path = overridesViewModel.EnvironmentDeltaFile;
+            if (!Path.IsPathRooted(path))
             {
-                DesignConfigurationSource source = new DesignConfigurationSource(overridesViewModel.EnvironmentDeltaFile);
+                string mainDirectory = Path.GetDirectoryName(applictionModel.ConfigurationFilePath);
+                path = Path.Combine(mainDirectory, path);
+            }
+
+            if (applictionModel.EnsureCanSaveConfigurationFile(path))
+            {
+                DesignConfigurationSource source = new DesignConfigurationSource(path);
                 overridesViewModel.Save(source);
             }
         }

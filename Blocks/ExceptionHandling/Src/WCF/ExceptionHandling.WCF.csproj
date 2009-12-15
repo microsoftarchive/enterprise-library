@@ -81,7 +81,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Configuration\WcfExceptionHandlingDesignTime.cs" />
     <Compile Include="ExceptionShielding.cs" />
     <Compile Include="ExceptionShieldingAttribute.cs" />
     <Compile Include="ExceptionShieldingBehavior.cs" />

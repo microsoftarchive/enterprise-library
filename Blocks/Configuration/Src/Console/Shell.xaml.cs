@@ -33,7 +33,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Console
 
         private List<EnvironmentalOverridesViewModel> environments = new List<EnvironmentalOverridesViewModel>();
         private ObservableCollection<CommandModel> environmentCommands = new ObservableCollection<CommandModel>();
-        private StandAloneApplicationViewModel applicationModel;
+        private ApplicationViewModel applicationModel;
 
         public Shell()
         {
@@ -46,7 +46,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Console
             container.RegisterType<ConfigurationSourceModel>(new ContainerControlledLifetimeManager());
             container.RegisterType<MenuCommandService>(new ContainerControlledLifetimeManager());
             container.RegisterType<ConfigurationSourceDependency>(new ContainerControlledLifetimeManager());
-            container.RegisterType<StandAloneApplicationViewModel>(new ContainerControlledLifetimeManager());
+            container.RegisterType<ApplicationViewModel>(new ContainerControlledLifetimeManager());
+            container.RegisterType<ValidationModel>(new ContainerControlledLifetimeManager());
 
             container.RegisterInstance<IUIServiceWpf>(this);
             container.RegisterInstance<IWindowsFormsEditorService>(this);
@@ -59,7 +60,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Console
             
             try
             {
-                applicationModel = container.Resolve<StandAloneApplicationViewModel>();
+                applicationModel = container.Resolve<ApplicationViewModel>();
             }
             catch(Exception ex)
             {
@@ -74,6 +75,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Console
             DataContext = container.Resolve<ConfigurationSourceModel>();
 
             applicationModel.New();
+
+            var validationModel = container.Resolve<ValidationModel>();
+            errorListView.ItemsSource = validationModel.ValidationErrors;
 
             Binding titleBinding = new Binding("ApplicationTitle");
             titleBinding.Source = applicationModel;
@@ -93,7 +97,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Console
 
         private void FileMenu_Open_Click(object sender, RoutedEventArgs e)
         {
-            var service = container.Resolve<StandAloneApplicationViewModel>();
+            var service = container.Resolve<ApplicationViewModel>();
             service.OpenConfigurationSource();
         }
 
@@ -111,19 +115,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Console
 
         private void FileMenu_SaveAs_Click(object sender, RoutedEventArgs e)
         {
-            var shellService = container.Resolve<StandAloneApplicationViewModel>();
+            var shellService = container.Resolve<ApplicationViewModel>();
             shellService.SaveAs();
         }
 
         private void FileMenu_Save_Click(object sender, RoutedEventArgs e)
         {
-            var shellService = container.Resolve<StandAloneApplicationViewModel>();
+            var shellService = container.Resolve<ApplicationViewModel>();
             shellService.Save();
         }
 
         private void FileMenu_New_Click(object sender, RoutedEventArgs e)
         {
-            var service = container.Resolve<StandAloneApplicationViewModel>();
+            var service = container.Resolve<ApplicationViewModel>();
             service.New();
         }
 
@@ -185,7 +189,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Console
 
         void IUIService.ShowError(string message)
         {
-            throw new NotImplementedException();
+            MessageBox.Show(message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
         System.Windows.Forms.DialogResult IUIService.ShowMessage(string message, string caption, System.Windows.Forms.MessageBoxButtons buttons)
@@ -233,10 +237,5 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Console
             return MessageBox.Show(message, caption, buttons);
         }
 
-
-        public bool UIDirty
-        {
-            get { throw new NotImplementedException(); }
-        }
     }
 }

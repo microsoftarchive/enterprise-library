@@ -19,10 +19,13 @@ using Microsoft.Practices.EnterpriseLibrary.Caching.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Caching.BackingStoreImplementations;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls;
+using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
+using System.Windows;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics
 {
-    public class CacheManagerSectionViewModel : PositionedSectionViewModel
+    public class CacheManagerSectionViewModel : SectionViewModel
     {
         public const string DefaultNullBackingStore = "NullBackingStore";
 
@@ -33,21 +36,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
         {
             NullBackingStoreName = DefaultNullBackingStore;
             cacheManagerSettings = (CacheManagerSettings)section;
-
-            Positioning.PositionCollection("Cache Managers",
-                typeof(NameTypeConfigurationElementCollection<CacheManagerDataBase, CustomCacheManagerData>),
-                typeof(CacheManagerDataBase),
-                new PositioningInstructions { FixedColumn = 0, FixedRow = 0 });
-
-            Positioning.PositionCollection("Backing Stores",
-                typeof(NameTypeConfigurationElementCollection<CacheStorageData, CustomCacheStorageData>),
-                typeof(CacheStorageData),
-                new PositioningInstructions { FixedColumn = 1, FixedRow = 0 });
-
-            Positioning.PositionCollection("Encryption Providers",
-                typeof(NameTypeConfigurationElementCollection<StorageEncryptionProviderData, StorageEncryptionProviderData>),
-                typeof(StorageEncryptionProviderData),
-                new PositioningInstructions { FixedColumn = 2, FixedRow = 0 });
         }
 
         public override void Initialize(InitializeContext context)
@@ -61,6 +49,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
                 NullBackingStoreName = memoryBackingStores.First();
             }
         }
+
+
+        protected override object CreateBindable()
+        {
+            var cacheManagers = DescendentElements().Where(x => x.ConfigurationType == typeof(NameTypeConfigurationElementCollection<CacheManagerDataBase, CustomCacheManagerData>)).First();
+            var backingStores = DescendentElements().Where(x => x.ConfigurationType == typeof(NameTypeConfigurationElementCollection<CacheStorageData, CustomCacheStorageData>)).First();
+            var storeEncryptionProviders = DescendentElements().Where(x => x.ConfigurationType == typeof(NameTypeConfigurationElementCollection<StorageEncryptionProviderData, StorageEncryptionProviderData>)).First();
+
+            return new HorizontalListViewModel(
+                new HeaderedListViewModel(cacheManagers), 
+                new HeaderedListViewModel(backingStores), 
+                new HeaderedListViewModel(storeEncryptionProviders));
+        }
+
 
         public override void BeforeSave(ConfigurationSection sectionToSave)
         {

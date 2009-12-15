@@ -38,7 +38,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         /// <summary>
         /// <para>Initializes a new instance of <see cref="SymmetricAlgorithmProviderData"/> class.</para>
         /// </summary>
-        public SymmetricAlgorithmProviderData()
+        public SymmetricAlgorithmProviderData() : base(typeof(SymmetricAlgorithmProvider))
         {
         }
 

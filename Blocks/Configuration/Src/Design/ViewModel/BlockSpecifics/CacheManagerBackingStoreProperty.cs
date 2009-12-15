@@ -18,6 +18,7 @@ using Microsoft.Practices.Unity;
 using System.ComponentModel;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Converters;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Validation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics
 {
@@ -40,12 +41,51 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
             }
         }
 
+        public override IEnumerable<object> SuggestedValues
+        {
+            get
+            {
+                return base.SuggestedValues.Union(new[] {string.Empty}).OrderBy(x => x);
+            }
+        }
+
         public override void Initialize(InitializeContext context)
         {
             cacheManagerViewModel = (CacheManagerSectionViewModel)ContainingSection;
             backingStoreReferenceConverter = new BackingStoreReferenceConverter(cacheManagerViewModel.NullBackingStoreName);
 
             base.Initialize(context);
+        }
+
+        public override IEnumerable<Validator> GetValidators()
+        {
+            return base.GetValidators()
+                .Where(v => v.GetType() != typeof(ElementReferenceValidator))
+                .Union(
+                    new Validator[] 
+                        {new CacheManagerBackingStoreReferenceValidator(cacheManagerViewModel.NullBackingStoreName)}
+                    );
+        }
+
+        private class CacheManagerBackingStoreReferenceValidator : ElementReferenceValidator
+        {
+            private readonly string nullBackingStoreName;
+
+            public CacheManagerBackingStoreReferenceValidator(string nullBackingStoreName)
+            {
+                this.nullBackingStoreName = nullBackingStoreName;
+            }
+
+            protected override void ValidateCore(object instance, string value, IList<ValidationError> errors)
+            {
+                var property = instance as Property;
+                if (property == null) return;
+
+                var convertedValue = property.ConvertFromBindableValue(value);
+                if (convertedValue.ToString() == nullBackingStoreName) return;
+
+                base.ValidateCore(instance, value, errors);
+            }
         }
     }
 }

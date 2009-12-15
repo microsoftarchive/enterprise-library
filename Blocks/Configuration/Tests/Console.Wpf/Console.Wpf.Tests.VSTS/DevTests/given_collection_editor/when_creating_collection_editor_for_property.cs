@@ -46,7 +46,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_collection_editor
             var entriesProperty = categoryFilter.Property("CategoryFilters");
 
             var numberOfEntries = ((CategoryFilterData)categoryFilter.ConfigurationElement).CategoryFilters.Count;
-            ((CollectionElementEditor)entriesProperty.Editor).NewCollectionElementCommand.Execute(null);
+            ((CollectionElementEditor)entriesProperty.Visual).NewCollectionElementCommand.Execute(null);
             Assert.AreEqual(numberOfEntries + 1, ((CategoryFilterData)categoryFilter.ConfigurationElement).CategoryFilters.Count);
             
         }

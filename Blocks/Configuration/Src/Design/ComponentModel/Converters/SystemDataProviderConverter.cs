@@ -14,6 +14,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.ComponentModel;
+using System.Configuration;
+using System.Data;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Converters
 {
@@ -29,16 +31,24 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
             return false;
         }
 
+        private string[] DoGetStandardValues()
+        {
+            DataSet dbProviderConfig = (DataSet)ConfigurationManager.GetSection("system.data");
+            DataTable table = dbProviderConfig.Tables["DbProviderFactories"];
+
+            List<string> providers = new List<string>();
+
+            foreach (DataRow row in table.Rows)
+            {
+                providers.Add(row.ItemArray[2].ToString());
+            }
+            
+            return providers.ToArray();
+        }
+
         public override TypeConverter.StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
         {
-            return new StandardValuesCollection(new[]{
-                "System.Data.SqlClient",
-                "Oracle.DataAccess.Client",
-                "System.Data.Odbc",
-                "System.Data.OleDb",
-                "System.Data.OracleClient",
-                "System.Data.SqlServerCe",
-                "System.Data.SqlServerCe.3.5" });
+            return new StandardValuesCollection(DoGetStandardValues());
         }
     }
 }

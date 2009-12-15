@@ -108,15 +108,6 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_piab_configuration
         protected override void Act()
         {
             piabViewModel = SectionViewModel.CreateSection(Container, PolicyInjectionSettings.SectionName, piabSettings);
-            piabViewModel.UpdateLayout();
-        }
-
-        [TestMethod]
-        public void then_all_policies_end_up_in_second_column()
-        {
-            var policies = piabViewModel.GetDescendentsOfType<PolicyData>();
-            Assert.IsTrue(policies.Any());
-            Assert.IsFalse(policies.Where(x => x.Column != 1).Any());
         }
     }
 }

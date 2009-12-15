@@ -303,7 +303,7 @@
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="20" />
                                     <ColumnDefinition MinWidth="160"/>
-                                    <ColumnDefinition Width="40" />
+                                    <ColumnDefinition Width="20" />
                                 </Grid.ColumnDefinitions>
                                 <ToggleButton Template="{DynamicResource ExpanderToggleButton}"
                                     x:Name="expanderToggle"
@@ -316,17 +316,17 @@
 									ContentSource="Header" />
                                 <StackPanel Orientation="Horizontal" Grid.Column="2">
                                     <ToggleButton Content="Properties"
-									    x:Name="showProperties"
+									    x:Name="ShowProperties"
 									    Template="{DynamicResource PropertiesExpandToggleButton}"
 									    Background="{DynamicResource NormalBrush}"
                                         VerticalAlignment="Center"
                                         Margin="1,0,1,0"
 									    Visibility="{Binding Properties, Converter={StaticResource EnumerableToVisibilityConverter}}" />
-                                    <Button Command="{Binding DeleteCommand}" 
+                                    <!--Button Command="{Binding DeleteCommand}" 
                                             Style="{DynamicResource DeleteButtonStyle}"                                             
                                             VerticalAlignment="Center" 
                                             Margin="1,0,1,0"                                            
-                                            AutomationProperties.Name="DeleteButton" />
+                                            AutomationProperties.Name="DeleteButton" /-->
                                 </StackPanel>
                             </Grid>
                         </Border>
@@ -342,8 +342,31 @@
 								MaxWidth="600"
 								HorizontalAlignment="Left"
 								Padding="5"
-								Visibility="{Binding IsChecked, Converter={StaticResource BooleanToVisibilityConverter}, ElementName=showProperties}">
-                            <ItemsControl ItemsSource="{Binding Properties}" Grid.IsSharedSizeScope="True" />
+								Visibility="{Binding IsChecked, Converter={StaticResource BooleanToVisibilityConverter}, ElementName=ShowProperties}">
+                            <ItemsControl ItemsSource="{Binding Properties}" Grid.IsSharedSizeScope="True">
+                                <ItemsControl.Template>
+                                    <ControlTemplate>
+                                        <Grid HorizontalAlignment="Stretch">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="12" />
+                                                <ColumnDefinition Width="75" SharedSizeGroup="PropLabel"/>
+                                                <ColumnDefinition Width="175*" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <GridSplitter Grid.Column="1" 
+                                                          HorizontalAlignment="Right" 
+                                                          Width="2"
+                                                          ResizeDirection="Columns" 
+                                                          ShowsPreview="False" />
+
+                                            <VirtualizingStackPanel 
+                                                Grid.ColumnSpan="3"
+                                                IsItemsHost="True" />
+                                            
+                                        </Grid>
+                                    </ControlTemplate>
+                                </ItemsControl.Template>
+                            </ItemsControl>
                         </Border>
 
                         <Border Visibility="Collapsed"

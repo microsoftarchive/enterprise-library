@@ -12,6 +12,7 @@
 using System.Collections.Generic;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design.Validation;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Filters;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
@@ -62,6 +63,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         [ConfigurationProperty(minimumPriorityProperty)]
         [ResourceDescription(typeof(DesignResources), "PriorityFilterDataMinimumPriorityDescription")]
         [ResourceDisplayName(typeof(DesignResources), "PriorityFilterDataMinimumPriorityDisplayName")]
+        [Validation(LoggingDesignTime.ValidatorTypes.LogPriorityMinMaxValidatorType)]
         public int MinimumPriority
         {
             get
@@ -81,6 +83,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         [ConfigurationProperty(maximumPriorityProperty, DefaultValue = int.MaxValue)]
         [ResourceDescription(typeof(DesignResources), "PriorityFilterDataMaximumPriorityDescription")]
         [ResourceDisplayName(typeof(DesignResources), "PriorityFilterDataMaximumPriorityDisplayName")]
+        [Validation(LoggingDesignTime.ValidatorTypes.LogPriorityMinMaxValidatorType)]
         public int MaximumPriority
         {
             get

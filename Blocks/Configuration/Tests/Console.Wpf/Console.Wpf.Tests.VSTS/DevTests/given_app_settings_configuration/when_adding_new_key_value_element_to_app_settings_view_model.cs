@@ -51,6 +51,13 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_app_settings_configuration
             Assert.IsNotNull(base.AppSettings.Settings.OfType<KeyValueConfigurationElement>().Where(x=> string.IsNullOrEmpty(x.Value)).FirstOrDefault());
         }
 
+        [TestMethod]
+        public void then_new_key_value_element_has_key_set()
+        {
+            var addedKeyValueElement = base.AppSettings.Settings.OfType<KeyValueConfigurationElement>().Where(x => string.IsNullOrEmpty(x.Value)).FirstOrDefault();
+            Assert.IsFalse(string.IsNullOrEmpty(addedKeyValueElement.Key));
+        }
+
         
         [TestMethod]
         public void then_key_value_was_added_to_view()

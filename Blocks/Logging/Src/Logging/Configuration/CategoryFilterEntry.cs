@@ -19,7 +19,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
     /// </summary>
     [ResourceDescription(typeof(DesignResources), "CategoryFilterEntryDescription")]
     [ResourceDisplayName(typeof(DesignResources), "CategoryFilterEntryDisplayName")]
-    [ViewModel(LoggingDesignTime.ViewModelTypeNames.CategoryFilterViewModel)]
     public class CategoryFilterEntry : NamedConfigurationElement
     {
         /// <summary>

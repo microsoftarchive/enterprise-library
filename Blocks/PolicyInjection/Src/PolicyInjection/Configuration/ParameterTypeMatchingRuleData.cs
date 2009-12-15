@@ -14,6 +14,7 @@ using System.Configuration;
 using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design.Validation;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
 using FakeRules = Microsoft.Practices.EnterpriseLibrary.PolicyInjection.MatchingRules;
@@ -74,8 +75,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         [ResourceDescription(typeof(DesignResources), "ParameterTypeMatchingRuleDataMatchesDescription")]
         [ResourceDisplayName(typeof(DesignResources), "ParameterTypeMatchingRuleDataMatchesDisplayName")]
         [System.ComponentModel.Editor(CommonDesignTime.EditorTypes.CollectionEditor, CommonDesignTime.EditorTypes.FrameworkElement)]
-        [CollectionEditorTemplate("ParameterTypeCollectionHeader", "ParameterTypeCollectionItem")]
         [EnvironmentalOverrides(false)]
+        [Validation(PolicyInjectionDesignTime.Validators.MatchCollectionPopulatedValidationType)]
         public MatchDataCollection<ParameterTypeMatchData> Matches
         {
             get { return (MatchDataCollection<ParameterTypeMatchData>)base[matchesPropertyName]; }
@@ -116,7 +117,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
     /// </summary>
     [ResourceDescription(typeof(DesignResources), "ParameterTypeMatchDataDescription")]
     [ResourceDisplayName(typeof(DesignResources), "ParameterTypeMatchDataDisplayName")]
-    [ViewModel(PolicyInjectionDesignTime.ViewModelTypeNames.PiabParameterTypeMatchDataViewModel)]
     public class ParameterTypeMatchData : MatchData
     {
         private const string kindPropertyName = "parameterKind";

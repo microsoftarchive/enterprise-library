@@ -44,6 +44,7 @@
       <CodeCoverageItem binaryFile="Microsoft.Practices.EnterpriseLibrary.Validation.dll" pdbFile="Microsoft.Practices.EnterpriseLibrary.Validation.pdb" />
       <CodeCoverageItem binaryFile="Microsoft.Practices.EnterpriseLibrary.Validation.Integration.AspNet.dll" pdbFile="Microsoft.Practices.EnterpriseLibrary.Validation.Integration.AspNet.pdb" />
       <CodeCoverageItem binaryFile="Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WCF.dll" pdbFile="Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WCF.pdb" />
+      <CodeCoverageItem binaryFile="Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WPF.dll" pdbFile="Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WPF.pdb" />
       <CodeCoverageItem binaryFile="Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WinForms.dll" pdbFile="Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WinForms.pdb" />
       <CodeCoverageItem binaryFile="MsmqDistributor.exe" pdbFile="MsmqDistributor.pdb" />
     </Regular>

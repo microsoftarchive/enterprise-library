@@ -135,37 +135,6 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_caching_configuraton
     [TestClass]
     public class when_updating_caching_configuration_model_layout : given_caching_configuration
     {
-        protected override void Act()
-        {
-            CachingViewModel.UpdateLayout();
-        }
-
-        [TestMethod]
-        public void then_cache_managers_are_contained_in_first_column()
-        {
-            var cacheManagers = CachingViewModel.DescendentElements().Where(x => typeof(CacheManagerData).IsAssignableFrom(x.ConfigurationType));
-
-            Assert.AreNotEqual(0, cacheManagers.Count());
-            Assert.IsFalse(cacheManagers.Where(x => x.Column != 0).Any());
-        }
-
-        [TestMethod]
-        public void then_backingstores_are_contained_in_first_column()
-        {
-            var backingStores = CachingViewModel.DescendentElements().Where(x => typeof(CacheStorageData).IsAssignableFrom(x.ConfigurationType));
-
-            Assert.AreNotEqual(0, backingStores.Count());
-            Assert.IsFalse(backingStores.Where(x => x.Column != 1).Any());
-        }
-
-        [TestMethod]
-        public void then_encryption_providers_are_contained_in_first_column()
-        {
-            var encryptionProviders = CachingViewModel.DescendentElements().Where(x => typeof(StorageEncryptionProviderData).IsAssignableFrom(x.ConfigurationType));
-
-            Assert.AreNotEqual(0, encryptionProviders.Count());
-            Assert.IsFalse(encryptionProviders.Where(x => x.Column != 2).Any());
-        }
 
         [TestMethod]
         public void then_related_elements_for_cache_manager_contains_backing_store()

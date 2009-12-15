@@ -78,6 +78,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration
                 [Category("(name)")]
                 [ResourceDisplayName(typeof(DesignResources), "ConnectionStringSettingsMetadataNameDisplayName")]
                 [ResourceDescription(typeof(DesignResources), "ConnectionStringSettingsMetadataNameDescription")]
+                [EnvironmentalOverrides(false)]
                 public string Name
                 {
                     get;

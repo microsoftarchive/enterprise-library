@@ -33,6 +33,8 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_application_model
             base.UIServiceMock.Setup(x=> x.ShowMessageWpf(It.IsAny<string>(), It.IsAny<string>(), MessageBoxButton.YesNoCancel))
                               .Returns( MessageBoxResult.Yes)
                               .Verifiable();
+
+            ApplicationModel.ConfigurationFilePath = "test.config";
         }
 
         protected override void Act()
@@ -51,12 +53,17 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_application_model
         {
             Assert.IsFalse(ApplicationModel.IsDirty);
         }
+        
+        [TestMethod]
+        public void then_configuration_file_is_cleared()
+        {
+            Assert.IsTrue(string.IsNullOrEmpty(ApplicationModel.ConfigurationFilePath));
+        }
     }
 
     [TestClass]
     public class when_creating_new_configuration_source_and_cancelling_save_dialog : given_clean_appllication_model
     {
-
         protected override void Arrange()
         {
             base.Arrange();

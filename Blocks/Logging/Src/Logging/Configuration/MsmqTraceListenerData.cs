@@ -167,6 +167,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// Gets or sets the message queue path.
         /// </summary>
         [ConfigurationProperty(queuePathProperty, Options=ConfigurationPropertyOptions.IsRequired)]
+        [DesigntimeDefault(".\\Private$\\myQueue")]
         public string QueuePath
         {
             get

@@ -65,35 +65,28 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_configuration_element_with_prope
         [TestMethod]
         public void then_editor_specified_in_editor_attributes_sets_has_editor()
         {
-            Assert.IsTrue(property.HasEditor);
+            Assert.IsNotNull(property.CreateCustomVisual());
 
-            Assert.AreNotSame(editorInstance, property.Editor);
-            editorInstance = property.Editor;
+            Assert.AreNotSame(editorInstance, property.CreateCustomVisual());
+            editorInstance = property.CreateCustomVisual();
         }
 
         [TestMethod]
         public void then_editor_is_returned_as_ui_element()
         {
-            Assert.IsNotNull(property.Editor);
-            Assert.IsInstanceOfType(property.Editor, typeof(System.Windows.Controls.Button));
+            Assert.IsNotNull(property.CreateCustomVisual());
+            Assert.IsInstanceOfType(property.CreateCustomVisual(), typeof(System.Windows.Controls.Button));
 
-            Assert.AreNotSame(editorInstance, property.Editor);
-            editorInstance = property.Editor;
+            Assert.AreNotSame(editorInstance, property.CreateCustomVisual());
+            editorInstance = property.CreateCustomVisual();
         }
 
 
         [TestMethod]
-        public void then_editor_data_context_is_ITypeDescriptorContext()
+        public void then_editor_data_context_is_BindableProperty()
         {
-            Assert.IsNotNull(property.Editor);
-            Assert.IsInstanceOfType(property.Editor.DataContext, typeof(ITypeDescriptorContext));
-        }
-
-        [TestMethod]
-        public void then_editor_data_context_is_ConfigElementPropertyModel()
-        {
-            Assert.IsNotNull(property.Editor);
-            Assert.IsInstanceOfType(property.Editor.DataContext, typeof(ElementProperty));
+            Assert.IsNotNull(property.CreateCustomVisual());
+            Assert.IsInstanceOfType(property.CreateCustomVisual().DataContext, typeof(BindableProperty));
         }
 
         private class PropertyDescriptorReturnEditor : PropertyDescriptor

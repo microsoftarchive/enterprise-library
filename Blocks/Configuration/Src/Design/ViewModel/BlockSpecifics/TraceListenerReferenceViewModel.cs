@@ -38,6 +38,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
         {
             get { return this.Property("Name"); }
         }
+
+        public Property GetNameProperty(EnvironmentalOverridesViewModel environment)
+        {
+            var overridesProperty = this.Properties.OfType<EnvironmentalOverridesViewModel.OverridesProperty>().Where(x => x.Environment == environment).FirstOrDefault();
+            return overridesProperty.ChildProperties.Where(x => x.PropertyName == "Name").FirstOrDefault();
+        }
     }
 
     public class TraceListenerReferenceNameProperty : ElementReferenceProperty

@@ -39,6 +39,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
     [ResourceDescription(typeof(DesignResources), "ExceptionTypeDataDescription")]
     [ResourceDisplayName(typeof(DesignResources), "ExceptionTypeDataDisplayName")]
     [TypePickingCommand(Replace=CommandReplacement.DefaultAddCommandReplacement)]
+    [ViewModel(ExceptionHandlingDesignTime.ViewModelTypeNames.ExceptionTypeDataViewModel)]
     public class ExceptionTypeData : NamedConfigurationElement
     {
         private static readonly AssemblyQualifiedTypeNameConverter typeConverter = new AssemblyQualifiedTypeNameConverter();

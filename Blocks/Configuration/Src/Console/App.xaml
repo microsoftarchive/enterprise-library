@@ -9,6 +9,8 @@
                 <ResourceDictionary Source="/Microsoft.Practices.EnterpriseLibrary.Configuration.Design;component/Resources/CollectionEditorTemplates.xaml" />
 				<ResourceDictionary Source="/Microsoft.Practices.EnterpriseLibrary.Configuration.Design;component/Resources/ExpanderDictionary.xaml" />
 				<ResourceDictionary Source="/Microsoft.Practices.EnterpriseLibrary.Configuration.Design;component/Resources/ViewModelDataTemplates.xaml" />
+                <!--ResourceDictionary Source="/Microsoft.Practices.EnterpriseLibrary.Configuration.Design;component/Themes/Generic.xaml" /-->
+                <ResourceDictionary Source="ValidationDisplayStyles.xaml" />
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
          

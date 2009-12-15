@@ -14,6 +14,7 @@ using System.Configuration;
 using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design.Validation;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
 using FakeRules = Microsoft.Practices.EnterpriseLibrary.PolicyInjection.MatchingRules;
@@ -73,9 +74,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         [ConfigurationCollection(typeof(PropertyMatchData))]
         [ResourceDescription(typeof(DesignResources), "PropertyMatchingRuleDataMatchesDescription")]
         [ResourceDisplayName(typeof(DesignResources), "PropertyMatchingRuleDataMatchesDisplayName")]
-        [System.ComponentModel.Editor(CommonDesignTime.EditorTypes.CollectionEditor, CommonDesignTime.EditorTypes.FrameworkElement)]
-        [CollectionEditorTemplate("PiabPropertyMatchHeader", "PiabPropertyMatchItem")]
-        [EnvironmentalOverrides(false)]
+        [Editor("Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors.ElementCollectionEditor, Microsoft.Practices.EnterpriseLibrary.Configuration.Design", CommonDesignTime.EditorTypes.FrameworkElement)]
+        [Validation(PolicyInjectionDesignTime.Validators.MatchCollectionPopulatedValidationType)]
         public MatchDataCollection<PropertyMatchData> Matches
         {
             get { return (MatchDataCollection<PropertyMatchData>)base[MatchesPropertyName]; }
@@ -108,7 +108,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
     /// </summary>
     [ResourceDescription(typeof(DesignResources), "PropertyMatchDataDescription")]
     [ResourceDisplayName(typeof(DesignResources), "PropertyMatchDataDisplayName")]
-    [ViewModel(PolicyInjectionDesignTime.ViewModelTypeNames.PiabPropertyMatchDataViewModel)]
     public class PropertyMatchData : MatchData
     {
         private const string OptionPropertyName = "matchOption";

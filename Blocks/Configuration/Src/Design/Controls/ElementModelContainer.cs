@@ -23,7 +23,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls
     [TemplatePart(Name = "PART_Adorner", Type = typeof(Border))]
     public class ElementModelContainer : ContentControl
     {
-
+        private Control Title;
         public static TogglePropertiesCommand ToggleProperties { get; set; }
 
         #region Custom Dependency Properties
@@ -31,13 +31,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls
         public Boolean IsExpanded
         {
             get { return (Boolean)GetValue(IsExpandedProperty); }
-            set { SetValue(IsExpandedProperty, value); }
+            set 
+            { 
+                SetValue(IsExpandedProperty, value);
+                if (Section != null) Section.ClearAdorners();
+            }
         }
         #endregion
 
         public static readonly RoutedEvent ShowPropertiesEvent = EventManager.RegisterRoutedEvent(
         "ShowProperties", RoutingStrategy.Bubble, typeof(PropertiesRoutedEventHandler), typeof(ElementModelContainer));
-        internal event PropertiesRoutedEventHandler ShowProperties;
+        
 
         static ElementModelContainer()
         {
@@ -46,9 +50,53 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls
 
         }
 
+        private BlockVisualizer Section;
+        private ElementViewModel ElementModel;
+        
+        
         public ElementModelContainer()
         {
             ToggleProperties = new TogglePropertiesCommand();
+            DataContextChanged += new DependencyPropertyChangedEventHandler(ElementModelContainer_DataContextChanged);
+            MouseLeftButtonDown += new MouseButtonEventHandler(ElementModelContainer_MouseLeftButtonDown);
+
+            IsExpanded = true;
+        }
+
+        void ElementModelContainer_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            Section.SetSelectedElement(this);
+            ElementModel.Select();
+        }
+
+        void ElementModelContainer_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            ElementModel = e.NewValue as ElementViewModel;
+        }
+
+        void ElementModelContainer_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            ToggleProperties.Execute(this);
+        }
+
+        protected override void OnVisualParentChanged(DependencyObject oldParent)
+        {
+            base.OnVisualParentChanged(oldParent);
+
+            Section = VisualTreeWalker.TryFindParent<BlockVisualizer>(this);
+        }
+
+        public override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+            
+            Title = (Control)Template.FindName("Title", this);
+            Title.MouseDoubleClick += new MouseButtonEventHandler(ElementModelContainer_MouseDoubleClick);
+        }
+
+        public ElementViewModel Element
+        {
+            get { return ElementModel; }
         }
 
         protected override System.Windows.Automation.Peers.AutomationPeer OnCreateAutomationPeer()
@@ -68,28 +116,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls
             this.control = control;
         }
 
-        protected override string GetNameCore()
+        protected override Point GetClickablePointCore()
         {
-            var element = control.Content as ElementViewModel;
-            if (element != null)
-            {
-                return element.Name;
-            }
-
-            var header = control.Content as ElementHeaderViewModel;
-            if (header != null)
-            {
-                return header.Name;
-            }
-
-            return control.Name;
+            Point p = base.GetClickablePointCore();
+            p.X -= control.ActualWidth / 2 - 30;
+            return p;
         }
-
+        protected override string GetAutomationIdCore()
+        {
+            return control.Element != null ? control.Element.Name : control.Name;
+        }
         protected override string GetClassNameCore()
         {
             return typeof(ElementModelContainer).Name;
         }
-
         protected override AutomationControlType GetAutomationControlTypeCore()
         {
             return AutomationControlType.Header;

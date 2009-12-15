@@ -30,6 +30,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Configuration.Design.HostAdapter, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Lib\Microsoft.Practices.EnterpriseLibrary.Configuration.Design.HostAdapter.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Practices.Unity, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Lib\Microsoft.Practices.Unity.dll</HintPath>
@@ -90,7 +94,6 @@
     <Compile Include="DevTests\given_configuration_source_model\when_initializing_new_configuration.cs" />
     <Compile Include="DevTests\given_configuration_source_model\when_loading_configuration.cs" />
     <Compile Include="DevTests\given_configuration_source_model\when_removing_section.cs" />
-    <Compile Include="DevTests\given_configuration_validator_rule\when_validating_value_with_configuration_validator_rule.cs" />
     <Compile Include="DevTests\given_cryptography_settings\given_keyed_hash_algorithm_provider_element.cs" />
     <Compile Include="DevTests\given_cryptography_settings\given_crypto_configuration.cs" />
     <Compile Include="DevTests\given_cryptography_settings\given_symmetric_crypto_provider_element.cs" />
@@ -124,7 +127,7 @@
     <Compile Include="DevTests\given_validation_configuration_section\when_creating_validation_view_model.cs" />
     <Compile Include="DevTests\given_view_model_and_config_collection\when_seeking_collection_add_commands.cs" />
     <Compile Include="DevTests\given_piab_configuration\when_creating_section_view_model_for_piab.cs" />
-    <Compile Include="DevTests\given_property_grid_consuming_view_model\when_property_grid_consumes_model_element.cs" />
+    <Compile Include="DevTests\given_host_adapter\when_creating_component_model_elements.cs" />
     <Compile Include="DevTests\given_type_picking_add_command\when_executing_command.cs" />
     <Compile Include="DevTests\given_validation_configuration_section\when_creating_reference_for_default_validation_rule.cs" />
     <Compile Include="DevTests\given_view_model\when_creating_model_that_contains_properties.cs" />
@@ -228,25 +231,67 @@
       <Project>{9CC92B51-39D9-4622-BE1D-57257C894FA7}</Project>
       <Name>Configuration.EnvironmentalOverrides</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\TestAssembly1\TestAssembly1.csproj">
+      <Project>{303AFD8C-1538-490D-9F83-EDF23BA1BBD1}</Project>
+      <Name>TestAssembly1</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\TestAssembly2\TestAssembly2.csproj">
+      <Project>{2A0F894F-20B9-497D-AB0B-7549E41AAF49}</Project>
+      <Name>TestAssembly2</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\TestAssembly3\TestAssembly3.csproj">
+      <Project>{18A388BB-41C8-47A3-AAC4-72343EE953CB}</Project>
+      <Name>TestAssembly3</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BlockSpecific\Caching\when_cache_manager_view_model_constructed.cs" />
+    <Compile Include="Contexts\NewConfigurationSourceModelContext.cs" />
+    <Compile Include="BlockSpecific\Logging\when_logging_filter_priorities_invalid.cs" />
+    <Compile Include="Contexts\CachingConfigurationContext.cs" />
+    <Compile Include="Controls\TypeBrowser\NodesFixture.cs" />
+    <Compile Include="Controls\TypeBrowser\SearchOperationFixture.cs" />
+    <Compile Include="Controls\TypeBrowser\TreeAssert.cs" />
+    <Compile Include="Controls\TypeBrowser\TypeBrowserViewModelFixture.cs" />
     <Compile Include="Converters\given_midpoint_value_converter.cs" />
+    <Compile Include="DevTests\given_add_application_block_command\when_executing_add_application_block_command.cs" />
     <Compile Include="DevTests\given_application_model\when_opening_composed_source.cs" />
     <Compile Include="DevTests\given_application_model\when_opening_configuration_source_with_errors.cs" />
     <Compile Include="DevTests\given_application_model\when_saving_configuration_source.cs" />
+    <Compile Include="DevTests\given_application_model\when_setting_application_file_path.cs" />
     <Compile Include="DevTests\given_app_settings_configuration\when_adding_new_key_value_element_to_app_settings_view_model.cs" />
     <Compile Include="DevTests\given_app_settings_configuration\when_saving_application_settings.cs" />
     <Compile Include="DevTests\given_app_settings_configuration\when_loading_app_settings_view_model.cs" />
     <Compile Include="DevTests\given_app_settings_configuration\when_saving_application_settings_after_adding_new_settings.cs" />
-    <Compile Include="DevTests\given_a_validation_service\when_validating_a_property.cs" />
-    <Compile Include="DevTests\given_collection_editor\when_creating_collection_editor_for_property.cs" />
+    <Compile Include="DevTests\given_an_exception_policy_add_command\when_adding_an_exception_policy.cs" />
+    <Compile Include="Contexts\SectionWithValidatablePropertiesContext.cs" />
+    <Compile Include="DevTests\given_default_add_command\when_executing_default_add_command.cs" />
+    <Compile Include="DevTests\given_delete_element_command\when_executing_default_delete_command.cs" />
+    <Compile Include="DevTests\given_save_environment_delta_command\when_saving_environment_delta_file_with_non_rooted_filename.cs" />
+    <Compile Include="DevTests\given_system_data_provider_converter\when_getting_standard_values.cs" />
+    <Compile Include="Mocks\CollectionHasItemValidator.cs" />
+    <Compile Include="Mocks\ErrorProducingValidator.cs" />
+    <Compile Include="DevTests\given_property_to_validate\when_applying_type_validation.cs" />
+    <Compile Include="DevTests\given_property_to_validate\when_updating_custom_property.cs" />
+    <Compile Include="DevTests\given_property_to_validate\when_validating_file_path.cs" />
+    <Compile Include="DevTests\given_property_to_validate\when_validating_override_property.cs" />
+    <Compile Include="DevTests\given_host_adapter\given_host_adapter.cs" />
+    <Compile Include="DevTests\given_host_adapter\given_host_adapter_and_type_descriptor.cs" />
+    <Compile Include="DevTests\given_host_adapter\when_creating_host_adapter.cs" />
+    <Compile Include="DevTests\given_host_adapter\when_editing_property.cs" />
+    <Compile Include="DevTests\given_host_adapter\when_selecting_element.cs" />
+    <Compile Include="DevTests\given_host_adapter\when_vialoting_validation_rule.cs" />
+    <Compile Include="DevTests\given_invalid_model\when_building_validation_model.cs" />
+    <Compile Include="DevTests\given_invalid_model\when_invalidating_caching_section.cs" />
+    <Compile Include="Mocks\ElementForValidation.cs" />
+    <Compile Include="DevTests\given_property_to_validate\when_loading_a_validation_source_with_errors.cs" />
+    <Compile Include="DevTests\given_property_to_validate\when_validating_a_property.cs" />
     <Compile Include="DevTests\given_element_reference\when_dropping_down_reference_picker.cs" />
     <Compile Include="DevTests\given_element_reference\when_reference_scope_is_not_currently_available.cs" />
     <Compile Include="DevTests\given_element_reference\when_updating_provider_name_in_reference_picker_list.cs" />
     <Compile Include="DevTests\given_environment_node_in_view_model\when_exporting_merged_configuration.cs" />
     <Compile Include="DevTests\given_element_reference_with_child_properties\when_requesting_child_properties.cs" />
     <Compile Include="DevTests\given_environment_node_in_view_model\when_loading_environment_model.cs" />
-    <Compile Include="DevTests\given_environment_node_in_view_model\when_saving_environment_section.cs" />
     <Compile Include="DevTests\given_environment_node_in_view_model\when_saving_main_configuration.cs" />
     <Compile Include="DevTests\given_logging_configuration\given_system_diagnostics_trace_listener_data.cs" />
     <Compile Include="DevTests\given_logging_configuration\given_custom_trace_listener_data.cs" />
@@ -255,7 +300,7 @@
     <Compile Include="DevTests\given_merge_configuration\given_merge_configuration.cs" />
     <Compile Include="DevTests\given_open_environment_delta_command\when_opening_environment_delta_file.cs" />
     <Compile Include="DevTests\given_satelite_provider_add_command\when_executing_satelite_provider.cs" />
-    <Compile Include="DevTests\given_save_environment_delta_command\when_saving_environment_delta_file.cs" />
+    <Compile Include="DevTests\given_save_environment_delta_command\when_saving_environment_delta_file_without_file_name.cs" />
     <None Include="merge_environment.dconfig">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

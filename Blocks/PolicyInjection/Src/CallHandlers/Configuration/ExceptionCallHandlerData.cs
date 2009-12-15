@@ -79,7 +79,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
         [ConfigurationProperty(ExceptionPolicyNamePropertyName, IsRequired = true)]
         [ResourceDescription(typeof(DesignResources), "ExceptionCallHandlerDataExceptionPolicyNameDescription")]
         [ResourceDisplayName(typeof(DesignResources), "ExceptionCallHandlerDataExceptionPolicyNameDisplayName")]
-        [Reference("Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.ExceptionPolicyData, Microsoft.Practices.EnterpriseLibrary.ExceptionHandling")]
+        [Reference(typeof(ExceptionHandlingSettings), typeof(ExceptionPolicyData))]
         public string ExceptionPolicyName
         {
             get { return (string)base[ExceptionPolicyNamePropertyName]; }

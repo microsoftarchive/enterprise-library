@@ -86,7 +86,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_environment_node_in_view_model
         [TestMethod]
         public void then_wrap_handler_overrides_property_is_readonly()
         {
-            Assert.IsTrue(OverriddenExceptionMessage.ReadOnly);
+            Assert.IsTrue(OverriddenExceptionMessage.BindableProperty.ReadOnly);
         }
 
         [TestMethod]

@@ -18,6 +18,8 @@ using System.Windows.Input;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Microsoft.Practices.Unity;
 using System.Diagnostics;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Commands;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
 {
@@ -32,15 +34,21 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         {
             this.containingCollection = containingCollection;
 
-            MoveUp = new DelegateCommand((o) => containingCollection.MoveUp(this), (o) => !containingCollection.IsFirst(this));
-            MoveDown = new DelegateCommand((o) => containingCollection.MoveDown(this), (o) => !containingCollection.IsLast(this));
+            MoveUp = new MoveUpCommand(containingCollection, this);
+            MoveDown = new MoveDownCommand(containingCollection, this);
 
             configurationCollectionAttribute = containingCollection.Attributes.OfType<ConfigurationCollectionAttribute>().FirstOrDefault();
             Debug.Assert(configurationCollectionAttribute != null);
         }
 
-        public ICommand MoveUp { get; protected set; }
-        public ICommand MoveDown { get; protected set; }
+        public CommandModel MoveUp { get; protected set; }
+        public CommandModel MoveDown { get; protected set; }
+
+
+        protected override IEnumerable<CommandModel> GetAllCommands()
+        {
+            return base.GetAllCommands().Union( new CommandModel[]{ MoveUp, MoveDown });
+        }
 
         public override void Delete()
         {
@@ -64,5 +72,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             builder.Append("]");
             return builder.ToString() ;
         }
+
     }
 }

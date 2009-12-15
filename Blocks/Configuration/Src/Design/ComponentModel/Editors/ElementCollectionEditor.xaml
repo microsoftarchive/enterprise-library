@@ -1,0 +1,22 @@
+﻿<UserControl x:Class="Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors.ElementCollectionEditor"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:Controls="clr-namespace:Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls"
+    xmlns:ViewModel="clr-namespace:Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel"				
+    HorizontalAlignment="Stretch">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Microsoft.Practices.EnterpriseLibrary.Configuration.Design;component/Resources/ViewModelDataTemplates.xaml" />
+                    
+                <ResourceDictionary>
+                    <DataTemplate DataType="{x:Type ViewModel:Property}">
+                        <ContentControl Content="{Binding Bindable}" ToolTip="{Binding Description}" />
+                    </DataTemplate>
+                </ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid x:Name="Collection" VerticalAlignment="Top"  HorizontalAlignment="Stretch">
+    </Grid>
+</UserControl>

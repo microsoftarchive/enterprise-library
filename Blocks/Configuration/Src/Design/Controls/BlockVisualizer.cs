@@ -37,6 +37,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls
         protected SectionViewModel SectionModel { get; set; }
         private Grid RootGrid { get; set; }
         private Canvas RelationshipCanvas { get; set; }
+        private ContentControl Content { get; set; }
 
         private const int RELATIONSHIP_LINE_Y_OFFSET = 12;
 
@@ -44,6 +45,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(BlockVisualizer), new FrameworkPropertyMetadata(typeof(BlockVisualizer)));
         }
+
 
         public BlockVisualizer()
         {
@@ -68,6 +70,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls
 
         private void HandleShowProperties(object sender, PropertiesRoutedEventArgs args)
         {
+            ClearAdorners();
+
             //Hide relationships
             var container = args.OriginalSource as ElementModelContainer;
             if (container != null)
@@ -75,55 +79,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls
                 //Flip the bit
                 container.IsExpanded = !container.IsExpanded;
                 //ReDraw the relationship lines 
-                ActivateRelationships(container.Content as ElementViewModel);
+                ActivateRelationships(container);
             }
         }
 
         public void CanShowRelationships(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = true;
-            //var container = sender as ElementModelContainer;
-            //if (container != null)
-            //{
-            //    if (container.IsExpanded)
-            //        e.CanExecute = false;
-            //    else
-            //    {
-            //        var model = container.Content as ElementViewModel;
-            //        if (model != null)
-            //        {
-
-            //            IEnumerable<ElementViewModel> relatedModels = SectionModel.GetRelatedElements(model);
-            //            foreach (var relatedModel in relatedModels)
-            //            {
-            //                ElementViewModel theRelatedModel = relatedModel;
-            //                Guid elementId = RelationshipMapping.FirstOrDefault(pair => pair.Value == theRelatedModel).Key;
-            //                var relatedContainer =
-            //                    VisualTreeWalker.FindName<ElementModelContainer>(GetXamlFriendlyName(elementId), RootGrid);
-
-            //                if (relatedContainer!= null && relatedContainer.IsExpanded)
-            //                {
-            //                    //If any of the related containers are open then we won't show relationships on the whole
-            //                    //relationship tree
-            //                    e.CanExecute = false;
-            //                }
-            //            }
-            //        }
-            //    }
-            //}		
-        }
-
-        public void OnShowRelationships(object sender, ExecutedRoutedEventArgs e)
-        {
-            var contentControl = e.OriginalSource as ContentControl;
-            if (contentControl != null)
-            {
-                var model = contentControl.Content as ElementViewModel;
-                if (model != null)
-                {
-                    ActivateRelationships(model);
-                }
-            }
         }
 
         void BlockVisualizerGotFocus(object sender, RoutedEventArgs e)
@@ -140,36 +102,45 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls
             }
         }
 
+
+        protected override void OnVisualParentChanged(DependencyObject oldParent)
+        {
+            base.OnVisualParentChanged(oldParent);
+        }
+
         void BlockVisualizerDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             SectionModel = DataContext as SectionViewModel;
-            //Set up change handlers
-            if (SectionModel != null)
-            {
-                SectionModel.UpdateVisualGrid += ElementsCollectionChanged;
-            }
+            SectionModel.DescendentElementsChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(SectionModel_DescendentElementsChanged);
         }
 
-        private void ActivateRelationships(ElementViewModel model)
+        void SectionModel_DescendentElementsChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
+            ClearAdorners();
+        }
+
+        internal void SetSelectedElement(ElementModelContainer elementContainer)
+        {
+            ActivateRelationships(elementContainer);
+        }
+
+        public void ActivateRelationships(ElementModelContainer elementContainer)
+        { 
             //Remove any previous adorners and lines
             ClearAdorners();
-            IEnumerable<ElementViewModel> relatedItems = SectionModel.GetRelatedElements(model);
+            IEnumerable<ElementViewModel> relatedItems = SectionModel.GetRelatedElements(elementContainer.Element);
 
-            Guid originId = RelationshipMapping.FirstOrDefault(pair => pair.Value == model).Key;
-            var originControl = VisualTreeWalker.FindName<ContentControl>(GetXamlFriendlyName(originId), RootGrid);
-
-            AdornElementModelControl(originControl);
+            AdornElementModelControl(elementContainer);
             foreach (var elementModel in relatedItems)
             {
                 Guid destinationId = RelationshipMapping.FirstOrDefault(pair => pair.Value == elementModel).Key;
 
                 //Find the relatedItems in the grid.
-                var destinationControl = VisualTreeWalker.FindName<FrameworkElement>(GetXamlFriendlyName(destinationId), RootGrid);
+                var destinationControl = VisualTreeWalker.FindChild<ElementModelContainer>(x => x.Element == elementModel, this);
                 if (destinationControl != null)
                 {
-                    Point offsetOrigin = GetOffsetOrigin(originControl, destinationControl);
-                    Point offsetDestination = GetOffsetDestination(destinationControl, originControl);
+                    Point offsetOrigin = GetOffsetOrigin(elementContainer, destinationControl);
+                    Point offsetDestination = GetOffsetDestination(destinationControl, elementContainer);
                     DrawRelationshipLines(offsetOrigin, offsetDestination);
                     AdornElementModelControl(destinationControl);
                 }
@@ -199,7 +170,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls
 
         private Point GetPointFromControl(FrameworkElement control)
         {
-            return control.TransformToAncestor(RootGrid).Transform(new Point(0, 0));
+            return control.TransformToAncestor(this).Transform(new Point(0, 0));
         }
 
         private Point GetOffsetOrigin(FrameworkElement originControl, FrameworkElement destinationControl)
@@ -224,7 +195,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls
         }
 
         #region Relationship Visualization
-        private void ClearAdorners()
+        public void ClearAdorners()
         {
             foreach (var activeAdorner in ActiveAdorners)
             {
@@ -309,154 +280,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls
         {
             base.OnApplyTemplate();
 
-            GenerateGridLayout();
             RelationshipCanvas = Template.FindName("PART_RelationshipCanvas", this) as Canvas;
+            Content = Template.FindName("PART_Content", this) as ContentControl;
+            Content.Content = SectionModel.Bindable;
         }
 
         private void ElementsCollectionChanged(object sender, EventArgs e)
         {
-            GenerateGridLayout();
         }
 
-        private static string GetXamlFriendlyName(Guid contentControlId)
-        {
-            return String.Format("{0}{1}", "_", contentControlId.ToString().Replace("-", "_"));
-        }
-
-        #region Grid Layout Methods
-        private void GenerateGridLayout()
-        {
-            RootGrid = Template.FindName("PART_RootGrid", this) as Grid;
-            if (RootGrid != null)
-            {
-                //Clear any previous children 
-                RootGrid.Children.Clear();
-                ClearAdorners();
-                RelationshipMapping.Clear();
-
-                GenerateGridColumns(RootGrid);
-                GenerateGridRows(RootGrid);
-
-                foreach (ViewModel.ViewModel elementModel in SectionModel.GetGridVisuals())
-                {
-                    LayoutElementInGrid(RootGrid, elementModel);
-                }
-            }
-        }
-
-        private static GridWidthConverter widthConverter = new GridWidthConverter();
-        private void LayoutElementInGrid(Grid theGrid, ViewModel.ViewModel elementModel)
-        {
-            var containerWidthBinding = new Binding
-                                            {
-                                                Source = theGrid.ColumnDefinitions[(elementModel.Column) * 2],
-                                                Converter = widthConverter,
-                                                Mode = BindingMode.TwoWay,
-                                                Path = new PropertyPath("Width")
-                                            };
-
-            FrameworkElement control;
-            control = elementModel.CustomVisual ?? new ElementModelContainer
-                                                       {
-                                                           Content = elementModel,
-                                                           Focusable = true
-                                                       };
-
-            control.SetBinding(MaxWidthProperty, containerWidthBinding);
-
-            control.CommandBindings.Add(new CommandBinding(ShowRelationships,
-                                                                  OnShowRelationships,
-                                                                  CanShowRelationships));
-            Grid.SetRow(control, elementModel.Row);
-
-            //Account for grid splitters
-            Grid.SetColumn(control, (elementModel.Column) * 2);
-
-            // todo: Set rowspan instead of min
-            Grid.SetRowSpan(control, Math.Max(1, elementModel.RowSpan));
-
-            var contentControlId = Guid.NewGuid();
-            //Ensure unique names for all content controls
-            control.Name = GetXamlFriendlyName(contentControlId);
-            theGrid.Children.Add(control);
-            //Add an entry for lookup later when relationships are visualized
-            ElementViewModel relatableElement = elementModel as ElementViewModel;
-            if (relatableElement != null)
-            {
-                //Only store a mapping for real element view models (not header or sections)
-                RelationshipMapping.Add(contentControlId, relatableElement);
-            }
-        }
-
-        private void GenerateGridRows(Grid theGrid)
-        {
-            theGrid.RowDefinitions.Clear();
-            for (int i = 0; i <= SectionModel.Rows; i++)
-            {
-                theGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(0, GridUnitType.Auto) });
-            }
-        }
-
-        private void GenerateGridColumns(Grid theGrid)
-        {
-            theGrid.ColumnDefinitions.Clear();
-            for (int i = 0; i < SectionModel.Columns; i++)
-            {
-                theGrid.ColumnDefinitions.Add(new ColumnDefinition
-                                                {
-                                                    Width = new GridLength(1, GridUnitType.Auto),
-                                                    MinWidth = 60
-                                                });
-
-                //Add a column and splitter in between each column
-                theGrid.ColumnDefinitions.Add(new ColumnDefinition
-                                                {
-                                                    Width = new GridLength(3, GridUnitType.Pixel),
-                                                });
-            }
-
-            // Add extra column definition for the grid splitter to work appropriately
-            theGrid.ColumnDefinitions.Add( new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Auto)});
-
-            AddGridSplitters(theGrid);
-        }
-
-        private void AddGridSplitters(Grid theGrid)
-        {
-            for (int i = 1; i < (SectionModel.Columns * 2); i += 2)
-            {
-                var splitter = new GridSplitter()
-                                {
-                                    BorderBrush = Brushes.Black,
-                                    BorderThickness = new Thickness(1),
-                                    Margin = new Thickness(-26, 0, 0, 0),
-                                    Opacity = .15,
-                                    Background = Brushes.Transparent,
-                                    Width = 3,
-                                    HorizontalAlignment = HorizontalAlignment.Center,
-                                    VerticalAlignment = VerticalAlignment.Stretch
-                                };
-                splitter.DragStarted += SplitterDragStarted;
-
-                Grid.SetColumn(splitter, i);
-                Grid.SetRowSpan(splitter, SectionModel.Rows + 1);
-                theGrid.Children.Add(splitter);
-            }
-        }
-
-        void SplitterDragStarted(object sender, System.Windows.Controls.Primitives.DragStartedEventArgs e)
-        {
-            if (RelationshipCanvas.Children.Count > 0)
-            {
-                ClearAdorners();
-            }
-        }
-
-        public static void RemoveItemFromGrid(Grid theGrid, ContentControl elementToRemove)
-        {
-            theGrid.Children.Remove(elementToRemove);
-        }
-        #endregion
     }
 
     internal delegate void PropertiesRoutedEventHandler(object sender, PropertiesRoutedEventArgs args);

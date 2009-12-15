@@ -24,7 +24,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
     /// </summary>
     [ResourceDescription(typeof(DesignResources), "LogCallHandlerCategoryEntryDescription")]
     [ResourceDisplayName(typeof(DesignResources), "LogCallHandlerCategoryEntryDisplayName")]
-    [ViewModel(PolicyInjectionCallHandlersDesignTime.ViewModelTypes.LogCallHandlerCategoryEntryViewModel)]
     public class LogCallHandlerCategoryEntry : NamedConfigurationElement
     {
         /// <summary>

@@ -34,14 +34,14 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_shell_service
     {
         protected static string TestConfigurationFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "test.config");
 
-        protected StandAloneApplicationViewModel ApplicationModel;
+        protected ApplicationViewModel ApplicationModel;
 
         protected PropertyChangedListener ApplicationModelChangedListener;
 
         protected override void Arrange()
         {
             base.Arrange();
-            ApplicationModel = Container.Resolve<StandAloneApplicationViewModel>();
+            ApplicationModel = Container.Resolve<ApplicationViewModel>();
 
             ApplicationModelChangedListener = new PropertyChangedListener(ApplicationModel);
         }

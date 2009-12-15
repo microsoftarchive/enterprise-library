@@ -28,11 +28,12 @@ namespace Console.Wpf.Tests.VSTS.Controls
         {
             base.Arrange();
 
-            contextMenu = new SelectionNotifyingContextMenu();
-            var menuItemOne = new SelectionNotifyingMenuItem();
-            var menuItemTwo = new SelectionNotifyingMenuItem();
-            contextMenu.Items.Add(menuItemOne);
-            contextMenu.Items.Add(menuItemTwo);
+            contextMenu = new SelectionNotifyingContextMenu() { Name = "ContextMenu" };
+            var firstMenu = new SelectionNotifyingMenuItem() { Name = "FirstMenu" };
+            firstMenu.Items.Add(new SelectionNotifyingMenuItem() { Name = "FirstMenu_FirstSubMenu" });
+            firstMenu.Items.Add(new SelectionNotifyingMenuItem() { Name = "FirstMenu_SecondSubMenu" });
+            contextMenu.Items.Add(firstMenu);
+            contextMenu.Items.Add(new SelectionNotifyingMenuItem() { Name = "SecondMenu" });
         }    
 
         protected SelectionNotifyingContextMenu ContextMenu

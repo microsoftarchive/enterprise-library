@@ -77,7 +77,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_environment_node_in_view_model
         {
             base.Arrange();
 
-            StandAloneApplicationViewModel appModel = (StandAloneApplicationViewModel)Container.Resolve<IApplicationModel>();
+            ApplicationViewModel appModel = (ApplicationViewModel)Container.Resolve<IApplicationModel>();
             appModel.ConfigurationFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "test.config");
             appModel.IsDirty = false ;
             

@@ -24,6 +24,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration
     /// </summary>
     [ResourceDescription(typeof(DesignResources), "AuthorizationRuleDataDescription")]
     [ResourceDisplayName(typeof(DesignResources), "AuthorizationRuleDataDisplayName")]
+    [ViewModel(SecurityDesignTime.ViewModelTypeNames.AuthorizationRuleDataViewModel)]
     public class AuthorizationRuleData : NamedConfigurationElement, IAuthorizationRule
     {
         private const string expressionProperty = "expression";

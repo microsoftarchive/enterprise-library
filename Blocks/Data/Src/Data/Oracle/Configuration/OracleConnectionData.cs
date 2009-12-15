@@ -56,7 +56,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Oracle.Configuration
         [ResourceDescription(typeof(DesignResources), "OracleConnectionDataPackagesDescription")]
         [ResourceDisplayName(typeof(DesignResources), "OracleConnectionDataPackagesDisplayName")]
         [Editor(CommonDesignTime.EditorTypes.CollectionEditor, CommonDesignTime.EditorTypes.FrameworkElement)]
-        [CollectionEditorTemplateAttribute("OraclePackageDataViewModelHeader", "OraclePackageDataViewModelItem")]
         [EnvironmentalOverrides(false)]
         [DesignTimeReadOnly(false)]
         public NamedElementCollection<OraclePackageData> Packages

@@ -22,7 +22,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\..\..\bin\Debug\Microsoft.Practices.EnterpriseLibrary.Configuration.Design.XML</DocumentationFile>
+    <DocumentationFile>
+    </DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -34,6 +35,14 @@
     <DocumentationFile>..\..\..\bin\Release\Microsoft.Practices.EnterpriseLibrary.Configuration.Design.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Configuration.Design.HostAdapter, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Lib\Microsoft.Practices.EnterpriseLibrary.Configuration.Design.HostAdapter.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Configuration.Design.HostAdapterV5, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Lib\Microsoft.Practices.EnterpriseLibrary.Configuration.Design.HostAdapterV5.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Practices.Unity, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Lib\Microsoft.Practices.Unity.dll</HintPath>
@@ -77,13 +86,32 @@
     <Reference Include="PresentationFramework">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="WindowsFormsIntegration">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WPFToolkit, Version=3.5.40128.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Lib\WPFToolkit.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Page Include="ComponentModel\Editors\CustomAttributesEditor.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="ComponentModel\Editors\ElementCollectionEditor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ComponentModel\Editors\FlagsEditor.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ComponentModel\Editors\TypeBrowser\TypeBrowser.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Hosting\ConfigurationEditorUI.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -135,6 +163,11 @@
     <Compile Include="ComponentModel\Converters\SystemDataProviderConverter.cs" />
     <Compile Include="ComponentModel\Editors\CustomAttributesEditor.xaml.cs">
       <DependentUpon>CustomAttributesEditor.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ComponentModel\Editors\CustomEditorBinder.cs" />
+    <Compile Include="ComponentModel\Editors\DatePickerEditor.cs" />
+    <Compile Include="ComponentModel\Editors\ElementCollectionEditor.xaml.cs">
+      <DependentUpon>ElementCollectionEditor.xaml</DependentUpon>
     </Compile>
     <Compile Include="ComponentModel\Editors\FilteredFileNameEditor.cs" />
     <Compile Include="ComponentModel\Editors\FlagsEditor.xaml.cs">
@@ -220,6 +253,12 @@
       <DependentUpon>TypeMemberChooserUI.cs</DependentUpon>
     </Compile>
     <Compile Include="ComponentModel\Editors\MultilineTextEditor.cs" />
+    <Compile Include="ComponentModel\Editors\TypeBrowser\AssemblyGroup.cs" />
+    <Compile Include="ComponentModel\Editors\TypeBrowser\SearchAction.cs" />
+    <Compile Include="ComponentModel\Editors\TypeBrowser\TypeBrowser.xaml.cs">
+      <DependentUpon>TypeBrowser.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ComponentModel\Editors\TypeBrowser\TypeBrowserViewModel.cs" />
     <Compile Include="ComponentModel\Editors\TypePicker\Resources.Designer.cs">
       <DependentUpon>Resources.resx</DependentUpon>
       <AutoGen>True</AutoGen>
@@ -261,11 +300,10 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Controls\BlockVisualizer.cs" />
-    <Compile Include="Controls\CollectionElementEditor.cs" />
     <Compile Include="Controls\ContextMenuButton.cs" />
     <Compile Include="Controls\ElementModelContainer.cs" />
-    <Compile Include="Controls\PropertyContentTemplateSelector.cs" />
     <Compile Include="Controls\RelationshipAdorner.cs" />
+    <Compile Include="Controls\SectionModelContainer.cs" />
     <Compile Include="Controls\SelectionNotifyingContextMenu.cs" />
     <Compile Include="Controls\SelectionNotifyingMenuItem.cs" />
     <Compile Include="Controls\ToggleButtonExtensions.cs" />
@@ -274,7 +312,9 @@
     <Compile Include="Converters\BooleanToHiddenConverter.cs" />
     <Compile Include="Converters\ChildCountToVisibility.cs" />
     <Compile Include="Converters\EnumerableToVisibilityConverter.cs" />
+    <Compile Include="Converters\ErrorsToStringConverter.cs" />
     <Compile Include="Converters\GridWidthConverter.cs" />
+    <Compile Include="Converters\IsWarningToTextConverter.cs" />
     <Compile Include="Converters\MidpointConverter.cs" />
     <Compile Include="Converters\StringToVisibilityConverter.cs" />
     <Compile Include="Converters\SuggestedValueTypeConverter.cs" />
@@ -282,6 +322,12 @@
     <Compile Include="Converters\ZIndexToBooleanConverter.cs" />
     <Compile Include="DesignConfigurationSource.cs" />
     <Compile Include="ElementType.cs" />
+    <Compile Include="Hosting\ComponentModelElement.cs" />
+    <Compile Include="Hosting\ConfigurationEditorUI.xaml.cs">
+      <DependentUpon>ConfigurationEditorUI.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Hosting\FrameworkElementUITypeEditor.cs" />
+    <Compile Include="Hosting\SingleHierarchyConfigurationUIHostAdapter.cs" />
     <Compile Include="IDesignConfigurationSource.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
@@ -296,49 +342,60 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="ApplicationViewModel.cs" />
     <Compile Include="Validation\DefaultPropertyValidator.cs" />
+    <Compile Include="Validation\ElementReferenceValidator.cs" />
+    <Compile Include="Validation\FilePathValidator.cs" />
+    <Compile Include="Validation\PropertyValidator.cs" />
     <Compile Include="Validation\RequiredFieldValidator.cs" />
-    <Compile Include="Validation\ValidationAttribute.cs" />
+    <Compile Include="Validation\TypeValidator.cs" />
+    <Compile Include="Validation\Validator.cs" />
     <Compile Include="Validation\ValidationError.cs" />
-    <Compile Include="Validation\ValidationPropertyExtensions.cs" />
-    <Compile Include="Validation\ValidationService.cs" />
+    <Compile Include="ViewModel\Bindable\BindableProperty.cs" />
+    <Compile Include="ViewModel\Bindable\HeaderedListViewModel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ViewModel\Bindable\HeaderViewModel.cs" />
+    <Compile Include="ViewModel\Bindable\HorizontalListViewModel.cs" />
+    <Compile Include="ViewModel\Bindable\ListViewModel.cs" />
+    <Compile Include="ViewModel\Bindable\PopupEditorBindableProperty.cs" />
+    <Compile Include="ViewModel\Bindable\SuggestedValuesBindableProperty.cs" />
     <Compile Include="ViewModel\BlockSpecifics\AddCachingBlockCommand.cs" />
     <Compile Include="ViewModel\BlockSpecifics\AddConfigurationSourcesBlockCommand.cs" />
     <Compile Include="ViewModel\BlockSpecifics\AddDatabaseBlockCommand.cs" />
     <Compile Include="ViewModel\BlockSpecifics\AddExceptionHandlingBlockCommand.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\AddExceptionPolicyCommand.cs" />
     <Compile Include="ViewModel\BlockSpecifics\AddLoggingBlockCommand.cs" />
     <Compile Include="ViewModel\BlockSpecifics\AppSettingsDecorator.cs" />
     <Compile Include="ViewModel\BlockSpecifics\AppSettingsViewModel.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\AuthorizationProviderViewModel.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\AuthorizationRuleDataViewModel.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\AuthorizationRuleProviderDataViewModel.cs" />
     <Compile Include="ViewModel\BlockSpecifics\CacheManagerSectionViewModel.cs" />
     <Compile Include="ViewModel\BlockSpecifics\CacheManagerBackingStoreProperty.cs" />
-    <Compile Include="ViewModel\BlockSpecifics\CategoryFilterEntryViewModel.cs" />
     <Compile Include="ViewModel\BlockSpecifics\ConfigurationSourceSectionViewModel.cs" />
     <Compile Include="ViewModel\BlockSpecifics\ConnectionStringsDecorator.cs" />
     <Compile Include="ViewModel\BlockSpecifics\CryptographySectionViewModel.cs" />
     <Compile Include="ViewModel\BlockSpecifics\CustomTraceListenerDataViewModel.cs" />
     <Compile Include="ViewModel\BlockSpecifics\DataSectionViewModel.cs" />
-    <Compile Include="ViewModel\BlockSpecifics\DomainConfigurationElementViewModel.cs" />
     <Compile Include="ViewModel\BlockSpecifics\EnvironmentalOverridesEditor.cs" />
     <Compile Include="ViewModel\BlockSpecifics\EnvironmentMergeSectionViewModel.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\ExceptionHandlerDataViewModel.cs" />
     <Compile Include="ViewModel\BlockSpecifics\ExceptionHandlingSectionViewModel.cs" />
-    <Compile Include="ViewModel\BlockSpecifics\FaultContractExceptionHandlerMappingDataViewModel.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\ExceptionPolicyDataViewModel.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\ExceptionTypeDataViewModel.cs" />
     <Compile Include="ViewModel\BlockSpecifics\KeyedHashAlgorithmProviderAddCommand.cs" />
     <Compile Include="ViewModel\BlockSpecifics\KeyedHashAlgorithmProviderDataViewModel.cs" />
-    <Compile Include="ViewModel\BlockSpecifics\LogCallHandlerCategoryEntryViewModel.cs" />
     <Compile Include="ViewModel\BlockSpecifics\LoggingSectionViewModel.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\Logging\LogPriorityMinMaxValidator.cs" />
     <Compile Include="ViewModel\BlockSpecifics\OpenEnvironmentConfigurationDeltaCommand.cs" />
-    <Compile Include="ViewModel\BlockSpecifics\OraclePackageDataViewModel.cs" />
     <Compile Include="ViewModel\BlockSpecifics\OverriddenElementViewModel.cs" />
     <Compile Include="ViewModel\BlockSpecifics\OverridenTraceListenerCollectionEditor.xaml.cs">
       <DependentUpon>OverridenTraceListenerCollectionEditor.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ViewModel\BlockSpecifics\PiabMemberNameViewModel.cs" />
-    <Compile Include="ViewModel\BlockSpecifics\PiabMethodSignatureTypesViewModel.cs" />
-    <Compile Include="ViewModel\BlockSpecifics\PiabNamespaceMatchDataViewModel.cs" />
-    <Compile Include="ViewModel\BlockSpecifics\PiabParameterTypeMatchDataCollectionElementViewModel.cs" />
-    <Compile Include="ViewModel\BlockSpecifics\PiabPropertyMatchDataViewModel.cs" />
     <Compile Include="ViewModel\BlockSpecifics\PiabSectionViewModel.cs" />
-    <Compile Include="ViewModel\BlockSpecifics\PiabTypeMatchDataViewModel.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\Piab\MatchCollectionPopulatedValidator.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\PolicyDataViewModel.cs" />
     <Compile Include="ViewModel\BlockSpecifics\SaveEnvironmentConfigurationDeltaCommand.cs" />
     <Compile Include="ViewModel\BlockSpecifics\SaveMergedEnvironmentConfigurationCommand.cs" />
     <Compile Include="ViewModel\BlockSpecifics\SecuritySectionViewModel.cs" />
@@ -348,36 +405,39 @@
     <Compile Include="ViewModel\BlockSpecifics\SystemDiagnosticsTraceListenerDataViewModel.cs" />
     <Compile Include="ViewModel\BlockSpecifics\TraceListenerElementCollectionViewModel.cs" />
     <Compile Include="ViewModel\BlockSpecifics\TraceListenerReferenceViewModel.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\ValidatedMemberReferenceViewModel.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\ValidatedTypeReferenceViewModel.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\ValidationRulesetDataViewModel.cs" />
     <Compile Include="ViewModel\BlockSpecifics\ValidationSectionViewModel.cs" />
     <Compile Include="ViewModel\BlockSpecifics\ValidationTypeReferenceAddCommand.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\ValidatorDataViewModel.cs" />
     <Compile Include="ViewModel\CollectionElementViewModel.cs" />
     <Compile Include="ViewModel\Commands\AddApplicationBlockCommand.cs" />
     <Compile Include="ViewModel\Commands\AddSateliteProviderCommand.cs" />
     <Compile Include="ViewModel\Commands\CommandModel.cs" />
+    <Compile Include="ViewModel\Commands\MoveDownCommand.cs" />
     <Compile Include="ViewModel\Commands\DefaultCollectionElementAddCommand.cs" />
     <Compile Include="ViewModel\Commands\DefaultDeleteCommandModel.cs" />
     <Compile Include="ViewModel\Commands\DefaultElementCollectionAddCommand.cs" />
     <Compile Include="ViewModel\Commands\DelegateCommand.cs" />
+    <Compile Include="ViewModel\Commands\MoveUpCommand.cs" />
     <Compile Include="ViewModel\Commands\TypePickingCollectionElementAddCommand.cs" />
-    <Compile Include="ViewModel\ComponentModel\ViewModelPropertyDescriptor.cs" />
-    <Compile Include="ViewModel\ComponentModel\ViewModelTypeDescriptorProxy.cs" />
+    <Compile Include="Hosting\ViewModelTypeDescriptorProxy.cs" />
+    <Compile Include="ViewModel\CompositeErrorsCollection.cs" />
     <Compile Include="ViewModel\ConfigurationProperty.cs" />
     <Compile Include="ViewModel\ConfigurationSourceModel.cs" />
     <Compile Include="ViewModel\CustomAttributesPropertyExtender.cs" />
     <Compile Include="ViewModel\CustomProperty.cs" />
     <Compile Include="ViewModel\ElementCollectionViewModel.cs" />
-    <Compile Include="ViewModel\ElementHeaderViewModel.cs" />
     <Compile Include="ViewModel\ElementProperty.cs" />
     <Compile Include="ViewModel\ElementReference.cs" />
     <Compile Include="ViewModel\ElementReferenceProperty.cs" />
     <Compile Include="ViewModel\ElementViewModel.cs" />
-    <Compile Include="ViewModel\GridPositioning.cs" />
-    <Compile Include="ViewModel\HeaderViewModel.cs" />
-    <Compile Include="ViewModel\HierarchicalSectionViewModel.cs" />
+    <Compile Include="ViewModel\Bindable\HierarchicalViewModel.cs" />
+    <Compile Include="ViewModel\IElementAssociation.cs" />
     <Compile Include="ViewModel\IElementExtendedPropertyProvider.cs" />
     <Compile Include="ViewModel\INeedInitialization.cs" />
     <Compile Include="ViewModel\MetadataCollection.cs" />
-    <Compile Include="ViewModel\PositionedSectionViewModel.cs" />
     <Compile Include="ViewModel\Property.cs" />
     <Compile Include="ViewModel\SectionViewModel.cs" />
     <Compile Include="ViewModel\Services\AnnotationService.cs" />
@@ -391,9 +451,9 @@
     <Compile Include="ViewModel\Services\ElementLookup.cs" />
     <Compile Include="ViewModel\Services\IApplicationModel.cs" />
     <Compile Include="ViewModel\Services\IUIServiceWpf.cs" />
-    <Compile Include="ViewModel\StringHeaderViewModel.cs" />
-    <Compile Include="ViewModel\Validation\ConfigurationValidatorRule.cs" />
-    <Compile Include="ViewModel\Validation\RequiredValidationRule.cs" />
+    <Compile Include="ViewModel\Bindable\TwoColumnsViewModel.cs" />
+    <Compile Include="ViewModel\Bindable\TwoVerticalVisualsViewModel.cs" />
+    <Compile Include="ViewModel\ValidationModel.cs" />
     <Compile Include="ViewModel\ViewModel.cs" />
     <EmbeddedResource Include="ComponentModel\Editors\KeyManager\ChooseDataProtectionScopeControl.resx">
       <DependentUpon>ChooseDataProtectionScopeControl.cs</DependentUpon>
@@ -538,6 +598,9 @@
       <Project>{9CC92B51-39D9-4622-BE1D-57257C894FA7}</Project>
       <Name>Configuration.EnvironmentalOverrides</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="ViewModel\ComponentModel\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

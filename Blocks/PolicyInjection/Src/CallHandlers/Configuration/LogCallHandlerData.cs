@@ -94,7 +94,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
         [ResourceDescription(typeof(DesignResources), "LogCallHandlerDataCategoriesDescription")]
         [ResourceDisplayName(typeof(DesignResources), "LogCallHandlerDataCategoriesDisplayName")]
         [System.ComponentModel.Editor(CommonDesignTime.EditorTypes.CollectionEditor, CommonDesignTime.EditorTypes.FrameworkElement)]
-        [CollectionEditorTemplate("ValidationLogHandlerCollectionEditorHeader", "ValidationLogHandlerCollectionEditorItem" )]
         [EnvironmentalOverrides(false)]
         public NamedElementCollection<LogCallHandlerCategoryEntry> Categories
         {

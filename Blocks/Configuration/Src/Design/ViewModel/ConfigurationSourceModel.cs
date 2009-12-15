@@ -25,7 +25,6 @@ using Microsoft.Practices.EnterpriseLibrary.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
 {
-
     public class ConfigurationSourceModel
     {
         private readonly IUIServiceWpf uiService;
@@ -56,6 +55,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         public void Load(IDesignConfigurationSource configSource)
         {
             Clear();
+            Initialize();
 
             var locator = builder.Resolve<ConfigurationSectionLocator>();
 
@@ -70,7 +70,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
                         
                         InitializeSection(sectionViewModel, new InitializeContext(configSource));
                         sections.Add(sectionViewModel);
-
                     }
                 }
                 catch (Exception e)
@@ -79,9 +78,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
                 }
             }
 
-            foreach (var section in sections)
+            Validate();
+        }
+
+        private void Validate()
+        {
+            foreach(var section in Sections)
             {
-                section.UpdateLayout();
+                section.Validate();
             }
         }
 
@@ -124,7 +128,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             {
                 section.Save(configurationSource);
             }
+        }
 
+        public void SaveEnvironmentDeltaFiles()
+        {
             foreach (EnvironmentalOverridesViewModel envrionment in Environments)
             {
                 envrionment.SaveDelta();
@@ -146,7 +153,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             sections.Add(environmentSection);
 
             InitializeSection(environmentSection, new InitializeContext(null));
-
         }
 
         public void NewEnvironment()
@@ -185,7 +191,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
 
             InitializeSection(sectionViewModel, new InitializeContext(null));
 
-            sectionViewModel.UpdateLayout();
             sections.Add(sectionViewModel);
         }
 
@@ -200,5 +205,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             
         }
 
+        public bool IsValidForSave()
+        {
+            Validate();
+            var errors = sections.SelectMany(
+                s => s.DescendentElements()
+                         .Union(new ElementViewModel[] {s}))
+                .SelectMany(e => e.Properties)
+                .SelectMany(p => p.ValidationErrors);
+            return !errors.Any(e => e.IsError);
+        }
     }
 }

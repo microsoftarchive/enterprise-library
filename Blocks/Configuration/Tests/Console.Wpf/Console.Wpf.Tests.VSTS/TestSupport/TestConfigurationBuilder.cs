@@ -47,6 +47,30 @@ namespace Console.Wpf.Tests.VSTS.TestSupport
             return this;
         }
 
+        public TestConfigurationBuilder AddLoggingSettings()
+        {
+            builder.ConfigureLogging()
+                .WithOptions.FilterOnPriority("PriorityFilter")
+                    .StartingWithPriority(10)
+                    .UpToPriority(20)
+                .LogToCategoryNamed("General")
+                    .SendTo.EventLog("EventLogListener")
+                    .ToLog("Application");
+
+            return this;
+        }
+
+        public const string CacheManagerName = "CacheManager";
+        public TestConfigurationBuilder AddCachingSettings()
+        {
+            builder.ConfigureCaching()
+                .ForCacheManagerNamed(CacheManagerName)
+                .UseAsDefaultCache()
+                .StoreInMemory();
+
+            return this;
+        }
+
         public void Build(IConfigurationSource source)
         {
             builder.UpdateConfigurationWithReplace(source);

@@ -10,24 +10,17 @@
 //===============================================================================
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Configuration;
 using System.ComponentModel;
-using System.Windows.Input;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Utility;
-using System.Reflection;
-using System.Collections.ObjectModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Properties;
 using Microsoft.Practices.Unity;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Commands;
 using System.Diagnostics;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
@@ -149,7 +142,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         
         public virtual ElementViewModel AddNewCollectionElement(Type elementType)
         {
-            var element = AddNewConfigurationElement(elementType);
+            var element = mergeableConfigurationCollection.CreateNewElement(elementType);
+            var childElementModel = ContainingSection.CreateCollectionElement(this, element);
+
+            if (childElementModel.NameProperty != null)
+            {
+                childElementModel.NameProperty.Value = CalculateNameFromType(elementType);
+            }
 
             // add the new element to the configuration.
             mergeableConfigurationCollection.ResetCollection(
@@ -158,22 +157,42 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
                 .ToArray());
 
             // add the new element to the view model.
-            var childElementModel = ContainingSection.CreateCollectionElement(this, element);
             ChildElements.Add(childElementModel);
+
+            foreach (var property in childElementModel.Properties)
+            {
+                DesigntimeDefaultAttribute defaultDesigntimeValue = property.Attributes.OfType<DesigntimeDefaultAttribute>().FirstOrDefault();
+                if (defaultDesigntimeValue != null)
+                {
+                    property.Value = property.ConvertFromBindableValue(defaultDesigntimeValue.DefaultValue);
+                }
+            }
+
+            InitializeElementProperties(childElementModel);
+
+            Validate();
 
             return childElementModel;
         }
 
-        private ConfigurationElement AddNewConfigurationElement(Type elementType)
+        private void ValidateDefiningProperty()
         {
-            var element = mergeableConfigurationCollection.CreateNewElement(elementType);
-            var namedElement = element as NamedConfigurationElement;
-            if (namedElement != null)
-            {
-                namedElement.Name = CalculateNameFromType(elementType);
-            }
+            if (ParentElement == null) return;
 
-            return element;
+            var declaringPropertyModel = ParentElement.Properties
+                .Where(p => DeclaringProperty.Equals(p.DeclaringProperty)).FirstOrDefault();
+            if (declaringPropertyModel == null) return;
+
+            declaringPropertyModel.Validate();
+        }
+
+        private static void InitializeElementProperties(ElementViewModel childElementModel)
+        {
+            var propertiesForInitialization = childElementModel.Properties.OfType<INeedInitialization>();
+            foreach(var propInitializer in propertiesForInitialization)
+            {
+                propInitializer.Initialize(new InitializeContext());
+            }
         }
 
         //todo: should we have a Delete() on ElementViewModel too? then override on CollectionElement.
@@ -188,6 +207,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
 
             //remove the element from the view.
             ChildElements.Remove(element);
+
+            Validate();
 
             //notify deleted.
             element.OnDeleted();
@@ -213,9 +234,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             while(true)
             {
                 string proposedName = string.Format(CultureInfo.CurrentUICulture,
-                                                    Resources.NewCollectionElementNameFormat, baseName, number);
+                                                    Resources.NewCollectionElementNameFormat,
+                                                    baseName,
+                                                    number == 1 ? string.Empty : number.ToString()).Trim();
 
-                if (this.thisElementCollection.OfType<NamedConfigurationElement>().Any(e => e.Name == proposedName))
+                if (this.ChildElements.Any(x => x.NameProperty != null && x.NameProperty.BindableProperty.BindableValue == proposedName))
                     number++;
                 else
                     return proposedName;
@@ -224,6 +247,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
 
         #endregion
 
+        public override void Validate()
+        {
+            base.Validate();
+            ValidateDefiningProperty();
+        }
 
         #region Move Up & Down
 
@@ -266,6 +294,5 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         }
         
         #endregion
-
     }
 }

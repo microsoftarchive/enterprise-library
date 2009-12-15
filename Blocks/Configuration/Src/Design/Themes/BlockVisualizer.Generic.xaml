@@ -5,7 +5,7 @@
 	<ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="/Microsoft.Practices.EnterpriseLibrary.Configuration.Design;component/Resources/Converters.xaml" />
 		<ResourceDictionary Source="/Microsoft.Practices.EnterpriseLibrary.Configuration.Design;component/Resources/Brushes.xaml" />
-	</ResourceDictionary.MergedDictionaries>
+    </ResourceDictionary.MergedDictionaries>
 
 	<Style TargetType="{x:Type Controls:BlockVisualizer}">
 		<Setter Property="Focusable"
@@ -18,8 +18,8 @@
 							<ColumnDefinition Width="*" />
 						</Grid.ColumnDefinitions>
 						<Canvas x:Name="PART_RelationshipCanvas" />
-						<Grid Grid.Column="0"
-							  x:Name="PART_RootGrid" />
+						
+                        <ContentControl x:Name="PART_Content" />
 					</Grid>
 				</ControlTemplate>
 			</Setter.Value>

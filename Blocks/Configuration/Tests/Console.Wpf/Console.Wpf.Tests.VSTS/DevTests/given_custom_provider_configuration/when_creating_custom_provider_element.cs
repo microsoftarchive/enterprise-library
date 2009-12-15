@@ -23,6 +23,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Console.Wpf.Tests.VSTS.DevTests.Contexts;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_custom_provider_configuration
 {
@@ -57,16 +58,9 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_custom_provider_configuration
         }
 
         [TestMethod]
-        public void then_attributes_property_has_drop_down_editor()
+        public void then_attributes_property_has_custom_visual()
         {
-            Assert.IsTrue(attributesProperty.HasEditor);
-            Assert.AreEqual(EditorBehavior.DropDown, attributesProperty.EditorBehavior);
-        }
-
-        [TestMethod]
-        public void then_attributes_property_is_not_readonly()
-        {
-            Assert.IsFalse(attributesProperty.ReadOnly);
+            Assert.IsInstanceOfType(attributesProperty.Visual, typeof(CustomAttributesEditor));
         }
 
         [TestMethod]

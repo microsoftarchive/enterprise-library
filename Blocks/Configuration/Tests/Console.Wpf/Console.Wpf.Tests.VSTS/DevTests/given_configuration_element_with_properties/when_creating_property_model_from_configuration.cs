@@ -208,7 +208,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_configuration_element_with_prope
         public void then_property_has_no_editor()
         {
             Property numberProperty = properties.Where(x => x.PropertyName == "Number").FirstOrDefault();
-            Assert.IsFalse(numberProperty.HasEditor);
+            Assert.AreEqual(EditorBehavior.None, numberProperty.EditorBehavior);
         }
 
         [TestMethod]
@@ -261,21 +261,21 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_configuration_element_with_prope
         public void then_should_return_true_if_designtimereadonly()
         {
             var property = properties.Where(p => p.PropertyName == "DesignTimeReadOnly").First();
-            Assert.IsTrue(property.DesignTimeReadOnly);
+            Assert.IsTrue(property.BindableProperty.ReadOnly);
         }
 
         [TestMethod]
         public void then_should_return_true_if_not_designtimereadonly()
         {
             var property = properties.Where(p => p.PropertyName == "DesignTimeWritable").First();
-            Assert.IsFalse(property.DesignTimeReadOnly);
+            Assert.IsFalse(property.BindableProperty.ReadOnly);
         }
 
         [TestMethod]
         public void then_should_default_to_readonly_value_if_not_set()
         {
             var property = properties.Where(p => p.PropertyName == "ReadOnlyProperty").First();
-            Assert.AreEqual(property.ReadOnly, property.DesignTimeReadOnly);
+            Assert.AreEqual(property.ReadOnly, property.BindableProperty.ReadOnly);
         }
     }
 

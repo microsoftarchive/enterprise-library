@@ -28,7 +28,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WPF.Tests
         }
 
         [TestMethod]
-        public void ValidatesBindingForInvalidStringValidatedProperty()
+        public void ValidatesBindingForPropertyInvalidStringValidatedProperty()
         {
             var instance = new ValidatedObject { };
 
@@ -47,7 +47,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WPF.Tests
         }
 
         [TestMethod]
-        public void ValidatesBindingForStringValidatedProperty()
+        public void ValidatesBindingForPropertyStringValidatedProperty()
         {
             var instance = new ValidatedObject { };
 
@@ -64,7 +64,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WPF.Tests
         }
 
         [TestMethod]
-        public void ValidatesBindingForInvalidConvertedValidatedProperty()
+        public void ValidatesBindingForPropertyInvalidConvertedValidatedProperty()
         {
             var instance = new ValidatedObject { };
 
@@ -107,7 +107,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WPF.Tests
         }
 
         [TestMethod]
-        public void ValidatesBindingForConvertedValidatedProperty()
+        public void ValidatesBindingForPropertyConvertedValidatedProperty()
         {
             var instance = new ValidatedObject { };
 
@@ -124,7 +124,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WPF.Tests
         }
 
         [TestMethod]
-        public void ValidatesBindingForConvertedNonValidatedProperty()
+        public void ValidatesBindingForPropertyConvertedNonValidatedProperty()
         {
             var instance = new ValidatedObject { };
 
@@ -141,6 +141,41 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WPF.Tests
             Assert.AreEqual(15, instance.NonValidatedProperty);
         }
 
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void SettingSourceTypeToNullThrows()
+        {
+            new ValidatorRule { SourceType = null };
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void SettingSourceTypeOnARuleInitializedWithABindingExpressionThrows()
+        {
+            var textBox = new TextBox();
+            BindingOperations.SetBinding(textBox, TextBox.TextProperty, new Binding("NonValidatedProperty"));
+            var bindingExpression = BindingOperations.GetBindingExpression(textBox, TextBox.TextProperty);
+
+            new ValidatorRule(bindingExpression) { SourceType = typeof(ValidatedObject) };
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void SettingSourcePropertyNameToNullThrows()
+        {
+            new ValidatorRule { SourcePropertyName = null };
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void SettingSourcePropertyNameOnARuleInitializedWithABindingExpressionThrows()
+        {
+            var textBox = new TextBox();
+            BindingOperations.SetBinding(textBox, TextBox.TextProperty, new Binding("NonValidatedProperty"));
+            var bindingExpression = BindingOperations.GetBindingExpression(textBox, TextBox.TextProperty);
+
+            new ValidatorRule(bindingExpression) { SourcePropertyName = "NonValidatedProperty" };
+        }
 
         [TestMethod]
         public void CanValidateWithExplicitlySetTypeAndProperty()
@@ -151,7 +186,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WPF.Tests
             textBox.DataContext = instance;
             var binding = new Binding("ValidatedStringProperty") { UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged };
             BindingOperations.SetBinding(textBox, TextBox.TextProperty, binding);
-            binding.ValidationRules.Add(new ValidatorRule(typeof(ValidatedObject), "ValidatedStringProperty"));
+            binding.ValidationRules.Add(
+                new ValidatorRule
+                {
+                    SourceType = typeof(ValidatedObject),
+                    SourcePropertyName = "ValidatedStringProperty"
+                });
 
             textBox.Text = "bbbb";
 
@@ -159,7 +199,185 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WPF.Tests
             Assert.AreEqual(1, SWC.Validation.GetErrors(textBox).Count);
             Assert.IsTrue(SWC.Validation.GetErrors(textBox)[0].ErrorContent.ToString().Contains("invalid string"));
         }
+
+        [TestMethod]
+        public void ValidatingWithARuleWithNoTypeSetThrows()
+        {
+            var instance = new ValidatedObject { };
+
+            var textBox = new TextBox();
+            textBox.DataContext = instance;
+            var binding = new Binding("ValidatedStringProperty") { UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged };
+            BindingOperations.SetBinding(textBox, TextBox.TextProperty, binding);
+            binding.ValidationRules.Add(
+                new ValidatorRule
+                {
+                    SourcePropertyName = "ValidatedStringProperty"
+                });
+
+            try
+            {
+                textBox.Text = "bbbb";
+                Assert.Fail("should have thrown");
+            }
+            catch (InvalidOperationException)
+            {
+            }
+        }
+
+        [TestMethod]
+        public void ValidatingWithARuleWithNoSourcePropertySetThrows()
+        {
+            var instance = new ValidatedObject { };
+
+            var textBox = new TextBox();
+            textBox.DataContext = instance;
+            var binding = new Binding("ValidatedStringProperty") { UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged };
+            BindingOperations.SetBinding(textBox, TextBox.TextProperty, binding);
+            binding.ValidationRules.Add(
+                new ValidatorRule
+                {
+                    SourceType = typeof(ValidatedObject)
+                });
+
+            try
+            {
+                textBox.Text = "bbbb";
+                Assert.Fail("should have thrown");
+            }
+            catch (InvalidOperationException)
+            {
+            }
+        }
+
+        [TestMethod]
+        public void ValidatingWithARuleWithInvalidSourcePropertySetThrows()
+        {
+            var instance = new ValidatedObject { };
+
+            var textBox = new TextBox();
+            textBox.DataContext = instance;
+            var binding = new Binding("ValidatedStringProperty") { UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged };
+            BindingOperations.SetBinding(textBox, TextBox.TextProperty, binding);
+            binding.ValidationRules.Add(
+                new ValidatorRule
+                {
+                    SourceType = typeof(ValidatedObject),
+                    SourcePropertyName = "Invalid"
+                });
+
+            try
+            {
+                textBox.Text = "bbbb";
+                Assert.Fail("should have thrown");
+            }
+            catch (InvalidOperationException)
+            {
+            }
+        }
+
+
+        [TestMethod]
+        public void ValidatesBindingForPropertyInvalidStringValidatedPropertyWithMultipleSources()
+        {
+            var instance = new ValidatedObject { };
+
+            var textBox = new TextBox();
+            textBox.DataContext = instance;
+            var binding =
+                new Binding("MultipleSourceValidatedStringProperty")
+                {
+                    UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+                };
+            BindingOperations.SetBinding(textBox, TextBox.TextProperty, binding);
+            var bindingExpression = BindingOperations.GetBindingExpression(textBox, TextBox.TextProperty);
+            binding.ValidationRules.Add(
+                new ValidatorRule(bindingExpression)
+                {
+                    ValidationSpecificationSource = ValidationSpecificationSource.All
+                });
+
+            textBox.Text = "bbbb";
+
+            Assert.IsTrue(SWC.Validation.GetHasError(textBox));
+            Assert.AreEqual(1, SWC.Validation.GetErrors(textBox).Count);
+            Assert.IsTrue(SWC.Validation.GetErrors(textBox)[0].ErrorContent.ToString().Contains("invalid string: vab"));
+            Assert.IsTrue(SWC.Validation.GetErrors(textBox)[0].ErrorContent.ToString().Contains("invalid string: data annotations"));
+        }
+
+        [TestMethod]
+        public void ValidatesBindingForPropertyInvalidStringValidatedPropertyWithFilteredSources()
+        {
+            var instance = new ValidatedObject { };
+
+            var textBox = new TextBox();
+            textBox.DataContext = instance;
+            var binding =
+                new Binding("MultipleSourceValidatedStringProperty")
+                {
+                    UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+                };
+            BindingOperations.SetBinding(textBox, TextBox.TextProperty, binding);
+            var bindingExpression = BindingOperations.GetBindingExpression(textBox, TextBox.TextProperty);
+            binding.ValidationRules.Add(
+                new ValidatorRule(bindingExpression)
+                {
+                    ValidationSpecificationSource = ValidationSpecificationSource.Attributes
+                });
+
+            textBox.Text = "bbbb";
+
+            Assert.IsTrue(SWC.Validation.GetHasError(textBox));
+            Assert.AreEqual(1, SWC.Validation.GetErrors(textBox).Count);
+            Assert.IsTrue(SWC.Validation.GetErrors(textBox)[0].ErrorContent.ToString().Contains("invalid string: vab"));
+            Assert.IsFalse(SWC.Validation.GetErrors(textBox)[0].ErrorContent.ToString().Contains("invalid string: data annotations"));
+        }
+
+
+        [TestMethod]
+        public void ValidatesBindingForPropertyInvalidStringValidatedPropertyUsingDefaultRuleset()
+        {
+            var instance = new ValidatedObject { };
+
+            var textBox = new TextBox();
+            textBox.DataContext = instance;
+            var binding = new Binding("MultipleRulesetValidatedStringProperty")
+            {
+                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+            };
+            BindingOperations.SetBinding(textBox, TextBox.TextProperty, binding);
+            var bindingExpression = BindingOperations.GetBindingExpression(textBox, TextBox.TextProperty);
+            binding.ValidationRules.Add(new ValidatorRule(bindingExpression));
+
+            textBox.Text = "bbbb";
+
+            Assert.IsTrue(SWC.Validation.GetHasError(textBox));
+            Assert.AreEqual(1, SWC.Validation.GetErrors(textBox).Count);
+            Assert.IsTrue(SWC.Validation.GetErrors(textBox)[0].ErrorContent.ToString().Contains("invalid string default"));
+            Assert.IsFalse(SWC.Validation.GetErrors(textBox)[0].ErrorContent.ToString().Contains("invalid string ruleset"));
+        }
+
+        [TestMethod]
+        public void ValidatesBindingForPropertyInvalidStringValidatedPropertyUsingNonDefaultRuleset()
+        {
+            var instance = new ValidatedObject { };
+
+            var textBox = new TextBox();
+            textBox.DataContext = instance;
+            var binding = new Binding("MultipleRulesetValidatedStringProperty")
+            {
+                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+            };
+            BindingOperations.SetBinding(textBox, TextBox.TextProperty, binding);
+            var bindingExpression = BindingOperations.GetBindingExpression(textBox, TextBox.TextProperty);
+            binding.ValidationRules.Add(new ValidatorRule(bindingExpression) { RulesetName = "A" });
+
+            textBox.Text = "bbbb";
+
+            Assert.IsTrue(SWC.Validation.GetHasError(textBox));
+            Assert.AreEqual(1, SWC.Validation.GetErrors(textBox).Count);
+            Assert.IsFalse(SWC.Validation.GetErrors(textBox)[0].ErrorContent.ToString().Contains("invalid string default"));
+            Assert.IsTrue(SWC.Validation.GetErrors(textBox)[0].ErrorContent.ToString().Contains("invalid string ruleset"));
+        }
     }
-
-
 }

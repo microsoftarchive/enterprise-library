@@ -1,31 +1,33 @@
-﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:local="clr-namespace:Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls">
+                    xmlns:local="clr-namespace:Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls"
+                    xmlns:viewModel="clr-namespace:Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel">
 
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="/Microsoft.Practices.EnterpriseLibrary.Configuration.Design;component/Themes/BlockVisualizer.Generic.xaml" />
         <ResourceDictionary Source="/Microsoft.Practices.EnterpriseLibrary.Configuration.Design;component/Themes/ElementModelContainer.Generic.xaml" />
         <ResourceDictionary Source="/Microsoft.Practices.EnterpriseLibrary.Configuration.Design;component/Themes/SelectionNotifyingContextMenu.Generic.xaml" />
+        <ResourceDictionary Source="/Microsoft.Practices.EnterpriseLibrary.Configuration.Design;component/Resources/ViewModelDataTemplates.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
-    <Style TargetType="{x:Type local:CollectionElementEditor}">
-        <Setter Property="HorizontalAlignment">
-            <Setter.Value>Stretch</Setter.Value>
-        </Setter>
+
+    <Style TargetType="{x:Type local:SectionModelContainer}">
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type local:CollectionElementEditor}">
-                    <Border Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}">
-                        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" HorizontalAlignment="Stretch">
-                            <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch">
-                                <ContentControl x:Name="PART_Header" />
-                                <ItemsControl x:Name="PART_ItemsControl" />
-                                <Button x:Name="PART_NewButton" >New</Button>
-                            </StackPanel>
-                        </ScrollViewer>
-                    </Border>
+                <ControlTemplate TargetType="{x:Type local:SectionModelContainer}">
+                    <Expander Style="{StaticResource SectionExpander}" >
+                        <Expander.Header>
+                            <DockPanel x:Name="PART_Header">
+                                <TextBlock DockPanel.Dock="Left" Text="{Binding Name}" />
+                                <DockPanel.ContextMenu>
+                                    <local:SelectionNotifyingContextMenu ItemsSource="{Binding Commands}" Style="{StaticResource ContextMenuStyle}"  />
+                                </DockPanel.ContextMenu>
+                            </DockPanel>
+                        </Expander.Header>
+
+                        <local:BlockVisualizer Grid.IsSharedSizeScope="True" />
+
+                    </Expander>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

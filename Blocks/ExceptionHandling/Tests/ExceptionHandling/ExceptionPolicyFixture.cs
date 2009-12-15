@@ -12,7 +12,9 @@
 using System;
 using System.Configuration;
 using System.Diagnostics;
+using System.Linq;
 using System.Security;
+using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Instrumentation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Practices.ServiceLocation;
@@ -170,18 +172,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
         [TestMethod]
         public void EventLogWrittenWhenCreatingUndefinedPolicy()
         {
-            try
+            using (var tracker = new EventLogTracker("Application"))
             {
-                ExceptionPolicy.HandleException(new Exception(), "ThisIsAnUnknownKey");
-            }
-            catch (ActivationException)
-            {
-                using (EventLog applicationLog = new EventLog("Application"))
+                try
                 {
-                    EventLogEntry lastEntry = applicationLog.Entries[applicationLog.Entries.Count - 1];
-
-                    Assert.AreEqual("Enterprise Library ExceptionHandling", lastEntry.Source);
-                    Assert.IsTrue(lastEntry.Message.Contains("ThisIsAnUnknownKey"));
+                    ExceptionPolicy.HandleException(new Exception(), "ThisIsAnUnknownKey");
+                }
+                catch (ActivationException)
+                {
+                    var entries = from entry in tracker.NewEntries()
+                        where entry.Source == "Enterprise Library ExceptionHandling" &&
+                            entry.Message.Contains("ThisIsAnUnknownKey")
+                        select entry;
+                    Assert.AreEqual(1, entries.Count());
                 }
             }
         }

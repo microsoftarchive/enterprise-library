@@ -310,6 +310,95 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
                 Assert.AreEqual(0, TestExceptionHandler.HandlingNames.Count);
             }
         }
+
+        [TestMethod]
+        public void ProcessWithReturnValueReturnsCorrectValueWhenNoExceptionThrown()
+        {
+            var policies = new Dictionary<string, ExceptionPolicyImpl>();
+            var policy1Entries = new Dictionary<Type, ExceptionPolicyEntry>
+            {
+                {
+                    typeof (ArithmeticException),
+                    new ExceptionPolicyEntry(typeof (ArithmeticException),
+                        PostHandlingAction.NotifyRethrow,
+                        new IExceptionHandler[] {new TestExceptionHandler("handler11")})
+                },
+                {
+                    typeof (ArgumentException),
+                    new ExceptionPolicyEntry(typeof (ArgumentException),
+                        PostHandlingAction.ThrowNewException,
+                        new IExceptionHandler[] {new TestExceptionHandler("handler12")})
+                },
+                {
+                    typeof (ArgumentOutOfRangeException),
+                    new ExceptionPolicyEntry(typeof (ArgumentOutOfRangeException),
+                        PostHandlingAction.None,
+                        new IExceptionHandler[] {new TestExceptionHandler("handler13")})
+                }
+            };
+            policies.Add("policy1", new ExceptionPolicyImpl("policy1", policy1Entries));
+
+            ExceptionManager manager = new ExceptionManagerImpl(policies);
+
+            int result = manager.Process(() => 42, "policy1");
+            Assert.AreEqual(42, result);
+        }
+
+        [TestMethod]
+        public void ProcessWithReturnValueProcessesExceptionsOnThrow()
+        {
+            var policies = new Dictionary<string, ExceptionPolicyImpl>();
+            var policy1Entries = new Dictionary<Type, ExceptionPolicyEntry>
+            {
+                {
+                    typeof (ArithmeticException),
+                    new ExceptionPolicyEntry(typeof (ArithmeticException),
+                        PostHandlingAction.NotifyRethrow,
+                        new IExceptionHandler[] {new TestExceptionHandler("handler11")})
+                },
+                {
+                    typeof (ArgumentException),
+                    new ExceptionPolicyEntry(typeof (ArgumentException),
+                        PostHandlingAction.ThrowNewException,
+                        new IExceptionHandler[] {new TestExceptionHandler("handler12")})
+                },
+                {
+                    typeof (ArgumentOutOfRangeException),
+                    new ExceptionPolicyEntry(typeof (ArgumentOutOfRangeException),
+                        PostHandlingAction.None,
+                        new IExceptionHandler[] {new TestExceptionHandler("handler13")})
+                }
+            };
+            policies.Add("policy1", new ExceptionPolicyImpl("policy1", policy1Entries));
+
+            ExceptionManager manager = new ExceptionManagerImpl(policies);
+
+            // is the exception rethrown?
+            Exception thrownException = new ArithmeticException();
+            try
+            {
+                Exception ex1 = thrownException;
+                int result = manager.Process(() => { throw ex1;
+                                                       return 37;  }, "policy1");
+                Assert.Fail("should have thrown");
+            }
+            catch (Exception e)
+            {
+                Assert.AreSame(thrownException, e);
+                Assert.AreEqual(1, TestExceptionHandler.HandlingNames.Count);
+                Assert.AreEqual("handler11", TestExceptionHandler.HandlingNames[0]);
+            }
+
+            // is the exception swallowed? action == None
+            TestExceptionHandler.HandlingNames.Clear();
+            thrownException = new ArgumentOutOfRangeException();
+            Exception ex3 = thrownException;
+            int swallowedResult = manager.Process(() => { throw ex3;
+                                                   return 17; }, -20, "policy1");
+            Assert.AreEqual(1, TestExceptionHandler.HandlingNames.Count);
+            Assert.AreEqual("handler13", TestExceptionHandler.HandlingNames[0]);
+            Assert.AreEqual(-20, swallowedResult);            
+        }
     }
 
     internal class TestExceptionHandler : IExceptionHandler

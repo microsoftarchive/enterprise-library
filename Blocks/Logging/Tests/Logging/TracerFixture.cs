@@ -16,18 +16,17 @@ using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Threading;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Storage;
 using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Filters;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport.TraceListeners;
 using Microsoft.Practices.ServiceLocation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
 {
@@ -185,6 +184,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
             {
                 Assert.IsFalse(Guid.Empty == Trace.CorrelationManager.ActivityId);
             }
+            Assert.AreEqual(Guid.Empty, Trace.CorrelationManager.ActivityId);
         }
 
         [TestMethod]
@@ -211,6 +211,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
             {
                 Assert.AreEqual(overwriteGuid, Trace.CorrelationManager.ActivityId);
             }
+            Assert.AreEqual(referenceGuid, Trace.CorrelationManager.ActivityId);
         }
 
         [TestMethod]
@@ -222,14 +223,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
 
             using (new Tracer(operation))
             {
-                Assert.IsFalse(Guid.Empty == Trace.CorrelationManager.ActivityId);
+                Assert.AreNotEqual(Guid.Empty, Trace.CorrelationManager.ActivityId);
                 Guid outerActivityId = Trace.CorrelationManager.ActivityId;
 
                 using (new Tracer(nestedOperation))
                 {
                     Assert.AreEqual(outerActivityId, Trace.CorrelationManager.ActivityId);
                 }
+
+                Assert.AreEqual(outerActivityId, Trace.CorrelationManager.ActivityId);
             }
+
+            Assert.AreEqual(Guid.Empty, Trace.CorrelationManager.ActivityId);
         }
 
         [TestMethod]
@@ -241,7 +246,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
 
             using (new Tracer(operation))
             {
-                Assert.IsFalse(Guid.Empty == Trace.CorrelationManager.ActivityId);
+                Assert.AreNotEqual(Guid.Empty, Trace.CorrelationManager.ActivityId);
                 Guid outerActivityId = Trace.CorrelationManager.ActivityId;
 
                 using (new Tracer(nestedOperation, referenceGuid))
@@ -249,8 +254,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
                     Assert.AreEqual(referenceGuid, Trace.CorrelationManager.ActivityId);
                 }
 
-                Assert.AreEqual(referenceGuid, Trace.CorrelationManager.ActivityId);
+                Assert.AreEqual(outerActivityId, Trace.CorrelationManager.ActivityId);
             }
+
+            Assert.AreEqual(Guid.Empty, Trace.CorrelationManager.ActivityId);
         }
 
         [TestMethod]

@@ -14,6 +14,7 @@ using System.Collections.Specialized;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design.Validation;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
 using System.Collections.Generic;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
@@ -107,6 +108,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.Configurat
         [ResourceDisplayName(typeof(DesignResources), "FaultContractExceptionHandlerDataFaultContractTypeDisplayName")]
         [Editor(CommonDesignTime.EditorTypes.TypeSelector, CommonDesignTime.EditorTypes.UITypeEditor)]
         [BaseType(typeof(object))]
+        [Validation(CommonDesignTime.ValidationTypeNames.TypeValidator)]
 		public string FaultContractType
 		{
 			get { return this[FaultContractTypeAttributeName] as string; }
@@ -122,7 +124,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.Configurat
         [ResourceDescription(typeof(DesignResources), "FaultContractExceptionHandlerDataPropertyMappingsDescription")]
         [ResourceDisplayName(typeof(DesignResources), "FaultContractExceptionHandlerDataPropertyMappingsDisplayName")]
         [System.ComponentModel.Editor(CommonDesignTime.EditorTypes.CollectionEditor, CommonDesignTime.EditorTypes.FrameworkElement)]
-        [CollectionEditorTemplate("FaultContractExceptionHandlerMappingDataItemHeader", "FaultContractExceptionHandlerMappingDataItem")]
         [EnvironmentalOverrides(false)]
         [DesignTimeReadOnly(false)]
 		public NamedElementCollection<FaultContractExceptionHandlerMappingData> PropertyMappings

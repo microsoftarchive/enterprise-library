@@ -37,6 +37,26 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
         { }
 
         /// <summary>
+        /// Overridden in order to add Editor Attribute.
+        /// </summary>
+        [EditorAttribute(CommonDesignTime.EditorTypes.DatePickerEditor, CommonDesignTime.EditorTypes.FrameworkElement)]
+        public override DateTime LowerBound
+        {
+            get { return base.LowerBound; }
+            set { base.LowerBound = value; }
+        }
+
+        /// <summary>
+        /// Overridden in order to add Editor Attribute.
+        /// </summary>
+        [EditorAttribute(CommonDesignTime.EditorTypes.DatePickerEditor, CommonDesignTime.EditorTypes.FrameworkElement)]
+        public override DateTime UpperBound
+        {
+            get { return base.UpperBound; }
+            set { base.UpperBound = value; }
+        }
+
+        /// <summary>
         /// Creates the <see cref="DateTimeRangeValidator"/> described by the configuration object.
         /// </summary>
         /// <param name="targetType">The type of object that will be validated by the validator.</param>

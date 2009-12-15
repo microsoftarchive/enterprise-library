@@ -1,0 +1,21 @@
+﻿<UserControl x:Class="Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WPF.Tests.ControlWithExplicitRule"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:vab="clr-namespace:Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WPF;assembly=Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WPF"
+    xmlns:test="clr-namespace:Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WPF.Tests"
+    Height="300" Width="300">
+    <UserControl.Resources>
+        <test:ValidatedObject x:Key="validated"/>
+    </UserControl.Resources>
+    <Grid DataContext="{StaticResource validated}">
+        <TextBox x:Name="TextBox1">
+            <TextBox.Text>
+                <Binding Path="ValidatedStringProperty" UpdateSourceTrigger="PropertyChanged">
+                    <Binding.ValidationRules>
+                        <vab:ValidatorRule SourceType="{x:Type test:ValidatedObject}" SourcePropertyName="ValidatedStringProperty"/>
+                    </Binding.ValidationRules>
+                </Binding>
+            </TextBox.Text>
+        </TextBox>
+    </Grid>
+</UserControl>

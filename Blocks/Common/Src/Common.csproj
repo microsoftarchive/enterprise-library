@@ -164,7 +164,7 @@
     <Compile Include="Configuration\Design\AddSateliteProviderCommandAttribute.cs" />
     <Compile Include="Configuration\Design\AppSettingsDesignTime.cs" />
     <Compile Include="Configuration\Design\BaseTypeAttribute.cs" />
-    <Compile Include="Configuration\Design\CollectionEditorTemplateAttribute.cs" />
+    <Compile Include="Configuration\Design\ConfigurationDefaultAttribute.cs" />
     <Compile Include="Configuration\Design\ConfigurationSourcesDesignTime.cs" />
     <Compile Include="Configuration\Design\NamePropertyAttribute.cs" />
     <Compile Include="Configuration\Design\OmitCustomAttributesPropertyAttribute.cs" />
@@ -181,6 +181,7 @@
     <Compile Include="Configuration\Design\ResourceDisplayNameAttribute.cs" />
     <Compile Include="Configuration\Design\HandlesSectionAttribute.cs" />
     <Compile Include="Configuration\Design\TypeSelectorIncludes.cs" />
+    <Compile Include="Configuration\Design\Validation\ValidationAttribute.cs" />
     <Compile Include="Configuration\Design\ViewModelAttribute.cs" />
     <Compile Include="Configuration\Fluent\IConfigureTypeRegistrations.cs" />
     <Compile Include="Configuration\Fluent\TypeRegistrationProviderConfigurationSourceBuilderExtension.cs" />

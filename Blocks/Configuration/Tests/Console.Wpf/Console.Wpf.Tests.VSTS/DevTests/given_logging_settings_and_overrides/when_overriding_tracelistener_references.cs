@@ -62,7 +62,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_logging_settings_and_overrides
         public void then_overridden_listeners_have_special_editor()
         {
             var overriddenTraceListeners = overridesProperty.ChildProperties.Where(x => x.PropertyName == "TraceListeners").First();
-            Assert.IsInstanceOfType(overriddenTraceListeners.Editor, typeof(OverridenTraceListenerCollectionEditor));
+            Assert.IsInstanceOfType(overriddenTraceListeners.Visual, typeof(OverridenTraceListenerCollectionEditor));
         }
     }
 }

@@ -20,6 +20,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
     /// <summary>
     /// Represents the configuration for an <see cref="IExceptionHandler"/>.
     /// </summary>    
+    [ViewModel(ExceptionHandlingDesignTime.ViewModelTypeNames.ExceptionHandlerDataViewModel)]
     public class ExceptionHandlerData : NameTypeConfigurationElement
     {
         /// <summary>

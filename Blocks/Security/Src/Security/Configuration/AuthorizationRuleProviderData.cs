@@ -42,6 +42,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration
     /// </summary>
     [ResourceDescription(typeof(DesignResources), "AuthorizationRuleProviderDataDescription")]
     [ResourceDisplayName(typeof(DesignResources), "AuthorizationRuleProviderDataDisplayName")]
+    [ViewModel(SecurityDesignTime.ViewModelTypeNames.AuthorizationRuleProviderDataViewModel)]
 	public class AuthorizationRuleProviderData : AuthorizationProviderData
     {
         private const string rulesProperty = "rules";

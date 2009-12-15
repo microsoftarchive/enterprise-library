@@ -41,41 +41,69 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
             this.DataContextChanged += new DependencyPropertyChangedEventHandler(FlagsEditor_DataContextChanged);
         }
 
-
+        bool updatingSource;
         ListItemChangedWatcher itemChangedWatcher;
         List<FlagsEditorItem> items;
         Property property; 
 
         void FlagsEditor_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            property = e.NewValue as Property;
+            BindableProperty bindableProperty = DataContext as BindableProperty;
+            if (bindableProperty == null) return;
+            CustomEditorBinder.BindProperty(this, bindableProperty);
+            
+            property = bindableProperty.Property;
             if (property != null)
             {
-                if (!property.Type.IsEnum) throw new InvalidOperationException("Enum editor can only be used with enum properties");
+                if (!property.PropertyType.IsEnum) throw new InvalidOperationException("Enum editor can only be used with enum properties");
 
-                int value = Convert.ToInt32( property.Value );
+                RefreshVisual(property);
 
-                items = Enum.GetValues(property.Type)
-                            .OfType<Enum>()
-                            .Select(x=> Convert.ToInt32(x))
-                            .Where(x => x != 0)
-                            .Select(x => new FlagsEditorItem
-                                {
-                                    Selected = 0 < (x & value),
-                                    Value = Enum.GetName(property.Type, x)
-                                }).ToList();
-
-                itemChangedWatcher = new ListItemChangedWatcher(items);
-                itemChangedWatcher.Changed += new EventHandler(itemChangedWatcher_Changed);
-
-                this.Flags.ItemsSource = items;
+                property.PropertyChanged += new PropertyChangedEventHandler(property_PropertyChanged);
             }
+        }
+
+        void property_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "Value")
+            {
+                RefreshVisual(property);
+            }
+        }
+
+        private void RefreshVisual(Property property)
+        {
+            if (updatingSource) return;
+
+            int value = Convert.ToInt32(property.Value);
+
+            items = Enum.GetValues(property.Type)
+                        .OfType<Enum>()
+                        .Select(x => Convert.ToInt32(x))
+                        .Where(x => x != 0)
+                        .Select(x => new FlagsEditorItem
+                        {
+                            Selected = 0 < (x & value),
+                            Value = Enum.GetName(property.Type, x)
+                        }).ToList();
+
+            itemChangedWatcher = new ListItemChangedWatcher(items);
+            itemChangedWatcher.Changed += new EventHandler(itemChangedWatcher_Changed);
+
+            this.Flags.ItemsSource = items;
         }
 
         void itemChangedWatcher_Changed(object sender, EventArgs e)
         {
-            RefreshValue();
-
+            updatingSource = true;
+            try
+            {
+                RefreshValue();
+            }
+            finally
+            {
+                updatingSource = false;
+            }
         }
 
         private void RefreshValue()
@@ -83,7 +111,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
             int value = 0;
             foreach (var item in items.Where(x=>x.Selected))
             {
-                var valuePart = Enum.Parse(property.Type, item.Value);
+                var valuePart = Enum.Parse(property.PropertyType, item.Value);
                 value += Convert.ToInt32(valuePart);
             }
 
@@ -147,7 +175,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
                     handler(this, new PropertyChangedEventArgs(propertyName));
                 }
             }
-
 
             public event PropertyChangedEventHandler PropertyChanged;
         }

@@ -15,6 +15,7 @@ using System.Linq;
 using System.Text;
 using System.ComponentModel;
 using Microsoft.Practices.Unity;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
 {
@@ -22,15 +23,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
     {
         [InjectionConstructor]
         public ConfigurationProperty(IServiceProvider serviceProvider, ElementViewModel parent, PropertyDescriptor declaringProperty)
-            : base(serviceProvider, parent, declaringProperty)
+            : base(serviceProvider, parent, declaringProperty, new Attribute[]{new DesignTimeReadOnlyAttribute(false)})
         {
         }
-
-        public ConfigurationProperty(IServiceProvider serviceProvider, ElementViewModel parent, PropertyDescriptor declaringProperty, IEnumerable<Attribute> additionalAttributes)
-            : base(serviceProvider, parent, declaringProperty, additionalAttributes)
-        {
-        }
-
 
         protected override object GetValue()
         {
@@ -46,15 +41,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             elementProperty.Value = value;
 
             OnPropertyChanged("Value");
-        }
-
-
-        public override bool ReadOnly
-        {
-            get
-            {
-                return false;
-            }
         }
     }
 }

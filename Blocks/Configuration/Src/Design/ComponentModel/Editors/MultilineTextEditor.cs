@@ -41,26 +41,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
             this.DataContextChanged += new DependencyPropertyChangedEventHandler(MultilineTextEditor_DataContextChanged);
         }
 
-        Property property;
-        Binding propertyBinding;
-        Binding readonlyBinding;
-
         void MultilineTextEditor_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            property = e.NewValue as Property;
-            if (property != null)
-            {
-                propertyBinding = new Binding("Value");
-                propertyBinding.Source = property;
-                this.SetBinding(TextBox.TextProperty, propertyBinding);
+            BindableProperty bindableProperty = DataContext as BindableProperty;
+            if (bindableProperty == null) return;
 
-                readonlyBinding = new Binding("ReadOnly");
-                readonlyBinding.Source = property;
-                this.SetBinding(TextBox.IsReadOnlyProperty, readonlyBinding);
-            }
+            CustomEditorBinder.BindProperty(this, bindableProperty);
+
+            var propertyBinding = new Binding("BindableValue");
+            propertyBinding.Source = bindableProperty;
+            this.SetBinding(TextBox.TextProperty, propertyBinding);
         }
-
-
-        
     }
 }

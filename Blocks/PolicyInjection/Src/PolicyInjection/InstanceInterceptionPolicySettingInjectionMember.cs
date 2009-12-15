@@ -51,28 +51,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection
         /// <param name="policies">Policy list to add policies to.</param>
         public override void AddPolicies(Type serviceType, Type implementationType, string name, IPolicyList policies)
         {
-            policies.Set<IInstanceInterceptionPolicy>(
-                new InstanceInterceptionPolicy(Interceptor),
-                implementationType);
-            policies.Set<IInterceptionBehaviorsPolicy>(
-                new PolicyInjectionInterceptionBehaviorsPolicy(),
-                implementationType);
+            var key = new NamedTypeBuildKey(implementationType);
+            policies.Set<IInstanceInterceptionPolicy>(new FixedInstanceInterceptionPolicy(Interceptor), key);
+
+            var piabInjectionMember = new InterceptionBehavior<PolicyInjectionBehavior>();
+            piabInjectionMember.AddPolicies(serviceType, implementationType, name, policies);
         }
 
         ///<summary>
         /// The <see cref="IInstanceInterceptor"/> set on the <see cref="IInstanceInterceptionPolicy"/>
         ///</summary>
         public IInstanceInterceptor Interceptor { get; private set; }
-
-        private class PolicyInjectionInterceptionBehaviorsPolicy : IInterceptionBehaviorsPolicy
-        {
-            private readonly static IInterceptionBehaviorDescriptor[] behaviorDescriptors =
-                new IInterceptionBehaviorDescriptor[] { new PolicyInjectionBehaviorDescriptor() };
-
-            public IEnumerable<IInterceptionBehaviorDescriptor> InterceptionBehaviorDescriptors
-            {
-                get { return behaviorDescriptors; }
-            }
-        }
     }
 }

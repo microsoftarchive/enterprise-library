@@ -44,11 +44,10 @@ namespace Console.Wpf.Tests.VSTS.DevTests.Contexts
             Container.RegisterType<ConfigurationSourceModel>(new ContainerControlledLifetimeManager());
             Container.RegisterType<ConfigurationSourceDependency>(new ContainerControlledLifetimeManager());
             Container.RegisterType<AnnotationService>(new ContainerControlledLifetimeManager());
-            Container.RegisterType<ValidationService>(new ContainerControlledLifetimeManager());
             Container.RegisterInstance<IServiceProvider>( new ContainerProvider(Container));
             Container.RegisterInstance<IUIServiceWpf>(UIServiceMock.Object);
 
-            Container.RegisterType<IApplicationModel, StandAloneApplicationViewModel>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<IApplicationModel, ApplicationViewModel>(new ContainerControlledLifetimeManager());
             
             AppSettingsDecorator.DecorateAppSettingsSection(Container.Resolve<AnnotationService>());
             ConnectionStringsDecorator.DecorateConnectionStringsSection(Container.Resolve<AnnotationService>());

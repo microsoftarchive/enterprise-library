@@ -40,6 +40,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls
                 new RoutedPropertyChangedEventHandler<bool>(OnIsSelectedChanged));
         }
 
+        protected override DependencyObject GetContainerForItemOverride()
+        {
+            return new SelectionNotifyingMenuItem();
+        }
+
         private static void OnIsSelectedChanged(object sender, RoutedPropertyChangedEventArgs<bool> e)
         {
             var contextMenu = (SelectionNotifyingContextMenu)sender;
@@ -54,7 +59,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls
                 contextMenu.CurrentSelection = null;
             }
 
-            e.Handled = true;
+            e.Handled = true; 
         }
 
         public MenuItem CurrentSelection

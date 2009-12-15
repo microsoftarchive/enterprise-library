@@ -1,0 +1,71 @@
+﻿<UserControl x:Class="Microsoft.Practices.EnterpriseLibrary.Configuration.Console.Hosting.ConfigurationEditorUI"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ComponentModel="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+    Background="White">
+    
+    <UserControl.Resources>
+
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Microsoft.Practices.EnterpriseLibrary.Configuration.Design;component/Resources/CollectionEditorTemplates.xaml" />
+                <ResourceDictionary Source="/Microsoft.Practices.EnterpriseLibrary.Configuration.Design;component/Resources/ExpanderDictionary.xaml" />
+                <ResourceDictionary Source="/Microsoft.Practices.EnterpriseLibrary.Configuration.Design;component/Resources/ViewModelDataTemplates.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+
+    </UserControl.Resources>
+    <ScrollViewer 
+        HorizontalScrollBarVisibility="Auto" 
+        VerticalScrollBarVisibility="Auto" 
+        VerticalAlignment="Stretch" 
+        HorizontalAlignment="Stretch">
+        <StackPanel VerticalAlignment="Stretch">
+        <ToolBarPanel x:Name="Toolbar">
+            <Menu>
+                <MenuItem Header="_Blocks" x:Name="AddApplicationBlockMenu" AutomationProperties.AutomationId="Blocks">
+                    <!-- This is here as setting MenuItem.AutomatinProperties.AutomationId does not work -->
+                    <MenuItem.ItemContainerStyle>
+                        <Style TargetType="{x:Type MenuItem}">
+                            <Setter Property="AutomationProperties.AutomationId" Value="{Binding Title}" />
+                        </Style>
+                    </MenuItem.ItemContainerStyle>
+                    <MenuItem.ItemTemplate>
+                        <DataTemplate>
+                            <Label Content="{Binding Title}" />
+                        </DataTemplate>
+                    </MenuItem.ItemTemplate>
+                </MenuItem>
+
+                <MenuItem Header="_Environments" x:Name="EnvironmentsMenu" AutomationProperties.AutomationId="Environments" >
+                    <MenuItem Header="_New Environment..."
+							  Click="EnvironemntMenu_New_Click" AutomationProperties.AutomationId="New Environment..." />
+
+                    <MenuItem Header="_Open Delta File..."
+							  Click="EnvironemntMenu_Open_Click" AutomationProperties.AutomationId="Open Delta File..." />
+
+                </MenuItem>
+            </Menu>
+        </ToolBarPanel>
+    
+    <ItemsControl x:Name="Sections">
+            <ItemsControl.Resources>
+                <CollectionViewSource x:Key="SortedSections" Source="{Binding Sections}">
+                    <CollectionViewSource.SortDescriptions>
+                        <ComponentModel:SortDescription PropertyName="Name" />
+                    </CollectionViewSource.SortDescriptions>
+                </CollectionViewSource>
+            </ItemsControl.Resources>
+            <ItemsControl.ItemsSource>
+                <Binding Source="{StaticResource SortedSections}" />
+            </ItemsControl.ItemsSource>
+
+            <ItemsControl.Template>
+                <ControlTemplate>
+                    <ItemsPresenter  />
+                </ControlTemplate>
+            </ItemsControl.Template>
+        </ItemsControl>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

@@ -67,6 +67,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
         [ResourceDescription(typeof(DesignResources), "ExceptionHandlingSettingsExceptionPoliciesDescription")]
         [ResourceDisplayName(typeof(DesignResources), "ExceptionHandlingSettingsExceptionPoliciesDisplayName")]
         [ConfigurationCollection(typeof(ExceptionPolicyData))]
+        [Command(ExceptionHandlingDesignTime.CommandTypeNames.AddExceptionPolicyCommand, CommandPlacement=CommandPlacement.ContextAdd, Replace = CommandReplacement.DefaultAddCommandReplacement)]
         public NamedElementCollection<ExceptionPolicyData> ExceptionPolicies
         {
             get { return (NamedElementCollection<ExceptionPolicyData>)this[policiesProperty]; }

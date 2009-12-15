@@ -13,6 +13,7 @@ using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using System.ComponentModel;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design.Validation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 {
@@ -54,6 +55,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         [ResourceDisplayName(typeof(DesignResources), "FileConfigurationSourceElementFilePathDisplayName")]
         [Editor(CommonDesignTime.EditorTypes.FilteredFilePath, CommonDesignTime.EditorTypes.UITypeEditor)]
         [FilteredFileNameEditorAttribute(typeof(DesignResources), "FileConfigurationSourceElementFilePathFilter")]
+        [Validation(CommonDesignTime.ValidationTypeNames.FileValidator)]
         public string FilePath
         {
             get { return (string)this[filePathProperty]; }

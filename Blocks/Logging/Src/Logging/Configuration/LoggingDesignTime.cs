@@ -47,10 +47,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
             ///<summary/>
             public const string TraceListenerElementCollectionViewModel = 
                 "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.TraceListenerElementCollectionViewModel, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
-
-            ///<summary/>
-            public const string CategoryFilterViewModel =
-                "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.CategoryFilterEntryViewModel, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
         }
         
         ///<summary/>
@@ -66,6 +62,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         {
             /// <summary/>
             public const string AddLoggingBlockCommand = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.AddLoggingBlockCommand, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
+        }
+
+        /// <summary/>
+        public static class ValidatorTypes
+        {
+            /// <summary/>
+            public const string LogPriorityMinMaxValidatorType = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.Logging.LogPriorityMinMaxValidator, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
         }
     }
 }

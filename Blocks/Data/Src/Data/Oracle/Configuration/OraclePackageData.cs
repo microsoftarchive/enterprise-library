@@ -29,7 +29,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Oracle.Configuration
     /// </remarks>
     [ResourceDescription(typeof(DesignResources), "OraclePackageDataDescription")]
     [ResourceDisplayName(typeof(DesignResources), "OraclePackageDataDisplayName")]
-    [ViewModel(DataAccessDesignTime.ViewModelTypeNames.OraclePackageDataViewModel)]
     public class OraclePackageData : NamedConfigurationElement, IOraclePackage
     {
 		private const string prefixProperty = "prefix";

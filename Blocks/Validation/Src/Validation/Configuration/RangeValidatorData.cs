@@ -15,12 +15,15 @@ using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 using System.ComponentModel;
 using System.Globalization;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 {
 	/// <summary>
 	/// Describes a <see cref="RangeValidator"/>.
 	/// </summary>
+    [ResourceDisplayName(typeof(DesignResources), "RangeValidatorDataDisplayName")]
+    [ResourceDescription(typeof(DesignResources), "RangeValidatorDataDescription")]
 	public class RangeValidatorData : RangeValidatorData<string>
 	{
 		/// <summary>

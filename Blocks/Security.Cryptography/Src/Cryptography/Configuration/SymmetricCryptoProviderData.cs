@@ -26,7 +26,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         /// <summary>
         /// <para>Initializes a new instance of <see cref="SymmetricProviderData"/> class.</para>
         /// </summary>
-        public SymmetricProviderData()
+        public SymmetricProviderData() 
+        {
+        }
+
+        /// <summary>
+        /// Initialize a new instance of the <see cref="SymmetricProviderData"/> class with a name and a <see cref="ISymmetricCryptoProvider"/>.
+        /// </summary>
+        /// <param name="type">The type of <see cref="ISymmetricCryptoProvider"/>.</param>
+        public SymmetricProviderData(Type type) : this(null, type)
         {
         }
 

@@ -40,7 +40,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
         /// Construct a new <see cref="PerformanceCounterCallHandlerData"/>.
         /// </summary>
         public PerformanceCounterCallHandlerData()
-            : base()
         {
             Type = typeof(PerformanceCounterCallHandler);
         }

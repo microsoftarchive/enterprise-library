@@ -117,6 +117,36 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ExceptionCannotModifyDynamicRule" xml:space="preserve">
+    <value>This ValidatorRule cannot be updated.</value>
+  </data>
+  <data name="ExceptionComplexBindingPath" xml:space="preserve">
+    <value>The binding with the complex path '{0}' cannot be validated. Only single-property binding paths are supported.</value>
+  </data>
+  <data name="ExceptionDependencyPropertyHasNoBinding" xml:space="preserve">
+    <value>The dependency property with name '{0}' for element '{1}' (Name='{2}', HashCode={3}) does not have a binding to validate.</value>
+  </data>
+  <data name="ExceptionMissingDependencyProperty" xml:space="preserve">
+    <value>The element '{1}' (Name='{2}', HashCode={3}) does not have a dependency property with name '{0}'.</value>
+  </data>
+  <data name="ExceptionSourcePropertyNameNotSet" xml:space="preserve">
+    <value>The source property name for the ValidatorRule is not set.</value>
+  </data>
+  <data name="ExceptionSourcePropertyNotFound" xml:space="preserve">
+    <value>The source type '{0}' does not have a property '{1}' for the ValidatorRule.</value>
+  </data>
+  <data name="ExceptionSourceTypeNotSet" xml:space="preserve">
+    <value>The source type for the ValidatorRule is not set.</value>
+  </data>
+  <data name="ExceptionUnexpectedBindingExpression" xml:space="preserve">
+    <value>Unknown binding expression of type '{0}'.</value>
+  </data>
+  <data name="ExceptionUnexpectedMissingType" xml:space="preserve">
+    <value>Cannot retrieve the type from the binding source.</value>
+  </data>
+  <data name="ExceptionUnexpectedPropertyType" xml:space="preserve">
+    <value>Cannot retrieve the property from a binding.</value>
+  </data>
   <data name="ExceptionUnexpectedValueSource" xml:space="preserve">
     <value>Attempted to extract a value from an unknown object.</value>
   </data>

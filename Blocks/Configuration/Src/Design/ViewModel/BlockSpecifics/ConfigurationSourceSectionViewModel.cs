@@ -16,25 +16,28 @@ using System.Text;
 using System.Configuration;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls;
+using System.Windows;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics
 {
-    public class ConfigurationSourceSectionViewModel : PositionedSectionViewModel
+    public class ConfigurationSourceSectionViewModel : SectionViewModel
     {
         public ConfigurationSourceSectionViewModel(IUnityContainer builder, string sectionName, ConfigurationSection section)
             : base(builder, sectionName, section) 
         {
-            Positioning.PositionCollection("Configuration Sources",
-                    typeof(NameTypeConfigurationElementCollection<ConfigurationSourceElement, ConfigurationSourceElement>),
-                    typeof(ConfigurationSourceElement),
-                    new PositioningInstructions { FixedColumn = 0, FixedRow = 0 });
-
-            Positioning.PositionCollection("Redirected Sections",
-                    typeof(NamedElementCollection<RedirectedSectionElement>),
-                    typeof(RedirectedSectionElement),
-                    new PositioningInstructions { FixedColumn = 1, FixedRow = 0 });
         }
 
-     
+       
+
+        protected override object CreateBindable()
+        {
+            var sources = DescendentElements().Where(x => x.ConfigurationType == typeof(NameTypeConfigurationElementCollection<ConfigurationSourceElement, ConfigurationSourceElement>)).First();
+            var redirectedSections = DescendentElements().Where(x => x.ConfigurationType == typeof(NamedElementCollection<RedirectedSectionElement>)).First();
+
+            return new HorizontalListViewModel(
+                    new HeaderedListViewModel(sources), 
+                    new HeaderedListViewModel(redirectedSections));
+        }     
     }
 }

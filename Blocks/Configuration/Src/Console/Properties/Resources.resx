@@ -117,37 +117,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="NewCollectionElementNameFormat" xml:space="preserve">
-    <value>New {0} {1}</value>
-  </data>
-  <data name="OpenConfigurationFileDialogFilter" xml:space="preserve">
-    <value>Configuration files (*.config)|*.config|All Files (*.*)|*.*</value>
-  </data>
-  <data name="OpenConfigurationFileDialogTitle" xml:space="preserve">
-    <value>Open Configuration File</value>
-  </data>
-  <data name="PromptContinueOperationDiscardChangesWarningMessage" xml:space="preserve">
-    <value>Continuing will discard changes made to the current configuration. Do you want save the current changes prior?</value>
-  </data>
-  <data name="PromptContinueOperationDiscardChangesWarningTitle" xml:space="preserve">
-    <value>Enterprise Library Configuration</value>
-  </data>
-  <data name="PromptOverwriteReadonlyFileMessage" xml:space="preserve">
-    <value>File is Read Only, Would you like to Overwride the file?</value>
-  </data>
-  <data name="PromptOverwriteReadonlyFiletitle" xml:space="preserve">
-    <value>Save Configuration File</value>
-  </data>
-  <data name="PromptSaveOverFileThatCannotBeReadFromWarningMessage" xml:space="preserve">
-    <value>The file '{0}' cannot be read from, it might not a valid configuration file or contain errors. Proceeding with save will overwrite the file.</value>
-  </data>
-  <data name="PromptSaveOverFileThatCannotBeReadFromWarningTitle" xml:space="preserve">
-    <value>Save Configuration File</value>
-  </data>
-  <data name="SaveConfigurationFileDialogFilter" xml:space="preserve">
-    <value>Configuration files (*.config)|*.config|All Files (*.*)|*.*</value>
-  </data>
-  <data name="SaveConfigurationFileDialogTitle" xml:space="preserve">
-    <value>Save Configuration File</value>
-  </data>
 </root>

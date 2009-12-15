@@ -9,31 +9,34 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Console.Wpf.Tests.VSTS.DevTests.given_caching_configuraton;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
-using Console.Wpf.Tests.VSTS.TestSupport;
-using Microsoft.Practices.EnterpriseLibrary.Caching.Configuration;
+using System.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_element_reference
 {
-    public class given_reference_property : given_caching_configuration
+    public abstract class given_reference_property : Console.Wpf.Tests.VSTS.DevTests.Contexts.ContainerContext
     {
-        protected ElementReferenceProperty DefaultCacheManagerProperty;
-        protected ElementViewModel CacheManager;
 
         protected override void Arrange()
         {
             base.Arrange();
-            DefaultCacheManagerProperty = (ElementReferenceProperty)CachingViewModel.Property("DefaultCacheManager");
-            DefaultCacheManagerProperty.Initialize(null);
 
-            CacheManager = CachingViewModel.GetDescendentsOfType<CacheManagerData>().First();
+            SectionWithReference = new SectionWithReference();
+            SectionWithReference.ItemsCollection.Add(new NamedReferencedItem() { Name = "FirstItem" });
+
+            SectionViewModel = SectionViewModel.CreateSection(Container, "testSection", SectionWithReference);
+
+            ReferencingProperty = (ElementReferenceProperty)SectionViewModel.Property("DefaultItem");
+            ReferencingProperty.Initialize(null);
         }
+
+        protected SectionViewModel SectionViewModel { get; private set; }
+        protected SectionWithReference SectionWithReference { get; private set; }
+        protected ElementReferenceProperty ReferencingProperty { get; private set; }
     }
 
     [TestClass]
@@ -42,7 +45,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_element_reference
         [TestMethod]
         public void then_reference_property_has_none_option()
         {
-            Assert.IsTrue(DefaultCacheManagerProperty.BindableSuggestedValues.Contains("<none>"));
+            Assert.IsTrue(((SuggestedValuesBindableProperty)ReferencingProperty.BindableProperty).BindableSuggestedValues.Contains("<none>"));
         }
     }
 
@@ -51,13 +54,13 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_element_reference
     {
         protected override void Act()
         {
-            DefaultCacheManagerProperty.BindableValue = "<none>";
+            ReferencingProperty.BindableProperty.BindableValue = "<none>";
         }
 
         [TestMethod]
         public void then_property_value_is_empty_string()
         {
-            Assert.IsTrue(string.IsNullOrEmpty((string)DefaultCacheManagerProperty.Value));
+            Assert.IsTrue(string.IsNullOrEmpty((string)ReferencingProperty.Value));
         }
     }
 
@@ -66,19 +69,53 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_element_reference
     {
         protected override void Act()
         {
-            CachingConfiguration.DefaultCacheManager = string.Empty;
+            SectionWithReference.DefaultItem = "";
         }
 
         [TestMethod]
         public void then_property_bindable_value_is_none()
         {
-            Assert.AreEqual("<none>", DefaultCacheManagerProperty.BindableValue);
+            Assert.AreEqual("<none>", ReferencingProperty.BindableProperty.BindableValue);
         }
 
         [TestMethod]
         public void then_property_value_is_empty()
         {
-            Assert.IsTrue(string.IsNullOrEmpty((string)DefaultCacheManagerProperty.Value));
+            Assert.IsTrue(string.IsNullOrEmpty((string)ReferencingProperty.Value));
         }
+
+        [TestMethod]
+        public void then_scope_containing_element_available()
+        {
+            Assert.AreSame(this.SectionViewModel, ReferencingProperty.ContainingScopeElement);
+        }
+    }
+
+    public class SectionWithReference : ConfigurationSection
+    {
+        private const string itemsCollection = "itemsCollection";
+        private const string defaultItem = "defaultItem";
+
+        [ConfigurationProperty(defaultItem, IsRequired = false)]
+        [Reference(typeof(NamedReferencedItem), ScopeIsDeclaringElement = true)]
+        public string DefaultItem
+        {
+            get { return (string) this[defaultItem]; }
+            set { this[defaultItem] = value; }
+        }
+
+        [ConfigurationProperty(itemsCollection)]
+        [ConfigurationCollection(typeof(NamedReferencedItem))]
+        public NamedElementCollection<NamedReferencedItem> ItemsCollection
+        {
+            get { return (NamedElementCollection<NamedReferencedItem>)this[itemsCollection]; }
+            set { this[itemsCollection] = value;}
+        }
+
+    }
+
+    public class NamedReferencedItem : NamedConfigurationElement
+    {
+        
     }
 }

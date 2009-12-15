@@ -13,6 +13,7 @@ using System;
 using System.Configuration;
 using System.ComponentModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design.Validation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 {
@@ -68,6 +69,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         [Browsable(false)]
         [ResourceDescription(typeof(DesignResources), "NameTypeConfigurationElementTypeNameDescription")]
         [ResourceDisplayName(typeof(DesignResources), "NameTypeConfigurationElementTypeNameDisplayName")]
+        [Validation(CommonDesignTime.ValidationTypeNames.TypeValidator)]
 		public virtual string TypeName
 		{
 			get { return (string)this[typeProperty]; }

@@ -80,7 +80,6 @@
     <Compile Include="Configuration\LogCallHandlerCategoryEntry.cs" />
     <Compile Include="Configuration\LogCallHandlerData.cs" />
     <Compile Include="Configuration\PerformanceCounterCallHandlerData.cs" />
-    <Compile Include="Configuration\PolicyInjectionCalllHandlersDesignTime.cs" />
     <Compile Include="Configuration\ValidationCallHandlerData.cs" />
     <Compile Include="ExceptionCallHandler.cs" />
     <Compile Include="ExceptionCallHandlerAttribute.cs" />

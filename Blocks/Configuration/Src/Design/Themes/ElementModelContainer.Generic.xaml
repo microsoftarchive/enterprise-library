@@ -2,35 +2,36 @@
 					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 					xmlns:Controls="clr-namespace:Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls"
 					xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		            xmlns:ComponentModel="clr-namespace:System.ComponentModel;assembly=WindowsBase"
 					xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 					mc:Ignorable="d">
 
 
-	<ResourceDictionary.MergedDictionaries>
-		<ResourceDictionary Source="/Microsoft.Practices.EnterpriseLibrary.Configuration.Design;component/Resources/Converters.xaml" />
-		<ResourceDictionary Source="/Microsoft.Practices.EnterpriseLibrary.Configuration.Design;component/Resources/Brushes.xaml" />
-	</ResourceDictionary.MergedDictionaries>
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/Microsoft.Practices.EnterpriseLibrary.Configuration.Design;component/Resources/Converters.xaml" />
+        <ResourceDictionary Source="/Microsoft.Practices.EnterpriseLibrary.Configuration.Design;component/Resources/Brushes.xaml" />
+    </ResourceDictionary.MergedDictionaries>
 
     <Style TargetType="{x:Type Controls:ElementModelContainer}">
-		<Setter Property="Margin"
-				Value="0,0,40,7" />
-		<Setter Property="Background"
+        <Setter Property="Margin" Value="12,0,12,6" />
+        <Setter Property="Background"
 				Value="White" />
-		<Setter Property="Template">
-			<Setter.Value>
-				<ControlTemplate TargetType="{x:Type Controls:ElementModelContainer}">
-					<Grid ScrollViewer.VerticalScrollBarVisibility="Disabled"
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Controls:ElementModelContainer}">
+                    <Grid ScrollViewer.VerticalScrollBarVisibility="Disabled"
 						  IsSharedSizeScope="True">
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="Auto" />
-							<ColumnDefinition Width="*" />
-							<ColumnDefinition Width="Auto" />
-						</Grid.ColumnDefinitions>
-						<Grid.RowDefinitions>
-							<RowDefinition Height="Auto" />
-							<RowDefinition Height="Auto" />							
-						</Grid.RowDefinitions>
-						<Border x:Name="contentBorder"
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <Border x:Name="contentBorder"
 								BorderBrush="{DynamicResource LightGreyBorderBrush}"
 								BorderThickness="1"
 								Background="#FFF0F0F0"
@@ -38,25 +39,44 @@
 								VerticalAlignment="Top"
 								d:LayoutOverrides="Width, Height"
 								Grid.ColumnSpan="2">
-							<Grid VerticalAlignment="Top">
-								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="*" />
-									<ColumnDefinition Width="Auto" />
-								</Grid.ColumnDefinitions>
-                                <ContentPresenter x:Name="contentPresenter" 
-												  Grid.Column="0"/>
-                                <ToggleButton Visibility="{Binding Content.Properties, Converter={StaticResource EnumerableToVisibilityConverter}, ElementName=contentPresenter, FallbackValue=Collapsed}"
-											  x:Name="ShowProperties"
-											  VerticalAlignment="Center"
-											  Background="{DynamicResource NormalBrush}"
-											  Command="{Binding Path=ToggleProperties, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Controls:ElementModelContainer}}}"
-											  CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Controls:ElementModelContainer}}}"
-											  Template="{DynamicResource PropertiesExpandToggleButton}"
-											  Grid.Column="1" />
-                            </Grid>
-						</Border>
 
-						<Border x:Name="PART_Adorner"
+                            <ContentControl 
+                                x:Name="Title" 
+                                Focusable="True"
+                                HorizontalAlignment="Stretch" 
+                                HorizontalContentAlignment="Stretch" >
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="24" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <ToggleButton Template="{DynamicResource ExpanderToggleButton}"
+                                            x:Name="ShowProperties"
+									        Background="{DynamicResource NormalBrush}"
+									        IsChecked="{Binding IsExpanded, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+									        OverridesDefaultStyle="True" 
+                                            Grid.Column="0">
+
+                                            <ToggleButton.Visibility>
+                                                <Binding Path="Properties" 
+                                                 Converter="{StaticResource EnumerableToVisibilityConverter}" 
+                                                 FallbackValue="Collapsed">
+                                                </Binding>
+                                            </ToggleButton.Visibility>
+                                        </ToggleButton>
+
+                                        <TextBlock Text="{Binding Name, Mode=OneWay}"
+				                           HorizontalAlignment="Left"
+				                           VerticalAlignment="Center"
+				                           Background="{x:Null}"
+				                           Margin="5,0,15,0"
+				                           Grid.Column="1"/>
+                                    </Grid>
+                            </ContentControl>
+                        </Border>
+
+                        <Border x:Name="PART_Adorner"
 								BorderBrush="{DynamicResource AdornerStrokeBrush}"
 								BorderThickness="1"
 								Background="{DynamicResource AdornerFillBrush}"
@@ -66,41 +86,61 @@
 								Height="{Binding ElementName=contentBorder, Path=ActualHeight, Mode=OneWay}"
 								Grid.ColumnSpan="2" />
 
-						<Border Background="{StaticResource PopupBackground}"
+                        <Border Background="{StaticResource PopupBackground}"
 									BorderBrush="{StaticResource LightGreyBorderBrush}"
 									BorderThickness="1"
 									Padding="2"
 									Grid.ColumnSpan="3"
 									Grid.Row="1"
-									Visibility="{Binding ElementName=ShowProperties,Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}">
-								<ItemsControl ItemsSource="{Binding Content.Properties, ElementName=contentPresenter}">
-								    <ItemsControl.Template>
-									    <ControlTemplate>
-										    <VirtualizingStackPanel IsItemsHost="True" />
-									    </ControlTemplate>
-								    </ItemsControl.Template>
-									    <ItemsControl.ItemTemplate>
-										    <DataTemplate>
-											    <ContentControl Content="{Binding}" />
-										    </DataTemplate>
-									    </ItemsControl.ItemTemplate>
-								</ItemsControl>
-							</Border>
-						
-					</Grid>
-					<ControlTemplate.Triggers>
-						<DataTrigger Binding="{Binding Path=Content, ElementName=contentPresenter, Converter={StaticResource TypeToVisibilityConverter}}"
+									Visibility="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+                            <ItemsControl ItemsSource="{Binding Properties}" Grid.IsSharedSizeScope="True">
+                                <ItemsControl.Template>
+                                    <ControlTemplate>
+                                        <Grid HorizontalAlignment="Stretch">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="12" />
+                                                <ColumnDefinition MinWidth="50" Width="75" SharedSizeGroup="PropLabel"/>
+                                                <ColumnDefinition MinWidth="50" Width="175*" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <GridSplitter Grid.Column="1" 
+                                                          HorizontalAlignment="Right" 
+                                                          Width="2"
+                                                          ResizeDirection="Columns" 
+                                                          ShowsPreview="False" />
+
+                                            <VirtualizingStackPanel 
+                                                Grid.ColumnSpan="3"
+                                                IsItemsHost="True" />
+                                        </Grid>
+                                    </ControlTemplate>
+                                </ItemsControl.Template>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <ContentControl Content="{Binding}" />
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </Border>
+
+                        <Grid.ContextMenu>
+                            <Controls:SelectionNotifyingContextMenu ItemsSource="{Binding Commands}" Style="{DynamicResource ContextMenuStyle}"  />
+                        </Grid.ContextMenu>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <DataTrigger Binding="{Binding Path=Content, ElementName=contentPresenter, Converter={StaticResource TypeToVisibilityConverter}}"
 									 Value="Header">
-							<Setter Property="BorderBrush"
+                            <Setter Property="BorderBrush"
 									Value="Transparent"
 									TargetName="contentBorder" />
-							<Setter Property="Background"
+                            <Setter Property="Background"
 									Value="Transparent"
 									TargetName="contentBorder" />
-						</DataTrigger>
-					</ControlTemplate.Triggers>
-				</ControlTemplate>
-			</Setter.Value>
-		</Setter>
-	</Style>
+                        </DataTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 </ResourceDictionary>

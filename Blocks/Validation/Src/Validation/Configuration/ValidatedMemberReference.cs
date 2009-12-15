@@ -20,7 +20,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 	/// </summary>
 	/// <seealso cref="ValidationRulesetData"/>
 	/// <seealso cref="ValidatedMemberReference"/>
-	public abstract class ValidatedMemberReference : NamedConfigurationElement
+	[ViewModel(ValidationDesignTime.ViewModelTypeNames.ValidatedMemberReferenceViewModel)]
+    public abstract class ValidatedMemberReference : NamedConfigurationElement
 	{
 		/// <summary>
 		/// <para>Initializes a new instance of the <see cref="ValidatedMemberReference"/> class.</para>

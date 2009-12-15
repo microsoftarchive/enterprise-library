@@ -17,14 +17,30 @@ using System.Windows.Media;
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls
 {
 	public static class VisualTreeWalker
-	{
-
-		public static FrameworkElement FindName(string name, DependencyObject reference)
+    {
+        public static T FindChild<T>(Func<T, bool> predicate, DependencyObject reference) where T : FrameworkElement
+        {
+            foreach (DependencyObject obj in GetChildren(reference))
+            {
+                T element = obj as T;
+                if (element != null && predicate(element))
+                {
+                    return element;
+                }
+                element = FindChild<T>(predicate, obj);
+                if (element != null)
+                {
+                    return element;
+                }
+            }
+            return null;
+        }
+		public static FrameworkElement FindChild(string name, DependencyObject reference)
 		{
-			return FindName<FrameworkElement>(name, reference);
+			return FindChild<FrameworkElement>(name, reference);
 		}
 
-		public static T FindName<T>(string name, DependencyObject reference) where T : FrameworkElement
+		public static T FindChild<T>(string name, DependencyObject reference) where T : FrameworkElement
 		{
 			if (string.IsNullOrEmpty(name))
 			{
@@ -65,5 +81,42 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls
 				yield return VisualTreeHelper.GetChild(reference, i);
 			}
 		}
+
+        public static T TryFindParent<T>(this DependencyObject context)
+            where T : DependencyObject
+        {
+            DependencyObject parent = GetParentObject(context);
+            if (parent == null) return null;
+
+            T castedParent = parent as T;
+            if (castedParent != null)
+            {
+                return castedParent;
+            }
+                
+            return TryFindParent<T>(parent);
+        }
+
+        public static DependencyObject GetParentObject(this DependencyObject context)
+        {
+            if (context == null) return null;
+
+            ContentElement contextAsContentElement = context as ContentElement;
+            if (contextAsContentElement != null)
+            {
+                DependencyObject parentOfContentElement = ContentOperations.GetParent(contextAsContentElement);
+                if (parentOfContentElement != null) return parentOfContentElement;
+            }
+
+            FrameworkElement contextAsFrameworkElement = context as FrameworkElement;
+            if (contextAsFrameworkElement != null)
+            {
+                DependencyObject parent = contextAsFrameworkElement.Parent;
+                if (parent != null) return parent;
+            }
+
+
+            return VisualTreeHelper.GetParent(context);
+        }
 	}
 }

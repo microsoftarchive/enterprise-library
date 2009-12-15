@@ -50,7 +50,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.Unity
         public object Resolve(IBuilderContext context)
         {
             return context.NewBuildUp(new NamedTypeBuildKey(validatorType, ruleSet),
-                policies => policies.Set(
+                newContext => newContext.Policies.Set(
                     new ValidationSpecificationSourcePolicy(validationSource),
                     new NamedTypeBuildKey(validatorType, ruleSet)));
         }

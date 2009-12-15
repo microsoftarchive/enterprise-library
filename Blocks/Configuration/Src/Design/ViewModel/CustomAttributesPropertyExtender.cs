@@ -63,10 +63,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         private class CustomAttributesProperty : Property
         {
             ElementViewModel subject;
-            CustomAttributesEditor editor = new CustomAttributesEditor();
 
             public CustomAttributesProperty(IServiceProvider serviceProvider, ElementViewModel subject, PropertyDescriptor declaringProperty)
-                : base(serviceProvider, subject.ConfigurationElement, declaringProperty, new Attribute[]{new EnvironmentalOverridesAttribute(false)})
+                : base(serviceProvider, subject.ConfigurationElement, declaringProperty, new Attribute[] { new ReadOnlyAttribute(false), ResourceCategoryAttribute.General, new EnvironmentalOverridesAttribute(false) })
             {
                 this.subject = subject;
             }
@@ -78,21 +77,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
                     return "Attributes";
                 }
             }
-            public override bool ReadOnly
-            {
-                get
-                {
-                    return false;
-                }
-            }
-
-            public override bool HasEditor
-            {
-                get
-                {
-                    return true;
-                }
-            }
 
             public override EditorBehavior EditorBehavior
             {
@@ -101,13 +85,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
                     return EditorBehavior.DropDown;
                 }
             }
-
-            public override System.Windows.FrameworkElement Editor
+            public override System.Windows.FrameworkElement CreateCustomVisual()
             {
-                get
+                return new CustomAttributesEditor()
                 {
-                    return editor;
-                }
+                    DataContext = Bindable
+                };
+            }
+
+            public override void Validate()
+            {
+                // Don't validate this custom property   
             }
         }
     }

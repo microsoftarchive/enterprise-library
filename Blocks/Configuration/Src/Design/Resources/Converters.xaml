@@ -13,4 +13,5 @@
 	<Converters:TypeToVisibilityConverter x:Key="TypeToVisibilityConverter" />
 	<Converters:SuggestedValueTypeConverter x:Key="SuggestedValueTypeConverter" />
     <Converters:MidpointConverter x:Key="MidpointConverter" />
+    <Converters:ErrorsToStringConverter x:Key="ErrorsToStringConverter" />
 </ResourceDictionary>

@@ -182,6 +182,33 @@
             <param name="dependencyType">Type of dependency desired.</param>
             <returns>a <see cref="T:Microsoft.Practices.ObjectBuilder2.IDependencyResolverPolicy"/> object if this override applies, null if not.</returns>
         </member>
+        <member name="T:Microsoft.Practices.Unity.ContainerRegistration">
+            <summary>
+            Class that returns information about the types registered in a container.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Unity.ContainerRegistration.RegisteredType">
+            <summary>
+            The type that was passed to the <see cref="M:Microsoft.Practices.Unity.IUnityContainer.RegisterType(System.Type,System.Type,System.String,Microsoft.Practices.Unity.LifetimeManager,Microsoft.Practices.Unity.InjectionMember[])"/> method
+            as the "from" type, or the only type if type mapping wasn't done.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Unity.ContainerRegistration.MappedToType">
+            <summary>
+            The type that this registration is mapped to. If no type mapping was done, the
+            <see cref="P:Microsoft.Practices.Unity.ContainerRegistration.RegisteredType"/> property and this one will have the same value.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Unity.ContainerRegistration.Name">
+            <summary>
+            Name the type was registered under. Null for default registration.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Unity.ContainerRegistration.LifetimeManagerType">
+            <summary>
+            The registered lifetime manager instance.
+            </summary>
+        </member>
         <member name="T:Microsoft.Practices.Unity.DependencyOverride">
             <summary>
             A <see cref="T:Microsoft.Practices.Unity.ResolverOverride"/> class that overrides
@@ -661,6 +688,47 @@
             </summary>
             <param name="disposing">Always true, since we don't have a finalizer.</param>
         </member>
+        <member name="T:Microsoft.Practices.Unity.PerResolveLifetimeManager">
+            <summary>
+            This is a custom lifetime manager that acts like <see cref="T:Microsoft.Practices.Unity.TransientLifetimeManager"/>,
+            but also provides a signal to the default build plan, marking the type so that
+            instances are reused across the build up object graph.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.PerResolveLifetimeManager.#ctor">
+            <summary>
+            Construct a new <see cref="T:Microsoft.Practices.Unity.PerResolveLifetimeManager"/> object that does not
+            itself manage an instance.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.PerResolveLifetimeManager.#ctor(System.Object)">
+            <summary>
+            Construct a new <see cref="T:Microsoft.Practices.Unity.PerResolveLifetimeManager"/> object that stores the
+            give value. This value will be returned by <see cref="M:Microsoft.Practices.Unity.LifetimeManager.GetValue"/>
+            but is not stored in the lifetime manager, nor is the value disposed.
+            This Lifetime manager is intended only for internal use, which is why the
+            normal <see cref="M:Microsoft.Practices.Unity.LifetimeManager.SetValue(System.Object)"/> method is not used here.
+            </summary>
+            <param name="value">Value to store.</param>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.PerResolveLifetimeManager.GetValue">
+            <summary>
+            Retrieve a value from the backing store associated with this Lifetime policy.
+            </summary>
+            <returns>the object desired, or null if no such object is currently stored.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.PerResolveLifetimeManager.SetValue(System.Object)">
+            <summary>
+            Stores the given value into backing store for retrieval later. In this class,
+            this is a noop, since it has special hooks down in the guts.
+            </summary>
+            <param name="newValue">The object being stored.</param>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.PerResolveLifetimeManager.RemoveValue">
+            <summary>
+            Remove the given object from backing store. Noop in this class.
+            </summary>
+        </member>
         <member name="T:Microsoft.Practices.Unity.HierarchicalLifetimeStrategy">
             <summary>
             A strategy that handles Hierarchical lifetimes across a set of parent/child
@@ -959,7 +1027,7 @@
         <member name="M:Microsoft.Practices.Unity.StaticFactory.IStaticFactoryConfiguration.RegisterFactory``1(System.Func{Microsoft.Practices.Unity.IUnityContainer,System.Object})">
             <summary>
             Register the given factory delegate to be called when the container is
-            asked to resolve <typeparamref name="=TTypeToBuild"/>.
+            asked to resolve <typeparamref name="TTypeToBuild"/>.
             </summary>
             <typeparam name="TTypeToBuild">Type that will be requested from the container.</typeparam>
             <param name="factoryMethod">Delegate to invoke to create the instance.</param>
@@ -968,7 +1036,7 @@
         <member name="M:Microsoft.Practices.Unity.StaticFactory.IStaticFactoryConfiguration.RegisterFactory``1(System.String,System.Func{Microsoft.Practices.Unity.IUnityContainer,System.Object})">
             <summary>
             Register the given factory delegate to be called when the container is
-            asked to resolve <typeparamref name="=TTypeToBuild"/> and <paramref name="name"/>.
+            asked to resolve <typeparamref name="TTypeToBuild"/> and <paramref name="name"/>.
             </summary>
             <typeparam name="TTypeToBuild">Type that will be requested from the container.</typeparam>
             <param name="name">The name that will be used when requesting to resolve this type.</param>
@@ -999,23 +1067,23 @@
             <param name="dependencyType">Type of the dependency.</param>
             <returns>Resolver to use, or null if no override matches for the current operation.</returns>
         </member>
-        <member name="M:Microsoft.Practices.ObjectBuilder2.IBuilderContext.NewBuildUp(System.Object)">
+        <member name="M:Microsoft.Practices.ObjectBuilder2.IBuilderContext.NewBuildUp(Microsoft.Practices.ObjectBuilder2.NamedTypeBuildKey)">
             <summary>
             A convenience method to do a new buildup operation on an existing context.
             </summary>
             <param name="newBuildKey">Key to use to build up.</param>
             <returns>Created object.</returns>
         </member>
-        <member name="M:Microsoft.Practices.ObjectBuilder2.IBuilderContext.NewBuildUp(System.Object,System.Action{Microsoft.Practices.ObjectBuilder2.IPolicyList})">
+        <member name="M:Microsoft.Practices.ObjectBuilder2.IBuilderContext.NewBuildUp(Microsoft.Practices.ObjectBuilder2.NamedTypeBuildKey,System.Action{Microsoft.Practices.ObjectBuilder2.IBuilderContext})">
             <summary>
             A convenience method to do a new buildup operation on an existing context. This
             overload allows you to specify extra policies which will be in effect for the duration
             of the build.
             </summary>
             <param name="newBuildKey">Key defining what to build up.</param>
-            <param name="policyAdderBlock">A delegate that takes a <see cref="T:Microsoft.Practices.ObjectBuilder2.IPolicyList"/>. This
-            is invoked before the build up process starts to give callers the opportunity to add
-            custom policies to the build process.</param>
+            <param name="childCustomizationBlock">A delegate that takes a <see cref="T:Microsoft.Practices.ObjectBuilder2.IBuilderContext"/>. This
+            is invoked with the new child context before the build up process starts. This gives callers
+            the opportunity to customize the context for the build process.</param>
             <returns>Created object.</returns>
         </member>
         <member name="P:Microsoft.Practices.ObjectBuilder2.IBuilderContext.Strategies">
@@ -1043,6 +1111,11 @@
             The original build key for the build operation.
             </value>
         </member>
+        <member name="P:Microsoft.Practices.ObjectBuilder2.IBuilderContext.BuildKey">
+            <summary>
+            Get the current build key for the current build operation.
+            </summary>
+        </member>
         <member name="P:Microsoft.Practices.ObjectBuilder2.IBuilderContext.PersistentPolicies">
             <summary>
             The set of policies that were passed into this context.
@@ -1065,11 +1138,6 @@
             <summary>
             Gets the collection of <see cref="T:Microsoft.Practices.ObjectBuilder2.IRequiresRecovery"/> objects
             that need to execute in event of an exception.
-            </summary>
-        </member>
-        <member name="P:Microsoft.Practices.ObjectBuilder2.IBuilderContext.BuildKey">
-            <summary>
-            Get the current build key for the current build operation.
             </summary>
         </member>
         <member name="P:Microsoft.Practices.ObjectBuilder2.IBuilderContext.Existing">
@@ -1103,7 +1171,7 @@
             Initialize a new instance of the <see cref="T:Microsoft.Practices.ObjectBuilder2.BuilderContext"/> class.
             </summary>
         </member>
-        <member name="M:Microsoft.Practices.ObjectBuilder2.BuilderContext.#ctor(Microsoft.Practices.ObjectBuilder2.IStrategyChain,Microsoft.Practices.ObjectBuilder2.ILifetimeContainer,Microsoft.Practices.ObjectBuilder2.IPolicyList,System.Object,System.Object)">
+        <member name="M:Microsoft.Practices.ObjectBuilder2.BuilderContext.#ctor(Microsoft.Practices.ObjectBuilder2.IStrategyChain,Microsoft.Practices.ObjectBuilder2.ILifetimeContainer,Microsoft.Practices.ObjectBuilder2.IPolicyList,Microsoft.Practices.ObjectBuilder2.NamedTypeBuildKey,System.Object)">
             <summary>
             Initialize a new instance of the <see cref="T:Microsoft.Practices.ObjectBuilder2.BuilderContext"/> class with a <see cref="T:Microsoft.Practices.ObjectBuilder2.IStrategyChain"/>, 
             <see cref="T:Microsoft.Practices.ObjectBuilder2.ILifetimeContainer"/>, <see cref="T:Microsoft.Practices.ObjectBuilder2.IPolicyList"/> and the 
@@ -1115,7 +1183,7 @@
             <param name="originalBuildKey">Build key to start building.</param>
             <param name="existing">The existing object to build up.</param>
         </member>
-        <member name="M:Microsoft.Practices.ObjectBuilder2.BuilderContext.#ctor(Microsoft.Practices.ObjectBuilder2.IStrategyChain,Microsoft.Practices.ObjectBuilder2.ILifetimeContainer,Microsoft.Practices.ObjectBuilder2.IPolicyList,Microsoft.Practices.ObjectBuilder2.IPolicyList,System.Object,System.Object)">
+        <member name="M:Microsoft.Practices.ObjectBuilder2.BuilderContext.#ctor(Microsoft.Practices.ObjectBuilder2.IStrategyChain,Microsoft.Practices.ObjectBuilder2.ILifetimeContainer,Microsoft.Practices.ObjectBuilder2.IPolicyList,Microsoft.Practices.ObjectBuilder2.IPolicyList,Microsoft.Practices.ObjectBuilder2.NamedTypeBuildKey,System.Object)">
             <summary>
             Create a new <see cref="T:Microsoft.Practices.ObjectBuilder2.BuilderContext"/> using the explicitly provided
             values.
@@ -1143,23 +1211,23 @@
             <param name="dependencyType">Type of the dependency.</param>
             <returns>Resolver to use, or null if no override matches for the current operation.</returns>
         </member>
-        <member name="M:Microsoft.Practices.ObjectBuilder2.BuilderContext.NewBuildUp(System.Object)">
+        <member name="M:Microsoft.Practices.ObjectBuilder2.BuilderContext.NewBuildUp(Microsoft.Practices.ObjectBuilder2.NamedTypeBuildKey)">
             <summary>
             A convenience method to do a new buildup operation on an existing context.
             </summary>
             <param name="newBuildKey">Key to use to build up.</param>
             <returns>Created object.</returns>
         </member>
-        <member name="M:Microsoft.Practices.ObjectBuilder2.BuilderContext.NewBuildUp(System.Object,System.Action{Microsoft.Practices.ObjectBuilder2.IPolicyList})">
+        <member name="M:Microsoft.Practices.ObjectBuilder2.BuilderContext.NewBuildUp(Microsoft.Practices.ObjectBuilder2.NamedTypeBuildKey,System.Action{Microsoft.Practices.ObjectBuilder2.IBuilderContext})">
             <summary>
             A convenience method to do a new buildup operation on an existing context. This
             overload allows you to specify extra policies which will be in effect for the duration
             of the build.
             </summary>
             <param name="newBuildKey">Key defining what to build up.</param>
-            <param name="policyAdderBlock">A delegate that takes a <see cref="T:Microsoft.Practices.ObjectBuilder2.IPolicyList"/>. This
-            is invoked before the build up process starts to give callers the opportunity to add
-            custom policies to the build process.</param>
+            <param name="childCustomizationBlock">A delegate that takes a <see cref="T:Microsoft.Practices.ObjectBuilder2.IBuilderContext"/>. This
+            is invoked with the new child context before the build up process starts. This gives callers
+            the opportunity to customize the context for the build process.</param>
             <returns>Created object.</returns>
         </member>
         <member name="P:Microsoft.Practices.ObjectBuilder2.BuilderContext.Strategies">
@@ -1346,27 +1414,13 @@
             <param name="name">Name to resolve with.</param>
             <returns>The resulting object.</returns>
         </member>
-        <member name="T:Microsoft.Practices.ObjectBuilder2.IBuildKey">
+        <member name="M:Microsoft.Practices.ObjectBuilder2.BuilderContextExtensions.AddResolverOverrides(Microsoft.Practices.ObjectBuilder2.IBuilderContext,Microsoft.Practices.Unity.ResolverOverride[])">
             <summary>
-            Represents a build key based on type.
+            Add a set of <see cref="T:Microsoft.Practices.Unity.ResolverOverride"/>s to the context, specified as a 
+            variable argument list.
             </summary>
-        </member>
-        <member name="M:Microsoft.Practices.ObjectBuilder2.IBuildKey.ReplaceType(System.Type)">
-            <summary>
-            Construct a new build key object with the current type
-            replaced with the specified <paramref name="newType"/>.
-            </summary>
-            <remarks>This method creates a new build key object, the original is unchanged.</remarks>
-            <param name="newType">New type to place in the build key.</param>
-            <returns>The new build key.</returns>
-        </member>
-        <member name="P:Microsoft.Practices.ObjectBuilder2.IBuildKey.Type">
-            <summary>
-            Gets the <see cref="P:Microsoft.Practices.ObjectBuilder2.IBuildKey.Type"/> that represents the key.
-            </summary>
-            <value>
-            The <see cref="P:Microsoft.Practices.ObjectBuilder2.IBuildKey.Type"/> that represents the key.
-            </value>
+            <param name="context">Context to add overrides to.</param>
+            <param name="overrides">The overrides.</param>
         </member>
         <member name="T:Microsoft.Practices.ObjectBuilder2.IRecoveryStack">
             <summary>
@@ -1798,7 +1852,7 @@
             </summary>
             <remarks>
             This strategy checks the object that is passing through the builder chain to see if it
-            implements IBuilderAware and if it does, it will call <see cref="M:Microsoft.Practices.ObjectBuilder2.IBuilderAware.OnBuiltUp(System.Object)"/>
+            implements IBuilderAware and if it does, it will call <see cref="M:Microsoft.Practices.ObjectBuilder2.IBuilderAware.OnBuiltUp(Microsoft.Practices.ObjectBuilder2.NamedTypeBuildKey)"/>
             and <see cref="M:Microsoft.Practices.ObjectBuilder2.IBuilderAware.OnTearingDown"/>. This strategy is meant to be used from the
             <see cref="F:Microsoft.Practices.ObjectBuilder2.BuilderStage.PostInitialization"/> stage.
             </remarks>
@@ -1825,7 +1879,7 @@
             about the build process.
             </summary>
         </member>
-        <member name="M:Microsoft.Practices.ObjectBuilder2.IBuilderAware.OnBuiltUp(System.Object)">
+        <member name="M:Microsoft.Practices.ObjectBuilder2.IBuilderAware.OnBuiltUp(Microsoft.Practices.ObjectBuilder2.NamedTypeBuildKey)">
             <summary>
             Called by the <see cref="T:Microsoft.Practices.ObjectBuilder2.BuilderAwareStrategy"/> when the object is being built up.
             </summary>
@@ -1880,20 +1934,20 @@
             Represents a builder policy for mapping build keys.
             </summary>
         </member>
-        <member name="M:Microsoft.Practices.ObjectBuilder2.IBuildKeyMappingPolicy.Map(System.Object)">
+        <member name="M:Microsoft.Practices.ObjectBuilder2.IBuildKeyMappingPolicy.Map(Microsoft.Practices.ObjectBuilder2.NamedTypeBuildKey)">
             <summary>
             Maps the build key.
             </summary>
             <param name="buildKey">The build key to map.</param>
             <returns>The new build key.</returns>
         </member>
-        <member name="M:Microsoft.Practices.ObjectBuilder2.BuildKeyMappingPolicy.#ctor(System.Object)">
+        <member name="M:Microsoft.Practices.ObjectBuilder2.BuildKeyMappingPolicy.#ctor(Microsoft.Practices.ObjectBuilder2.NamedTypeBuildKey)">
             <summary>
             Initialize a new instance of the <see cref="T:Microsoft.Practices.ObjectBuilder2.BuildKeyMappingPolicy"/> with the new build key.
             </summary>
             <param name="newBuildKey">The new build key.</param>
         </member>
-        <member name="M:Microsoft.Practices.ObjectBuilder2.BuildKeyMappingPolicy.Map(System.Object)">
+        <member name="M:Microsoft.Practices.ObjectBuilder2.BuildKeyMappingPolicy.Map(Microsoft.Practices.ObjectBuilder2.NamedTypeBuildKey)">
             <summary>
             Map the <paramref name="buildKey"/> to a new build key.
             </summary>
@@ -1918,14 +1972,14 @@
             generic types.
             </summary>
         </member>
-        <member name="M:Microsoft.Practices.ObjectBuilder2.GenericTypeBuildKeyMappingPolicy.#ctor(System.Object)">
+        <member name="M:Microsoft.Practices.ObjectBuilder2.GenericTypeBuildKeyMappingPolicy.#ctor(Microsoft.Practices.ObjectBuilder2.NamedTypeBuildKey)">
             <summary>
             Create a new <see cref="T:Microsoft.Practices.ObjectBuilder2.GenericTypeBuildKeyMappingPolicy"/> instance
             that will map generic types.
             </summary>
             <param name="destinationKey">Build key to map to. This must be or contain an open generic type.</param>
         </member>
-        <member name="M:Microsoft.Practices.ObjectBuilder2.GenericTypeBuildKeyMappingPolicy.Map(System.Object)">
+        <member name="M:Microsoft.Practices.ObjectBuilder2.GenericTypeBuildKeyMappingPolicy.Map(Microsoft.Practices.ObjectBuilder2.NamedTypeBuildKey)">
             <summary>
             Maps the build key.
             </summary>
@@ -2148,6 +2202,13 @@
             A helper method used by the generated IL to store the current operation in the build context.
             </summary>
         </member>
+        <member name="M:Microsoft.Practices.ObjectBuilder2.DynamicMethodConstructorStrategy.SetPerBuildSingleton(Microsoft.Practices.ObjectBuilder2.IBuilderContext)">
+            <summary>
+            A helper method used by the generated IL to set up a PerResolveLifetimeManager lifetime manager
+            if the current object is such.
+            </summary>
+            <param name="context">Current build context.</param>
+        </member>
         <member name="T:Microsoft.Practices.ObjectBuilder2.InvokingConstructorOperation">
             <summary>
             A class that records that a constructor is about to be call, and is 
@@ -2359,7 +2420,7 @@
             for the given build key.
             </summary>
         </member>
-        <member name="M:Microsoft.Practices.ObjectBuilder2.IBuildPlanCreatorPolicy.CreatePlan(Microsoft.Practices.ObjectBuilder2.IBuilderContext,System.Object)">
+        <member name="M:Microsoft.Practices.ObjectBuilder2.IBuildPlanCreatorPolicy.CreatePlan(Microsoft.Practices.ObjectBuilder2.IBuilderContext,Microsoft.Practices.ObjectBuilder2.NamedTypeBuildKey)">
             <summary>
             Create a build plan using the given context and build key.
             </summary>
@@ -2374,7 +2435,7 @@
             </summary>
             <param name="strategies">The strategy chain.</param>
         </member>
-        <member name="M:Microsoft.Practices.ObjectBuilder2.DynamicMethodBuildPlanCreatorPolicy.CreatePlan(Microsoft.Practices.ObjectBuilder2.IBuilderContext,System.Object)">
+        <member name="M:Microsoft.Practices.ObjectBuilder2.DynamicMethodBuildPlanCreatorPolicy.CreatePlan(Microsoft.Practices.ObjectBuilder2.IBuilderContext,Microsoft.Practices.ObjectBuilder2.NamedTypeBuildKey)">
             <summary>
             Construct a build plan.
             </summary>
@@ -2847,6 +2908,11 @@
             </summary>
             <returns>The new instance.</returns>
         </member>
+        <member name="P:Microsoft.Practices.ObjectBuilder2.ILifetimeFactoryPolicy.LifetimeType">
+            <summary>
+            The type of Lifetime manager that will be created by this factory.
+            </summary>
+        </member>
         <member name="T:Microsoft.Practices.ObjectBuilder2.LifetimeStrategy">
             <summary>
             An <see cref="T:Microsoft.Practices.ObjectBuilder2.IBuilderStrategy"/> implementation that uses
@@ -3041,38 +3107,6 @@
             </returns>
             <filterpriority>2</filterpriority>
         </member>
-        <member name="T:Microsoft.Practices.ObjectBuilder2.BuildKey">
-            <summary>
-            Utility methods for dealing with arbitrary build key objects.
-            </summary>
-        </member>
-        <member name="M:Microsoft.Practices.ObjectBuilder2.BuildKey.GetType(System.Object)">
-            <summary>
-            Gets the <see cref="T:System.Type"/> of object to build from the build key.
-            </summary>
-            <param name="buildKey">The build key to get the <see cref="T:System.Type"/>.</param>
-            <returns>The <see cref="T:System.Type"/> of object to build from the key.</returns>
-        </member>
-        <member name="M:Microsoft.Practices.ObjectBuilder2.BuildKey.TryGetType(System.Object,System.Type@)">
-            <summary>
-            Tries to get the <see cref="T:System.Type"/> from <paramref name="buildKey"/>.
-            </summary>
-            <param name="buildKey">The build key to get the <see cref="T:System.Type"/>.</param>
-            <param name="type">When this method returns, contains the <see cref="T:System.Type"/> contained in 
-            <paramref name="buildKey"/>, if the extraction succeeded, or <see langword="null"/> if the extration failed.
-            </param>
-            <returns>true if the <see cref="T:System.Type"/> was found; otherwise, false.</returns>
-        </member>
-        <member name="M:Microsoft.Practices.ObjectBuilder2.BuildKey.ReplaceType(System.Object,System.Type)">
-            <summary>
-            Given a <paramref name="buildKey"/>, return a new build key
-            which is the same as the original, except that the type has
-            been replaced with <paramref name="newType"/>.
-            </summary>
-            <param name="buildKey">original build key</param>
-            <param name="newType">New type to put in new build key.</param>
-            <returns>The new build key.</returns>
-        </member>
         <member name="T:Microsoft.Practices.ObjectBuilder2.NamedTypeBuildKey">
             <summary>
             Build key used to combine a type object with a string name. Used by
@@ -3110,15 +3144,6 @@
             <typeparam name="T">Type to build</typeparam>
             <param name="name">Key to use to look up type mappings and singletons.</param>
             <returns>A new <see cref="T:Microsoft.Practices.ObjectBuilder2.NamedTypeBuildKey"/> instance initialized with the given type and name.</returns>
-        </member>
-        <member name="M:Microsoft.Practices.ObjectBuilder2.NamedTypeBuildKey.ReplaceType(System.Type)">
-            <summary>
-            Construct a new build key object with the current type
-            replaced with the specified <paramref name="newType"/>.
-            </summary>
-            <remarks>This method creates a new build key object, the original is unchanged.</remarks>
-            <param name="newType">New type to place in the build key.</param>
-            <returns>The new build key.</returns>
         </member>
         <member name="M:Microsoft.Practices.ObjectBuilder2.NamedTypeBuildKey.Equals(System.Object)">
             <summary>
@@ -3174,6 +3199,26 @@
             Returns the name stored in this build key.
             </summary>
             <remarks>The name to use when building.</remarks>
+        </member>
+        <member name="T:Microsoft.Practices.ObjectBuilder2.NamedTypeBuildKey`1">
+            <summary>
+            A generic version of <see cref="T:Microsoft.Practices.ObjectBuilder2.NamedTypeBuildKey"/> so that
+            you can new up a key using generic syntax.
+            </summary>
+            <typeparam name="T">Type for the key.</typeparam>
+        </member>
+        <member name="M:Microsoft.Practices.ObjectBuilder2.NamedTypeBuildKey`1.#ctor">
+            <summary>
+            Construct a new <see cref="T:Microsoft.Practices.ObjectBuilder2.NamedTypeBuildKey`1"/> that
+            specifies the given type.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Practices.ObjectBuilder2.NamedTypeBuildKey`1.#ctor(System.String)">
+            <summary>
+            Construct a new <see cref="T:Microsoft.Practices.ObjectBuilder2.NamedTypeBuildKey`1"/> that
+            specifies the given type and name.
+            </summary>
+            <param name="name">Name for the key.</param>
         </member>
         <member name="T:Microsoft.Practices.ObjectBuilder2.Sequence">
             <summary>
@@ -3823,6 +3868,41 @@
             <param name="container">Container to configure.</param>
             <returns>The requested extension's configuration interface, or null if not found.</returns>
         </member>
+        <member name="M:Microsoft.Practices.Unity.UnityContainerExtensions.IsRegistered(Microsoft.Practices.Unity.IUnityContainer,System.Type)">
+            <summary>
+             Check if a particular type has been registered with the container with
+             the default name.
+            </summary>
+            <param name="container">Container to inspect.</param>
+            <param name="typeToCheck">Type to check registration for.</param>
+            <returns>True if this type has been registered, false if not.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.UnityContainerExtensions.IsRegistered(Microsoft.Practices.Unity.IUnityContainer,System.Type,System.String)">
+            <summary>
+            Check if a particular type/name pair has been registered with the container.
+            </summary>
+            <param name="container">Container to inspect.</param>
+            <param name="typeToCheck">Type to check registration for.</param>
+            <param name="nameToCheck">Name to check registration for.</param>
+            <returns>True if this type/name pair has been registered, false if not.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.UnityContainerExtensions.IsRegistered``1(Microsoft.Practices.Unity.IUnityContainer)">
+            <summary>
+            Check if a particular type has been registered with the container with the default name.
+            </summary>
+            <typeparam name="T">Type to check registration for.</typeparam>
+            <param name="container">Container to inspect.</param>
+            <returns>True if this type has been registered, false if not.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.UnityContainerExtensions.IsRegistered``1(Microsoft.Practices.Unity.IUnityContainer,System.String)">
+            <summary>
+            Check if a particular type/name pair has been registered with the container.
+            </summary>
+            <typeparam name="T">Type to check registration for.</typeparam>
+            <param name="container">Container to inspect.</param>
+            <param name="nameToCheck">Name to check registration for.</param>
+            <returns>True if this type/name pair has been registered, false if not.</returns>
+        </member>
         <member name="T:Microsoft.Practices.Unity.UnityDefaultStrategiesExtension">
             <summary>
             This extension installs the default strategies and policies into the container
@@ -4467,6 +4547,12 @@
             </summary>
             <value>The parent container, or null if this container doesn't have one.</value>
         </member>
+        <member name="P:Microsoft.Practices.Unity.IUnityContainer.Registrations">
+            <summary>
+            Get a sequence of <see cref="T:Microsoft.Practices.Unity.ContainerRegistration"/> that describe the current state
+            of the container.
+            </summary>
+        </member>
         <member name="T:Microsoft.Practices.Unity.ExternallyControlledLifetimeManager">
             <summary>
             A <see cref="T:Microsoft.Practices.Unity.LifetimeManager"/> that holds a weak reference to
@@ -4511,6 +4597,11 @@
             Create a new instance of <see cref="T:Microsoft.Practices.ObjectBuilder2.ILifetimePolicy"/>.
             </summary>
             <returns>The new instance.</returns>
+        </member>
+        <member name="P:Microsoft.Practices.Unity.LifetimeManagerFactory.LifetimeType">
+            <summary>
+            The type of Lifetime manager that will be created by this factory.
+            </summary>
         </member>
         <member name="T:Microsoft.Practices.Unity.PerThreadLifetimeManager">
             <summary>
@@ -4846,9 +4937,6 @@
             <summary>
             A static helper class that includes various parameter checking routines.
             </summary>
-            <summary>
-            A static helper class that includes various parameter checking routines.
-            </summary>
         </member>
         <member name="M:Microsoft.Practices.Unity.Utility.Guard.ArgumentNotNull(System.Object,System.String)">
             <summary>
@@ -5005,6 +5093,11 @@
               Looks up a localized string similar to The method {0}.{1}({2}) is static. Static methods cannot be injected..
             </summary>
         </member>
+        <member name="P:Microsoft.Practices.Unity.Properties.Resources.CannotResolveOpenGenericType">
+            <summary>
+              Looks up a localized string similar to The type {0} is an open generic type. An open generic type cannot be resolved..
+            </summary>
+        </member>
         <member name="P:Microsoft.Practices.Unity.Properties.Resources.ConstructorArgumentResolveOperation">
             <summary>
               Looks up a localized string similar to Resolving parameter &quot;{0}&quot; of constructor {1}.
@@ -5013,6 +5106,11 @@
         <member name="P:Microsoft.Practices.Unity.Properties.Resources.ConstructorParameterResolutionFailed">
             <summary>
               Looks up a localized string similar to The parameter {0} could not be resolved when attempting to call constructor {1}..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Unity.Properties.Resources.ExceptionNullParameterValue">
+            <summary>
+              Looks up a localized string similar to Parameter type inference does not work for null values. Indicate the parameter type explicitly using a properly configured instance of the InjectionParameter or InjectionParameter&lt;T&gt; classes..
             </summary>
         </member>
         <member name="P:Microsoft.Practices.Unity.Properties.Resources.InvokingConstructorOperation">
@@ -5165,9 +5263,19 @@
               Looks up a localized string similar to Setting value for property {0}.{1}.
             </summary>
         </member>
+        <member name="P:Microsoft.Practices.Unity.Properties.Resources.TypeIsNotConstructable">
+            <summary>
+              Looks up a localized string similar to The type {0} is cannot be constructed. You must configure the container to supply this value..
+            </summary>
+        </member>
         <member name="P:Microsoft.Practices.Unity.Properties.Resources.TypesAreNotAssignable">
             <summary>
               Looks up a localized string similar to The type {1} cannot be assigned to variables of type {0}..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Unity.Properties.Resources.UnknownType">
+            <summary>
+              Looks up a localized string similar to &lt;unknown&gt;.
             </summary>
         </member>
         <member name="T:Microsoft.Practices.Unity.UnityContainer">
@@ -5350,6 +5458,12 @@
             The parent of this container.
             </summary>
             <value>The parent container, or null if this container doesn't have one.</value>
+        </member>
+        <member name="P:Microsoft.Practices.Unity.UnityContainer.Registrations">
+            <summary>
+            Get a sequence of <see cref="T:Microsoft.Practices.Unity.ContainerRegistration"/> that describe the current state
+            of the container.
+            </summary>
         </member>
         <member name="T:Microsoft.Practices.Unity.UnityContainer.ExtensionContextImpl">
             <summary>

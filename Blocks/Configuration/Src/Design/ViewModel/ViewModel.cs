@@ -14,47 +14,60 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows;
+using System.Windows.Controls;
+using System.ComponentModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
 {
 
     //base class for everything that can be rendered in the grid.
     //actual elements, collections, sections and even headers derive from this.
-    public class ViewModel
+    public class ViewModel 
     {
         public ViewModel()
         {
-            Row = -1;
-            Column = -1;
-            RowSpan = 1;
-            ColumnSpan = 1;
         }
 
-        public int Row { get; set; }
-        public int Column { get; set; }
-        public int RowSpan { get; set; }
-        public int ColumnSpan { get; set; }
+        private object bindable;
 
-        public Type CustomVisualType { get; set; }
-        public virtual FrameworkElement CustomVisual
+        protected virtual object CreateBindable()
+        {
+            return this;
+        }
+
+        public object Bindable
         {
             get
             {
-                if (CustomVisualType == null) return null;
-                var visualElement = (FrameworkElement)Activator.CreateInstance(CustomVisualType);
-                visualElement.DataContext = this;
-                return visualElement;
+                return (bindable == null) ?
+                    bindable = CreateBindable() :
+                    bindable;
             }
         }
 
-        /// <summary>
-        /// Returns true if this <see cref="ViewModel"/> should be shown.
-        /// </summary>
-        public virtual bool IsShown
+        public Type CustomVisualType { get; set; }
+
+        public virtual FrameworkElement CreateCustomVisual()
+        {
+            if (CustomVisualType == null) return null;
+            var visualElement = (FrameworkElement)Activator.CreateInstance(CustomVisualType);
+            visualElement.DataContext = Bindable;
+            return visualElement;
+        }
+
+        public FrameworkElement Visual
         {
             get
             {
-                return (Row != -1 && Column != -1);
+                var visual = CreateCustomVisual();
+                if (visual == null)
+                {
+                    visual = new ContentControl()
+                    {
+                        Content = Bindable
+                    };
+                }
+                return visual;
             }
         }
     }

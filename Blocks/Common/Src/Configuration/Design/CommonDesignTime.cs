@@ -38,27 +38,22 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
         /// <summary/>
         public static class EditorTypes
         {
-            ///<summary>
-            ///</summary>
-            public const string CollectionEditor = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls.CollectionElementEditor, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
+            /// <summary/>
+            public const string DatePickerEditor = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors.DatePickerEditor, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
+            
+            ///<summary/>
+            public const string CollectionEditor = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors.ElementCollectionEditor, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
 
-            /// <summary>
-            /// </summary>
+            /// <summary/>
             public const string UITypeEditor = "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
 
-            /// <summary>
-            /// 
-            /// </summary>
+            /// <summary/>
             public const string TypeSelector = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors.TypeSelectorEditor, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
 
-            /// <summary>
-            /// 
-            /// </summary>
+            /// <summary/>
             public const string FilteredFilePath = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors.FilteredFileNameEditor, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
 
-            /// <summary>
-            /// 
-            /// </summary>
+            /// <summary/>
             public const string FrameworkElement = "System.Windows.FrameworkElement, PresentationFramework, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35";
 
             /// <summary>
@@ -102,7 +97,26 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
                 "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.ConfigurationProperty, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
 
             /// <summary/>
-            public const string HierarchicalViewModel = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.HierarchicalSectionViewModel, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
+            public const string SectionViewModel = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.SectionViewModel, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
         }
+
+        ///<summary>
+        ///</summary>
+        public static class ValidationTypeNames
+        {
+            /// <summary>
+            /// </summary>
+            public const string FileValidator = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Validation.FilePathValidator, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
+
+            ///<summary>
+            ///</summary>
+            public const string RequiredFieldValidator = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Validation.RequiredFieldValidator, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
+
+            ///<summary>
+            /// Type name for <see cref="TypeValidator"/>.
+            ///</summary>
+            public const string TypeValidator =
+                "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Validation.TypeValidator, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
+        } 
     }
 }

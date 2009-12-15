@@ -92,7 +92,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         [ConfigurationCollection(typeof(TraceListenerReferenceData))]
         [ResourceDescription(typeof(DesignResources), "TraceSourceDataTraceListenersDescription")]
         [ResourceDisplayName(typeof(DesignResources), "TraceSourceDataTraceListenersDisplayName")]
-        [CollectionEditorTemplate("TraceListenerReferenceHeaderTemplate", "TraceListenerReferenceItemTemplate")]
         [System.ComponentModel.Editor(CommonDesignTime.EditorTypes.CollectionEditor, CommonDesignTime.EditorTypes.FrameworkElement)]
         [System.ComponentModel.Editor(LoggingDesignTime.EditorTypeNames.OverridenTraceListenerCollectionEditor, CommonDesignTime.EditorTypes.OverridesEditor)]
         [DesignTimeReadOnly(false)]

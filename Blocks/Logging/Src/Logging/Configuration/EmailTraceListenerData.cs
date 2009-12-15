@@ -157,6 +157,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         [ConfigurationProperty(toAddressProperty, IsRequired = true)]
         [ResourceDescription(typeof(DesignResources), "EmailTraceListenerDataToAddressDescription")]
         [ResourceDisplayName(typeof(DesignResources), "EmailTraceListenerDataToAddressDisplayName")]
+        [DesigntimeDefault("to@example.com")]
         public string ToAddress
         {
             get { return (string)base[toAddressProperty]; }
@@ -169,6 +170,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         [ConfigurationProperty(fromAddressProperty, IsRequired = true)]
         [ResourceDescription(typeof(DesignResources), "EmailTraceListenerDataFromAddressDescription")]
         [ResourceDisplayName(typeof(DesignResources), "EmailTraceListenerDataFromAddressDisplayName")]
+        [DesigntimeDefault("from@example.com")]
         public string FromAddress
         {
             get { return (string)base[fromAddressProperty]; }

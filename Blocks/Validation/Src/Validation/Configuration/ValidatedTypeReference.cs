@@ -24,6 +24,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
     [TypePickingCommand("Name", Replace = CommandReplacement.DefaultAddCommandReplacement, CommandModelTypeName = ValidationDesignTime.CommandTypeNames.AddValidatedTypeCommand)]
     [ResourceDescription(typeof(DesignResources), "ValidatedTypeReferenceDescription")]
     [ResourceDisplayName(typeof(DesignResources), "ValidatedTypeReferenceDisplayName")]
+    [ViewModel(ValidationDesignTime.ViewModelTypeNames.ValidatedTypeReferenceViewModel)]
 	public class ValidatedTypeReference : NamedConfigurationElement
 	{
 		/// <summary>
@@ -39,6 +40,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 		public ValidatedTypeReference(Type type)
 			: base(type.FullName)
 		{ }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [DesignTimeReadOnly(true)]
+        public override string Name
+        {
+            get { return base.Name; }
+            set { base.Name = value; }
+        }
 
 		private const string RulesetsPropertyName = "";
 		/// <summary>

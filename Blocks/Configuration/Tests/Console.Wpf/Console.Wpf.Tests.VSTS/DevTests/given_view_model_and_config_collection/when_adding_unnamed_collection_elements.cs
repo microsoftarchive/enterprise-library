@@ -81,7 +81,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model_and_config_collection
         [TestMethod]
         public void then_name_is_assigned_initial_value()
         {
-            Assert.AreEqual("New " + TestHandlerDataWithChildren.DisplayName + " 1",collection.ChildElements.ElementAt(0).Name);
+            Assert.AreEqual(TestHandlerDataWithChildren.DisplayName,collection.ChildElements.ElementAt(0).Name);
         }
     }
 }

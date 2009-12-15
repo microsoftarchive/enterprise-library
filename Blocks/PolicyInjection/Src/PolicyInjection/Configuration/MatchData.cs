@@ -25,7 +25,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
     /// </summary>
     [ResourceDescription(typeof(DesignResources), "MatchDataDescription")]
     [ResourceDisplayName(typeof(DesignResources), "MatchDataDisplayName")]
-    [ViewModel(PolicyInjectionDesignTime.ViewModelTypeNames.PiabMemberNameViewModel)]
+    [NameProperty("Match")]
     public class MatchData : ConfigurationElement
     {
         private const string MatchPropertyName = "match";
@@ -62,7 +62,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// Gets or sets the string to match against.
         /// </summary>
         /// <value>The "match" attribute value out of the configuration file.</value>
-        [ConfigurationProperty(MatchPropertyName, IsRequired = true)]
+        [ConfigurationProperty(MatchPropertyName, IsRequired = true, IsKey=true)]
         [ResourceDescription(typeof(DesignResources), "MatchDataMatchDescription")]
         [ResourceDisplayName(typeof(DesignResources), "MatchDataMatchDisplayName")]
         public string Match

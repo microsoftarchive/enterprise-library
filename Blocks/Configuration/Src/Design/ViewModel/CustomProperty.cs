@@ -23,12 +23,22 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         string propertyName;
 
         public CustomProperty(IServiceProvider serviceProvider, string propertyName)
-            : this(serviceProvider, TypeDescriptor.GetConverter(typeof(TProperty)), propertyName)
+            : this(serviceProvider, TypeDescriptor.GetConverter(typeof(TProperty)), propertyName, new Attribute[0])
+        {
+        }
+
+        public CustomProperty(IServiceProvider serviceProvider, string propertyName, params Attribute[] attributes)
+            : this(serviceProvider, TypeDescriptor.GetConverter(typeof(TProperty)), propertyName, attributes)
         {
         }
 
         public CustomProperty(IServiceProvider serviceProvider, TypeConverter converter, string propertyName)
-            : base(serviceProvider, null, null)
+            : this(serviceProvider, converter, propertyName, new Attribute[0])
+        {
+        }
+
+        public CustomProperty(IServiceProvider serviceProvider, TypeConverter converter, string propertyName, params Attribute[] attributes)
+            : base(serviceProvider, null, null, attributes)
         {
             this.converter = converter;
             this.propertyName = propertyName;
@@ -67,14 +77,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             }
         }
 
-        public override bool HasEditor
-        {
-            get
-            {
-                return false;
-            }
-        }
-
         public override EditorBehavior EditorBehavior
         {
             get
@@ -87,6 +89,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         protected override void SetValue(object value)
         {
             this.value = (TProperty)value;
+            Validate();
         }
 
         protected override object GetValue()

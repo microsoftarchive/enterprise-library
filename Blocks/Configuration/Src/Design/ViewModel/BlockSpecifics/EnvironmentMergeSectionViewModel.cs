@@ -15,6 +15,7 @@ using System.Linq;
 using System.Text;
 using System.Configuration;
 using System.ComponentModel;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Validation;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.ComponentModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using System.Collections;
@@ -22,6 +23,9 @@ using Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
 using Microsoft.Practices.Unity;
 using System.Windows;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors.RuleEditor;
+using System.Windows.Controls;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics
 {
@@ -37,9 +41,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
         IUnityContainer builder;
         EnvironmentMergeSection environmentSection;
         List<OverriddenElementViewModel> overriddenElements = new List<OverriddenElementViewModel>();
-        
+
         public EnvironmentalOverridesViewModel(IUnityContainer builder, ConfigurationSourceModel sourceModel, ConfigurationSection section)
-            : base(builder, EnvironmentMergeSection.EnvironmentMergeData, section, new Attribute[]{ new EnvironmentalOverridesAttribute(false) } )
+            : base(builder, EnvironmentMergeSection.EnvironmentMergeData, section, new Attribute[] { new EnvironmentalOverridesAttribute(false) })
         {
             this.builder = builder;
             this.environmentSection = section as EnvironmentMergeSection;
@@ -67,7 +71,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
 
         protected override IEnumerable<Property> GetAllProperties()
         {
-            return base.GetAllProperties().Union(new Property[] { ContainingSection.CreateProperty<EnvironmentDeltaFileProperty>()  }); ;
+            return base.GetAllProperties().Union(new Property[] { ContainingSection.CreateProperty<EnvironmentDeltaFileProperty>() }); ;
         }
 
         public string EnvironmentName
@@ -94,7 +98,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
                 return false;
             }
 
-            return subject.Properties.Where(x => !x.Hidden && !x.Attributes.OfType<EnvironmentalOverridesAttribute>().Where(y=>!y.CanOverride).Any()).Count() > 0;
+            return subject.Properties.Where(x => !x.Hidden && !x.Attributes.OfType<EnvironmentalOverridesAttribute>().Where(y => !y.CanOverride).Any()).Count() > 0;
         }
 
         public IEnumerable<Property> GetExtendedProperties(ElementViewModel subject)
@@ -112,6 +116,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
                 new ParameterOverride("overrides", overrides));
         }
 
+        public OverriddenElementViewModel GetOverridesForElement(ElementViewModel element)
+        {
+            return overriddenElements.Where(x => x.Subject == element).FirstOrDefault();
+        }
+
         public void SaveDelta()
         {
             saveEnvironmentDeltaCommand.Execute(null);
@@ -119,17 +128,35 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
 
         private class EnvironmentDeltaFileProperty : CustomProperty<string>
         {
-            public EnvironmentDeltaFileProperty(IServiceProvider serviceProvider)
-                :base(serviceProvider, "EnvironmentDeltaFile")
-            {
+            IApplicationModel applicationModel;
 
+            public EnvironmentDeltaFileProperty(IServiceProvider serviceProvider, IApplicationModel applicationModel)
+                : base(serviceProvider, "EnvironmentDeltaFile", new Attribute[]
+                {
+                    new FilteredFileNameEditorAttribute(typeof(Resources), "EnvironmentDeltaFileFilter"),
+                    new EditorAttribute(CommonDesignTime.EditorTypes.FilteredFilePath, CommonDesignTime.EditorTypes.UITypeEditor)
+                })
+            {
+                this.applicationModel = applicationModel;
+            }
+
+            public override IEnumerable<Validator> GetValidators()
+            {
+                return base.GetValidators().Union(new[] { new FilePathValidator() { ApplicationModel = applicationModel } });
+            }
+            public override string DisplayName
+            {
+                get
+                {
+                    return "Environment Delta File";
+                }
             }
         }
 
         /// <summary>
         /// property that declares the thing that represents overrides for 1 element.
         /// </summary>
-        private class OverridesProperty : Property
+        public class OverridesProperty : Property
         {
             EnvironmentalOverridesViewModel environment;
             OverriddenElementViewModelConverter converter;
@@ -137,7 +164,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
             ElementViewModel subject;
 
             public OverridesProperty(IServiceProvider serviceProvider, EnvironmentalOverridesViewModel environmentModel, ElementViewModel subject, OverriddenElementViewModel overrides)
-                : base(serviceProvider, subject, null, new Attribute[] { new EnvironmentalOverridesAttribute(false) })
+                : base(serviceProvider, subject, null, new Attribute[] { new EnvironmentalOverridesAttribute(false), new CategoryAttribute("Overrides") })
             {
                 this.environment = environmentModel;
                 this.converter = new OverriddenElementViewModelConverter();
@@ -164,7 +191,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
 
             public override TypeConverter Converter
             {
-                get{ return converter; }
+                get { return converter; }
             }
 
             public override bool SuggestedValuesEditable
@@ -173,6 +200,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
                 {
                     return false;
                 }
+            }
+
+            public EnvironmentalOverridesViewModel Environment
+            {
+                get { return environment; }
             }
 
             public override object Value
@@ -190,12 +222,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
 
             public override Type PropertyType
             {
-                get{ return typeof(bool); }
+                get { return typeof(bool); }
             }
 
             public override string Category
             {
-                get{ return "Overrides" ; }
+                get { return "Overrides"; }
             }
 
             public override string PropertyName
@@ -223,18 +255,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
                 }
             }
 
-            public override IEnumerable<Property> ChildProperties
+            protected override IEnumerable<Property> GetChildProperties()
             {
-                get
-                {
-                    return subject.Properties.Where( x => !x.Hidden)
-                                             .Where( x => !x.Attributes.OfType<EnvironmentalOverridesAttribute>().Where(y=>!y.CanOverride).Any())
-                                             .OfType<ElementProperty>()
-                                             .Select( x => ContainingSection.CreateProperty(typeof(EnvironmentOverriddenProperty), 
-                                                     new ParameterOverride("overridesProperty", this),
-                                                     new ParameterOverride("originalProperty", x),
-                                                     new ParameterOverride("overrides", overrides)));
-                }
+                return subject.Properties.Where(x => !x.Hidden)
+                                         .Where(x => !x.Attributes.OfType<EnvironmentalOverridesAttribute>().Where(y => !y.CanOverride).Any())
+                                         .OfType<ElementProperty>()
+                                         .Select(x => ContainingSection.CreateProperty(typeof(EnvironmentOverriddenProperty),
+                                                 new ParameterOverride("overridesProperty", this),
+                                                 new ParameterOverride("originalProperty", x),
+                                                 new ParameterOverride("overrides", overrides),
+                                                 new ParameterOverride("environment", environment))).ToArray();
             }
         }
 
@@ -246,7 +276,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
 
             public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
             {
-                return (sourceType == typeof(bool) || sourceType == typeof(OverriddenElementViewModel) || base.CanConvertFrom(context, sourceType)) ;
+                return (sourceType == typeof(bool) || sourceType == typeof(OverriddenElementViewModel) || base.CanConvertFrom(context, sourceType));
             }
 
             public override object ConvertFrom(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value)
@@ -277,7 +307,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
                 {
                     return ((bool)value) ? OverrideProperties : DontOverrideProperties;
                 }
-                
+
                 if (destinationType == typeof(string) && value is OverriddenElementViewModel)
                 {
                     return ((OverriddenElementViewModel)value).OverrideProperties ? OverrideProperties : DontOverrideProperties;
@@ -307,20 +337,30 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
             }
         }
 
-        private class EnvironmentOverriddenProperty : Property
+        public class EnvironmentOverriddenProperty : Property, IElementAssociation
         {
             OverriddenElementViewModel overrides;
             OverridesProperty overridesProperty;
             ElementProperty originalProperty;
             IServiceProvider serviceProvider;
+            EnvironmentalOverridesViewModel environment;
+            Type customOverridesEditorType;
 
-            public EnvironmentOverriddenProperty(IServiceProvider serviceProvider, OverridesProperty overridesProperty, OverriddenElementViewModel overrides, ElementProperty originalProperty)
+            public EnvironmentOverriddenProperty(IServiceProvider serviceProvider, OverridesProperty overridesProperty, OverriddenElementViewModel overrides, ElementProperty originalProperty, EnvironmentalOverridesViewModel environment)
                 : base(serviceProvider, null, originalProperty.DeclaringProperty)
             {
                 this.overrides = overrides;
                 this.overridesProperty = overridesProperty;
                 this.originalProperty = originalProperty;
                 this.serviceProvider = serviceProvider;
+                this.environment = environment;
+
+
+                var customOverridesEditorAttribute = originalProperty.Attributes.OfType<EditorAttribute>().Where(x => Type.GetType(x.EditorBaseTypeName) == typeof(IEnvironmentalOverridesEditor)).FirstOrDefault();
+                if (customOverridesEditorAttribute != null)
+                {
+                    customOverridesEditorType = Type.GetType(customOverridesEditorAttribute.EditorTypeName, true);
+                }
 
                 this.originalProperty.PropertyChanged += new PropertyChangedEventHandler(originalProperty_PropertyChanged);
                 this.overrides.PropertyChanged += new PropertyChangedEventHandler(overridesProperty_PropertyChanged);
@@ -335,21 +375,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
             {
                 if (e.PropertyName == "OverrideProperties")
                 {
-                    overrides.SetValue(originalProperty, originalProperty.Value);
-
-                    OnPropertyChanged("ReadOnly");
+                    if (typeof(IConvertible).IsAssignableFrom(originalProperty.Type))
+                    {
+                        overrides.SetValue(originalProperty, originalProperty.Value);
+                    }
+                    BindableProperty.ReadOnly = !overrides.OverrideProperties || originalProperty.ReadOnly;
                     OnPropertyChanged("Value");
+                    Validate();
                 }
             }
 
             public override TypeConverter Converter
             {
                 get { return originalProperty.Converter; }
-            }
-
-            public override string Category
-            {
-                get{ return originalProperty.Category; }
             }
 
             public override IEnumerable<Property> ChildProperties
@@ -359,24 +397,36 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
 
             public override string Description
             {
-                get{ return originalProperty.Description; }
+                get { return originalProperty.Description; }
             }
 
-            public override System.Windows.FrameworkElement Editor
+            public override FrameworkElement CreateCustomVisual()
             {
-                get
+                if (customOverridesEditorType != null)
                 {
-                    if (originalProperty.OverridesEditor == null) return null;
+                    var editor = (FrameworkElement)Activator.CreateInstance(customOverridesEditorType);
 
-                    FrameworkElement editor = (FrameworkElement)Activator.CreateInstance(originalProperty.OverridesEditor.GetType());
-                    if (editor is IEnvironmentalOverridesEditor)
-                    {
-                        ((IEnvironmentalOverridesEditor)editor).Initialize(overrides);
-                    }
-                    editor.DataContext = this;
-
+                    ((IEnvironmentalOverridesEditor)editor).Initialize(environment);
+                    editor.DataContext = this.Bindable;
                     return editor;
                 }
+
+                var visual = originalProperty.CreateCustomVisual();
+                if (visual != null)
+                {
+                    visual.DataContext = this.Bindable;
+                }
+                else
+                {
+                    visual = new ContentControl()
+                    {
+                        Content = this.Bindable
+                    };
+                }
+                
+
+                return visual;
+                
             }
 
             public override bool SuggestedValuesEditable
@@ -419,14 +469,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
                 }
             }
 
-            public override bool HasEditor
-            {
-                get
-                {
-                    return originalProperty.HasEditor;
-                }
-            }
-
             public override Type PropertyType
             {
                 get
@@ -451,32 +493,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
                 }
             }
 
-
-            public override bool ReadOnly
+            public ElementViewModel OriginalPropertyViewModel
             {
                 get
                 {
-                    return !overrides.OverrideProperties || originalProperty.ReadOnly;
+                    return originalProperty.DeclaringElement;
                 }
             }
 
-            public override void ShowUITypeEditor()
+            protected override object CreateBindable()
             {
-                if (ReadOnly) return;
-                if (originalProperty.PopupEditor != null) Value = originalProperty.PopupEditor.EditValue(this, serviceProvider, Value);        
-            }
+                BindableProperty prop = (BindableProperty)base.CreateBindable();
+                prop.ReadOnly = !overrides.OverrideProperties || originalProperty.ReadOnly;
 
-
-            public override string BindableValue
-            {
-                get
-                {
-                    return originalProperty.ConvertToBindableValue(Value);
-                }
-                set
-                {
-                    Value = originalProperty.ConvertFromBindableValue(value);
-                }
+                return prop;
             }
 
             public override object Value
@@ -489,10 +519,67 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
                 set
                 {
                     overrides.SetValue(originalProperty, value);
+                    Validate();
                     OnPropertyChanged("Value");
                 }
             }
-        }
 
+            public override void Validate()
+            {
+                if (overrides.OverrideProperties)
+                {
+                    base.Validate();
+                }
+                else
+                {
+                    ResetValidationResults(Enumerable.Empty<Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Validation.ValidationError>());
+                }
+            }
+
+
+            public override IEnumerable<Validator> GetValidators()
+            {
+                return originalProperty.GetValidators().Select(
+                    v => typeof(ElementReferenceValidator).IsAssignableFrom(v.GetType()) ? new OverridesValidatorWrapper(v) : v).Cast<Validator>();
+            }
+
+            #region IElementAssociation Members
+
+            ElementViewModel IElementAssociation.AssociatedElement
+            {
+                get { return originalProperty.DeclaringElement; }
+            }
+
+            string IElementAssociation.ElementName
+            {
+                get
+                {
+                    return string.Format("{0}.{1}", originalProperty.DeclaringElement.Name,
+                                         overridesProperty.DisplayName);
+                }
+            }
+
+            #endregion
+
+
+            private class OverridesValidatorWrapper : Validator
+            {
+                private readonly Validator innerValidator;
+
+                public OverridesValidatorWrapper(Validator innerValidator)
+                {
+                    this.innerValidator = innerValidator;
+                }
+
+                protected override void ValidateCore(object instance, string value, IList<Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Validation.ValidationError> errors)
+                {
+                    var overridesProperty = instance as EnvironmentOverriddenProperty;
+                    if (overridesProperty == null) return;
+
+                    innerValidator.Validate(overridesProperty.originalProperty, value, errors);
+                }
+            }
+        }
     }
 }
+

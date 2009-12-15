@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Configuration;
@@ -20,6 +21,7 @@ using System.Drawing.Design;
 using System.Windows;
 using System.Windows.Input;
 using System.Globalization;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Validation;
 using Microsoft.Practices.Unity;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
@@ -27,11 +29,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
     ///<summary>
     /// A property model from a property discovered on a <see cref="ConfigurationElement"/>.
     ///</summary>
-    public class ElementProperty : Property
+    public class ElementProperty : Property, IElementAssociation
     {
         private readonly ConfigurationPropertyAttribute configurationPropertyAttribute;
         private readonly PropertyInformation configurationProperty;
         private readonly ElementViewModel declaringElement;
+
 
         ///<summary>
         /// Initializes an instance of ElementProperty.
@@ -44,7 +47,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             : this(serviceProvider, parent, declaringProperty, new Attribute[0])
         {
         }
-
+        
         ///<summary>
         /// Initializes an instance of ElementProperty.
         ///</summary>
@@ -79,7 +82,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         ///<summary>
         /// Returns true if the property is required.
         ///</summary>
-        public virtual bool IsRequired
+        public override bool IsRequired
         {
             get { return configurationProperty != null ? configurationProperty.IsRequired : false; }
         }
@@ -92,5 +95,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             get { return declaringElement; }
         }
 
+        #region IElementAssociation Members
+
+        ElementViewModel IElementAssociation.AssociatedElement
+        {
+            get { return DeclaringElement; }
+        }
+
+        string IElementAssociation.ElementName
+        {
+            get { return DeclaringElement.Name; }
+        }
+
+        #endregion
     }
 }

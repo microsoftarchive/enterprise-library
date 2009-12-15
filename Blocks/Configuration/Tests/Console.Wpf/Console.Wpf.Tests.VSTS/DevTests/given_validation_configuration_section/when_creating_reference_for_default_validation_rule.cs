@@ -100,8 +100,8 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_validation_configuration_section
         public void then_suggested_values_doesnt_contain_rules_contained_in_other_types()
         {
             var defaultRuleSetProperty = stringTypeReference.Property("DefaultRuleset");
-            Assert.AreEqual(2, defaultRuleSetProperty.BindableSuggestedValues.Count());
-            Assert.IsFalse(defaultRuleSetProperty.BindableSuggestedValues.Any( x=> x == "int-rules"));
+            Assert.AreEqual(2, ((SuggestedValuesBindableProperty)defaultRuleSetProperty.BindableProperty).BindableSuggestedValues.Count());
+            Assert.IsFalse(((SuggestedValuesBindableProperty)defaultRuleSetProperty.BindableProperty).BindableSuggestedValues.Any( x=> x == "int-rules"));
         }
     }
 }

@@ -11,10 +11,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Configuration;
 using System.Windows;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using System.ComponentModel;
 using System.Windows.Controls;
@@ -59,9 +61,17 @@ namespace Console.Wpf.Tests.VSTS.Mocks
     }
 
     [ViewModel(typeof(ElementViewModelEx), typeof(UIElement))]
-    public class ElementWithExtendedViewModel : ConfigurationElement
+    public class ElementWithExtendedViewModel : ConfigurationElement, ICustomProviderData
     {
+        public string Name
+        {
+            get { return "TestName";  }
+        }
 
+        public NameValueCollection Attributes
+        {
+            get { return new NameValueCollection(); }
+        }
     }
 
 
@@ -90,6 +100,7 @@ namespace Console.Wpf.Tests.VSTS.Mocks
     [ViewModel(typeof(CollectionElementViewModelEx))]
     public class CollectionElementWithExtendedViewModel : ConfigurationElement
     {
+       
     }
 
 

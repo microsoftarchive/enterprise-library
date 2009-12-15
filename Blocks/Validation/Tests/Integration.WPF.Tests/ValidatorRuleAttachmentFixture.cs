@@ -9,7 +9,9 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -34,7 +36,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WPF.Tests
             BindingOperations.SetBinding(textBox, TextBox.TextProperty, binding);
             textBox.EndInit();
 
-            Validate.SetBindingFor(textBox, "Text");
+            Validate.SetBindingForProperty(textBox, "Text");
 
             Assert.AreEqual(1, binding.ValidationRules.OfType<ValidatorRule>().Count());
         }
@@ -51,7 +53,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WPF.Tests
             };
             BindingOperations.SetBinding(textBox, TextBox.TextProperty, binding);
 
-            Validate.SetBindingFor(textBox, "Text");
+            Validate.SetBindingForProperty(textBox, "Text");
 
             Assert.AreEqual(0, binding.ValidationRules.OfType<ValidatorRule>().Count());
         }
@@ -68,7 +70,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WPF.Tests
             };
             BindingOperations.SetBinding(textBox, TextBox.TextProperty, binding);
 
-            Validate.SetBindingFor(textBox, "Text");
+            Validate.SetBindingForProperty(textBox, "Text");
 
             textBox.EndInit();
 
@@ -88,11 +90,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WPF.Tests
             BindingOperations.SetBinding(textBox, TextBox.TextProperty, binding);
             textBox.EndInit();
 
-            Validate.SetBindingFor(textBox, "Text");
+            Validate.SetBindingForProperty(textBox, "Text");
 
             Assert.AreEqual(1, binding.ValidationRules.OfType<ValidatorRule>().Count());
 
-            textBox.ClearValue(Validate.BindingForProperty);
+            textBox.ClearValue(Validate.BindingForPropertyProperty);
 
             Assert.AreEqual(0, binding.ValidationRules.OfType<ValidatorRule>().Count());
         }
@@ -117,19 +119,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WPF.Tests
             BindingOperations.SetBinding(textBox, TextBox.MaxLengthProperty, binding2);
             textBox.EndInit();
 
-            Validate.SetBindingFor(textBox, "MaxLines");
+            Validate.SetBindingForProperty(textBox, "MaxLines");
 
             Assert.AreEqual(1, binding1.ValidationRules.OfType<ValidatorRule>().Count());
             Assert.AreEqual(0, binding2.ValidationRules.OfType<ValidatorRule>().Count());
 
-            Validate.SetBindingFor(textBox, "MaxLength");
+            Validate.SetBindingForProperty(textBox, "MaxLength");
 
             Assert.AreEqual(0, binding1.ValidationRules.OfType<ValidatorRule>().Count());
             Assert.AreEqual(1, binding2.ValidationRules.OfType<ValidatorRule>().Count());
         }
 
         [TestMethod]
-        public void BindingForPropertyNamedInAttachedProperyIsValidatedForInvalidValue()
+        public void BindingForPropertyPropertyNamedInAttachedProperyIsValidatedForInvalidValue()
         {
             var instance = new ValidatedObject();
 
@@ -146,7 +148,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WPF.Tests
             BindingOperations.SetBinding(textBox, TextBox.TextProperty, binding);
             textBox.EndInit();
 
-            Validate.SetBindingFor(textBox, "Text");
+            Validate.SetBindingForProperty(textBox, "Text");
 
             Assert.IsFalse(SWC.Validation.GetHasError(textBox));
 
@@ -156,7 +158,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WPF.Tests
         }
 
         [TestMethod]
-        public void BindingForPropertyNamedInAttachedProperyIsValidatedForValidValue()
+        public void BindingForPropertyPropertyNamedInAttachedProperyIsValidatedForValidValue()
         {
             var instance = new ValidatedObject();
 
@@ -173,7 +175,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WPF.Tests
             BindingOperations.SetBinding(textBox, TextBox.TextProperty, binding);
             textBox.EndInit();
 
-            Validate.SetBindingFor(textBox, "Text");
+            Validate.SetBindingForProperty(textBox, "Text");
 
             Assert.IsFalse(SWC.Validation.GetHasError(textBox));
 
@@ -181,5 +183,199 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WPF.Tests
 
             Assert.IsFalse(SWC.Validation.GetHasError(textBox));
         }
+
+        [TestMethod]
+        public void CanSetAValidationSpecificationSourceBeforeSettingTheBindingForPropertyProperty()
+        {
+            var textBox = new TextBox();
+            textBox.BeginInit();
+            var binding = new Binding("ValidatedStringProperty")
+            {
+                Mode = BindingMode.OneWayToSource,
+                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+            };
+            BindingOperations.SetBinding(textBox, TextBox.TextProperty, binding);
+            textBox.EndInit();
+
+            Validate.SetUsingSource(textBox, ValidationSpecificationSource.Attributes);
+            Validate.SetBindingForProperty(textBox, "Text");
+
+            var rule = binding.ValidationRules.OfType<ValidatorRule>().FirstOrDefault();
+
+            Assert.AreEqual(ValidationSpecificationSource.Attributes, rule.ValidationSpecificationSource);
+        }
+
+        [TestMethod]
+        public void CanSetAValidationSpecificationSourceAfterSettingTheBindingForPropertyProperty()
+        {
+            var textBox = new TextBox();
+            textBox.BeginInit();
+            var binding = new Binding("ValidatedStringProperty")
+            {
+                Mode = BindingMode.OneWayToSource,
+                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+            };
+            BindingOperations.SetBinding(textBox, TextBox.TextProperty, binding);
+            textBox.EndInit();
+
+            Validate.SetBindingForProperty(textBox, "Text");
+            Validate.SetUsingSource(textBox, ValidationSpecificationSource.Attributes);
+
+            var rule = binding.ValidationRules.OfType<ValidatorRule>().FirstOrDefault();
+
+            Assert.AreEqual(ValidationSpecificationSource.Attributes, rule.ValidationSpecificationSource);
+        }
+
+        [TestMethod]
+        public void CanSetARulesetNameBeforeSettingTheBindingForPropertyProperty()
+        {
+            var textBox = new TextBox();
+            textBox.BeginInit();
+            var binding = new Binding("ValidatedStringProperty")
+            {
+                Mode = BindingMode.OneWayToSource,
+                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+            };
+            BindingOperations.SetBinding(textBox, TextBox.TextProperty, binding);
+            textBox.EndInit();
+
+            Validate.SetUsingRulesetName(textBox, "Ruleset");
+            Validate.SetBindingForProperty(textBox, "Text");
+
+            var rule = binding.ValidationRules.OfType<ValidatorRule>().FirstOrDefault();
+
+            Assert.AreEqual("Ruleset", rule.RulesetName);
+        }
+
+        [TestMethod]
+        public void CanSetARulesetNameAfterSettingTheBindingForPropertyProperty()
+        {
+            var textBox = new TextBox();
+            textBox.BeginInit();
+            var binding = new Binding("ValidatedStringProperty")
+            {
+                Mode = BindingMode.OneWayToSource,
+                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+            };
+            BindingOperations.SetBinding(textBox, TextBox.TextProperty, binding);
+            textBox.EndInit();
+
+            Validate.SetBindingForProperty(textBox, "Text");
+            Validate.SetUsingRulesetName(textBox, "Ruleset");
+
+            var rule = binding.ValidationRules.OfType<ValidatorRule>().FirstOrDefault();
+
+            Assert.AreEqual("Ruleset", rule.RulesetName);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void SettingTheAttachedPropertyToAValueThatIsNotADependencyPropertyNameThrows()
+        {
+            var textBox = new TextBox();
+            textBox.BeginInit();
+            textBox.EndInit();
+
+            Validate.SetBindingForProperty(textBox, "InvalidPropertyName");
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void SettingTheAttachedPropertyTheNameOfAnUnboundDependencyPropertyThrows()
+        {
+            var textBox = new TextBox();
+            textBox.BeginInit();
+            textBox.EndInit();
+
+            Validate.SetBindingForProperty(textBox, "Text");
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void SettingTheAttachedPropertyTheNameOfAnDependencyPropertyWithAComplexPathBindingThrows()
+        {
+            var textBox = new TextBox();
+            textBox.BeginInit();
+            BindingOperations.SetBinding(textBox, TextBox.TextProperty, new Binding("Complex.Path"));
+            textBox.EndInit();
+
+            Validate.SetBindingForProperty(textBox, "Text");
+        }
+
+
+        [TestMethod]
+        public void AttachingValidationToPropertyWithMultiBindingAddsRulesToTheLeafLevelBindings()
+        {
+            var textBox = new TextBox();
+            textBox.BeginInit();
+            var binding1 = new Binding("ValidatedStringProperty")
+            {
+                Mode = BindingMode.OneWayToSource,
+                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+            };
+            var binding2 = new Binding("ValidatedStringProperty")
+            {
+                Mode = BindingMode.OneWayToSource,
+                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+            };
+            BindingOperations.SetBinding(
+                textBox,
+                TextBox.TextProperty,
+                new MultiBinding
+                {
+                    Bindings = { binding1, binding2 },
+                    Converter = new TestConverter()
+                });
+            textBox.EndInit();
+
+            Validate.SetBindingForProperty(textBox, "Text");
+
+            Assert.AreEqual(1, binding1.ValidationRules.OfType<ValidatorRule>().Count());
+            Assert.AreEqual(1, binding2.ValidationRules.OfType<ValidatorRule>().Count());
+        }
+
+        [TestMethod]
+        public void AttachingValidationToPropertyWithPriorityBindingAddsRulesToTheLeafLevelBindings()
+        {
+            var textBox = new TextBox();
+            textBox.BeginInit();
+            var binding1 = new Binding("ValidatedStringProperty")
+            {
+                Mode = BindingMode.OneWayToSource,
+                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+            };
+            var binding2 = new Binding("ValidatedStringProperty")
+            {
+                Mode = BindingMode.OneWayToSource,
+                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+            };
+            BindingOperations.SetBinding(
+                textBox,
+                TextBox.TextProperty,
+                new PriorityBinding
+                {
+                    Bindings = { binding1, binding2 }
+                });
+            textBox.EndInit();
+
+            Validate.SetBindingForProperty(textBox, "Text");
+
+            Assert.AreEqual(1, binding1.ValidationRules.OfType<ValidatorRule>().Count());
+            Assert.AreEqual(1, binding2.ValidationRules.OfType<ValidatorRule>().Count());
+        }
+
+        private class TestConverter : IMultiValueConverter
+        {
+            public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+            {
+                throw new NotImplementedException();
+            }
+
+            public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+            {
+                throw new NotImplementedException();
+            }
+        }
+
     }
 }

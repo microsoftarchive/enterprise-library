@@ -38,7 +38,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
         /// Create a new <see cref="AuthorizationCallHandlerData"/>.
         /// </summary>
         public AuthorizationCallHandlerData()
-            : base()
         {
             Type = typeof(AuthorizationCallHandler);
         }
@@ -70,7 +69,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
         [ConfigurationProperty(AuthorizationProviderPropertyName)]
         [ResourceDescription(typeof(DesignResources), "AuthorizationCallHandlerDataAuthorizationProviderDescription")]
         [ResourceDisplayName(typeof(DesignResources), "AuthorizationCallHandlerDataAuthorizationProviderDisplayName")]
-        [Reference("Microsoft.Practices.EnterpriseLibrary.Security.Configuration.AuthorizationProviderData, Microsoft.Practices.EnterpriseLibrary.Security")]
+        [Reference(typeof(SecuritySettings), typeof(AuthorizationProviderData))]
         public string AuthorizationProvider
         {
             get { return (string)base[AuthorizationProviderPropertyName]; }

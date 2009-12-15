@@ -78,7 +78,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
             if (scavengerTask.IsScavengingNeeded())
             {
                 StartScavenging();
-            }              
+            }
         }
 
         internal void BackgroundWork(Action work)
@@ -99,7 +99,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
         internal void Scavenge()
         {
             int pendingScavengings = Interlocked.Exchange(ref scavengePending, 0);
-            int timesToScavenge = ((pendingScavengings - 1) % scavengerTask.NumberOfItemsToBeScavenged) + 1;
+            int timesToScavenge = ((pendingScavengings - 1) / scavengerTask.NumberOfItemsToBeScavenged) + 1;
             while (timesToScavenge > 0)
             {
                 scavengerTask.DoScavenging();

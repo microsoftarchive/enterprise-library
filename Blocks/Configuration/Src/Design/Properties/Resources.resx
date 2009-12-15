@@ -117,22 +117,76 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="EnvironmentDeltaFileFilter" xml:space="preserve">
+    <value>Delta Configuration files (*.dconfig)|*.dconfig|All Files (*.*)|*.*</value>
+  </data>
   <data name="ExceptionCollectionElementEditorNeedsTemplateAttribute" xml:space="preserve">
     <value>Property {0} has a CollectionElementEditor specified, but not the required  CollectionEditorTemplateAttribute.</value>
+  </data>
+  <data name="ExceptionReferenceScopeNotSet" xml:space="preserve">
+    <value>Reference attribute for type {0} has no scope specified.</value>
   </data>
   <data name="ExceptionStringNullOrEmpty" xml:space="preserve">
     <value>The value can not be null or an empty string.</value>
   </data>
   <data name="NewCollectionElementNameFormat" xml:space="preserve">
-    <value>New {0} {1}</value>
+    <value>{0} {1}</value>
+  </data>
+  <data name="OpenConfigurationFileDialogFilter" xml:space="preserve">
+    <value>Configuration files (*.config)|*.config|All Files (*.*)|*.*</value>
+  </data>
+  <data name="OpenConfigurationFileDialogTitle" xml:space="preserve">
+    <value>Open Configuration File</value>
+  </data>
+  <data name="PromptContinueOperationDiscardChangesWarningMessage" xml:space="preserve">
+    <value>Continuing will discard changes made to the current configuration. Do you want save the current changes prior?</value>
+  </data>
+  <data name="PromptContinueOperationDiscardChangesWarningTitle" xml:space="preserve">
+    <value>Enterprise Library Configuration</value>
+  </data>
+  <data name="PromptOverwriteReadonlyFileMessage" xml:space="preserve">
+    <value>File is Read Only, Would you like to Overwride the file?</value>
+  </data>
+  <data name="PromptOverwriteReadonlyFiletitle" xml:space="preserve">
+    <value>Save Configuration File</value>
+  </data>
+  <data name="PromptSaveOverFileThatCannotBeReadFromWarningMessage" xml:space="preserve">
+    <value>The file '{0}' cannot be read from, it might not a valid configuration file or contain errors. Proceeding with save will overwrite the file.</value>
+  </data>
+  <data name="PromptSaveOverFileThatCannotBeReadFromWarningTitle" xml:space="preserve">
+    <value>Save Configuration File</value>
   </data>
   <data name="ReferencePropertyInvalidType" xml:space="preserve">
     <value>ElementReferenceProperty may only be created for properties of type string.  Check property on which the ReferenceAttribute is supplied.</value>
   </data>
+  <data name="SaveConfigurationFileDialogFilter" xml:space="preserve">
+    <value>Configuration files (*.config)|*.config|All Files (*.*)|*.*</value>
+  </data>
+  <data name="SaveConfigurationFileDialogTitle" xml:space="preserve">
+    <value>Save Configuration File</value>
+  </data>
+  <data name="SaveConfigurationInvalidError" xml:space="preserve">
+    <value>The configuration has validation errors that must be corrected before it can be saved.</value>
+  </data>
+  <data name="ValidationElementReferenceMissing" xml:space="preserve">
+    <value>Referenced item is not available.  Select an item or you may need to add new items.</value>
+  </data>
+  <data name="ValidationElementReferenceMissingWithScope" xml:space="preserve">
+    <value>Referenced item is not available.  Select an item or you may need to add new items to {0}.</value>
+  </data>
   <data name="ValidationErrorToString" xml:space="preserve">
     <value>The property {0} is invalid for {1}. Message: {2}</value>
   </data>
+  <data name="ValidationLoggingPriorityValuesInvalid" xml:space="preserve">
+    <value>The maximum priority must be higher than the minimum priority.</value>
+  </data>
+  <data name="ValidationPathNotVerified" xml:space="preserve">
+    <value>The file {0} cannot be verified.</value>
+  </data>
   <data name="ValidationRequiredPropertyValueMissing" xml:space="preserve">
     <value>The field {0} is missing a required value.</value>
+  </data>
+  <data name="ValidationTypeNotLocatable" xml:space="preserve">
+    <value>Unable to find type {0}.</value>
   </data>
 </root>

@@ -21,20 +21,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Validation
     ///<summary>
     /// Validates that a <see cref="Property.Value" /> has a required value.
     ///</summary>
-    public class RequiredFieldValidator : ValidationAttribute
+    public class RequiredFieldValidator : PropertyValidator
     {
-        protected override void ValidateCore(object instance, IList<ValidationError> errors)
+        protected override void ValidateCore(Property property, string value, IList<ValidationError> errors)
         {
-            var property = instance as ElementProperty;
-
-            if (property == null) return;
-
-            bool isMissing = (property.BindableValue == null) ||
-                             (property.PropertyType == typeof (string) && string.IsNullOrEmpty((string) property.Value));
-
-            if (isMissing)
+            if (string.IsNullOrEmpty(value))
             {
-                errors.Add(property.ValidationError(string.Format(Resources.ValidationRequiredPropertyValueMissing, property.DisplayName)));
+                errors.Add(new ValidationError(property, string.Format(Resources.ValidationRequiredPropertyValueMissing, property.DisplayName)));
             }
         }
     }

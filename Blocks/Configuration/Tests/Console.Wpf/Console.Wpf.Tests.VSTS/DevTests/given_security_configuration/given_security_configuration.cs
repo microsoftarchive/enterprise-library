@@ -52,77 +52,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_security_configuration
         protected override void Act()
         {
             viewModel = SectionViewModel.CreateSection(Container, SecuritySettings.SectionName, securitySettings);
-            viewModel.UpdateLayout();
         }
 
-        [TestMethod]
-        public void then_authz_providers_are_in_first_column()
-        {
-            var allAuthProviders = viewModel.GetDescendentsOfType<AuthorizationProviderData>();
-
-            Assert.IsTrue(allAuthProviders.Any());
-            Assert.IsFalse(allAuthProviders.Where(x => x.Column != 0).Any());
-        }
-
-        [TestMethod]
-        public void then_authz_providers_start_at_row_1()
-        {
-            var allAuthProviders = viewModel.GetDescendentsOfType<AuthorizationProviderData>();
-
-            Assert.IsTrue(allAuthProviders.Any());
-            Assert.AreEqual(1, allAuthProviders.Min(x => x.Row));
-        }
-
-        [TestMethod]
-        public void then_security_cache_providers_are_in_first_column()
-        {
-            var cacheProviders = viewModel.GetDescendentsOfType<SecurityCacheProviderData>();
-
-            Assert.IsTrue(cacheProviders.Any());
-            Assert.IsFalse(cacheProviders.Where(x => x.Column != 0).Any());
-        }
-
-        [TestMethod]
-        public void then_rules_are_positioned_in_column_2()
-        {
-            var ruleProvider = viewModel.GetDescendentsOfType<AuthorizationRuleProviderData>().First();
-            Assert.IsNotNull(ruleProvider);
-
-            var rules = ruleProvider.GetDescendentsOfType<AuthorizationRuleData>();
-            Assert.IsTrue(rules.Any());
-            Assert.IsFalse(rules.Where(x => x.Column != 1).Any());
-        }
-
-        [TestMethod]
-        public void then_rules_are_positioned_in_row_of_parent()
-        {
-            var ruleProvider = viewModel.GetDescendentsOfType<AuthorizationRuleProviderData>().First();
-            Assert.IsNotNull(ruleProvider);
-
-            var rules = ruleProvider.GetDescendentsOfType<AuthorizationRuleData>();
-            Assert.IsTrue(rules.Any());
-            Assert.AreEqual(ruleProvider.Row, rules.Min(x => x.Row));
-        }
-
-        [TestMethod]
-        public void then_rules_provider_has_row_span_of_rules()
-        {
-            var ruleProvider = viewModel.GetDescendentsOfType<AuthorizationRuleProviderData>().First();
-            Assert.IsNotNull(ruleProvider);
-
-            var rules = ruleProvider.GetDescendentsOfType<AuthorizationRuleData>();
-            Assert.IsTrue(rules.Any());
-            Assert.AreEqual(ruleProvider.RowSpan, rules.Count());
-        }
-
-        [TestMethod]
-        public void then_security_cache_providers_start_at_row_after_authz_providers()
-        {
-            var allAuthProviders = viewModel.GetDescendentsOfType<AuthorizationProviderData>();
-            var cacheProviders = viewModel.GetDescendentsOfType<SecurityCacheProviderData>();
-
-            Assert.IsTrue(cacheProviders.Any());
-            Assert.AreEqual(allAuthProviders.Max(x => x.Row + x.RowSpan) + 1, cacheProviders.Min(x => x.Row));
-        }
     }
 }

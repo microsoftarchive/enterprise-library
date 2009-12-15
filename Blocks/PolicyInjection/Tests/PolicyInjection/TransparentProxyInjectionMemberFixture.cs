@@ -25,7 +25,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests
     {
         private TransparentProxyInterceptor interceptor;
         private PolicyExposingInjectionMember assertingInjectionMember;
-
+        private NamedTypeBuildKey fooKey = new NamedTypeBuildKey<Foo>();
         [TestInitialize]
         public void Given()
         {
@@ -41,7 +41,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests
         public void ThenInjectorPolicyAdded()
         {
             var policy = assertingInjectionMember.Policies
-                .Get<IInstanceInterceptionPolicy>(typeof(Foo));
+                .Get<IInstanceInterceptionPolicy>(fooKey);
             Assert.IsNotNull(policy);
         }
 
@@ -49,8 +49,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests
         public void ThenProvidedInterceptorMatchesProvidedInterceptor()
         {
             var policy = assertingInjectionMember.Policies
-                .Get<IInstanceInterceptionPolicy>(typeof(Foo));
-            Assert.AreSame(interceptor, policy.Interceptor);
+                .Get<IInstanceInterceptionPolicy>(fooKey);
+            Assert.AreSame(interceptor, policy.GetInterceptor(null));
         }
 
         [TestMethod]

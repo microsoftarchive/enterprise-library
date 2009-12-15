@@ -19,6 +19,7 @@ using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides.Configuration;
+using Console.Wpf.Tests.VSTS.TestSupport;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_environment_node_in_view_model
 {
@@ -26,16 +27,27 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_environment_node_in_view_model
     public class when_overriding_properties : given_environmental_overrides_and_ehab
     {
         Property overridenWrapTypeProperty;
+        PropertyChangedListener overridenWrapTypePropertyChangedListener;
         protected override void Act()
         {
-            OverridesProperty.Value = OverridesProperty.Converter.ConvertFromString(OverridesProperty, "Override Properties");
             overridenWrapTypeProperty = base.OverridesProperty.ChildProperties.Where(x => x.PropertyName == "WrapExceptionTypeName").FirstOrDefault();
+
+            overridenWrapTypePropertyChangedListener = new PropertyChangedListener(overridenWrapTypeProperty.BindableProperty);
+
+            OverridesProperty.Value = OverridesProperty.Converter.ConvertFromString(OverridesProperty, "Override Properties");
+            
         }
 
         [TestMethod]
         public void then_child_properties_are_read_write()
         {
-            Assert.IsFalse(OverriddenExceptionMessage.ReadOnly);
+            Assert.IsFalse(OverriddenExceptionMessage.BindableProperty.ReadOnly);
+        }
+
+        [TestMethod]
+        public void then_child_property_readonly_changed()
+        {
+            Assert.IsTrue(overridenWrapTypePropertyChangedListener.ChangedProperties.Contains("ReadOnly"));
         }
 
 

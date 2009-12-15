@@ -279,26 +279,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model
         [TestMethod]
         public void then_new_child_has_expected_name()
         {
-            Assert.IsTrue(handlerCollection.ChildElements.Any(x => x.Name == "New Wrap Handler 1"));
-        }
-
-        [TestMethod]
-        public void then_collection_rows_are_recalculated()
-        {
-            int lastRow = handlerCollection.ChildElements.First().Row;
-            foreach(var element in handlerCollection.ChildElements.Skip(1))
-            {
-                Assert.AreEqual(lastRow + 1, element.Row);
-                lastRow = element.Row;
-            }
-        }
-
-        [TestMethod]
-        public void then_rowspan_for_added_node_is_one()
-        {
-            Assert.IsTrue(handlerCollection.ChildElements.All(x => x.RowSpan == 1));
+            Assert.IsTrue(handlerCollection.ChildElements.Any(x => x.Name == "Wrap Handler"));
         }
     }
-
-   
 }

@@ -25,6 +25,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
     /// </summary>
     [ResourceDescription(typeof(DesignResources), "PolicyDataDescription")]
     [ResourceDisplayName(typeof(DesignResources), "PolicyDataDisplayName")]
+    [ViewModel(PolicyInjectionDesignTime.ViewModelTypeNames.PolicyDataViewModel)]
     public class PolicyData : NamedConfigurationElement
     {
         private const string HandlersPropertyName = "handlers";

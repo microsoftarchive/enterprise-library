@@ -142,7 +142,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_configuration_element_with_prope
             var Prop1 = properties.Where(x => x.PropertyName == "Prop1").FirstOrDefault();
 
             Assert.IsNotNull(Prop1);
-            Assert.IsFalse(Prop1.SuggestedValuesEditable);
+            Assert.IsFalse(((SuggestedValuesBindableProperty)Prop1.BindableProperty).SuggestedValuesEditable);
         }
 
         [TestMethod]

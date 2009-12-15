@@ -27,23 +27,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
             public const string PiabSectionViewModel = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.PiabSectionViewModel, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
 
             ///<summary/>
-            public const string PiabParameterTypeMatchDataViewModel = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.PiabParameterTypeMatchDataCollectionElementViewModel, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
+            public const string PolicyDataViewModel = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.PolicyDataViewModel, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
+        }
 
+        ///<summary/>
+        public static class Validators
+        {
             ///<summary/>
-            public const string PiabPropertyMatchDataViewModel = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.PiabPropertyMatchDataViewModel, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
-
-            ///<summary/>
-            public const string PiabTypeMatchDataViewModel = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.PiabTypeMatchDataViewModel, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
-
-            ///<summary/>
-            public const string PiabNamespaceMatchDataViewModel = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.PiabNamespaceMatchDataViewModel, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
-
-            ///<summary/>
-            public const string PiabMethodSignatureTypesViewModel = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.PiabMethodSignatureTypesViewModel, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
-
-            ///<summary/>
-            public const string PiabMemberNameViewModel = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.PiabMemberNameViewModel, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
-
+            public const string MatchCollectionPopulatedValidationType = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.Piab.MatchCollectionPopulatedValidator, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
         }
     }
 }

@@ -10,9 +10,8 @@
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="/Microsoft.Practices.EnterpriseLibrary.Configuration.Design;component/Resources/Converters.xaml" />
         <ResourceDictionary Source="/Microsoft.Practices.EnterpriseLibrary.Configuration.Design;component/Resources/Brushes.xaml" />
+        <ResourceDictionary Source="/Microsoft.Practices.EnterpriseLibrary.Configuration.Design;component/Resources/ExpanderDictionary.xaml" />
     </ResourceDictionary.MergedDictionaries>
-
-    <Controls:PropertyContentTemplateSelector x:Key="propertyContentTemplateSelector" />
 
     <ControlTemplate x:Key="NoAdornerErrorTemplate">
         <AdornedElementPlaceholder />
@@ -50,25 +49,164 @@
             <Style TargetType="{x:Type MenuItem}">
                 <Setter Property="AutomationProperties.AutomationId" Value="{Binding Title}"  />
             </Style>
+            
             <HierarchicalDataTemplate DataType="{x:Type ViewModel:DefaultElementCollectionAddCommand}" ItemsSource="{Binding ChildCommands}">
-                <MenuItem Header="{Binding Title}"/>
+                <Label Content="{Binding Title}" />
             </HierarchicalDataTemplate>
 
             <DataTemplate DataType="{x:Type ViewModel:CommandModel}">
-                <Controls:SelectionNotifyingMenuItem Header="{Binding Title}" Command="{Binding}" />
+                <Label Content="{Binding Title}" />
+                <!--Controls:SelectionNotifyingMenuItem Header="{Binding Title}" Command="{Binding}" /-->
             </DataTemplate>
         </Style.Resources>
     </Style>
 
-    <DataTemplate DataType="{x:Type ViewModel:HeaderViewModel}">
+    <Style x:Key="BindablePropertyStyle" TargetType="{x:Type FrameworkElement}">
+        <Setter Property="HorizontalAlignment" Value="Stretch"  />
+        <Style.Triggers>
+            <Trigger Property="IsFocused" Value="True">
+                <Setter Property="TextBlock.FontWeight" Value="Bold"/>
+            </Trigger>
+            <Trigger Property="Validation.HasError"
+					 Value="true">
+                <Setter Property="ToolTip"                        
+                        Value="{Binding Path=(Validation.Errors), RelativeSource={RelativeSource Self}, Converter={StaticResource ErrorsToStringConverter}}" />
+            </Trigger>
+            <Trigger Property="Validation.HasError"
+					 Value="false">
+                <Setter Property="ToolTip" Value="{Binding BindableValue}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+    
+    <DataTemplate DataType="{x:Type ViewModel:ElementViewModel}">
+        <Controls:ElementModelContainer DataContext="{Binding}"/>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type ViewModel:ElementListViewModel}">
+        <ItemsControl ItemsSource="{Binding Elements}" >
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel>
+                        <ContentControl Content="{Binding Visual}" />
+                    </StackPanel>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type ViewModel:ListViewModel}">
+        <ItemsControl ItemsSource="{Binding Elements}" >
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel>
+                        <ContentControl Content="{Binding Visual}" />
+                    </StackPanel>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type ViewModel:HorizontalListViewModel}">
+        <Grid x:Name="Grid" VerticalAlignment="Stretch">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition MinWidth="275" Width="275" SharedSizeGroup="{Binding ColumnName}" />
+                <!--ColumnDefinition Width="3" /-->
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <ContentControl x:Name="Content"
+                            VerticalAlignment="Stretch" 
+                            Grid.Column="0" 
+                            Content="{Binding Current}" 
+                            Focusable="False" 
+                            HorizontalAlignment="Stretch"/>
+
+            <ContentControl VerticalAlignment="Stretch" Grid.RowSpan="2" Grid.Column="1" Content="{Binding}">
+                <ContentControl.ContentTemplate>
+                    <DataTemplate>
+                        <ContentControl VerticalAlignment="Stretch"
+                                        x:Name="Next" 
+                                        Visibility="Collapsed"
+                                        Focusable="False"/>
+
+                        <DataTemplate.Triggers>
+                            <DataTrigger Binding="{Binding HasNext}" Value="true">
+                                <Setter TargetName="Next" Property="Content" Value="{Binding Next}" />
+                                <Setter TargetName="Next" Property="Visibility" Value="{Binding Visible}" />
+                            </DataTrigger>
+                        </DataTemplate.Triggers>
+                    </DataTemplate>
+                </ContentControl.ContentTemplate>
+            </ContentControl>
+
+            <StackPanel
+                    Grid.Column="0"
+                    Grid.ColumnSpan="2"
+                    Grid.Row="1">
+                <ContentControl Content="{Binding Contained}" />
+            </StackPanel>
+
+            <GridSplitter   x:Name="Splitter"
+                            Grid.Column="0" 
+                            Grid.Row="0"
+                            Grid.RowSpan="2"
+                            BorderBrush="Black" 
+                            BorderThickness="1"
+                            Opacity="0.15"
+                            Width="3"
+                            Background="Transparent" 
+                            ResizeDirection="Columns" 
+                            ShowsPreview="True" />
+
+
+        </Grid>
+        <DataTemplate.Triggers>
+            <DataTrigger Binding="{Binding Root}" Value="False">
+                <Setter TargetName="Splitter" Property="Visibility" Value="Collapsed" />
+            </DataTrigger>
+        </DataTemplate.Triggers>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type ViewModel:TwoVerticalVisualsViewModel}">
+        <StackPanel>
+            <ContentControl Content="{Binding First}" />
+            <ContentControl Content="{Binding Second}" />
+        </StackPanel>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type ViewModel:TwoColumnsViewModel}">
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition />
+                <ColumnDefinition Width="275" SharedSizeGroup="{Binding ColumnName}" />
+                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="0" Text="{Binding Name}"
-					   FontStyle="Italic"
-					   HorizontalAlignment="Stretch" FontWeight="Bold" />
+
+            <ContentControl Grid.Column="0" Content="{Binding Left}" />
+
+            <ContentControl Grid.Column="1" Content="{Binding Right}" />
+
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type ViewModel:HeaderViewModel}">
+        <Grid ScrollViewer.VerticalScrollBarVisibility="Disabled" 
+              Margin="12, 0, 12, 6">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Column="0" 
+                       Text="{Binding Title}" 
+                       FontStyle="Italic"
+					   HorizontalAlignment="Stretch" 
+                       FontWeight="Bold" />
+
             <Controls:ContextMenuButton x:Name="AddButton" 
                             Grid.Column="1" 
                             VerticalAlignment="Top" 
@@ -76,6 +214,7 @@
                             Margin="0,0,0,0"
                             Visibility="{Binding Commands, Converter={StaticResource EnumerableToVisibilityConverter}, FallbackValue=Hidden}"                            
                             Style="{StaticResource ContextAdderButtonMenuStyle}"
+                            AutomationProperties.AutomationId ="{Binding Title}"
                             >
                 <Controls:ContextMenuButton.ContextMenu>
                     <Controls:SelectionNotifyingContextMenu ItemsSource="{Binding Commands}" Style="{StaticResource ContextMenuStyle}"  />
@@ -84,63 +223,66 @@
         </Grid>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type ViewModel:Property}"
-				  x:Key="ChildPropertyTemplate">
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"
-								  SharedSizeGroup="Column1" />
-                <ColumnDefinition Width="Auto"
-								  SharedSizeGroup="Column2" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="1"
-					   Text="{Binding DisplayName}"
-					   ToolTip="{Binding Description}"
-					   Margin="0,0,5,0"
-					   HorizontalAlignment="Left" />
-            <ContentControl Grid.Column="2">
-                <ContentPresenter ContentTemplateSelector="{StaticResource propertyContentTemplateSelector}" />
-            </ContentControl>
-        </Grid>
-        <DataTemplate.Triggers>
-            <DataTrigger Binding="{Binding Hidden}"
-						 Value="True">
-                <Setter Property="Visibility"
-						Value="Collapsed" />
-            </DataTrigger>
-        </DataTemplate.Triggers>
-    </DataTemplate>
 
-    <DataTemplate x:Key="SuggestedValuePropertyEditingTemplate">
+    <DataTemplate DataType="{x:Type ViewModel:SuggestedValuesBindableProperty}">
         <Grid HorizontalAlignment="Stretch">
+            <Border BorderBrush="Red"
+						BorderThickness="1"
+						Margin="-1"
+						x:Name="ErrorAdorner"
+						Visibility="Collapsed" />
             <ComboBox ItemsSource="{Binding BindableSuggestedValues}"
-							  Text="{Binding BindableValue}"
+							  Text="{Binding BindableValue, ValidatesOnDataErrors=true}"
+                              Validation.ErrorTemplate="{StaticResource NoAdornerErrorTemplate}"
 							  x:Name="propertyDropdown"
+                              Style="{StaticResource BindablePropertyStyle}"
 							  Grid.Column="0"
-                              HorizontalAlignment="Stretch"
-							  IsEditable="{Binding SuggestedValuesEditable}"
-                              IsEnabled="{Binding DesignTimeReadOnly, Converter={StaticResource BooleanInverseConverter}}"
+							  IsEditable="true"
+                              IsReadOnly="{Binding SuggestedValuesEditable, Converter={StaticResource BooleanInverseConverter}}"
+                              IsEnabled="{Binding ReadOnly, Converter={StaticResource BooleanInverseConverter}}"
 							  Visibility="Visible" 
                               AutomationProperties.Name="{Binding DisplayName}"/>
         </Grid>
-    </DataTemplate>
-
-    <DataTemplate x:Key="DropDownEditorPropertyTemplate">
-        <Expander x:Name="propertyDropDownEditor" Visibility="Visible" Header="{Binding BindableValue}" Content="{Binding Editor}" Focusable="True" Style="{DynamicResource DropDownEditorExpander}" AutomationProperties.Name="{Binding DisplayName}" 
-            IsEnabled="{Binding DesignTimeReadOnly, Converter={StaticResource BooleanInverseConverter}}"/>
         <DataTemplate.Triggers>
-            <Trigger Property="IsFocused" Value="False" SourceName="propertyDropDownEditor">
-                <Setter Property="IsExpanded" TargetName="propertyDropDownEditor" Value="False"/>
+            <Trigger Property="Validation.HasError" Value="true" SourceName="propertyDropdown">
+                <Setter Property="Visibility"
+						Value="Visible"
+						TargetName="ErrorAdorner" />
             </Trigger>
         </DataTemplate.Triggers>
     </DataTemplate>
 
-    <DataTemplate x:Key="TextPropertyEditingTemplate">
+ 
+
+
+    <DataTemplate DataType="{x:Type ViewModel:BindableProperty}">
+        <Grid HorizontalAlignment="Stretch">
+            <Border BorderBrush="Red"
+						BorderThickness="1"
+						Margin="-1"
+						x:Name="ErrorAdorner"
+						Visibility="Collapsed" />
+            <TextBox
+                        Validation.ErrorTemplate="{StaticResource NoAdornerErrorTemplate}" 		 
+                        x:Name="valueTextBox"
+                        Style="{StaticResource BindablePropertyStyle}"
+                        IsReadOnly="{Binding TextReadOnly}"
+                        AutomationProperties.Name="{Binding DisplayName}"
+                        Text="{Binding BindableValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=true}" />
+        </Grid>
+        <DataTemplate.Triggers>
+            <Trigger Property="Validation.HasError" Value="true" SourceName="valueTextBox">
+                <Setter Property="Visibility"
+						Value="Visible"
+						TargetName="ErrorAdorner" />
+            </Trigger>
+            <DataTrigger Binding="{Binding ReadOnly}" Value="true">
+                <Setter TargetName="valueTextBox" Property="IsEnabled" Value="false" />
+            </DataTrigger>
+        </DataTemplate.Triggers>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type ViewModel:PopupEditorBindableProperty}">
         <DockPanel>
             <Button Content="..."
 						DockPanel.Dock="Right"
@@ -150,96 +292,53 @@
 						CommandParameter="{Binding}"
 						x:Name="propertyPopupButton"
 						HorizontalAlignment="Right"
-						IsEnabled="{Binding DesignTimeReadOnly, Converter={StaticResource BooleanInverseConverter}}"
-						Visibility="Collapsed" />
+                        VerticalAlignment="Top"
+						IsEnabled="{Binding ReadOnly, Converter={StaticResource BooleanInverseConverter}}" />
+
             <Grid HorizontalAlignment="Stretch">
                 <Border BorderBrush="Red"
 							BorderThickness="1"
 							Margin="-1"
 							x:Name="ErrorAdorner"
 							Visibility="Collapsed" />
-                <TextBox IsEnabled="{Binding DesignTimeReadOnly, Converter={StaticResource BooleanInverseConverter}}"
-							 Validation.ErrorTemplate="{StaticResource NoAdornerErrorTemplate}"
-							 HorizontalAlignment="Stretch"
-							 x:Name="valueTextBox"
+                <TextBox IsEnabled="{Binding ReadOnly, Converter={StaticResource BooleanInverseConverter}}"
+							Validation.ErrorTemplate="{StaticResource NoAdornerErrorTemplate}"
+                            Style="{StaticResource BindablePropertyStyle}"
+							x:Name="valueTextBox"
                             IsReadOnly="{Binding TextReadOnly}"
-                             AutomationProperties.Name="{Binding DisplayName}">
-                    <TextBox.Text>
-                        <Binding Path="BindableValue" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
-                            <Binding.ValidationRules>
-                                <ExceptionValidationRule />
-                            </Binding.ValidationRules>
-                        </Binding>
-                    </TextBox.Text>
-                </TextBox>
+                            AutomationProperties.Name="{Binding DisplayName}"
+                            Text="{Binding BindableValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=true}"
+                         />
             </Grid>
         </DockPanel>
         <DataTemplate.Triggers>
-            <Trigger Property="IsFocused" Value="True" SourceName="valueTextBox">
-                <Setter Property="FontWeight" TargetName="valueTextBox" Value="Bold"/>
-            </Trigger>
             <Trigger Property="Validation.HasError"
 					 Value="true"
 					 SourceName="valueTextBox">
-                <Setter Property="ToolTip"
-						Value="{Binding (Validation.Errors)[0].ErrorContent, RelativeSource={x:Static RelativeSource.Self}}" />
                 <Setter Property="Visibility"
 						Value="Visible"
 						TargetName="ErrorAdorner" />
-            </Trigger>
-            <Trigger Property="Validation.HasError"
-					 Value="false"
-					 SourceName="valueTextBox">
-                <Setter Property="ToolTip"
-						Value="{Binding Value}" />
-            </Trigger>
-            <DataTrigger Binding="{Binding EditorBehavior}"
-						 Value="ModalPopup">
-                <Setter Property="Visibility"
-						Value="Visible"
-						TargetName="propertyPopupButton" />
-            </DataTrigger>
+            </Trigger>          
         </DataTemplate.Triggers>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type ViewModel:Property}">
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
+    <DataTemplate x:Key="ActualProperty">
+        <Grid HorizontalAlignment="Stretch">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"
-								  SharedSizeGroup="Column1" />
-                <ColumnDefinition Width="Auto"
-								  SharedSizeGroup="Column2" />
-                <ColumnDefinition Width="*" />
+                <ColumnDefinition MinWidth="50" Width="Auto" SharedSizeGroup="PropLabel" />
+                <ColumnDefinition MinWidth="50" Width="175*" />
             </Grid.ColumnDefinitions>
-            <!--Child Properties -->
-            <ToggleButton Visibility="{Binding HasChildProperties, Converter={StaticResource BooleanToVisibilityConverter}}"
-						  Margin="1,2,0,0"
-						  Grid.Column="0"
-						  x:Name="ShowChildProperties"
-						  VerticalAlignment="Top"
-						  Background="{DynamicResource NormalBrush}"
-						  Template="{DynamicResource PropertiesExpandToggleButton}"
-						  HorizontalAlignment="Left" />
-            <ItemsControl ItemsSource="{Binding ChildProperties}"
-						  ItemTemplate="{StaticResource ChildPropertyTemplate}"
-						  Visibility="{Binding IsChecked, Converter={StaticResource BooleanToVisibilityConverter}, ElementName=ShowChildProperties, Mode=TwoWay}"
-						  Grid.Column="0"
-						  Grid.Row="1"
-						  Grid.ColumnSpan="4"
-						  Margin="0,0,10,0" />
-            <!--End Child Properties -->
-            <TextBlock Grid.Column="1"
+
+            <TextBlock Grid.Column="0"
 					   Text="{Binding DisplayName}"
 					   ToolTip="{Binding Description}"
 					   Margin="5,0,5,0"
-					   HorizontalAlignment="Left" VerticalAlignment="Center" />
-            <ContentControl Grid.Column="2">
-                <ContentPresenter ContentTemplateSelector="{StaticResource propertyContentTemplateSelector}" />
-            </ContentControl>
+                       TextTrimming="CharacterEllipsis"
+					   HorizontalAlignment="Left" 
+                       VerticalAlignment="Top" />
+
+            <ContentControl Grid.Column="1" Content="{Binding Visual}" />
+
         </Grid>
         <DataTemplate.Triggers>
             <DataTrigger Binding="{Binding Hidden}"
@@ -250,129 +349,78 @@
         </DataTemplate.Triggers>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type ViewModel:ElementViewModel}">
-        <TextBlock Text="{Binding Name, Mode=OneWay}"
-				   HorizontalAlignment="Left"
-				   VerticalAlignment="Center"
-				   Background="{x:Null}"
-				   Margin="5,0,0,0" >
-            <TextBlock.ContextMenu>
-                  <Controls:SelectionNotifyingContextMenu ItemsSource="{Binding Commands}" Style="{StaticResource ContextMenuStyle}"  />
-            </TextBlock.ContextMenu>
-        </TextBlock>
-    </DataTemplate>
 
-    <!-- todo: May not need this any longer -->
-    <!--<DataTemplate DataType="{x:Type ViewModel:CommandModel}">
-        <Button Content="{Binding Title}"
-				Command="{Binding}"
-				Margin="0,0,10,5">
-            <Button.Template>
-                <ControlTemplate TargetType="{x:Type Button}">
-                    <Grid x:Name="grid">
-                        <TextBlock HorizontalAlignment="Stretch"
-								   VerticalAlignment="Stretch"
-								   Text="{TemplateBinding Content}"
-								   TextWrapping="Wrap" />
-                    </Grid>
-                </ControlTemplate>
-            </Button.Template>
-        </Button>
-    </DataTemplate>-->
-
-    <DataTemplate DataType="{x:Type ViewModel:CollectionElementViewModel}">
-        <Grid>
+    <DataTemplate DataType="{x:Type ViewModel:Property}"
+				  x:Key="ChildPropertyTemplate">
+        <Grid >
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <TextBlock Text="{Binding Name, Mode=OneWay}"
-					   HorizontalAlignment="Left"
-					   VerticalAlignment="Center"
-					   Background="{x:Null}"
-					   Margin="5,0,15,0"
-					   Grid.Column="0"/>
+            <Grid.RowDefinitions>
+                <RowDefinition />
+            </Grid.RowDefinitions>
 
-            <StackPanel Orientation="Horizontal"
-						HorizontalAlignment="Right"
-						Margin="0,0,0,0"
-						d:LayoutOverrides="HorizontalAlignment"
-						Grid.Column="1">
-                <StackPanel x:Name="reorderButtons">
-                    <Button Content="Up"
-							Command="{Binding MoveUp}"
-							CommandParameter="{Binding}"
-							Template="{DynamicResource ReorderUpButton}"
-							Margin="0,1,0,-2"
-							HorizontalAlignment="Center"
-							Visibility="{Binding IsEnabled, Converter={StaticResource BooleanToVisibilityConverter}, RelativeSource={RelativeSource Self}}" />
-                    <Button Content="Down"
-							Command="{Binding MoveDown}"
-							CommandParameter="{Binding}"
-							Template="{DynamicResource ReorderDownButton}"
-							Margin="0,5,0,0"
-							HorizontalAlignment="Center"
-							Visibility="{Binding IsEnabled, Converter={StaticResource BooleanToVisibilityConverter}, RelativeSource={RelativeSource Self}}" />
-                </StackPanel>
-                <Button Command="{Binding DeleteCommand}" 
-                        Style="{DynamicResource DeleteButtonStyle}" 
-                        Margin="0,0,0,0" 
-                        VerticalAlignment="Center"                        
-                        Width="18" Height="18" 
-                        AutomationProperties.Name="DeleteButton" />
-                <Controls:ContextMenuButton x:Name="AddButton" 
-                            Grid.Column="1" 
-                            VerticalAlignment="Center"
-                            Width="18" Height="18"
-                            Visibility="{Binding AddCommands, Converter={StaticResource EnumerableToVisibilityConverter}, FallbackValue=Hidden}"                            
-                            Style="{StaticResource ContextAdderButtonMenuStyle}"
-                            >
-                    <Controls:ContextMenuButton.ContextMenu>
-                        <Controls:SelectionNotifyingContextMenu Style="{StaticResource ContextMenuStyle}">
-                            <Controls:SelectionNotifyingContextMenu.Resources>
-                                <CollectionViewSource x:Key="AddCommandViewSource" Source="{Binding AddCommands}">
-                                    <CollectionViewSource.SortDescriptions>
-                                        <ComponentModel:SortDescription PropertyName="Title" />
-                                    </CollectionViewSource.SortDescriptions>
-                                </CollectionViewSource>
-                            </Controls:SelectionNotifyingContextMenu.Resources>
-                            <Controls:SelectionNotifyingContextMenu.ItemsSource>
-                                  <Binding Source="{StaticResource AddCommandViewSource}" />
-                            </Controls:SelectionNotifyingContextMenu.ItemsSource>
-                        </Controls:SelectionNotifyingContextMenu>
-                    </Controls:ContextMenuButton.ContextMenu>
-                </Controls:ContextMenuButton>
-                
-            </StackPanel>
-            
-            <Grid.ContextMenu>
-                <Controls:SelectionNotifyingContextMenu ItemsSource="{Binding Commands}" Style="{StaticResource ContextMenuStyle}"  />
-            </Grid.ContextMenu>
+            <ContentControl Grid.Column="1" Content="{Binding}" ContentTemplate="{StaticResource ActualProperty}">
+
+            </ContentControl>
+
         </Grid>
         <DataTemplate.Triggers>
-            <DataTrigger Binding="{Binding ChildElements.Count, Converter={StaticResource ChildCountToVisibility}, FallbackValue=False}"
+            <DataTrigger Binding="{Binding Hidden}"
 						 Value="True">
                 <Setter Property="Visibility"
-						Value="Visible"
-						TargetName="reorderButtons" />
+						Value="Collapsed" />
+            </DataTrigger>
+        </DataTemplate.Triggers>
+    </DataTemplate>
+
+
+    <DataTemplate DataType="{x:Type ViewModel:Property}">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="12" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <ToggleButton Template="{DynamicResource ExpanderToggleButton}"
+                          Visibility="{Binding HasChildProperties, Converter={StaticResource BooleanToVisibilityConverter}}"
+                          x:Name="ShowChildProperties"
+                          Height="6"
+                          Width="12"
+                          Margin="0, -6, 0, 0"
+				          Background="{DynamicResource NormalBrush}"
+				          OverridesDefaultStyle="True" 
+						  VerticalAlignment="Center"
+                          HorizontalAlignment="Center"
+                          Grid.Column="0" >
+            </ToggleButton>
+
+            <ContentControl 
+                          Grid.Column="1" 
+                          Content="{Binding}" 
+                          ContentTemplate="{StaticResource ActualProperty}" />
+
+            <ItemsControl ItemsSource="{Binding ChildProperties}"
+                          ItemTemplate="{StaticResource ActualProperty}"
+					      Visibility="{Binding IsChecked, Converter={StaticResource BooleanToVisibilityConverter}, ElementName=ShowChildProperties, Mode=TwoWay}"
+					      Grid.Column="1"
+					      Grid.Row="1" />
+
+        </Grid>
+        <DataTemplate.Triggers>
+            <DataTrigger Binding="{Binding Hidden}"
+						 Value="True">
+                <Setter Property="Visibility"
+						Value="Collapsed" />
             </DataTrigger>
         </DataTemplate.Triggers>
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type ViewModel:SectionViewModel}">
-        <Expander Style="{StaticResource SectionExpander}" >
-            <Expander.Header>
-                <DockPanel>
-                    <TextBlock DockPanel.Dock="Left" Text="{Binding Name}" />
-                    <DockPanel.ContextMenu>
-                        <Controls:SelectionNotifyingContextMenu ItemsSource="{Binding Commands}" Style="{StaticResource ContextMenuStyle}"  />
-                    </DockPanel.ContextMenu>
-                </DockPanel>
-            </Expander.Header>
-
-            <Controls:BlockVisualizer />
-
-        </Expander>
+        <Controls:SectionModelContainer  DataContext="{Binding}"  />
     </DataTemplate>
 
     <Style x:Key="ButtonFocusVisual">
@@ -396,7 +444,7 @@
     <Style x:Key="DeleteButtonStyle" TargetType="{x:Type Button}">
         <Setter Property="FocusVisualStyle" Value="{StaticResource ButtonFocusVisual}"/>
         <Setter Property="Background" Value="{StaticResource ButtonNormalBackground}"/>
-        <Setter Property="BorderBrush" Value="{StaticResource ButtonNormalBorder}"/>        
+        <Setter Property="BorderBrush" Value="{StaticResource ButtonNormalBorder}"/>
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>

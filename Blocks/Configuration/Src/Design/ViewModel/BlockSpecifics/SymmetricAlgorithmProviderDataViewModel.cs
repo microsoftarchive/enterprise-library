@@ -18,6 +18,8 @@ using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography;
+using System.ComponentModel;
+using System.Drawing.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics
 {
@@ -43,7 +45,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
             SymmetricAlgorithmProviderData configuration;
 
             public ProtectedKeySettingsProperty(IServiceProvider serviceProvider, SymmetricAlgorithmProviderData configuration)
-                :base(serviceProvider, "Key")
+                : base(serviceProvider, "Key", new EditorAttribute(typeof(KeyManagerEditor), typeof(UITypeEditor)))
             {
                 this.configuration = configuration;
             }
@@ -68,36 +70,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
                 }
             }
 
-            public override bool HasEditor
+            protected override object CreateBindable()
             {
-                get
-                {
-                    return true;
-                }
-            }
-
-            public override bool TextReadOnly
-            {
-                get
-                {
-                    return true;
-                }
-            }
-
-            public override EditorBehavior EditorBehavior
-            {
-                get
-                {
-                    return EditorBehavior.ModalPopup;
-                }
-            }
-
-            public override System.Drawing.Design.UITypeEditor PopupEditor
-            {
-                get
-                {
-                    return new KeyManagerEditor();
-                }
+                return new PopupEditorBindableProperty(this) { TextReadOnly = true };
             }
 
             public ProtectedKeySettings KeySettings

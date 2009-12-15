@@ -22,6 +22,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
     /// <summary>
     /// Base class for configuration objects describing validators.
     /// </summary>
+    [ViewModel(ValidationDesignTime.ViewModelTypeNames.ValidatorDataViewModel)]
     public class ValidatorData : NameTypeConfigurationElement, IValidatorDescriptor
     {
         /// <summary>
@@ -57,7 +58,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
         [Editor(CommonDesignTime.EditorTypes.MultilineText, CommonDesignTime.EditorTypes.FrameworkElement)]
         [ResourceDescription(typeof(DesignResources), "ValidatorDataMessageTemplateDescription")]
         [ResourceDisplayName(typeof(DesignResources), "ValidatorDataMessageTemplateDisplayName")]
-        public string MessageTemplate
+        public virtual string MessageTemplate
         {
             get { return (string)this[MessageTemplatePropertyName]; }
             set { this[MessageTemplatePropertyName] = value; }
@@ -83,7 +84,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
         [ResourceDescription(typeof(DesignResources), "ValidatorDataMessageTemplateResourceNameDescription")]
         [ResourceDisplayName(typeof(DesignResources), "ValidatorDataMessageTemplateResourceNameDisplayName")]
         [Category("CategoryLocalization")]
-        public string MessageTemplateResourceName
+        public virtual string MessageTemplateResourceName
         {
             get { return (string)this[MessageTemplateResourceNamePropertyName]; }
             set { this[MessageTemplateResourceNamePropertyName] = value; }
@@ -111,7 +112,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
         [Category("CategoryLocalization")]
         [Editor(CommonDesignTime.EditorTypes.TypeSelector, CommonDesignTime.EditorTypes.UITypeEditor)]
         [BaseType(typeof(object))]
-        public string MessageTemplateResourceTypeName
+        public virtual string MessageTemplateResourceTypeName
         {
             get { return (string)this[MessageTemplateResourceTypeNamePropertyName]; }
             set { this[MessageTemplateResourceTypeNamePropertyName] = value; }
@@ -124,7 +125,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
         [ConfigurationProperty(TagPropertyName)]
         [ResourceDescription(typeof(DesignResources), "ValidatorDataTagDescription")]
         [ResourceDisplayName(typeof(DesignResources), "ValidatorDataTagDisplayName")]
-        public string Tag
+        public virtual string Tag
         {
             get { return (string)this[TagPropertyName]; }
             set { this[TagPropertyName] = value; }

@@ -177,6 +177,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
         /// <seealso cref="ExceptionManagerImpl.HandleException(Exception, string)"/>
         public override void Process(Action action, string policyName)
         {
+            if (action == null) throw new ArgumentNullException("action");
+            if (policyName == null) throw new ArgumentNullException("policyName");
+
             try
             {
                 action();
@@ -188,6 +191,36 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
                     throw;
                 }
             }
+        }
+
+        /// <summary>
+        /// Executes the supplied delegate <paramref name="action"/>, and handles
+        /// any thrown exception according to the rules configured for <paramref name="policyName"/>.
+        /// </summary>
+        /// <typeparam name="TResult">Type of return value from <paramref name="action"/>.</typeparam>
+        /// <param name="action">The delegate to execute.</param>
+        /// <param name="defaultResult">The value to return if an exception is thrown and the
+        /// exception policy swallows it instead of rethrowing.</param>
+        /// <param name="policyName">The name of the policy to handle.</param>
+        /// <returns>If no exception occurs, returns the result from executing <paramref name="action"/>. If
+        /// an exception occurs and the policy does not re-throw, returns <paramref name="defaultResult"/>.</returns>
+        public override TResult Process<TResult>(Func<TResult> action, TResult defaultResult, string policyName)
+        {
+            if(action == null) throw new ArgumentNullException("action");
+            if(policyName == null) throw new ArgumentNullException("policyName");
+
+            try
+            {
+                return action();
+            }
+            catch (Exception e)
+            {
+                if(HandleException(e, policyName))
+                {
+                    throw;
+                }
+            }
+            return defaultResult;
         }
     }
 }

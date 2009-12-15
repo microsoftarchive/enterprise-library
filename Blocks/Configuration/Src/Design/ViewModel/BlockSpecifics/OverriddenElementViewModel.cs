@@ -93,7 +93,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
         {
             if (mergeElement == null) throw new InvalidOperationException("TODO");
 
-            string valueToSet = property.Converter.ConvertToString(property, CultureInfo.CurrentUICulture, value);
+            string valueToSet = (string) Convert.ChangeType(value, typeof(string));
             string propertyName = property.ConfigurationName;
 
             if (!mergeElement.OverriddenProperties.AllKeys.Contains(propertyName))

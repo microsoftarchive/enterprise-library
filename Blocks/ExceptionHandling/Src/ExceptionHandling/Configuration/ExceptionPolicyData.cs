@@ -26,6 +26,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
     /// </summary> 
     [ResourceDescription(typeof(DesignResources), "ExceptionPolicyDataDescription")]
     [ResourceDisplayName(typeof(DesignResources), "ExceptionPolicyDataDisplayName")]
+    [ViewModel(ExceptionHandlingDesignTime.ViewModelTypeNames.ExceptionPolicyDataViewModel)]
 	public class ExceptionPolicyData : NamedConfigurationElement
     {
 		private const string exceptionTypesProperty = "exceptionTypes";

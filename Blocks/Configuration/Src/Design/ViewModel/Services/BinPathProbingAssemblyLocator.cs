@@ -22,37 +22,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.S
     {
 
         public BinPathProbingAssemblyLocator()
+            :base(AppDomain.CurrentDomain.BaseDirectory)
         {
-            assemblies = new List<Assembly>();
-            LoadAssembliesFromDirectory(AppDomain.CurrentDomain.BaseDirectory);
+            
         }
 
-        private List<Assembly> assemblies;
-
-        public override IEnumerable<Assembly> Assemblies
-        {
-            get { return assemblies; }
-        }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods", MessageId = "System.Reflection.Assembly.LoadFrom")]
-        private void LoadAssembliesFromDirectory(string directory)
-        {
-            foreach (var file in Directory.GetFiles(directory))
-            {
-                if (Path.GetExtension(file).ToUpperInvariant() == ".DLL" ||
-                    Path.GetExtension(file).ToUpperInvariant() == ".EXE")
-                {
-                    string fullPath = Path.Combine(directory, file);
-
-                    try
-                    {
-                        assemblies.Add(Assembly.LoadFrom(fullPath));
-                    }
-                        // Eat expected exceptions - if load fails just go on to the next file.
-                    catch (BadImageFormatException) { }
-                    catch (FileLoadException) { }
-                }
-            }
-        }
     }
 }

@@ -17,29 +17,34 @@ using Microsoft.Practices.Unity;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Security.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls;
+using System.Windows;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics
 {
-    public class SecuritySectionViewModel : PositionedSectionViewModel
+    public class SecuritySectionViewModel : SectionViewModel
     {
         public SecuritySectionViewModel(IUnityContainer builder, string sectionName, ConfigurationSection section)
             : base(builder, sectionName, section)
         {
-            var authZProviders = Positioning.PositionCollection("Authorization Providers", 
-                typeof(NameTypeConfigurationElementCollection<AuthorizationProviderData, CustomAuthorizationProviderData>), 
-                typeof(AuthorizationProviderData), 
-                new PositioningInstructions { FixedColumn = 0, FixedRow = 0 });
 
-            authZProviders.PositionNestedCollection(typeof(AuthorizationRuleData));
-
-
-            Positioning.PositionCollection("Security Cache Providers",
-                            typeof(NameTypeConfigurationElementCollection<SecurityCacheProviderData, CustomSecurityCacheProviderData>),
-                            typeof(SecurityCacheProviderData),
-                            new PositioningInstructions { FixedColumn = 0, RowAfter = authZProviders});
-
-            Positioning.PositionHeader("Auhtorization Rules", new PositioningInstructions { FixedColumn = 1, FixedRow = 0 });
         }
 
+        protected override object CreateBindable()
+        {
+            var securityCacheProviders = DescendentElements().Where(x => x.ConfigurationType == typeof(NameTypeConfigurationElementCollection<SecurityCacheProviderData, CustomSecurityCacheProviderData>)).First();
+            var authorizationProviders = DescendentElements().Where(x => x.ConfigurationType == typeof(NameTypeConfigurationElementCollection<AuthorizationProviderData, CustomAuthorizationProviderData>)).First();
+
+            return new HorizontalListViewModel(
+                    new HeaderViewModel(authorizationProviders.Name, authorizationProviders.Commands),
+                    new HeaderViewModel("Authorization Rules")
+                )
+                {
+                    Contained = new TwoVerticalVisualsViewModel(
+                        new ElementListViewModel(authorizationProviders.ChildElements),
+                        new TwoColumnsViewModel(new HeaderedListViewModel(securityCacheProviders), null) { ColumnName = "Column0" }
+                    )
+                };
+        }
     }
 }

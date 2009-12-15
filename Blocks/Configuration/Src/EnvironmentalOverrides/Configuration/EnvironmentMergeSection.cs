@@ -16,6 +16,7 @@ using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using System.ComponentModel;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design.Validation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides.Configuration
 {
@@ -72,6 +73,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverr
         [FilteredFileNameEditor(typeof(DesignResources), "EnvironmentMergeSectionEnvironmentDeltaFileFilter")]
         [Editor(CommonDesignTime.EditorTypes.FilteredFilePath, CommonDesignTime.EditorTypes.UITypeEditor)]
         [EnvironmentalOverrides(false)]
+        [Validation(CommonDesignTime.ValidationTypeNames.FileValidator)]
         public string EnvironmentConfigurationFile
         {
             get { return (string)base[EnvironmentConfigurationFilePropertyName]; }

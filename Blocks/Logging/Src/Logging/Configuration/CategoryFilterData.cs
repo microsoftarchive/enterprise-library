@@ -82,7 +82,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         [ResourceDescription(typeof(DesignResources), "CategoryFilterDataCategoryFiltersDescription")]
         [ResourceDisplayName(typeof(DesignResources), "CategoryFilterDataCategoryFiltersDisplayName")]
         [System.ComponentModel.Editor(CommonDesignTime.EditorTypes.CollectionEditor, CommonDesignTime.EditorTypes.FrameworkElement)]
-        [CollectionEditorTemplate("CategoryFilterEntryHeader", "CategoryFilterEntryItem")]
         [EnvironmentalOverrides(false)]
         [DesignTimeReadOnly(false)]
         public NamedElementCollection<CategoryFilterEntry> CategoryFilters

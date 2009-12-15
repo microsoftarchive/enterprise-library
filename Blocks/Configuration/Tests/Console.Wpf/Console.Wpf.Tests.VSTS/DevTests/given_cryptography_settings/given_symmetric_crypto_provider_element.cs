@@ -47,8 +47,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_cryptography_settings
             var keyProperty = symmetricCryptoProvider.Property("Key");
             Assert.IsNotNull(keyProperty);
             Assert.AreEqual(typeof(ProtectedKeySettings), keyProperty.PropertyType);
-            Assert.IsTrue(keyProperty.TextReadOnly);
-            Assert.IsTrue(keyProperty.HasEditor);
+            Assert.IsTrue(((PopupEditorBindableProperty)keyProperty.BindableProperty).TextReadOnly);
         }
 
     }

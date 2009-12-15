@@ -15,6 +15,7 @@ using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using System.ComponentModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 {
@@ -52,6 +53,44 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
         public ValidatorDataCollection Validators
         {
             get { return (ValidatorDataCollection)this[ValidatorsPropertyName]; }
+        }
+
+        /// <summary>
+        /// Overridden in order to hide from the configuration designtime.
+        /// </summary>
+        [Browsable(false)]
+        public override string MessageTemplate
+        {
+            get { return base.MessageTemplate; }
+            set { base.MessageTemplate = value; }
+        }
+
+        /// <summary>
+        /// Overridden in order to hide from the configuration designtime.
+        /// </summary>
+        [Browsable(false)]
+        public override string MessageTemplateResourceName
+        {
+            get { return base.MessageTemplateResourceName; }
+            set { base.MessageTemplateResourceName = value; }
+        }
+        /// <summary>
+        /// Overridden in order to hide from the configuration designtime.
+        /// </summary>
+        [Browsable(false)]
+        public override string MessageTemplateResourceTypeName
+        {
+            get { return base.MessageTemplateResourceTypeName; }
+            set { base.MessageTemplateResourceTypeName = value; }
+        }
+        /// <summary>
+        /// Overridden in order to hide from the configuration designtime.
+        /// </summary>
+        [Browsable(false)]
+        public override string Tag
+        {
+            get { return base.Tag; }
+            set { base.Tag = value; }
         }
 
         /// <summary>

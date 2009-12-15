@@ -12,9 +12,11 @@
 using System;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Data;
+using Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WPF.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WPF
 {
@@ -25,45 +27,113 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WPF
     public static class Validate
     {
         /// <summary>
-        /// Identifies the BindingFor attached property.
+        /// Identifies the BindingForProperty attached property.
         /// </summary>
-        public static readonly DependencyProperty BindingForProperty =
+        public static readonly DependencyProperty BindingForPropertyProperty =
             DependencyProperty.RegisterAttached(
-                "BindingFor",
+                "BindingForProperty",
                 typeof(string),
                 typeof(Validate),
-                new PropertyMetadata(OnAttachedPropertyChanged));
+                new PropertyMetadata(OnBindingForPropertyChanged));
 
         /// <summary>
-        /// Sets the value of the BindingFor attached property to a specified element.
+        /// Identifies the UsingSource attached property.
+        /// </summary>
+        public static readonly DependencyProperty UsingSourceProperty =
+            DependencyProperty.RegisterAttached(
+                "UsingSource",
+                typeof(ValidationSpecificationSource),
+                typeof(Validate),
+                new PropertyMetadata(ValidationSpecificationSource.All, OnConfigurationPropertyChanged));
+
+        /// <summary>
+        /// Identifies the UsingRulesetName attached property.
+        /// </summary>
+        public static readonly DependencyProperty UsingRulesetNameProperty =
+            DependencyProperty.RegisterAttached(
+                "UsingRulesetName",
+                typeof(string),
+                typeof(Validate),
+                new PropertyMetadata(string.Empty, OnConfigurationPropertyChanged));
+
+        /// <summary>
+        /// Sets the value of the BindingForProperty attached property to a specified element.
         /// </summary>
         /// <param name="element">The element to which the attached property is written.</param>
         /// <param name="property">The name of the bound property to validate.</param>
         [SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
-        public static void SetBindingFor(FrameworkElement element, string property)
+        public static void SetBindingForProperty(FrameworkElement element, string property)
         {
-            element.SetValue(BindingForProperty, property);
+            element.SetValue(BindingForPropertyProperty, property);
         }
 
         /// <summary>
-        /// Gets the value of the BindingFor attached property for a specified element.
+        /// Gets the value of the BindingForProperty attached property for a specified element.
         /// </summary>
         /// <param name="element">The element from which the property value is read.</param>
-        /// <returns>The BindingFor property value for the element.</returns>
+        /// <returns>The BindingForProperty property value for the element.</returns>
         [SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
         [AttachedPropertyBrowsableForType(typeof(FrameworkElement))]
-        public static string GetBindingFor(FrameworkElement element)
+        public static string GetBindingForProperty(FrameworkElement element)
         {
-            return (string)element.GetValue(BindingForProperty);
+            return (string)element.GetValue(BindingForPropertyProperty);
         }
 
-        private static void OnAttachedPropertyChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs args)
+        /// <summary>
+        /// Sets the value of the UsingSource attached property to a specified element.
+        /// </summary>
+        /// <param name="element">The element to which the attached property is written.</param>
+        /// <param name="property">The source for validation information.</param>
+        [SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
+        public static void SetUsingSource(FrameworkElement element, ValidationSpecificationSource property)
+        {
+            element.SetValue(UsingSourceProperty, property);
+        }
+
+        /// <summary>
+        /// Gets the value of the UsingSource attached property for a specified element.
+        /// </summary>
+        /// <param name="element">The element from which the property value is read.</param>
+        /// <returns>The UsingSource property value for the element.</returns>
+        [SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
+        [AttachedPropertyBrowsableForType(typeof(FrameworkElement))]
+        public static ValidationSpecificationSource GetUsingSource(FrameworkElement element)
+        {
+            return (ValidationSpecificationSource)element.GetValue(UsingSourceProperty);
+        }
+
+        /// <summary>
+        /// Sets the value of the UsingRulesetName attached property to a specified element.
+        /// </summary>
+        /// <param name="element">The element to which the attached property is written.</param>
+        /// <param name="rulesetName">The ruleset name.</param>
+        [SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
+        public static void SetUsingRulesetName(FrameworkElement element, string rulesetName)
+        {
+            element.SetValue(UsingRulesetNameProperty, rulesetName);
+        }
+
+        /// <summary>
+        /// Gets the value of the UsingRulesetName attached property for a specified element.
+        /// </summary>
+        /// <param name="element">The element from which the property value is read.</param>
+        /// <returns>The UsingRulesetName property value for the element.</returns>
+        [SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
+        [AttachedPropertyBrowsableForType(typeof(FrameworkElement))]
+        public static string GetUsingRulesetName(FrameworkElement element)
+        {
+            return (string)element.GetValue(UsingRulesetNameProperty);
+        }
+
+        private static void OnBindingForPropertyChanged(
+            DependencyObject dependencyObject,
+            DependencyPropertyChangedEventArgs args)
         {
             FrameworkElement element = dependencyObject as FrameworkElement;
-            UpdateValidatorRule(element, args);
+            ResetValidatorRule(element, args);
         }
 
-        private static void UpdateValidatorRule(FrameworkElement element, DependencyPropertyChangedEventArgs args)
+        private static void ResetValidatorRule(FrameworkElement element, DependencyPropertyChangedEventArgs args)
         {
             // Defer the initialization if not yet initialized
             if (!element.IsInitialized)
@@ -73,7 +143,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WPF
                     (o, e) =>
                     {
                         element.Initialized -= handler;
-                        UpdateValidatorRule(element, args);
+                        ResetValidatorRule(element, args);
                     };
 
                 element.Initialized += handler;
@@ -82,49 +152,184 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WPF
 
             if (args.OldValue != null)
             {
-                var expression = GetBindingExpressionForPropertyName(element, (string)args.OldValue);
-                Binding binding = expression.ParentBinding;
+                var bindingExpressionBase =
+                    GetBindingExpressionBaseForPropertyName(element, (string)args.OldValue, false);
 
-                // remove the previous validation rule, if any
-                var currentRule = binding.ValidationRules.OfType<ValidatorRule>().FirstOrDefault();
-                if (currentRule != null)
+                if (bindingExpressionBase != null)
                 {
-                    binding.ValidationRules.Remove(currentRule);
+                    NavigateBindingExpressionTree(
+                        bindingExpressionBase,
+                        bindingExpression =>
+                        {
+                            Binding binding = bindingExpression.ParentBinding;
+
+                            // remove the previous validation rule, if any
+                            var currentRule =
+                                binding.ValidationRules.OfType<ValidatorRule>().FirstOrDefault(vr => vr.IsDynamic);
+                            if (currentRule != null)
+                            {
+                                binding.ValidationRules.Remove(currentRule);
+                            }
+                        });
                 }
             }
             if (args.NewValue != null)
             {
-                var expression = GetBindingExpressionForPropertyName(element, (string)args.NewValue);
-                Binding binding = expression.ParentBinding;
+                var bindingExpressionBase =
+                    GetBindingExpressionBaseForPropertyName(element, (string)args.NewValue, true);
 
-                // Add the rule if necessary
-                if (!binding.ValidationRules.OfType<ValidatorRule>().Any())
-                {
-                    binding.ValidationRules.Add(new ValidatorRule(expression));
-                }
+                NavigateBindingExpressionTree(
+                    bindingExpressionBase,
+                    bindingExpression =>
+                    {
+                        ValidatorRule.GetCheckedPath(bindingExpression);
+
+                        Binding binding = bindingExpression.ParentBinding;
+
+                        // Add the rule if necessary
+                        if (!binding.ValidationRules.OfType<ValidatorRule>().Any(vr => vr.IsDynamic))
+                        {
+                            binding.ValidationRules.Add(
+                                new ValidatorRule(bindingExpression)
+                                {
+                                    ValidationSpecificationSource = GetUsingSource(element),
+                                    RulesetName = GetUsingRulesetName(element)
+                                });
+                        }
+                    });
             }
         }
 
-        private static BindingExpression GetBindingExpressionForPropertyName(FrameworkElement element, string dependencyPropertyName)
+        private static BindingExpressionBase GetBindingExpressionBaseForPropertyName(
+            FrameworkElement element,
+            string dependencyPropertyName,
+            bool thrownOnError)
         {
+            BindingExpressionBase bindingExpressionBase = null;
+
             // Get the property to be validated
-            var descriptor = DependencyPropertyDescriptor.FromName(dependencyPropertyName, element.GetType(), element.GetType());
+            var descriptor =
+                DependencyPropertyDescriptor.FromName(dependencyPropertyName, element.GetType(), element.GetType());
             if (descriptor == null)
             {
-                // TODO should throw?
-                throw new ArgumentException("value", "Cannot find property for name " + dependencyPropertyName);
+                if (thrownOnError)
+                {
+                    throw new InvalidOperationException(
+                        string.Format(
+                            CultureInfo.CurrentCulture,
+                            Resources.ExceptionMissingDependencyProperty,
+                            dependencyPropertyName,
+                            element.GetType().Name,
+                            element.Name,
+                            element.GetHashCode()));
+                }
             }
-            var dependencyProperty = descriptor.DependencyProperty;
-
-            // Get the BindingExpression for the property to validate
-            var bindingExpression = element.GetBindingExpression(dependencyProperty);
-            if (bindingExpression == null)
+            else
             {
-                // TODO should throw?
-                throw new ArgumentException("value", "Property does not have a binding " + dependencyPropertyName);
+                var dependencyProperty = descriptor.DependencyProperty;
+
+                // Get the BindingExpression for the property to validate
+                bindingExpressionBase = BindingOperations.GetBindingExpressionBase(element, dependencyProperty);
+                if (bindingExpressionBase == null)
+                {
+                    if (thrownOnError)
+                    {
+                        throw new InvalidOperationException(
+                            string.Format(
+                                CultureInfo.CurrentCulture,
+                                Resources.ExceptionDependencyPropertyHasNoBinding,
+                                dependencyPropertyName,
+                                element.GetType().Name,
+                                element.Name,
+                                element.GetHashCode()));
+                    }
+                }
             }
 
-            return bindingExpression;
+            return bindingExpressionBase;
+        }
+
+        private static void OnConfigurationPropertyChanged(
+            DependencyObject dependencyObject,
+            DependencyPropertyChangedEventArgs args)
+        {
+            FrameworkElement element = dependencyObject as FrameworkElement;
+            UpdateExistingValidatorRule(element, args);
+        }
+
+        private static void UpdateExistingValidatorRule(
+            FrameworkElement element,
+            DependencyPropertyChangedEventArgs args)
+        {
+            // Ignore the initialization if not yet initialized
+            if (!element.IsInitialized)
+            {
+                return;
+            }
+
+            var bindingFor = GetBindingForProperty(element);
+            if (bindingFor == null)
+            {
+                return;
+            }
+
+            var bindingExpressionBase = GetBindingExpressionBaseForPropertyName(element, bindingFor, false);
+            if (bindingExpressionBase == null)
+            {
+                return;
+            }
+
+            NavigateBindingExpressionTree(
+                bindingExpressionBase,
+                bindingExpression =>
+                {
+                    var validatorRule =
+                        bindingExpression.ParentBinding.ValidationRules.OfType<ValidatorRule>().First(vr => vr.IsDynamic);
+
+                    if (validatorRule != null)
+                    {
+                        validatorRule.ValidationSpecificationSource = GetUsingSource(element);
+                        validatorRule.RulesetName = GetUsingRulesetName(element);
+                    }
+                });
+        }
+
+        private static void NavigateBindingExpressionTree(
+            BindingExpressionBase bindingExpressionBase,
+            Action<BindingExpression> action)
+        {
+            BindingExpression bindingExpression = bindingExpressionBase as BindingExpression;
+            if (bindingExpression != null)
+            {
+                action(bindingExpression);
+                return;
+            }
+
+            MultiBindingExpression multiBindingExpression = bindingExpressionBase as MultiBindingExpression;
+            if (multiBindingExpression != null)
+            {
+                foreach (var subExpression in multiBindingExpression.BindingExpressions)
+                {
+                    NavigateBindingExpressionTree(subExpression, action);
+                }
+                return;
+            }
+
+            PriorityBindingExpression priorityBindingExpression = bindingExpressionBase as PriorityBindingExpression;
+            if (priorityBindingExpression != null)
+            {
+                foreach (var subExpression in priorityBindingExpression.BindingExpressions)
+                {
+                    NavigateBindingExpressionTree(subExpression, action);
+                }
+                return;
+            }
+
+            throw new InvalidOperationException(
+                string.Format(
+                    CultureInfo.CurrentCulture,
+                    Resources.ExceptionUnexpectedBindingExpression,
+                    bindingExpression.GetType().Name));
         }
     }
 }

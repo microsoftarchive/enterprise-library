@@ -38,8 +38,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
         /// Create a new <see cref="ValidationCallHandlerData"/> instance.
         /// </summary>
         public ValidationCallHandlerData()
-            : base()
         {
+            Type = typeof (ValidationCallHandler);
         }
 
         /// <summary>

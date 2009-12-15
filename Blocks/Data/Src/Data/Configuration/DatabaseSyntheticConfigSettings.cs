@@ -50,7 +50,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration
         /// </summary>
         public DatabaseSyntheticConfigSettings()
         {
-            
+
         }
 
         /// <summary>
@@ -303,15 +303,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration
         /// <returns>A set of <see cref="TypeRegistration"/> entries.</returns>
         public IEnumerable<TypeRegistration> GetRegistrations(IConfigurationSource configurationSource)
         {
-            if(configurationSource == null) throw new ArgumentNullException("configurationSource");
+            if (configurationSource == null) throw new ArgumentNullException("configurationSource");
 
             this.configurationSource = configurationSource;
 
+            return this.DoGetRegistrations().ToList();
+        }
+
+        private IEnumerable<TypeRegistration> DoGetRegistrations()
+        {
             var defaultDatabase = DefaultDatabase;
 
-            foreach (DatabaseData data in Databases)
+            foreach (DatabaseData data in Databases.ToList())
             {
-                foreach (TypeRegistration typeRegistration in data.GetRegistrations())
+                foreach (TypeRegistration typeRegistration in data.GetRegistrations().ToList())
                 {
                     if (typeRegistration.ServiceType == typeof(Database)
                         && String.Equals(typeRegistration.Name, defaultDatabase))

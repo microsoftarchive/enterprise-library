@@ -9,32 +9,19 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-//===============================================================================
-// Microsoft patterns & practices Enterprise Library
-// Logging Application Block
-//===============================================================================
-// Copyright © Microsoft Corporation.  All rights reserved.
-// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
-// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
-// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
-// FITNESS FOR A PARTICULAR PURPOSE.
-//===============================================================================
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 using System.Security;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Properties;
+using System.Security.Permissions;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
-using System.Collections.Generic;
-using System.Security.Permissions;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Properties;
 using Microsoft.Practices.ServiceLocation;
-
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging
 {
-
-
     /// <summary>
     /// Represents a performance tracing class to log method entry/exit and duration.
     /// </summary>
@@ -81,6 +68,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         private long tracingStartTicks;
         private bool tracerDisposed;
         private bool tracingAvailable;
+        private readonly Guid? previousActivityId;
 
         private readonly LogWriter writer;
 
@@ -106,7 +94,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// <param name="operation">The operation for the <see cref="Tracer"/></param>
         /// <param name="activityId">The activity id</param>
         public Tracer(string operation, Guid activityId)
-            :this(operation, activityId, Logger.Writer, GetTracerInstrumentationProvider())
+            : this(operation, activityId, Logger.Writer, GetTracerInstrumentationProvider())
         {
         }
 
@@ -150,7 +138,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         public Tracer(string operation, IServiceLocator container)
             : this(operation, container.GetInstance<LogWriter>(), container.GetInstance<ITracerInstrumentationProvider>())
         {
-            
+
         }
 
         /// <summary>
@@ -163,10 +151,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// <param name="activityId">The activity id</param>
         /// <param name="writer">The <see cref="LogWriter"/> that is used to write trace messages</param>
         /// <param name="instrumentationConfiguration">configuration source that is used to determine instrumentation should be enabled</param>
-		public Tracer(string operation, Guid activityId, LogWriter writer, IConfigurationSource instrumentationConfiguration) :
+        public Tracer(string operation, Guid activityId, LogWriter writer, IConfigurationSource instrumentationConfiguration) :
             this(operation, activityId, writer, GetTracerInstrumentationProvider(instrumentationConfiguration))
-		{
-		}
+        {
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Tracer"/> class with the given logical operation name and activity id.
@@ -202,6 +190,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
             {
                 if (writer == null) throw new ArgumentNullException("writer", Resources.ExceptionWriterShouldNotBeNull);
 
+                this.previousActivityId = GetActivityId();
                 SetActivityId(activityId);
 
                 this.writer = writer;
@@ -230,7 +219,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
 
                 if (GetActivityId().Equals(Guid.Empty))
                 {
+                    this.previousActivityId = Guid.Empty;
                     SetActivityId(Guid.NewGuid());
+                }
+                else
+                {
+                    this.previousActivityId = null;
                 }
 
                 this.writer = writer;
@@ -258,6 +252,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
                         try
                         {
                             StopLogicalOperation();
+                            if (this.previousActivityId != null)
+                            {
+                                SetActivityId(this.previousActivityId.Value);
+                            }
                         }
                         catch (SecurityException)
                         {

@@ -117,17 +117,5 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
             Assert.AreEqual(1, valueValidator.ValidatedTargets.Count);
             Assert.AreSame(targetToValidate.Property2, valueValidator.ValidatedTargets[0]);
         }
-
-        [TestMethod]
-        public void ReturnsFailureIfParameterToValidateIsNull()
-        {
-            MockValueAccess valueAccess = new MockValueAccess("value");
-            MockValidator<object> valueValidator = new MockValidator<object>(false);
-            Validator validator = new ValueAccessValidator(valueAccess, valueValidator);
-
-            ValidationResults validationResults = validator.Validate(null);
-
-            Assert.IsFalse(validationResults.IsValid);
-        }
     }
 }

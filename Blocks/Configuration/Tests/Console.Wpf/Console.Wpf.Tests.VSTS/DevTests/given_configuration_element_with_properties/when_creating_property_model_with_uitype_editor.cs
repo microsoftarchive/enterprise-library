@@ -87,7 +87,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_configuration_element_with_prope
         public void then_editor_specified_in_editor_attributes_sets_has_editor()
         {
             var Prop3 = properties.Where(x => x.PropertyName == "Prop3").FirstOrDefault();
-            Assert.IsTrue(Prop3.HasEditor);
+            Assert.AreEqual(EditorBehavior.ModalPopup, Prop3.EditorBehavior);
 
         }
 
@@ -95,7 +95,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_configuration_element_with_prope
         public void then_editor_is_invoked_when_edit_value_is_called()
         {
             var Prop3 = properties.Where(x => x.PropertyName == "Prop3").FirstOrDefault();
-            Prop3.ShowUITypeEditor();
+            ((PopupEditorBindableProperty)Prop3.BindableProperty).LaunchEditor.Execute(null);
         }
 
 
@@ -112,7 +112,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_configuration_element_with_prope
             Prop3Editor.NewValue = "NewValue";
 
             var Prop3 = properties.Where(x => x.PropertyName == "Prop3").FirstOrDefault();
-            Prop3.ShowUITypeEditor();
+            ((PopupEditorBindableProperty)Prop3.BindableProperty).LaunchEditor.Execute(null);
 
             Assert.AreEqual("NewValue", Prop3.Value);
         }

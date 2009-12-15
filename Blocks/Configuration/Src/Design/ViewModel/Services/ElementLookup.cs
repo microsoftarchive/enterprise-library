@@ -35,6 +35,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.S
         Dictionary<ElementViewModel, TrackPathPropertyChangedAndUpdateReferences> elementPathTrackers = new Dictionary<ElementViewModel, TrackPathPropertyChangedAndUpdateReferences>();
         List<ElementReferenceImplementationBase> references = new List<ElementReferenceImplementationBase>();
         Dictionary<ElementViewModel, CollectionContainer> elementCollectionContainers = new Dictionary<ElementViewModel, CollectionContainer>();
+        private bool refreshing;
 
         //TODO : Should depend on configurationSourceModel.
         ObservableCollection<SectionViewModel> sections = new ObservableCollection<SectionViewModel>();
@@ -54,11 +55,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.S
 
             allElements = view.OfType<ElementViewModel>();
 
-            innerCollectionChanged.CollectionChanged += (sender, args) => OnCollectionChanged(args) ;
+            innerCollectionChanged.CollectionChanged += (sender, args) =>
+                                                            {
+                                                                if (!refreshing)
+                                                                {
+                                                                    OnCollectionChanged(args);
+                                                                }
+                                                            };
         }
 
         void sourceModelDependency_Refresh(object sender, EventArgs e)
         {
+            refreshing = true;
             elements.Clear();
             elementPathTrackers.Clear();
             references.Clear();
@@ -68,6 +76,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.S
             innerCollection.Clear();
             innerCollection.Add(new CollectionContainer { Collection = sections });
             innerCollection.Add(new CollectionContainer { Collection = customElementViewModels });
+            
+            refreshing = false;
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         }
 
         public IEnumerable<ElementViewModel> FindInstancesOfConfigurationType(Type scope, Type configurationType)
@@ -145,13 +156,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.S
             return new ElementChangeScope(this, x=>x is IElementExtendedPropertyProvider);
         }
 
-        public ElementReference CreateReference(string parentPath, Type elementType, string elementName)
+        public ElementReference CreateReference(string ancestorPath, Type elementType, string elementName)
         {
             ElementViewModel element = null;
-            ElementViewModel parentElement = elements.Keys.Where(x => x.Path == parentPath).FirstOrDefault();
+            ElementViewModel parentElement = elements.Keys.Where(x => x.Path == ancestorPath).FirstOrDefault();
             if (parentElement != null) element = parentElement.DescendentElements(x => x.Name == elementName && elementType.IsAssignableFrom(x.ConfigurationType)).FirstOrDefault();
 
-            ElementReferenceOverParentPath reference = new ElementReferenceOverParentPath(this, element, parentPath, elementName);
+            var reference = new ElementReferenceOverAncestorPath(this, element, ancestorPath, elementName);
 
             references.Add(reference);
             return reference;
@@ -278,20 +289,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.S
 
         }
         
-        private class ElementReferenceOverParentPath : ElementReferenceImplementationBase
+        private class ElementReferenceOverAncestorPath : ElementReferenceImplementationBase
         {
-            string parentPath;
+            string ancestorPath;
             string elementName;
 
-            public ElementReferenceOverParentPath(ElementLookup lookup, ElementViewModel element, string parentPath, string elementName)
+            public ElementReferenceOverAncestorPath(ElementLookup lookup, ElementViewModel element, string ancestorPath, string elementName)
                 : base(lookup, element)
             {
-                this.parentPath = parentPath;
+                this.ancestorPath = ancestorPath;
                 this.elementName = elementName;
 
                 base.PathChanged += (sender, args) =>
                 {
-                    this.parentPath = Element.ParentElement.Path;
+                    this.ancestorPath = Element.ParentElement.Path;
                     this.elementName = Element.Name;
                 };
             }
@@ -299,9 +310,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.S
             protected override bool Matches(ElementViewModel element)
             {
                 if (element.ParentElement == null) return false;
-                return this.parentPath == element.ParentElement.Path && element.Name == elementName;
+                return element.AncesterElements().Any(x => x.Path == this.ancestorPath) && element.Name == elementName;
             }
-
         }
 
         private class TrackPathPropertyChangedAndUpdateReferences  : IDisposable

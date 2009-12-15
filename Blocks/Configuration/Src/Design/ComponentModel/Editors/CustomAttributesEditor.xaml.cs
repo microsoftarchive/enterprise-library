@@ -26,6 +26,7 @@ using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Converters;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors
 {
@@ -36,7 +37,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
     {
         List<ChangeMonitor> changeMonitors = new List<ChangeMonitor>();
         ObservableCollection<KeyValueItem> list = new ObservableCollection<KeyValueItem>();
-        Property property;
+        BindableProperty property;
 
         public CustomAttributesEditor()
         {
@@ -47,13 +48,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
 
         void CustomAttributesEditor_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            property = (Property)e.NewValue;
+            property = (BindableProperty)e.NewValue;
+            CustomEditorBinder.BindProperty(this, property);
+            
             NameValueCollection value = (NameValueCollection)property.Value;
-
             list = new ObservableCollection<KeyValueItem>();
             foreach (string key in value)
             {
                 var item = new KeyValueItem { Key = key, Value = value[key] };
+                item.DeleteCommand = new KeyValueItemDeleteCommand(this, item);
                 ChangeMonitor monitor = new ChangeMonitor(this, item);
                 changeMonitors.Add(monitor);
                 list.Add(item);
@@ -86,6 +89,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
         internal void AddNewItem()
         {
             var item = new KeyValueItem { IsNew = true };
+            item.DeleteCommand = new KeyValueItemDeleteCommand(this, item);
             ChangeMonitor monitor = new ChangeMonitor(this, item);
             changeMonitors.Add(monitor);
             list.Add(item);
@@ -115,8 +119,39 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
             }
         }
 
+        private class KeyValueItemDeleteCommand : ICommand
+        {
+            CustomAttributesEditor editor;
+            KeyValueItem item;
+            
+            public KeyValueItemDeleteCommand(CustomAttributesEditor editor, KeyValueItem item)
+            {
+                this.editor = editor;
+                this.item = item;
+            }
+            public bool CanExecute(object parameter)
+            {
+                return true;
+            }
 
-        public class KeyValueItem : INotifyPropertyChanged
+            public event EventHandler CanExecuteChanged;
+
+            public void Execute(object parameter)
+            {
+                if (editor.list.Count < 2)
+                {
+                    item.Key = string.Empty;
+                    item.Value = string.Empty;
+                }
+                else
+                {
+                    editor.list.Remove(item);
+                    editor.UpdateValue();
+                }
+            }
+        }
+
+        private class KeyValueItem : INotifyPropertyChanged
         {
             string key;
             string value;
@@ -150,6 +185,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
             public bool IsEmpty
             {
                 get { return string.IsNullOrEmpty(Key) && string.IsNullOrEmpty(Value); }
+            }
+
+            public ICommand DeleteCommand
+            {
+                get;
+                set;
             }
 
             public virtual void OnPropertyChanged(string propertyName)

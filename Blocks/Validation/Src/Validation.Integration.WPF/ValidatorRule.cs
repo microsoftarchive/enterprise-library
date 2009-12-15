@@ -10,9 +10,11 @@
 //===============================================================================
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Windows.Controls;
 using System.Windows.Data;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WPF.Properties;
@@ -33,13 +35,31 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WPF
     /// </remarks>
     public class ValidatorRule : ValidationRule
     {
+        // regex for a simple identifier
+        private static readonly Regex pathValidationRegex =
+            new Regex(
+                @"^
+                    (?:\p{Lu}|\p{Ll}|\p{Lt}|\p{Lm}|\p{Lo}|\p{Nl}|_)
+                    (?:\p{Lu}|\p{Ll}|\p{Lt}|\p{Lm}|\p{Lo}|\p{Nl}|\p{Nd}|\p{Pc}|\p{Mn}|\p{Mc}|\p{Cf})*
+                $",
+                RegexOptions.IgnorePatternWhitespace);
+
         private readonly BindingExpression bindingExpression;
-        private readonly PropertyInfo validatedProperty;
+        private Type sourceType;
+        private string sourcePropertyName;
+        private ValidationSpecificationSource validationSpecificationSource = ValidationSpecificationSource.All;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ValidatorRule"/> class..
+        /// </summary>
+        public ValidatorRule()
+            : base(ValidationStep.ConvertedProposedValue, false)
+        { }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ValidatorRule"/> class for a binding expression.
         /// </summary>
-        /// <param name="bindingExpression"></param>
+        /// <param name="bindingExpression">The expression to validate.</param>
         public ValidatorRule(BindingExpression bindingExpression)
             : base(ValidationStep.ConvertedProposedValue, false)
         {
@@ -49,19 +69,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WPF
             }
 
             this.bindingExpression = bindingExpression;
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ValidatorRule"/> class for a type and a property.
-        /// </summary>
-        /// <param name="sourceType"></param>
-        /// <param name="sourceProperty"></param>
-        public ValidatorRule(Type sourceType, string sourceProperty)
-            : base(ValidationStep.ConvertedProposedValue, false)
-        {
-            var property = sourceType.GetProperty(sourceProperty);
-
-            this.validatedProperty = property;
         }
 
         /// <summary>
@@ -94,6 +101,62 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WPF
             return validationResult;
         }
 
+        /// <summary>
+        /// Gets or sets the type from which explicitly configured <see cref="ValidatorRule"/> instances should get
+        /// their validators.
+        /// </summary>
+        public Type SourceType
+        {
+            get
+            {
+                return this.sourceType;
+            }
+            set
+            {
+                if (value == null) throw new ArgumentNullException("value");
+                if (this.IsDynamic) throw new ArgumentException(Resources.ExceptionCannotModifyDynamicRule, "value");
+                this.sourceType = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the name of the property for which explicitly configured <see cref="ValidatorRule"/> instances
+        /// should get their validators.
+        /// </summary>
+        public string SourcePropertyName
+        {
+            get
+            {
+                return this.sourcePropertyName;
+            }
+            set
+            {
+                if (value == null) throw new ArgumentNullException("value");
+                if (this.IsDynamic) throw new ArgumentException(Resources.ExceptionCannotModifyDynamicRule, "value");
+                this.sourcePropertyName = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the source for validation information.
+        /// </summary>
+        public ValidationSpecificationSource ValidationSpecificationSource
+        {
+            get { return this.validationSpecificationSource; }
+            set { this.validationSpecificationSource = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the ruleset name to use when validating.
+        /// </summary>
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Ruleset")]
+        public string RulesetName { get; set; }
+
+        internal bool IsDynamic
+        {
+            get { return this.bindingExpression != null; }
+        }
+
         private Validator GetValidator()
         {
             PropertyInfo property = null;
@@ -103,31 +166,48 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WPF
                 var type = GetSourceItemType();
                 if (type == null)
                 {
-                    // TODO check type
+                    throw new InvalidOperationException(Resources.ExceptionUnexpectedMissingType);
                 }
 
                 property = type.GetProperty(GetSourcePropertyName());
                 if (property == null)
                 {
-                    // TODO check property
+                    throw new InvalidOperationException(Resources.ExceptionUnexpectedPropertyType);
                 }
             }
             else
             {
-                property = this.validatedProperty;
+                if (this.SourceType == null)
+                {
+                    throw new InvalidOperationException(Resources.ExceptionSourceTypeNotSet);
+                }
+                if (this.SourcePropertyName == null)
+                {
+                    throw new InvalidOperationException(Resources.ExceptionSourcePropertyNameNotSet);
+                }
+                property = this.SourceType.GetProperty(this.SourcePropertyName);
+                if (property == null)
+                {
+                    throw new InvalidOperationException(
+                        string.Format(
+                            CultureInfo.CurrentCulture,
+                            Resources.ExceptionSourcePropertyNotFound,
+                            this.SourceType.Name,
+                            this.SourcePropertyName));
+                }
             }
 
             return CreateValidator(property);
         }
 
-        private static Validator CreateValidator(PropertyInfo validatedProperty)
+        private Validator CreateValidator(PropertyInfo validatedProperty)
         {
             var validator =
                 PropertyValidationFactory.GetPropertyValidator(
                     validatedProperty.ReflectedType,
                     validatedProperty,
-                    "",
-                    ValidationSpecificationSource.All,
+                    this.RulesetName ?? string.Empty,
+                    this.ValidationSpecificationSource,
                     new FixedPropertyMemberValueAccessBuilder(validatedProperty));
             return validator;
         }
@@ -139,7 +219,23 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WPF
 
         private string GetSourcePropertyName()
         {
-            return this.bindingExpression.ParentBinding.Path.Path;
+            return GetCheckedPath(this.bindingExpression);
+        }
+
+        internal static string GetCheckedPath(BindingExpression bindingExpression)
+        {
+            var pathText = bindingExpression.ParentBinding.Path.Path;
+
+            if (!pathValidationRegex.IsMatch(pathText))
+            {
+                throw new InvalidOperationException(
+                    string.Format(
+                        CultureInfo.CurrentCulture,
+                        Resources.ExceptionComplexBindingPath,
+                        pathText));
+            }
+
+            return pathText;
         }
 
         private class FixedPropertyMemberValueAccessBuilder : MemberValueAccessBuilder

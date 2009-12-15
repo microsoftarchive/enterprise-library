@@ -24,7 +24,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.Configurat
 	/// </summary>
     [ResourceDescription(typeof(DesignResources), "FaultContractExceptionHandlerMappingDataDescription")]
     [ResourceDisplayName(typeof(DesignResources), "FaultContractExceptionHandlerMappingDataDisplayName")]
-    [ViewModel(WcfExceptionHandlingDesignTime.ViewModelTypes.FaultContractExceptionHandlerMappingDataViewModel)]
 	public class FaultContractExceptionHandlerMappingData : NamedConfigurationElement
 	{
 		/// <summary>

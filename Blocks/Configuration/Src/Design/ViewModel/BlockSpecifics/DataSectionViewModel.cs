@@ -24,16 +24,17 @@ using System.Windows;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors;
 using System.Collections.Specialized;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics
 {
 
 
 
-    public class DataSectionViewModel : PositionedSectionViewModel
+    public class DataSectionViewModel : SectionViewModel
     {
-        SobordinateSectionViewModel dataSettingsViewModel;
-        SobordinateSectionViewModel oracleSettingsViewModel;
+        SubordinateSectionViewModel dataSettingsViewModel;
+        SubordinateSectionViewModel oracleSettingsViewModel;
         IUnityContainer builder;
 
         public DataSectionViewModel(IUnityContainer builder, string sectionName, ConfigurationSection section)
@@ -56,7 +57,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
                 InitializeSubordinateSectionViewModels(null, null);
             }
 
-            InitializeGridPosition();
         }
 
         public override void Save(IDesignConfigurationSource configurationSource)
@@ -85,13 +85,23 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
             var elementLookup = builder.Resolve<ElementLookup>();
 
             if (databaseSettings == null) databaseSettings = new DatabaseSettings();
-            dataSettingsViewModel = new SobordinateSectionViewModel(this, builder, DatabaseSettings.SectionName, databaseSettings);
+            dataSettingsViewModel = CreateSubordinateModel(DatabaseSettings.SectionName, databaseSettings);
             elementLookup.AddSection(dataSettingsViewModel);
 
-
             if (oracleSettings == null) oracleSettings = new OracleConnectionSettings();
-            oracleSettingsViewModel = new SobordinateSectionViewModel(this, builder, OracleConnectionSettings.SectionName, oracleSettings);
+            oracleSettingsViewModel = CreateSubordinateModel(OracleConnectionSettings.SectionName, oracleSettings);
             elementLookup.AddSection(oracleSettingsViewModel);
+        }
+
+        private SubordinateSectionViewModel CreateSubordinateModel(string sectionName, ConfigurationSection section)
+        {
+            return CreateViewModelInstance<SubordinateSectionViewModel>(
+                builder,
+                Enumerable.Empty<Attribute>(),
+                new DependencyOverride<SectionViewModel>(this),
+                new DependencyOverride<string>(sectionName),
+                new DependencyOverride<ConfigurationSection>(section)
+                );
         }
 
         public override void Delete()
@@ -102,62 +112,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
             dataSettingsViewModel.Delete();
         }
 
-        private void InitializeGridPosition()
-        {
-            this.Positioning.PositionCollection("Connection Strings",
-                            typeof(ConnectionStringSettingsCollection),
-                            typeof(ConnectionStringSettings),
-                            new PositioningInstructions { FixedColumn = 0, FixedRow = 0 });
-
-
-            this.dataSettingsViewModel.Positioning.PositionCollection("Provider Mappings",
-                            typeof(NamedElementCollection<DbProviderMapping>),
-                            typeof(DbProviderMapping),
-                            new PositioningInstructions { FixedColumn = 2, FixedRow = 0 });
-
-            this.oracleSettingsViewModel.Positioning.PositionCollection("Oracle connection Settings",
-                            typeof(NamedElementCollection<OracleConnectionData>),
-                            typeof(OracleConnectionData),
-                            new PositioningInstructions { FixedColumn = 1, FixedRow = 0 });
-        }
-
-        public override IEnumerable<ViewModel> GetGridVisuals()
-        {
-            return this.Positioning.GetGridVisuals().Union(this.dataSettingsViewModel.Positioning.GetGridVisuals()).Union(this.oracleSettingsViewModel.Positioning.GetGridVisuals());
-        }
-
-        public override int Columns
-        {
-            get { return new[] { Positioning.EndColumn, dataSettingsViewModel.Positioning.EndColumn, oracleSettingsViewModel.Positioning.EndColumn }.Max(); }
-        }
-
-        public override int Rows
-        {
-            get { return new[] { Positioning.EndRow, dataSettingsViewModel.Positioning.EndRow, oracleSettingsViewModel.Positioning.EndRow }.Max(); }
-        }
-
         protected override IEnumerable<Property> GetAllProperties()
         {
             return dataSettingsViewModel.GetProperties();
         }
 
-        int lastNumberOfGridVisuals = 0;
-        public override void UpdateLayout()
+       
+        protected override object CreateBindable()
         {
-            Positioning.Update(this);
-            dataSettingsViewModel.Positioning.Update(dataSettingsViewModel);
-            oracleSettingsViewModel.Positioning.Update(oracleSettingsViewModel);
-
-            var numberOfVisuals = GetGridVisuals().Count();
-
-            if (lastNumberOfGridVisuals != numberOfVisuals)
-            {
-                lastNumberOfGridVisuals = numberOfVisuals;
-
-                OnUpdateVisualGrid();
-            }
+            return new HorizontalListViewModel(
+                       new HeaderedListViewModel(this.DescendentElements().Where(x=>x.ConfigurationType == typeof(ConnectionStringSettingsCollection)).First()),
+                       new HeaderedListViewModel(this.oracleSettingsViewModel.DescendentElements().Where(x => x.ConfigurationType == typeof(NamedElementCollection<OracleConnectionData>)).First()),
+                       new HeaderedListViewModel(this.dataSettingsViewModel.DescendentElements().Where(x=>x.ConfigurationType == typeof(NamedElementCollection<DbProviderMapping>)).First())
+                );
         }
-
 
         private static bool DaabSettingsAreEmpty(DatabaseSettings databaseSettings)
         {
@@ -175,18 +143,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
             return true;
         }
 
-        private class SobordinateSectionViewModel : SectionViewModel
+        private class SubordinateSectionViewModel : SectionViewModel
         {
             SectionViewModel containerModel;
-            public SobordinateSectionViewModel(SectionViewModel containerModel, IUnityContainer builder, string sectionName, ConfigurationSection section)
+            public SubordinateSectionViewModel(SectionViewModel containerModel, IUnityContainer builder, string sectionName, ConfigurationSection section)
                 : base(builder, sectionName, section)
             {
                 this.containerModel = containerModel;
-            }
-
-            public override void UpdateLayout()
-            {
-                containerModel.UpdateLayout();
             }
 
             public IEnumerable<Property> GetProperties()

@@ -31,6 +31,15 @@
             <param name="typeName">The name or the alias for the type of the instance to create.</param>
             <returns>A new instace of <paramref name="typeName"/>.</returns>
         </member>
+        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptionMemberElement.GetResolvedType``1(System.String)">
+            <summary>
+            A helper method that will resolve the type given by name to an actual type object.
+            </summary>
+            <typeparam name="TInterface">Target interface for the type name. Resolved type must
+            be assignable to this type.</typeparam>
+            <param name="typeName">Type string to resolve.</param>
+            <returns>The resolved type.</returns>
+        </member>
         <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.AdditionalInterfaceElement.CreateInjectionMember">
             <summary>
             Returns the InjectionMember object represented by this configuration
@@ -71,11 +80,6 @@
         <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptionBehaviorElement.BehaviorTypeName">
             <summary>
             Returns the string name of the type of the interception behavior represented by this element.
-            </summary>
-        </member>
-        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptionBehaviorElement.BehaviorDescriptorTypeName">
-            <summary>
-            Returns the string name of the type of the interception behavior descriptor represented by this element.
             </summary>
         </member>
         <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptionBehaviorElement.BehaviorName">
@@ -448,7 +452,7 @@
         </member>
         <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.Properties.Resources.MustHaveAtLeastOneBehaviorAttribute">
             <summary>
-              Looks up a localized string similar to The interception behavior element must have one and only one of the &apos;behavior&apos;, &apos;behaviorType&apos; and &apos;behaviorDescriptorType&apos; attributes..
+              Looks up a localized string similar to The interception behavior element must have at least one of the &apos;behaviorName&apos; or &apos;behaviorType&apos; attributes..
             </summary>
         </member>
         <member name="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.KeyInterceptorTargetConfigurationElement">

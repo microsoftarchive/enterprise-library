@@ -35,7 +35,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_environment_node_in_view_model
             targetMainFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, string.Format("{0}.config", Guid.NewGuid()));
             base.Arrange();
 
-            StandAloneApplicationViewModel applicationModel = (StandAloneApplicationViewModel)Container.Resolve<IApplicationModel>();
+            ApplicationViewModel applicationModel = (ApplicationViewModel)Container.Resolve<IApplicationModel>();
             applicationModel.ConfigurationFilePath = targetMainFile;
 
             ((EnvironmentalOverridesViewModel)base.EnvironmentViewModel).EnvironmentDeltaFile = targetDeltaFile;
@@ -43,7 +43,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_environment_node_in_view_model
 
         protected override void Act()
         {
-            StandAloneApplicationViewModel applicationModel = (StandAloneApplicationViewModel)Container.Resolve<IApplicationModel>();
+            ApplicationViewModel applicationModel = (ApplicationViewModel)Container.Resolve<IApplicationModel>();
             applicationModel.Save();
         }
 

@@ -89,7 +89,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
         public abstract bool HandleException(Exception exceptionToHandle, string policyName);
 
         /// <summary>
-        /// Excecutes the supplied delegate <paramref name="action"/> and handles 
+        /// Executes the supplied delegate <paramref name="action"/> and handles 
         /// any thrown exception according to the rules configured for <paramref name="policyName"/>.
         /// </summary>
         /// <param name="action">The delegate to execute.</param>
@@ -102,5 +102,32 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
         /// </example>
         /// <seealso cref="ExceptionManager.HandleException(Exception, string)"/>
         public abstract void Process(Action action, string policyName);
+
+        /// <summary>
+        /// Executes the supplied delegate <paramref name="action"/>, and handles
+        /// any thrown exception according to the rules configured for <paramref name="policyName"/>.
+        /// </summary>
+        /// <typeparam name="TResult">Type of return value from <paramref name="action"/>.</typeparam>
+        /// <param name="action">The delegate to execute.</param>
+        /// <param name="defaultResult">The value to return if an exception is thrown and the
+        /// exception policy swallows it instead of rethrowing.</param>
+        /// <param name="policyName">The name of the policy to handle.</param>
+        /// <returns>If no exception occurs, returns the result from executing <paramref name="action"/>. If
+        /// an exception occurs and the policy does not re-throw, returns <paramref name="defaultResult"/>.</returns>
+	    public abstract TResult Process<TResult>(Func<TResult> action, TResult defaultResult, string policyName);
+
+        /// <summary>
+        /// Executes the supplied delegate <paramref name="action"/>, and handles
+        /// any thrown exception according to the rules configured for <paramref name="policyName"/>.
+        /// </summary>
+        /// <typeparam name="TResult">Type of return value from <paramref name="action"/>.</typeparam>
+        /// <param name="action">The delegate to execute.</param>
+        /// <param name="policyName">The name of the policy to handle.</param>
+        /// <returns>If no exception occurs, returns the result from executing <paramref name="action"/>. If
+        /// an exception occurs and the policy does not re-throw, returns the default value for <typeparamref name="TResult"/>.</returns>
+        public virtual TResult Process<TResult>(Func<TResult> action, string policyName)
+        {
+            return Process(action, default(TResult), policyName);
+        }
     }
 }

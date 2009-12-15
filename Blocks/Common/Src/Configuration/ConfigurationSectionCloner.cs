@@ -58,9 +58,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 
             foreach (PropertyInformation property in sourceElement.ElementInformation.Properties)
             {
+                
                 if (property.ValueOrigin == PropertyValueOrigin.Default) continue;
-                if (property.Value == null) continue;
-
+                try
+                {
+                    if (property.Value == null) continue;
+                }
+                catch
+                {
+                    continue;
+                }
                 PropertyInformation targetProperty = targetElement.ElementInformation.Properties[property.Name];
 
                 if (typeof(ConfigurationElementCollection).IsAssignableFrom(property.Type))

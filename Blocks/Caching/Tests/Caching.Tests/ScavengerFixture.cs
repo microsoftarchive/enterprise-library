@@ -210,13 +210,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests
             scheduler.StartScavenging();
             Thread.Sleep(250);
             AddCacheItem("key7", item7);
-            // this new scavenge request will be scheduled, because the previously is "full" (it handles 2 elements only)
+            // this new scavenge request will be ignored
             scheduler.StartScavenging();
             Thread.Sleep(250);
             bool value = inMemoryCacheRequestSemaphore.Set();
             Thread.Sleep(250);
 
-            Assert.AreEqual(2, inMemoryCacheRequests);
+            // 3 cache requests should be issued: one for "key4" for one element and two for the remaining elements
+            // since at most 2 elements are removed per scavenge
+            Assert.AreEqual(3, inMemoryCacheRequests);
         }
 
         [TestMethod]

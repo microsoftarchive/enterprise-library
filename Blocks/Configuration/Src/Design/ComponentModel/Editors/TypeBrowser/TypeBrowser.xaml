@@ -1,0 +1,97 @@
+﻿<Window x:Class="Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors.TypeBrowser"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:browser="clr-namespace:Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors"
+        Title="TypeBrowser" Height="315" Width="536">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </Window.Resources>
+    <DockPanel>
+        <DockPanel DockPanel.Dock="Top" Margin="5,10,5,0">
+            <Label Margin="0,0,5,0">Type name</Label>
+            <TextBox HorizontalAlignment="Stretch" 
+                     Margin="5,0,0,0" 
+                     Text="{Binding TypeName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        </DockPanel>
+
+        <Grid DockPanel.Dock="Top" 
+              Margin="5,5,5,5"
+              Visibility="{Binding HasGenericParameters, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <!--<TextBlock Text="HasGenericType parameters"/>-->
+            <ItemsControl ItemsSource="{Binding GenericTypeParameters}"
+                      >
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal" Margin="0, 0, 0, 5">
+                            <TextBlock Text="{Binding TypeArgument.Name}"/>
+                            <TextBlock Text=": "/>
+                            <Button Content="{Binding Type.Name}" MinWidth="100"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Grid>
+
+        <DockPanel DockPanel.Dock="Bottom" LastChildFill="False" Margin="5, 5, 5, 10">
+            <Button x:Name="Cancel" DockPanel.Dock="Right" MinWidth="100" Margin="5,0,0,0" IsCancel="True">Cancel</Button>
+            <Button x:Name="Ok" 
+                    DockPanel.Dock="Right" 
+                    MinWidth="100" 
+                    Margin="0" 
+                    IsDefault="True" 
+                    IsEnabled="{Binding HasType}" >
+                OK
+            </Button>
+            <Button x:Name="Add" DockPanel.Dock="Left" MinWidth="100" Margin="0">Add</Button>
+        </DockPanel>
+        <TreeView x:Name="TypesTree" 
+                  ItemsSource="{Binding AssemblyGroups}" 
+                  Margin="5" 
+                  MouseDoubleClick="TypesTree_MouseDoubleClick" 
+                  PreviewMouseLeftButtonDown="TypesTree_PreviewMouseLeftButtonDown" 
+                  PreviewMouseLeftButtonUp="TypesTree_PreviewMouseLeftButtonUp">
+            <TreeView.ItemContainerStyle>
+                <Style TargetType="{x:Type TreeViewItem}">
+                    <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+                    <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+                    <Setter Property="Visibility" Value="{Binding Visibility, Mode=TwoWay}" />
+                    <Setter Property="FontWeight" Value="Normal" />
+                </Style>
+            </TreeView.ItemContainerStyle>
+
+            <TreeView.Resources>
+                <HierarchicalDataTemplate 
+                  DataType="{x:Type browser:AssemblyGroupNode}" 
+                  ItemsSource="{Binding Assemblies}">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding DisplayName}" />
+                    </StackPanel>
+                </HierarchicalDataTemplate>
+
+                <HierarchicalDataTemplate 
+                  DataType="{x:Type browser:AssemblyNode}" 
+                  ItemsSource="{Binding Namespaces}">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding DisplayName}" />
+                    </StackPanel>
+                </HierarchicalDataTemplate>
+
+                <HierarchicalDataTemplate 
+                  DataType="{x:Type browser:NamespaceNode}" 
+                  ItemsSource="{Binding Types}">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding DisplayName}" />
+                    </StackPanel>
+                </HierarchicalDataTemplate>
+
+                <DataTemplate 
+                  DataType="{x:Type browser:TypeNode}" >
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding DisplayName}" />
+                    </StackPanel>
+                </DataTemplate>
+            </TreeView.Resources>
+        </TreeView>
+    </DockPanel>
+
+</Window>

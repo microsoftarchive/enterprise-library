@@ -96,7 +96,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Configuration
         /// <summary>
         /// Gets and sets the database instance name.
         /// </summary>
-        [ConfigurationProperty(databaseInstanceNameProperty, IsRequired = false)]
+        [ConfigurationProperty(databaseInstanceNameProperty, IsRequired = true)]
         [ResourceDescription(typeof(DesignResources), "FormattedDatabaseTraceListenerDataDatabaseInstanceNameDescription")]
         [ResourceDisplayName(typeof(DesignResources), "FormattedDatabaseTraceListenerDataDatabaseInstanceNameDisplayName")]
         [Reference(typeof(ConnectionStringSettingsCollection), typeof(ConnectionStringSettings))]

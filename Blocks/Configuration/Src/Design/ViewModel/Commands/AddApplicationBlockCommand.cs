@@ -16,6 +16,7 @@ using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.Unity;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Commands
 {
@@ -28,6 +29,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.C
         string sectionName;
         ConfigurationSourceModel configurationModel;
         Type configurationSectionType;
+        IApplicationModel applicationModel;
 
         /// <summary>
         /// Intializes a new instance of the <see cref="AddApplicationBlockCommand"/> class.
@@ -44,6 +46,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.C
             this.configurationModel.Sections.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(Sections_CollectionChanged);
             this.sectionName = commandAttribute.SectionName;
             this.configurationSectionType = commandAttribute.ConfigurationSectionType;
+        }
+
+        [InjectionMethod]
+        public void AddApplicationBlockCommandInitialize(IApplicationModel applicationModel)
+        {
+            this.applicationModel = applicationModel;
         }
 
         /// <summary>
@@ -75,7 +83,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.C
         public override void Execute(object parameter)
         {
             configurationModel.AddSection(sectionName, CreateConfigurationSection());
-
+            applicationModel.SetDirty();
             OnCanExecuteChanged();
         }
     }

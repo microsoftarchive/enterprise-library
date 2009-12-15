@@ -15,6 +15,8 @@ using System.Linq;
 using System.Text;
 using System.Windows.Input;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.Unity;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
 {
@@ -25,6 +27,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
     public class DefaultDeleteCommandModel : CommandModel
     {
         ElementViewModel elementViewModel;
+        IApplicationModel applicationModel;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DefaultDeleteCommandModel"/> class.
@@ -42,6 +45,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
                 return string.Format("Delete {0}", elementViewModel.Name); // todo: move to resource
             }
         }
+
+        [InjectionMethod]
+        public void DefaultDeleteCommandModelInitialize(IApplicationModel applicationModel)
+        {
+            this.applicationModel = applicationModel;
+        }
+
         public override bool CanExecute(object parameter)
         {
             return true;
@@ -50,7 +60,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         public override void Execute(object parameter)
         {
             elementViewModel.Delete();
+            applicationModel.SetDirty();
         }
+
         public override CommandPlacement Placement
         {
             get { return CommandPlacement.ContextDelete; }

@@ -11,6 +11,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.ComponentModel;
@@ -19,14 +21,19 @@ using System.Windows;
 using System.Globalization;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using System.Windows.Input;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design.Validation;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.ComponentModel;
 using System.Configuration;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Validation;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls;
+using System.Windows.Data;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
 {
+    [DebuggerDisplay("Name : {DisplayName} Value: {Value}")]
     public class Property : ViewModel, ITypeDescriptorContext, INotifyPropertyChanged, INeedInitialization
     {
         private readonly IServiceProvider serviceProvider;
@@ -36,20 +43,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         private readonly MetadataCollection metadata;
         SectionViewModel containingSection;
         IApplicationModel appModel;
-        
+        private ObservableCollection<ValidationError> validationErrors = new ObservableCollection<ValidationError>();
+        private CompositeErrorsCollection compositedErrors;
+        private IEnumerable<Property> childProperties;
+
         private string propertyName;
         private string displayName;
         private string description;
         private Type propertyType;
         private bool hidden;
         private bool @readonly;
-        private bool? designTimeReadOnly = null;
         private TypeConverter converter;
-        private UITypeEditor popupEditor;
-        private FrameworkElement dropdownEditor;
-        private FrameworkElement overridesEditor;
         private string category;
-        private string uncommittedValue = null;
 
         [InjectionConstructor]
         public Property(IServiceProvider serviceProvider, object component, PropertyDescriptor declaringProperty)
@@ -74,7 +79,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             }
 
             Initialize(declaringProperty, metadata.Attributes);
-        	LaunchEditor = new LaunchEditorCommand();
         }
 
         private void Initialize(PropertyDescriptor declaringProperty, IEnumerable<Attribute> attributes)
@@ -91,11 +95,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
                 this.@readonly = declaringProperty.IsReadOnly;
                 this.hidden = !declaringProperty.IsBrowsable;
                 this.converter = declaringProperty.Converter;
-
-                if (declaringProperty.Category != "Misc") // TODO: check
-                {
-                    this.category = declaringProperty.Category;
-                }
             }
 
             TypeConverterAttribute converterAttribute = attributes.OfType<TypeConverterAttribute>().FirstOrDefault();
@@ -104,20 +103,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
                 Type converterType = Type.GetType(converterAttribute.ConverterTypeName);
                 converter = (TypeConverter)Activator.CreateInstance(converterType);
             }
-
-            CategoryAttribute categoryAttribute = attributes.OfType<CategoryAttribute>().FirstOrDefault();
-            if (categoryAttribute != null)
-            {
-                category = categoryAttribute.Category;
-            }
-
-            DesignTimeReadOnlyAttribute designTimeReadOnlyAttribute =
-                attributes.OfType<DesignTimeReadOnlyAttribute>().FirstOrDefault();
-            if (designTimeReadOnlyAttribute != null)
-            {
-                designTimeReadOnly = designTimeReadOnlyAttribute.ReadOnly;
-            }
-
         }
 
         [InjectionMethod]
@@ -135,33 +120,40 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             }
         }
 
-        private bool editorsAreInitialized = false;
-
-        protected void EnsureEditors()
+        protected override object CreateBindable()
         {
-            if (editorsAreInitialized) return;
-            if (declaringProperty != null)
+            if (HasSuggestedValues)
             {
-                this.popupEditor = declaringProperty.GetEditor(typeof(UITypeEditor)) as UITypeEditor;
-                this.dropdownEditor = declaringProperty.GetEditor(typeof(FrameworkElement)) as FrameworkElement;
-                
-                if (dropdownEditor != null)
-                {
-                    //todo: need to figure this out proper, 
-                    //... maybe even moving away from TypeDescriptor, as it seems get in our way.
-                    this.dropdownEditor = (FrameworkElement)Activator.CreateInstance(dropdownEditor.GetType());
-                    dropdownEditor.DataContext = this;
-                }
-                this.overridesEditor = declaringProperty.GetEditor(typeof(IEnvironmentalOverridesEditor)) as FrameworkElement;
-
-                if (overridesEditor != null)
-                {
-                    //todo: need to figure this out proper, 
-                    //... maybe even moving away from TypeDescriptor, as it seems get in our way.
-                    this.overridesEditor = (FrameworkElement)Activator.CreateInstance(overridesEditor.GetType());
-                }
+                return new SuggestedValuesBindableProperty(this);
             }
-            editorsAreInitialized = true;
+            else if (EditorBehavior == EditorBehavior.ModalPopup)
+            {
+                return new PopupEditorBindableProperty(this);
+            }
+            else
+            {
+                return new BindableProperty(this);
+            }
+        }
+
+        public override FrameworkElement CreateCustomVisual()
+        {
+            var customVisual = base.CreateCustomVisual();
+            if (customVisual != null)
+            {
+                return customVisual;
+            }
+
+            if (Attributes.OfType<EditorAttribute>().Where(x => Type.GetType(x.EditorBaseTypeName) == typeof(FrameworkElement)).Any())
+            {
+                var editor = Attributes.OfType<EditorAttribute>().Where(x => Type.GetType(x.EditorBaseTypeName) == typeof(FrameworkElement)).First();
+                var editorType = Type.GetType(editor.EditorTypeName, true);
+                FrameworkElement editorInstance = (FrameworkElement)Activator.CreateInstance(editorType);
+                editorInstance.DataContext = Bindable;
+                return editorInstance;
+            }
+
+            return null;
         }
 
         /// <summary>
@@ -177,7 +169,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
 
         public virtual string Category
         {
-            get { return category; }
+            get { return BindableProperty.Category; }
         }
 
         /// <summary>
@@ -193,7 +185,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         /// </summary>
         public virtual string DisplayName
         {
-            get { return displayName; }
+            get { return BindableProperty.DisplayName; }
         }
 
         /// <summary>
@@ -220,11 +212,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             get { return propertyType; }
         }
 
-        public virtual bool TextReadOnly
-        {
-            get { return false; }
-        }
-
         /// <summary>
         /// Returns <see langword="true"/> if the property should show up in the editor.
         /// Otherwise returns <see langword="false"/>.
@@ -233,7 +220,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         {
             get { return hidden; }
         }
-
 
         public object Component
         {
@@ -254,51 +240,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             get { return converter; }
         }
 
-
-        /// <summary>
-        /// Returns <see langword="true"/> if there is an editor availble for this property
-        /// otherwise <see langword="false"/>.
-        /// </summary>
-        public virtual bool HasEditor
-        {
-            get
-            {
-                EnsureEditors();
-                return popupEditor != null || dropdownEditor != null;
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public virtual FrameworkElement Editor
-        {
-            get
-            {
-                EnsureEditors();
-                return dropdownEditor;
-            }
-        }
-
-        public virtual UITypeEditor PopupEditor
-        {
-            get
-            {
-                EnsureEditors();
-                return popupEditor;
-            }
-        }
-
-        public virtual FrameworkElement OverridesEditor
-        {
-            get
-            {
-                EnsureEditors();
-                if (overridesEditor != null) return overridesEditor;
-                return Editor;
-            }
-        }
-
         /// <summary>
         /// 
         /// </summary>
@@ -306,9 +247,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         {
             get
             {
-                EnsureEditors();
-                if (dropdownEditor != null) return EditorBehavior.DropDown;
-                if (popupEditor != null) return EditorBehavior.ModalPopup;
+                if (Attributes.OfType<EditorAttribute>().Where(x => Type.GetType(x.EditorBaseTypeName) == typeof(UITypeEditor)).Any()) return EditorBehavior.ModalPopup;
 
                 return EditorBehavior.None;
             }
@@ -325,13 +264,27 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         {
             get
             {
-                var properties = Converter.GetProperties(this, Value);
-                if (properties == null) return Enumerable.Empty<Property>();
-
-                return properties
-                        .OfType<PropertyDescriptor>()
-                        .Select(x => ContainingSection.CreateProperty(Value, x));    
+                EnsureChildProperties();
+                return childProperties;
             }
+        }
+
+        private void EnsureChildProperties()
+        {
+            if (childProperties != null) return;
+            childProperties = GetChildProperties();
+        }
+
+        protected virtual IEnumerable<Property> GetChildProperties()
+        {
+            if (Converter == null) return Enumerable.Empty<Property>();
+
+            var properties = Converter.GetProperties(this, Value);
+            if (properties == null) return Enumerable.Empty<Property>();
+
+            return properties
+                .OfType<PropertyDescriptor>()
+                .Select(x => ContainingSection.CreateProperty(Value, x)).ToArray();
         }
 
         /// <summary>
@@ -340,7 +293,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         /// </summary>
         public virtual bool HasSuggestedValues
         {
-            get { return !HasEditor && Converter.GetStandardValuesSupported(this); }
+            get { return Converter.GetStandardValuesSupported(this); }
         }
 
         /// <summary>
@@ -355,32 +308,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             }
         }
 
-        public IEnumerable<string> BindableSuggestedValues
-        {
-            get { return SuggestedValues.Select(x=>Converter.ConvertToString(this, CultureInfo.CurrentUICulture, x)); }
-        }
-
-
         /// <summary>
         /// returns <see langword="true"/> if the property is readonly.
         /// otherwise <see langword="false"/>.
         /// </summary>
-        public virtual bool ReadOnly
+        public bool ReadOnly
         {
             get
             {
-                return @readonly;
-            }
-        }
-
-        public virtual bool DesignTimeReadOnly
-        {
-            get
-            {
-                if (designTimeReadOnly.HasValue)
-                    return designTimeReadOnly.Value;
-
-                return ReadOnly;
+                return BindableProperty.ReadOnly;
             }
         }
 
@@ -388,24 +324,41 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         {
             get
             {
-                if (HasSuggestedValues && !Converter.GetStandardValuesExclusive(this))
-                {
-                    return true;
-                }
-                return false;
+                return ((SuggestedValuesBindableProperty)BindableProperty).SuggestedValuesEditable;
             }
         }
 
-        public virtual string BindableValue
+        public BindableProperty BindableProperty
         {
-            get
+            get { return Bindable as BindableProperty; }
+        }
+
+        public IEnumerable<ValidationError> ValidateWithResults(string value)
+        {
+             var results = new List<ValidationError>();
+
+            foreach (var validation in this.GetValidators())
             {
-                return uncommittedValue;
+                validation.Validate(this, value, results);
             }
-            set
+
+            return results;
+        }
+
+        ///<summary>
+        /// Validates the property and updates the <see cref="ValidationErrors"/> collection.
+        ///</summary>
+        public virtual void Validate()
+        {
+            ResetValidationResults(ValidateWithResults(this.BindableProperty.BindableValue));
+        }
+
+        public void ResetValidationResults(IEnumerable<ValidationError> results)
+        {
+            validationErrors.Clear();
+            foreach (var result in results)
             {
-                uncommittedValue = value;
-                Value = ConvertFromBindableValue(uncommittedValue);
+                validationErrors.Add(result);
             }
         }
 
@@ -431,6 +384,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             set
             {
                 SetValue(value);
+                OnPropertyChanged("Value");
             }
         }
 
@@ -442,8 +396,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         protected virtual void SetValue(object value)
         {
             declaringProperty.SetValue(component, value);
-            uncommittedValue = ConvertToBindableValue(value);
-            OnPropertyChanged("Value");
+            Validate();
         }
 
         public virtual event PropertyChangedEventHandler PropertyChanged;
@@ -452,28 +405,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         {
             if (propertyName == "Value")
             {
-                OnPropertyChanged("BindableValue");
                 if (appModel != null)
                 {
                     appModel.SetDirty();
                 }
             }
-            if (propertyName == "SuggestedValues") OnPropertyChanged("BindableSuggestedValues");
-            if (propertyName == "ReadOnly") OnPropertyChanged("DesignTimeReadOnly");
 
             PropertyChangedEventHandler handlers = PropertyChanged;
             if (handlers != null)
             {
                 handlers(this, new PropertyChangedEventArgs(propertyName));
             }
-        }
-
-        //ICommand for ease of Binding
-        public LaunchEditorCommand LaunchEditor { get; set; }
-
-        public virtual void ShowUITypeEditor()
-        {
-            if (PopupEditor != null) Value = PopupEditor.EditValue(this, serviceProvider, Value);
         }
 
         IContainer ITypeDescriptorContext.Container
@@ -506,53 +448,80 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             return serviceProvider.GetService(serviceType);
         }
 
-        internal object GetEditor(Type editorBaseType)
-        {
-            if (editorBaseType == typeof(UITypeEditor))
-            {
-                if (popupEditor != null) return popupEditor;
-                if (dropdownEditor != null) return null;
-                //todo: wrap dropdown editor in UITypeEditor
-            }
 
-            return null;
-        }
-
+        ///<summary>
+        /// Provides an opportunity to initialize the property after creation and prior to visualization.
+        ///</summary>
+        ///<param name="context"></param>
         public virtual void Initialize(InitializeContext context)
         {
-            uncommittedValue = ConvertToBindableValue(Value);
+        }
+
+        public virtual bool IsRequired
+        {
+            get{ return false; }
+        }
+
+        ///<summary>
+        /// Returns true if valid.
+        ///</summary>
+        public bool IsValid
+        {
+            get { return !ValidationErrors.Any(); }
+        }
+
+
+        protected IList<ValidationError> InternalErrors
+        {
+            get { return validationErrors; }
+        }
+
+        ///<summary>
+        /// The validation errors for this property.
+        ///</summary>
+        public virtual IEnumerable<ValidationError> ValidationErrors
+        {
+            get
+            {
+                EnsureCompositeErrors();
+                return compositedErrors;
+            }
+        }
+
+        private void EnsureCompositeErrors()
+        {
+            if (compositedErrors == null)
+            {
+                compositedErrors = new CompositeErrorsCollection();
+                compositedErrors.Add(validationErrors);
+
+                foreach(var childProperty in ChildProperties)
+                {
+                    compositedErrors.Add(childProperty.ValidationErrors);
+                }
+            }
+        }
+
+        public virtual IEnumerable<Validator> GetValidators()
+        {
+            var validations = GetDefaultPropertyValidators()
+                .Union(Attributes.OfType<ValidationAttribute>()
+                           .Select(v => ContainingSection.CreateValidatorInstance(v.ValidatorType)));
+
+            return validations;
+        }
+
+        protected virtual IEnumerable<Validator> GetDefaultPropertyValidators()
+        {
+            if (this.Converter is CollectionConverter)
+            {
+                yield break;
+            }
+
+            yield return new DefaultPropertyValidator();
         }
     }
 
-
-    public class LaunchEditorCommand : ICommand
-    {
-        public void Execute(object parameter)
-        {
-            var propertyModel = parameter as Property;
-            if (propertyModel != null && propertyModel.EditorBehavior == EditorBehavior.ModalPopup)
-            {
-                propertyModel.ShowUITypeEditor();
-            }
-            else if (propertyModel != null && propertyModel.EditorBehavior == EditorBehavior.DropDown)
-            {
-                
-            }
-        }
-
-        public bool CanExecute(object parameter)
-        {
-            //var propertyModel = parameter as ConfigElementPropertyModel;
-            //if (propertyModel != null)
-            //{
-            //    return propertyModel.HasEditor && propertyModel.EditorBehavior == EditorBehavior.ModalPopup;
-            //}
-
-            return true;
-        }
-
-        public event EventHandler CanExecuteChanged;
-    }
 
     public enum EditorBehavior
     {

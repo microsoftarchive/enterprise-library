@@ -22,7 +22,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 	/// </summary>
     [ResourceDescription(typeof(DesignResources), "DomainConfigurationElementDescription")]
     [ResourceDisplayName(typeof(DesignResources), "DomainConfigurationElementDisplayName")]
-    [ViewModel(ValidationDesignTime.ViewModelTypeNames.DomainConfigurationElementViewModel)]
     public class DomainConfigurationElement : NamedConfigurationElement
 	{
 		/// <summary>

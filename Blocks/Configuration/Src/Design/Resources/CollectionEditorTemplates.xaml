@@ -9,13 +9,9 @@
                 <ColumnDefinition SharedSizeGroup="DeleteCol" Width="16"/>
             </Grid.ColumnDefinitions>
 
-            <ContentControl Grid.Column="0" >
-                <ContentPresenter Content="{Binding PrefixProperty}"  ContentTemplate="{DynamicResource TextPropertyEditingTemplate}" />
-            </ContentControl>
+            <ContentControl Grid.Column="0" Content="{Binding PrefixProperty.Visual}" />
+            <ContentControl Grid.Column="1" Content="{Binding NameProperty.Visual}" />
 
-            <ContentControl Grid.Column="1" >
-                <ContentPresenter Content="{Binding NameProperty}"  ContentTemplate="{DynamicResource TextPropertyEditingTemplate}" />
-            </ContentControl>
 
             <Button Grid.Column="2" x:Name="DeleteButton"  Command="{Binding DeleteCommand}" Style="{DynamicResource DeleteButtonStyle}" />
         </Grid>
@@ -40,9 +36,7 @@
                 <ColumnDefinition SharedSizeGroup="DeleteCol" Width="16"/>
             </Grid.ColumnDefinitions>
 
-            <ContentControl Grid.Column="0" >
-                <ContentPresenter Content="{Binding NameProperty}"  ContentTemplate="{DynamicResource SuggestedValuePropertyEditingTemplate}" />
-            </ContentControl>
+            <ContentControl Grid.Column="0" Content="{Binding NameProperty.Visual}" />
 
             <Button Grid.Column="1" x:Name="DeleteButton"  Command="{Binding DeleteCommand}" Style="{DynamicResource DeleteButtonStyle}" />
         </Grid>
@@ -65,9 +59,7 @@
                 <ColumnDefinition SharedSizeGroup="DeleteCol" Width="16"/>
             </Grid.ColumnDefinitions>
 
-            <ContentControl Grid.Column="0" >
-                <ContentPresenter Content="{Binding NameProperty}"  ContentTemplate="{DynamicResource TextPropertyEditingTemplate}" />
-            </ContentControl>
+            <ContentControl Grid.Column="0" Content="{Binding NameProperty.Visual}" />
 
             <Button Grid.Column="1" x:Name="DeleteButton"  Command="{Binding DeleteCommand}" Style="{DynamicResource DeleteButtonStyle}" />
         </Grid>
@@ -91,9 +83,7 @@
                 <ColumnDefinition SharedSizeGroup="DeleteCol" Width="16"/>
             </Grid.ColumnDefinitions>
 
-            <ContentControl Grid.Column="0" >
-                <ContentPresenter Content="{Binding NameProperty}"  ContentTemplate="{DynamicResource SuggestedValuePropertyEditingTemplate}" />
-            </ContentControl>
+            <ContentControl Grid.Column="0" Content="{Binding NameProperty.Visual}" />
 
             <Button Grid.Column="1" x:Name="DeleteButton"  Command="{Binding DeleteCommand}" Style="{DynamicResource DeleteButtonStyle}" />
         </Grid>
@@ -118,13 +108,8 @@
             </Grid.ColumnDefinitions>
 
 
-            <ContentControl Grid.Column="0" >
-                <ContentPresenter Content="{Binding SourceProperty}"  ContentTemplate="{DynamicResource TextPropertyEditingTemplate}" />
-            </ContentControl>
-
-            <ContentControl Grid.Column="1" >
-                <ContentPresenter Content="{Binding NameProperty}" ContentTemplate="{DynamicResource TextPropertyEditingTemplate}" />
-            </ContentControl>
+            <ContentControl Grid.Column="0" Content="{Binding SourceProperty.Visual}" />
+            <ContentControl Grid.Column="1" Content="{Binding NameProperty.Visual}" />
 
             <Button Grid.Column="2" x:Name="DeleteButton"  Command="{Binding DeleteCommand}" Style="{DynamicResource DeleteButtonStyle}" />
 
@@ -153,17 +138,10 @@
             </Grid.ColumnDefinitions>
 
 
-            <ContentControl Grid.Column="0" >
-                <ContentPresenter Content="{Binding IgnoreCaseProperty}"  ContentTemplate="{DynamicResource SuggestedValuePropertyEditingTemplate}" />
-            </ContentControl>
-
-            <ContentControl Grid.Column="1" >
-                <ContentPresenter Content="{Binding KindProperty}" ContentTemplate="{DynamicResource SuggestedValuePropertyEditingTemplate}" />
-            </ContentControl>
-
-            <ContentControl Grid.Column="2" >
-                <ContentPresenter Content="{Binding MatchProperty}"  ContentTemplate="{DynamicResource TextPropertyEditingTemplate}" />
-            </ContentControl>
+            <ContentControl Grid.Column="0" Content="{Binding IgnoreCaseProperty.Visual}" />
+            <ContentControl Grid.Column="1" Content="{Binding KindProperty.Visual}" />
+            <ContentControl Grid.Column="2" Content="{Binding MatchProperty.Visual}" />
+           
 
             <Button Grid.Column="3" x:Name="DeleteButton"  Command="{Binding DeleteCommand}" Style="{DynamicResource DeleteButtonStyle}" />
 
@@ -192,14 +170,10 @@
                 <ColumnDefinition SharedSizeGroup="DeleteCol" Width="16"/>
             </Grid.ColumnDefinitions>
 
-            <ContentControl Grid.Column="0" >
-                <ContentPresenter Content="{Binding IgnoreCaseProperty}"  ContentTemplate="{DynamicResource SuggestedValuePropertyEditingTemplate}" />
-            </ContentControl>
 
-            <ContentControl Grid.Column="1" >
-                <ContentPresenter Content="{Binding MatchProperty}"  ContentTemplate="{DynamicResource TextPropertyEditingTemplate}" />
-            </ContentControl>
-
+            <ContentControl Grid.Column="0" Content="{Binding IgnoreCaseProperty.Visual}" />
+            <ContentControl Grid.Column="1" Content="{Binding MatchProperty.Visual}" />
+            
             <Button Grid.Column="2" x:Name="DeleteButton"  Command="{Binding DeleteCommand}" Style="{DynamicResource DeleteButtonStyle}" />
 
         </Grid>
@@ -226,13 +200,8 @@
             </Grid.ColumnDefinitions>
 
 
-            <ContentControl Grid.Column="0" >
-                <ContentPresenter Content="{Binding ParameterTypeNameProperty}"  ContentTemplate="{DynamicResource TextPropertyEditingTemplate}" />
-            </ContentControl>
-
-            <ContentControl Grid.Column="1" >
-                <ContentPresenter Content="{Binding NameProperty}"  ContentTemplate="{DynamicResource TextPropertyEditingTemplate}" />
-            </ContentControl>
+            <ContentControl Grid.Column="0" Content="{Binding ParameterTypeNameProperty.Visual}" />
+            <ContentControl Grid.Column="1" Content="{Binding NameProperty.Visual}" />
 
             <Button Grid.Column="2" x:Name="DeleteButton"  Command="{Binding DeleteCommand}" Style="{DynamicResource DeleteButtonStyle}" />
 
@@ -259,15 +228,9 @@
                 <ColumnDefinition SharedSizeGroup="DeleteCol" Width="16"/>
             </Grid.ColumnDefinitions>
 
-
-            <ContentControl Grid.Column="0" >
-                <ContentPresenter Content="{Binding IgnoreCaseProperty}"  ContentTemplate="{DynamicResource SuggestedValuePropertyEditingTemplate}" />
-            </ContentControl>
-
-            <ContentControl Grid.Column="1" >
-                <ContentPresenter Content="{Binding MatchProperty}"  ContentTemplate="{DynamicResource TextPropertyEditingTemplate}" />
-            </ContentControl>
-
+            <ContentControl Grid.Column="0" Content="{Binding IgnoreCaseProperty.Visual}" />
+            <ContentControl Grid.Column="1" Content="{Binding MatchProperty.Visual}" />
+            
             <Button Grid.Column="2" x:Name="DeleteButton"  Command="{Binding DeleteCommand}" Style="{DynamicResource DeleteButtonStyle}" />
 
         </Grid>
@@ -294,18 +257,9 @@
                 <ColumnDefinition SharedSizeGroup="DeleteCol" Width="16"/>
             </Grid.ColumnDefinitions>
 
-
-            <ContentControl Grid.Column="0" >
-                <ContentPresenter Content="{Binding IgnoreCaseProperty}"  ContentTemplate="{DynamicResource SuggestedValuePropertyEditingTemplate}" />
-            </ContentControl>
-
-            <ContentControl Grid.Column="1" >
-                <ContentPresenter Content="{Binding MatchOptionProperty}"  ContentTemplate="{DynamicResource SuggestedValuePropertyEditingTemplate}" />
-            </ContentControl>
-
-            <ContentControl Grid.Column="2" >
-                <ContentPresenter Content="{Binding MatchProperty}"  ContentTemplate="{DynamicResource TextPropertyEditingTemplate}" />
-            </ContentControl>
+            <ContentControl Grid.Column="0" Content="{Binding IgnoreCaseProperty.Visual}" />
+            <ContentControl Grid.Column="1" Content="{Binding MatchOptionProperty.Visual}" />
+            <ContentControl Grid.Column="2" Content="{Binding MatchProperty.Visual}" />
 
             <Button Grid.Column="3" x:Name="DeleteButton"  Command="{Binding DeleteCommand}" Style="{DynamicResource DeleteButtonStyle}" />
 
@@ -335,13 +289,9 @@
             </Grid.ColumnDefinitions>
 
 
-            <ContentControl Grid.Column="0" >
-                <ContentPresenter Content="{Binding IgnoreCaseProperty}"  ContentTemplate="{DynamicResource SuggestedValuePropertyEditingTemplate}" />
-            </ContentControl>
-
-            <ContentControl Grid.Column="1" >
-                <ContentPresenter Content="{Binding MatchProperty}"  ContentTemplate="{DynamicResource TextPropertyEditingTemplate}" />
-            </ContentControl>
+            <ContentControl Grid.Column="0" Content="{Binding IgnoreCaseProperty.Visual}" />
+            <ContentControl Grid.Column="1" Content="{Binding MatchProperty.Visual}" />
+            
 
             <Button Grid.Column="2" x:Name="DeleteButton"  Command="{Binding DeleteCommand}" Style="{DynamicResource DeleteButtonStyle}" />
 
@@ -377,10 +327,8 @@
                 <ColumnDefinition SharedSizeGroup="DeleteCol" Width="16"/>
             </Grid.ColumnDefinitions>
 
-            <ContentControl Grid.Column="0" >
-                <ContentPresenter Content="{Binding NameProperty}"  ContentTemplate="{DynamicResource SuggestedValuePropertyEditingTemplate}" />
-            </ContentControl>
-
+            <ContentControl Grid.Column="0" Content="{Binding NameProperty.Visual}" />
+            
             <Button Grid.Column="2" x:Name="DeleteButton"  Command="{Binding DeleteCommand}" Style="{DynamicResource DeleteButtonStyle}" />
         </Grid>
     </DataTemplate>

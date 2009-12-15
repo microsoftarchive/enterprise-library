@@ -10,8 +10,10 @@
 //===============================================================================
 
 using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
+using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Properties;
 using System.Globalization;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
@@ -24,27 +26,40 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Validation
     public class ValidationError
     {
         private readonly string message;
-        private readonly string propertyName;
+        private readonly Property property;
         private readonly bool isWarning;
 
         /// <summary>
         /// Initialize a new instance of the <see cref="ValidationError"/> calss with the invalid object, property name, and error message.
         /// </summary>
-        /// <param name="propertyName">
-        /// The name of the property that is invalid.
+        /// <param name="property">
+        /// The invalid property.
         /// </param>
         /// <param name="errorMessage">
         /// The message that describes the error.
         /// </param>
-        public ValidationError(string propertyName, string errorMessage, string elementPath)
+        public ValidationError(Property property, string errorMessage) : this(property, errorMessage, false)
         {
-            if (string.IsNullOrEmpty(propertyName)) throw new ArgumentException(Resources.ExceptionStringNullOrEmpty, "propertyName");
-            if (string.IsNullOrEmpty(errorMessage)) throw new ArgumentException(Resources.ExceptionStringNullOrEmpty, "errorMessage");
-            if (string.IsNullOrEmpty(elementPath)) throw new ArgumentException(Resources.ExceptionStringNullOrEmpty, "elementPath");
+        }
 
-            this.propertyName = propertyName;
+        /// <summary>
+        /// Initialize a new instance of the <see cref="ValidationError"/> calss with the invalid object, property name, and error message.
+        /// </summary>
+        /// <param name="property">
+        /// The invalid property.
+        /// </param>
+        /// <param name="errorMessage">
+        /// The message that describes the error.
+        /// </param>
+        /// <param name="isWarning">Sets the error as a warning instead of an error.</param>
+        public ValidationError(Property property, string errorMessage, bool isWarning)
+        {
+            if (property == null) throw new ArgumentException(Resources.ExceptionStringNullOrEmpty, "property");
+            if (string.IsNullOrEmpty(errorMessage)) throw new ArgumentException(Resources.ExceptionStringNullOrEmpty, "errorMessage");
+
+            this.isWarning = isWarning;
+            this.property = property;
             this.message = errorMessage;
-            ElementPath = elementPath;
         }
 
         /// <summary>
@@ -55,7 +70,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Validation
         /// </value>
         public string PropertyName
         {
-            get { return this.propertyName; }
+            get { return this.property.DisplayName; }
         }
 
         /// <summary>
@@ -80,7 +95,43 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Validation
         ///<summary>
         /// The <see cref="ElementViewModel.Path"/> reference of the containing element producing the valiation error.
         ///</summary>
-        public string ElementPath { get; private set; }
+        public string ElementPath
+        {
+            get
+            {
+                var elementAssociation = property as IElementAssociation;
+                if (elementAssociation == null) return string.Empty;
+
+                return elementAssociation.AssociatedElement.Path;
+            }
+        }
+
+        public string FriendlyPath
+        {
+            get
+            {
+                var elementAssociation = property as IElementAssociation;
+                if (elementAssociation == null) return string.Empty;
+
+                return new FriendlyElementPathBuilder(elementAssociation.AssociatedElement).ToString();
+            }
+        }
+
+        public string ElementName
+        {
+            get
+            {
+                var elementAssociation = property as IElementAssociation;
+                if (elementAssociation == null) return string.Empty;
+                return elementAssociation.ElementName ;
+            }
+        }
+
+
+        public bool IsError
+        {
+            get { return !IsWarning; }
+        }
 
         /// <summary>
         /// Returns the string representatio of the error.
@@ -90,7 +141,36 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Validation
         /// </returns>
         public override string ToString()
         {
-            return string.Format(CultureInfo.CurrentUICulture, Resources.ValidationErrorToString, PropertyName, ElementPath, Message);
+            return string.Format(CultureInfo.CurrentUICulture, Resources.ValidationErrorToString, PropertyName, ElementName, Message);
+        }
+
+        private class FriendlyElementPathBuilder
+        {
+            private readonly ElementViewModel element;
+            private const string separator = ".";
+
+            public FriendlyElementPathBuilder(ElementViewModel element)
+            {
+                this.element = element;
+            }
+
+            private string BuildPath()
+            {
+                var current = element;
+                var pathStack = new Stack<string>();
+                while(current != null)
+                {
+                    pathStack.Push(current.Name);
+                    current = current.ParentElement;
+                }
+
+                return string.Join(separator, pathStack.ToArray());
+            }
+
+            public override string ToString()
+            {
+                return BuildPath();
+            }
         }
     }
 }

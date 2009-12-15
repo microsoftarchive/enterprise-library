@@ -9,6 +9,7 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using System.ComponentModel.DataAnnotations;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WPF.Tests
@@ -22,5 +23,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WPF.Tests
         public string ValidatedStringProperty { get; set; }
 
         public int NonValidatedProperty { get; set; }
+
+        [RegexValidator(@"^a*$", MessageTemplate = "invalid string: vab")]
+        [StringLength(2, ErrorMessage = "invalid string: data annotations")]
+        public string MultipleSourceValidatedStringProperty { get; set; }
+
+        [RegexValidator(@"^a*$", MessageTemplate = "invalid string default")]
+        [RegexValidator(@"^a*$", MessageTemplate = "invalid string ruleset", Ruleset = "A")]
+        public string MultipleRulesetValidatedStringProperty { get; set; }
     }
 }

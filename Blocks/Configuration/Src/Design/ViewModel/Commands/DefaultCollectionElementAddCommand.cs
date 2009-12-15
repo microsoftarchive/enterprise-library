@@ -18,6 +18,8 @@ using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using System.Windows.Input;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
+using Microsoft.Practices.Unity;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
 {
@@ -28,6 +30,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
     {
         private readonly string helpText;
         private readonly CommandPlacement commandPlacement;
+        private ElementViewModel addedElementViewModel;
+        private IApplicationModel applicationModel;
 
         public DefaultCollectionElementAddCommand(ConfigurationElementType configurationElementType, ElementCollectionViewModel collection)
         {
@@ -48,6 +52,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             commandPlacement = commandAttribute.CommandPlacement;
         }
 
+        [InjectionMethod]
+        public void DefaultCollectionElementAddCommandInitialization(IApplicationModel applicationModel)
+        {
+            this.applicationModel = applicationModel;
+        }
+
         public virtual Type ConfigurationElementType { get; private set; }
         protected ElementCollectionViewModel ElementCollectionModel { get; private set; }
 
@@ -63,6 +73,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             }
         }
 
+        public ElementViewModel AddedElementViewModel
+        {
+            get { return addedElementViewModel; }
+        }
+
         public override string  HelpText
         {
             get { return helpText; }
@@ -70,7 +85,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
 
         public override void Execute(object parameter)
         {
-            ElementCollectionModel.AddNewCollectionElement(ConfigurationElementType);
+            addedElementViewModel = ElementCollectionModel.AddNewCollectionElement(ConfigurationElementType);
+            applicationModel.SetDirty();
         }
 
         public override CommandPlacement Placement

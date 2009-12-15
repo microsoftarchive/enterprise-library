@@ -59,7 +59,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         [ResourceDescription(typeof(DesignResources), "MethodSignatureMatchingRuleDataParametersDescription")]
         [ResourceDisplayName(typeof(DesignResources), "MethodSignatureMatchingRuleDataParametersDisplayName")]
         [System.ComponentModel.Editor(CommonDesignTime.EditorTypes.CollectionEditor, CommonDesignTime.EditorTypes.FrameworkElement)]
-        [CollectionEditorTemplate("PiabMethodSignatureTypesHeader", "PiabMethodSignatureTypesItem")]
         [EnvironmentalOverrides(false)]
         public ParameterTypeElementDataCollection Parameters
         {
@@ -182,7 +181,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
     /// </summary>
     [ResourceDescription(typeof(DesignResources), "ParameterTypeElementDescription")]
     [ResourceDisplayName(typeof(DesignResources), "ParameterTypeElementDisplayName")]
-    [ViewModel(PolicyInjectionDesignTime.ViewModelTypeNames.PiabParameterTypeMatchDataViewModel)]
+    [NameProperty("Name")]
     public class ParameterTypeElement : ConfigurationElement
     {
         private const string NamePropertyName = "name";
