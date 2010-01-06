@@ -28,7 +28,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         XmlTraceListenerDataManageabilityProvider provider;
         MockRegistryKey machineKey;
         MockRegistryKey userKey;
-        IList<ConfigurationSetting> wmiSettings;
         XmlTraceListenerData configurationObject;
 
         [TestInitialize]
@@ -37,15 +36,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             provider = new XmlTraceListenerDataManageabilityProvider();
             machineKey = new MockRegistryKey(true);
             userKey = new MockRegistryKey(true);
-            wmiSettings = new List<ConfigurationSetting>();
             configurationObject = new XmlTraceListenerData();
-        }
-
-        [TestCleanup]
-        public void TearDown()
-        {
-            // preventive unregister to work around WMI.NET 2.0 issues with appdomain unloading
-            ManagementEntityTypesRegistrar.UnregisterAll();
         }
 
         [TestMethod]
@@ -73,7 +64,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         [ExpectedException(typeof(ArgumentException))]
         public void ProviderThrowsWithConfigurationObjectOfWrongType()
         {
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(new TestsConfigurationSection(), true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(new TestsConfigurationSection(), true, machineKey, userKey);
         }
 
         [TestMethod]
@@ -81,116 +72,68 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         {
             configurationObject.FileName = "file name";
             configurationObject.TraceOutputOptions = TraceOptions.None;
-			configurationObject.Filter = SourceLevels.Error;
+            configurationObject.Filter = SourceLevels.Error;
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, null, null, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, null, null);
 
             Assert.AreEqual("file name", configurationObject.FileName);
             Assert.AreEqual(TraceOptions.None, configurationObject.TraceOutputOptions);
-			Assert.AreEqual(SourceLevels.Error, configurationObject.Filter);
-		}
+            Assert.AreEqual(SourceLevels.Error, configurationObject.Filter);
+        }
 
         [TestMethod]
         public void ConfigurationObjectIsModifiedIfThereAreMachinePolicyOverrides()
         {
             configurationObject.FileName = "file name";
             configurationObject.TraceOutputOptions = TraceOptions.None;
-			configurationObject.Filter = SourceLevels.Error;
+            configurationObject.Filter = SourceLevels.Error;
 
             machineKey.AddStringValue(XmlTraceListenerDataManageabilityProvider.FileNamePropertyName, "overriden file name");
             machineKey.AddStringValue(XmlTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, "ProcessId, ThreadId");
-			machineKey.AddStringValue(XmlTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
+            machineKey.AddStringValue(XmlTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, machineKey, null, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, machineKey, null);
 
             Assert.AreEqual("overriden file name", configurationObject.FileName);
             Assert.AreEqual(TraceOptions.ProcessId | TraceOptions.ThreadId, configurationObject.TraceOutputOptions);
-			Assert.AreEqual(SourceLevels.Critical, configurationObject.Filter);
-		}
+            Assert.AreEqual(SourceLevels.Critical, configurationObject.Filter);
+        }
 
         [TestMethod]
         public void ConfigurationObjectIsModifiedIfThereAreUserPolicyOverrides()
         {
             configurationObject.FileName = "file name";
             configurationObject.TraceOutputOptions = TraceOptions.None;
-			configurationObject.Filter = SourceLevels.Error;
+            configurationObject.Filter = SourceLevels.Error;
 
             userKey.AddStringValue(XmlTraceListenerDataManageabilityProvider.FileNamePropertyName, "overriden file name");
             userKey.AddStringValue(XmlTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, "ProcessId, ThreadId");
-			userKey.AddStringValue(XmlTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
+            userKey.AddStringValue(XmlTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, null, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, null, userKey);
 
             Assert.AreEqual("overriden file name", configurationObject.FileName);
             Assert.AreEqual(TraceOptions.ProcessId | TraceOptions.ThreadId, configurationObject.TraceOutputOptions);
-			Assert.AreEqual(SourceLevels.Critical, configurationObject.Filter);
-		}
+            Assert.AreEqual(SourceLevels.Critical, configurationObject.Filter);
+        }
 
         [TestMethod]
         public void ConfigurationObjectIsNotModifiedIfThereArePolicyOverridesButGroupPoliciesAreDisabled()
         {
             configurationObject.FileName = "file name";
             configurationObject.TraceOutputOptions = TraceOptions.None;
-			configurationObject.Filter = SourceLevels.Error;
+            configurationObject.Filter = SourceLevels.Error;
 
             machineKey.AddStringValue(XmlTraceListenerDataManageabilityProvider.FileNamePropertyName, "overriden file name");
             machineKey.AddStringValue(XmlTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, "ProcessId, ThreadId");
-			machineKey.AddStringValue(XmlTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
+            machineKey.AddStringValue(XmlTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, false, machineKey, null, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, false, machineKey, null);
 
             Assert.AreEqual("file name", configurationObject.FileName);
             Assert.AreEqual(TraceOptions.None, configurationObject.TraceOutputOptions);
-			Assert.AreEqual(SourceLevels.Error, configurationObject.Filter);
-		}
-
-        [TestMethod]
-        public void WmiSettingsAreNotGeneratedIfWmiIsDisabled()
-        {
-            configurationObject.FileName = "file name";
-            configurationObject.TraceOutputOptions = TraceOptions.None;
-			configurationObject.Filter = SourceLevels.Error;
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, false, machineKey, userKey, false, wmiSettings);
-
-            Assert.AreEqual(0, wmiSettings.Count);
+            Assert.AreEqual(SourceLevels.Error, configurationObject.Filter);
         }
-
-        [TestMethod]
-        public void WmiSettingsAreGeneratedIfWmiIsEnabled()
-        {
-            configurationObject.FileName = "file name";
-            configurationObject.TraceOutputOptions = TraceOptions.None;
-			configurationObject.Filter = SourceLevels.Error;
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, false, machineKey, userKey, true, wmiSettings);
-
-            Assert.AreEqual(1, wmiSettings.Count);
-            Assert.AreSame(typeof(XmlTraceListenerSetting), wmiSettings[0].GetType());
-            Assert.AreEqual(configurationObject.FileName, ((XmlTraceListenerSetting)wmiSettings[0]).FileName);
-            Assert.AreEqual(configurationObject.TraceOutputOptions.ToString(), ((XmlTraceListenerSetting)wmiSettings[0]).TraceOutputOptions);
-			Assert.AreEqual(configurationObject.Filter.ToString(), ((XmlTraceListenerSetting)wmiSettings[0]).Filter);
-		}
-
-        [TestMethod]
-        public void WmiSettingsAreGeneratedWithPolicyOverridesIfWmiIsEnabled()
-        {
-            configurationObject.FileName = "file name";
-            configurationObject.TraceOutputOptions = TraceOptions.None;
-			configurationObject.Filter = SourceLevels.Error;
-
-            machineKey.AddStringValue(XmlTraceListenerDataManageabilityProvider.FileNamePropertyName, "overriden file name");
-            machineKey.AddStringValue(XmlTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, "ProcessId, ThreadId");
-			machineKey.AddStringValue(XmlTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, machineKey, userKey, true, wmiSettings);
-
-            Assert.AreEqual(1, wmiSettings.Count);
-            Assert.AreSame(typeof(XmlTraceListenerSetting), wmiSettings[0].GetType());
-            Assert.AreEqual(configurationObject.FileName, ((XmlTraceListenerSetting)wmiSettings[0]).FileName);
-            Assert.AreEqual(configurationObject.TraceOutputOptions.ToString(), ((XmlTraceListenerSetting)wmiSettings[0]).TraceOutputOptions);
-			Assert.AreEqual(configurationObject.Filter.ToString(), ((XmlTraceListenerSetting)wmiSettings[0]).Filter);
-		}
 
         [TestMethod]
         public void ManageabilityProviderGeneratesProperAdmContent()
@@ -224,11 +167,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             Assert.AreEqual(XmlTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName,
                             partsEnumerator.Current.ValueName);
 
-			Assert.IsTrue(partsEnumerator.MoveNext());
-			Assert.AreSame(typeof(AdmDropDownListPart), partsEnumerator.Current.GetType());
-			Assert.IsNull(partsEnumerator.Current.KeyName);
-			Assert.AreEqual(XmlTraceListenerDataManageabilityProvider.FilterPropertyName,
-							partsEnumerator.Current.ValueName);
+            Assert.IsTrue(partsEnumerator.MoveNext());
+            Assert.AreSame(typeof(AdmDropDownListPart), partsEnumerator.Current.GetType());
+            Assert.IsNull(partsEnumerator.Current.KeyName);
+            Assert.AreEqual(XmlTraceListenerDataManageabilityProvider.FilterPropertyName,
+                            partsEnumerator.Current.ValueName);
 
             Assert.IsFalse(partsEnumerator.MoveNext());
             Assert.IsFalse(policiesEnumerator.MoveNext());

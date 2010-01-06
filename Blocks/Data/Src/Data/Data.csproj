@@ -102,9 +102,6 @@
       <Name>System.EnterpriseServices</Name>
     </Reference>
     <Reference Include="System.Management" />
-    <Reference Include="System.Management.Instrumentation">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
     <Reference Include="System.Transactions" />
     <Reference Include="System.XML" />
     <ProjectReference Include="..\..\..\Common\Src\Common.csproj">
@@ -150,22 +147,15 @@
     <Compile Include="Configuration\Fluent\SqlCeDatabaseConfigurationExtension.cs" />
     <Compile Include="Configuration\Fluent\SqlDatabaseConfigurationExtension.cs" />
     <Compile Include="Configuration\GenericDatabaseData.cs" />
-    <Compile Include="Configuration\Manageability\ConnectionStringSetting.cs" />
     <Compile Include="Configuration\Manageability\ConnectionStringsManageabilityProvider.cs" />
-    <Compile Include="Configuration\Manageability\ConnectionStringsWmiMapper.cs" />
-    <Compile Include="Configuration\Manageability\DatabaseBlockSetting.cs" />
     <Compile Include="Configuration\Manageability\DatabaseSettingsManageabilityProvider.cs" />
-    <Compile Include="Configuration\Manageability\DatabaseSettingsWmiMapper.cs" />
-    <Compile Include="Configuration\Manageability\OracleConnectionSetting.cs" />
     <Compile Include="Configuration\Manageability\OracleConnectionSettingsManageabilityProvider.cs" />
-    <Compile Include="Configuration\Manageability\OracleConnectionSettingsWmiMapper.cs" />
     <Compile Include="Configuration\Manageability\Properties\AssemblyInfo.cs" />
     <Compile Include="Configuration\Manageability\Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Configuration\Manageability\ProviderMappingSetting.cs" />
     <Compile Include="DatabaseExtensions.cs" />
     <Compile Include="Instrumentation\IDataInstrumentationProvider.cs" />
     <Compile Include="Instrumentation\NewDataInstrumentationProvider.cs" />

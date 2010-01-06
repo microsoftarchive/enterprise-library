@@ -13,13 +13,13 @@
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type Controls:BlockVisualizer}">
-					<Grid>
+					<Grid Focusable="False">
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="*" />
 						</Grid.ColumnDefinitions>
 						<Canvas x:Name="PART_RelationshipCanvas" />
 						
-                        <ContentControl x:Name="PART_Content" />
+                        <ContentControl Focusable="False"  x:Name="PART_Content" />
 					</Grid>
 				</ControlTemplate>
 			</Setter.Value>

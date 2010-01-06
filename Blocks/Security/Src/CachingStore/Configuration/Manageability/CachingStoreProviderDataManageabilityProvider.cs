@@ -10,7 +10,6 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability;
@@ -24,19 +23,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cache.CachingStore.Conf
     /// splits policy overrides processing and WMI objects generation, performing appropriate logging of 
     /// policy processing errors.
     /// </summary>
-	public class CachingStoreProviderDataManageabilityProvider
-		: ConfigurationElementManageabilityProviderBase<CachingStoreProviderData>
-	{
-		/// <summary>
-		/// The name of the cache manager property.
-		/// </summary>
+    public class CachingStoreProviderDataManageabilityProvider
+        : ConfigurationElementManageabilityProviderBase<CachingStoreProviderData>
+    {
+        /// <summary>
+        /// The name of the cache manager property.
+        /// </summary>
         public const String CacheManagerPropertyName = "cacheManager";
 
         /// <summary>
         /// The name of the absolute expiration property.
         /// </summary>
-		public const String AbsoluteExpirationPropertyName = "defaultAbsoluteSessionExpirationInMinutes";
-		
+        public const String AbsoluteExpirationPropertyName = "defaultAbsoluteSessionExpirationInMinutes";
+
         /// <summary>
         /// The name of the sliding expriration property.
         /// </summary>
@@ -45,10 +44,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cache.CachingStore.Conf
         /// <summary>
         /// Initialize an instnace of the <see cref="CachingStoreProviderDataManageabilityProvider"/> class.
         /// </summary>
-		public CachingStoreProviderDataManageabilityProvider()
-		{
-			CachingStoreProviderDataWmiMapper.RegisterWmiTypes();
-		}
+        public CachingStoreProviderDataManageabilityProvider()
+        { }
 
         /// <summary>
         /// Adds the ADM parts that represent the properties of
@@ -63,27 +60,27 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cache.CachingStore.Conf
         /// Subclasses managing objects that must not create a policy will likely need to include the elements' keys when creating the parts.
         /// </remarks>
         protected override void AddElementAdministrativeTemplateParts(AdmContentBuilder contentBuilder,
-			CachingStoreProviderData configurationObject,
-			IConfigurationSource configurationSource,
-			String elementPolicyKeyName)
-		{
-			CacheManagerSettings cachingConfigurationSection
-				= (CacheManagerSettings)configurationSource.GetSection(CacheManagerSettings.SectionName);
+            CachingStoreProviderData configurationObject,
+            IConfigurationSource configurationSource,
+            String elementPolicyKeyName)
+        {
+            CacheManagerSettings cachingConfigurationSection
+                = (CacheManagerSettings)configurationSource.GetSection(CacheManagerSettings.SectionName);
 
-			contentBuilder.AddDropDownListPartForNamedElementCollection<CacheManagerDataBase>(Resources.CachingStoreProviderCacheManagerPartName,
-				CacheManagerPropertyName,
-				cachingConfigurationSection.CacheManagers,
-				configurationObject.CacheManager,
-				false);
+            contentBuilder.AddDropDownListPartForNamedElementCollection<CacheManagerDataBase>(Resources.CachingStoreProviderCacheManagerPartName,
+                CacheManagerPropertyName,
+                cachingConfigurationSection.CacheManagers,
+                configurationObject.CacheManager,
+                false);
 
-			contentBuilder.AddNumericPart(Resources.CachingStoreProviderAbsoluteExpirationPartName,
-				AbsoluteExpirationPropertyName,
-				configurationObject.AbsoluteExpiration);
+            contentBuilder.AddNumericPart(Resources.CachingStoreProviderAbsoluteExpirationPartName,
+                AbsoluteExpirationPropertyName,
+                configurationObject.AbsoluteExpiration);
 
-			contentBuilder.AddNumericPart(Resources.CachingStoreProviderSlidingExpirationPartName,
-				SlidingExpirationPropertyName,
-				configurationObject.SlidingExpiration);
-		}
+            contentBuilder.AddNumericPart(Resources.CachingStoreProviderSlidingExpirationPartName,
+                SlidingExpirationPropertyName,
+                configurationObject.SlidingExpiration);
+        }
 
         /// <summary>
         /// Gets the template for the name of the policy associated to the object.
@@ -94,12 +91,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cache.CachingStore.Conf
         /// to avoid creating a policy must still override this property.
         /// </remarks>
         protected override string ElementPolicyNameTemplate
-		{
-			get
-			{
-				return Resources.SecurityCacheProviderPolicyNameTemplate;
-			}
-		}
+        {
+            get
+            {
+                return Resources.SecurityCacheProviderPolicyNameTemplate;
+            }
+        }
 
         /// <summary>
         /// Overrides the <paramref name="configurationObject"/>'s properties with the Group Policy values from the 
@@ -112,26 +109,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cache.CachingStore.Conf
         /// before making modifications to the <paramref name="configurationObject"/> so any error retrieving
         /// the override values will cancel policy processing.</remarks>
         protected override void OverrideWithGroupPolicies(CachingStoreProviderData configurationObject, IRegistryKey policyKey)
-		{
-			String cacheManagerOverride = policyKey.GetStringValue(CacheManagerPropertyName);
-			int? absoluteExpirationOverride = policyKey.GetIntValue(AbsoluteExpirationPropertyName);
-			int? slidingExpirationOverride = policyKey.GetIntValue(SlidingExpirationPropertyName);
+        {
+            String cacheManagerOverride = policyKey.GetStringValue(CacheManagerPropertyName);
+            int? absoluteExpirationOverride = policyKey.GetIntValue(AbsoluteExpirationPropertyName);
+            int? slidingExpirationOverride = policyKey.GetIntValue(SlidingExpirationPropertyName);
 
-			configurationObject.CacheManager = cacheManagerOverride;
-			configurationObject.AbsoluteExpiration = absoluteExpirationOverride.Value;
-			configurationObject.SlidingExpiration = slidingExpirationOverride.Value;
-		}
-
-        /// <summary>
-        /// Creates the <see cref="ConfigurationSetting"/> instances that describe the 
-        /// configurationObject.
-        /// </summary>
-        /// <param name="configurationObject">The configuration object for instances that must be managed.</param>
-        /// <param name="wmiSettings">A collection to where the generated WMI objects are to be added.</param>
-        protected override void GenerateWmiObjects(CachingStoreProviderData configurationObject,
-			ICollection<ConfigurationSetting> wmiSettings)
-		{
-			CachingStoreProviderDataWmiMapper.GenerateWmiObjects(configurationObject, wmiSettings);
-		}
-	}
+            configurationObject.CacheManager = cacheManagerOverride;
+            configurationObject.AbsoluteExpiration = absoluteExpirationOverride.Value;
+            configurationObject.SlidingExpiration = slidingExpirationOverride.Value;
+        }
+    }
 }

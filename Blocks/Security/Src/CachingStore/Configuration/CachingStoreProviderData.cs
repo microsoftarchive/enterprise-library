@@ -29,7 +29,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cache.CachingStore.Conf
 	/// </summary>
     [ResourceDescription(typeof(DesignResources), "CachingStoreProviderDataDescription")]
     [ResourceDisplayName(typeof(DesignResources), "CachingStoreProviderDataDisplayName")]
-    [AddSateliteProviderCommand(CacheManagerSettings.SectionName)]
+    [AddSateliteProviderCommand(CacheManagerSettings.SectionName, typeof(CacheManagerSettings), "DefaultCacheManager", "CacheManager" )]
 	public class CachingStoreProviderData : SecurityCacheProviderData
 	{
 		private const string cacheManagerProperty = "cacheManagerInstanceName";

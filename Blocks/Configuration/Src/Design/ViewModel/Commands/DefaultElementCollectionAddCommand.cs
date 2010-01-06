@@ -79,7 +79,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         {
             get
             {
-                return childCommands;
+                return childCommands.Where(x => x.Browsable);
             }
         }
 

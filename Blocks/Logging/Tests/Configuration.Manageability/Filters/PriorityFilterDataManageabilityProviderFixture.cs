@@ -27,7 +27,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         PriorityFilterDataManageabilityProvider provider;
         MockRegistryKey machineKey;
         MockRegistryKey userKey;
-        IList<ConfigurationSetting> wmiSettings;
         PriorityFilterData configurationObject;
 
         [TestInitialize]
@@ -36,15 +35,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             provider = new PriorityFilterDataManageabilityProvider();
             machineKey = new MockRegistryKey(true);
             userKey = new MockRegistryKey(true);
-            wmiSettings = new List<ConfigurationSetting>();
             configurationObject = new PriorityFilterData();
-        }
-
-        [TestCleanup]
-        public void TearDown()
-        {
-            // preventive unregister to work around WMI.NET 2.0 issues with appdomain unloading
-            ManagementEntityTypesRegistrar.UnregisterAll();
         }
 
         [TestMethod]
@@ -72,7 +63,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         [ExpectedException(typeof(ArgumentException))]
         public void ProviderThrowsWithConfigurationObjectOfWrongType()
         {
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(new TestsConfigurationSection(), true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(new TestsConfigurationSection(), true, machineKey, userKey);
         }
 
         [TestMethod]
@@ -81,7 +72,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             configurationObject.MaximumPriority = 10;
             configurationObject.MinimumPriority = 5;
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, machineKey, userKey);
 
             Assert.AreEqual(10, configurationObject.MaximumPriority);
             Assert.AreEqual(5, configurationObject.MinimumPriority);
@@ -93,7 +84,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             configurationObject.MaximumPriority = 10;
             configurationObject.MinimumPriority = 5;
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, null, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, null, userKey);
         }
 
         [TestMethod]
@@ -102,7 +93,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             configurationObject.MaximumPriority = 10;
             configurationObject.MinimumPriority = 5;
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, null, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, null, userKey);
         }
 
         [TestMethod]
@@ -114,7 +105,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             machineKey.AddIntValue(PriorityFilterDataManageabilityProvider.MaximumPriorityPropertyName, 9);
             machineKey.AddIntValue(PriorityFilterDataManageabilityProvider.MinimumPriorityPropertyName, 3);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, machineKey, userKey);
 
             Assert.AreEqual(9, configurationObject.MaximumPriority);
             Assert.AreEqual(3, configurationObject.MinimumPriority);
@@ -129,7 +120,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             userKey.AddIntValue(PriorityFilterDataManageabilityProvider.MaximumPriorityPropertyName, 9);
             userKey.AddIntValue(PriorityFilterDataManageabilityProvider.MinimumPriorityPropertyName, 3);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, null, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, null, userKey);
 
             Assert.AreEqual(9, configurationObject.MaximumPriority);
             Assert.AreEqual(3, configurationObject.MinimumPriority);
@@ -144,52 +135,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             userKey.AddIntValue(PriorityFilterDataManageabilityProvider.MaximumPriorityPropertyName, 9);
             userKey.AddIntValue(PriorityFilterDataManageabilityProvider.MinimumPriorityPropertyName, 3);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, false, machineKey, null, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, false, machineKey, null);
 
             Assert.AreEqual(10, configurationObject.MaximumPriority);
             Assert.AreEqual(5, configurationObject.MinimumPriority);
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreNotGeneratedIfWmiIsDisabled()
-        {
-            configurationObject.MaximumPriority = 10;
-            configurationObject.MinimumPriority = 5;
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, false, null, null, false, wmiSettings);
-
-            Assert.AreEqual(0, wmiSettings.Count);
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreGeneratedIfWmiIsEnabled()
-        {
-            configurationObject.MaximumPriority = 10;
-            configurationObject.MinimumPriority = 5;
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, false, null, null, true, wmiSettings);
-
-            Assert.AreEqual(1, wmiSettings.Count);
-            Assert.AreSame(typeof(PriorityFilterSetting), wmiSettings[0].GetType());
-            Assert.AreEqual(configurationObject.MaximumPriority, ((PriorityFilterSetting)wmiSettings[0]).MaximumPriority);
-            Assert.AreEqual(configurationObject.MinimumPriority, ((PriorityFilterSetting)wmiSettings[0]).MinimumPriority);
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreGeneratedWithPolicyOverridesIfWmiIsEnabled()
-        {
-            configurationObject.MaximumPriority = 10;
-            configurationObject.MinimumPriority = 5;
-
-            machineKey.AddIntValue(PriorityFilterDataManageabilityProvider.MaximumPriorityPropertyName, 9);
-            machineKey.AddIntValue(PriorityFilterDataManageabilityProvider.MinimumPriorityPropertyName, 3);
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, machineKey, null, true, wmiSettings);
-
-            Assert.AreEqual(1, wmiSettings.Count);
-            Assert.AreSame(typeof(PriorityFilterSetting), wmiSettings[0].GetType());
-            Assert.AreEqual(configurationObject.MaximumPriority, ((PriorityFilterSetting)wmiSettings[0]).MaximumPriority);
-            Assert.AreEqual(configurationObject.MinimumPriority, ((PriorityFilterSetting)wmiSettings[0]).MinimumPriority);
         }
 
         [TestMethod]

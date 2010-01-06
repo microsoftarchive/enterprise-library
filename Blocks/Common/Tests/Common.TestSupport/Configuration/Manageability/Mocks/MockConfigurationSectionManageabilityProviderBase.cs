@@ -26,7 +26,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration
         public bool readGroupPolicies;
         public IRegistryKey machineKey;
         public IRegistryKey userKey;
-        public bool generateWmiObjects;
 
         public const string ValuePropertyName = "value";
 
@@ -40,16 +39,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration
             String applicationName)
         { }
 
-        public override bool OverrideWithGroupPoliciesAndGenerateWmiObjects(ConfigurationSection configurationObject,
-            bool readGroupPolicies, IRegistryKey machineKey, IRegistryKey userKey,
-            bool generateWmiObjects, ICollection<ConfigurationSetting> wmiSettings)
+        public override bool OverrideWithGroupPolicies(ConfigurationSection configurationObject,
+            bool readGroupPolicies, IRegistryKey machineKey, IRegistryKey userKey)
         {
             called = true;
             this.configurationObject = configurationObject;
             this.readGroupPolicies = readGroupPolicies;
             this.machineKey = machineKey;
             this.userKey = userKey;
-            this.generateWmiObjects = generateWmiObjects;
 
             IRegistryKey policyKey = GetPolicyKey(machineKey, userKey);
             if (policyKey != null)
@@ -69,14 +66,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration
                     catch (RegistryAccessException)
                     { }
                 }
-            }
-
-            if (generateWmiObjects)
-            {
-                TestConfigurationSettings setting = new TestConfigurationSettings(configurationObject.ToString());
-                setting.SourceElement = configurationObject;
-
-                wmiSettings.Add(setting);
             }
 
             return true;

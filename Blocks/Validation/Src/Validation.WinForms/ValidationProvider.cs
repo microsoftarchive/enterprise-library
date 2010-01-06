@@ -314,7 +314,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WinForms
             {
                 do
                 {
-                    sb.AppendFormat(CultureInfo.CurrentUICulture,
+                    sb.AppendFormat(CultureInfo.CurrentCulture,
                                     ValidationResultFormat,
                                     validationResultEnumerator.Current.Message,
                                     validationResultEnumerator.Current.Key,

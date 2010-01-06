@@ -16,19 +16,18 @@ using System.Security;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration;
 
-[assembly : ReliabilityContract(Consistency.WillNotCorruptState, Cer.None)]
-[assembly : AssemblyTitle("Enterprise Library Cryptography Application Block")]
-[assembly : AssemblyDescription("Enterprise Library Cryptography Application Block")]
-[assembly : AssemblyVersion("4.1.0.0")]
-[assembly : Instrumented(@"root\EnterpriseLibrary")]
-[assembly : WmiConfiguration(@"root\EnterpriseLibrary", HostingModel = ManagementHostingModel.Decoupled, IdentifyLevel = false)]
-[assembly : AllowPartiallyTrustedCallers]
-[assembly : SecurityTransparent]
+[assembly: ReliabilityContract(Consistency.WillNotCorruptState, Cer.None)]
+[assembly: AssemblyTitle("Enterprise Library Cryptography Application Block")]
+[assembly: AssemblyDescription("Enterprise Library Cryptography Application Block")]
+[assembly: AssemblyVersion("4.1.0.0")]
+[assembly: Instrumented(@"root\EnterpriseLibrary")]
+[assembly: AllowPartiallyTrustedCallers]
+[assembly: SecurityTransparent]
 
 [assembly: HandlesSection(CryptographySettings.SectionName)]
 
 [assembly: AddApplicationBlockCommand(
-                CryptographySettings.SectionName, 
+                CryptographySettings.SectionName,
                 typeof(CryptographySettings),
                 TitleResourceName = "AddCryptographySettings",
                 TitleResourceType = typeof(DesignResources))]

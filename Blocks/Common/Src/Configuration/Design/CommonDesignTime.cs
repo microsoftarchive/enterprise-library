@@ -32,6 +32,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
 
             /// <summary/>
             public const string AddProviderUsingTypePickerCommand = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.TypePickingCollectionElementAddCommand, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
+
+            /// <summary/>
+            public const string ExportAdmTemplateCommand = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.ExportAdmTemplateCommand, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
+
+            /// <summary/>
+            public const string HiddenCommand = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.Commands.HiddenCommand, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
         }
 
 

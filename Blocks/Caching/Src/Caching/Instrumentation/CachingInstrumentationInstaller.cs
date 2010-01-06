@@ -29,7 +29,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation
 			InitializeComponent();
 			Installers.Add(new ReflectionInstaller<PerformanceCounterInstallerBuilder>());
 			Installers.Add(new ReflectionInstaller<EventLogInstallerBuilder>());
-			Installers.Add(new DefaultManagementInstaller());
 		}
 	}
 }

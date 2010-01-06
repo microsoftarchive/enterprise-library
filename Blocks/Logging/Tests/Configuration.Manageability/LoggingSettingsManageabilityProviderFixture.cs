@@ -27,7 +27,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         LoggingSettingsManageabilityProvider provider;
         MockRegistryKey machineKey;
         MockRegistryKey userKey;
-        IList<ConfigurationSetting> wmiSettings;
         LoggingSettings section;
         DictionaryConfigurationSource configurationSource;
 
@@ -37,17 +36,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             provider = new LoggingSettingsManageabilityProvider(new Dictionary<Type, ConfigurationElementManageabilityProvider>(0));
             machineKey = new MockRegistryKey(true);
             userKey = new MockRegistryKey(true);
-            wmiSettings = new List<ConfigurationSetting>();
             section = new LoggingSettings();
             configurationSource = new DictionaryConfigurationSource();
             configurationSource.Add(LoggingSettings.SectionName, section);
-        }
-
-        [TestCleanup]
-        public void TearDown()
-        {
-            // preventive unregister to work around WMI.NET 2.0 issues with appdomain unloading
-            ManagementEntityTypesRegistrar.UnregisterAll();
         }
 
         [TestMethod]
@@ -74,7 +65,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         [ExpectedException(typeof(ArgumentException))]
         public void ProviderThrowsWithConfigurationObjectOfWrongType()
         {
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(new TestsConfigurationSection(), true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(new TestsConfigurationSection(), true, machineKey, userKey);
         }
 
         [TestMethod]
@@ -83,7 +74,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             section.DefaultCategory = "defaultCategory";
             section.TracingEnabled = true;
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual("defaultCategory", section.DefaultCategory);
             Assert.AreEqual(true, section.TracingEnabled);
@@ -96,7 +87,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             section.TracingEnabled = true;
             section.LogWarningWhenNoCategoriesMatch = true;
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, null, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, null, userKey);
         }
 
         [TestMethod]
@@ -106,7 +97,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             section.TracingEnabled = true;
             section.LogWarningWhenNoCategoriesMatch = true;
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, null, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, null);
         }
 
         [TestMethod]
@@ -123,7 +114,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             machineKey.AddBooleanValue(LoggingSettingsManageabilityProvider.LogWarningOnNoMatchPropertyName, true);
             machineKey.AddBooleanValue(LoggingSettingsManageabilityProvider.RevertImpersonationPropertyName, false);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual("machineOverridenCategory", section.DefaultCategory);
             Assert.AreEqual(false, section.TracingEnabled);
@@ -145,7 +136,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             userKey.AddBooleanValue(LoggingSettingsManageabilityProvider.LogWarningOnNoMatchPropertyName, false);
             userKey.AddBooleanValue(LoggingSettingsManageabilityProvider.RevertImpersonationPropertyName, true);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual("userOverridenCategory", section.DefaultCategory);
             Assert.AreEqual(true, section.TracingEnabled);
@@ -165,7 +156,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             machineTraceSourcesKey.AddSubKey("source1", machineSource1Key);
             machineSource1Key.AddStringValue(LoggingSettingsManageabilityProvider.SourceDefaultLevelPropertyName, SourceLevels.Error.ToString());
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual(SourceLevels.Error, sourceData.DefaultLevel);
 
@@ -184,7 +175,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             userTraceSourcesKey.AddSubKey("source1", userSource1Key);
             userSource1Key.AddStringValue(LoggingSettingsManageabilityProvider.SourceDefaultLevelPropertyName, SourceLevels.Error.ToString());
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual(SourceLevels.Error, sourceData.DefaultLevel);
 
@@ -207,7 +198,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             machineTraceSourcesKey.AddSubKey("source1", machineSource1Key);
             machineSource1Key.AddEnumValue<SourceLevels>(LoggingSettingsManageabilityProvider.SourceDefaultLevelPropertyName, SourceLevels.ActivityTracing);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual(0, sourceData.TraceListeners.Count);
 
@@ -230,7 +221,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             MockRegistryKey machineSource1ListenersKey = new MockRegistryKey(false);
             machineSource1Key.AddSubKey(LoggingSettingsManageabilityProvider.SourceTraceListenersPropertyName, machineSource1ListenersKey);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual(0, sourceData.TraceListeners.Count);
 
@@ -256,7 +247,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             machineSource1ListenersKey.AddBooleanValue("listener4", true);
             machineSource1ListenersKey.AddBooleanValue("listener5", true);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual(3, sourceData.TraceListeners.Count);
             Assert.IsNotNull(sourceData.TraceListeners.Get("listener3"));
@@ -282,7 +273,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             userTraceSourcesKey.AddSubKey("source1", userSource1Key);
             userSource1Key.AddEnumValue<SourceLevels>(LoggingSettingsManageabilityProvider.SourceDefaultLevelPropertyName, SourceLevels.ActivityTracing);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual(0, sourceData.TraceListeners.Count);
 
@@ -305,7 +296,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             userSource1Key.AddEnumValue<SourceLevels>(LoggingSettingsManageabilityProvider.SourceDefaultLevelPropertyName, SourceLevels.ActivityTracing);
             userSource1Key.AddSubKey(LoggingSettingsManageabilityProvider.SourceTraceListenersPropertyName, userSource1ListenersKey);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual(0, sourceData.TraceListeners.Count);
 
@@ -331,7 +322,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             userSource1ListenersKey.AddBooleanValue("listener4", true);
             userSource1ListenersKey.AddBooleanValue("listener5", true);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual(3, sourceData.TraceListeners.Count);
             Assert.IsNotNull(sourceData.TraceListeners.Get("listener3"));
@@ -370,7 +361,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             userSource1ListenersKey.AddBooleanValue("listener7", true);
             userSource1ListenersKey.AddBooleanValue("listener8", true);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual(3, sourceData.TraceListeners.Count);
             Assert.IsNotNull(sourceData.TraceListeners.Get("listener3"));
@@ -407,7 +398,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             userSource1ListenersKey.AddBooleanValue("listener7", true);
             userSource1ListenersKey.AddBooleanValue("listener8", true);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual(0, sourceData.TraceListeners.Count);
 
@@ -436,7 +427,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             machineSpecialSourcesKey.AddSubKey(LoggingSettingsManageabilityProvider.SpecialSourcesNotProcessedKeyName, machineNotProcessedSourceKey);
             machineNotProcessedSourceKey.AddStringValue(LoggingSettingsManageabilityProvider.SourceDefaultLevelPropertyName, SourceLevels.Warning.ToString());
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual(SourceLevels.Error, section.SpecialTraceSources.AllEventsTraceSource.DefaultLevel);
             Assert.AreEqual(SourceLevels.Information, section.SpecialTraceSources.ErrorsTraceSource.DefaultLevel);
@@ -467,7 +458,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             userSpecialSourcesKey.AddSubKey(LoggingSettingsManageabilityProvider.SpecialSourcesErrorsKeyName, userErrorsSourceKey);
             userErrorsSourceKey.AddStringValue(LoggingSettingsManageabilityProvider.SourceDefaultLevelPropertyName, SourceLevels.Information.ToString());
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual(SourceLevels.Error, section.SpecialTraceSources.AllEventsTraceSource.DefaultLevel);
             Assert.AreEqual(SourceLevels.Information, section.SpecialTraceSources.ErrorsTraceSource.DefaultLevel);
@@ -497,7 +488,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             userSpecialSourcesKey.AddSubKey(LoggingSettingsManageabilityProvider.SpecialSourcesNotProcessedKeyName, userNotProcessedSourceKey);
             userNotProcessedSourceKey.AddStringValue(LoggingSettingsManageabilityProvider.SourceDefaultLevelPropertyName, SourceLevels.Warning.ToString());
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual(SourceLevels.Error, section.SpecialTraceSources.AllEventsTraceSource.DefaultLevel);
             Assert.AreEqual(SourceLevels.Information, section.SpecialTraceSources.ErrorsTraceSource.DefaultLevel);
@@ -528,7 +519,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             machineLogFiltersKey.AddSubKey("logFilter2", machineLogFilter2Key);
             machineLogFilter2Key.AddBooleanValue(AdmContentBuilder.AvailableValueName, false);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual(1, section.LogFilters.Count);
             Assert.IsNotNull(section.LogFilters.Get("logFilter1"));
@@ -557,7 +548,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             machineLogFiltersKey.AddSubKey("logFilter2", machineLogFilter2Key);
             machineLogFilter2Key.AddBooleanValue(AdmContentBuilder.AvailableValueName, false);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, false, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, false, machineKey, userKey);
 
             Assert.AreEqual(2, section.LogFilters.Count);
             Assert.IsNotNull(section.LogFilters.Get("logFilter1"));
@@ -587,7 +578,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             machineLogFormattersKey.AddSubKey("logFormatter2", machineLogFormatter2Key);
             machineLogFormatter2Key.AddBooleanValue(AdmContentBuilder.AvailableValueName, false);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual(1, section.Formatters.Count);
             Assert.IsNotNull(section.Formatters.Get("logFormatter1"));
@@ -616,7 +607,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             machineLogFormattersKey.AddSubKey("logFormatter2", machineLogFormatter2Key);
             machineLogFormatter2Key.AddBooleanValue(AdmContentBuilder.AvailableValueName, false);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, false, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, false, machineKey, userKey);
 
             Assert.AreEqual(2, section.Formatters.Count);
             Assert.IsNotNull(section.Formatters.Get("logFormatter1"));
@@ -648,7 +639,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             machineTraceListenersKey.AddSubKey("traceListener2", machineTraceListener2Key);
             machineTraceListener2Key.AddBooleanValue(AdmContentBuilder.AvailableValueName, false);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual(1, section.TraceListeners.Count);
             Assert.IsNotNull(section.TraceListeners.Get("traceListener1"));
@@ -679,7 +670,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             machineTraceListenersKey.AddSubKey("traceListener2", machineTraceListener2Key);
             machineTraceListener2Key.AddBooleanValue(AdmContentBuilder.AvailableValueName, false);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, false, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, false, machineKey, userKey);
 
             Assert.AreEqual(2, section.TraceListeners.Count);
             Assert.IsNotNull(section.TraceListeners.Get("traceListener1"));
@@ -702,7 +693,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             machineTraceSourcesKey.AddSubKey("traceSource2", machineTraceSource2Key);
             machineTraceSource2Key.AddBooleanValue(AdmContentBuilder.AvailableValueName, false);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual(1, section.TraceSources.Count);
             Assert.IsNotNull(section.TraceSources.Get("traceSource1"));
@@ -724,7 +715,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             machineTraceSourcesKey.AddSubKey("traceSource2", machineTraceSource2Key);
             machineTraceSource2Key.AddBooleanValue(AdmContentBuilder.AvailableValueName, false);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, false, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, false, machineKey, userKey);
 
             Assert.AreEqual(2, section.TraceSources.Count);
             Assert.IsNotNull(section.TraceSources.Get("traceSource1"));
@@ -744,7 +735,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             machineTraceSpecialSourcesKey.AddSubKey(LoggingSettingsManageabilityProvider.SpecialSourcesAllEventsKeyName, machineAllEventsTraceSourceKey);
             machineAllEventsTraceSourceKey.AddBooleanValue(AdmContentBuilder.AvailableValueName, false);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual(0, section.SpecialTraceSources.AllEventsTraceSource.TraceListeners.Count);
 
@@ -762,7 +753,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             machineTraceSpecialSourcesKey.AddSubKey(LoggingSettingsManageabilityProvider.SpecialSourcesAllEventsKeyName, machineAllEventsTraceSourceKey);
             machineAllEventsTraceSourceKey.AddBooleanValue(AdmContentBuilder.AvailableValueName, false);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, false, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, false, machineKey, userKey);
 
             Assert.AreEqual(1, section.SpecialTraceSources.AllEventsTraceSource.TraceListeners.Count);
             Assert.IsNotNull(section.SpecialTraceSources.AllEventsTraceSource.TraceListeners.Get("listener"));
@@ -783,7 +774,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             PriorityFilterData filterData = new PriorityFilterData(10);
             section.LogFilters.Add(filterData);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.IsTrue(registeredProvider.called);
             Assert.AreSame(filterData, registeredProvider.LastConfigurationObject);
@@ -818,7 +809,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             MockRegistryKey userOtherFilterKey = new MockRegistryKey(false);
             userFiltersKey.AddSubKey("filter2", userOtherFilterKey);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.IsTrue(registeredProvider.called);
             Assert.AreSame(filterData, registeredProvider.LastConfigurationObject);
@@ -843,7 +834,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             TextFormatterData formatterData = new TextFormatterData("name", "template");
             section.Formatters.Add(formatterData);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.IsTrue(registeredProvider.called);
             Assert.AreSame(formatterData, registeredProvider.LastConfigurationObject);
@@ -878,7 +869,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             MockRegistryKey userOtherFormatterKey = new MockRegistryKey(false);
             userFormattersKey.AddSubKey("formatter2", userOtherFormatterKey);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.IsTrue(registeredProvider.called);
             Assert.AreSame(formatterData, registeredProvider.LastConfigurationObject);
@@ -904,7 +895,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
                 = new FormattedEventLogTraceListenerData("name", "source", "formatter");
             section.TraceListeners.Add(listenerData);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.IsTrue(registeredProvider.called);
             Assert.AreSame(listenerData, registeredProvider.LastConfigurationObject);
@@ -940,7 +931,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             MockRegistryKey userOtherListenerKey = new MockRegistryKey(false);
             userListenersKey.AddSubKey("listener2", userOtherListenerKey);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.IsTrue(registeredProvider.called);
             Assert.AreSame(listenerData, registeredProvider.LastConfigurationObject);
@@ -950,96 +941,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             Assert.IsTrue(
                 MockRegistryKey.CheckAllClosed(machineListenersKey, machineListenerKey, machineOtherListenerKey,
                                                userListenersKey, userListenerKey, userOtherListenerKey));
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreNotGeneratedIfWmiIsDisabled()
-        {
-            section.DefaultCategory = "source1";
-            section.LogWarningWhenNoCategoriesMatch = false;
-            section.TracingEnabled = true;
-            TraceSourceData sourceData = new TraceSourceData("source1", SourceLevels.Critical);
-            section.TraceSources.Add(sourceData);
-            sourceData.TraceListeners.Add(new TraceListenerReferenceData("listener1"));
-            sourceData.TraceListeners.Add(new TraceListenerReferenceData("listener2"));
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, false, machineKey, userKey, false, wmiSettings);
-
-            Assert.AreEqual(0, wmiSettings.Count);
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreGeneratedIfWmiIsEnabled()
-        {
-            section.DefaultCategory = "source1";
-            section.LogWarningWhenNoCategoriesMatch = false;
-            section.TracingEnabled = true;
-            section.RevertImpersonation = false;
-            TraceSourceData sourceData = new TraceSourceData("source1", SourceLevels.Critical);
-            section.TraceSources.Add(sourceData);
-            sourceData.TraceListeners.Add(new TraceListenerReferenceData("listener1"));
-            sourceData.TraceListeners.Add(new TraceListenerReferenceData("listener2"));
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
-
-            Assert.AreEqual(5, wmiSettings.Count); // 3 wmi settings created for special trace sources
-            Assert.AreSame(typeof(LoggingBlockSetting), wmiSettings[0].GetType());
-            Assert.AreEqual("source1", ((LoggingBlockSetting)wmiSettings[0]).DefaultCategory);
-            Assert.AreEqual(false, ((LoggingBlockSetting)wmiSettings[0]).LogWarningWhenNoCategoriesMatch);
-            Assert.AreEqual(true, ((LoggingBlockSetting)wmiSettings[0]).TracingEnabled);
-            Assert.AreEqual(false, ((LoggingBlockSetting)wmiSettings[0]).RevertImpersonation);
-            Assert.AreSame(typeof(TraceSourceSetting), wmiSettings[1].GetType());
-            Assert.AreEqual(SourceLevels.Critical.ToString(), ((TraceSourceSetting)wmiSettings[1]).DefaultLevel);
-            Assert.AreEqual(2, ((TraceSourceSetting)wmiSettings[1]).TraceListeners.Length);
-            Assert.AreEqual(LoggingSettingsManageabilityProvider.SourceKindCategory, ((TraceSourceSetting)wmiSettings[1]).Kind);
-            Assert.AreSame(typeof(TraceSourceSetting), wmiSettings[2].GetType());
-            Assert.AreEqual(LoggingSettingsManageabilityProvider.SourceKindAllEvents, ((TraceSourceSetting)wmiSettings[2]).Kind);
-            Assert.AreSame(typeof(TraceSourceSetting), wmiSettings[3].GetType());
-            Assert.AreEqual(LoggingSettingsManageabilityProvider.SourceKindNotProcessed, ((TraceSourceSetting)wmiSettings[3]).Kind);
-            Assert.AreSame(typeof(TraceSourceSetting), wmiSettings[4].GetType());
-            Assert.AreEqual(LoggingSettingsManageabilityProvider.SourceKindErrors, ((TraceSourceSetting)wmiSettings[4]).Kind);
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreGeneratedWithPolicyOverridesIfWmiIsEnabled()
-        {
-            section.DefaultCategory = "source1";
-            section.LogWarningWhenNoCategoriesMatch = false;
-            section.TracingEnabled = true;
-            section.RevertImpersonation = false;
-            TraceSourceData sourceData = new TraceSourceData("source1", SourceLevels.Critical);
-            section.TraceSources.Add(sourceData);
-            sourceData.TraceListeners.Add(new TraceListenerReferenceData("listener1"));
-            sourceData.TraceListeners.Add(new TraceListenerReferenceData("listener2"));
-
-            machineKey.AddBooleanValue(LoggingSettingsManageabilityProvider.PolicyValueName, true);
-            machineKey.AddStringValue(LoggingSettingsManageabilityProvider.DefaultCategoryPropertyName, "overrideSource1");
-            machineKey.AddBooleanValue(LoggingSettingsManageabilityProvider.LogWarningOnNoMatchPropertyName, true);
-            machineKey.AddBooleanValue(LoggingSettingsManageabilityProvider.TracingEnabledPropertyName, false);
-            machineKey.AddBooleanValue(LoggingSettingsManageabilityProvider.RevertImpersonationPropertyName, true);
-            MockRegistryKey machineTraceSourcesKey = new MockRegistryKey(false);
-            machineKey.AddSubKey(LoggingSettingsManageabilityProvider.CategorySourcesKeyName, machineTraceSourcesKey);
-            MockRegistryKey machineSource1Key = new MockRegistryKey(false);
-            machineTraceSourcesKey.AddSubKey("source1", machineSource1Key);
-            machineSource1Key.AddEnumValue<SourceLevels>(LoggingSettingsManageabilityProvider.SourceDefaultLevelPropertyName, SourceLevels.Error);
-            MockRegistryKey machineSource1ListenersKey = new MockRegistryKey(false);
-            machineSource1Key.AddSubKey(LoggingSettingsManageabilityProvider.SourceTraceListenersPropertyName, machineSource1ListenersKey);
-            machineSource1ListenersKey.AddBooleanValue("listener3", true);
-            machineSource1ListenersKey.AddBooleanValue("listener4", true);
-            machineSource1ListenersKey.AddBooleanValue("listener5", true);
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
-
-            Assert.AreEqual(5, wmiSettings.Count); // 3 wmi settings created for special trace sources
-            Assert.AreSame(typeof(LoggingBlockSetting), wmiSettings[0].GetType());
-            Assert.AreEqual("overrideSource1", ((LoggingBlockSetting)wmiSettings[0]).DefaultCategory);
-            Assert.AreEqual(true, ((LoggingBlockSetting)wmiSettings[0]).LogWarningWhenNoCategoriesMatch);
-            Assert.AreEqual(false, ((LoggingBlockSetting)wmiSettings[0]).TracingEnabled);
-            Assert.AreEqual(true, ((LoggingBlockSetting)wmiSettings[0]).RevertImpersonation);
-            Assert.AreSame(typeof(TraceSourceSetting), wmiSettings[1].GetType());
-            Assert.AreEqual(SourceLevels.Error.ToString(), ((TraceSourceSetting)wmiSettings[1]).DefaultLevel);
-            Assert.AreEqual(3, ((TraceSourceSetting)wmiSettings[1]).TraceListeners.Length);
-            Assert.AreEqual(LoggingSettingsManageabilityProvider.SourceKindCategory, ((TraceSourceSetting)wmiSettings[1]).Kind);
         }
 
         [TestMethod]

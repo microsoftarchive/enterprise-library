@@ -27,7 +27,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         KeyedHashAlgorithmProviderDataManageabilityProvider provider;
         MockRegistryKey machineKey;
         MockRegistryKey userKey;
-        IList<ConfigurationSetting> wmiSettings;
         KeyedHashAlgorithmProviderData configurationObject;
 
         [TestInitialize]
@@ -36,15 +35,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
             provider = new KeyedHashAlgorithmProviderDataManageabilityProvider();
             machineKey = new MockRegistryKey(true);
             userKey = new MockRegistryKey(true);
-            wmiSettings = new List<ConfigurationSetting>();
             configurationObject = new KeyedHashAlgorithmProviderData();
-        }
-
-        [TestCleanup]
-        public void TearDown()
-        {
-            // preventive unregister to work around WMI.NET 2.0 issues with appdomain unloading
-            ManagementEntityTypesRegistrar.UnregisterAll();
         }
 
         [TestMethod]
@@ -72,7 +63,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         [ExpectedException(typeof(ArgumentException))]
         public void ProviderThrowsWithConfigurationObjectOfWrongType()
         {
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(new TestsConfigurationSection(), true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(new TestsConfigurationSection(), true, machineKey, userKey);
         }
 
         [TestMethod]
@@ -83,7 +74,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
             configurationObject.ProtectedKeyFilename = "file name";
             configurationObject.ProtectedKeyProtectionScope = DataProtectionScope.CurrentUser;
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, machineKey, userKey);
 
             Assert.AreEqual(true, configurationObject.SaltEnabled);
             Assert.AreEqual("file name", configurationObject.ProtectedKeyFilename);
@@ -102,7 +93,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
             machineKey.AddStringValue(KeyedHashAlgorithmProviderDataManageabilityProvider.ProtectedKeyFilenamePropertyName, "machine file name");
             machineKey.AddStringValue(KeyedHashAlgorithmProviderDataManageabilityProvider.ProtectedKeyProtectionScopePropertyName, DataProtectionScope.LocalMachine.ToString());
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, machineKey, userKey);
 
             Assert.AreEqual(false, configurationObject.SaltEnabled);
             Assert.AreEqual("machine file name", configurationObject.ProtectedKeyFilename);
@@ -121,7 +112,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
             userKey.AddStringValue(KeyedHashAlgorithmProviderDataManageabilityProvider.ProtectedKeyFilenamePropertyName, "user file name");
             userKey.AddStringValue(KeyedHashAlgorithmProviderDataManageabilityProvider.ProtectedKeyProtectionScopePropertyName, DataProtectionScope.LocalMachine.ToString());
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, null, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, null, userKey);
 
             Assert.AreEqual(false, configurationObject.SaltEnabled);
             Assert.AreEqual("user file name", configurationObject.ProtectedKeyFilename);
@@ -140,68 +131,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
             machineKey.AddStringValue(KeyedHashAlgorithmProviderDataManageabilityProvider.ProtectedKeyFilenamePropertyName, "machine file name");
             machineKey.AddStringValue(KeyedHashAlgorithmProviderDataManageabilityProvider.ProtectedKeyProtectionScopePropertyName, DataProtectionScope.LocalMachine.ToString());
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, false, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, false, machineKey, userKey);
 
             Assert.AreEqual(true, configurationObject.SaltEnabled);
             Assert.AreEqual("file name", configurationObject.ProtectedKeyFilename);
             Assert.AreEqual(DataProtectionScope.CurrentUser, configurationObject.ProtectedKeyProtectionScope);
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreNotGeneratedIfWmiIsDisabled()
-        {
-            configurationObject.SaltEnabled = true;
-            configurationObject.AlgorithmType = typeof(HMACSHA256);
-            configurationObject.ProtectedKeyFilename = "file name";
-            configurationObject.ProtectedKeyProtectionScope = DataProtectionScope.CurrentUser;
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, machineKey, userKey, false, wmiSettings);
-
-            Assert.AreEqual(0, wmiSettings.Count);
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreGeneratedIfWmiIsEnabled()
-        {
-            configurationObject.Name = "provider name";
-            configurationObject.SaltEnabled = true;
-            configurationObject.AlgorithmType = typeof(HMACSHA256);
-            configurationObject.ProtectedKeyFilename = "file name";
-            configurationObject.ProtectedKeyProtectionScope = DataProtectionScope.CurrentUser;
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, machineKey, userKey, true, wmiSettings);
-
-            Assert.AreEqual(1, wmiSettings.Count);
-            Assert.AreSame(typeof(KeyedHashAlgorithmProviderSetting), wmiSettings[0].GetType());
-            Assert.AreEqual("provider name", ((KeyedHashAlgorithmProviderSetting)wmiSettings[0]).Name);
-            Assert.AreEqual(true, ((KeyedHashAlgorithmProviderSetting)wmiSettings[0]).SaltEnabled);
-            Assert.AreEqual(typeof(HMACSHA256).AssemblyQualifiedName, ((KeyedHashAlgorithmProviderSetting)wmiSettings[0]).AlgorithmType);
-            Assert.AreEqual("file name", ((KeyedHashAlgorithmProviderSetting)wmiSettings[0]).ProtectedKeyFilename);
-            Assert.AreEqual(DataProtectionScope.CurrentUser.ToString(), ((KeyedHashAlgorithmProviderSetting)wmiSettings[0]).ProtectedKeyProtectionScope);
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreGeneratedWithPolicyOverridesIfWmiIsEnabled()
-        {
-            configurationObject.Name = "provider name";
-            configurationObject.SaltEnabled = true;
-            configurationObject.AlgorithmType = typeof(HMACSHA256);
-            configurationObject.ProtectedKeyFilename = "file name";
-            configurationObject.ProtectedKeyProtectionScope = DataProtectionScope.CurrentUser;
-
-            machineKey.AddBooleanValue(KeyedHashAlgorithmProviderDataManageabilityProvider.SaltEnabledPropertyName, false);
-            machineKey.AddStringValue(KeyedHashAlgorithmProviderDataManageabilityProvider.ProtectedKeyFilenamePropertyName, "machine file name");
-            machineKey.AddStringValue(KeyedHashAlgorithmProviderDataManageabilityProvider.ProtectedKeyProtectionScopePropertyName, DataProtectionScope.LocalMachine.ToString());
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, machineKey, userKey, true, wmiSettings);
-
-            Assert.AreEqual(1, wmiSettings.Count);
-            Assert.AreSame(typeof(KeyedHashAlgorithmProviderSetting), wmiSettings[0].GetType());
-            Assert.AreEqual("provider name", ((KeyedHashAlgorithmProviderSetting)wmiSettings[0]).Name);
-            Assert.AreEqual(false, ((KeyedHashAlgorithmProviderSetting)wmiSettings[0]).SaltEnabled);
-            Assert.AreEqual(typeof(HMACSHA256).AssemblyQualifiedName, ((KeyedHashAlgorithmProviderSetting)wmiSettings[0]).AlgorithmType);
-            Assert.AreEqual("machine file name", ((KeyedHashAlgorithmProviderSetting)wmiSettings[0]).ProtectedKeyFilename);
-            Assert.AreEqual(DataProtectionScope.LocalMachine.ToString(), ((KeyedHashAlgorithmProviderSetting)wmiSettings[0]).ProtectedKeyProtectionScope);
         }
 
         [TestMethod]

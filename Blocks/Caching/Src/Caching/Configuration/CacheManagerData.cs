@@ -28,6 +28,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
 	/// </summary>
     [ResourceDescription(typeof(DesignResources), "CacheManagerDataDescription")]
     [ResourceDisplayName(typeof(DesignResources), "CacheManagerDataDisplayName")]
+    [Command(CachingDesignTime.CommandTypeNames.AddCacheManagerCommand, 
+                        Replace=CommandReplacement.DefaultAddCommandReplacement, 
+                        CommandPlacement=CommandPlacement.ContextAdd)]
 	public class CacheManagerData : CacheManagerDataBase
 	{
 		private const string expirationPollFrequencyInSecondsProperty = "expirationPollFrequencyInSeconds";

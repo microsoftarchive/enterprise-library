@@ -307,6 +307,7 @@
                                 </Grid.ColumnDefinitions>
                                 <ToggleButton Template="{DynamicResource ExpanderToggleButton}"
                                     x:Name="expanderToggle"
+                                    Focusable="False"
 									Background="{DynamicResource NormalBrush}"
 									IsChecked="{Binding IsExpanded, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
 									OverridesDefaultStyle="True" />
@@ -314,19 +315,16 @@
 									Margin="4"
 									RecognizesAccessKey="True"
 									ContentSource="Header" />
-                                <StackPanel Orientation="Horizontal" Grid.Column="2">
+                                <StackPanel Orientation="Horizontal" Grid.Column="2" Focusable="False">
                                     <ToggleButton Content="Properties"
+                                        Focusable="False"
 									    x:Name="ShowProperties"
 									    Template="{DynamicResource PropertiesExpandToggleButton}"
 									    Background="{DynamicResource NormalBrush}"
                                         VerticalAlignment="Center"
                                         Margin="1,0,1,0"
+                                        IsChecked="{Binding PropertiesShown, Mode=TwoWay}"
 									    Visibility="{Binding Properties, Converter={StaticResource EnumerableToVisibilityConverter}}" />
-                                    <!--Button Command="{Binding DeleteCommand}" 
-                                            Style="{DynamicResource DeleteButtonStyle}"                                             
-                                            VerticalAlignment="Center" 
-                                            Margin="1,0,1,0"                                            
-                                            AutomationProperties.Name="DeleteButton" /-->
                                 </StackPanel>
                             </Grid>
                         </Border>
@@ -343,7 +341,7 @@
 								HorizontalAlignment="Left"
 								Padding="5"
 								Visibility="{Binding IsChecked, Converter={StaticResource BooleanToVisibilityConverter}, ElementName=ShowProperties}">
-                            <ItemsControl ItemsSource="{Binding Properties}" Grid.IsSharedSizeScope="True">
+                            <ItemsControl Focusable="False" ItemsSource="{Binding Properties}" Grid.IsSharedSizeScope="True">
                                 <ItemsControl.Template>
                                     <ControlTemplate>
                                         <Grid HorizontalAlignment="Stretch">
@@ -353,7 +351,8 @@
                                                 <ColumnDefinition Width="175*" />
                                             </Grid.ColumnDefinitions>
 
-                                            <GridSplitter Grid.Column="1" 
+                                            <GridSplitter Focusable="False"
+                                                          Grid.Column="1" 
                                                           HorizontalAlignment="Right" 
                                                           Width="2"
                                                           ResizeDirection="Columns" 
@@ -413,7 +412,7 @@
     
     <ControlTemplate x:Key="PropertiesExpandToggleButton"
 					 TargetType="{x:Type ToggleButton}">
-        <ContentControl x:Name="propertiesButtonVisual" Foreground="{DynamicResource ElementCommandNormalBrush}" Background="{DynamicResource ElementCommandBackgroundBrush}" >
+        <ContentControl Focusable="False"  x:Name="propertiesButtonVisual" Foreground="{DynamicResource ElementCommandNormalBrush}" Background="{DynamicResource ElementCommandBackgroundBrush}" >
             <Canvas x:Name="chevronVisual" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Width="17" Height="17">
                 <Canvas.RenderTransform>
                     <RotateTransform Angle="180" CenterX="8.5" CenterY="8.5" />

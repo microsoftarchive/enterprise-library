@@ -1,4 +1,15 @@
-﻿using System.Collections.Generic;
+﻿//===============================================================================
+// Microsoft patterns & practices Enterprise Library
+// Core
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+
+using System.Collections.Generic;
 using System.Windows;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -24,6 +35,7 @@ namespace Console.Wpf.Tests.VSTS.Controls.TypeBrowser
             var model = new TypeBrowserViewModel(groups);
 
             Assert.IsNull(model.TypeName);
+            Assert.IsNull(model.ConcreteType);
             Assert.IsFalse(model.HasGenericParameters);
             Assert.AreEqual(0, model.GenericTypeParameters.Count);
             TreeAssert.IsMatch(
@@ -158,8 +170,8 @@ namespace Console.Wpf.Tests.VSTS.Controls.TypeBrowser
 
             model.AssemblyGroups[0].Assemblies[0].Namespaces[0].Types[0].IsSelected = true;
 
-            CollectionAssert.AreEqual(new[] { "HasType", "HasGenericParameters", "TypeName" }, modifiedProperties);
-            Assert.IsTrue(model.HasType);
+            CollectionAssert.AreEqual(new[] { "HasGenericParameters", "ConcreteType", "TypeName" }, modifiedProperties);
+            Assert.IsNotNull(model.ConcreteType);
             Assert.IsFalse(model.HasGenericParameters);
             Assert.AreEqual("TestAssembly1.Namespace1.Class1", model.TypeName);
         }
@@ -190,7 +202,7 @@ namespace Console.Wpf.Tests.VSTS.Controls.TypeBrowser
             model.AssemblyGroups[0].Assemblies[0].Namespaces[1].IsSelected = true;
 
             Assert.AreEqual(0, modifiedProperties.Count);
-            Assert.IsTrue(model.HasType);
+            Assert.IsNotNull(model.ConcreteType);
             Assert.IsFalse(model.HasGenericParameters);
             Assert.AreEqual("TestAssembly1.Namespace1.Class1", model.TypeName);
         }
@@ -363,7 +375,7 @@ namespace Console.Wpf.Tests.VSTS.Controls.TypeBrowser
             model.TypeName = "NamespaceClass";
             Dispatcher.PushFrame(frame);
 
-            Assert.IsTrue(model.HasType);
+            Assert.IsNotNull(model.ConcreteType);
             Assert.AreEqual("NamespaceClass", model.TypeName);
             TreeAssert.IsMatch(
                 new

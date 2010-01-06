@@ -28,7 +28,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         EmailTraceListenerDataManageabilityProvider provider;
         MockRegistryKey machineKey;
         MockRegistryKey userKey;
-        IList<ConfigurationSetting> wmiSettings;
         EmailTraceListenerData configurationObject;
 
         [TestInitialize]
@@ -37,15 +36,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             provider = new EmailTraceListenerDataManageabilityProvider();
             machineKey = new MockRegistryKey(true);
             userKey = new MockRegistryKey(true);
-            wmiSettings = new List<ConfigurationSetting>();
             configurationObject = new EmailTraceListenerData();
-        }
-
-        [TestCleanup]
-        public void TearDown()
-        {
-            // preventive unregister to work around WMI.NET 2.0 issues with appdomain unloading
-            ManagementEntityTypesRegistrar.UnregisterAll();
         }
 
         [TestMethod]
@@ -73,7 +64,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         [ExpectedException(typeof(ArgumentException))]
         public void ProviderThrowsWithConfigurationObjectOfWrongType()
         {
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(new TestsConfigurationSection(), true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(new TestsConfigurationSection(), true, machineKey, userKey);
         }
 
         [TestMethod]
@@ -87,9 +78,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             configurationObject.SubjectLineStarter = "subject line starter";
             configurationObject.ToAddress = "to";
             configurationObject.TraceOutputOptions = TraceOptions.None;
-			configurationObject.Filter = SourceLevels.Error;
+            configurationObject.Filter = SourceLevels.Error;
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, null, null, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, null, null);
 
             Assert.AreEqual("formatter", configurationObject.Formatter);
             Assert.AreEqual("from", configurationObject.FromAddress);
@@ -99,8 +90,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             Assert.AreEqual("subject line starter", configurationObject.SubjectLineStarter);
             Assert.AreEqual("to", configurationObject.ToAddress);
             Assert.AreEqual(TraceOptions.None, configurationObject.TraceOutputOptions);
-			Assert.AreEqual(SourceLevels.Error, configurationObject.Filter);
-		}
+            Assert.AreEqual(SourceLevels.Error, configurationObject.Filter);
+        }
 
         [TestMethod]
         public void ConfigurationObjectIsModifiedIfThereAreMachinePolicyOverrides()
@@ -113,7 +104,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             configurationObject.SubjectLineStarter = "subject line starter";
             configurationObject.ToAddress = "to";
             configurationObject.TraceOutputOptions = TraceOptions.None;
-			configurationObject.Filter = SourceLevels.Error;
+            configurationObject.Filter = SourceLevels.Error;
 
             machineKey.AddStringValue(EmailTraceListenerDataManageabilityProvider.FormatterPropertyName, "overriden formatter");
             machineKey.AddStringValue(EmailTraceListenerDataManageabilityProvider.FromAddressPropertyName, "overriden from");
@@ -123,9 +114,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             machineKey.AddStringValue(EmailTraceListenerDataManageabilityProvider.SubjectLineStarterPropertyName, "overriden subject line starter");
             machineKey.AddStringValue(EmailTraceListenerDataManageabilityProvider.ToAddressPropertyName, "overriden to");
             machineKey.AddStringValue(EmailTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, "ProcessId, ThreadId");
-			machineKey.AddStringValue(EmailTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
+            machineKey.AddStringValue(EmailTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, machineKey, null, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, machineKey, null);
 
             Assert.AreEqual("overriden formatter", configurationObject.Formatter);
             Assert.AreEqual("overriden from", configurationObject.FromAddress);
@@ -135,8 +126,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             Assert.AreEqual("overriden subject line starter", configurationObject.SubjectLineStarter);
             Assert.AreEqual("overriden to", configurationObject.ToAddress);
             Assert.AreEqual(TraceOptions.ProcessId | TraceOptions.ThreadId, configurationObject.TraceOutputOptions);
-			Assert.AreEqual(SourceLevels.Critical, configurationObject.Filter);
-		}
+            Assert.AreEqual(SourceLevels.Critical, configurationObject.Filter);
+        }
 
         [TestMethod]
         public void ConfigurationObjectIsModifiedIfThereAreUserPolicyOverrides()
@@ -149,7 +140,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             configurationObject.SubjectLineStarter = "subject line starter";
             configurationObject.ToAddress = "to";
             configurationObject.TraceOutputOptions = TraceOptions.None;
-			configurationObject.Filter = SourceLevels.Error;
+            configurationObject.Filter = SourceLevels.Error;
 
             userKey.AddStringValue(EmailTraceListenerDataManageabilityProvider.FormatterPropertyName, "overriden formatter");
             userKey.AddStringValue(EmailTraceListenerDataManageabilityProvider.FromAddressPropertyName, "overriden from");
@@ -159,9 +150,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             userKey.AddStringValue(EmailTraceListenerDataManageabilityProvider.SubjectLineStarterPropertyName, "overriden subject line starter");
             userKey.AddStringValue(EmailTraceListenerDataManageabilityProvider.ToAddressPropertyName, "overriden to");
             userKey.AddStringValue(EmailTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, "ProcessId, ThreadId");
-			userKey.AddStringValue(CustomTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
+            userKey.AddStringValue(CustomTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, null, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, null, userKey);
 
             Assert.AreEqual("overriden formatter", configurationObject.Formatter);
             Assert.AreEqual("overriden from", configurationObject.FromAddress);
@@ -171,8 +162,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             Assert.AreEqual("overriden subject line starter", configurationObject.SubjectLineStarter);
             Assert.AreEqual("overriden to", configurationObject.ToAddress);
             Assert.AreEqual(TraceOptions.ProcessId | TraceOptions.ThreadId, configurationObject.TraceOutputOptions);
-			Assert.AreEqual(SourceLevels.Critical, configurationObject.Filter);
-		}
+            Assert.AreEqual(SourceLevels.Critical, configurationObject.Filter);
+        }
 
         [TestMethod]
         public void ConfigurationObjectIsNotModifiedIfThereArePolicyOverridesButGroupPoliciesAreDisabled()
@@ -185,7 +176,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             configurationObject.SubjectLineStarter = "subject line starter";
             configurationObject.ToAddress = "to";
             configurationObject.TraceOutputOptions = TraceOptions.None;
-			configurationObject.Filter = SourceLevels.Error;
+            configurationObject.Filter = SourceLevels.Error;
 
             machineKey.AddStringValue(EmailTraceListenerDataManageabilityProvider.FormatterPropertyName, "overriden formatter");
             machineKey.AddStringValue(EmailTraceListenerDataManageabilityProvider.FromAddressPropertyName, "overriden from");
@@ -195,9 +186,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             machineKey.AddStringValue(EmailTraceListenerDataManageabilityProvider.SubjectLineStarterPropertyName, "overriden subject line starter");
             machineKey.AddStringValue(EmailTraceListenerDataManageabilityProvider.ToAddressPropertyName, "overriden to");
             machineKey.AddStringValue(EmailTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, "ProcessId, ThreadId");
-			machineKey.AddStringValue(EmailTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
+            machineKey.AddStringValue(EmailTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, false, machineKey, null, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, false, machineKey, null);
 
             Assert.AreEqual("formatter", configurationObject.Formatter);
             Assert.AreEqual("from", configurationObject.FromAddress);
@@ -207,8 +198,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             Assert.AreEqual("subject line starter", configurationObject.SubjectLineStarter);
             Assert.AreEqual("to", configurationObject.ToAddress);
             Assert.AreEqual(TraceOptions.None, configurationObject.TraceOutputOptions);
-			Assert.AreEqual(SourceLevels.Error, configurationObject.Filter);
-		}
+            Assert.AreEqual(SourceLevels.Error, configurationObject.Filter);
+        }
 
         [TestMethod]
         public void ConfigurationObjectIsModifiedWithFormatterOverrideWithListItemNone()
@@ -223,96 +214,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             machineKey.AddStringValue(EmailTraceListenerDataManageabilityProvider.SubjectLineStarterPropertyName, "overriden subject line starter");
             machineKey.AddStringValue(EmailTraceListenerDataManageabilityProvider.ToAddressPropertyName, "overriden to");
             machineKey.AddStringValue(EmailTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, "ProcessId, ThreadId");
-			machineKey.AddStringValue(EmailTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
+            machineKey.AddStringValue(EmailTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, machineKey, userKey);
 
             Assert.AreEqual("", configurationObject.Formatter);
         }
-
-        [TestMethod]
-        public void WmiSettingsAreNotGeneratedIfWmiIsDisabled()
-        {
-            configurationObject.Formatter = "formatter";
-            configurationObject.FromAddress = "from";
-            configurationObject.SmtpPort = 25;
-            configurationObject.SmtpServer = "smtp server";
-            configurationObject.SubjectLineEnder = "subject line ender";
-            configurationObject.SubjectLineStarter = "subject line starter";
-            configurationObject.ToAddress = "to";
-            configurationObject.TraceOutputOptions = TraceOptions.None;
-			configurationObject.Filter = SourceLevels.Error;
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, false, machineKey, userKey, false, wmiSettings);
-
-            Assert.AreEqual(0, wmiSettings.Count);
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreGeneratedIfWmiIsEnabled()
-        {
-            configurationObject.Formatter = "formatter";
-            configurationObject.FromAddress = "from";
-            configurationObject.SmtpPort = 25;
-            configurationObject.SmtpServer = "smtp server";
-            configurationObject.SubjectLineEnder = "subject line ender";
-            configurationObject.SubjectLineStarter = "subject line starter";
-            configurationObject.ToAddress = "to";
-            configurationObject.TraceOutputOptions = TraceOptions.None;
-			configurationObject.Filter = SourceLevels.Critical;
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, false, machineKey, userKey, true, wmiSettings);
-
-            Assert.AreEqual(1, wmiSettings.Count);
-            Assert.AreSame(typeof(EmailTraceListenerSetting), wmiSettings[0].GetType());
-            Assert.AreEqual(configurationObject.Formatter, ((EmailTraceListenerSetting)wmiSettings[0]).Formatter);
-            Assert.AreEqual(configurationObject.FromAddress, ((EmailTraceListenerSetting)wmiSettings[0]).FromAddress);
-            Assert.AreEqual(configurationObject.SmtpPort, ((EmailTraceListenerSetting)wmiSettings[0]).SmtpPort);
-            Assert.AreEqual(configurationObject.SmtpServer, ((EmailTraceListenerSetting)wmiSettings[0]).SmtpServer);
-            Assert.AreEqual(configurationObject.SubjectLineEnder, ((EmailTraceListenerSetting)wmiSettings[0]).SubjectLineEnder);
-            Assert.AreEqual(configurationObject.SubjectLineStarter, ((EmailTraceListenerSetting)wmiSettings[0]).SubjectLineStarter);
-            Assert.AreEqual(configurationObject.ToAddress, ((EmailTraceListenerSetting)wmiSettings[0]).ToAddress);
-            Assert.AreEqual(configurationObject.TraceOutputOptions.ToString(), ((EmailTraceListenerSetting)wmiSettings[0]).TraceOutputOptions);
-			Assert.AreEqual(configurationObject.Filter.ToString(), ((EmailTraceListenerSetting)wmiSettings[0]).Filter);
-		}
-
-        [TestMethod]
-        public void WmiSettingsAreGeneratedWithPolicyOverridesIfWmiIsEnabled()
-        {
-            configurationObject.Formatter = "formatter";
-            configurationObject.FromAddress = "from";
-            configurationObject.SmtpPort = 25;
-            configurationObject.SmtpServer = "smtp server";
-            configurationObject.SubjectLineEnder = "subject line ender";
-            configurationObject.SubjectLineStarter = "subject line starter";
-            configurationObject.ToAddress = "to";
-            configurationObject.TraceOutputOptions = TraceOptions.None;
-			configurationObject.Filter = SourceLevels.Error;
-
-            machineKey.AddStringValue(EmailTraceListenerDataManageabilityProvider.FormatterPropertyName, "overriden formatter");
-            machineKey.AddStringValue(EmailTraceListenerDataManageabilityProvider.FromAddressPropertyName, "overriden from");
-            machineKey.AddIntValue(EmailTraceListenerDataManageabilityProvider.SmtpPortPropertyName, 26);
-            machineKey.AddStringValue(EmailTraceListenerDataManageabilityProvider.SmtpServerPropertyName, "overriden smtp server");
-            machineKey.AddStringValue(EmailTraceListenerDataManageabilityProvider.SubjectLineEnderPropertyName, "overriden subject line ender");
-            machineKey.AddStringValue(EmailTraceListenerDataManageabilityProvider.SubjectLineStarterPropertyName, "overriden subject line starter");
-            machineKey.AddStringValue(EmailTraceListenerDataManageabilityProvider.ToAddressPropertyName, "overriden to");
-            machineKey.AddStringValue(EmailTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, "ProcessId, ThreadId");
-			machineKey.AddStringValue(EmailTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, false, machineKey, userKey, true, wmiSettings);
-
-            Assert.AreEqual(1, wmiSettings.Count);
-            Assert.AreSame(typeof(EmailTraceListenerSetting), wmiSettings[0].GetType());
-            Assert.AreEqual(configurationObject.Formatter, ((EmailTraceListenerSetting)wmiSettings[0]).Formatter);
-            Assert.AreEqual(configurationObject.FromAddress, ((EmailTraceListenerSetting)wmiSettings[0]).FromAddress);
-            Assert.AreEqual(configurationObject.SmtpPort, ((EmailTraceListenerSetting)wmiSettings[0]).SmtpPort);
-            Assert.AreEqual(configurationObject.SmtpServer, ((EmailTraceListenerSetting)wmiSettings[0]).SmtpServer);
-            Assert.AreEqual(configurationObject.SubjectLineEnder, ((EmailTraceListenerSetting)wmiSettings[0]).SubjectLineEnder);
-            Assert.AreEqual(configurationObject.SubjectLineStarter, ((EmailTraceListenerSetting)wmiSettings[0]).SubjectLineStarter);
-            Assert.AreEqual(configurationObject.ToAddress, ((EmailTraceListenerSetting)wmiSettings[0]).ToAddress);
-            Assert.AreEqual(configurationObject.TraceOutputOptions.ToString(), ((EmailTraceListenerSetting)wmiSettings[0]).TraceOutputOptions);
-			Assert.AreEqual(configurationObject.Filter.ToString(), ((EmailTraceListenerSetting)wmiSettings[0]).Filter);
-		}
 
         [TestMethod]
         public void ManageabilityProviderGeneratesProperAdmContent()
@@ -376,11 +283,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             Assert.AreEqual(EmailTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName,
                             partsEnumerator.Current.ValueName);
 
-			Assert.IsTrue(partsEnumerator.MoveNext());
-			Assert.AreSame(typeof(AdmDropDownListPart), partsEnumerator.Current.GetType());
-			Assert.IsNull(partsEnumerator.Current.KeyName);
-			Assert.AreEqual(EmailTraceListenerDataManageabilityProvider.FilterPropertyName,
-							partsEnumerator.Current.ValueName);
+            Assert.IsTrue(partsEnumerator.MoveNext());
+            Assert.AreSame(typeof(AdmDropDownListPart), partsEnumerator.Current.GetType());
+            Assert.IsNull(partsEnumerator.Current.KeyName);
+            Assert.AreEqual(EmailTraceListenerDataManageabilityProvider.FilterPropertyName,
+                            partsEnumerator.Current.ValueName);
 
             Assert.IsTrue(partsEnumerator.MoveNext());
             Assert.AreSame(typeof(AdmDropDownListPart), partsEnumerator.Current.GetType());

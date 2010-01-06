@@ -8,7 +8,6 @@
 
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/Microsoft.Practices.EnterpriseLibrary.Configuration.Design;component/Resources/CollectionEditorTemplates.xaml" />
                 <ResourceDictionary Source="/Microsoft.Practices.EnterpriseLibrary.Configuration.Design;component/Resources/ExpanderDictionary.xaml" />
                 <ResourceDictionary Source="/Microsoft.Practices.EnterpriseLibrary.Configuration.Design;component/Resources/ViewModelDataTemplates.xaml" />
             </ResourceDictionary.MergedDictionaries>

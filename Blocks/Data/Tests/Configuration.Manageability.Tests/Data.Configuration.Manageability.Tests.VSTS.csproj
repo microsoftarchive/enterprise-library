@@ -46,9 +46,6 @@
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Management" />
-    <Reference Include="System.Management.Instrumentation">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
@@ -59,10 +56,6 @@
     <Compile Include="DatabaseSettingsManageabilityProviderFixture.cs" />
     <Compile Include="OracleConnectionSettingsManageabilityProviderFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="WMI\ConnectionStringSettingFixture.cs" />
-    <Compile Include="WMI\DatabaseBlockSettingFixture.cs" />
-    <Compile Include="WMI\OracleConnectionSettingFixture.cs" />
-    <Compile Include="WMI\ProviderMappingSettingFixture.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\Src\Common.csproj">

@@ -30,7 +30,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
     /// </summary>
     [ResourceDescription(typeof(DesignResources), "CustomCallHandlerDataDescription")]
     [ResourceDisplayName(typeof(DesignResources), "CustomCallHandlerDataDisplayName")]
-    [TypePickingCommand(TitleResourceName = "CustomCallHandlerDataAddCommand", TitleResourceType=typeof(DesignResources))]
+    [TypePickingCommand(TitleResourceName = "CustomCallHandlerDataDisplayName", TitleResourceType = typeof(DesignResources), Replace = CommandReplacement.DefaultAddCommandReplacement)]
     public class CustomCallHandlerData : CallHandlerData, IHelperAssistedCustomConfigurationData<CustomCallHandlerData>
     {
         CustomProviderDataHelper<CustomCallHandlerData> helper;

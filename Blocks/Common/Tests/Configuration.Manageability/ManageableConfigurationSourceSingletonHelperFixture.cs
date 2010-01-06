@@ -42,7 +42,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
             string fullConfigurationFilepath = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile;
 
             ManageableConfigurationSourceImplementation configSourceImpl1
-                = helper.GetInstance(fullConfigurationFilepath, noProviders, true, true, "app");
+                = helper.GetInstance(fullConfigurationFilepath, noProviders, true, "app");
 
             Assert.IsNotNull(configSourceImpl1);
         }
@@ -53,9 +53,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
             string fullConfigurationFilepath = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile;
 
             ManageableConfigurationSourceImplementation configSourceImpl1
-                = helper.GetInstance(fullConfigurationFilepath, noProviders, true, true, "app");
+                = helper.GetInstance(fullConfigurationFilepath, noProviders, true, "app");
             ManageableConfigurationSourceImplementation configSourceImpl2
-                = helper.GetInstance(fullConfigurationFilepath, noProviders, true, true, "app");
+                = helper.GetInstance(fullConfigurationFilepath, noProviders, true, "app");
 
             Assert.IsNotNull(configSourceImpl1);
             Assert.IsNotNull(configSourceImpl2);
@@ -68,9 +68,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
             string fullConfigurationFilepath = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile;
 
             ManageableConfigurationSourceImplementation configSourceImpl1
-                = helper.GetInstance(fullConfigurationFilepath, noProviders, true, true, "app");
+                = helper.GetInstance(fullConfigurationFilepath, noProviders, true, "app");
             ManageableConfigurationSourceImplementation configSourceImpl2
-                = helper.GetInstance(fullConfigurationFilepath, noProviders, false, true, "app");
+                = helper.GetInstance(fullConfigurationFilepath, noProviders, false, "app");
 
             Assert.IsNotNull(configSourceImpl1);
             Assert.IsNotNull(configSourceImpl2);
@@ -81,21 +81,21 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
         [ExpectedException(typeof(ArgumentException))]
         public void HelperThrowsForNullConfigurationFileName()
         {
-            helper.GetInstance(null, noProviders, true, true, "app");
+            helper.GetInstance(null, noProviders, true, "app");
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
         public void HelperThrowsForEmptyConfigurationFileName()
         {
-            helper.GetInstance("", noProviders, true, true, "app");
+            helper.GetInstance("", noProviders, true, "app");
         }
 
         [TestMethod]
         [ExpectedException(typeof(FileNotFoundException))]
         public void HelperThrowsForNonExistentConfigurationFileName()
         {
-            helper.GetInstance("nonexistent.exe.config", noProviders, true, true, "app");
+            helper.GetInstance("nonexistent.exe.config", noProviders, true, "app");
         }
 
         [TestMethod]
@@ -105,9 +105,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
             string configurationFilename = Path.GetFileName(fullConfigurationFilepath);
 
             ManageableConfigurationSourceImplementation configSourceImpl1
-                = helper.GetInstance(configurationFilename, noProviders, true, true, "app");
+                = helper.GetInstance(configurationFilename, noProviders, true, "app");
             ManageableConfigurationSourceImplementation configSourceImpl2
-                = helper.GetInstance(fullConfigurationFilepath, noProviders, true, true, "app");
+                = helper.GetInstance(fullConfigurationFilepath, noProviders, true, "app");
 
             Assert.AreSame(configSourceImpl1, configSourceImpl2);
         }
@@ -119,9 +119,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
             string relativeConfigurationFilename = ".\\" + Path.GetFileName(fullConfigurationFilepath);
 
             ManageableConfigurationSourceImplementation configSourceImpl1
-                = helper.GetInstance(relativeConfigurationFilename, noProviders, true, true, "app");
+                = helper.GetInstance(relativeConfigurationFilename, noProviders, true, "app");
             ManageableConfigurationSourceImplementation configSourceImpl2
-                = helper.GetInstance(fullConfigurationFilepath, noProviders, true, true, "app");
+                = helper.GetInstance(fullConfigurationFilepath, noProviders, true, "app");
 
             Assert.AreSame(configSourceImpl1, configSourceImpl2);
         }

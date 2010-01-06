@@ -33,9 +33,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration.Manageabi
         /// Initialize a new instance of the <see cref="AuthorizationRuleProviderDataManageabilityProvider"/> class.
         /// </summary>
         public AuthorizationRuleProviderDataManageabilityProvider()
-        {
-            AuthorizationRuleProviderDataWmiMapper.RegisterWmiTypes();
-        }
+        { }
 
         /// <summary>
         /// Gets the template for the name of the policy associated to the object.
@@ -84,18 +82,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration.Manageabi
             }
 
             return encoder.GetEncodedKeyValuePairs();
-        }
-
-        /// <summary>
-        /// Creates the <see cref="ConfigurationSetting"/> instances that describe the 
-        /// configurationObject.
-        /// </summary>
-        /// <param name="configurationObject">The configuration object for instances that must be managed.</param>
-        /// <param name="wmiSettings">A collection to where the generated WMI objects are to be added.</param>
-        protected override void GenerateWmiObjects(AuthorizationRuleProviderData configurationObject,
-                                                   ICollection<ConfigurationSetting> wmiSettings)
-        {
-            AuthorizationRuleProviderDataWmiMapper.GenerateWmiObjects(configurationObject, wmiSettings);
         }
 
         /// <summary>

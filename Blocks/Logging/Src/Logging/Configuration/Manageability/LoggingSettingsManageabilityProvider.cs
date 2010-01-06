@@ -21,8 +21,7 @@ using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageability.
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageability
 {
     /// <summary>
-    /// Represents the behavior required to provide Group Policy updates and to publish the 
-    /// <see cref="ConfigurationSetting"/> instances associated to a <see cref="LoggingSettings"/> instance
+    /// Represents the behavior required to provide Group Policy updates for a <see cref="LoggingSettings"/> instance
     /// and its internal configuration elements.
     /// </summary>
     public class LoggingSettingsManageabilityProvider
@@ -128,9 +127,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         /// <see cref="ConfigurationElementManageabilityProvider"/>.</param>
         public LoggingSettingsManageabilityProvider(IDictionary<Type, ConfigurationElementManageabilityProvider> subProviders)
             : base(subProviders)
-        {
-            LoggingSettingsWmiMapper.RegisterWmiTypes();
-        }
+        { }
 
         #region ADM generation
 
@@ -325,21 +322,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         }
 
         /// <summary>
-        /// Creates the <see cref="ConfigurationSetting"/> instances that describe the <paramref name="configurationSection"/>.
-        /// </summary>
-        /// <param name="configurationSection">The configuration section that must be managed.</param>
-        /// <param name="wmiSettings">A collection to where the generated WMI objects are to be added.</param>
-        protected override void GenerateWmiObjectsForConfigurationSection(
-            LoggingSettings configurationSection,
-            ICollection<ConfigurationSetting> wmiSettings)
-        {
-            LoggingSettingsWmiMapper.GenerateWmiObjects(configurationSection, wmiSettings);
-        }
-
-        /// <summary>
         /// Overrides the <paramref name="configurationSection"/>'s configuration elements' properties 
-        /// with the Group Policy values from the registry, if any, and creates the <see cref="ConfigurationSetting"/> 
-        /// instances that describe these configuration elements.
+        /// with the Group Policy values from the registry, if any.
         /// </summary>
         /// <param name="configurationSection">The configuration section that must be managed.</param>
         /// <param name="readGroupPolicies"><see langword="true"/> if Group Policy overrides must be applied; otherwise, 
@@ -350,44 +334,32 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         /// <param name="userKey">The <see cref="IRegistryKey"/> which holds the Group Policy overrides for the 
         /// configuration section at the user level, or <see langword="null"/> 
         /// if there is no such registry key.</param>
-        /// <param name="generateWmiObjects"><see langword="true"/> if WMI objects must be generated; otherwise, 
-        /// <see langword="false"/>.</param>
-        /// <param name="wmiSettings">A collection to where the generated WMI objects are to be added.</param>
-        protected override void OverrideWithGroupPoliciesAndGenerateWmiObjectsForConfigurationElements(
+        protected override void OverrideWithGroupPoliciesForConfigurationElements(
             LoggingSettings configurationSection,
             bool readGroupPolicies,
             IRegistryKey machineKey,
-            IRegistryKey userKey,
-            bool generateWmiObjects,
-            ICollection<ConfigurationSetting> wmiSettings)
+            IRegistryKey userKey)
         {
-            OverrideWithGroupPoliciesAndGenerateWmiObjectsForCategoryTraceSources(configurationSection,
-                readGroupPolicies, machineKey, userKey,
-                generateWmiObjects, wmiSettings);
-            OverrideWithGroupPoliciesAndGenerateWmiObjectsForSpecialTraceSources(configurationSection,
-                readGroupPolicies, machineKey, userKey,
-                generateWmiObjects, wmiSettings);
-            OverrideWithGroupPoliciesAndGenerateWmiObjectsForElementCollection(configurationSection.LogFilters,
+            OverrideWithGroupPoliciesForCategoryTraceSources(configurationSection,
+                readGroupPolicies, machineKey, userKey);
+            OverrideWithGroupPoliciesForSpecialTraceSources(configurationSection,
+                readGroupPolicies, machineKey, userKey);
+            OverrideWithGroupPoliciesForElementCollection(configurationSection.LogFilters,
                 LogFiltersKeyName,
-                readGroupPolicies, machineKey, userKey,
-                generateWmiObjects, wmiSettings);
-            OverrideWithGroupPoliciesAndGenerateWmiObjectsForElementCollection(configurationSection.Formatters,
+                readGroupPolicies, machineKey, userKey);
+            OverrideWithGroupPoliciesForElementCollection(configurationSection.Formatters,
                 LogFormattersKeyName,
-                readGroupPolicies, machineKey, userKey,
-                generateWmiObjects, wmiSettings);
-            OverrideWithGroupPoliciesAndGenerateWmiObjectsForElementCollection(configurationSection.TraceListeners,
+                readGroupPolicies, machineKey, userKey);
+            OverrideWithGroupPoliciesForElementCollection(configurationSection.TraceListeners,
                 TraceListenersKeyName,
-                readGroupPolicies, machineKey, userKey,
-                generateWmiObjects, wmiSettings);
+                readGroupPolicies, machineKey, userKey);
         }
 
-        private void OverrideWithGroupPoliciesAndGenerateWmiObjectsForCategoryTraceSources(
+        private void OverrideWithGroupPoliciesForCategoryTraceSources(
             LoggingSettings configurationSection,
             bool readGroupPolicies,
             IRegistryKey machineKey,
-            IRegistryKey userKey,
-            bool generateWmiObjects,
-            ICollection<ConfigurationSetting> wmiSettings)
+            IRegistryKey userKey)
         {
             List<TraceSourceData> elementsToRemove = new List<TraceSourceData>();
 
@@ -411,9 +383,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
                             machineSourcesKey, userSourcesKey,
                             out machineSourceKey, out userSourceKey);
 
-                        if (!OverrideWithGroupPoliciesAndGenerateWmiObjectsForTraceSource(traceSourceData,
+                        if (!OverrideWithGroupPoliciesForTraceSource(traceSourceData,
                                 readGroupPolicies, machineSourceKey, userSourceKey,
-                                generateWmiObjects, wmiSettings,
                                 SourceKindCategory))
                         {
                             elementsToRemove.Add(traceSourceData);
@@ -437,13 +408,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             }
         }
 
-        private void OverrideWithGroupPoliciesAndGenerateWmiObjectsForSpecialTraceSources(
+        private void OverrideWithGroupPoliciesForSpecialTraceSources(
             LoggingSettings configurationSection,
             bool readGroupPolicies,
             IRegistryKey machineKey,
-            IRegistryKey userKey,
-            bool generateWmiObjects,
-            ICollection<ConfigurationSetting> wmiSettings)
+            IRegistryKey userKey)
         {
             IRegistryKey machineSpecialSourcesKey = null;
             IRegistryKey userSpecialSourcesKey = null;
@@ -456,24 +425,23 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
 
                 if (configurationSection.SpecialTraceSources.AllEventsTraceSource != null)
                 {
-                    OverrideWithGroupPoliciesAndGenerateWmiObjectsForSpecialTraceSource(SpecialSourcesAllEventsKeyName,
+                    OverrideWithGroupPoliciesForSpecialTraceSource(SpecialSourcesAllEventsKeyName,
                         configurationSection.SpecialTraceSources.AllEventsTraceSource,
                         readGroupPolicies, machineSpecialSourcesKey, userSpecialSourcesKey,
-                        generateWmiObjects, wmiSettings, SourceKindAllEvents);
+                        SourceKindAllEvents);
                 }
                 if (configurationSection.SpecialTraceSources.NotProcessedTraceSource != null)
                 {
-                    OverrideWithGroupPoliciesAndGenerateWmiObjectsForSpecialTraceSource(SpecialSourcesNotProcessedKeyName,
+                    OverrideWithGroupPoliciesForSpecialTraceSource(SpecialSourcesNotProcessedKeyName,
                         configurationSection.SpecialTraceSources.NotProcessedTraceSource,
                         readGroupPolicies, machineSpecialSourcesKey, userSpecialSourcesKey,
-                        generateWmiObjects, wmiSettings, SourceKindNotProcessed);
+                        SourceKindNotProcessed);
                 }
                 if (configurationSection.SpecialTraceSources.ErrorsTraceSource != null)
                 {
-                    OverrideWithGroupPoliciesAndGenerateWmiObjectsForSpecialTraceSource(SpecialSourcesErrorsKeyName,
+                    OverrideWithGroupPoliciesForSpecialTraceSource(SpecialSourcesErrorsKeyName,
                         configurationSection.SpecialTraceSources.ErrorsTraceSource,
                         readGroupPolicies, machineSpecialSourcesKey, userSpecialSourcesKey,
-                        generateWmiObjects, wmiSettings,
                         SourceKindErrors);
                 }
             }
@@ -483,14 +451,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             }
         }
 
-        private void OverrideWithGroupPoliciesAndGenerateWmiObjectsForSpecialTraceSource(
+        private void OverrideWithGroupPoliciesForSpecialTraceSource(
             String sourceName,
             TraceSourceData traceSourceData,
             bool readGroupPolicies,
             IRegistryKey machineParentKey,
             IRegistryKey userParentKey,
-            bool generateWmiObjects,
-            ICollection<ConfigurationSetting> wmiSettings,
             String sourceKind)
         {
             if (readGroupPolicies)
@@ -504,9 +470,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
                         machineParentKey, userParentKey,
                         out machineSourceKey, out userSourceKey);
 
-                    if (!OverrideWithGroupPoliciesAndGenerateWmiObjectsForTraceSource(traceSourceData,
+                    if (!OverrideWithGroupPoliciesForTraceSource(traceSourceData,
                             readGroupPolicies, machineSourceKey, userSourceKey,
-                            generateWmiObjects, wmiSettings,
                             sourceKind))
                     {
                         // "special" trace sources cannot be removed because they aren't elements in collections
@@ -521,13 +486,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             }
         }
 
-        private bool OverrideWithGroupPoliciesAndGenerateWmiObjectsForTraceSource(
+        private bool OverrideWithGroupPoliciesForTraceSource(
             TraceSourceData traceSourceData,
             bool readGroupPolicies,
             IRegistryKey machineKey,
             IRegistryKey userKey,
-            bool generateWmiObjects,
-            ICollection<ConfigurationSetting> wmiSettings,
             String sourceKind)
         {
             if (readGroupPolicies)
@@ -563,10 +526,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
                         LogExceptionWhileOverriding(ex);
                     }
                 }
-            }
-            if (generateWmiObjects)
-            {
-                LoggingSettingsWmiMapper.GenerateTraceSourceDataWmiObjects(traceSourceData, wmiSettings, sourceKind);
             }
 
             return true;

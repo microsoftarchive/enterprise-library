@@ -10,7 +10,6 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Messaging;
@@ -48,7 +47,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         /// The name of the time to be received property.
         /// </summary>
         public const String TimeToBeReceivedPropertyName = "timeToBeReceived";
-        
+
         /// <summary>
         /// The name of the time to reach the queue property.
         /// </summary>
@@ -78,9 +77,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         /// Initialize a new instance of the <see cref="MsmqTraceListenerDataManageabilityProvider"/> class.
         /// </summary>
         public MsmqTraceListenerDataManageabilityProvider()
-        {
-            MsmqTraceListenerDataWmiMapper.RegisterWmiTypes();
-        }
+        { }
 
         /// <summary>
         /// Adds the ADM parts that represent the properties of
@@ -143,21 +140,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
 
             AddTraceOptionsPart(contentBuilder, configurationObject.TraceOutputOptions);
 
-			AddFilterPart(contentBuilder, configurationObject.Filter);
+            AddFilterPart(contentBuilder, configurationObject.Filter);
 
             AddFormattersPart(contentBuilder, configurationObject.Formatter, configurationSource);
-        }
-
-        /// <summary>
-        /// Creates the <see cref="ConfigurationSetting"/> instances that describe the 
-        /// configurationObject.
-        /// </summary>
-        /// <param name="configurationObject">The configuration object for instances that must be managed.</param>
-        /// <param name="wmiSettings">A collection to where the generated WMI objects are to be added.</param>
-        protected override void GenerateWmiObjects(MsmqTraceListenerData configurationObject,
-                                                   ICollection<ConfigurationSetting> wmiSettings)
-        {
-            MsmqTraceListenerDataWmiMapper.GenerateWmiObjects(configurationObject, wmiSettings);
         }
 
         TimeSpan GetTimeSpanOverride(IRegistryKey policyKey,
@@ -199,8 +184,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             TimeSpan timeToBeReceivedOverride = GetTimeSpanOverride(policyKey, TimeToBeReceivedPropertyName);
             TimeSpan timeToReachQueueOverride = GetTimeSpanOverride(policyKey, TimeToReachQueuePropertyName);
             TraceOptions? traceOutputOptionsOverride = policyKey.GetEnumValue<TraceOptions>(TraceOutputOptionsPropertyName);
-			SourceLevels? filterOverride = policyKey.GetEnumValue<SourceLevels>(FilterPropertyName);
-			MessageQueueTransactionType? transactionTypeOverride
+            SourceLevels? filterOverride = policyKey.GetEnumValue<SourceLevels>(FilterPropertyName);
+            MessageQueueTransactionType? transactionTypeOverride
                 = policyKey.GetEnumValue<MessageQueueTransactionType>(TransactionTypePropertyName);
             bool? usedAuthenticationOverride = policyKey.GetBoolValue(UseAuthenticationPropertyName);
             bool? useDeadLetterOverride = policyKey.GetBoolValue(UseDeadLetterQueuePropertyName);
@@ -213,8 +198,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             configurationObject.TimeToReachQueue = timeToReachQueueOverride;
             configurationObject.TimeToBeReceived = timeToBeReceivedOverride;
             configurationObject.TraceOutputOptions = traceOutputOptionsOverride.Value;
-			configurationObject.Filter = filterOverride.Value;
-			configurationObject.TransactionType = transactionTypeOverride.Value;
+            configurationObject.Filter = filterOverride.Value;
+            configurationObject.TransactionType = transactionTypeOverride.Value;
             configurationObject.UseAuthentication = usedAuthenticationOverride.Value;
             configurationObject.UseDeadLetterQueue = useDeadLetterOverride.Value;
             configurationObject.UseEncryption = useEncryptionOverride.Value;

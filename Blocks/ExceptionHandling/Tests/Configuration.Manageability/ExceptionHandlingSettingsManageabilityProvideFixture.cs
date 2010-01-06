@@ -26,7 +26,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
         ExceptionHandlingSettingsManageabilityProvider provider;
         MockRegistryKey machineKey;
         MockRegistryKey userKey;
-        IList<ConfigurationSetting> wmiSettings;
         ExceptionHandlingSettings section;
         DictionaryConfigurationSource configurationSource;
 
@@ -38,17 +37,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
                     new Dictionary<Type, ConfigurationElementManageabilityProvider>(0));
             machineKey = new MockRegistryKey(true);
             userKey = new MockRegistryKey(true);
-            wmiSettings = new List<ConfigurationSetting>();
             section = new ExceptionHandlingSettings();
             configurationSource = new DictionaryConfigurationSource();
             configurationSource.Add(ExceptionHandlingSettings.SectionName, section);
-        }
-
-        [TestCleanup]
-        public void TearDown()
-        {
-            // preventive unregister to work around WMI.NET 2.0 issues with appdomain unloading
-            ManagementEntityTypesRegistrar.UnregisterAll();
         }
 
         [TestMethod]
@@ -75,8 +66,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
         [ExpectedException(typeof(ArgumentException))]
         public void ProviderThrowsWithConfigurationObjectOfWrongType()
         {
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(new TestsConfigurationSection(), true, machineKey, userKey,
-                                                                    true, wmiSettings);
+            provider.OverrideWithGroupPolicies(new TestsConfigurationSection(), true, machineKey, userKey);
         }
 
         [TestMethod]
@@ -100,7 +90,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
                 ExceptionHandlingSettingsManageabilityProvider.PolicyTypePostHandlingActionPropertyName,
                 PostHandlingAction.NotifyRethrow.ToString());
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, null, false, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, null);
 
             Assert.AreEqual(PostHandlingAction.NotifyRethrow, exceptionType1.PostHandlingAction);
 
@@ -129,7 +119,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
                 ExceptionHandlingSettingsManageabilityProvider.PolicyTypePostHandlingActionPropertyName,
                 PostHandlingAction.NotifyRethrow.ToString());
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, null, false, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, null);
 
             Assert.AreEqual(PostHandlingAction.None, exceptionType1.PostHandlingAction);
 
@@ -168,7 +158,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
                 ExceptionHandlingSettingsManageabilityProvider.PolicyTypePostHandlingActionPropertyName,
                 PostHandlingAction.NotifyRethrow.ToString());
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, null, false, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, null);
 
             Assert.AreEqual(PostHandlingAction.NotifyRethrow, exceptionType1.PostHandlingAction);
 
@@ -197,7 +187,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
                 ExceptionHandlingSettingsManageabilityProvider.PolicyTypePostHandlingActionPropertyName,
                 PostHandlingAction.NotifyRethrow.ToString());
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, null, userKey, false, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, null, userKey);
 
             Assert.AreEqual(PostHandlingAction.NotifyRethrow, exceptionType1.PostHandlingAction);
 
@@ -225,7 +215,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
                 ExceptionHandlingSettingsManageabilityProvider.PolicyTypePostHandlingActionPropertyName,
                 PostHandlingAction.NotifyRethrow.ToString());
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, null, userKey, false, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, null, userKey);
 
             Assert.AreEqual(PostHandlingAction.None, exceptionType1.PostHandlingAction);
 
@@ -262,7 +252,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
                 ExceptionHandlingSettingsManageabilityProvider.PolicyTypePostHandlingActionPropertyName,
                 PostHandlingAction.NotifyRethrow.ToString());
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, null, userKey, false, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, null, userKey);
 
             Assert.AreEqual(PostHandlingAction.NotifyRethrow, exceptionType1.PostHandlingAction);
 
@@ -311,7 +301,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
             userPolicy2Type21Key.AddEnumValue(
                 ExceptionHandlingSettingsManageabilityProvider.PolicyTypePostHandlingActionPropertyName, PostHandlingAction.None);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual(2, section.ExceptionPolicies.Count);
             Assert.IsNotNull(section.ExceptionPolicies.Get("policy1"));
@@ -360,7 +350,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
             userPolicy2TypesKey.AddSubKey("type21", userPolicy2Type21Key);
             userPolicy2Type21Key.AddBooleanValue(ExceptionHandlingSettingsManageabilityProvider.PolicyValueName, false);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, false, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, false, machineKey, userKey);
 
             Assert.AreEqual(2, section.ExceptionPolicies.Count);
             Assert.IsNotNull(section.ExceptionPolicies.Get("policy1"));
@@ -395,7 +385,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
                 new ReplaceHandlerData("handler1", "msg", typeof(ArgumentException).AssemblyQualifiedName);
             exceptionType1.ExceptionHandlers.Add(handlerData1);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, false, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.IsTrue(registeredProvider.called);
             Assert.AreSame(handlerData1, registeredProvider.LastConfigurationObject);
@@ -454,7 +444,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
             MockRegistryKey userHandlerKey = new MockRegistryKey(false);
             userHandlersKey.AddSubKey("handler1", userHandlerKey);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, false, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.IsTrue(registeredProvider.called);
             Assert.AreSame(handlerData1, registeredProvider.LastConfigurationObject);
@@ -466,173 +456,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
                                                          machineHandlersKey, machineHandlerKey,
                                                          userPolicy1Key, userPolicy1TypesKey, userPolicy1Type1Key,
                                                          userHandlersKey, userHandlerKey));
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreNotGeneratedIfWmiIsDisabled()
-        {
-            ExceptionPolicyData policy1 = new ExceptionPolicyData("policy1");
-            section.ExceptionPolicies.Add(policy1);
-            ExceptionTypeData exceptionType1 = new ExceptionTypeData("type1", typeof(Exception), PostHandlingAction.None);
-            policy1.ExceptionTypes.Add(exceptionType1);
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, false, machineKey, userKey, false, wmiSettings);
-
-            Assert.AreEqual(0, wmiSettings.Count);
-        }
-
-        [TestMethod]
-        public void WmiSettingsForPolicyAreGeneratedIfWmiIsEnabled()
-        {
-            ExceptionPolicyData policy1 = new ExceptionPolicyData("policy1");
-            section.ExceptionPolicies.Add(policy1);
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, false, machineKey, userKey, true, wmiSettings);
-
-            Assert.AreEqual(1, wmiSettings.Count);
-            Assert.AreSame(typeof(ExceptionPolicySetting), wmiSettings[0].GetType());
-            Assert.AreEqual("policy1", ((ExceptionPolicySetting)wmiSettings[0]).Name);
-        }
-
-        [TestMethod]
-        public void WmiSettingsForExceptionTypeAreGeneratedIfWmiIsEnabled()
-        {
-            ExceptionPolicyData policy1 = new ExceptionPolicyData("policy1");
-            section.ExceptionPolicies.Add(policy1);
-            ExceptionTypeData exceptionType1 = new ExceptionTypeData("type1", typeof(Exception), PostHandlingAction.None);
-            policy1.ExceptionTypes.Add(exceptionType1);
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, false, machineKey, userKey, true, wmiSettings);
-
-            // TODO change so that order is not important
-            Assert.AreEqual(2, wmiSettings.Count);
-            Assert.AreSame(typeof(ExceptionTypeSetting), wmiSettings[0].GetType());
-            Assert.AreEqual("type1", ((ExceptionTypeSetting)wmiSettings[0]).Name);
-            Assert.AreEqual(typeof(Exception).AssemblyQualifiedName, ((ExceptionTypeSetting)wmiSettings[0]).ExceptionTypeName);
-            Assert.AreEqual(PostHandlingAction.None.ToString(), ((ExceptionTypeSetting)wmiSettings[0]).PostHandlingAction);
-            Assert.AreEqual("policy1", ((ExceptionTypeSetting)wmiSettings[0]).Policy);
-            Assert.AreSame(typeof(ExceptionPolicySetting), wmiSettings[1].GetType());
-            Assert.AreEqual("policy1", ((ExceptionPolicySetting)wmiSettings[1]).Name);
-        }
-
-        [TestMethod]
-        public void WmiSettingsForExceptionHandlerAreGeneratedWithCorrectPolicyAndTypeIfWmiIsEnabled()
-        {
-            Dictionary<Type, ConfigurationElementManageabilityProvider> subProviders
-                = new Dictionary<Type, ConfigurationElementManageabilityProvider>();
-            subProviders.Add(typeof(ReplaceHandlerData), new ReplaceHandlerDataManageabilityProvider());
-            provider = new ExceptionHandlingSettingsManageabilityProvider(subProviders);
-
-            ExceptionPolicyData policy1 = new ExceptionPolicyData("policy1");
-            section.ExceptionPolicies.Add(policy1);
-            ExceptionTypeData exceptionType1 = new ExceptionTypeData("type1", typeof(Exception), PostHandlingAction.None);
-            policy1.ExceptionTypes.Add(exceptionType1);
-            ReplaceHandlerData handler1 =
-                new ReplaceHandlerData("handler1", "message", typeof(ArgumentNullException).AssemblyQualifiedName);
-            exceptionType1.ExceptionHandlers.Add(handler1);
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, false, machineKey, userKey, true, wmiSettings);
-
-            Assert.AreEqual(3, wmiSettings.Count);
-            IDictionary<String, ExceptionHandlerSetting> handlerSettings =
-                SelectWmiSettings<ExceptionHandlerSetting>(wmiSettings);
-            Assert.AreEqual(1, handlerSettings.Count);
-            Assert.IsTrue(handlerSettings.ContainsKey("handler1"));
-            Assert.AreEqual("message", ((ReplaceHandlerSetting)handlerSettings["handler1"]).ExceptionMessage);
-            Assert.AreEqual(typeof(ArgumentNullException).AssemblyQualifiedName,
-                            ((ReplaceHandlerSetting)handlerSettings["handler1"]).ReplaceExceptionType);
-            Assert.AreEqual("policy1", handlerSettings["handler1"].Policy);
-            Assert.AreEqual("type1", handlerSettings["handler1"].ExceptionType);
-            Assert.AreEqual(0, handlerSettings["handler1"].Order);
-        }
-
-        [TestMethod]
-        public void WmiSettingsForMultipleExceptionHandlersAreGeneratedWithCorrectPolicyAndTypeIfWmiIsEnabled()
-        {
-            Dictionary<Type, ConfigurationElementManageabilityProvider> subProviders
-                = new Dictionary<Type, ConfigurationElementManageabilityProvider>();
-            subProviders.Add(typeof(ReplaceHandlerData), new ReplaceHandlerDataManageabilityProvider());
-            provider = new ExceptionHandlingSettingsManageabilityProvider(subProviders);
-
-            ExceptionPolicyData policy1 = new ExceptionPolicyData("policy1");
-            section.ExceptionPolicies.Add(policy1);
-            ExceptionTypeData exceptionType1 = new ExceptionTypeData("type1", typeof(Exception), PostHandlingAction.None);
-            policy1.ExceptionTypes.Add(exceptionType1);
-            ReplaceHandlerData handler1 =
-                new ReplaceHandlerData("handler1", "message", typeof(ArgumentNullException).AssemblyQualifiedName);
-            exceptionType1.ExceptionHandlers.Add(handler1);
-            ReplaceHandlerData handler2 =
-                new ReplaceHandlerData("handler2", "message2", typeof(ArgumentException).AssemblyQualifiedName);
-            exceptionType1.ExceptionHandlers.Add(handler2);
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, false, machineKey, userKey, true, wmiSettings);
-
-            Assert.AreEqual(4, wmiSettings.Count);
-            IDictionary<String, ExceptionHandlerSetting> handlerSettings =
-                SelectWmiSettings<ExceptionHandlerSetting>(wmiSettings);
-            Assert.AreEqual(2, handlerSettings.Count);
-
-            Assert.IsTrue(handlerSettings.ContainsKey("handler1"));
-            Assert.AreEqual("message", ((ReplaceHandlerSetting)handlerSettings["handler1"]).ExceptionMessage);
-            Assert.AreEqual(typeof(ArgumentNullException).AssemblyQualifiedName,
-                            ((ReplaceHandlerSetting)handlerSettings["handler1"]).ReplaceExceptionType);
-            Assert.AreEqual("policy1", handlerSettings["handler1"].Policy);
-            Assert.AreEqual("type1", handlerSettings["handler1"].ExceptionType);
-            Assert.AreEqual(0, handlerSettings["handler1"].Order);
-
-            Assert.IsTrue(handlerSettings.ContainsKey("handler2"));
-            Assert.AreEqual("message2", ((ReplaceHandlerSetting)handlerSettings["handler2"]).ExceptionMessage);
-            Assert.AreEqual(typeof(ArgumentException).AssemblyQualifiedName,
-                            ((ReplaceHandlerSetting)handlerSettings["handler2"]).ReplaceExceptionType);
-            Assert.AreEqual("policy1", handlerSettings["handler2"].Policy);
-            Assert.AreEqual("type1", handlerSettings["handler2"].ExceptionType);
-            Assert.AreEqual(1, handlerSettings["handler2"].Order);
-        }
-
-        [TestMethod]
-        public void WmiSettingsForMultipleExceptionHandlersOnDifferentTypesAreGeneratedWithCorrectPolicyAndTypeIfWmiIsEnabled()
-        {
-            Dictionary<Type, ConfigurationElementManageabilityProvider> subProviders
-                = new Dictionary<Type, ConfigurationElementManageabilityProvider>();
-            subProviders.Add(typeof(ReplaceHandlerData), new ReplaceHandlerDataManageabilityProvider());
-            provider = new ExceptionHandlingSettingsManageabilityProvider(subProviders);
-
-            ExceptionPolicyData policy1 = new ExceptionPolicyData("policy1");
-            section.ExceptionPolicies.Add(policy1);
-            ExceptionTypeData exceptionType1 = new ExceptionTypeData("type1", typeof(Exception), PostHandlingAction.None);
-            policy1.ExceptionTypes.Add(exceptionType1);
-            ReplaceHandlerData handler1 =
-                new ReplaceHandlerData("handler1", "message", typeof(ArgumentNullException).AssemblyQualifiedName);
-            exceptionType1.ExceptionHandlers.Add(handler1);
-            ExceptionTypeData exceptionType2 =
-                new ExceptionTypeData("type2", typeof(NullReferenceException), PostHandlingAction.None);
-            policy1.ExceptionTypes.Add(exceptionType2);
-            ReplaceHandlerData handler2 =
-                new ReplaceHandlerData("handler2", "message2", typeof(ArgumentException).AssemblyQualifiedName);
-            exceptionType2.ExceptionHandlers.Add(handler2);
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, false, machineKey, userKey, true, wmiSettings);
-
-            Assert.AreEqual(5, wmiSettings.Count);
-            IDictionary<String, ExceptionHandlerSetting> handlerSettings =
-                SelectWmiSettings<ExceptionHandlerSetting>(wmiSettings);
-            Assert.AreEqual(2, handlerSettings.Count);
-
-            Assert.IsTrue(handlerSettings.ContainsKey("handler1"));
-            Assert.AreEqual("message", ((ReplaceHandlerSetting)handlerSettings["handler1"]).ExceptionMessage);
-            Assert.AreEqual(typeof(ArgumentNullException).AssemblyQualifiedName,
-                            ((ReplaceHandlerSetting)handlerSettings["handler1"]).ReplaceExceptionType);
-            Assert.AreEqual("policy1", handlerSettings["handler1"].Policy);
-            Assert.AreEqual("type1", handlerSettings["handler1"].ExceptionType);
-            Assert.AreEqual(0, handlerSettings["handler1"].Order);
-
-            Assert.IsTrue(handlerSettings.ContainsKey("handler2"));
-            Assert.AreEqual("message2", ((ReplaceHandlerSetting)handlerSettings["handler2"]).ExceptionMessage);
-            Assert.AreEqual(typeof(ArgumentException).AssemblyQualifiedName,
-                            ((ReplaceHandlerSetting)handlerSettings["handler2"]).ReplaceExceptionType);
-            Assert.AreEqual("policy1", handlerSettings["handler2"].Policy);
-            Assert.AreEqual("type2", handlerSettings["handler2"].ExceptionType);
-            Assert.AreEqual(0, handlerSettings["handler2"].Order);
         }
 
         [TestMethod]
@@ -746,23 +569,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
 
             Assert.IsFalse(subCategoriesEnumerator.MoveNext());
             Assert.IsFalse(categoriesEnumerator.MoveNext());
-        }
-
-        static IDictionary<String, T> SelectWmiSettings<T>(IEnumerable<ConfigurationSetting> wmiSettings)
-            where T : ExceptionHandlerSetting
-        {
-            Dictionary<String, T> result = new Dictionary<string, T>();
-
-            foreach (ConfigurationSetting setting in wmiSettings)
-            {
-                T namedSetting = setting as T;
-                if (namedSetting != null)
-                {
-                    result.Add(namedSetting.Name, namedSetting);
-                }
-            }
-
-            return result;
         }
     }
 }

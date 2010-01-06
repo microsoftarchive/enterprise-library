@@ -33,7 +33,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security
 
 			Installers.Add(new ReflectionInstaller<EventLogInstallerBuilder>());
 			Installers.Add(new ReflectionInstaller<PerformanceCounterInstallerBuilder>());
-			Installers.Add(new DefaultManagementInstaller());
 		}
 	}
 }

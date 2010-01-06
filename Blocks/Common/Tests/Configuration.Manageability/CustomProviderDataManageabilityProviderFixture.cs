@@ -13,7 +13,6 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability.Adm;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability.Tests.Mocks;
-using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration.Manageability;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration.Manageability.Mocks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -25,7 +24,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
         MockCustomProviderDataManageabilityProvider provider;
         MockRegistryKey machineKey;
         MockRegistryKey userKey;
-        IList<ConfigurationSetting> wmiSettings;
         MockCustomProviderData configurationObject;
 
         [TestInitialize]
@@ -34,7 +32,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
             provider = new MockCustomProviderDataManageabilityProvider();
             machineKey = new MockRegistryKey(true);
             userKey = new MockRegistryKey(true);
-            wmiSettings = new List<ConfigurationSetting>();
             configurationObject = new MockCustomProviderData();
         }
 
@@ -42,7 +39,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
         [ExpectedException(typeof(ArgumentException))]
         public void ProviderThrowsWithConfigurationObjectOfWrongType()
         {
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(new TestsConfigurationSection(), true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(new TestsConfigurationSection(), true, machineKey, userKey);
         }
 
         [TestMethod]
@@ -52,7 +49,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
             configurationObject.Attributes.Add("name1", "value1");
             configurationObject.Attributes.Add("name2", "value2");
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, null, null, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, null, null);
 
             Assert.AreSame(typeof(Object), configurationObject.Type);
             Assert.AreEqual(2, configurationObject.Attributes.Count);
@@ -68,7 +65,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
             machineKey.AddStringValue(MockCustomProviderDataManageabilityProvider.ProviderTypePropertyName, typeof(String).AssemblyQualifiedName);
             machineKey.AddStringValue(MockCustomProviderDataManageabilityProvider.AttributesPropertyName, "");
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, machineKey, null, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, machineKey, null);
 
             Assert.AreSame(typeof(String), configurationObject.Type);
             Assert.AreEqual(0, configurationObject.Attributes.Count);
@@ -83,7 +80,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
             machineKey.AddStringValue(MockCustomProviderDataManageabilityProvider.AttributesPropertyName,
                                       "name3=value3;name4=value4;name5=value 5");
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, machineKey, null, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, machineKey, null);
 
             Assert.AreSame(typeof(String), configurationObject.Type);
             Assert.AreEqual(3, configurationObject.Attributes.Count);
@@ -100,7 +97,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
             userKey.AddStringValue(MockCustomProviderDataManageabilityProvider.ProviderTypePropertyName, typeof(String).AssemblyQualifiedName);
             userKey.AddStringValue(MockCustomProviderDataManageabilityProvider.AttributesPropertyName, "");
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, null, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, null, userKey);
 
             Assert.AreSame(typeof(String), configurationObject.Type);
             Assert.AreEqual(0, configurationObject.Attributes.Count);
@@ -115,7 +112,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
             userKey.AddStringValue(MockCustomProviderDataManageabilityProvider.AttributesPropertyName,
                                    "name3=value3;name4=value4;name5=value 5");
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, null, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, null, userKey);
 
             Assert.AreSame(typeof(String), configurationObject.Type);
             Assert.AreEqual(3, configurationObject.Attributes.Count);
@@ -132,7 +129,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
             machineKey.AddStringValue(MockCustomProviderDataManageabilityProvider.ProviderTypePropertyName, typeof(String).AssemblyQualifiedName);
             machineKey.AddStringValue(MockCustomProviderDataManageabilityProvider.AttributesPropertyName, "");
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, machineKey, null, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, machineKey, null);
 
             Assert.AreSame(typeof(String), configurationObject.Type);
         }
@@ -144,72 +141,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
 
             machineKey.AddStringValue(MockCustomProviderDataManageabilityProvider.ProviderTypePropertyName, "An invalid type name");
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, machineKey, null, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, machineKey, null);
 
             Assert.AreSame(typeof(Object), configurationObject.Type);
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreNotGeneratedIfWmiIsDisabled()
-        {
-            configurationObject.Type = typeof(Object);
-            configurationObject.Attributes.Add("name1", "value1");
-            configurationObject.Attributes.Add("name2", "value2");
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, false, machineKey, userKey, false, wmiSettings);
-
-            Assert.AreEqual(0, wmiSettings.Count);
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreGeneratedIfWmiIsEnabled()
-        {
-            configurationObject.Type = typeof(Object);
-            configurationObject.Attributes.Add("name1", "value1");
-            configurationObject.Attributes.Add("name2", "value2");
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, false, machineKey, userKey, true, wmiSettings);
-
-            Assert.AreEqual(1, wmiSettings.Count);
-            Assert.AreSame(typeof(MockCustomProviderSetting), wmiSettings[0].GetType());
-            Assert.AreEqual(typeof(Object).AssemblyQualifiedName, ((MockCustomProviderSetting)wmiSettings[0]).providerTypeName);
-
-            Dictionary<String, String> attributesDictionary = new Dictionary<string, string>();
-            foreach (String entry in ((MockCustomProviderSetting)wmiSettings[0]).attributes)
-            {
-                KeyValuePairParsingTestHelper.ExtractKeyValueEntries(entry, attributesDictionary);
-            }
-            Assert.AreEqual(2, attributesDictionary.Count);
-            Assert.AreEqual("value1", attributesDictionary["name1"]);
-            Assert.AreEqual("value2", attributesDictionary["name2"]);
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreGeneratedWithPolicyOverridesIfWmiIsEnabled()
-        {
-            configurationObject.Type = typeof(Object);
-            configurationObject.Attributes.Add("name1", "value1");
-            configurationObject.Attributes.Add("name2", "value2");
-
-            machineKey.AddStringValue(MockCustomProviderDataManageabilityProvider.ProviderTypePropertyName, typeof(String).AssemblyQualifiedName);
-            machineKey.AddStringValue(MockCustomProviderDataManageabilityProvider.AttributesPropertyName,
-                                      "name3=value3;name4=;name5=value 5");
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, machineKey, userKey, true, wmiSettings);
-
-            Assert.AreEqual(1, wmiSettings.Count);
-            Assert.AreSame(typeof(MockCustomProviderSetting), wmiSettings[0].GetType());
-            Assert.AreEqual(typeof(String).AssemblyQualifiedName, ((MockCustomProviderSetting)wmiSettings[0]).providerTypeName);
-
-            Dictionary<String, String> attributesDictionary = new Dictionary<string, string>();
-            foreach (String entry in ((MockCustomProviderSetting)wmiSettings[0]).attributes)
-            {
-                KeyValuePairParsingTestHelper.ExtractKeyValueEntries(entry, attributesDictionary);
-            }
-            Assert.AreEqual(3, attributesDictionary.Count);
-            Assert.AreEqual("value3", attributesDictionary["name3"]);
-            Assert.AreEqual("", attributesDictionary["name4"]);
-            Assert.AreEqual("value 5", attributesDictionary["name5"]);
         }
 
         [TestMethod]

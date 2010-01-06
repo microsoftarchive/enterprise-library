@@ -30,7 +30,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Configuration.M
         FormattedDatabaseTraceListenerDataManageabilityProvider provider;
         MockRegistryKey machineKey;
         MockRegistryKey userKey;
-        IList<ConfigurationSetting> wmiSettings;
         FormattedDatabaseTraceListenerData configurationObject;
 
         [TestInitialize]
@@ -39,15 +38,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Configuration.M
             provider = new FormattedDatabaseTraceListenerDataManageabilityProvider();
             machineKey = new MockRegistryKey(true);
             userKey = new MockRegistryKey(true);
-            wmiSettings = new List<ConfigurationSetting>();
             configurationObject = new FormattedDatabaseTraceListenerData();
-        }
-
-        [TestCleanup]
-        public void TearDown()
-        {
-            // preventive unregister to work around WMI.NET 2.0 issues with appdomain unloading
-            ManagementEntityTypesRegistrar.UnregisterAll();
         }
 
         [TestMethod]
@@ -75,7 +66,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Configuration.M
         [ExpectedException(typeof(ArgumentException))]
         public void ProviderThrowsWithConfigurationObjectOfWrongType()
         {
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(new TestsConfigurationSection(), true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(new TestsConfigurationSection(), true, machineKey, userKey);
         }
 
         [TestMethod]
@@ -88,7 +79,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Configuration.M
             configurationObject.TraceOutputOptions = TraceOptions.None;
             configurationObject.Filter = SourceLevels.Error;
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, null, null, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, null, null);
 
             Assert.AreEqual("add category", configurationObject.AddCategoryStoredProcName);
             Assert.AreEqual("database", configurationObject.DatabaseInstanceName);
@@ -115,7 +106,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Configuration.M
             machineKey.AddStringValue(FormattedDatabaseTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, "ProcessId, ThreadId");
             machineKey.AddStringValue(FormattedDatabaseTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, machineKey, null, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, machineKey, null);
 
             Assert.AreEqual("overriden add category", configurationObject.AddCategoryStoredProcName);
             Assert.AreEqual("overriden database", configurationObject.DatabaseInstanceName);
@@ -141,7 +132,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Configuration.M
             userKey.AddStringValue(FormattedDatabaseTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, "ProcessId, ThreadId");
             userKey.AddStringValue(FormattedDatabaseTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, null, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, null, userKey);
 
             Assert.AreEqual("overriden add category", configurationObject.AddCategoryStoredProcName);
             Assert.AreEqual("overriden database", configurationObject.DatabaseInstanceName);
@@ -167,7 +158,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Configuration.M
             machineKey.AddStringValue(FormattedDatabaseTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, "ProcessId, ThreadId");
             machineKey.AddStringValue(FormattedDatabaseTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, false, machineKey, null, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, false, machineKey, null);
 
             Assert.AreEqual("add category", configurationObject.AddCategoryStoredProcName);
             Assert.AreEqual("database", configurationObject.DatabaseInstanceName);
@@ -189,75 +180,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Configuration.M
             machineKey.AddStringValue(FormattedDatabaseTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, "ProcessId, ThreadId");
             machineKey.AddStringValue(FormattedDatabaseTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, machineKey, userKey);
 
             Assert.AreEqual("", configurationObject.Formatter);
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreNotGeneratedIfWmiIsDisabled()
-        {
-            configurationObject.AddCategoryStoredProcName = "add category";
-            configurationObject.DatabaseInstanceName = "database";
-            configurationObject.Formatter = "formatter";
-            configurationObject.WriteLogStoredProcName = "write";
-            configurationObject.TraceOutputOptions = TraceOptions.None;
-            configurationObject.Filter = SourceLevels.Error;
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, false, machineKey, userKey, false, wmiSettings);
-
-            Assert.AreEqual(0, wmiSettings.Count);
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreGeneratedIfWmiIsEnabled()
-        {
-            configurationObject.AddCategoryStoredProcName = "add category";
-            configurationObject.DatabaseInstanceName = "database";
-            configurationObject.Formatter = "formatter";
-            configurationObject.WriteLogStoredProcName = "write";
-            configurationObject.TraceOutputOptions = TraceOptions.None;
-            configurationObject.Filter = SourceLevels.Error;
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, false, machineKey, userKey, true, wmiSettings);
-
-            Assert.AreEqual(1, wmiSettings.Count);
-            Assert.AreSame(typeof(FormattedDatabaseTraceListenerSetting), wmiSettings[0].GetType());
-            Assert.AreEqual(configurationObject.AddCategoryStoredProcName, ((FormattedDatabaseTraceListenerSetting)wmiSettings[0]).AddCategoryStoredProcName);
-            Assert.AreEqual(configurationObject.DatabaseInstanceName, ((FormattedDatabaseTraceListenerSetting)wmiSettings[0]).DatabaseInstanceName);
-            Assert.AreEqual(configurationObject.Formatter, ((FormattedDatabaseTraceListenerSetting)wmiSettings[0]).Formatter);
-            Assert.AreEqual(configurationObject.TraceOutputOptions.ToString(), ((FormattedDatabaseTraceListenerSetting)wmiSettings[0]).TraceOutputOptions);
-            Assert.AreEqual(configurationObject.Filter.ToString(), ((FormattedDatabaseTraceListenerSetting)wmiSettings[0]).Filter);
-            Assert.AreEqual(configurationObject.WriteLogStoredProcName, ((FormattedDatabaseTraceListenerSetting)wmiSettings[0]).WriteLogStoredProcName);
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreGeneratedWithPolicyOverridesIfWmiIsEnabled()
-        {
-            configurationObject.AddCategoryStoredProcName = "add category";
-            configurationObject.DatabaseInstanceName = "database";
-            configurationObject.Formatter = "formatter";
-            configurationObject.WriteLogStoredProcName = "write";
-            configurationObject.TraceOutputOptions = TraceOptions.None;
-            configurationObject.Filter = SourceLevels.Error;
-
-            machineKey.AddStringValue(FormattedDatabaseTraceListenerDataManageabilityProvider.AddCategoryStoredProcNamePropertyName, "overriden add category");
-            machineKey.AddStringValue(FormattedDatabaseTraceListenerDataManageabilityProvider.DatabaseInstanceNamePropertyName, "overriden database");
-            machineKey.AddStringValue(FormattedDatabaseTraceListenerDataManageabilityProvider.FormatterPropertyName, "overriden formatter");
-            machineKey.AddStringValue(FormattedDatabaseTraceListenerDataManageabilityProvider.WriteLogStoredProcNamePropertyName, "overriden write");
-            machineKey.AddStringValue(FormattedDatabaseTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, "ProcessId, ThreadId");
-            machineKey.AddStringValue(FormattedDatabaseTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, machineKey, null, true, wmiSettings);
-
-            Assert.AreEqual(1, wmiSettings.Count);
-            Assert.AreSame(typeof(FormattedDatabaseTraceListenerSetting), wmiSettings[0].GetType());
-            Assert.AreEqual(configurationObject.AddCategoryStoredProcName, ((FormattedDatabaseTraceListenerSetting)wmiSettings[0]).AddCategoryStoredProcName);
-            Assert.AreEqual(configurationObject.DatabaseInstanceName, ((FormattedDatabaseTraceListenerSetting)wmiSettings[0]).DatabaseInstanceName);
-            Assert.AreEqual(configurationObject.Formatter, ((FormattedDatabaseTraceListenerSetting)wmiSettings[0]).Formatter);
-            Assert.AreEqual(configurationObject.TraceOutputOptions.ToString(), ((FormattedDatabaseTraceListenerSetting)wmiSettings[0]).TraceOutputOptions);
-            Assert.AreEqual(configurationObject.Filter.ToString(), ((FormattedDatabaseTraceListenerSetting)wmiSettings[0]).Filter);
-            Assert.AreEqual(configurationObject.WriteLogStoredProcName, ((FormattedDatabaseTraceListenerSetting)wmiSettings[0]).WriteLogStoredProcName);
         }
 
         [TestMethod]

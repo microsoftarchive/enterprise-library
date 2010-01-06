@@ -154,6 +154,17 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_type_picking_add_command
             Assert.AreEqual(TestableTypePickingCollectionElementAddCommand.ExceptionTypeUsed.Name, AddedElement.Name);
         }
 
+
+        [TestMethod]
+        public void then_name_is_unique_when_adding_same_type_twice()
+        {
+            var firstElementName = AddedElement.Name;
+            addCommand.Execute(null);
+            var otherElementName = AddedElement.Name;
+
+            Assert.AreNotEqual(firstElementName, otherElementName);
+        }
+
         [TestMethod]
         public void then_type_property_is_set_to_selected_type()
         {

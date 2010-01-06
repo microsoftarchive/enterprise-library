@@ -47,6 +47,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
 
             /// <summary/>
             public const string AddExceptionHandlingBlockCommand = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.AddExceptionHandlingBlockCommand, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public const string AddExceptionTypeCommand = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.ExceptionTypeAddCommand, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
         }
     }
 }

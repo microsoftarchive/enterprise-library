@@ -15,6 +15,7 @@ using Microsoft.Practices.EnterpriseLibrary.Caching.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using System.Collections.Generic;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Data.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.Database.Configuration
 {
@@ -24,7 +25,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Database.Configuration
 	/// </summary>
     [ResourceDescription(typeof(DesignResources), "DataCacheStorageDataDescription")]
     [ResourceDisplayName(typeof(DesignResources), "DataCacheStorageDataDisplayName")]
-    [AddSateliteProviderCommand("connectionStrings")]
+    [AddSateliteProviderCommand("connectionStrings", typeof(DatabaseSettings), "DefaultDatabase", "DatabaseInstanceName")]
     [System.ComponentModel.Browsable(true)]
     public class DataCacheStorageData : CacheStorageData
     {

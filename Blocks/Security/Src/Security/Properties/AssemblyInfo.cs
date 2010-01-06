@@ -11,23 +11,21 @@
 
 using System.Management.Instrumentation;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Security;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Microsoft.Practices.EnterpriseLibrary.Security.Configuration;
 
-[assembly : AssemblyTitle("Enterprise Library Security Application Block")]
-[assembly : AssemblyDescription("Enterprise Library Security Application Block")]
-[assembly : AssemblyVersion("4.1.0.0")]
-[assembly : Instrumented(@"root\EnterpriseLibrary")]
-[assembly : WmiConfiguration(@"root\EnterpriseLibrary", HostingModel = ManagementHostingModel.Decoupled, IdentifyLevel = false)]
-[assembly : AllowPartiallyTrustedCallers]
-[assembly : SecurityTransparent]
+[assembly: AssemblyTitle("Enterprise Library Security Application Block")]
+[assembly: AssemblyDescription("Enterprise Library Security Application Block")]
+[assembly: AssemblyVersion("4.1.0.0")]
+[assembly: Instrumented(@"root\EnterpriseLibrary")]
+[assembly: AllowPartiallyTrustedCallers]
+[assembly: SecurityTransparent]
 
 
 [assembly: HandlesSection(SecuritySettings.SectionName)]
 [assembly: AddApplicationBlockCommand(
-                SecuritySettings.SectionName, 
+                SecuritySettings.SectionName,
                 typeof(SecuritySettings),
-                TitleResourceName="AddSecuritySettings",
-                TitleResourceType=typeof(DesignResources))]
+                TitleResourceName = "AddSecuritySettings",
+                TitleResourceType = typeof(DesignResources))]

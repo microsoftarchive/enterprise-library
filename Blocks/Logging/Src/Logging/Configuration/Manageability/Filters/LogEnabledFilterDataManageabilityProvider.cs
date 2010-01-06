@@ -10,7 +10,6 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability.Adm;
@@ -35,9 +34,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         /// Initilize a new instance of the <see cref="LogEnabledFilterDataManageabilityProvider"/> class.
         /// </summary>
         public LogEnabledFilterDataManageabilityProvider()
-        {
-            LogEnabledFilterDataWmiMapper.RegisterWmiTypes();
-        }
+        { }
 
         /// <summary>
         /// Gets the template for the name of the policy associated to the object.
@@ -72,18 +69,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             contentBuilder.AddCheckboxPart(Resources.LogEnabledFilterEnabledPartName,
                                            EnabledPropertyName,
                                            configurationObject.Enabled);
-        }
-
-        /// <summary>
-        /// Creates the <see cref="ConfigurationSetting"/> instances that describe the 
-        /// configurationObject.
-        /// </summary>
-        /// <param name="configurationObject">The configuration object for instances that must be managed.</param>
-        /// <param name="wmiSettings">A collection to where the generated WMI objects are to be added.</param>
-        protected override void GenerateWmiObjects(LogEnabledFilterData configurationObject,
-                                                   ICollection<ConfigurationSetting> wmiSettings)
-        {
-            LogEnabledFilterDataWmiMapper.GenerateWmiObjects(configurationObject, wmiSettings);
         }
 
         /// <summary>

@@ -30,7 +30,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         MsmqTraceListenerDataManageabilityProvider provider;
         MockRegistryKey machineKey;
         MockRegistryKey userKey;
-        IList<ConfigurationSetting> wmiSettings;
         MsmqTraceListenerData configurationObject;
 
         [TestInitialize]
@@ -39,15 +38,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             provider = new MsmqTraceListenerDataManageabilityProvider();
             machineKey = new MockRegistryKey(true);
             userKey = new MockRegistryKey(true);
-            wmiSettings = new List<ConfigurationSetting>();
             configurationObject = new MsmqTraceListenerData();
-        }
-
-        [TestCleanup]
-        public void TearDown()
-        {
-            // preventive unregister to work around WMI.NET 2.0 issues with appdomain unloading
-            ManagementEntityTypesRegistrar.UnregisterAll();
         }
 
         [TestMethod]
@@ -75,7 +66,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         [ExpectedException(typeof(ArgumentException))]
         public void ProviderThrowsWithConfigurationObjectOfWrongType()
         {
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(new TestsConfigurationSection(), true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(new TestsConfigurationSection(), true, machineKey, userKey);
         }
 
         [TestMethod]
@@ -88,13 +79,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             configurationObject.TimeToBeReceived = TimeSpan.FromSeconds(500);
             configurationObject.TimeToReachQueue = TimeSpan.FromSeconds(1000);
             configurationObject.TraceOutputOptions = TraceOptions.None;
-			configurationObject.Filter = SourceLevels.Error;
-			configurationObject.TransactionType = MessageQueueTransactionType.None;
+            configurationObject.Filter = SourceLevels.Error;
+            configurationObject.TransactionType = MessageQueueTransactionType.None;
             configurationObject.UseAuthentication = false;
             configurationObject.UseDeadLetterQueue = true;
             configurationObject.UseEncryption = false;
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, null, null, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, null, null);
 
             Assert.AreEqual("formatter", configurationObject.Formatter);
             Assert.AreEqual(MessagePriority.Normal, configurationObject.MessagePriority);
@@ -103,8 +94,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             Assert.AreEqual(TimeSpan.FromSeconds(500), configurationObject.TimeToBeReceived);
             Assert.AreEqual(TimeSpan.FromSeconds(1000), configurationObject.TimeToReachQueue);
             Assert.AreEqual(TraceOptions.None, configurationObject.TraceOutputOptions);
-			Assert.AreEqual(SourceLevels.Error, configurationObject.Filter);
-			Assert.AreEqual(MessageQueueTransactionType.None, configurationObject.TransactionType);
+            Assert.AreEqual(SourceLevels.Error, configurationObject.Filter);
+            Assert.AreEqual(MessageQueueTransactionType.None, configurationObject.TransactionType);
             Assert.AreEqual(false, configurationObject.UseAuthentication);
             Assert.AreEqual(true, configurationObject.UseDeadLetterQueue);
             Assert.AreEqual(false, configurationObject.UseEncryption);
@@ -120,8 +111,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             configurationObject.TimeToBeReceived = TimeSpan.FromSeconds(500);
             configurationObject.TimeToReachQueue = TimeSpan.FromSeconds(1000);
             configurationObject.TraceOutputOptions = TraceOptions.None;
-			configurationObject.Filter = SourceLevels.Error;
-			configurationObject.TransactionType = MessageQueueTransactionType.None;
+            configurationObject.Filter = SourceLevels.Error;
+            configurationObject.TransactionType = MessageQueueTransactionType.None;
             configurationObject.UseAuthentication = false;
             configurationObject.UseDeadLetterQueue = true;
             configurationObject.UseEncryption = false;
@@ -133,13 +124,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             machineKey.AddStringValue(MsmqTraceListenerDataManageabilityProvider.TimeToBeReceivedPropertyName, Convert.ToString(TimeSpan.FromSeconds(100), CultureInfo.CurrentCulture));
             machineKey.AddStringValue(MsmqTraceListenerDataManageabilityProvider.TimeToReachQueuePropertyName, Convert.ToString(TimeSpan.FromSeconds(200), CultureInfo.CurrentCulture));
             machineKey.AddStringValue(MsmqTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, "ProcessId, ThreadId");
-			machineKey.AddStringValue(MsmqTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
-			machineKey.AddStringValue(MsmqTraceListenerDataManageabilityProvider.TransactionTypePropertyName, MessageQueueTransactionType.Single.ToString());
+            machineKey.AddStringValue(MsmqTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
+            machineKey.AddStringValue(MsmqTraceListenerDataManageabilityProvider.TransactionTypePropertyName, MessageQueueTransactionType.Single.ToString());
             machineKey.AddBooleanValue(MsmqTraceListenerDataManageabilityProvider.UseAuthenticationPropertyName, true);
             machineKey.AddBooleanValue(MsmqTraceListenerDataManageabilityProvider.UseDeadLetterQueuePropertyName, false);
             machineKey.AddBooleanValue(MsmqTraceListenerDataManageabilityProvider.UseEncryptionPropertyName, true);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, machineKey, null, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, machineKey, null);
 
             Assert.AreEqual("overriden formatter", configurationObject.Formatter);
             Assert.AreEqual(MessagePriority.High, configurationObject.MessagePriority);
@@ -148,8 +139,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             Assert.AreEqual(TimeSpan.FromSeconds(100), configurationObject.TimeToBeReceived);
             Assert.AreEqual(TimeSpan.FromSeconds(200), configurationObject.TimeToReachQueue);
             Assert.AreEqual(TraceOptions.ProcessId | TraceOptions.ThreadId, configurationObject.TraceOutputOptions);
-			Assert.AreEqual(SourceLevels.Critical, configurationObject.Filter);
-			Assert.AreEqual(MessageQueueTransactionType.Single, configurationObject.TransactionType);
+            Assert.AreEqual(SourceLevels.Critical, configurationObject.Filter);
+            Assert.AreEqual(MessageQueueTransactionType.Single, configurationObject.TransactionType);
             Assert.AreEqual(true, configurationObject.UseAuthentication);
             Assert.AreEqual(false, configurationObject.UseDeadLetterQueue);
             Assert.AreEqual(true, configurationObject.UseEncryption);
@@ -165,8 +156,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             configurationObject.TimeToBeReceived = TimeSpan.MaxValue;
             configurationObject.TimeToReachQueue = TimeSpan.MinValue;
             configurationObject.TraceOutputOptions = TraceOptions.None;
-			configurationObject.Filter = SourceLevels.Error;
-			configurationObject.TransactionType = MessageQueueTransactionType.None;
+            configurationObject.Filter = SourceLevels.Error;
+            configurationObject.TransactionType = MessageQueueTransactionType.None;
             configurationObject.UseAuthentication = false;
             configurationObject.UseDeadLetterQueue = true;
             configurationObject.UseEncryption = false;
@@ -178,13 +169,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             userKey.AddStringValue(MsmqTraceListenerDataManageabilityProvider.TimeToBeReceivedPropertyName, Convert.ToString(TimeSpan.FromSeconds(100), CultureInfo.CurrentCulture));
             userKey.AddStringValue(MsmqTraceListenerDataManageabilityProvider.TimeToReachQueuePropertyName, Convert.ToString(TimeSpan.FromSeconds(200), CultureInfo.CurrentCulture));
             userKey.AddStringValue(MsmqTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, "ProcessId, ThreadId");
-			userKey.AddStringValue(MsmqTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
-			userKey.AddStringValue(MsmqTraceListenerDataManageabilityProvider.TransactionTypePropertyName, MessageQueueTransactionType.Single.ToString());
+            userKey.AddStringValue(MsmqTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
+            userKey.AddStringValue(MsmqTraceListenerDataManageabilityProvider.TransactionTypePropertyName, MessageQueueTransactionType.Single.ToString());
             userKey.AddBooleanValue(MsmqTraceListenerDataManageabilityProvider.UseAuthenticationPropertyName, true);
             userKey.AddBooleanValue(MsmqTraceListenerDataManageabilityProvider.UseDeadLetterQueuePropertyName, false);
             userKey.AddBooleanValue(MsmqTraceListenerDataManageabilityProvider.UseEncryptionPropertyName, true);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, null, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, null, userKey);
 
             Assert.AreEqual("overriden formatter", configurationObject.Formatter);
             Assert.AreEqual(MessagePriority.High, configurationObject.MessagePriority);
@@ -193,8 +184,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             Assert.AreEqual(TimeSpan.FromSeconds(100), configurationObject.TimeToBeReceived);
             Assert.AreEqual(TimeSpan.FromSeconds(200), configurationObject.TimeToReachQueue);
             Assert.AreEqual(TraceOptions.ProcessId | TraceOptions.ThreadId, configurationObject.TraceOutputOptions);
-			Assert.AreEqual(SourceLevels.Critical, configurationObject.Filter);
-			Assert.AreEqual(MessageQueueTransactionType.Single, configurationObject.TransactionType);
+            Assert.AreEqual(SourceLevels.Critical, configurationObject.Filter);
+            Assert.AreEqual(MessageQueueTransactionType.Single, configurationObject.TransactionType);
             Assert.AreEqual(true, configurationObject.UseAuthentication);
             Assert.AreEqual(false, configurationObject.UseDeadLetterQueue);
             Assert.AreEqual(true, configurationObject.UseEncryption);
@@ -210,8 +201,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             configurationObject.TimeToBeReceived = TimeSpan.FromSeconds(500);
             configurationObject.TimeToReachQueue = TimeSpan.FromSeconds(1000);
             configurationObject.TraceOutputOptions = TraceOptions.None;
-			configurationObject.Filter = SourceLevels.Error;
-			configurationObject.TransactionType = MessageQueueTransactionType.None;
+            configurationObject.Filter = SourceLevels.Error;
+            configurationObject.TransactionType = MessageQueueTransactionType.None;
             configurationObject.UseAuthentication = false;
             configurationObject.UseDeadLetterQueue = true;
             configurationObject.UseEncryption = false;
@@ -223,13 +214,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             machineKey.AddStringValue(MsmqTraceListenerDataManageabilityProvider.TimeToBeReceivedPropertyName, Convert.ToString(TimeSpan.FromSeconds(100), CultureInfo.CurrentCulture));
             machineKey.AddStringValue(MsmqTraceListenerDataManageabilityProvider.TimeToReachQueuePropertyName, Convert.ToString(TimeSpan.FromSeconds(200), CultureInfo.CurrentCulture));
             machineKey.AddStringValue(MsmqTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, "ProcessId, ThreadId");
-			machineKey.AddStringValue(MsmqTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
-			machineKey.AddStringValue(MsmqTraceListenerDataManageabilityProvider.TransactionTypePropertyName, MessageQueueTransactionType.Single.ToString());
+            machineKey.AddStringValue(MsmqTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
+            machineKey.AddStringValue(MsmqTraceListenerDataManageabilityProvider.TransactionTypePropertyName, MessageQueueTransactionType.Single.ToString());
             machineKey.AddBooleanValue(MsmqTraceListenerDataManageabilityProvider.UseAuthenticationPropertyName, true);
             machineKey.AddBooleanValue(MsmqTraceListenerDataManageabilityProvider.UseDeadLetterQueuePropertyName, false);
             machineKey.AddBooleanValue(MsmqTraceListenerDataManageabilityProvider.UseEncryptionPropertyName, true);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, false, machineKey, null, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, false, machineKey, null);
 
             Assert.AreEqual("formatter", configurationObject.Formatter);
             Assert.AreEqual(MessagePriority.Normal, configurationObject.MessagePriority);
@@ -238,8 +229,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             Assert.AreEqual(TimeSpan.FromSeconds(500), configurationObject.TimeToBeReceived);
             Assert.AreEqual(TimeSpan.FromSeconds(1000), configurationObject.TimeToReachQueue);
             Assert.AreEqual(TraceOptions.None, configurationObject.TraceOutputOptions);
-			Assert.AreEqual(SourceLevels.Error, configurationObject.Filter);
-			Assert.AreEqual(MessageQueueTransactionType.None, configurationObject.TransactionType);
+            Assert.AreEqual(SourceLevels.Error, configurationObject.Filter);
+            Assert.AreEqual(MessageQueueTransactionType.None, configurationObject.TransactionType);
             Assert.AreEqual(false, configurationObject.UseAuthentication);
             Assert.AreEqual(true, configurationObject.UseDeadLetterQueue);
             Assert.AreEqual(false, configurationObject.UseEncryption);
@@ -255,8 +246,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             configurationObject.TimeToBeReceived = TimeSpan.FromSeconds(500);
             configurationObject.TimeToReachQueue = TimeSpan.FromSeconds(1000);
             configurationObject.TraceOutputOptions = TraceOptions.None;
-			configurationObject.Filter = SourceLevels.Error;
-			configurationObject.TransactionType = MessageQueueTransactionType.None;
+            configurationObject.Filter = SourceLevels.Error;
+            configurationObject.TransactionType = MessageQueueTransactionType.None;
             configurationObject.UseAuthentication = false;
             configurationObject.UseDeadLetterQueue = true;
             configurationObject.UseEncryption = false;
@@ -268,13 +259,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             machineKey.AddStringValue(MsmqTraceListenerDataManageabilityProvider.TimeToBeReceivedPropertyName, "invalid");
             machineKey.AddStringValue(MsmqTraceListenerDataManageabilityProvider.TimeToReachQueuePropertyName, "invalid");
             machineKey.AddStringValue(MsmqTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, "ProcessId, ThreadId");
-			machineKey.AddStringValue(MsmqTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
-			machineKey.AddStringValue(MsmqTraceListenerDataManageabilityProvider.TransactionTypePropertyName, MessageQueueTransactionType.Single.ToString());
+            machineKey.AddStringValue(MsmqTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
+            machineKey.AddStringValue(MsmqTraceListenerDataManageabilityProvider.TransactionTypePropertyName, MessageQueueTransactionType.Single.ToString());
             machineKey.AddBooleanValue(MsmqTraceListenerDataManageabilityProvider.UseAuthenticationPropertyName, true);
             machineKey.AddBooleanValue(MsmqTraceListenerDataManageabilityProvider.UseDeadLetterQueuePropertyName, false);
             machineKey.AddBooleanValue(MsmqTraceListenerDataManageabilityProvider.UseEncryptionPropertyName, true);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, machineKey, null, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, machineKey, null);
 
             Assert.AreEqual("formatter", configurationObject.Formatter);
             Assert.AreEqual(MessagePriority.Normal, configurationObject.MessagePriority);
@@ -283,8 +274,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             Assert.AreEqual(TimeSpan.FromSeconds(500), configurationObject.TimeToBeReceived);
             Assert.AreEqual(TimeSpan.FromSeconds(1000), configurationObject.TimeToReachQueue);
             Assert.AreEqual(TraceOptions.None, configurationObject.TraceOutputOptions);
-			Assert.AreEqual(SourceLevels.Error, configurationObject.Filter);
-			Assert.AreEqual(MessageQueueTransactionType.None, configurationObject.TransactionType);
+            Assert.AreEqual(SourceLevels.Error, configurationObject.Filter);
+            Assert.AreEqual(MessageQueueTransactionType.None, configurationObject.TransactionType);
             Assert.AreEqual(false, configurationObject.UseAuthentication);
             Assert.AreEqual(true, configurationObject.UseDeadLetterQueue);
             Assert.AreEqual(false, configurationObject.UseEncryption);
@@ -302,117 +293,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             machineKey.AddStringValue(MsmqTraceListenerDataManageabilityProvider.TimeToBeReceivedPropertyName, Convert.ToString(TimeSpan.FromSeconds(100), CultureInfo.CurrentCulture));
             machineKey.AddStringValue(MsmqTraceListenerDataManageabilityProvider.TimeToReachQueuePropertyName, Convert.ToString(TimeSpan.FromSeconds(200), CultureInfo.CurrentCulture));
             machineKey.AddStringValue(MsmqTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, "ProcessId, ThreadId");
-			machineKey.AddStringValue(MsmqTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
-			machineKey.AddStringValue(MsmqTraceListenerDataManageabilityProvider.TransactionTypePropertyName, MessageQueueTransactionType.Single.ToString());
+            machineKey.AddStringValue(MsmqTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
+            machineKey.AddStringValue(MsmqTraceListenerDataManageabilityProvider.TransactionTypePropertyName, MessageQueueTransactionType.Single.ToString());
             machineKey.AddBooleanValue(MsmqTraceListenerDataManageabilityProvider.UseAuthenticationPropertyName, true);
             machineKey.AddBooleanValue(MsmqTraceListenerDataManageabilityProvider.UseDeadLetterQueuePropertyName, false);
             machineKey.AddBooleanValue(MsmqTraceListenerDataManageabilityProvider.UseEncryptionPropertyName, true);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, machineKey, userKey);
 
             Assert.AreEqual("", configurationObject.Formatter);
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreNotGeneratedIfWmiIsDisabled()
-        {
-            configurationObject.Formatter = "formatter";
-            configurationObject.MessagePriority = MessagePriority.Normal;
-            configurationObject.QueuePath = "queue";
-            configurationObject.Recoverable = true;
-            configurationObject.TimeToBeReceived = TimeSpan.MaxValue;
-            configurationObject.TimeToReachQueue = TimeSpan.MinValue;
-            configurationObject.TraceOutputOptions = TraceOptions.None;
-			configurationObject.Filter = SourceLevels.Error;
-			configurationObject.TransactionType = MessageQueueTransactionType.None;
-            configurationObject.UseAuthentication = false;
-            configurationObject.UseDeadLetterQueue = true;
-            configurationObject.UseEncryption = false;
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, false, machineKey, userKey, false, wmiSettings);
-
-            Assert.AreEqual(0, wmiSettings.Count);
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreGeneratedIfWmiIsEnabled()
-        {
-            configurationObject.Formatter = "formatter";
-            configurationObject.MessagePriority = MessagePriority.Normal;
-            configurationObject.QueuePath = "queue";
-            configurationObject.Recoverable = true;
-            configurationObject.TimeToBeReceived = TimeSpan.FromSeconds(500);
-            configurationObject.TimeToReachQueue = TimeSpan.FromSeconds(1000);
-            configurationObject.TraceOutputOptions = TraceOptions.None;
-			configurationObject.Filter = SourceLevels.Error;
-			configurationObject.TransactionType = MessageQueueTransactionType.None;
-            configurationObject.UseAuthentication = false;
-            configurationObject.UseDeadLetterQueue = true;
-            configurationObject.UseEncryption = false;
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, false, machineKey, userKey, true, wmiSettings);
-
-            Assert.AreEqual(1, wmiSettings.Count);
-            Assert.AreSame(typeof(MsmqTraceListenerSetting), wmiSettings[0].GetType());
-            Assert.AreEqual(configurationObject.Formatter, ((MsmqTraceListenerSetting)wmiSettings[0]).Formatter);
-            Assert.AreEqual(configurationObject.MessagePriority.ToString(), ((MsmqTraceListenerSetting)wmiSettings[0]).MessagePriority);
-            Assert.AreEqual(configurationObject.QueuePath, ((MsmqTraceListenerSetting)wmiSettings[0]).QueuePath);
-            Assert.AreEqual(configurationObject.Recoverable, ((MsmqTraceListenerSetting)wmiSettings[0]).Recoverable);
-            Assert.AreEqual(configurationObject.TimeToBeReceived, TimeSpan.Parse(((MsmqTraceListenerSetting)wmiSettings[0]).TimeToBeReceived));
-            Assert.AreEqual(configurationObject.TimeToReachQueue, TimeSpan.Parse(((MsmqTraceListenerSetting)wmiSettings[0]).TimeToReachQueue));
-            Assert.AreEqual(configurationObject.TraceOutputOptions.ToString(), ((MsmqTraceListenerSetting)wmiSettings[0]).TraceOutputOptions);
-			Assert.AreEqual(configurationObject.Filter.ToString(), ((MsmqTraceListenerSetting)wmiSettings[0]).Filter);
-			Assert.AreEqual(configurationObject.TransactionType.ToString(), ((MsmqTraceListenerSetting)wmiSettings[0]).TransactionType);
-            Assert.AreEqual(configurationObject.UseAuthentication, ((MsmqTraceListenerSetting)wmiSettings[0]).UseAuthentication);
-            Assert.AreEqual(configurationObject.UseDeadLetterQueue, ((MsmqTraceListenerSetting)wmiSettings[0]).UseDeadLetterQueue);
-            Assert.AreEqual(configurationObject.UseEncryption, ((MsmqTraceListenerSetting)wmiSettings[0]).UseEncryption);
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreGeneratedWithPolicyOverridesIfWmiIsEnabled()
-        {
-            configurationObject.Formatter = "formatter";
-            configurationObject.MessagePriority = MessagePriority.Normal;
-            configurationObject.QueuePath = "queue";
-            configurationObject.Recoverable = true;
-            configurationObject.TimeToBeReceived = TimeSpan.FromSeconds(500);
-            configurationObject.TimeToReachQueue = TimeSpan.FromSeconds(1000);
-            configurationObject.TraceOutputOptions = TraceOptions.None;
-			configurationObject.Filter = SourceLevels.Error;
-			configurationObject.TransactionType = MessageQueueTransactionType.None;
-            configurationObject.UseAuthentication = false;
-            configurationObject.UseDeadLetterQueue = true;
-            configurationObject.UseEncryption = false;
-
-            machineKey.AddStringValue(MsmqTraceListenerDataManageabilityProvider.FormatterPropertyName, "overriden formatter");
-            machineKey.AddStringValue(MsmqTraceListenerDataManageabilityProvider.MessagePriorityPropertyName, MessagePriority.High.ToString());
-            machineKey.AddStringValue(MsmqTraceListenerDataManageabilityProvider.QueuePathPropertyName, "overriden queue");
-            machineKey.AddBooleanValue(MsmqTraceListenerDataManageabilityProvider.RecoverablePropertyName, false);
-            machineKey.AddStringValue(MsmqTraceListenerDataManageabilityProvider.TimeToBeReceivedPropertyName, Convert.ToString(TimeSpan.FromSeconds(100), CultureInfo.CurrentCulture));
-            machineKey.AddStringValue(MsmqTraceListenerDataManageabilityProvider.TimeToReachQueuePropertyName, Convert.ToString(TimeSpan.FromSeconds(200), CultureInfo.CurrentCulture));
-            machineKey.AddStringValue(MsmqTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, "ProcessId, ThreadId");
-			machineKey.AddStringValue(MsmqTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
-			machineKey.AddStringValue(MsmqTraceListenerDataManageabilityProvider.TransactionTypePropertyName, MessageQueueTransactionType.Single.ToString());
-            machineKey.AddBooleanValue(MsmqTraceListenerDataManageabilityProvider.UseAuthenticationPropertyName, true);
-            machineKey.AddBooleanValue(MsmqTraceListenerDataManageabilityProvider.UseDeadLetterQueuePropertyName, false);
-            machineKey.AddBooleanValue(MsmqTraceListenerDataManageabilityProvider.UseEncryptionPropertyName, true);
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, false, machineKey, userKey, true, wmiSettings);
-
-            Assert.AreEqual(1, wmiSettings.Count);
-            Assert.AreSame(typeof(MsmqTraceListenerSetting), wmiSettings[0].GetType());
-            Assert.AreEqual(configurationObject.Formatter, ((MsmqTraceListenerSetting)wmiSettings[0]).Formatter);
-            Assert.AreEqual(configurationObject.MessagePriority.ToString(), ((MsmqTraceListenerSetting)wmiSettings[0]).MessagePriority);
-            Assert.AreEqual(configurationObject.QueuePath, ((MsmqTraceListenerSetting)wmiSettings[0]).QueuePath);
-            Assert.AreEqual(configurationObject.Recoverable, ((MsmqTraceListenerSetting)wmiSettings[0]).Recoverable);
-            Assert.AreEqual(configurationObject.TimeToBeReceived, TimeSpan.Parse(((MsmqTraceListenerSetting)wmiSettings[0]).TimeToBeReceived));
-            Assert.AreEqual(configurationObject.TimeToReachQueue, TimeSpan.Parse(((MsmqTraceListenerSetting)wmiSettings[0]).TimeToReachQueue));
-            Assert.AreEqual(configurationObject.TraceOutputOptions.ToString(), ((MsmqTraceListenerSetting)wmiSettings[0]).TraceOutputOptions);
-			Assert.AreEqual(configurationObject.Filter.ToString(), ((MsmqTraceListenerSetting)wmiSettings[0]).Filter);
-			Assert.AreEqual(configurationObject.TransactionType.ToString(), ((MsmqTraceListenerSetting)wmiSettings[0]).TransactionType);
-            Assert.AreEqual(configurationObject.UseAuthentication, ((MsmqTraceListenerSetting)wmiSettings[0]).UseAuthentication);
-            Assert.AreEqual(configurationObject.UseDeadLetterQueue, ((MsmqTraceListenerSetting)wmiSettings[0]).UseDeadLetterQueue);
-            Assert.AreEqual(configurationObject.UseEncryption, ((MsmqTraceListenerSetting)wmiSettings[0]).UseEncryption);
         }
 
         [TestMethod]
@@ -499,11 +388,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             Assert.AreEqual(MsmqTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName,
                             partsEnumerator.Current.ValueName);
 
-			Assert.IsTrue(partsEnumerator.MoveNext());
-			Assert.AreSame(typeof(AdmDropDownListPart), partsEnumerator.Current.GetType());
-			Assert.IsNull(partsEnumerator.Current.KeyName);
-			Assert.AreEqual(MsmqTraceListenerDataManageabilityProvider.FilterPropertyName,
-							partsEnumerator.Current.ValueName);
+            Assert.IsTrue(partsEnumerator.MoveNext());
+            Assert.AreSame(typeof(AdmDropDownListPart), partsEnumerator.Current.GetType());
+            Assert.IsNull(partsEnumerator.Current.KeyName);
+            Assert.AreEqual(MsmqTraceListenerDataManageabilityProvider.FilterPropertyName,
+                            partsEnumerator.Current.ValueName);
 
             Assert.IsTrue(partsEnumerator.MoveNext());
             Assert.AreSame(typeof(AdmDropDownListPart), partsEnumerator.Current.GetType());

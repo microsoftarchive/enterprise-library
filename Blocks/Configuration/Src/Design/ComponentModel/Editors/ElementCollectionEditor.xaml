@@ -11,7 +11,7 @@
                     
                 <ResourceDictionary>
                     <DataTemplate DataType="{x:Type ViewModel:Property}">
-                        <ContentControl Content="{Binding Bindable}" ToolTip="{Binding Description}" />
+                        <ContentControl Focusable="False" Content="{Binding Bindable}" ToolTip="{Binding Description}" />
                     </DataTemplate>
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>

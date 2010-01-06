@@ -28,13 +28,20 @@
                     <MenuItem Header="_File" AutomationProperties.AutomationId="File">
                         <MenuItem Header="_New..."
 							  Click="FileMenu_New_Click"
+                              InputGestureText="Ctrl + N"
                               AutomationProperties.AutomationId="New..." />
                         <MenuItem Header="_Open..."
-							  Click="FileMenu_Open_Click" AutomationProperties.AutomationId="Open..." />
+							  Click="FileMenu_Open_Click" 
+                              InputGestureText="Ctrl + O"
+                              AutomationProperties.AutomationId="Open..." />
                         <MenuItem Header="_Save"
-							  Click="FileMenu_Save_Click" AutomationProperties.AutomationId="Save" />
-                        <MenuItem Header="_Save As..."
-							  Click="FileMenu_SaveAs_Click" AutomationProperties.AutomationId="Save As..."/>
+							  Click="FileMenu_Save_Click" 
+                              InputGestureText="Ctrl + S" 
+                              AutomationProperties.AutomationId="Save" />
+                        <MenuItem Header="Save _As..."
+							  Click="FileMenu_SaveAs_Click" 
+                              InputGestureText="Ctrl + A"
+                              AutomationProperties.AutomationId="Save As..."/>
                         <Separator/>
                         <MenuItem Header="E_xit"
 							  Click="FileMenu_Exit_Click" AutomationProperties.AutomationId="Exit" />
@@ -64,7 +71,7 @@
 
                     </MenuItem>
                 </Menu>
-                <ItemsControl Grid.Row="1">
+                <ItemsControl Grid.Row="1" Focusable="False">
                     <ItemsControl.Resources>
                         <CollectionViewSource x:Key="SortedSections" Source="{Binding Sections}">
                             <CollectionViewSource.SortDescriptions>

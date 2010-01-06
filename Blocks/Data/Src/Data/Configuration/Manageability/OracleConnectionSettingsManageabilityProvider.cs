@@ -40,9 +40,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Manageability
         /// <param name="subProviders">A set of sub providers.</param>
         public OracleConnectionSettingsManageabilityProvider(IDictionary<Type, ConfigurationElementManageabilityProvider> subProviders)
             : base(subProviders)
-        {
-            OracleConnectionSettingsWmiMapper.RegisterWmiTypes();
-        }
+        { }
 
         /// <summary>
         /// Gets the name of the category that represents the whole configuration section.
@@ -110,20 +108,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Manageability
         }
 
         /// <summary>
-        /// Creates the <see cref="ConfigurationSetting"/> instances that describe the <paramref name="configurationSection"/>.
-        /// </summary>
-        /// <param name="configurationSection">The configuration section that must be managed.</param>
-        /// <param name="wmiSettings">A collection to where the generated WMI objects are to be added.</param>
-        protected override void GenerateWmiObjectsForConfigurationSection(OracleConnectionSettings configurationSection,
-                                                                          ICollection<ConfigurationSetting> wmiSettings)
-        {
-            OracleConnectionSettingsWmiMapper.GenerateWmiObjects(configurationSection, wmiSettings);
-        }
-
-        /// <summary>
         /// Overrides the <paramref name="configurationSection"/>'s configuration elements' properties 
-        /// with the Group Policy values from the registry, if any, and creates the <see cref="ConfigurationSetting"/> 
-        /// instances that describe these configuration elements.
+        /// with the Group Policy values from the registry, if any.
         /// </summary>
         /// <param name="configurationSection">The configuration section that must be managed.</param>
         /// <param name="readGroupPolicies"><see langword="true"/> if Group Policy overrides must be applied; otherwise, 
@@ -134,15 +120,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Manageability
         /// <param name="userKey">The <see cref="IRegistryKey"/> which holds the Group Policy overrides for the 
         /// configuration section at the user level, or <see langword="null"/> 
         /// if there is no such registry key.</param>
-        /// <param name="generateWmiObjects"><see langword="true"/> if WMI objects must be generated; otherwise, 
-        /// <see langword="false"/>.</param>
-        /// <param name="wmiSettings">A collection to where the generated WMI objects are to be added.</param>
-        protected override void OverrideWithGroupPoliciesAndGenerateWmiObjectsForConfigurationElements(OracleConnectionSettings configurationSection,
+        protected override void OverrideWithGroupPoliciesForConfigurationElements(OracleConnectionSettings configurationSection,
                                                                                                        bool readGroupPolicies,
                                                                                                        IRegistryKey machineKey,
-                                                                                                       IRegistryKey userKey,
-                                                                                                       bool generateWmiObjects,
-                                                                                                       ICollection<ConfigurationSetting> wmiSettings)
+                                                                                                       IRegistryKey userKey)
         {
             List<OracleConnectionData> connectionsToRemove = new List<OracleConnectionData>();
 
@@ -157,9 +138,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Manageability
                                         machineKey, userKey,
                                         out machineConnectionKey, out userConnectionKey);
 
-                    if (!OverrideWithGroupPoliciesAndGenerateWmiObjectsForOracleConnection(connectionData,
-                                                                                           readGroupPolicies, machineConnectionKey, userConnectionKey,
-                                                                                           generateWmiObjects, wmiSettings))
+                    if (!OverrideWithGroupPoliciesForOracleConnection(connectionData,
+                                                                                           readGroupPolicies, machineConnectionKey, userConnectionKey))
                     {
                         connectionsToRemove.Add(connectionData);
                     }
@@ -176,12 +156,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Manageability
             }
         }
 
-        bool OverrideWithGroupPoliciesAndGenerateWmiObjectsForOracleConnection(OracleConnectionData connectionData,
-                                                                               bool readGroupPolicies,
-                                                                               IRegistryKey machineKey,
-                                                                               IRegistryKey userKey,
-                                                                               bool generateWmiObjects,
-                                                                               ICollection<ConfigurationSetting> wmiSettings)
+        bool OverrideWithGroupPoliciesForOracleConnection(OracleConnectionData connectionData,
+                                                           bool readGroupPolicies,
+                                                           IRegistryKey machineKey,
+                                                           IRegistryKey userKey)
         {
             if (readGroupPolicies)
             {
@@ -209,10 +187,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Manageability
                         LogExceptionWhileOverriding(ex);
                     }
                 }
-            }
-            if (generateWmiObjects)
-            {
-                OracleConnectionSettingsWmiMapper.GenerateOracleConnectionSettingWmiObjects(connectionData, wmiSettings);
             }
 
             return true;

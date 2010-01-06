@@ -34,6 +34,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
             return new HorizontalListViewModel( new HeaderedListViewModel(settings) );
         }
 
+        protected override IEnumerable<Property> GetAllProperties()
+        {
+            return from p in base.GetAllProperties()
+                   where p.GetType() != typeof(RequirePermissionProperty)
+                   select p;
+        }
+
         public override void BeforeSave(ConfigurationSection sectionToSave)
         {
             AppSettingsSection appSettingsSectionToSave = (AppSettingsSection)sectionToSave;

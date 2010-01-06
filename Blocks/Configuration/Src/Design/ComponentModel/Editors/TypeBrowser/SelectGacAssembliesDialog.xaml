@@ -1,0 +1,48 @@
+﻿<Window x:Class="Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors.SelectGacAssembliesDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:config="clr-namespace:Microsoft.Practices.EnterpriseLibrary.Configuration.Design"
+        xmlns:editors="clr-namespace:Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors"
+        xmlns:gac="clr-namespace:System.GACManagedAccess"
+        xmlns:cm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+        xmlns:ref="clr-namespace:System.Reflection;assembly=mscorlib"
+        Title="Global Assembly Cache" Height="358" Width="555" Loaded="Window_Loaded">
+    <Window.Resources>
+        <editors:AssemblyNamesCollection x:Key="AssemblyNames"/>
+        <CollectionViewSource x:Key="AssemblyNamesView" Source="{Binding Source={StaticResource AssemblyNames}}">
+            <CollectionViewSource.SortDescriptions>
+                <cm:SortDescription Direction="Ascending" PropertyName="Name"/>
+                <cm:SortDescription Direction="Ascending" PropertyName="Version"/>
+                <cm:SortDescription Direction="Ascending" PropertyName="ProcessorArchitecture"/>
+            </CollectionViewSource.SortDescriptions>
+        </CollectionViewSource>
+    </Window.Resources>
+    <Grid>
+        <DockPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
+            <UniformGrid HorizontalAlignment="Right" Rows="1" Columns="2" DockPanel.Dock="Bottom" Margin="5">
+                <Button IsDefault="True" DockPanel.Dock="Right" Margin="0, 0, 5, 0" MinWidth="75">
+                    <Button.Style>
+                        <Style>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ElementName=Assemblies, Path=SelectedItems.Count}" Value="0">
+                                    <Setter Property="Button.IsEnabled" Value="False" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                    Ok
+                </Button>
+                <Button IsCancel="True" DockPanel.Dock="Right" Grid.Column="1">Cancel</Button>
+            </UniformGrid>
+            <ListView x:Name="Assemblies"  DockPanel.Dock="Bottom" Margin=" 5, 5, 5, 0" ItemsSource="{Binding Source={StaticResource AssemblyNamesView}}">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}" Width="300"/>
+                        <GridViewColumn Header="Version" DisplayMemberBinding="{Binding Version}" Width="100"/>
+                        <GridViewColumn Header="Architecture" DisplayMemberBinding="{Binding ProcessorArchitecture}" Width="100"/>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </DockPanel>
+    </Grid>
+</Window>

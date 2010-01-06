@@ -27,7 +27,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         DpapiSymmetricCryptoProviderDataManageabilityProvider provider;
         MockRegistryKey machineKey;
         MockRegistryKey userKey;
-        IList<ConfigurationSetting> wmiSettings;
         DpapiSymmetricCryptoProviderData configurationObject;
 
         [TestInitialize]
@@ -36,15 +35,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
             provider = new DpapiSymmetricCryptoProviderDataManageabilityProvider();
             machineKey = new MockRegistryKey(true);
             userKey = new MockRegistryKey(true);
-            wmiSettings = new List<ConfigurationSetting>();
             configurationObject = new DpapiSymmetricCryptoProviderData();
-        }
-
-        [TestCleanup]
-        public void TearDown()
-        {
-            // preventive unregister to work around WMI.NET 2.0 issues with appdomain unloading
-            ManagementEntityTypesRegistrar.UnregisterAll();
         }
 
         [TestMethod]
@@ -72,7 +63,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         [ExpectedException(typeof(ArgumentException))]
         public void ProviderThrowsWithConfigurationObjectOfWrongType()
         {
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(new TestsConfigurationSection(), true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(new TestsConfigurationSection(), true, machineKey, userKey);
         }
 
         [TestMethod]
@@ -80,7 +71,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         {
             configurationObject.Scope = DataProtectionScope.CurrentUser;
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, machineKey, userKey);
 
             Assert.AreEqual(DataProtectionScope.CurrentUser, configurationObject.Scope);
         }
@@ -92,7 +83,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
 
             machineKey.AddStringValue(DpapiSymmetricCryptoProviderDataManageabilityProvider.ScopePropertyName, DataProtectionScope.LocalMachine.ToString());
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, machineKey, userKey);
 
             Assert.AreEqual(DataProtectionScope.LocalMachine, configurationObject.Scope);
         }
@@ -104,7 +95,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
 
             userKey.AddStringValue(DpapiSymmetricCryptoProviderDataManageabilityProvider.ScopePropertyName, DataProtectionScope.LocalMachine.ToString());
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, null, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, null, userKey);
 
             Assert.AreEqual(DataProtectionScope.LocalMachine, configurationObject.Scope);
         }
@@ -116,49 +107,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
 
             machineKey.AddStringValue(DpapiSymmetricCryptoProviderDataManageabilityProvider.ScopePropertyName, DataProtectionScope.LocalMachine.ToString());
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, false, machineKey, null, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, false, machineKey, null);
 
             Assert.AreEqual(DataProtectionScope.CurrentUser, configurationObject.Scope);
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreNotGeneratedIfWmiIsDisabled()
-        {
-            configurationObject.Scope = DataProtectionScope.CurrentUser;
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, machineKey, userKey, false, wmiSettings);
-
-            Assert.AreEqual(0, wmiSettings.Count);
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreGeneratedIfWmiIsEnabled()
-        {
-            configurationObject.Name = "provider name";
-            configurationObject.Scope = DataProtectionScope.CurrentUser;
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, machineKey, userKey, true, wmiSettings);
-
-            Assert.AreEqual(1, wmiSettings.Count);
-            Assert.AreSame(typeof(DpapiSymmetricCryptoProviderSetting), wmiSettings[0].GetType());
-            Assert.AreEqual("provider name", ((DpapiSymmetricCryptoProviderSetting)wmiSettings[0]).Name);
-            Assert.AreEqual(DataProtectionScope.CurrentUser.ToString(), ((DpapiSymmetricCryptoProviderSetting)wmiSettings[0]).Scope);
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreGeneratedWithPolicyOverridesIfWmiIsEnabled()
-        {
-            configurationObject.Name = "provider name";
-            configurationObject.Scope = DataProtectionScope.CurrentUser;
-
-            machineKey.AddStringValue(DpapiSymmetricCryptoProviderDataManageabilityProvider.ScopePropertyName, DataProtectionScope.LocalMachine.ToString());
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, machineKey, userKey, true, wmiSettings);
-
-            Assert.AreEqual(1, wmiSettings.Count);
-            Assert.AreSame(typeof(DpapiSymmetricCryptoProviderSetting), wmiSettings[0].GetType());
-            Assert.AreEqual("provider name", ((DpapiSymmetricCryptoProviderSetting)wmiSettings[0]).Name);
-            Assert.AreEqual(DataProtectionScope.LocalMachine.ToString(), ((DpapiSymmetricCryptoProviderSetting)wmiSettings[0]).Scope);
         }
 
         [TestMethod]

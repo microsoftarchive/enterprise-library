@@ -16,5 +16,4 @@ using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.Configuration.Manageability;
 
 [assembly : Instrumented(@"root\EnterpriseLibrary")]
-[assembly : WmiConfiguration(@"root\EnterpriseLibrary", HostingModel = ManagementHostingModel.Decoupled, IdentifyLevel = false)]
 [assembly : ConfigurationElementManageabilityProvider(typeof(FaultContractExceptionHandlerDataManageabilityProvider), typeof(FaultContractExceptionHandlerData), typeof(ExceptionHandlingSettingsManageabilityProvider))]

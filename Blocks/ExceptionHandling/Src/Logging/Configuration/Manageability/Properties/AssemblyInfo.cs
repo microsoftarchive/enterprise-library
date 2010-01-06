@@ -16,5 +16,4 @@ using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Configurat
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Configuration.Manageability;
 
 [assembly : Instrumented(@"root\EnterpriseLibrary")]
-[assembly : WmiConfiguration(@"root\EnterpriseLibrary", HostingModel = ManagementHostingModel.Decoupled, IdentifyLevel = false)]
 [assembly : ConfigurationElementManageabilityProvider(typeof(LoggingExceptionHandlerDataManageabilityProvider), typeof(LoggingExceptionHandlerData), typeof(ExceptionHandlingSettingsManageabilityProvider))]

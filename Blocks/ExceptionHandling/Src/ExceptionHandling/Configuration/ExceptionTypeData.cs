@@ -38,7 +38,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
     /// </summary>
     [ResourceDescription(typeof(DesignResources), "ExceptionTypeDataDescription")]
     [ResourceDisplayName(typeof(DesignResources), "ExceptionTypeDataDisplayName")]
-    [TypePickingCommand(Replace=CommandReplacement.DefaultAddCommandReplacement)]
+    [TypePickingCommand("TypeName", Replace = CommandReplacement.DefaultAddCommandReplacement, CommandModelTypeName = ExceptionHandlingDesignTime.CommandTypeNames.AddExceptionTypeCommand)]
     [ViewModel(ExceptionHandlingDesignTime.ViewModelTypeNames.ExceptionTypeDataViewModel)]
     public class ExceptionTypeData : NamedConfigurationElement
     {

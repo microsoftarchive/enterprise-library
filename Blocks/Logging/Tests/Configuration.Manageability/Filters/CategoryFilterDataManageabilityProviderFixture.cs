@@ -18,7 +18,6 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability.Adm;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration.Manageability.Mocks;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageability.Filters;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageability.Properties;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageability.Tests.Filters
@@ -29,7 +28,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         CategoryFilterDataManageabilityProvider provider;
         MockRegistryKey machineKey;
         MockRegistryKey userKey;
-        IList<ConfigurationSetting> wmiSettings;
         CategoryFilterData configurationObject;
 
         [TestInitialize]
@@ -38,15 +36,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             provider = new CategoryFilterDataManageabilityProvider();
             machineKey = new MockRegistryKey(true);
             userKey = new MockRegistryKey(true);
-            wmiSettings = new List<ConfigurationSetting>();
             configurationObject = new CategoryFilterData();
-        }
-
-        [TestCleanup]
-        public void TearDown()
-        {
-            // preventive unregister to work around WMI.NET 2.0 issues with appdomain unloading
-            ManagementEntityTypesRegistrar.UnregisterAll();
         }
 
         [TestMethod]
@@ -74,7 +64,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         [ExpectedException(typeof(ArgumentException))]
         public void ProviderThrowsWithConfigurationObjectOfWrongType()
         {
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(new TestsConfigurationSection(), true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(new TestsConfigurationSection(), true, machineKey, userKey);
         }
 
         [TestMethod]
@@ -84,7 +74,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             configurationObject.CategoryFilters.Add(new CategoryFilterEntry("cat1"));
             configurationObject.CategoryFilters.Add(new CategoryFilterEntry("cat2"));
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, null, null, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, null, null);
 
             Assert.AreEqual(CategoryFilterMode.AllowAllExceptDenied, configurationObject.CategoryFilterMode);
             Assert.AreEqual(2, configurationObject.CategoryFilters.Count);
@@ -99,7 +89,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             configurationObject.CategoryFilters.Add(new CategoryFilterEntry("cat1"));
             configurationObject.CategoryFilters.Add(new CategoryFilterEntry("cat2"));
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, null, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, null, userKey);
         }
 
         [TestMethod]
@@ -109,7 +99,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             configurationObject.CategoryFilters.Add(new CategoryFilterEntry("cat1"));
             configurationObject.CategoryFilters.Add(new CategoryFilterEntry("cat2"));
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, null, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, null, userKey);
         }
 
         [TestMethod]
@@ -124,7 +114,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             machineKey.AddSubKey(CategoryFilterDataManageabilityProvider.CategoryFiltersKeyName, machineCategoriesKey);
             machineCategoriesKey.AddBooleanValue("cat3", true);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, machineKey, userKey);
 
             Assert.AreEqual(CategoryFilterMode.DenyAllExceptAllowed, configurationObject.CategoryFilterMode);
             Assert.AreEqual(1, configurationObject.CategoryFilters.Count);
@@ -142,7 +132,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
 
             machineKey.AddStringValue(CategoryFilterDataManageabilityProvider.CategoryFilterModePropertyName, CategoryFilterMode.DenyAllExceptAllowed.ToString());
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, machineKey, userKey);
 
             Assert.AreEqual(CategoryFilterMode.DenyAllExceptAllowed, configurationObject.CategoryFilterMode);
             Assert.AreEqual(0, configurationObject.CategoryFilters.Count);
@@ -160,7 +150,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             userKey.AddSubKey(CategoryFilterDataManageabilityProvider.CategoryFiltersKeyName, userCategoriesKey);
             userCategoriesKey.AddBooleanValue("cat3", true);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, null, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, null, userKey);
 
             Assert.AreEqual(CategoryFilterMode.DenyAllExceptAllowed, configurationObject.CategoryFilterMode);
             Assert.AreEqual(1, configurationObject.CategoryFilters.Count);
@@ -182,7 +172,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             userKey.AddSubKey(CategoryFilterDataManageabilityProvider.CategoryFiltersKeyName, userCategoriesKey);
             userCategoriesKey.AddBooleanValue("cat3", true);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, machineKey, userKey);
 
             Assert.AreEqual(CategoryFilterMode.DenyAllExceptAllowed, configurationObject.CategoryFilterMode);
             Assert.AreEqual(0, configurationObject.CategoryFilters.Count);
@@ -202,7 +192,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             machineKey.AddSubKey(CategoryFilterDataManageabilityProvider.CategoryFiltersKeyName, machineCategoriesKey);
             machineCategoriesKey.AddBooleanValue("cat3", true);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, false, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, false, machineKey, userKey);
 
             Assert.AreEqual(CategoryFilterMode.AllowAllExceptDenied, configurationObject.CategoryFilterMode);
             Assert.AreEqual(2, configurationObject.CategoryFilters.Count);
@@ -210,61 +200,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             Assert.IsNotNull(configurationObject.CategoryFilters.Get("cat2"));
 
             Assert.IsTrue(MockRegistryKey.CheckAllClosed(machineCategoriesKey));
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreNotGeneratedIfWmiIsDisabled()
-        {
-            configurationObject.CategoryFilterMode = CategoryFilterMode.AllowAllExceptDenied;
-            configurationObject.CategoryFilters.Add(new CategoryFilterEntry("cat1"));
-            configurationObject.CategoryFilters.Add(new CategoryFilterEntry("cat2"));
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, false, machineKey, userKey, false, wmiSettings);
-
-            Assert.AreEqual(0, wmiSettings.Count);
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreGeneratedIfWmiIsEnabled()
-        {
-            configurationObject.CategoryFilterMode = CategoryFilterMode.AllowAllExceptDenied;
-            configurationObject.CategoryFilters.Add(new CategoryFilterEntry("cat1"));
-            configurationObject.CategoryFilters.Add(new CategoryFilterEntry("cat2"));
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, false, machineKey, userKey, true, wmiSettings);
-
-            Assert.AreEqual(1, wmiSettings.Count);
-            Assert.AreSame(typeof(CategoryFilterSetting), wmiSettings[0].GetType());
-            Assert.AreEqual(configurationObject.CategoryFilterMode.ToString(), ((CategoryFilterSetting)wmiSettings[0]).CategoryFilterMode);
-            Assert.AreEqual(configurationObject.CategoryFilters.Count, ((CategoryFilterSetting)wmiSettings[0]).CategoryFilters.Length);
-            foreach (String name in ((CategoryFilterSetting)wmiSettings[0]).CategoryFilters)
-            {
-                Assert.IsNotNull(configurationObject.CategoryFilters.Get(name));
-            }
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreGeneratedWithPolicyOverridesIfWmiIsEnabled()
-        {
-            configurationObject.CategoryFilterMode = CategoryFilterMode.AllowAllExceptDenied;
-            configurationObject.CategoryFilters.Add(new CategoryFilterEntry("cat1"));
-            configurationObject.CategoryFilters.Add(new CategoryFilterEntry("cat2"));
-
-            machineKey.AddStringValue(CategoryFilterDataManageabilityProvider.CategoryFilterModePropertyName, CategoryFilterMode.DenyAllExceptAllowed.ToString());
-            MockRegistryKey machineCategoriesKey = new MockRegistryKey(false);
-            machineKey.AddSubKey(CategoryFilterDataManageabilityProvider.CategoryFiltersKeyName, machineCategoriesKey);
-            machineCategoriesKey.AddBooleanValue("cat3", true);
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, machineKey, userKey, true, wmiSettings);
-
-            Assert.AreEqual(1, wmiSettings.Count);
-            Assert.AreSame(typeof(CategoryFilterSetting), wmiSettings[0].GetType());
-            Assert.AreEqual(configurationObject.CategoryFilterMode.ToString(), ((CategoryFilterSetting)wmiSettings[0]).CategoryFilterMode);
-            Assert.AreEqual(configurationObject.CategoryFilters.Count, ((CategoryFilterSetting)wmiSettings[0]).CategoryFilters.Length);
-            foreach (String name in ((CategoryFilterSetting)wmiSettings[0]).CategoryFilters)
-            {
-                Assert.IsNotNull(configurationObject.CategoryFilters.Get(name));
-            }
         }
 
         [TestMethod]

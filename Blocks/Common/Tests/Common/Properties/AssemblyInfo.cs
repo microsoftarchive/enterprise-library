@@ -20,6 +20,5 @@ using System.Security;
 
 
 [assembly: Instrumented(@"root\EnterpriseLibrary")]
-[assembly: WmiConfiguration(@"root\EnterpriseLibrary", HostingModel = ManagementHostingModel.Decoupled, IdentifyLevel = false)]
 [assembly: AllowPartiallyTrustedCallers]
 [assembly: CLSCompliant(false)]

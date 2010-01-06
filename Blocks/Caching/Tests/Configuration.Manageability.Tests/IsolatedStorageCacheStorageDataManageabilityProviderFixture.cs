@@ -26,7 +26,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration.Manageabil
         IsolatedStorageCacheStorageDataManageabilityProvider provider;
         MockRegistryKey machineKey;
         MockRegistryKey userKey;
-        IList<ConfigurationSetting> wmiSettings;
         IsolatedStorageCacheStorageData configurationObject;
 
         [TestInitialize]
@@ -35,15 +34,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration.Manageabil
             provider = new IsolatedStorageCacheStorageDataManageabilityProvider();
             machineKey = new MockRegistryKey(true);
             userKey = new MockRegistryKey(true);
-            wmiSettings = new List<ConfigurationSetting>();
             configurationObject = new IsolatedStorageCacheStorageData();
-        }
-
-        [TestCleanup]
-        public void TearDown()
-        {
-            // preventive unregister to work around WMI.NET 2.0 issues with appdomain unloading
-            ManagementEntityTypesRegistrar.UnregisterAll();
         }
 
         [TestMethod]
@@ -71,7 +62,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration.Manageabil
         [ExpectedException(typeof(ArgumentException))]
         public void ProviderThrowsWithConfigurationObjectOfWrongType()
         {
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(new TestsConfigurationSection(), true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(new TestsConfigurationSection(), true, machineKey, userKey);
         }
 
         [TestMethod]
@@ -80,7 +71,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration.Manageabil
             configurationObject.PartitionName = "partition";
             configurationObject.StorageEncryption = "encryption";
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, null, null, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, null, null);
 
             Assert.AreEqual("partition", configurationObject.PartitionName);
             Assert.AreEqual("encryption", configurationObject.StorageEncryption);
@@ -94,7 +85,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration.Manageabil
 
             machineKey.AddStringValue(IsolatedStorageCacheStorageDataManageabilityProvider.PartitionNamePropertyName, "machine partition");
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, machineKey, null, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, machineKey, null);
 
             Assert.AreEqual("machine partition", configurationObject.PartitionName);
             Assert.AreEqual("encryption", configurationObject.StorageEncryption);
@@ -108,7 +99,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration.Manageabil
 
             userKey.AddStringValue(IsolatedStorageCacheStorageDataManageabilityProvider.PartitionNamePropertyName, "user partition");
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, null, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, null, userKey);
 
             Assert.AreEqual("user partition", configurationObject.PartitionName);
             Assert.AreEqual("encryption", configurationObject.StorageEncryption);
@@ -122,56 +113,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration.Manageabil
 
             machineKey.AddStringValue(IsolatedStorageCacheStorageDataManageabilityProvider.PartitionNamePropertyName, "machine partition");
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, false, machineKey, null, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, false, machineKey, null);
 
             Assert.AreEqual("partition", configurationObject.PartitionName);
             Assert.AreEqual("encryption", configurationObject.StorageEncryption);
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreNotGeneratedIfWmiIsDisabled()
-        {
-            configurationObject.Name = "provider name";
-            configurationObject.PartitionName = "partition";
-            configurationObject.StorageEncryption = "encryption";
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, false, null, null, false, wmiSettings);
-
-            Assert.AreEqual(0, wmiSettings.Count);
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreGeneratedIfWmiIsEnabled()
-        {
-            configurationObject.Name = "provider name";
-            configurationObject.PartitionName = "partition";
-            configurationObject.StorageEncryption = "encryption";
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, false, null, null, true, wmiSettings);
-
-            Assert.AreEqual(1, wmiSettings.Count);
-            Assert.AreSame(typeof(IsolatedStorageCacheStorageSetting), wmiSettings[0].GetType());
-            Assert.AreEqual("provider name", ((IsolatedStorageCacheStorageSetting)wmiSettings[0]).Name);
-            Assert.AreEqual("partition", ((IsolatedStorageCacheStorageSetting)wmiSettings[0]).PartitionName);
-            Assert.AreEqual("encryption", ((IsolatedStorageCacheStorageSetting)wmiSettings[0]).StorageEncryption);
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreGeneratedWithPolicyOverridesIfWmiIsEnabled()
-        {
-            configurationObject.Name = "provider name";
-            configurationObject.PartitionName = "partition";
-            configurationObject.StorageEncryption = "encryption";
-
-            machineKey.AddStringValue(IsolatedStorageCacheStorageDataManageabilityProvider.PartitionNamePropertyName, "machine partition");
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, machineKey, null, true, wmiSettings);
-
-            Assert.AreEqual(1, wmiSettings.Count);
-            Assert.AreSame(typeof(IsolatedStorageCacheStorageSetting), wmiSettings[0].GetType());
-            Assert.AreEqual("provider name", ((IsolatedStorageCacheStorageSetting)wmiSettings[0]).Name);
-            Assert.AreEqual("machine partition", ((IsolatedStorageCacheStorageSetting)wmiSettings[0]).PartitionName);
-            Assert.AreEqual("encryption", ((IsolatedStorageCacheStorageSetting)wmiSettings[0]).StorageEncryption);
         }
 
         [TestMethod]

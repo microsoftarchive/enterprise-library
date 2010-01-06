@@ -8,44 +8,14 @@
         <ResourceDictionary Source="/Microsoft.Practices.EnterpriseLibrary.Configuration.Design;component/Resources/Converters.xaml" />
         <ResourceDictionary Source="/Microsoft.Practices.EnterpriseLibrary.Configuration.Design;component/Resources/Brushes.xaml" />
     </ResourceDictionary.MergedDictionaries>
-    
+
     <LinearGradientBrush x:Key="MenuItemSelectionFill" EndPoint="0,1" StartPoint="0,0">
         <GradientStop Color="#34C5EBFF" Offset="0"/>
         <GradientStop Color="#3481D8FF" Offset="1"/>
     </LinearGradientBrush>
     <Geometry x:Key="Checkmark">M 0,5.1 L 1.7,5.2 L 3.4,7.1 L 8,0.4 L 9.2,0 L 3.3,10.8 Z</Geometry>
     <Geometry x:Key="RightArrow">M 0,0 L 4,3.5 L 0,7 Z</Geometry>
-    
-    <!-- todo: Move this with binding to somewhere else and put in default -->
-    <Style x:Key="MenuItemHelpTextStyle" TargetType="{x:Type ContentControl}">
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate>
-                    <Border Background="{StaticResource PopupBackground}"
-										BorderBrush="{StaticResource LightGreyBorderBrush}"
-										BorderThickness="1"
-										Padding="5"
-                                        Width="{TemplateBinding Width}"
-                                        MinWidth="{TemplateBinding MinWidth}"
-                                        MaxWidth="{TemplateBinding MaxWidth}"
-                                        Height="{TemplateBinding Height}"
-                                        MaxHeight="{TemplateBinding MaxHeight}"
-                            >
-                        <TextBlock x:Name="HelpText"
-											FontStyle="Italic"
-											Visibility="Visible"
-                                            TextWrapping="Wrap"
-                                            HorizontalAlignment="Left"
-                                            Height="35"
-                                            MaxWidth="300"
-                                            Text="{Binding Path=CurrentSelection.DataContext.HelpText, RelativeSource={RelativeSource AncestorType={x:Type Controls:SelectionNotifyingMenuItem}}}"
-                                   />
-                    </Border>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-    
+
     <Style x:Key="MenuHelpTextStyle" TargetType="{x:Type ContentControl}">
         <Setter Property="Template">
             <Setter.Value>
@@ -58,6 +28,7 @@
                                         MinWidth="{TemplateBinding MinWidth}"
                                         MaxWidth="{TemplateBinding MaxWidth}"
                                         Height="{TemplateBinding Height}"
+                                        MinHeight="{TemplateBinding MinHeight}"
                                         MaxHeight="{TemplateBinding MaxHeight}"
                             >
                         <TextBlock x:Name="HelpText"
@@ -65,16 +36,23 @@
 											Visibility="Visible"
                                             TextWrapping="Wrap"
                                             HorizontalAlignment="Left"
-                                            Height="35"
-                                            MaxWidth="300"
-                                            Text="{Binding Path=CurrentSelection.DataContext.HelpText, RelativeSource={RelativeSource AncestorType={x:Type Controls:SelectionNotifyingContextMenu}}}"
-                                   />
-                    </Border>                   
+                                            MaxWidth="300">
+                            <TextBlock.Text>
+                                <PriorityBinding>
+                                    <Binding Path="CurrentSelection.DataContext.HelpText"
+                                        RelativeSource="{RelativeSource AncestorType={x:Type Controls:SelectionNotifyingMenuItem}}" />
+                                    <Binding Path="CurrentSelection.DataContext.HelpText"
+                                             RelativeSource="{RelativeSource AncestorType={x:Type Controls:SelectionNotifyingContextMenu}}" />
+                                    
+                                </PriorityBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
+                    </Border>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
-    
+
     <ControlTemplate x:Key="SubmenuItemTemplate" TargetType="{x:Type Controls:SelectionNotifyingMenuItem}">
         <Grid SnapsToDevicePixels="true">
             <Rectangle x:Name="Bg" Fill="{TemplateBinding Background}" Stroke="{TemplateBinding BorderBrush}" StrokeThickness="1" RadiusX="2" RadiusY="2"/>
@@ -116,7 +94,6 @@
                 <Setter Property="Fill" TargetName="Glyph" Value="#848589"/>
             </Trigger>
         </ControlTemplate.Triggers>
-    
     </ControlTemplate>
 
     <ControlTemplate x:Key="SubmenuHeaderTemplate" TargetType="{x:Type Controls:SelectionNotifyingMenuItem}">
@@ -152,13 +129,20 @@
                                 <ItemsPresenter Margin="2" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Grid.IsSharedSizeScope="true" KeyboardNavigation.DirectionalNavigation="Cycle" KeyboardNavigation.TabNavigation="Cycle"/>
                             </ScrollViewer>
                             <!-- HelpText -->
-                            <ContentControl Grid.Row="1" Style="{StaticResource MenuItemHelpTextStyle}" />
+                            <Popup x:Name="Help_Popup" AllowsTransparency="True" Focusable="False" PlacementTarget="{Binding ElementName=SubMenuBorder}" Placement="Bottom"  >
+                                <ContentControl Style="{StaticResource MenuHelpTextStyle}" MinWidth="{Binding Path=ActualWidth, ElementName=SubMenuBorder}" />
+                            </Popup>
                         </Grid>
                     </ContentControl>
                 </mwt:SystemDropShadowChrome>
             </Popup>
         </Grid>
         <ControlTemplate.Triggers>
+            <DataTrigger Binding="{Binding CurrentSelection.DataContext.HelpText, RelativeSource={RelativeSource Self}, Converter={StaticResource NullOrEmptyToBooleanConverter}}"
+                                     Value="true"
+                                     >
+                <Setter Property="IsOpen" Value="true" TargetName="Help_Popup" />
+            </DataTrigger>
             <Trigger Property="IsSuspendingPopupAnimation" Value="true">
                 <Setter Property="PopupAnimation" TargetName="PART_Popup" Value="None"/>
             </Trigger>
@@ -188,7 +172,7 @@
             </Trigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>
-    
+
     <Style TargetType="{x:Type Controls:SelectionNotifyingMenuItem}">
         <Setter Property="HorizontalContentAlignment" Value="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
         <Setter Property="VerticalContentAlignment" Value="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
@@ -212,7 +196,7 @@
             </Trigger>
         </Style.Triggers>
     </Style>
-    
+
     <Style TargetType="{x:Type Controls:SelectionNotifyingContextMenu}">
         <Setter Property="Background" Value="#FFF5F5F5" />
         <Setter Property="Template">
@@ -231,11 +215,22 @@
                                 <ScrollViewer x:Name="Scroller" Grid.Row="0" CanContentScroll="True" Style="{DynamicResource {ComponentResourceKey TypeInTargetAssembly=FrameworkElement, ResourceId=MenuScrollViewer}}" Margin="1,0,1,0" Grid.ColumnSpan="2">
                                     <ItemsPresenter Margin="{TemplateBinding Control.Padding}" SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}" KeyboardNavigation.DirectionalNavigation="Cycle" />
                                 </ScrollViewer>
-                                <ContentControl Grid.Row="1" Style="{StaticResource MenuHelpTextStyle}" />
+
+                                <Popup x:Name="Help_Popup" 
+                                       AllowsTransparency="True" 
+                                       Focusable="False" 
+                                       Placement="Bottom"  >
+                                    <ContentControl Style="{StaticResource MenuHelpTextStyle}" MinWidth="{TemplateBinding ActualWidth}"  />
+                                </Popup>
                             </Grid>
                         </Border>
                     </mwt:SystemDropShadowChrome>
                     <ControlTemplate.Triggers>
+                        <DataTrigger Binding="{Binding CurrentSelection.DataContext.HelpText, RelativeSource={RelativeSource Self}, Converter={StaticResource NullOrEmptyToBooleanConverter}}"
+                                     Value="true"
+                                     >
+                            <Setter Property="IsOpen" Value="true" TargetName="Help_Popup" />
+                        </DataTrigger>
                         <Trigger Property="ContextMenuService.HasDropShadow">
                             <Setter Property="FrameworkElement.Margin" TargetName="Shdw">
                                 <Setter.Value>

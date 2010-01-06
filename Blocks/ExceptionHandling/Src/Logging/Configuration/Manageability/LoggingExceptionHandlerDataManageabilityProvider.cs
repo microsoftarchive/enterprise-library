@@ -10,7 +10,6 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
@@ -26,46 +25,44 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Config
     /// splits policy overrides processing and WMI objects generation, performing appropriate logging of 
     /// policy processing errors.
     /// </summary>
-	public class LoggingExceptionHandlerDataManageabilityProvider
-		: ConfigurationElementManageabilityProviderBase<LoggingExceptionHandlerData>
-	{
+    public class LoggingExceptionHandlerDataManageabilityProvider
+        : ConfigurationElementManageabilityProviderBase<LoggingExceptionHandlerData>
+    {
         /// <summary>
         /// The name of the event id property.
         /// </summary>
-		public const String EventIdPropertyName = "eventId";
+        public const String EventIdPropertyName = "eventId";
 
         /// <summary>
         /// The name of the formatter type property.
         /// </summary>
-		public const String FormatterTypePropertyName = "formatterType";
+        public const String FormatterTypePropertyName = "formatterType";
 
         /// <summary>
         /// The name of the log category property.
         /// </summary>
-		public const String LogCategoryPropertyName = "logCategory";
+        public const String LogCategoryPropertyName = "logCategory";
 
         /// <summary>
         /// The name of the priority property.
         /// </summary>
-		public const String PriorityPropertyName = "priority";
+        public const String PriorityPropertyName = "priority";
 
         /// <summary>
         /// The name of the severity property.
         /// </summary>
-		public const String SeverityPropertyName = "severity";
+        public const String SeverityPropertyName = "severity";
 
         /// <summary>
         /// The name of the title property.
         /// </summary>
-		public const String TitlePropertyName = "title";
+        public const String TitlePropertyName = "title";
 
         /// <summary>
         /// Initialize a new instance of the <see cref="LoggingExceptionHandlerDataManageabilityProvider"/> class.
         /// </summary>
-		public LoggingExceptionHandlerDataManageabilityProvider()
-		{
-			LoggingExceptionHandlerDataWmiMapper.RegisterWmiTypes();
-		}
+        public LoggingExceptionHandlerDataManageabilityProvider()
+        { }
 
         /// <summary>
         /// Adds the ADM instructions that describe the policies that can be used to override the properties of
@@ -84,16 +81,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Config
         /// Subclasses managing objects that must not create a policy must override this method to just add the parts.
         /// </remarks>
         protected override void AddAdministrativeTemplateDirectives(AdmContentBuilder contentBuilder,
-			LoggingExceptionHandlerData configurationObject,
-			IConfigurationSource configurationSource,
-			String elementPolicyKeyName)
-		{
-			// directives are parts of the exception type policy
-			AddElementAdministrativeTemplateParts(contentBuilder,
-				configurationObject,
-				configurationSource,
-				elementPolicyKeyName);
-		}
+            LoggingExceptionHandlerData configurationObject,
+            IConfigurationSource configurationSource,
+            String elementPolicyKeyName)
+        {
+            // directives are parts of the exception type policy
+            AddElementAdministrativeTemplateParts(contentBuilder,
+                configurationObject,
+                configurationSource,
+                elementPolicyKeyName);
+        }
 
         /// <summary>
         /// Adds the ADM parts that represent the properties of
@@ -108,55 +105,55 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Config
         /// Subclasses managing objects that must not create a policy will likely need to include the elements' keys when creating the parts.
         /// </remarks>
         protected override void AddElementAdministrativeTemplateParts(AdmContentBuilder contentBuilder,
-			LoggingExceptionHandlerData configurationObject,
-			IConfigurationSource configurationSource,
-			String elementPolicyKeyName)
-		{
-			contentBuilder.AddTextPart(String.Format(CultureInfo.CurrentCulture,
-													Resources.HandlerPartNameTemplate,
-													configurationObject.Name));
+            LoggingExceptionHandlerData configurationObject,
+            IConfigurationSource configurationSource,
+            String elementPolicyKeyName)
+        {
+            contentBuilder.AddTextPart(String.Format(CultureInfo.CurrentCulture,
+                                                    Resources.HandlerPartNameTemplate,
+                                                    configurationObject.Name));
 
-			contentBuilder.AddEditTextPart(Resources.LoggingHandlerTitlePartName,
-				elementPolicyKeyName,
-				TitlePropertyName,
-				configurationObject.Title,
-				255,
-				true);
+            contentBuilder.AddEditTextPart(Resources.LoggingHandlerTitlePartName,
+                elementPolicyKeyName,
+                TitlePropertyName,
+                configurationObject.Title,
+                255,
+                true);
 
-			contentBuilder.AddNumericPart(Resources.LoggingHandlerEventIdPartName,
-				elementPolicyKeyName,
-				EventIdPropertyName,
-				configurationObject.EventId);
+            contentBuilder.AddNumericPart(Resources.LoggingHandlerEventIdPartName,
+                elementPolicyKeyName,
+                EventIdPropertyName,
+                configurationObject.EventId);
 
-			contentBuilder.AddDropDownListPartForEnumeration<TraceEventType>(Resources.LoggingHandlerSeverityPartName,
-				elementPolicyKeyName,
-				SeverityPropertyName,
-				configurationObject.Severity);
+            contentBuilder.AddDropDownListPartForEnumeration<TraceEventType>(Resources.LoggingHandlerSeverityPartName,
+                elementPolicyKeyName,
+                SeverityPropertyName,
+                configurationObject.Severity);
 
-			contentBuilder.AddNumericPart(Resources.LoggingHandlerPriorityPartName,
-				elementPolicyKeyName,
-				PriorityPropertyName,
-				configurationObject.Priority);
+            contentBuilder.AddNumericPart(Resources.LoggingHandlerPriorityPartName,
+                elementPolicyKeyName,
+                PriorityPropertyName,
+                configurationObject.Priority);
 
-			LoggingSettings loggingConfigurationSection
-				= configurationSource.GetSection(LoggingSettings.SectionName) as LoggingSettings;
+            LoggingSettings loggingConfigurationSection
+                = configurationSource.GetSection(LoggingSettings.SectionName) as LoggingSettings;
 
-			contentBuilder.AddDropDownListPartForNamedElementCollection<TraceSourceData>(Resources.LoggingHandlerCategoryPartName,
-				elementPolicyKeyName,
-				LogCategoryPropertyName,
-				loggingConfigurationSection.TraceSources,
-				configurationObject.LogCategory,
-				false);
+            contentBuilder.AddDropDownListPartForNamedElementCollection<TraceSourceData>(Resources.LoggingHandlerCategoryPartName,
+                elementPolicyKeyName,
+                LogCategoryPropertyName,
+                loggingConfigurationSection.TraceSources,
+                configurationObject.LogCategory,
+                false);
 
-			contentBuilder.AddComboBoxPart(Resources.LoggingHandlerFormatterPartName,
-				elementPolicyKeyName,
-				FormatterTypePropertyName,
-				configurationObject.FormatterType.AssemblyQualifiedName,
-				255,
-				true,
-				typeof(TextExceptionFormatter).AssemblyQualifiedName,
-				typeof(XmlExceptionFormatter).AssemblyQualifiedName);
-		}
+            contentBuilder.AddComboBoxPart(Resources.LoggingHandlerFormatterPartName,
+                elementPolicyKeyName,
+                FormatterTypePropertyName,
+                configurationObject.FormatterType.AssemblyQualifiedName,
+                255,
+                true,
+                typeof(TextExceptionFormatter).AssemblyQualifiedName,
+                typeof(XmlExceptionFormatter).AssemblyQualifiedName);
+        }
 
         /// <summary>
         /// Gets the template for the name of the policy associated to the object.
@@ -167,9 +164,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Config
         /// to avoid creating a policy must still override this property.
         /// </remarks>
         protected override string ElementPolicyNameTemplate
-		{
-			get { return null; }
-		}
+        {
+            get { return null; }
+        }
 
         /// <summary>
         /// Overrides the <paramref name="configurationObject"/>'s properties with the Group Policy values from the 
@@ -182,32 +179,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Config
         /// before making modifications to the <paramref name="configurationObject"/> so any error retrieving
         /// the override values will cancel policy processing.</remarks>
         protected override void OverrideWithGroupPolicies(LoggingExceptionHandlerData configurationObject, IRegistryKey policyKey)
-		{
-			int? eventIdOverride = policyKey.GetIntValue(EventIdPropertyName);
-			Type formatterTypeOverride = policyKey.GetTypeValue(FormatterTypePropertyName);
-			String logCategoryOverride = policyKey.GetStringValue(LogCategoryPropertyName);
-			int? priorityOverride = policyKey.GetIntValue(PriorityPropertyName);
-			TraceEventType? severityOverride = policyKey.GetEnumValue<TraceEventType>(SeverityPropertyName);
-			String titleOverride = policyKey.GetStringValue(TitlePropertyName);
+        {
+            int? eventIdOverride = policyKey.GetIntValue(EventIdPropertyName);
+            Type formatterTypeOverride = policyKey.GetTypeValue(FormatterTypePropertyName);
+            String logCategoryOverride = policyKey.GetStringValue(LogCategoryPropertyName);
+            int? priorityOverride = policyKey.GetIntValue(PriorityPropertyName);
+            TraceEventType? severityOverride = policyKey.GetEnumValue<TraceEventType>(SeverityPropertyName);
+            String titleOverride = policyKey.GetStringValue(TitlePropertyName);
 
-			configurationObject.EventId = eventIdOverride.Value;
-			configurationObject.FormatterType = formatterTypeOverride;
-			configurationObject.LogCategory = logCategoryOverride;
-			configurationObject.Priority = priorityOverride.Value;
-			configurationObject.Severity = severityOverride.Value;
-			configurationObject.Title = titleOverride;
-		}
-
-        /// <summary>
-        /// Creates the <see cref="ConfigurationSetting"/> instances that describe the 
-        /// configurationObject.
-        /// </summary>
-        /// <param name="configurationObject">The configuration object for instances that must be managed.</param>
-        /// <param name="wmiSettings">A collection to where the generated WMI objects are to be added.</param>
-        protected override void GenerateWmiObjects(LoggingExceptionHandlerData configurationObject, 
-			ICollection<ConfigurationSetting> wmiSettings)
-		{
-			LoggingExceptionHandlerDataWmiMapper.GenerateWmiObjects(configurationObject, wmiSettings);
-		}
-	}
+            configurationObject.EventId = eventIdOverride.Value;
+            configurationObject.FormatterType = formatterTypeOverride;
+            configurationObject.LogCategory = logCategoryOverride;
+            configurationObject.Priority = priorityOverride.Value;
+            configurationObject.Severity = severityOverride.Value;
+            configurationObject.Title = titleOverride;
+        }
+    }
 }

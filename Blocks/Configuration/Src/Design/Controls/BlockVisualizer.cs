@@ -46,12 +46,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls
             DefaultStyleKeyProperty.OverrideMetadata(typeof(BlockVisualizer), new FrameworkPropertyMetadata(typeof(BlockVisualizer)));
         }
 
-
         public BlockVisualizer()
         {
             DataContextChanged += BlockVisualizerDataContextChanged;
             GotFocus += BlockVisualizerGotFocus;
-
+            LostFocus += BlockVisualizer_LostFocus;
             var commandGestures = new InputGestureCollection
 			                      	{
 			                      		new MouseGesture(MouseAction.LeftClick)
@@ -64,23 +63,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls
 
             RelationshipMapping = new Dictionary<Guid, ElementViewModel>();
             ActiveAdorners = new Dictionary<FrameworkElement, Border>();
-
-            AddHandler(ElementModelContainer.ShowPropertiesEvent, new PropertiesRoutedEventHandler(HandleShowProperties));
-        }
-
-        private void HandleShowProperties(object sender, PropertiesRoutedEventArgs args)
-        {
-            ClearAdorners();
-
-            //Hide relationships
-            var container = args.OriginalSource as ElementModelContainer;
-            if (container != null)
-            {
-                //Flip the bit
-                container.IsExpanded = !container.IsExpanded;
-                //ReDraw the relationship lines 
-                ActivateRelationships(container);
-            }
         }
 
         public void CanShowRelationships(object sender, CanExecuteRoutedEventArgs e)
@@ -90,33 +72,26 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls
 
         void BlockVisualizerGotFocus(object sender, RoutedEventArgs e)
         {
-            //All focus events will bubble up to here so we can activate the relationships
-            //as focus shifts
-            var contentControl = e.OriginalSource as ContentControl;
-            if (contentControl != null)
+            if (e.OriginalSource is ElementModelContainer)
             {
-                if (ShowRelationships.CanExecute(null, contentControl))
-                {
-                    ShowRelationships.Execute(null, contentControl);
-                }
+                SetSelectedElement((ElementModelContainer)e.OriginalSource);
+            }
+            var containingElementModelContainer = VisualTreeWalker.TryFindParent<ElementModelContainer>(e.OriginalSource as DependencyObject);
+            if (containingElementModelContainer != null)
+            {
+                SetSelectedElement(containingElementModelContainer);
             }
         }
 
 
-        protected override void OnVisualParentChanged(DependencyObject oldParent)
+        void BlockVisualizer_LostFocus(object sender, RoutedEventArgs e)
         {
-            base.OnVisualParentChanged(oldParent);
+            ClearAdorners();
         }
 
         void BlockVisualizerDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             SectionModel = DataContext as SectionViewModel;
-            SectionModel.DescendentElementsChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(SectionModel_DescendentElementsChanged);
-        }
-
-        void SectionModel_DescendentElementsChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            ClearAdorners();
         }
 
         internal void SetSelectedElement(ElementModelContainer elementContainer)
@@ -285,20 +260,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls
             Content.Content = SectionModel.Bindable;
         }
 
-        private void ElementsCollectionChanged(object sender, EventArgs e)
-        {
-        }
-
     }
 
-    internal delegate void PropertiesRoutedEventHandler(object sender, PropertiesRoutedEventArgs args);
-    internal class PropertiesRoutedEventArgs : RoutedEventArgs
-    {
-        public Boolean IsOpen { get; set; }
-        public PropertiesRoutedEventArgs(RoutedEvent routedEvent)
-            : base(routedEvent)
-        {
-
-        }
-    }
+  
 }

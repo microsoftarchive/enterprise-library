@@ -12,7 +12,6 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability.Adm;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability.Tests.Mocks;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration.Manageability.Mocks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -31,7 +30,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
         MockRegistryAccessor registryAccessor;
         MockRegistryKey currentUser;
         MockRegistryKey localMachine;
-        MockWmiPublisher wmiPublisher;
         IDictionary<string, ConfigurationSectionManageabilityProvider> manageabilityProviders;
         IDictionary<Type, ConfigurationElementManageabilityProvider> subProviders;
 
@@ -43,7 +41,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
             currentUser = new MockRegistryKey(true);
             localMachine = new MockRegistryKey(true);
             registryAccessor = new MockRegistryAccessor(currentUser, localMachine);
-            wmiPublisher = new MockWmiPublisher();
 
             manageabilityProviders = new Dictionary<string, ConfigurationSectionManageabilityProvider>();
             subProviders = new Dictionary<Type, ConfigurationElementManageabilityProvider>();
@@ -61,10 +58,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
             localMachine.AddSubKey(ManageabilityHelper.BuildSectionKeyName(ApplicationName, SectionName), machineKey);
 
             ManageabilityHelper helper
-                = new ManageabilityHelper(manageabilityProviders, true, registryAccessor, true, wmiPublisher, ApplicationName);
+                = new ManageabilityHelper(manageabilityProviders, true, registryAccessor, ApplicationName);
             helper.UpdateConfigurationManageability(configurationAccessor);
 
-            Assert.AreEqual(0, wmiPublisher.GetPublishedInstances().Count);
             Assert.AreEqual(0, currentUser.GetRequests().Count);
             Assert.AreEqual(0, localMachine.GetRequests().Count);
 
@@ -86,11 +82,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
             manageabilityProviders.Add(AltSectionName, manageabilityProvider);
 
             ManageabilityHelper helper
-                = new ManageabilityHelper(manageabilityProviders, true, registryAccessor, true, wmiPublisher, ApplicationName);
+                = new ManageabilityHelper(manageabilityProviders, true, registryAccessor, ApplicationName);
             helper.UpdateConfigurationManageability(configurationAccessor);
 
             Assert.IsFalse(manageabilityProvider.called);
-            Assert.AreEqual(0, wmiPublisher.GetPublishedInstances().Count);
             Assert.AreEqual(0, currentUser.GetRequests().Count);
             Assert.AreEqual(0, localMachine.GetRequests().Count);
 
@@ -112,11 +107,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
             manageabilityProviders.Add(SectionName, manageabilityProvider);
 
             ManageabilityHelper helper
-                = new ManageabilityHelper(manageabilityProviders, true, registryAccessor, true, wmiPublisher, ApplicationName);
+                = new ManageabilityHelper(manageabilityProviders, true, registryAccessor, ApplicationName);
             helper.UpdateConfigurationManageability(configurationAccessor);
 
             Assert.IsTrue(manageabilityProvider.called);
-            Assert.AreEqual(1, wmiPublisher.GetPublishedInstances().Count);
             Assert.AreEqual(1, currentUser.GetRequests().Count);
             Assert.AreSame(userKey, manageabilityProvider.userKey);
             Assert.AreEqual(1, localMachine.GetRequests().Count);
@@ -140,7 +134,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
             manageabilityProviders.Add(SectionName, manageabilityProvider);
 
             ManageabilityHelper helper
-                = new ManageabilityHelper(manageabilityProviders, false, registryAccessor, true, wmiPublisher, ApplicationName);
+                = new ManageabilityHelper(manageabilityProviders, false, registryAccessor, ApplicationName);
             helper.UpdateConfigurationManageability(configurationAccessor);
 
             Assert.IsTrue(manageabilityProvider.called);
@@ -166,7 +160,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
             manageabilityProviders.Add(SectionName, manageabilityProvider);
 
             ManageabilityHelper helper
-                = new ManageabilityHelper(manageabilityProviders, true, registryAccessor, true, wmiPublisher, ApplicationName);
+                = new ManageabilityHelper(manageabilityProviders, true, registryAccessor, ApplicationName);
             helper.UpdateConfigurationManageability(configurationAccessor);
 
             Assert.IsTrue(manageabilityProvider.called);
@@ -180,69 +174,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
         }
 
         [TestMethod]
-        public void HelperWillSendAppropriateParameterIfWmiIsDisabled()
-        {
-            TestsConfigurationSection section = new TestsConfigurationSection(originalValue);
-            configurationSource.Add(SectionName, section);
-
-            MockConfigurationSectionManageabilityProvider manageabilityProvider = new MockConfigurationSectionManageabilityProvider(subProviders);
-            manageabilityProviders.Add(SectionName, manageabilityProvider);
-
-            ManageabilityHelper helper
-                = new ManageabilityHelper(manageabilityProviders, true, registryAccessor, false, wmiPublisher, ApplicationName);
-            helper.UpdateConfigurationManageability(configurationAccessor);
-
-            Assert.IsTrue(manageabilityProvider.called);
-            Assert.IsTrue(manageabilityProvider.readGroupPolicies);
-            Assert.IsFalse(manageabilityProvider.generateWmiObjects);
-            Assert.AreEqual(0, wmiPublisher.GetPublishedInstances().Count);
-        }
-
-        [TestMethod]
-        public void HelperWillPublishIfWmiIsEnabled()
-        {
-            TestsConfigurationSection section = new TestsConfigurationSection(originalValue);
-            configurationSource.Add(SectionName, section);
-
-            MockConfigurationSectionManageabilityProvider manageabilityProvider
-                = new MockConfigurationSectionManageabilityProvider(subProviders);
-            manageabilityProviders.Add(SectionName, manageabilityProvider);
-
-            ManageabilityHelper helper
-                = new ManageabilityHelper(manageabilityProviders, true, registryAccessor, true, wmiPublisher, ApplicationName);
-            helper.UpdateConfigurationManageability(configurationAccessor);
-
-            Assert.IsTrue(manageabilityProvider.called);
-            Assert.IsTrue(manageabilityProvider.readGroupPolicies);
-            Assert.IsTrue(manageabilityProvider.generateWmiObjects);
-            Assert.AreEqual(1, wmiPublisher.GetPublishedInstances().Count);
-        }
-
-        [TestMethod]
-        public void HelperWillRevokePublishedSettingsOnReprocess()
-        {
-            TestsConfigurationSection section = new TestsConfigurationSection(originalValue);
-            configurationSource.Add(SectionName, section);
-
-            MockConfigurationSectionManageabilityProvider manageabilityProvider
-                = new MockConfigurationSectionManageabilityProvider(subProviders);
-            manageabilityProviders.Add(SectionName, manageabilityProvider);
-
-            ManageabilityHelper helper
-                = new ManageabilityHelper(manageabilityProviders, true, registryAccessor, true, wmiPublisher, ApplicationName);
-            helper.UpdateConfigurationManageability(configurationAccessor);
-
-            Assert.AreEqual(1, wmiPublisher.GetPublishedInstances().Count);
-            ConfigurationSetting publishedSetting = new List<ConfigurationSetting>(wmiPublisher.GetPublishedInstances())[0];
-
-            helper.UpdateConfigurationManageability(configurationAccessor);
-
-            Assert.AreEqual(1, wmiPublisher.GetPublishedInstances().Count);
-            ConfigurationSetting rePublishedSetting = new List<ConfigurationSetting>(wmiPublisher.GetPublishedInstances())[0];
-            Assert.AreNotSame(publishedSetting, rePublishedSetting);
-        }
-
-        [TestMethod]
         public void HelperIgnoresUpdateEmptySectionsList()
         {
             MockConfigurationSectionManageabilityProvider manageabilityProvider
@@ -250,10 +181,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
             manageabilityProviders.Add(SectionName, manageabilityProvider);
 
             ManageabilityHelper helper
-                = new ManageabilityHelper(manageabilityProviders, true, registryAccessor, true, wmiPublisher, ApplicationName);
+                = new ManageabilityHelper(manageabilityProviders, true, registryAccessor, ApplicationName);
             helper.UpdateConfigurationManageability(configurationAccessor);
 
-            Assert.AreEqual(0, wmiPublisher.GetPublishedInstances().Count);
             Assert.AreEqual(0, currentUser.GetRequests().Count);
             Assert.AreEqual(0, localMachine.GetRequests().Count);
         }
@@ -266,10 +196,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
             manageabilityProviders.Add(SectionName, manageabilityProvider);
 
             ManageabilityHelper helper
-                = new ManageabilityHelper(manageabilityProviders, true, registryAccessor, true, wmiPublisher, ApplicationName);
+                = new ManageabilityHelper(manageabilityProviders, true, registryAccessor, ApplicationName);
             helper.UpdateConfigurationManageability(configurationAccessor);
 
-            Assert.AreEqual(0, wmiPublisher.GetPublishedInstances().Count);
             Assert.AreEqual(0, currentUser.GetRequests().Count);
             Assert.AreEqual(0, localMachine.GetRequests().Count);
         }
@@ -282,7 +211,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
             manageabilityProviders.Add(SectionName, manageabilityProvider);
 
             ManageabilityHelper helper
-                = new ManageabilityHelper(manageabilityProviders, true, registryAccessor, true, wmiPublisher, ApplicationName);
+                = new ManageabilityHelper(manageabilityProviders, true, registryAccessor, ApplicationName);
             helper.UpdateConfigurationManageability(configurationAccessor);
 
             Assert.IsFalse(manageabilityProvider.called);
@@ -299,52 +228,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
             manageabilityProviders.Add(SectionName, manageabilityProvider);
 
             ManageabilityHelper helper
-                = new ManageabilityHelper(manageabilityProviders, true, registryAccessor, true, wmiPublisher, ApplicationName);
+                = new ManageabilityHelper(manageabilityProviders, true, registryAccessor, ApplicationName);
             helper.UpdateConfigurationManageability(configurationAccessor);
 
             Assert.IsTrue(manageabilityProvider.called);
-        }
-
-        [TestMethod]
-        public void HelperRevokesPublishedObjectsForRemovedSection()
-        {
-            TestsConfigurationSection section = new TestsConfigurationSection(originalValue);
-            configurationSource.Add(SectionName, section);
-
-            MockConfigurationSectionManageabilityProvider manageabilityProvider
-                = new MockConfigurationSectionManageabilityProvider(subProviders);
-            manageabilityProviders.Add(SectionName, manageabilityProvider);
-
-            ManageabilityHelper helper
-                = new ManageabilityHelper(manageabilityProviders, true, registryAccessor, true, wmiPublisher, ApplicationName);
-            helper.UpdateConfigurationManageability(configurationAccessor);
-
-            Assert.AreEqual(1, wmiPublisher.GetPublishedInstances().Count);
-
-            configurationSource.Remove(SectionName);
-            helper.UpdateConfigurationManageability(configurationAccessor);
-
-            Assert.AreEqual(0, wmiPublisher.GetPublishedInstances().Count);
-        }
-
-        [TestMethod]
-        public void WmiSettingsArePublishedWithApplicationAndSectionName()
-        {
-            TestsConfigurationSection section = new TestsConfigurationSection(originalValue);
-            configurationSource.Add(SectionName, section);
-
-            MockConfigurationSectionManageabilityProvider manageabilityProvider
-                = new MockConfigurationSectionManageabilityProvider(subProviders);
-            manageabilityProviders.Add(SectionName, manageabilityProvider);
-
-            ManageabilityHelper helper
-                = new ManageabilityHelper(manageabilityProviders, false, registryAccessor, true, wmiPublisher, ApplicationName);
-            helper.UpdateConfigurationManageability(configurationAccessor);
-
-            Assert.AreEqual(1, wmiPublisher.GetPublishedInstances().Count);
-            ConfigurationSetting publishedSetting = new List<ConfigurationSetting>(wmiPublisher.GetPublishedInstances())[0];
-            Assert.AreEqual(ApplicationName, publishedSetting.ApplicationName);
-            Assert.AreEqual(SectionName, publishedSetting.SectionName);
         }
 
         [TestMethod]
@@ -361,7 +248,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
                 = new MockConfigurationSectionManageabilityProvider(subProviders);
             manageabilityProviders.Add(SectionName, manageabilityProvider);
             ManageabilityHelper helper
-                = new ManageabilityHelper(manageabilityProviders, true, registryAccessor, true, wmiPublisher, ApplicationName);
+                = new ManageabilityHelper(manageabilityProviders, true, registryAccessor, ApplicationName);
 
             Assert.IsTrue(configurationSource.Contains(SectionName));
 
@@ -384,168 +271,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
                 = new MockConfigurationSectionManageabilityProvider(subProviders);
             manageabilityProviders.Add(SectionName, manageabilityProvider);
             ManageabilityHelper helper
-                = new ManageabilityHelper(manageabilityProviders, false, registryAccessor, true, wmiPublisher, ApplicationName);
+                = new ManageabilityHelper(manageabilityProviders, false, registryAccessor, ApplicationName);
 
             Assert.IsTrue(configurationSource.Contains(SectionName));
 
             helper.UpdateConfigurationManageability(configurationAccessor);
 
             Assert.IsTrue(configurationSource.Contains(SectionName));
-        }
-
-        [TestMethod]
-        public void WillForwardChangeEventInConfigurationSetting()
-        {
-            TestsConfigurationSection section = new TestsConfigurationSection(originalValue);
-            configurationSource.Add(SectionName, section);
-
-            MockConfigurationSectionManageabilityProvider manageabilityProvider
-                = new MockConfigurationSectionManageabilityProvider(subProviders);
-            manageabilityProviders.Add(SectionName, manageabilityProvider);
-
-            ManageabilityHelper helper
-                = new ManageabilityHelper(manageabilityProviders, true, registryAccessor, true, wmiPublisher, ApplicationName);
-            helper.ConfigurationSettingChanged += OnConfigurationSettingChanged;
-
-            helper.UpdateConfigurationManageability(configurationAccessor);
-
-            IEnumerator<ConfigurationSetting> publishedSettings = wmiPublisher.GetPublishedInstances().GetEnumerator();
-            Assert.IsTrue(publishedSettings.MoveNext());
-
-            Assert.IsNull(notifiedChangeSource);
-            ((ConfigurationSetting)publishedSettings.Current).Commit(); // commit changes
-            Assert.AreEqual(SectionName, notifiedChangeSource);
-        }
-
-        [TestMethod]
-        public void WillRemoveHandlerForChangeEventInConfigurationSettingWhenRevoked()
-        {
-            TestsConfigurationSection section = new TestsConfigurationSection(originalValue);
-            configurationSource.Add(SectionName, section);
-
-            MockConfigurationSectionManageabilityProvider manageabilityProvider
-                = new MockConfigurationSectionManageabilityProvider(subProviders);
-            manageabilityProviders.Add(SectionName, manageabilityProvider);
-
-            ManageabilityHelper helper
-                = new ManageabilityHelper(manageabilityProviders, true, registryAccessor, true, wmiPublisher, ApplicationName);
-            helper.ConfigurationSettingChanged += OnConfigurationSettingChanged;
-
-            helper.UpdateConfigurationManageability(configurationAccessor);
-
-            IEnumerator<ConfigurationSetting> publishedSettings = wmiPublisher.GetPublishedInstances().GetEnumerator();
-            Assert.IsTrue(publishedSettings.MoveNext());
-
-            // same as before, check that the setting's commit will trigger the event
-            Assert.IsNull(notifiedChangeSource);
-            ((ConfigurationSetting)publishedSettings.Current).Commit(); // commit changes
-            Assert.AreEqual(SectionName, notifiedChangeSource);
-
-            // remove the section and update the manageability
-            configurationSource.Remove(SectionName);
-            helper.UpdateConfigurationManageability(configurationAccessor);
-
-            // check that *the original* setting's commit will not trigger changes now
-            notifiedChangeSource = null;
-            ((ConfigurationSetting)publishedSettings.Current).Commit(); // commit changes
-            Assert.IsNull(notifiedChangeSource);
-        }
-
-        [TestMethod]
-        public void UpdateOnSectionRepublishesWmiObjects()
-        {
-            TestsConfigurationSection section = new TestsConfigurationSection(originalValue);
-            configurationSource.Add(SectionName, section);
-
-            MockRegistryKey userKey = new MockRegistryKey(false);
-            MockRegistryKey machineKey = new MockRegistryKey(false);
-
-            MockConfigurationSectionManageabilityProvider manageabilityProvider = new MockConfigurationSectionManageabilityProvider(subProviders);
-            manageabilityProviders.Add(SectionName, manageabilityProvider);
-
-            ManageabilityHelper helper
-                = new ManageabilityHelper(manageabilityProviders, true, registryAccessor, true, wmiPublisher, ApplicationName);
-            helper.ConfigurationSettingChanged += OnConfigurationSettingChangedTriggerUpdate;
-            helper.UpdateConfigurationManageability(configurationAccessor);
-
-            // check the original setting was published alright.
-            IEnumerator<ConfigurationSetting> publishedInstances = wmiPublisher.GetPublishedInstances().GetEnumerator();
-            Assert.IsTrue(publishedInstances.MoveNext());
-            TestConfigurationSettings originalSetting = publishedInstances.Current as TestConfigurationSettings;
-            Assert.IsNotNull(originalSetting);
-            Assert.AreEqual(originalValue, originalSetting.Value);
-            Assert.IsFalse(publishedInstances.MoveNext());
-
-            // change and notify
-            originalSetting.Value = "Foo";
-            originalSetting.Commit();
-
-            // check the updated setting is indeed updated and a new instance
-            publishedInstances = wmiPublisher.GetPublishedInstances().GetEnumerator();
-            Assert.IsTrue(publishedInstances.MoveNext());
-            TestConfigurationSettings updatedSetting = publishedInstances.Current as TestConfigurationSettings;
-            Assert.IsNotNull(updatedSetting);
-            Assert.AreNotSame(originalSetting, updatedSetting);
-            Assert.AreEqual(originalSetting.Value, updatedSetting.Value);
-            Assert.IsFalse(publishedInstances.MoveNext());
-        }
-
-        [TestMethod]
-        public void UpdateOnSectionReappliesPoliciesAndRepublishesWmiObjects()
-        {
-            TestsConfigurationSection section = new TestsConfigurationSection(originalValue);
-            configurationSource.Add(SectionName, section);
-
-            MockRegistryKey userKey = new MockRegistryKey(false);
-            currentUser.AddSubKey(ManageabilityHelper.BuildSectionKeyName(ApplicationName, SectionName), userKey);
-            userKey.AddBooleanValue(RegistryKeyBase.PolicyValueName, true);
-            userKey.AddStringValue(MockConfigurationSectionManageabilityProvider.ValuePropertyName, "Overriden");
-            MockRegistryKey machineKey = new MockRegistryKey(false);
-            localMachine.AddSubKey(ManageabilityHelper.BuildSectionKeyName(ApplicationName, SectionName), machineKey);
-
-            MockConfigurationSectionManageabilityProvider manageabilityProvider = new MockConfigurationSectionManageabilityProvider(subProviders);
-            manageabilityProviders.Add(SectionName, manageabilityProvider);
-
-            ManageabilityHelper helper
-                = new ManageabilityHelper(manageabilityProviders, true, registryAccessor, true, wmiPublisher, ApplicationName);
-            helper.ConfigurationSettingChanged += OnConfigurationSettingChangedTriggerUpdate;
-            helper.UpdateConfigurationManageability(configurationAccessor);
-
-            // check the original setting was published alright.
-            IEnumerator<ConfigurationSetting> publishedInstances = wmiPublisher.GetPublishedInstances().GetEnumerator();
-            Assert.IsTrue(publishedInstances.MoveNext());
-            TestConfigurationSettings originalSetting = publishedInstances.Current as TestConfigurationSettings;
-            Assert.IsNotNull(originalSetting);
-            Assert.AreEqual("Overriden", originalSetting.Value);
-            Assert.IsFalse(publishedInstances.MoveNext());
-
-            // change and notify
-            originalSetting.Value = "Foo";
-            originalSetting.Commit();
-
-            // check the updated setting is indeed updated and a new instance
-            // the gp override should still take precedence
-            publishedInstances = wmiPublisher.GetPublishedInstances().GetEnumerator();
-            Assert.IsTrue(publishedInstances.MoveNext());
-            TestConfigurationSettings updatedSetting = publishedInstances.Current as TestConfigurationSettings;
-            Assert.IsNotNull(updatedSetting);
-            Assert.AreNotSame(originalSetting, updatedSetting);
-            Assert.AreEqual("Overriden", updatedSetting.Value);
-            Assert.IsFalse(publishedInstances.MoveNext());
-        }
-
-        void OnConfigurationSettingChangedTriggerUpdate(object source,
-                                                        ConfigurationSettingChangedEventArgs args)
-        {
-            ((ManageabilityHelper)source).UpdateConfigurationSectionManageability(configurationAccessor, args.SectionName);
-        }
-
-        string notifiedChangeSource;
-
-        void OnConfigurationSettingChanged(object source,
-                                           ConfigurationSettingChangedEventArgs args)
-        {
-            notifiedChangeSource = args.SectionName;
         }
     }
 }

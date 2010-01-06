@@ -27,7 +27,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
     [ViewModel(CryptographyDesignTime.ViewModelTypeNames.CryptographySectionViewModel)]
     [ResourceDescription(typeof(DesignResources), "CryptographySettingsDescription")]
     [ResourceDisplayName(typeof(DesignResources), "CryptographySettingsDisplayName")]
-
     public class CryptographySettings : SerializableConfigurationSection, ITypeRegistrationsProvider
     {       
 		private const string hashProvidersProperty = "hashProviders";

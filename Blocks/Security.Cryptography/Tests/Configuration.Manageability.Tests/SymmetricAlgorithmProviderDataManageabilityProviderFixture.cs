@@ -28,7 +28,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         SymmetricAlgorithmProviderDataManageabilityProvider provider;
         MockRegistryKey machineKey;
         MockRegistryKey userKey;
-        IList<ConfigurationSetting> wmiSettings;
         SymmetricAlgorithmProviderData configurationObject;
 
         [TestInitialize]
@@ -37,15 +36,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
             provider = new SymmetricAlgorithmProviderDataManageabilityProvider();
             machineKey = new MockRegistryKey(true);
             userKey = new MockRegistryKey(true);
-            wmiSettings = new List<ConfigurationSetting>();
             configurationObject = new SymmetricAlgorithmProviderData();
-        }
-
-        [TestCleanup]
-        public void TearDown()
-        {
-            // preventive unregister to work around WMI.NET 2.0 issues with appdomain unloading
-            ManagementEntityTypesRegistrar.UnregisterAll();
         }
 
         [TestMethod]
@@ -73,7 +64,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         [ExpectedException(typeof(ArgumentException))]
         public void ProviderThrowsWithConfigurationObjectOfWrongType()
         {
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(new TestsConfigurationSection(), true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(new TestsConfigurationSection(), true, machineKey, userKey);
         }
 
         [TestMethod]
@@ -83,7 +74,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
             configurationObject.ProtectedKeyFilename = "file name";
             configurationObject.ProtectedKeyProtectionScope = DataProtectionScope.CurrentUser;
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, null, null, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, null, null);
 
             Assert.AreEqual("file name", configurationObject.ProtectedKeyFilename);
             Assert.AreEqual(DataProtectionScope.CurrentUser, configurationObject.ProtectedKeyProtectionScope);
@@ -99,7 +90,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
             machineKey.AddStringValue(SymmetricAlgorithmProviderDataManageabilityProvider.ProtectedKeyFilenamePropertyName, "machine file name");
             machineKey.AddStringValue(SymmetricAlgorithmProviderDataManageabilityProvider.ProtectedKeyProtectionScopePropertyName, DataProtectionScope.LocalMachine.ToString());
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, machineKey, null, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, machineKey, null);
 
             Assert.AreEqual("machine file name", configurationObject.ProtectedKeyFilename);
             Assert.AreEqual(DataProtectionScope.LocalMachine, configurationObject.ProtectedKeyProtectionScope);
@@ -115,7 +106,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
             userKey.AddStringValue(SymmetricAlgorithmProviderDataManageabilityProvider.ProtectedKeyFilenamePropertyName, "user file name");
             userKey.AddStringValue(SymmetricAlgorithmProviderDataManageabilityProvider.ProtectedKeyProtectionScopePropertyName, DataProtectionScope.LocalMachine.ToString());
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, null, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, null, userKey);
 
             Assert.AreEqual("user file name", configurationObject.ProtectedKeyFilename);
             Assert.AreEqual(DataProtectionScope.LocalMachine, configurationObject.ProtectedKeyProtectionScope);
@@ -131,62 +122,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
             machineKey.AddStringValue(SymmetricAlgorithmProviderDataManageabilityProvider.ProtectedKeyFilenamePropertyName, "machine file name");
             machineKey.AddStringValue(SymmetricAlgorithmProviderDataManageabilityProvider.ProtectedKeyProtectionScopePropertyName, DataProtectionScope.LocalMachine.ToString());
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, false, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, false, machineKey, userKey);
 
             Assert.AreEqual("file name", configurationObject.ProtectedKeyFilename);
             Assert.AreEqual(DataProtectionScope.CurrentUser, configurationObject.ProtectedKeyProtectionScope);
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreNotGeneratedIfWmiIsDisabled()
-        {
-            configurationObject.Name = "provider name";
-            configurationObject.AlgorithmType = typeof(DESCryptoServiceProvider);
-            configurationObject.ProtectedKeyFilename = "file name";
-            configurationObject.ProtectedKeyProtectionScope = DataProtectionScope.CurrentUser;
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, false, null, null, false, wmiSettings);
-
-            Assert.AreEqual(0, wmiSettings.Count);
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreGeneratedIfWmiIsEnabled()
-        {
-            configurationObject.Name = "provider name";
-            configurationObject.AlgorithmType = typeof(DESCryptoServiceProvider);
-            configurationObject.ProtectedKeyFilename = "file name";
-            configurationObject.ProtectedKeyProtectionScope = DataProtectionScope.CurrentUser;
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, false, null, null, true, wmiSettings);
-
-            Assert.AreEqual(1, wmiSettings.Count);
-            Assert.AreSame(typeof(SymmetricAlgorithmProviderSetting), wmiSettings[0].GetType());
-            Assert.AreEqual("provider name", ((SymmetricAlgorithmProviderSetting)wmiSettings[0]).Name);
-            Assert.AreEqual(typeof(DESCryptoServiceProvider).AssemblyQualifiedName, ((SymmetricAlgorithmProviderSetting)wmiSettings[0]).AlgorithmType);
-            Assert.AreEqual("file name", ((SymmetricAlgorithmProviderSetting)wmiSettings[0]).ProtectedKeyFilename);
-            Assert.AreEqual(DataProtectionScope.CurrentUser.ToString(), ((SymmetricAlgorithmProviderSetting)wmiSettings[0]).ProtectedKeyProtectionScope);
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreGeneratedWithPolicyOverridesIfWmiIsEnabled()
-        {
-            configurationObject.Name = "provider name";
-            configurationObject.AlgorithmType = typeof(DESCryptoServiceProvider);
-            configurationObject.ProtectedKeyFilename = "file name";
-            configurationObject.ProtectedKeyProtectionScope = DataProtectionScope.CurrentUser;
-
-            machineKey.AddStringValue(SymmetricAlgorithmProviderDataManageabilityProvider.ProtectedKeyFilenamePropertyName, "machine file name");
-            machineKey.AddStringValue(SymmetricAlgorithmProviderDataManageabilityProvider.ProtectedKeyProtectionScopePropertyName, DataProtectionScope.LocalMachine.ToString());
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, machineKey, null, true, wmiSettings);
-
-            Assert.AreEqual(1, wmiSettings.Count);
-            Assert.AreSame(typeof(SymmetricAlgorithmProviderSetting), wmiSettings[0].GetType());
-            Assert.AreEqual("provider name", ((SymmetricAlgorithmProviderSetting)wmiSettings[0]).Name);
-            Assert.AreEqual(typeof(DESCryptoServiceProvider).AssemblyQualifiedName, ((SymmetricAlgorithmProviderSetting)wmiSettings[0]).AlgorithmType);
-            Assert.AreEqual("machine file name", ((SymmetricAlgorithmProviderSetting)wmiSettings[0]).ProtectedKeyFilename);
-            Assert.AreEqual(DataProtectionScope.LocalMachine.ToString(), ((SymmetricAlgorithmProviderSetting)wmiSettings[0]).ProtectedKeyProtectionScope);
         }
 
         [TestMethod]

@@ -21,7 +21,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate>
-                    <ContentControl x:Name="AddButtonVisual" Foreground="{DynamicResource ElementCommandNormalBrush}" Background="{DynamicResource ElementCommandBackgroundBrush}" >
+                    <ContentControl Focusable="False" x:Name="AddButtonVisual" Foreground="{DynamicResource ElementCommandNormalBrush}" Background="{DynamicResource ElementCommandBackgroundBrush}" >
                         <Canvas xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Width="17" Height="17">
                             <Path Width="18" Height="18" Canvas.Left="-0.499999" Canvas.Top="-0.499999" Stretch="Fill" StrokeLineJoin="Round" Stroke="#00949494" Fill="{Binding Background, ElementName=AddButtonVisual}" Data="F1 M 3,9.53674e-007L 14,9.53674e-007C 15.6569,9.53674e-007 17,1.34315 17,3L 17,14C 17,15.6569 15.6569,17 14,17L 3,17C 1.34315,17 5.23122e-007,15.6569 5.23122e-007,14L 5.23122e-007,3C 5.23122e-007,1.34315 1.34315,9.53674e-007 3,9.53674e-007 Z "/>
                             <Path Width="18" Height="18" Canvas.Left="-0.499999" Canvas.Top="-0.499999" Stretch="Fill" StrokeLineJoin="Round" Stroke="{DynamicResource ElementCommandNormalBrush}" Data="F1 M 3,9.53674e-007L 14,9.53674e-007C 15.6569,9.53674e-007 17,1.34315 17,3L 17,14C 17,15.6569 15.6569,17 14,17L 3,17C 1.34315,17 5.23122e-007,15.6569 5.23122e-007,14L 5.23122e-007,3C 5.23122e-007,1.34315 1.34315,9.53674e-007 3,9.53674e-007 Z "/>
@@ -80,15 +80,19 @@
     </Style>
     
     <DataTemplate DataType="{x:Type ViewModel:ElementViewModel}">
-        <Controls:ElementModelContainer DataContext="{Binding}"/>
+        <Controls:ElementModelContainer DataContext="{Binding}">
+            <Controls:ElementModelContainer.ContextMenu>
+                <Controls:SelectionNotifyingContextMenu ItemsSource="{Binding Commands}" Style="{StaticResource ContextMenuStyle}" /> 
+            </Controls:ElementModelContainer.ContextMenu>
+        </Controls:ElementModelContainer>
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type ViewModel:ElementListViewModel}">
-        <ItemsControl ItemsSource="{Binding Elements}" >
+        <ItemsControl Focusable="False"  ItemsSource="{Binding Elements}" >
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel>
-                        <ContentControl Content="{Binding Visual}" />
+                    <StackPanel Focusable="False">
+                        <ContentControl Focusable="False" Content="{Binding Visual}" />
                     </StackPanel>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
@@ -96,11 +100,11 @@
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type ViewModel:ListViewModel}">
-        <ItemsControl ItemsSource="{Binding Elements}" >
+        <ItemsControl ItemsSource="{Binding Elements}"  Focusable="False">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel>
-                        <ContentControl Content="{Binding Visual}" />
+                    <StackPanel Focusable="False">
+                        <ContentControl Focusable="False" Content="{Binding Visual}" />
                     </StackPanel>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
@@ -108,7 +112,7 @@
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type ViewModel:HorizontalListViewModel}">
-        <Grid x:Name="Grid" VerticalAlignment="Stretch">
+        <Grid x:Name="Grid" VerticalAlignment="Stretch" Focusable="False">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition MinWidth="275" Width="275" SharedSizeGroup="{Binding ColumnName}" />
                 <!--ColumnDefinition Width="3" /-->
@@ -126,7 +130,20 @@
                             Focusable="False" 
                             HorizontalAlignment="Stretch"/>
 
-            <ContentControl VerticalAlignment="Stretch" Grid.RowSpan="2" Grid.Column="1" Content="{Binding}">
+            <GridSplitter   Focusable="False"
+                            x:Name="Splitter"
+                            Grid.Column="0" 
+                            Grid.Row="0"
+                            Grid.RowSpan="2"
+                            BorderBrush="Black" 
+                            BorderThickness="1"
+                            Opacity="0.15"
+                            Width="3"
+                            Background="Transparent" 
+                            ResizeDirection="Columns" 
+                            ShowsPreview="True" />
+            
+            <ContentControl Focusable="False" VerticalAlignment="Stretch" Grid.RowSpan="2" Grid.Column="1" Content="{Binding}">
                 <ContentControl.ContentTemplate>
                     <DataTemplate>
                         <ContentControl VerticalAlignment="Stretch"
@@ -148,20 +165,9 @@
                     Grid.Column="0"
                     Grid.ColumnSpan="2"
                     Grid.Row="1">
-                <ContentControl Content="{Binding Contained}" />
+                <ContentControl Focusable="False" Content="{Binding Contained}" />
             </StackPanel>
 
-            <GridSplitter   x:Name="Splitter"
-                            Grid.Column="0" 
-                            Grid.Row="0"
-                            Grid.RowSpan="2"
-                            BorderBrush="Black" 
-                            BorderThickness="1"
-                            Opacity="0.15"
-                            Width="3"
-                            Background="Transparent" 
-                            ResizeDirection="Columns" 
-                            ShowsPreview="True" />
 
 
         </Grid>
@@ -174,8 +180,8 @@
 
     <DataTemplate DataType="{x:Type ViewModel:TwoVerticalVisualsViewModel}">
         <StackPanel>
-            <ContentControl Content="{Binding First}" />
-            <ContentControl Content="{Binding Second}" />
+            <ContentControl Focusable="False"  Content="{Binding First}" />
+            <ContentControl Focusable="False" Content="{Binding Second}" />
         </StackPanel>
     </DataTemplate>
 
@@ -186,15 +192,16 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <ContentControl Grid.Column="0" Content="{Binding Left}" />
+            <ContentControl Focusable="False" Grid.Column="0" Content="{Binding Left}" />
 
-            <ContentControl Grid.Column="1" Content="{Binding Right}" />
+            <ContentControl Focusable="False" Grid.Column="1" Content="{Binding Right}" />
 
         </Grid>
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type ViewModel:HeaderViewModel}">
-        <Grid ScrollViewer.VerticalScrollBarVisibility="Disabled" 
+        <Grid Focusable="False"
+              ScrollViewer.VerticalScrollBarVisibility="Disabled" 
               Margin="12, 0, 12, 6">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
@@ -293,8 +300,8 @@
 						x:Name="propertyPopupButton"
 						HorizontalAlignment="Right"
                         VerticalAlignment="Top"
+                        Focusable="true"
 						IsEnabled="{Binding ReadOnly, Converter={StaticResource BooleanInverseConverter}}" />
-
             <Grid HorizontalAlignment="Stretch">
                 <Border BorderBrush="Red"
 							BorderThickness="1"
@@ -310,6 +317,7 @@
                             Text="{Binding BindableValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=true}"
                          />
             </Grid>
+          
         </DockPanel>
         <DataTemplate.Triggers>
             <Trigger Property="Validation.HasError"
@@ -337,7 +345,7 @@
 					   HorizontalAlignment="Left" 
                        VerticalAlignment="Top" />
 
-            <ContentControl Grid.Column="1" Content="{Binding Visual}" />
+            <ContentControl Focusable="False" Grid.Column="1" Content="{Binding Visual}" />
 
         </Grid>
         <DataTemplate.Triggers>
@@ -360,7 +368,7 @@
                 <RowDefinition />
             </Grid.RowDefinitions>
 
-            <ContentControl Grid.Column="1" Content="{Binding}" ContentTemplate="{StaticResource ActualProperty}">
+            <ContentControl Focusable="False" Grid.Column="1" Content="{Binding}" ContentTemplate="{StaticResource ActualProperty}">
 
             </ContentControl>
 
@@ -399,11 +407,13 @@
             </ToggleButton>
 
             <ContentControl 
+                          Focusable="False"
                           Grid.Column="1" 
                           Content="{Binding}" 
                           ContentTemplate="{StaticResource ActualProperty}" />
 
-            <ItemsControl ItemsSource="{Binding ChildProperties}"
+            <ItemsControl Focusable="False"
+                          ItemsSource="{Binding ChildProperties}"
                           ItemTemplate="{StaticResource ActualProperty}"
 					      Visibility="{Binding IsChecked, Converter={StaticResource BooleanToVisibilityConverter}, ElementName=ShowChildProperties, Mode=TwoWay}"
 					      Grid.Column="1"
@@ -420,7 +430,11 @@
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type ViewModel:SectionViewModel}">
-        <Controls:SectionModelContainer  DataContext="{Binding}"  />
+        <Controls:SectionModelContainer DataContext="{Binding}" >
+            <Controls:SectionModelContainer.ContextMenu>
+                <Controls:SelectionNotifyingContextMenu ItemsSource="{Binding Commands}" Style="{StaticResource ContextMenuStyle}" />
+            </Controls:SectionModelContainer.ContextMenu>
+        </Controls:SectionModelContainer>
     </DataTemplate>
 
     <Style x:Key="ButtonFocusVisual">
@@ -454,7 +468,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
-                    <ContentControl x:Name="DeleteButtonVisual" Foreground="{DynamicResource ElementCommandNormalBrush}" Background="{DynamicResource BackgroundBrush}">
+                    <ContentControl Focusable="False" x:Name="DeleteButtonVisual" Foreground="{DynamicResource ElementCommandNormalBrush}" Background="{DynamicResource BackgroundBrush}">
                         <Canvas xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Width="17" Height="17">
                             <Path Width="18" Height="18" Canvas.Left="-0.500002" Canvas.Top="-0.499999" Stretch="Fill" StrokeLineJoin="Round" Stroke="#00949494" Fill="#00FFFFFF" Data="F1 M 3,9.53674e-007L 14,9.53674e-007C 15.6569,9.53674e-007 17,1.34315 17,3L 17,14C 17,15.6569 15.6569,17 14,17L 3,17C 1.34314,17 -1.7257e-006,15.6569 -1.7257e-006,14L -1.7257e-006,3C -1.7257e-006,1.34315 1.34314,9.53674e-007 3,9.53674e-007 Z "/>
                             <Path Width="18" Height="18" Canvas.Left="-0.500002" Canvas.Top="-0.499999" Stretch="Fill" StrokeLineJoin="Round" Stroke="{DynamicResource ElementCommandNormalBrush}" Data="F1 M 3,9.53674e-007L 14,9.53674e-007C 15.6569,9.53674e-007 17,1.34315 17,3L 17,14C 17,15.6569 15.6569,17 14,17L 3,17C 1.34314,17 -1.7257e-006,15.6569 -1.7257e-006,14L -1.7257e-006,3C -1.7257e-006,1.34315 1.34314,9.53674e-007 3,9.53674e-007 Z "/>

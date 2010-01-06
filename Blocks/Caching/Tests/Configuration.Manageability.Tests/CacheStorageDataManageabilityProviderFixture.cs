@@ -12,7 +12,6 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Microsoft.Practices.EnterpriseLibrary.Caching.BackingStoreImplementations;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability.Adm;
@@ -27,7 +26,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration.Manageabil
         CacheStorageDataManageabilityProvider provider;
         MockRegistryKey machineKey;
         MockRegistryKey userKey;
-        IList<ConfigurationSetting> wmiSettings;
         CacheStorageData configurationObject;
 
         [TestInitialize]
@@ -36,15 +34,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration.Manageabil
             provider = new CacheStorageDataManageabilityProvider();
             machineKey = new MockRegistryKey(true);
             userKey = new MockRegistryKey(true);
-            wmiSettings = new List<ConfigurationSetting>();
             configurationObject = new CacheStorageData();
-        }
-
-        [TestCleanup]
-        public void TearDown()
-        {
-            // preventive unregister to work around WMI.NET 2.0 issues with appdomain unloading
-            ManagementEntityTypesRegistrar.UnregisterAll();
         }
 
         [TestMethod]
@@ -72,31 +62,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration.Manageabil
         [ExpectedException(typeof(ArgumentException))]
         public void ProviderThrowsWithConfigurationObjectOfWrongType()
         {
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(new TestsConfigurationSection(), true, machineKey, userKey, true, wmiSettings);
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreNotGeneratedIfWmiIsDisabled()
-        {
-            configurationObject.Type = typeof(NullBackingStore);
-            configurationObject.StorageEncryption = "encryption";
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, false, machineKey, userKey, false, wmiSettings);
-
-            Assert.AreEqual(0, wmiSettings.Count);
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreGeneratedIfWmiIsEnabled()
-        {
-            configurationObject.Type = typeof(NullBackingStore);
-            configurationObject.StorageEncryption = "encryption";
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, false, machineKey, userKey, true, wmiSettings);
-
-            Assert.AreEqual(1, wmiSettings.Count);
-            Assert.AreSame(typeof(NullBackingStoreSetting), wmiSettings[0].GetType());
-            Assert.AreEqual("encryption", ((NullBackingStoreSetting)wmiSettings[0]).StorageEncryption);
+            provider.OverrideWithGroupPolicies(new TestsConfigurationSection(), true, machineKey, userKey);
         }
 
         [TestMethod]

@@ -14,13 +14,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.ComponentModel;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Converters
 {
     public class ReferencePropertyConverter : StringConverter
     {
-        private readonly string NoReference = "<none>";
-        
+        private readonly string NoReference;
+
+        public ReferencePropertyConverter()
+        {
+            NoReference = Resources.ReferencePropertyNoReference;
+        }
 
         public override object ConvertFrom(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value)
         {
@@ -33,10 +38,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
 
         public override object ConvertTo(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destinationType)
         {
-            if (destinationType == typeof(string) && value is string && string.IsNullOrEmpty((string)value))
+            if (destinationType == typeof(string) && string.IsNullOrEmpty((string)value))
             {
                 return NoReference;
             }
+
             return base.ConvertTo(context, culture, value, destinationType);
         }
     }

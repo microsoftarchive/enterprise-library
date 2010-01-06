@@ -9,15 +9,13 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
-using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
-using System.Text;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Console.Wpf.Tests.VSTS.DevTests.Contexts;
-using Microsoft.Practices.Unity;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides.Configuration;
+using Microsoft.Practices.Unity;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_configuration_source_model
 {
@@ -35,6 +33,28 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_configuration_source_model
         {
             var sourceModel = Container.Resolve<ConfigurationSourceModel>();
             Assert.IsTrue(sourceModel.Sections.Where(x=>x.ConfigurationType == typeof(EnvironmentMergeSection)).Any());
+        }
+
+        [TestMethod]
+        public void then_environment_name_is_calculated_correctly()
+        {
+            const string EnvironmentName = "Environment";
+            var sourceModel = Container.Resolve<ConfigurationSourceModel>();
+
+            Assert.AreEqual(EnvironmentName, sourceModel.Environments.Last().Name);
+
+            for (var i = 2; i < 5; i++)
+            {
+                sourceModel.NewEnvironment();
+
+                string correctName = string.Format(CultureInfo.CurrentUICulture,
+                                                  "{0} {1}",
+                                                  EnvironmentName,
+                                                  i.ToString()).Trim();
+
+                var environmentName = sourceModel.Environments.Last().Name;
+                Assert.AreEqual(correctName, environmentName);
+            }
         }
     }
 }

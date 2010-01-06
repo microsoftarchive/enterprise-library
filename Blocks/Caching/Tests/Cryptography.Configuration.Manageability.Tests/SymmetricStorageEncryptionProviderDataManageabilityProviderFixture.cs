@@ -28,7 +28,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Cryptography.Configurati
         SymmetricStorageEncryptionProviderDataManageabilityProvider provider;
         MockRegistryKey machineKey;
         MockRegistryKey userKey;
-        IList<ConfigurationSetting> wmiSettings;
         SymmetricStorageEncryptionProviderData configurationObject;
 
         [TestInitialize]
@@ -37,15 +36,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Cryptography.Configurati
             provider = new SymmetricStorageEncryptionProviderDataManageabilityProvider();
             machineKey = new MockRegistryKey(true);
             userKey = new MockRegistryKey(true);
-            wmiSettings = new List<ConfigurationSetting>();
             configurationObject = new SymmetricStorageEncryptionProviderData();
-        }
-
-        [TestCleanup]
-        public void TearDown()
-        {
-            // preventive unregister to work around WMI.NET 2.0 issues with appdomain unloading
-            ManagementEntityTypesRegistrar.UnregisterAll();
         }
 
         [TestMethod]
@@ -73,7 +64,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Cryptography.Configurati
         [ExpectedException(typeof(ArgumentException))]
         public void ProviderThrowsWithConfigurationObjectOfWrongType()
         {
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(new TestsConfigurationSection(), true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(new TestsConfigurationSection(), true, machineKey, userKey);
         }
 
         [TestMethod]
@@ -81,7 +72,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Cryptography.Configurati
         {
             configurationObject.SymmetricInstance = "symmetric instance";
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, null, null, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, null, null);
 
             Assert.AreEqual("symmetric instance", configurationObject.SymmetricInstance);
         }
@@ -93,7 +84,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Cryptography.Configurati
 
             machineKey.AddStringValue(SymmetricStorageEncryptionProviderDataManageabilityProvider.SymmetricInstancePropertyName, "machine symmetric instance");
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, machineKey, null, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, machineKey, null);
 
             Assert.AreEqual("machine symmetric instance", configurationObject.SymmetricInstance);
         }
@@ -105,7 +96,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Cryptography.Configurati
 
             userKey.AddStringValue(SymmetricStorageEncryptionProviderDataManageabilityProvider.SymmetricInstancePropertyName, "user symmetric instance");
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, null, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, null, userKey);
 
             Assert.AreEqual("user symmetric instance", configurationObject.SymmetricInstance);
         }
@@ -117,50 +108,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Cryptography.Configurati
 
             machineKey.AddStringValue(SymmetricStorageEncryptionProviderDataManageabilityProvider.SymmetricInstancePropertyName, "machine symmetric instance");
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, false, machineKey, null, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, false, machineKey, null);
 
             Assert.AreEqual("symmetric instance", configurationObject.SymmetricInstance);
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreNotGeneratedIfWmiIsDisabled()
-        {
-            configurationObject.Name = "provider name";
-            configurationObject.SymmetricInstance = "symmetric instance";
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, false, null, null, false, wmiSettings);
-
-            Assert.AreEqual(0, wmiSettings.Count);
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreGeneratedIfWmiIsEnabled()
-        {
-            configurationObject.Name = "provider name";
-            configurationObject.SymmetricInstance = "symmetric instance";
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, false, null, null, true, wmiSettings);
-
-            Assert.AreEqual(1, wmiSettings.Count);
-            Assert.AreSame(typeof(SymmetricStorageEncryptionProviderSetting), wmiSettings[0].GetType());
-            Assert.AreEqual("provider name", ((SymmetricStorageEncryptionProviderSetting)wmiSettings[0]).Name);
-            Assert.AreEqual("symmetric instance", ((SymmetricStorageEncryptionProviderSetting)wmiSettings[0]).SymmetricInstance);
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreGeneratedWithPolicyOverridesIfWmiIsEnabled()
-        {
-            configurationObject.Name = "provider name";
-            configurationObject.SymmetricInstance = "symmetric instance";
-
-            machineKey.AddStringValue(SymmetricStorageEncryptionProviderDataManageabilityProvider.SymmetricInstancePropertyName, "machine symmetric instance");
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, machineKey, null, true, wmiSettings);
-
-            Assert.AreEqual(1, wmiSettings.Count);
-            Assert.AreSame(typeof(SymmetricStorageEncryptionProviderSetting), wmiSettings[0].GetType());
-            Assert.AreEqual("provider name", ((SymmetricStorageEncryptionProviderSetting)wmiSettings[0]).Name);
-            Assert.AreEqual("machine symmetric instance", ((SymmetricStorageEncryptionProviderSetting)wmiSettings[0]).SymmetricInstance);
         }
 
         [TestMethod]

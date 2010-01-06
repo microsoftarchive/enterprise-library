@@ -16,5 +16,4 @@ using Microsoft.Practices.EnterpriseLibrary.Logging.Database.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Database.Configuration.Manageability;
 
 [assembly : Instrumented(@"root\EnterpriseLibrary")]
-[assembly : WmiConfiguration(@"root\EnterpriseLibrary", HostingModel = ManagementHostingModel.Decoupled, IdentifyLevel = false)]
 [assembly : ConfigurationElementManageabilityProvider(typeof(FormattedDatabaseTraceListenerDataManageabilityProvider), typeof(FormattedDatabaseTraceListenerData), typeof(LoggingSettingsManageabilityProvider))]

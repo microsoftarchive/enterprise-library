@@ -24,4 +24,3 @@ using System.Management.Instrumentation;
 
 
 [assembly: Instrumented(@"root\EnterpriseLibrary")]
-[assembly: WmiConfiguration(@"root\EnterpriseLibrary", HostingModel = ManagementHostingModel.Decoupled, IdentifyLevel = false)]

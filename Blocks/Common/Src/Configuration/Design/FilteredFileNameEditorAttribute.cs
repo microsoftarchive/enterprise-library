@@ -33,7 +33,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
         {
             if (null == resourceType) throw new ArgumentNullException("resourceType");
 
-            this.filter = ResourceStringLoader.LoadString(resourceType.FullName, resourceKey, resourceType.Assembly); ;
+            this.filter = ResourceStringLoader.LoadString(resourceType.FullName, resourceKey, resourceType.Assembly);
+            this.CheckFileExists = true;
         }
 
         /// <summary>
@@ -45,6 +46,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
         public string Filter
         {
             get { return this.filter; }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool CheckFileExists
+        {
+            get;
+            set;
         }
     }
 }

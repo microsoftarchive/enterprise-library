@@ -27,7 +27,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration.Manageabil
         CacheManagerSettingsManageabilityProvider provider;
         MockRegistryKey machineKey;
         MockRegistryKey userKey;
-        IList<ConfigurationSetting> wmiSettings;
         CacheManagerSettings section;
         DictionaryConfigurationSource configurationSource;
 
@@ -37,17 +36,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration.Manageabil
             provider = new CacheManagerSettingsManageabilityProvider(new Dictionary<Type, ConfigurationElementManageabilityProvider>(0));
             machineKey = new MockRegistryKey(true);
             userKey = new MockRegistryKey(true);
-            wmiSettings = new List<ConfigurationSetting>();
             section = new CacheManagerSettings();
             configurationSource = new DictionaryConfigurationSource();
             configurationSource.Add(CacheManagerSettings.SectionName, section);
-        }
-
-        [TestCleanup]
-        public void TearDown()
-        {
-            // preventive unregister to work around WMI.NET 2.0 issues with appdomain unloading
-            ManagementEntityTypesRegistrar.UnregisterAll();
         }
 
         [TestMethod]
@@ -74,7 +65,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration.Manageabil
         [ExpectedException(typeof(ArgumentException))]
         public void ProviderThrowsWithConfigurationObjectOfWrongType()
         {
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(new TestsConfigurationSection(), true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(new TestsConfigurationSection(), true, machineKey, userKey);
         }
 
         [TestMethod]
@@ -82,7 +73,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration.Manageabil
         {
             section.DefaultCacheManager = "default";
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual("default", section.DefaultCacheManager);
         }
@@ -92,7 +83,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration.Manageabil
         {
             section.DefaultCacheManager = "default";
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, null, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, null, userKey);
         }
 
         [TestMethod]
@@ -100,7 +91,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration.Manageabil
         {
             section.DefaultCacheManager = "default";
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, null, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, null);
         }
 
         [TestMethod]
@@ -111,7 +102,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration.Manageabil
             machineKey.AddBooleanValue(CacheManagerSettingsManageabilityProvider.PolicyValueName, true);
             machineKey.AddStringValue(CacheManagerSettingsManageabilityProvider.DefaultCacheManagerPropertyName, "machineOverridenDefault");
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual("machineOverridenDefault", section.DefaultCacheManager);
         }
@@ -124,7 +115,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration.Manageabil
             userKey.AddBooleanValue(CacheManagerSettingsManageabilityProvider.PolicyValueName, true);
             userKey.AddStringValue(CacheManagerSettingsManageabilityProvider.DefaultCacheManagerPropertyName, "userOverridenDefault");
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual("userOverridenDefault", section.DefaultCacheManager);
         }
@@ -137,7 +128,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration.Manageabil
             machineKey.AddBooleanValue(CacheManagerSettingsManageabilityProvider.PolicyValueName, true);
             machineKey.AddStringValue(CacheManagerSettingsManageabilityProvider.DefaultCacheManagerPropertyName, "machineOverridenDefault");
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, false, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, false, machineKey, userKey);
 
             Assert.AreEqual("default", section.DefaultCacheManager);
         }
@@ -153,7 +144,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration.Manageabil
             data1.NumberToRemoveWhenScavenging = 300;
             section.CacheManagers.Add(data1);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, false, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, false, machineKey, userKey);
 
             Assert.AreEqual("cache storage", data1.CacheStorage);
             Assert.AreEqual(100, data1.ExpirationPollFrequencyInSeconds);
@@ -172,7 +163,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration.Manageabil
 
             section.CacheManagers.Add(data1);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, false, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, false, machineKey, userKey);
 
             Assert.AreEqual("value1", data1.Attributes["key1"]);
             Assert.AreEqual("value2", data1.Attributes["key2"]);
@@ -197,7 +188,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration.Manageabil
             machineCacheManager1Key.AddIntValue(CacheManagerSettingsManageabilityProvider.CacheManagerMaximumElementsInCacheBeforeScavengingPropertyName, 250);
             machineCacheManager1Key.AddIntValue(CacheManagerSettingsManageabilityProvider.CacheManagerNumberToRemoveWhenScavengingPropertyName, 350);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual("cache storage", data1.CacheStorage);
             Assert.AreEqual(150, data1.ExpirationPollFrequencyInSeconds);
@@ -227,7 +218,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration.Manageabil
             userCacheManager1Key.AddIntValue(CacheManagerSettingsManageabilityProvider.CacheManagerMaximumElementsInCacheBeforeScavengingPropertyName, 260);
             userCacheManager1Key.AddIntValue(CacheManagerSettingsManageabilityProvider.CacheManagerNumberToRemoveWhenScavengingPropertyName, 360);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual("cache storage", data1.CacheStorage);
             Assert.AreEqual(160, data1.ExpirationPollFrequencyInSeconds);
@@ -257,7 +248,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration.Manageabil
             machineCacheManager1Key.AddIntValue(CacheManagerSettingsManageabilityProvider.CacheManagerMaximumElementsInCacheBeforeScavengingPropertyName, 250);
             machineCacheManager1Key.AddIntValue(CacheManagerSettingsManageabilityProvider.CacheManagerNumberToRemoveWhenScavengingPropertyName, 350);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual("cache storage", data1.CacheStorage);
             Assert.AreEqual(100, data1.ExpirationPollFrequencyInSeconds);
@@ -284,7 +275,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration.Manageabil
             machineCacheManagersKey.AddSubKey("cache manager 1", machineCacheManager1Key);
             machineCacheManager1Key.AddBooleanValue(AdmContentBuilder.AvailableValueName, false);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual(1, section.CacheManagers.Count);
             Assert.IsNotNull(section.CacheManagers.Get("cache manager 2"));
@@ -310,7 +301,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration.Manageabil
             machineCacheManagersKey.AddSubKey("cache manager 1", machineCacheManager1Key);
             machineCacheManager1Key.AddBooleanValue(AdmContentBuilder.AvailableValueName, false);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual(1, section.CacheManagers.Count);
             Assert.IsNotNull(section.CacheManagers.Get("cache manager 2"));
@@ -341,7 +332,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration.Manageabil
             machineCacheManagersKey.AddSubKey("cache manager 1", machineCacheManager1Key);
             machineCacheManager1Key.AddBooleanValue(AdmContentBuilder.AvailableValueName, false);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual(1, section.CacheManagers.Count);
             Assert.IsNotNull(section.CacheManagers.Get("cache manager 2"));
@@ -365,7 +356,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration.Manageabil
             machineCacheManagersKey.AddSubKey("cache manager 1", machineCacheManager1Key);
             machineCacheManager1Key.AddBooleanValue(AdmContentBuilder.AvailableValueName, false);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, false, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, false, machineKey, userKey);
 
             Assert.AreEqual(2, section.CacheManagers.Count);
             Assert.IsNotNull(section.CacheManagers.Get("cache manager 1"));
@@ -392,7 +383,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration.Manageabil
             machineCacheManagersKey.AddSubKey("cache manager 1", machineCacheManager1Key);
             machineCacheManager1Key.AddBooleanValue(AdmContentBuilder.AvailableValueName, false);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, false, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, false, machineKey, userKey);
 
             Assert.AreEqual(2, section.CacheManagers.Count);
             Assert.IsNotNull(section.CacheManagers.Get("cache manager 1"));
@@ -414,7 +405,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration.Manageabil
             CacheStorageData data = new CacheStorageData("store1", typeof(NullBackingStore));
             section.BackingStores.Add(data);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.IsTrue(registeredProvider.called);
             Assert.AreSame(data, registeredProvider.LastConfigurationObject);
@@ -449,7 +440,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration.Manageabil
             MockRegistryKey userOtherStoreKey = new MockRegistryKey(false);
             userStoresKey.AddSubKey("store2", userOtherStoreKey);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.IsTrue(registeredProvider.called);
             Assert.AreSame(data, registeredProvider.LastConfigurationObject);
@@ -474,7 +465,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration.Manageabil
             StorageEncryptionProviderData data = new StorageEncryptionProviderData("encryptionprovider1", typeof(Object));
             section.EncryptionProviders.Add(data);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.IsTrue(registeredProvider.called);
             Assert.AreSame(data, registeredProvider.LastConfigurationObject);
@@ -509,7 +500,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration.Manageabil
             MockRegistryKey userOtherEncryptionProviderKey = new MockRegistryKey(false);
             userEncryptionProvidersKey.AddSubKey("encryptionprovider2", userOtherEncryptionProviderKey);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.IsTrue(registeredProvider.called);
             Assert.AreSame(data, registeredProvider.LastConfigurationObject);
@@ -519,68 +510,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration.Manageabil
             Assert.IsTrue(
                 MockRegistryKey.CheckAllClosed(machineEncryptionProvidersKey, machineEncryptionProviderKey, machineOtherEncryptionProviderKey,
                                                userEncryptionProvidersKey, userEncryptionProviderKey, userOtherEncryptionProviderKey));
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreNotGeneratedIfWmiIsDisabled()
-        {
-            section.DefaultCacheManager = "default";
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, false, machineKey, userKey, false, wmiSettings);
-
-            Assert.AreEqual(0, wmiSettings.Count);
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreGeneratedIfWmiIsEnabled()
-        {
-            section.DefaultCacheManager = "default";
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, false, machineKey, userKey, true, wmiSettings);
-
-            Assert.AreEqual(1, wmiSettings.Count);
-            Assert.AreSame(typeof(CachingBlockSetting), wmiSettings[0].GetType());
-            Assert.AreEqual("default", ((CachingBlockSetting)wmiSettings[0]).DefaultCacheManager);
-        }
-
-        [TestMethod]
-        public void WmiSettingsForCacheManagerAreGeneratedIfWmiIsEnabled()
-        {
-            section.DefaultCacheManager = "default";
-            CacheManagerData data1 = new CacheManagerData();
-            data1.Name = "cache manager 1";
-            data1.CacheStorage = "cache storage";
-            data1.ExpirationPollFrequencyInSeconds = 100;
-            data1.MaximumElementsInCacheBeforeScavenging = 200;
-            data1.NumberToRemoveWhenScavenging = 300;
-            section.CacheManagers.Add(data1);
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, false, machineKey, userKey, true, wmiSettings);
-
-            Assert.AreEqual(2, wmiSettings.Count);
-            Assert.AreSame(typeof(CachingBlockSetting), wmiSettings[0].GetType());
-            Assert.AreEqual("default", ((CachingBlockSetting)wmiSettings[0]).DefaultCacheManager);
-            Assert.AreSame(typeof(CacheManagerSetting), wmiSettings[1].GetType());
-            Assert.AreEqual("cache manager 1", ((CacheManagerSetting)wmiSettings[1]).Name);
-            Assert.AreEqual("cache storage", ((CacheManagerSetting)wmiSettings[1]).CacheStorage);
-            Assert.AreEqual(100, ((CacheManagerSetting)wmiSettings[1]).ExpirationPollFrequencyInSeconds);
-            Assert.AreEqual(200, ((CacheManagerSetting)wmiSettings[1]).MaximumElementsInCacheBeforeScavenging);
-            Assert.AreEqual(300, ((CacheManagerSetting)wmiSettings[1]).NumberToRemoveWhenScavenging);
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreGeneratedWithPolicyOverridesIfWmiIsEnabled()
-        {
-            section.DefaultCacheManager = "default";
-
-            machineKey.AddBooleanValue(CacheManagerSettingsManageabilityProvider.PolicyValueName, true);
-            machineKey.AddStringValue(CacheManagerSettingsManageabilityProvider.DefaultCacheManagerPropertyName, "machineOverridenDefault");
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
-
-            Assert.AreEqual(1, wmiSettings.Count);
-            Assert.AreSame(typeof(CachingBlockSetting), wmiSettings[0].GetType());
-            Assert.AreEqual("machineOverridenDefault", ((CachingBlockSetting)wmiSettings[0]).DefaultCacheManager);
         }
 
         [TestMethod]

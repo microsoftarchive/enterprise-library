@@ -27,7 +27,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         CryptographySettingsManageabilityProvider provider;
         MockRegistryKey machineKey;
         MockRegistryKey userKey;
-        IList<ConfigurationSetting> wmiSettings;
         CryptographySettings section;
         DictionaryConfigurationSource configurationSource;
 
@@ -37,17 +36,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
             provider = new CryptographySettingsManageabilityProvider(new Dictionary<Type, ConfigurationElementManageabilityProvider>(0));
             machineKey = new MockRegistryKey(true);
             userKey = new MockRegistryKey(true);
-            wmiSettings = new List<ConfigurationSetting>();
             section = new CryptographySettings();
             configurationSource = new DictionaryConfigurationSource();
             configurationSource.Add("securityCryptographyConfiguration", section);
-        }
-
-        [TestCleanup]
-        public void TearDown()
-        {
-            // preventive unregister to work around WMI.NET 2.0 issues with appdomain unloading
-            ManagementEntityTypesRegistrar.UnregisterAll();
         }
 
         [TestMethod]
@@ -74,7 +65,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         [ExpectedException(typeof(ArgumentException))]
         public void ProviderThrowsWithConfigurationObjectOfWrongType()
         {
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(new TestsConfigurationSection(), true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(new TestsConfigurationSection(), true, machineKey, userKey);
         }
 
         [TestMethod]
@@ -83,7 +74,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
             section.DefaultHashProviderName = "default hash";
             section.DefaultSymmetricCryptoProviderName = "default symmetric";
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual("default hash", section.DefaultHashProviderName);
             Assert.AreEqual("default symmetric", section.DefaultSymmetricCryptoProviderName);
@@ -95,7 +86,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
             section.DefaultHashProviderName = "default hash";
             section.DefaultSymmetricCryptoProviderName = "default symmetric";
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, null, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, null, userKey);
         }
 
         [TestMethod]
@@ -104,7 +95,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
             section.DefaultHashProviderName = "default hash";
             section.DefaultSymmetricCryptoProviderName = "default symmetric";
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, null, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, null);
         }
 
         [TestMethod]
@@ -117,7 +108,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
             machineKey.AddStringValue(CryptographySettingsManageabilityProvider.DefaultHashProviderPropertyName, "machine hash");
             machineKey.AddStringValue(CryptographySettingsManageabilityProvider.DefaultSymmetricCryptoProviderPropertyName, "machine symmetric");
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual("machine hash", section.DefaultHashProviderName);
             Assert.AreEqual("machine symmetric", section.DefaultSymmetricCryptoProviderName);
@@ -133,7 +124,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
             userKey.AddStringValue(CryptographySettingsManageabilityProvider.DefaultHashProviderPropertyName, "user hash");
             userKey.AddStringValue(CryptographySettingsManageabilityProvider.DefaultSymmetricCryptoProviderPropertyName, "user symmetric");
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, userKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, userKey, userKey);
 
             Assert.AreEqual("user hash", section.DefaultHashProviderName);
             Assert.AreEqual("user symmetric", section.DefaultSymmetricCryptoProviderName);
@@ -149,7 +140,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
             machineKey.AddStringValue(CryptographySettingsManageabilityProvider.DefaultHashProviderPropertyName, AdmContentBuilder.NoneListItem);
             machineKey.AddStringValue(CryptographySettingsManageabilityProvider.DefaultSymmetricCryptoProviderPropertyName, "machine symmetric");
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual("", section.DefaultHashProviderName);
             Assert.AreEqual("machine symmetric", section.DefaultSymmetricCryptoProviderName);
@@ -165,7 +156,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
             machineKey.AddStringValue(CryptographySettingsManageabilityProvider.DefaultHashProviderPropertyName, "machine hash");
             machineKey.AddStringValue(CryptographySettingsManageabilityProvider.DefaultSymmetricCryptoProviderPropertyName, AdmContentBuilder.NoneListItem);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual("machine hash", section.DefaultHashProviderName);
             Assert.AreEqual("", section.DefaultSymmetricCryptoProviderName);
@@ -192,7 +183,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
             machineHashProvidersKey.AddSubKey("hashProvider2", machineHashProvider2Key);
             machineHashProvider2Key.AddBooleanValue(CryptographySettingsManageabilityProvider.PolicyValueName, false);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual(1, section.HashProviders.Count);
             Assert.IsNotNull(section.HashProviders.Get("hashProvider1"));
@@ -221,7 +212,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
             machineHashProvidersKey.AddSubKey("hashProvider2", machineHashProvider2Key);
             machineHashProvider2Key.AddBooleanValue(CryptographySettingsManageabilityProvider.PolicyValueName, false);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, false, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, false, machineKey, userKey);
 
             Assert.AreEqual(2, section.HashProviders.Count);
             Assert.IsNotNull(section.HashProviders.Get("hashProvider1"));
@@ -253,7 +244,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
             machineSymmetricCryptoProvidersKey.AddSubKey("symmetricCryptoProvider2", machineSymmetricCryptoProvider2Key);
             machineSymmetricCryptoProvider2Key.AddBooleanValue(CryptographySettingsManageabilityProvider.PolicyValueName, false);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual(1, section.SymmetricCryptoProviders.Count);
             Assert.IsNotNull(section.SymmetricCryptoProviders.Get("symmetricCryptoProvider1"));
@@ -284,7 +275,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
             machineSymmetricCryptoProvidersKey.AddSubKey("symmetricCryptoProvider2", machineSymmetricCryptoProvider2Key);
             machineSymmetricCryptoProvider2Key.AddBooleanValue(CryptographySettingsManageabilityProvider.PolicyValueName, false);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, false, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, false, machineKey, userKey);
 
             Assert.AreEqual(2, section.SymmetricCryptoProviders.Count);
             Assert.IsNotNull(section.SymmetricCryptoProviders.Get("symmetricCryptoProvider1"));
@@ -306,7 +297,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
             HashAlgorithmProviderData hashProviderData = new HashAlgorithmProviderData("hashProvider1", typeof(Object), false);
             section.HashProviders.Add(hashProviderData);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.IsTrue(registeredProvider.called);
             Assert.AreSame(hashProviderData, registeredProvider.LastConfigurationObject);
@@ -341,7 +332,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
             MockRegistryKey userOtherhashProviderKey = new MockRegistryKey(false);
             userhashProvidersKey.AddSubKey("hashProvider2", userOtherhashProviderKey);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.IsTrue(registeredProvider.called);
             Assert.AreSame(hashProviderData, registeredProvider.LastConfigurationObject);
@@ -366,7 +357,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
             SymmetricAlgorithmProviderData symmetricCryptoProviderData = new SymmetricAlgorithmProviderData("symmetricCryptoProvider1", typeof(Object), "key", DataProtectionScope.CurrentUser);
             section.SymmetricCryptoProviders.Add(symmetricCryptoProviderData);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.IsTrue(registeredProvider.called);
             Assert.AreSame(symmetricCryptoProviderData, registeredProvider.LastConfigurationObject);
@@ -401,7 +392,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
             MockRegistryKey userOthersymmetricCryptoProviderKey = new MockRegistryKey(false);
             usersymmetricCryptoProvidersKey.AddSubKey("symmetricCryptoProvider2", userOthersymmetricCryptoProviderKey);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.IsTrue(registeredProvider.called);
             Assert.AreSame(symmetricCryptoProviderData, registeredProvider.LastConfigurationObject);
@@ -411,31 +402,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
             Assert.IsTrue(
                 MockRegistryKey.CheckAllClosed(machinesymmetricCryptoProvidersKey, machinesymmetricCryptoProviderKey, machineOthersymmetricCryptoProviderKey,
                                                usersymmetricCryptoProvidersKey, usersymmetricCryptoProviderKey, userOthersymmetricCryptoProviderKey));
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreNotGeneratedIfWmiIsDisabled()
-        {
-            section.DefaultHashProviderName = "default hash";
-            section.DefaultSymmetricCryptoProviderName = "default symmetric";
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, false, machineKey, userKey, false, wmiSettings);
-
-            Assert.AreEqual(0, wmiSettings.Count);
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreGeneratedIfWmiIsEnabled()
-        {
-            section.DefaultHashProviderName = "default hash";
-            section.DefaultSymmetricCryptoProviderName = "default symmetric";
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, false, machineKey, userKey, true, wmiSettings);
-
-            Assert.AreEqual(1, wmiSettings.Count);
-            Assert.AreSame(typeof(CryptographyBlockSetting), wmiSettings[0].GetType());
-            Assert.AreEqual("default hash", ((CryptographyBlockSetting)wmiSettings[0]).DefaultHashProvider);
-            Assert.AreEqual("default symmetric", ((CryptographyBlockSetting)wmiSettings[0]).DefaultSymmetricCryptoProvider);
         }
 
         [TestMethod]

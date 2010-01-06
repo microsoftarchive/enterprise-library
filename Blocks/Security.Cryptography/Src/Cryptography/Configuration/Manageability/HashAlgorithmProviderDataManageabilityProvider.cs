@@ -10,7 +10,6 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability.Adm;
@@ -36,7 +35,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         /// </summary>
         public HashAlgorithmProviderDataManageabilityProvider()
         {
-            HashAlgorithmProviderDataWmiMapper.RegisterWmiTypes();
         }
 
         /// <summary>
@@ -72,18 +70,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
             contentBuilder.AddCheckboxPart(Resources.HashAlgorithmProviderSaltEnabledPartName,
                                            SaltEnabledPropertyName,
                                            configurationObject.SaltEnabled);
-        }
-
-        /// <summary>
-        /// Creates the <see cref="ConfigurationSetting"/> instances that describe the 
-        /// configurationObject.
-        /// </summary>
-        /// <param name="configurationObject">The configuration object for instances that must be managed.</param>
-        /// <param name="wmiSettings">A collection to where the generated WMI objects are to be added.</param>
-        protected override void GenerateWmiObjects(HashAlgorithmProviderData configurationObject,
-                                                   ICollection<ConfigurationSetting> wmiSettings)
-        {
-            HashAlgorithmProviderDataWmiMapper.GenerateWmiObjects(configurationObject, wmiSettings);
         }
 
         /// <summary>

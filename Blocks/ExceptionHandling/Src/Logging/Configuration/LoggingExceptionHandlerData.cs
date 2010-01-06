@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 using System.ComponentModel;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design.Validation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Configuration
 {
@@ -28,7 +29,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Config
     /// </summary>
     [ResourceDescription(typeof(DesignResources), "LoggingExceptionHandlerDataDescription")]
     [ResourceDisplayName(typeof(DesignResources), "LoggingExceptionHandlerDataDisplayName")]
-    [AddSateliteProviderCommand(LoggingSettings.SectionName)]
+    [AddSateliteProviderCommand(LoggingSettings.SectionName, typeof(LoggingSettings), "DefaultCategory", "LogCategory")]
     public class LoggingExceptionHandlerData : ExceptionHandlerData
     {
         private static readonly AssemblyQualifiedTypeNameConverter typeConverter
@@ -194,6 +195,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Config
         [ResourceDisplayName(typeof(DesignResources), "LoggingExceptionHandlerDataFormatterTypeNameDisplayName")]
         [Editor(CommonDesignTime.EditorTypes.TypeSelector, CommonDesignTime.EditorTypes.UITypeEditor)]
         [BaseType(typeof(ExceptionFormatter))]
+        [DesigntimeDefault("Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.TextExceptionFormatter, Microsoft.Practices.EnterpriseLibrary.ExceptionHandling")]
+        [Validation(LoggingDesignTime.ValidatorTypes.LogFormatterValidator)]
         public string FormatterTypeName
         {
             get { return (string)this[formatterType]; }

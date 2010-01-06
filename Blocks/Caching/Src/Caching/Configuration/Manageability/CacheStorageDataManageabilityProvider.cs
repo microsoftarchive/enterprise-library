@@ -10,7 +10,6 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Configuration.Manageability.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability;
@@ -23,16 +22,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration.Manageabil
     /// splits policy overrides processing and WMI objects generation, performing appropriate logging of 
     /// policy processing errors.
     /// </summary>
-	public class CacheStorageDataManageabilityProvider
-		: ConfigurationElementManageabilityProviderBase<CacheStorageData>
-	{
+    public class CacheStorageDataManageabilityProvider
+        : ConfigurationElementManageabilityProviderBase<CacheStorageData>
+    {
         /// <summary>
         /// Initialize a new instance of the <see cref="CacheStorageDataManageabilityProvider"/> class.
         /// </summary>
-		public CacheStorageDataManageabilityProvider()
-		{
-			CacheStorageDataWmiMapper.RegisterWmiTypes();
-		}
+        public CacheStorageDataManageabilityProvider()
+        { }
 
         /// <summary>
         /// Adds the ADM instructions that describe the policies that can be used to override the properties of
@@ -51,16 +48,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration.Manageabil
         /// Subclasses managing objects that must not create a policy must override this method to just add the parts.
         /// </remarks>
         protected override void AddAdministrativeTemplateDirectives(AdmContentBuilder contentBuilder,
-			CacheStorageData configurationObject,
-			IConfigurationSource configurationSource,
-			String elementPolicyKeyName)
-		{
-			// parts for stores are part of their cache manager's policies
-			AddElementAdministrativeTemplateParts(contentBuilder,
-				configurationObject,
-				configurationSource,
-				elementPolicyKeyName);
-		}
+            CacheStorageData configurationObject,
+            IConfigurationSource configurationSource,
+            String elementPolicyKeyName)
+        {
+            // parts for stores are part of their cache manager's policies
+            AddElementAdministrativeTemplateParts(contentBuilder,
+                configurationObject,
+                configurationSource,
+                elementPolicyKeyName);
+        }
 
         /// <summary>
         /// Adds the ADM parts that represent the properties of
@@ -75,13 +72,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration.Manageabil
         /// Subclasses managing objects that must not create a policy will likely need to include the elements' keys when creating the parts.
         /// </remarks>
         protected override void AddElementAdministrativeTemplateParts(AdmContentBuilder contentBuilder,
-			CacheStorageData configurationObject,
-			IConfigurationSource configurationSource,
-			String elementPolicyKeyName)
-		{
-			// nothing to set for this part
-			contentBuilder.AddTextPart(Resources.NullBackingStoreNoSettingsPartName);
-		}
+            CacheStorageData configurationObject,
+            IConfigurationSource configurationSource,
+            String elementPolicyKeyName)
+        {
+            // nothing to set for this part
+            contentBuilder.AddTextPart(Resources.NullBackingStoreNoSettingsPartName);
+        }
 
         /// <summary>
         /// Gets the template for the name of the policy associated to the object.
@@ -92,12 +89,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration.Manageabil
         /// to avoid creating a policy must still override this property.
         /// </remarks>
         protected override string ElementPolicyNameTemplate
-		{
-			get
-			{
-				return null;	// no policy for these elements
-			}
-		}
+        {
+            get
+            {
+                return null;	// no policy for these elements
+            }
+        }
 
         /// <summary>
         /// Overrides the <paramref name="configurationObject"/>'s properties with the Group Policy values from the 
@@ -110,20 +107,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration.Manageabil
         /// before making modifications to the <paramref name="configurationObject"/> so any error retrieving
         /// the override values will cancel policy processing.</remarks>
         protected override void OverrideWithGroupPolicies(CacheStorageData configurationObject, IRegistryKey policyKey)
-		{
-			// no need for group policies support
-		}
-
-        /// <summary>
-        /// Creates the <see cref="ConfigurationSetting"/> instances that describe the 
-        /// configurationObject.
-        /// </summary>
-        /// <param name="configurationObject">The configuration object for instances that must be managed.</param>
-        /// <param name="wmiSettings">A collection to where the generated WMI objects are to be added.</param>
-        protected override void GenerateWmiObjects(CacheStorageData configurationObject,
-			ICollection<ConfigurationSetting> wmiSettings)
-		{
-			CacheStorageDataWmiMapper.GenerateWmiObjects(configurationObject, wmiSettings);
-		}
-	}
+        {
+            // no need for group policies support
+        }
+    }
 }

@@ -26,6 +26,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
     /// </summary>
     [ResourceDescription(typeof(DesignResources), "CustomFormatterDataDescription")]
     [ResourceDisplayName(typeof(DesignResources), "CustomFormatterDataDisplayName")]
+    [TypePickingCommand(TitleResourceName = "CustomFormatterDataDisplayName", TitleResourceType = typeof(DesignResources), Replace = CommandReplacement.DefaultAddCommandReplacement)]
     public class CustomFormatterData
         : FormatterData, IHelperAssistedCustomConfigurationData<CustomFormatterData>
     {

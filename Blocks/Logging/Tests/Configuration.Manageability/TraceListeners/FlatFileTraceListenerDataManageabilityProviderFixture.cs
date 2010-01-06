@@ -28,7 +28,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         FlatFileTraceListenerDataManageabilityProvider provider;
         MockRegistryKey machineKey;
         MockRegistryKey userKey;
-        IList<ConfigurationSetting> wmiSettings;
         FlatFileTraceListenerData configurationObject;
 
         [TestInitialize]
@@ -37,15 +36,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             provider = new FlatFileTraceListenerDataManageabilityProvider();
             machineKey = new MockRegistryKey(true);
             userKey = new MockRegistryKey(true);
-            wmiSettings = new List<ConfigurationSetting>();
             configurationObject = new FlatFileTraceListenerData();
-        }
-
-        [TestCleanup]
-        public void TearDown()
-        {
-            // preventive unregister to work around WMI.NET 2.0 issues with appdomain unloading
-            ManagementEntityTypesRegistrar.UnregisterAll();
         }
 
         [TestMethod]
@@ -73,7 +64,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         [ExpectedException(typeof(ArgumentException))]
         public void ProviderThrowsWithConfigurationObjectOfWrongType()
         {
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(new TestsConfigurationSection(), true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(new TestsConfigurationSection(), true, machineKey, userKey);
         }
 
         [TestMethod]
@@ -84,17 +75,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             configurationObject.Formatter = "formatter";
             configurationObject.Header = "header";
             configurationObject.TraceOutputOptions = TraceOptions.None;
-			configurationObject.Filter = SourceLevels.Error;
+            configurationObject.Filter = SourceLevels.Error;
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, null, null, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, null, null);
 
             Assert.AreEqual("file name", configurationObject.FileName);
             Assert.AreEqual("footer", configurationObject.Footer);
             Assert.AreEqual("formatter", configurationObject.Formatter);
             Assert.AreEqual("header", configurationObject.Header);
             Assert.AreEqual(TraceOptions.None, configurationObject.TraceOutputOptions);
-			Assert.AreEqual(SourceLevels.Error, configurationObject.Filter);
-		}
+            Assert.AreEqual(SourceLevels.Error, configurationObject.Filter);
+        }
 
         [TestMethod]
         public void ConfigurationObjectIsModifiedIfThereAreMachinePolicyOverrides()
@@ -104,24 +95,24 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             configurationObject.Formatter = "formatter";
             configurationObject.Header = "header";
             configurationObject.TraceOutputOptions = TraceOptions.None;
-			configurationObject.Filter = SourceLevels.Error;
+            configurationObject.Filter = SourceLevels.Error;
 
             machineKey.AddStringValue(FlatFileTraceListenerDataManageabilityProvider.FileNamePropertyName, "overriden file name");
             machineKey.AddStringValue(FlatFileTraceListenerDataManageabilityProvider.FooterPropertyName, "overriden footer");
             machineKey.AddStringValue(FlatFileTraceListenerDataManageabilityProvider.FormatterPropertyName, "overriden formatter");
             machineKey.AddStringValue(FlatFileTraceListenerDataManageabilityProvider.HeaderPropertyName, "overriden header");
             machineKey.AddStringValue(FlatFileTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, "ProcessId, ThreadId");
-			machineKey.AddStringValue(FlatFileTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
+            machineKey.AddStringValue(FlatFileTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, machineKey, null, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, machineKey, null);
 
             Assert.AreEqual("overriden file name", configurationObject.FileName);
             Assert.AreEqual("overriden footer", configurationObject.Footer);
             Assert.AreEqual("overriden formatter", configurationObject.Formatter);
             Assert.AreEqual("overriden header", configurationObject.Header);
             Assert.AreEqual(TraceOptions.ProcessId | TraceOptions.ThreadId, configurationObject.TraceOutputOptions);
-			Assert.AreEqual(SourceLevels.Critical, configurationObject.Filter);
-		}
+            Assert.AreEqual(SourceLevels.Critical, configurationObject.Filter);
+        }
 
         [TestMethod]
         public void ConfigurationObjectIsModifiedIfThereAreUserPolicyOverrides()
@@ -131,24 +122,24 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             configurationObject.Formatter = "formatter";
             configurationObject.Header = "header";
             configurationObject.TraceOutputOptions = TraceOptions.None;
-			configurationObject.Filter = SourceLevels.Error;
+            configurationObject.Filter = SourceLevels.Error;
 
             userKey.AddStringValue(FlatFileTraceListenerDataManageabilityProvider.FileNamePropertyName, "overriden file name");
             userKey.AddStringValue(FlatFileTraceListenerDataManageabilityProvider.FooterPropertyName, "overriden footer");
             userKey.AddStringValue(FlatFileTraceListenerDataManageabilityProvider.FormatterPropertyName, "overriden formatter");
             userKey.AddStringValue(FlatFileTraceListenerDataManageabilityProvider.HeaderPropertyName, "overriden header");
             userKey.AddStringValue(FlatFileTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, "ProcessId, ThreadId");
-			userKey.AddStringValue(FlatFileTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
+            userKey.AddStringValue(FlatFileTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, null, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, null, userKey);
 
             Assert.AreEqual("overriden file name", configurationObject.FileName);
             Assert.AreEqual("overriden footer", configurationObject.Footer);
             Assert.AreEqual("overriden formatter", configurationObject.Formatter);
             Assert.AreEqual("overriden header", configurationObject.Header);
             Assert.AreEqual(TraceOptions.ProcessId | TraceOptions.ThreadId, configurationObject.TraceOutputOptions);
-			Assert.AreEqual(SourceLevels.Critical, configurationObject.Filter);
-		}
+            Assert.AreEqual(SourceLevels.Critical, configurationObject.Filter);
+        }
 
         [TestMethod]
         public void ConfigurationObjectIsNotModifiedIfThereArePolicyOverridesButGroupPoliciesAreDisabled()
@@ -158,24 +149,24 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             configurationObject.Formatter = "formatter";
             configurationObject.Header = "header";
             configurationObject.TraceOutputOptions = TraceOptions.None;
-			configurationObject.Filter = SourceLevels.Error;
+            configurationObject.Filter = SourceLevels.Error;
 
             machineKey.AddStringValue(FlatFileTraceListenerDataManageabilityProvider.FileNamePropertyName, "overriden file name");
             machineKey.AddStringValue(FlatFileTraceListenerDataManageabilityProvider.FooterPropertyName, "overriden footer");
             machineKey.AddStringValue(FlatFileTraceListenerDataManageabilityProvider.FormatterPropertyName, "overriden formatter");
             machineKey.AddStringValue(FlatFileTraceListenerDataManageabilityProvider.HeaderPropertyName, "overriden header");
             machineKey.AddStringValue(FlatFileTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, "ProcessId, ThreadId");
-			machineKey.AddStringValue(FlatFileTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
+            machineKey.AddStringValue(FlatFileTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, false, machineKey, null, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, false, machineKey, null);
 
             Assert.AreEqual("file name", configurationObject.FileName);
             Assert.AreEqual("footer", configurationObject.Footer);
             Assert.AreEqual("formatter", configurationObject.Formatter);
             Assert.AreEqual("header", configurationObject.Header);
             Assert.AreEqual(TraceOptions.None, configurationObject.TraceOutputOptions);
-			Assert.AreEqual(SourceLevels.Error, configurationObject.Filter);
-		}
+            Assert.AreEqual(SourceLevels.Error, configurationObject.Filter);
+        }
 
         [TestMethod]
         public void ConfigurationObjectIsModifiedWithFormatterOverrideWithListItemNone()
@@ -187,78 +178,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             machineKey.AddStringValue(FlatFileTraceListenerDataManageabilityProvider.FormatterPropertyName, AdmContentBuilder.NoneListItem);
             machineKey.AddStringValue(FlatFileTraceListenerDataManageabilityProvider.HeaderPropertyName, "overriden header");
             machineKey.AddStringValue(FlatFileTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, "ProcessId, ThreadId");
-			machineKey.AddStringValue(FlatFileTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
+            machineKey.AddStringValue(FlatFileTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, machineKey, userKey);
 
             Assert.AreEqual("", configurationObject.Formatter);
         }
-
-        [TestMethod]
-        public void WmiSettingsAreNotGeneratedIfWmiIsDisabled()
-        {
-            configurationObject.FileName = "file name";
-            configurationObject.Footer = "footer";
-            configurationObject.Formatter = "formatter";
-            configurationObject.Header = "header";
-            configurationObject.TraceOutputOptions = TraceOptions.None;
-			configurationObject.Filter = SourceLevels.Error;
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, false, machineKey, userKey, false, wmiSettings);
-
-            Assert.AreEqual(0, wmiSettings.Count);
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreGeneratedIfWmiIsEnabled()
-        {
-            configurationObject.FileName = "file name";
-            configurationObject.Footer = "footer";
-            configurationObject.Formatter = "formatter";
-            configurationObject.Header = "header";
-            configurationObject.TraceOutputOptions = TraceOptions.None;
-			configurationObject.Filter = SourceLevels.Error;
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, false, machineKey, userKey, true, wmiSettings);
-
-            Assert.AreEqual(1, wmiSettings.Count);
-            Assert.AreSame(typeof(FlatFileTraceListenerSetting), wmiSettings[0].GetType());
-            Assert.AreEqual(configurationObject.FileName, ((FlatFileTraceListenerSetting)wmiSettings[0]).FileName);
-            Assert.AreEqual(configurationObject.Footer, ((FlatFileTraceListenerSetting)wmiSettings[0]).Footer);
-            Assert.AreEqual(configurationObject.Formatter, ((FlatFileTraceListenerSetting)wmiSettings[0]).Formatter);
-            Assert.AreEqual(configurationObject.Header, ((FlatFileTraceListenerSetting)wmiSettings[0]).Header);
-            Assert.AreEqual(configurationObject.TraceOutputOptions.ToString(), ((FlatFileTraceListenerSetting)wmiSettings[0]).TraceOutputOptions);
-			Assert.AreEqual(configurationObject.Filter.ToString(), ((FlatFileTraceListenerSetting)wmiSettings[0]).Filter);
-		}
-
-        [TestMethod]
-        public void WmiSettingsAreGeneratedWithPolicyOverridesIfWmiIsEnabled()
-        {
-            configurationObject.FileName = "file name";
-            configurationObject.Footer = "footer";
-            configurationObject.Formatter = "formatter";
-            configurationObject.Header = "header";
-            configurationObject.TraceOutputOptions = TraceOptions.None;
-			configurationObject.Filter = SourceLevels.Error;
-
-            machineKey.AddStringValue(FlatFileTraceListenerDataManageabilityProvider.FileNamePropertyName, "overriden file name");
-            machineKey.AddStringValue(FlatFileTraceListenerDataManageabilityProvider.FooterPropertyName, "overriden footer");
-            machineKey.AddStringValue(FlatFileTraceListenerDataManageabilityProvider.FormatterPropertyName, "overriden formatter");
-            machineKey.AddStringValue(FlatFileTraceListenerDataManageabilityProvider.HeaderPropertyName, "overriden header");
-            machineKey.AddStringValue(FlatFileTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, "ProcessId, ThreadId");
-			machineKey.AddStringValue(FlatFileTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, machineKey, userKey, true, wmiSettings);
-
-            Assert.AreEqual(1, wmiSettings.Count);
-            Assert.AreSame(typeof(FlatFileTraceListenerSetting), wmiSettings[0].GetType());
-            Assert.AreEqual(configurationObject.FileName, ((FlatFileTraceListenerSetting)wmiSettings[0]).FileName);
-            Assert.AreEqual(configurationObject.Footer, ((FlatFileTraceListenerSetting)wmiSettings[0]).Footer);
-            Assert.AreEqual(configurationObject.Formatter, ((FlatFileTraceListenerSetting)wmiSettings[0]).Formatter);
-            Assert.AreEqual(configurationObject.Header, ((FlatFileTraceListenerSetting)wmiSettings[0]).Header);
-            Assert.AreEqual(configurationObject.TraceOutputOptions.ToString(), ((FlatFileTraceListenerSetting)wmiSettings[0]).TraceOutputOptions);
-			Assert.AreEqual(configurationObject.Filter.ToString(), ((FlatFileTraceListenerSetting)wmiSettings[0]).Filter);
-		}
 
         [TestMethod]
         public void ManageabilityProviderGeneratesProperAdmContent()
@@ -304,11 +229,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             Assert.AreEqual(FlatFileTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName,
                             partsEnumerator.Current.ValueName);
 
-			Assert.IsTrue(partsEnumerator.MoveNext());
-			Assert.AreSame(typeof(AdmDropDownListPart), partsEnumerator.Current.GetType());
-			Assert.IsNull(partsEnumerator.Current.KeyName);
-			Assert.AreEqual(FlatFileTraceListenerDataManageabilityProvider.FilterPropertyName,
-							partsEnumerator.Current.ValueName);
+            Assert.IsTrue(partsEnumerator.MoveNext());
+            Assert.AreSame(typeof(AdmDropDownListPart), partsEnumerator.Current.GetType());
+            Assert.IsNull(partsEnumerator.Current.KeyName);
+            Assert.AreEqual(FlatFileTraceListenerDataManageabilityProvider.FilterPropertyName,
+                            partsEnumerator.Current.ValueName);
 
             Assert.IsTrue(partsEnumerator.MoveNext());
             Assert.AreSame(typeof(AdmDropDownListPart), partsEnumerator.Current.GetType());

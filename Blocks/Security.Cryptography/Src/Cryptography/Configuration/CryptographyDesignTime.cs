@@ -48,6 +48,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
             public const string AddKeyedHashProviderCommand = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.KeyedHashAlgorithmProviderAddCommand, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
 
             /// <summary/>
+            public const string AddHashProviderCommand = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.HashAlgorithmProviderAddCommand, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
+
+            /// <summary/>
             public const string AddSymmetricAlgorithmProviderCommand = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.SymmetricAlgorithmProviderAddCommand, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
         }
     }

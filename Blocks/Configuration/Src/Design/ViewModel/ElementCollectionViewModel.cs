@@ -156,8 +156,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
                 .Concat(new [] { element })
                 .ToArray());
 
-            // add the new element to the view model.
-            ChildElements.Add(childElementModel);
 
             foreach (var property in childElementModel.Properties)
             {
@@ -169,6 +167,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             }
 
             InitializeElementProperties(childElementModel);
+
+            // add the new element to the view model.
+            ChildElements.Add(childElementModel);
+
 
             Validate();
 
@@ -228,7 +230,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             return FindUniqueNewName(baseName);
         }
 
-        private string FindUniqueNewName(string baseName)
+        public string FindUniqueNewName(string baseName)
         {
             int number = 1;
             while(true)

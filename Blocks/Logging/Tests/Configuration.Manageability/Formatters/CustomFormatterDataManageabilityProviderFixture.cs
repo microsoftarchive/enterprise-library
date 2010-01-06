@@ -29,7 +29,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         CustomFormatterDataManageabilityProvider provider;
         MockRegistryKey machineKey;
         MockRegistryKey userKey;
-        IList<ConfigurationSetting> wmiSettings;
         CustomFormatterData configurationObject;
 
         [TestInitialize]
@@ -38,15 +37,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             provider = new CustomFormatterDataManageabilityProvider();
             machineKey = new MockRegistryKey(true);
             userKey = new MockRegistryKey(true);
-            wmiSettings = new List<ConfigurationSetting>();
             configurationObject = new CustomFormatterData();
-        }
-
-        [TestCleanup]
-        public void TearDown()
-        {
-            // preventive unregister to work around WMI.NET 2.0 issues with appdomain unloading
-            ManagementEntityTypesRegistrar.UnregisterAll();
         }
 
         [TestMethod]
@@ -68,29 +59,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             Assert.IsNotNull(selectedAttribute);
             Assert.AreSame(typeof(LoggingSettingsManageabilityProvider), selectedAttribute.SectionManageabilityProviderType);
             Assert.AreSame(typeof(CustomFormatterData), selectedAttribute.TargetType);
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreGeneratedIfWmiIsEnabled()
-        {
-            configurationObject.Type = typeof(object);
-            configurationObject.Attributes.Add("name1", "value1");
-            configurationObject.Attributes.Add("name2", "value2");
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, false, machineKey, userKey, true, wmiSettings);
-
-            Assert.AreEqual(1, wmiSettings.Count);
-            Assert.AreSame(typeof(CustomFormatterSetting), wmiSettings[0].GetType());
-            Assert.AreEqual(typeof(object).AssemblyQualifiedName, ((CustomFormatterSetting)wmiSettings[0]).FormatterType);
-
-            Dictionary<String, String> attributesDictionary = new Dictionary<string, string>();
-            foreach (String entry in ((CustomFormatterSetting)wmiSettings[0]).Attributes)
-            {
-                KeyValuePairParsingTestHelper.ExtractKeyValueEntries(entry, attributesDictionary);
-            }
-            Assert.AreEqual(2, attributesDictionary.Count);
-            Assert.AreEqual("value1", attributesDictionary["name1"]);
-            Assert.AreEqual("value2", attributesDictionary["name2"]);
         }
 
         [TestMethod]

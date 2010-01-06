@@ -18,6 +18,7 @@ using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
+using System.Windows.Input;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
 using Microsoft.Practices.Unity;
@@ -154,9 +155,46 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         public void Select()
         {
             applicationModel.OnSelectedElementChanged(this);
+            IsSelected = true;
         }
 
-        #region Identity 
+        private bool isSelected;
+        public bool IsSelected
+        {
+            get
+            {
+                return isSelected;
+            }
+            set
+            {
+                if (isSelected != value)
+                {
+                    isSelected = value;
+                    OnPropertyChanged("IsSelected");
+                }
+            }
+        }
+
+
+        private bool propertiesShown;
+        public bool PropertiesShown
+        {
+            get
+            {
+                return propertiesShown;
+            }
+
+            set
+            {
+                if (propertiesShown != value)
+                {
+                    propertiesShown = value;
+                    OnPropertyChanged("PropertiesShown");
+                }
+            }
+        }
+
+        #region Identity
 
         //property witn null-value.
         //empty leaf
@@ -327,7 +365,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         {
             get
             {
-                if (this is SectionViewModel) return (SectionViewModel) this;
+                if (this is SectionViewModel) return (SectionViewModel)this;
                 return AncesterElements().OfType<SectionViewModel>().First();
             }
         }
@@ -344,8 +382,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
                 .OfType<PropertyDescriptor>()
                 .Where(
                 x =>
-                !typeof (ConfigurationElement).IsAssignableFrom(x.PropertyType) ||
-                (x.GetEditor(typeof (FrameworkElement)) != null)) //filter out configuration elements
+                !typeof(ConfigurationElement).IsAssignableFrom(x.PropertyType) ||
+                (x.GetEditor(typeof(FrameworkElement)) != null)) //filter out configuration elements
                 .Where(x => x.Attributes.OfType<ConfigurationPropertyAttribute>().Any())
                 //only the once where we have a configurationPropertyAtt
                 .Select(x => ContainingSection.CreateElementProperty(this, x))
@@ -358,12 +396,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         {
             if (properties == null)
             {
-                properties =
-                    new ObservableCollection<Property>(
-                        GetAllProperties().OrderBy(x => x.Category).ThenBy(x => x.DisplayName));
+                properties = new ObservableCollection<Property>(GetAllProperties());
+                //second set: to make sure the properties arent created twice when filter.
+                properties = new ObservableCollection<Property>(properties.OrderBy(x => x.Category).ThenBy(x => x.DisplayName));
 
                 extendedProperties = new ExtendedPropertyContainer(elementLookup, this, properties);
-
                 PropagateNamePropertyChanges();
             }
         }
@@ -388,7 +425,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             return TypeDescriptor.GetProperties(thisElement)
                 .OfType<PropertyDescriptor>()
                 .Where(x => x.IsBrowsable)
-                .Where(x => typeof (ConfigurationElement).IsAssignableFrom(x.PropertyType))
+                .Where(x => typeof(ConfigurationElement).IsAssignableFrom(x.PropertyType))
                 // only properties that are configuration elements
                 .Where(x => x.Attributes.OfType<ConfigurationPropertyAttribute>().Any())
                 //that have the configuration property attribute
@@ -506,7 +543,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         {
             if (commands == null)
             {
-                commands = GetAllCommands().ToArray();
+                commands = GetAllCommands()
+                    .Where(x => x.Browsable)
+                    .ToArray();
             }
         }
 
@@ -517,6 +556,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         protected virtual IEnumerable<CommandModel> GetAllCommands()
         {
             return CreateDeleteCommand()
+                .Union( new CommandModel[] { new ToggleShowPropertiesCommand(this) })
                 .Union(CreateCustomCommands())
                 .Union(GetPromotedCommands());
         }
@@ -739,5 +779,42 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         }
 
         #endregion
+
+
+        private class ToggleShowPropertiesCommand : CommandModel
+        {
+            private readonly ElementViewModel viewModel;
+
+            public ToggleShowPropertiesCommand(ElementViewModel viewModel)
+            {
+                this.viewModel = viewModel;
+            }
+
+            public override string Title
+            {
+                get
+                {
+                    return "Toggle Properties";
+                }
+            }
+
+            public override bool CanExecute(object parameter)
+            {
+                return true;
+            }
+
+            public override void Execute(object parameter)
+            {
+                viewModel.PropertiesShown = !viewModel.PropertiesShown;
+            }
+
+            public override string KeyGesture
+            {
+                get
+                {
+                    return new KeyGestureConverter().ConvertToString(new KeyGesture(Key.Space));
+                }
+            }
+        }
     }
 }

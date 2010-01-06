@@ -55,6 +55,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_caching_configuraton
             CachingConfiguration = (CacheManagerSettings)source.GetSection(CacheManagerSettings.SectionName);
             CachingViewModel = SectionViewModel.CreateSection(Container, CacheManagerSettings.SectionName, CachingConfiguration);
             
+            
         }
     }
 

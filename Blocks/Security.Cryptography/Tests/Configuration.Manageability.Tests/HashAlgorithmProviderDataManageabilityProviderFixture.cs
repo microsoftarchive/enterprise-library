@@ -27,7 +27,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         HashAlgorithmProviderDataManageabilityProvider provider;
         MockRegistryKey machineKey;
         MockRegistryKey userKey;
-        IList<ConfigurationSetting> wmiSettings;
         HashAlgorithmProviderData configurationObject;
 
         [TestInitialize]
@@ -36,15 +35,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
             provider = new HashAlgorithmProviderDataManageabilityProvider();
             machineKey = new MockRegistryKey(true);
             userKey = new MockRegistryKey(true);
-            wmiSettings = new List<ConfigurationSetting>();
             configurationObject = new HashAlgorithmProviderData();
-        }
-
-        [TestCleanup]
-        public void TearDown()
-        {
-            // preventive unregister to work around WMI.NET 2.0 issues with appdomain unloading
-            ManagementEntityTypesRegistrar.UnregisterAll();
         }
 
         [TestMethod]
@@ -72,7 +63,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         [ExpectedException(typeof(ArgumentException))]
         public void ProviderThrowsWithConfigurationObjectOfWrongType()
         {
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(new TestsConfigurationSection(), true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(new TestsConfigurationSection(), true, machineKey, userKey);
         }
 
         [TestMethod]
@@ -81,7 +72,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
             configurationObject.SaltEnabled = true;
             configurationObject.AlgorithmType = typeof(SHA1Managed);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, machineKey, userKey);
 
             Assert.AreEqual(true, configurationObject.SaltEnabled);
         }
@@ -94,7 +85,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
 
             machineKey.AddBooleanValue(HashAlgorithmProviderDataManageabilityProvider.SaltEnabledPropertyName, false);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, machineKey, userKey);
 
             Assert.AreEqual(false, configurationObject.SaltEnabled);
         }
@@ -107,7 +98,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
 
             userKey.AddBooleanValue(HashAlgorithmProviderDataManageabilityProvider.SaltEnabledPropertyName, false);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, null, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, null, userKey);
 
             Assert.AreEqual(false, configurationObject.SaltEnabled);
         }
@@ -120,54 +111,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
 
             machineKey.AddBooleanValue(HashAlgorithmProviderDataManageabilityProvider.SaltEnabledPropertyName, false);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, false, machineKey, null, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, false, machineKey, null);
 
             Assert.AreEqual(true, configurationObject.SaltEnabled);
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreNotGeneratedIfWmiIsDisabled()
-        {
-            configurationObject.SaltEnabled = true;
-            configurationObject.AlgorithmType = typeof(SHA1Managed);
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, false, null, null, false, wmiSettings);
-
-            Assert.AreEqual(0, wmiSettings.Count);
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreGeneratedIfWmiIsEnabled()
-        {
-            configurationObject.Name = "provider name";
-            configurationObject.SaltEnabled = true;
-            configurationObject.AlgorithmType = typeof(SHA1Managed);
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, false, null, null, true, wmiSettings);
-
-            Assert.AreEqual(1, wmiSettings.Count);
-            Assert.AreSame(typeof(HashAlgorithmProviderSetting), wmiSettings[0].GetType());
-            Assert.AreEqual("provider name", ((HashAlgorithmProviderSetting)wmiSettings[0]).Name);
-            Assert.AreEqual(true, ((HashAlgorithmProviderSetting)wmiSettings[0]).SaltEnabled);
-            Assert.AreEqual(typeof(SHA1Managed).AssemblyQualifiedName, ((HashAlgorithmProviderSetting)wmiSettings[0]).AlgorithmType);
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreGeneratedWithPolicyOverridesIfWmiIsEnabled()
-        {
-            configurationObject.Name = "provider name";
-            configurationObject.SaltEnabled = true;
-            configurationObject.AlgorithmType = typeof(SHA1Managed);
-
-            machineKey.AddBooleanValue(HashAlgorithmProviderDataManageabilityProvider.SaltEnabledPropertyName, false);
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, machineKey, null, true, wmiSettings);
-
-            Assert.AreEqual(1, wmiSettings.Count);
-            Assert.AreSame(typeof(HashAlgorithmProviderSetting), wmiSettings[0].GetType());
-            Assert.AreEqual("provider name", ((HashAlgorithmProviderSetting)wmiSettings[0]).Name);
-            Assert.AreEqual(false, ((HashAlgorithmProviderSetting)wmiSettings[0]).SaltEnabled);
-            Assert.AreEqual(typeof(SHA1Managed).AssemblyQualifiedName, ((HashAlgorithmProviderSetting)wmiSettings[0]).AlgorithmType);
         }
 
         [TestMethod]

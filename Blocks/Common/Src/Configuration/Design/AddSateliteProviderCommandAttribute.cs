@@ -23,6 +23,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
     public class AddSateliteProviderCommandAttribute : CommandAttribute
     {
         readonly string sectionName;
+        readonly Type defaultProviderConfigurationType;
+        readonly string defaultProviderConfigurationPropertyName;
+        readonly string sateliteProviderReferencePropertyName;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AddSateliteProviderCommandAttribute"/> specifying the block dependency by its configuration section name.<br/>
@@ -40,11 +43,60 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sectionName"></param>
+        /// <param name="defaultProviderConfigurationType"></param>
+        /// <param name="defaultProviderConfigurationPropertyName"></param>
+        /// <param name="sateliteProviderReferencePropertyName"></param>
+        public AddSateliteProviderCommandAttribute(string sectionName, Type defaultProviderConfigurationType, string defaultProviderConfigurationPropertyName, string sateliteProviderReferencePropertyName)
+            :this(sectionName)
+        {
+            this.defaultProviderConfigurationType = defaultProviderConfigurationType;
+            this.defaultProviderConfigurationPropertyName = defaultProviderConfigurationPropertyName;
+            this.sateliteProviderReferencePropertyName = sateliteProviderReferencePropertyName;
+        }
+
+
+        /// <summary>
         /// Gets the section name of the block dependency.
         /// </summary>
         public string SectionName
         {
             get { return sectionName; }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public Type DefaultProviderConfigurationType
+        {
+            get
+            {
+                return defaultProviderConfigurationType;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string DefaultProviderConfigurationPropertyName
+        {
+            get
+            {
+                return defaultProviderConfigurationPropertyName;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string SateliteProviderReferencePropertyName
+        {
+            get
+            {
+                return sateliteProviderReferencePropertyName;
+            }
         }
     }
 }

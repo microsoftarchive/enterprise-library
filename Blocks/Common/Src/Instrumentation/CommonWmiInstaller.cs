@@ -34,7 +34,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation
 			InitializeComponent();
 
 			Installers.Add(new ReflectionInstaller<EventLogInstallerBuilder>());
-			Installers.Add(new DefaultManagementInstaller());
 		}
 	}
 }

@@ -205,7 +205,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WinForms
                 catch (Exception e)
                 {
                     throw new InvalidOperationException(
-                        string.Format(CultureInfo.CurrentUICulture,
+                        string.Format(CultureInfo.CurrentCulture,
                                       Resources.ExceptionValidatedControlPropertyNotFound,
                                       validatedPropertyName,
                                       control.Name),

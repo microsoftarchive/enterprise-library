@@ -54,7 +54,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         [ResourceDescription(typeof(DesignResources), "FileConfigurationSourceElementFilePathDescription")]
         [ResourceDisplayName(typeof(DesignResources), "FileConfigurationSourceElementFilePathDisplayName")]
         [Editor(CommonDesignTime.EditorTypes.FilteredFilePath, CommonDesignTime.EditorTypes.UITypeEditor)]
-        [FilteredFileNameEditorAttribute(typeof(DesignResources), "FileConfigurationSourceElementFilePathFilter")]
+        [FilteredFileNameEditorAttribute(typeof(DesignResources), "FileConfigurationSourceElementFilePathFilter", CheckFileExists = false)]
         [Validation(CommonDesignTime.ValidationTypeNames.FileValidator)]
         public string FilePath
         {

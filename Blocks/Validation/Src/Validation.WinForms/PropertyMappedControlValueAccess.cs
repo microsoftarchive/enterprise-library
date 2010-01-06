@@ -66,7 +66,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WinForms
                 validatedControlItem = validatedControlItem.ValidationProvider.GetExistingValidatedControlItem(propertyName);
                 if (validatedControlItem == null)
                 {
-                    throw new InvalidOperationException(string.Format(CultureInfo.CurrentUICulture,
+                    throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture,
                                                                       Resources.ExceptionValueAccessPropertyNotFound,
                                                                       propertyName));
                 }

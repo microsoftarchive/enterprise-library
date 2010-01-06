@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.ComponentModel;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Converters
 {
@@ -25,6 +26,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
         public BackingStoreReferenceConverter(string nullBackingStoreName)
         {
             this.nullBackingStoreName = nullBackingStoreName;
+            this.NoReference = Resources.ReferencePropertyNoReference;
         }
 
         public override object ConvertFrom(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value)

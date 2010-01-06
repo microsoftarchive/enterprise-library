@@ -44,17 +44,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
         /// provide manageability for each configuration section.</param>
         /// <param name="readGroupPolicies"><see langword="true"/> if Group Policy overrides must be applied; otherwise, 
         /// <see langword="false"/>.</param>
-        /// <param name="generateWmiObjects"><see langword="true"/> if WMI objects must be generated; otherwise, 
-        /// <see langword="false"/>.</param>
         /// <param name="applicationName">The name of the running application. This name is used to look for policy overrides
         /// and to identify the published WMI objects.</param>
         public ManageableConfigurationSource(
             string configurationFilePath,
             IDictionary<string, ConfigurationSectionManageabilityProvider> manageabilityProviders,
             bool readGroupPolicies,
-            bool generateWmiObjects,
             string applicationName)
-            : this(GetManageableConfigurationSourceImplementation(configurationFilePath, manageabilityProviders, readGroupPolicies, generateWmiObjects, applicationName)) { }
+            : this(GetManageableConfigurationSourceImplementation(configurationFilePath, manageabilityProviders, readGroupPolicies, applicationName)) { }
 
         /// <summary>
         /// Initialize a new instance of the <see cref="ManageableConfigurationSource"/> class with the implementation.
@@ -157,14 +154,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
         static ManageableConfigurationSourceImplementation GetManageableConfigurationSourceImplementation(string configurationFilePath,
                                                                                                           IDictionary<string, ConfigurationSectionManageabilityProvider> manageabilityProviders,
                                                                                                           bool readGroupPolicies,
-                                                                                                          bool generateWmiObjects,
                                                                                                           string applicationName)
         {
             CheckFilePath(configurationFilePath);
             CheckApplicationName(applicationName);
             CheckProvidersMapping(manageabilityProviders);
 
-            return singletonHelper.GetInstance(configurationFilePath, manageabilityProviders, readGroupPolicies, generateWmiObjects, applicationName);
+            return singletonHelper.GetInstance(configurationFilePath, manageabilityProviders, readGroupPolicies, applicationName);
         }
 
         /// <summary>

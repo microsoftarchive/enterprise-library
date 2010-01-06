@@ -107,7 +107,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="ComponentModel\Editors\TypeBrowser\SelectGacAssembliesDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ComponentModel\Editors\TypeBrowser\TypeBrowser.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ComponentModel\Editors\TypeBrowser\TypeBrowserControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -124,10 +132,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Resources\Converters.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Resources\CollectionEditorTemplates.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -151,7 +155,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="ViewModel\BlockSpecifics\OverridenTraceListenerCollectionEditor.xaml">
+    <Page Include="ViewModel\BlockSpecifics\Logging\OverridenTraceListenerCollectionEditor.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -255,10 +259,17 @@
     <Compile Include="ComponentModel\Editors\MultilineTextEditor.cs" />
     <Compile Include="ComponentModel\Editors\TypeBrowser\AssemblyGroup.cs" />
     <Compile Include="ComponentModel\Editors\TypeBrowser\SearchAction.cs" />
+    <Compile Include="ComponentModel\Editors\TypeBrowser\SelectGacAssembliesDialog.xaml.cs">
+      <DependentUpon>SelectGacAssembliesDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ComponentModel\Editors\TypeBrowser\TypeBrowser.xaml.cs">
       <DependentUpon>TypeBrowser.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ComponentModel\Editors\TypeBrowser\TypeBrowserControl.xaml.cs">
+      <DependentUpon>TypeBrowserControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ComponentModel\Editors\TypeBrowser\TypeBrowserViewModel.cs" />
+    <Compile Include="ComponentModel\Editors\TypeBrowser\TypeSelectionEditor.cs" />
     <Compile Include="ComponentModel\Editors\TypePicker\Resources.Designer.cs">
       <DependentUpon>Resources.resx</DependentUpon>
       <AutoGen>True</AutoGen>
@@ -304,6 +315,7 @@
     <Compile Include="Controls\ElementModelContainer.cs" />
     <Compile Include="Controls\RelationshipAdorner.cs" />
     <Compile Include="Controls\SectionModelContainer.cs" />
+    <Compile Include="Controls\SelectionHelper.cs" />
     <Compile Include="Controls\SelectionNotifyingContextMenu.cs" />
     <Compile Include="Controls\SelectionNotifyingMenuItem.cs" />
     <Compile Include="Controls\ToggleButtonExtensions.cs" />
@@ -311,11 +323,14 @@
     <Compile Include="Converters\BooleanInverseConverter.cs" />
     <Compile Include="Converters\BooleanToHiddenConverter.cs" />
     <Compile Include="Converters\ChildCountToVisibility.cs" />
+    <Compile Include="Converters\CollectionToVisibilityConverter.cs" />
     <Compile Include="Converters\EnumerableToVisibilityConverter.cs" />
     <Compile Include="Converters\ErrorsToStringConverter.cs" />
     <Compile Include="Converters\GridWidthConverter.cs" />
     <Compile Include="Converters\IsWarningToTextConverter.cs" />
     <Compile Include="Converters\MidpointConverter.cs" />
+    <Compile Include="Converters\NullOrEmptyToBooleanConverter.cs" />
+    <Compile Include="Converters\NullToBooleanConverter.cs" />
     <Compile Include="Converters\StringToVisibilityConverter.cs" />
     <Compile Include="Converters\SuggestedValueTypeConverter.cs" />
     <Compile Include="Converters\TypeToVisibilityConverter.cs" />
@@ -360,57 +375,64 @@
     <Compile Include="ViewModel\Bindable\ListViewModel.cs" />
     <Compile Include="ViewModel\Bindable\PopupEditorBindableProperty.cs" />
     <Compile Include="ViewModel\Bindable\SuggestedValuesBindableProperty.cs" />
-    <Compile Include="ViewModel\BlockSpecifics\AddCachingBlockCommand.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\AddCacheManagerCommand.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\Caching\AddCachingBlockCommand.cs" />
     <Compile Include="ViewModel\BlockSpecifics\AddConfigurationSourcesBlockCommand.cs" />
-    <Compile Include="ViewModel\BlockSpecifics\AddDatabaseBlockCommand.cs" />
-    <Compile Include="ViewModel\BlockSpecifics\AddExceptionHandlingBlockCommand.cs" />
-    <Compile Include="ViewModel\BlockSpecifics\AddExceptionPolicyCommand.cs" />
-    <Compile Include="ViewModel\BlockSpecifics\AddLoggingBlockCommand.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\DataAccess\AddDatabaseBlockCommand.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\ExceptionHandling\AddExceptionHandlingBlockCommand.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\ExceptionHandling\AddExceptionPolicyCommand.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\Logging\AddLoggingBlockCommand.cs" />
     <Compile Include="ViewModel\BlockSpecifics\AppSettingsDecorator.cs" />
     <Compile Include="ViewModel\BlockSpecifics\AppSettingsViewModel.cs" />
-    <Compile Include="ViewModel\BlockSpecifics\AuthorizationProviderViewModel.cs" />
-    <Compile Include="ViewModel\BlockSpecifics\AuthorizationRuleDataViewModel.cs" />
-    <Compile Include="ViewModel\BlockSpecifics\AuthorizationRuleProviderDataViewModel.cs" />
-    <Compile Include="ViewModel\BlockSpecifics\CacheManagerSectionViewModel.cs" />
-    <Compile Include="ViewModel\BlockSpecifics\CacheManagerBackingStoreProperty.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\ExceptionTypeAddCommand.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\Logging\LogFormatterValidator.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\Security\AuthorizationProviderViewModel.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\Security\AuthorizationRuleDataViewModel.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\Security\AuthorizationRuleProviderDataViewModel.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\Caching\CacheManagerSectionViewModel.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\Caching\CacheManagerBackingStoreProperty.cs" />
+    <Compile Include="ViewModel\Commands\HiddenCommand.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\ConfigurationManageabilityProviderAttributeRetriever.cs" />
     <Compile Include="ViewModel\BlockSpecifics\ConfigurationSourceSectionViewModel.cs" />
-    <Compile Include="ViewModel\BlockSpecifics\ConnectionStringsDecorator.cs" />
-    <Compile Include="ViewModel\BlockSpecifics\CryptographySectionViewModel.cs" />
-    <Compile Include="ViewModel\BlockSpecifics\CustomTraceListenerDataViewModel.cs" />
-    <Compile Include="ViewModel\BlockSpecifics\DataSectionViewModel.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\DataAccess\ConnectionStringsDecorator.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\Cryptography\HashAlgorithmProviderAddCommand.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\Cryptography\CryptographySectionViewModel.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\Logging\CustomTraceListenerDataViewModel.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\DataAccess\DataSectionViewModel.cs" />
     <Compile Include="ViewModel\BlockSpecifics\EnvironmentalOverridesEditor.cs" />
     <Compile Include="ViewModel\BlockSpecifics\EnvironmentMergeSectionViewModel.cs" />
-    <Compile Include="ViewModel\BlockSpecifics\ExceptionHandlerDataViewModel.cs" />
-    <Compile Include="ViewModel\BlockSpecifics\ExceptionHandlingSectionViewModel.cs" />
-    <Compile Include="ViewModel\BlockSpecifics\ExceptionPolicyDataViewModel.cs" />
-    <Compile Include="ViewModel\BlockSpecifics\ExceptionTypeDataViewModel.cs" />
-    <Compile Include="ViewModel\BlockSpecifics\KeyedHashAlgorithmProviderAddCommand.cs" />
-    <Compile Include="ViewModel\BlockSpecifics\KeyedHashAlgorithmProviderDataViewModel.cs" />
-    <Compile Include="ViewModel\BlockSpecifics\LoggingSectionViewModel.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\ExceptionHandling\ExceptionHandlerDataViewModel.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\ExceptionHandling\ExceptionHandlingSectionViewModel.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\ExceptionHandling\ExceptionPolicyDataViewModel.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\ExceptionHandling\ExceptionTypeDataViewModel.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\ExportAdmTemplateCommand.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\Cryptography\KeyedHashAlgorithmProviderAddCommand.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\Cryptography\KeyedHashAlgorithmProviderDataViewModel.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\Logging\LoggingSectionViewModel.cs" />
     <Compile Include="ViewModel\BlockSpecifics\Logging\LogPriorityMinMaxValidator.cs" />
     <Compile Include="ViewModel\BlockSpecifics\OpenEnvironmentConfigurationDeltaCommand.cs" />
     <Compile Include="ViewModel\BlockSpecifics\OverriddenElementViewModel.cs" />
-    <Compile Include="ViewModel\BlockSpecifics\OverridenTraceListenerCollectionEditor.xaml.cs">
+    <Compile Include="ViewModel\BlockSpecifics\Logging\OverridenTraceListenerCollectionEditor.xaml.cs">
       <DependentUpon>OverridenTraceListenerCollectionEditor.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ViewModel\BlockSpecifics\PiabSectionViewModel.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\Piab\PiabSectionViewModel.cs" />
     <Compile Include="ViewModel\BlockSpecifics\Piab\MatchCollectionPopulatedValidator.cs" />
-    <Compile Include="ViewModel\BlockSpecifics\PolicyDataViewModel.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\Piab\PolicyDataViewModel.cs" />
     <Compile Include="ViewModel\BlockSpecifics\SaveEnvironmentConfigurationDeltaCommand.cs" />
     <Compile Include="ViewModel\BlockSpecifics\SaveMergedEnvironmentConfigurationCommand.cs" />
-    <Compile Include="ViewModel\BlockSpecifics\SecuritySectionViewModel.cs" />
-    <Compile Include="ViewModel\BlockSpecifics\SelectValidatedTypeReferenceMembersCommand.cs" />
-    <Compile Include="ViewModel\BlockSpecifics\SymmetricAlgorithmProviderAddCommand.cs" />
-    <Compile Include="ViewModel\BlockSpecifics\SymmetricAlgorithmProviderDataViewModel.cs" />
-    <Compile Include="ViewModel\BlockSpecifics\SystemDiagnosticsTraceListenerDataViewModel.cs" />
-    <Compile Include="ViewModel\BlockSpecifics\TraceListenerElementCollectionViewModel.cs" />
-    <Compile Include="ViewModel\BlockSpecifics\TraceListenerReferenceViewModel.cs" />
-    <Compile Include="ViewModel\BlockSpecifics\ValidatedMemberReferenceViewModel.cs" />
-    <Compile Include="ViewModel\BlockSpecifics\ValidatedTypeReferenceViewModel.cs" />
-    <Compile Include="ViewModel\BlockSpecifics\ValidationRulesetDataViewModel.cs" />
-    <Compile Include="ViewModel\BlockSpecifics\ValidationSectionViewModel.cs" />
-    <Compile Include="ViewModel\BlockSpecifics\ValidationTypeReferenceAddCommand.cs" />
-    <Compile Include="ViewModel\BlockSpecifics\ValidatorDataViewModel.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\Security\SecuritySectionViewModel.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\Validation\SelectValidatedTypeReferenceMembersCommand.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\Cryptography\SymmetricAlgorithmProviderAddCommand.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\Cryptography\SymmetricAlgorithmProviderDataViewModel.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\Logging\SystemDiagnosticsTraceListenerDataViewModel.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\Logging\TraceListenerElementCollectionViewModel.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\Logging\TraceListenerReferenceViewModel.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\Validation\ValidatedMemberReferenceViewModel.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\Validation\ValidatedTypeReferenceViewModel.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\Validation\ValidationRulesetDataViewModel.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\Validation\ValidationSectionViewModel.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\Validation\ValidationTypeReferenceAddCommand.cs" />
+    <Compile Include="ViewModel\BlockSpecifics\Validation\ValidatorDataViewModel.cs" />
     <Compile Include="ViewModel\CollectionElementViewModel.cs" />
     <Compile Include="ViewModel\Commands\AddApplicationBlockCommand.cs" />
     <Compile Include="ViewModel\Commands\AddSateliteProviderCommand.cs" />

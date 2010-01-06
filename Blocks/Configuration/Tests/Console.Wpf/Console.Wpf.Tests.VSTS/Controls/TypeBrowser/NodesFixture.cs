@@ -1,4 +1,15 @@
-﻿using System;
+﻿//===============================================================================
+// Microsoft patterns & practices Enterprise Library
+// Core
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+
+using System;
 using System.Reflection;
 using System.Windows;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors;
@@ -43,7 +54,7 @@ namespace Console.Wpf.Tests.VSTS.Controls.TypeBrowser
         [TestMethod]
         public void AssemblyNodeIsInitialized()
         {
-            var node = new AssemblyNode(typeof(TestAssembly1.Namespace1.Class1).Assembly, this);
+            var node = new AssemblyNode(typeof(TestAssembly1.Namespace1.Class1).Assembly, this, null);
 
             Assert.AreEqual("TestAssembly1", node.DisplayName);
             Assert.AreEqual(2, node.Namespaces.Count);
@@ -55,7 +66,7 @@ namespace Console.Wpf.Tests.VSTS.Controls.TypeBrowser
         [TestMethod]
         public void AssemblyNodeNamespacesAreCreatedOnDemand()
         {
-            var node = new AssemblyNode(typeof(TestAssembly1.Namespace1.Class1).Assembly, this);
+            var node = new AssemblyNode(typeof(TestAssembly1.Namespace1.Class1).Assembly, this, null);
 
             Assert.IsFalse(this.createdNamespaceNodes);
             var ignored = node.Namespaces;
@@ -65,7 +76,7 @@ namespace Console.Wpf.Tests.VSTS.Controls.TypeBrowser
         [TestMethod]
         public void AssemblyNodeNamespacesHaveTypes()
         {
-            var node = new AssemblyNode(typeof(TestAssembly1.Namespace1.Class1).Assembly, this);
+            var node = new AssemblyNode(typeof(TestAssembly1.Namespace1.Class1).Assembly, this, null);
 
             Assert.AreEqual(3, node.Namespaces[0].Types.Count);
             Assert.AreSame(typeof(TestAssembly1.Namespace1.Class1), node.Namespaces[0].Types[0].Data);
@@ -73,6 +84,17 @@ namespace Console.Wpf.Tests.VSTS.Controls.TypeBrowser
             Assert.AreEqual("TestAssembly1.Namespace1.InternalClass1", node.Namespaces[0].Types[2].Data.FullName);
             Assert.AreEqual(1, node.Namespaces[1].Types.Count);
             Assert.AreEqual("TestAssembly1.Namespace2.AnotherInternalClass", node.Namespaces[1].Types[0].Data.FullName);
+        }
+
+        [TestMethod]
+        public void AssemblyNodeNamespacesHaveFilteredTypes()
+        {
+            var node = new AssemblyNode(typeof(TestAssembly1.Namespace1.Class1).Assembly, this, t => !t.Name.Contains("Internal"));
+
+            Assert.AreEqual(1, node.Namespaces.Count);
+            Assert.AreEqual(2, node.Namespaces[0].Types.Count);
+            Assert.AreSame(typeof(TestAssembly1.Namespace1.Class1), node.Namespaces[0].Types[0].Data);
+            Assert.AreSame(typeof(TestAssembly1.Namespace1.Class2), node.Namespaces[0].Types[1].Data);
         }
 
         [TestMethod]

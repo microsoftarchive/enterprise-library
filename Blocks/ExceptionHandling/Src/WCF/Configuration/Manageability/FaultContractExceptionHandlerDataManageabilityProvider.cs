@@ -25,31 +25,29 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.Configurat
     /// splits policy overrides processing and WMI objects generation, performing appropriate logging of 
     /// policy processing errors.
     /// </summary>
-	public class FaultContractExceptionHandlerDataManageabilityProvider
-		: ConfigurationElementManageabilityProviderBase<FaultContractExceptionHandlerData>
-	{
+    public class FaultContractExceptionHandlerDataManageabilityProvider
+        : ConfigurationElementManageabilityProviderBase<FaultContractExceptionHandlerData>
+    {
         /// <summary>
         /// The name of the attributes property.
         /// </summary>
-		public const String AttributesPropertyName = "attributes";
+        public const String AttributesPropertyName = "attributes";
 
         /// <summary>
         /// The name of the exception message property.
         /// </summary>
-		public const String ExceptionMessagePropertyName = "exceptionMessage";
+        public const String ExceptionMessagePropertyName = "exceptionMessage";
 
         /// <summary>
         /// The name of the fault contract type property.
         /// </summary>
-		public const String FaultContractTypePropertyName = "faultContractType";
+        public const String FaultContractTypePropertyName = "faultContractType";
 
         /// <summary>
         /// Initialize a new instance of the <see cref="FaultContractExceptionHandlerDataManageabilityProvider"/> clas.
         /// </summary>
-		public FaultContractExceptionHandlerDataManageabilityProvider()
-		{
-			FaultContractExceptionHandlerDataWmiMapper.RegisterWmiTypes();
-		}
+        public FaultContractExceptionHandlerDataManageabilityProvider()
+        { }
 
         /// <summary>
         /// Adds the ADM instructions that describe the policies that can be used to override the properties of
@@ -68,16 +66,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.Configurat
         /// Subclasses managing objects that must not create a policy must override this method to just add the parts.
         /// </remarks>
         protected override void AddAdministrativeTemplateDirectives(AdmContentBuilder contentBuilder,
-			FaultContractExceptionHandlerData configurationObject,
-			IConfigurationSource configurationSource,
-			String elementPolicyKeyName)
-		{
-			// directives are parts of the exception type policy
-			AddElementAdministrativeTemplateParts(contentBuilder,
-				configurationObject,
-				configurationSource,
-				elementPolicyKeyName);
-		}
+            FaultContractExceptionHandlerData configurationObject,
+            IConfigurationSource configurationSource,
+            String elementPolicyKeyName)
+        {
+            // directives are parts of the exception type policy
+            AddElementAdministrativeTemplateParts(contentBuilder,
+                configurationObject,
+                configurationSource,
+                elementPolicyKeyName);
+        }
 
         /// <summary>
         /// Adds the ADM parts that represent the properties of
@@ -92,35 +90,35 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.Configurat
         /// Subclasses managing objects that must not create a policy will likely need to include the elements' keys when creating the parts.
         /// </remarks>
         protected override void AddElementAdministrativeTemplateParts(AdmContentBuilder contentBuilder,
-			FaultContractExceptionHandlerData configurationObject,
-			IConfigurationSource configurationSource,
-			String elementPolicyKeyName)
-		{
-			contentBuilder.AddTextPart(String.Format(CultureInfo.CurrentCulture,
-													Resources.HandlerPartNameTemplate,
-													configurationObject.Name));
+            FaultContractExceptionHandlerData configurationObject,
+            IConfigurationSource configurationSource,
+            String elementPolicyKeyName)
+        {
+            contentBuilder.AddTextPart(String.Format(CultureInfo.CurrentCulture,
+                                                    Resources.HandlerPartNameTemplate,
+                                                    configurationObject.Name));
 
-			contentBuilder.AddEditTextPart(Resources.FaultContractExceptionHandlerExceptionMessagePartName,
-				elementPolicyKeyName,
-				ExceptionMessagePropertyName,
-				configurationObject.ExceptionMessage,
-				512,
-				true);
+            contentBuilder.AddEditTextPart(Resources.FaultContractExceptionHandlerExceptionMessagePartName,
+                elementPolicyKeyName,
+                ExceptionMessagePropertyName,
+                configurationObject.ExceptionMessage,
+                512,
+                true);
 
-			contentBuilder.AddEditTextPart(Resources.FaultContractExceptionHandlerFaultContractTypePartName,
-				elementPolicyKeyName,
-				FaultContractTypePropertyName,
-				configurationObject.FaultContractType,
-				512,
-				true);
+            contentBuilder.AddEditTextPart(Resources.FaultContractExceptionHandlerFaultContractTypePartName,
+                elementPolicyKeyName,
+                FaultContractTypePropertyName,
+                configurationObject.FaultContractType,
+                512,
+                true);
 
-			contentBuilder.AddEditTextPart(Resources.FaultContractExceptionHandlerAttributesPartName,
-				elementPolicyKeyName,
-				AttributesPropertyName,
-				GenerateAttributesString(configurationObject.Attributes),
-				1024,
-				false);
-		}
+            contentBuilder.AddEditTextPart(Resources.FaultContractExceptionHandlerAttributesPartName,
+                elementPolicyKeyName,
+                AttributesPropertyName,
+                GenerateAttributesString(configurationObject.Attributes),
+                1024,
+                false);
+        }
 
         /// <summary>
         /// Gets the template for the name of the policy associated to the object.
@@ -131,9 +129,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.Configurat
         /// to avoid creating a policy must still override this property.
         /// </remarks>
         protected override string ElementPolicyNameTemplate
-		{
-			get { return null; }
-		}
+        {
+            get { return null; }
+        }
 
         /// <summary>
         /// Overrides the <paramref name="configurationObject"/>'s properties with the Group Policy values from the 
@@ -146,45 +144,33 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.Configurat
         /// before making modifications to the <paramref name="configurationObject"/> so any error retrieving
         /// the override values will cancel policy processing.</remarks>
         protected override void OverrideWithGroupPolicies(FaultContractExceptionHandlerData configurationObject, IRegistryKey policyKey)
-		{
-			String attributesOverride = policyKey.GetStringValue(AttributesPropertyName);
-			String exceptionMessageOverride = policyKey.GetStringValue(ExceptionMessagePropertyName);
-			String faultContractTypeOverride = policyKey.GetStringValue(FaultContractTypePropertyName);
+        {
+            String attributesOverride = policyKey.GetStringValue(AttributesPropertyName);
+            String exceptionMessageOverride = policyKey.GetStringValue(ExceptionMessagePropertyName);
+            String faultContractTypeOverride = policyKey.GetStringValue(FaultContractTypePropertyName);
 
-			configurationObject.ExceptionMessage = exceptionMessageOverride;
-			configurationObject.FaultContractType = faultContractTypeOverride;
+            configurationObject.ExceptionMessage = exceptionMessageOverride;
+            configurationObject.FaultContractType = faultContractTypeOverride;
 
-			configurationObject.PropertyMappings.Clear();
-			Dictionary<String, String> attributesDictionary = new Dictionary<string, string>();
-			KeyValuePairParser.ExtractKeyValueEntries(attributesOverride, attributesDictionary);
-			foreach (KeyValuePair<String, String> kvp in attributesDictionary)
-			{
-				configurationObject.PropertyMappings.Add(new FaultContractExceptionHandlerMappingData(kvp.Key, kvp.Value));
-			}
-		}
+            configurationObject.PropertyMappings.Clear();
+            Dictionary<String, String> attributesDictionary = new Dictionary<string, string>();
+            KeyValuePairParser.ExtractKeyValueEntries(attributesOverride, attributesDictionary);
+            foreach (KeyValuePair<String, String> kvp in attributesDictionary)
+            {
+                configurationObject.PropertyMappings.Add(new FaultContractExceptionHandlerMappingData(kvp.Key, kvp.Value));
+            }
+        }
 
-		private static String GenerateAttributesString(NameValueCollection attributes)
-		{
-			KeyValuePairEncoder encoder = new KeyValuePairEncoder();
+        private static String GenerateAttributesString(NameValueCollection attributes)
+        {
+            KeyValuePairEncoder encoder = new KeyValuePairEncoder();
 
-			foreach (String key in attributes.AllKeys)
-			{
-				encoder.AppendKeyValuePair(key, attributes[key]);
-			}
+            foreach (String key in attributes.AllKeys)
+            {
+                encoder.AppendKeyValuePair(key, attributes[key]);
+            }
 
-			return encoder.GetEncodedKeyValuePairs();
-		}
-
-        /// <summary>
-        /// Creates the <see cref="ConfigurationSetting"/> instances that describe the 
-        /// configurationObject.
-        /// </summary>
-        /// <param name="configurationObject">The configuration object for instances that must be managed.</param>
-        /// <param name="wmiSettings">A collection to where the generated WMI objects are to be added.</param>
-        protected override void GenerateWmiObjects(FaultContractExceptionHandlerData configurationObject, 
-			ICollection<ConfigurationSetting> wmiSettings)
-		{
-			FaultContractExceptionHandlerDataWmiMapper.GenerateWmiObjects(configurationObject, wmiSettings);
-		}
-	}
+            return encoder.GetEncodedKeyValuePairs();
+        }
+    }
 }

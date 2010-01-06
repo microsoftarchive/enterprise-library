@@ -4,7 +4,7 @@
     
     <UserControl.Resources>
         <DataTemplate x:Key="KeyValueItem">
-            <Grid>
+            <Grid Focusable="False">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition SharedSizeGroup="KeyCol" Width="160*"/>
                     <ColumnDefinition SharedSizeGroup="ValueCol" Width="160*"/>
@@ -29,7 +29,7 @@
                 <TextBlock Grid.Column="1">Value</TextBlock>
         </Grid>
             
-        <ItemsControl x:Name="Items" ItemTemplate="{StaticResource KeyValueItem}">
+        <ItemsControl Focusable="False" x:Name="Items" ItemTemplate="{StaticResource KeyValueItem}">
         </ItemsControl>
         </StackPanel>
     </ScrollViewer>

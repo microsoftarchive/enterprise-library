@@ -10,7 +10,6 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability;
@@ -24,31 +23,29 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
     /// splits policy overrides processing and WMI objects generation, performing appropriate logging of 
     /// policy processing errors.
     /// </summary>
-	public class FlatFileTraceListenerDataManageabilityProvider
-		: TraceListenerDataManageabilityProvider<FlatFileTraceListenerData>
-	{
+    public class FlatFileTraceListenerDataManageabilityProvider
+        : TraceListenerDataManageabilityProvider<FlatFileTraceListenerData>
+    {
         /// <summary>
         /// The name of the file name property.
         /// </summary>
-		public const String FileNamePropertyName = "fileName";
+        public const String FileNamePropertyName = "fileName";
 
         /// <summary>
         /// The name of the footer property.
         /// </summary>
-		public const String FooterPropertyName = "footer";
+        public const String FooterPropertyName = "footer";
 
         /// <summary>
         /// The name of the header property
         /// </summary>
-		public const String HeaderPropertyName = "header";
+        public const String HeaderPropertyName = "header";
 
         /// <summary>
         /// Initialize a new instance <see cref="FlatFileTraceListenerDataManageabilityProvider"/> class.
         /// </summary>
-		public FlatFileTraceListenerDataManageabilityProvider()
-		{
-			FlatFileTraceListenerDataWmiMapper.RegisterWmiTypes();
-		}
+        public FlatFileTraceListenerDataManageabilityProvider()
+        { }
 
         /// <summary>
         /// Adds the ADM parts that represent the properties of
@@ -63,34 +60,34 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         /// Subclasses managing objects that must not create a policy will likely need to include the elements' keys when creating the parts.
         /// </remarks>
         protected override void AddElementAdministrativeTemplateParts(AdmContentBuilder contentBuilder,
-			FlatFileTraceListenerData configurationObject,
-			IConfigurationSource configurationSource,
-			String elementPolicyKeyName)
-		{
-			contentBuilder.AddEditTextPart(Resources.FlatFileTraceListenerFileNamePartName,
-				FileNamePropertyName,
-				configurationObject.FileName,
-				255,
-				true);
+            FlatFileTraceListenerData configurationObject,
+            IConfigurationSource configurationSource,
+            String elementPolicyKeyName)
+        {
+            contentBuilder.AddEditTextPart(Resources.FlatFileTraceListenerFileNamePartName,
+                FileNamePropertyName,
+                configurationObject.FileName,
+                255,
+                true);
 
-			contentBuilder.AddEditTextPart(Resources.FlatFileTraceListenerHeaderPartName,
-				HeaderPropertyName,
-				configurationObject.Header,
-				512,
-				false);
+            contentBuilder.AddEditTextPart(Resources.FlatFileTraceListenerHeaderPartName,
+                HeaderPropertyName,
+                configurationObject.Header,
+                512,
+                false);
 
-			contentBuilder.AddEditTextPart(Resources.FlatFileTraceListenerFooterPartName,
-				FooterPropertyName,
-				configurationObject.Footer,
-				512,
-				false);
+            contentBuilder.AddEditTextPart(Resources.FlatFileTraceListenerFooterPartName,
+                FooterPropertyName,
+                configurationObject.Footer,
+                512,
+                false);
 
-			AddTraceOptionsPart(contentBuilder, configurationObject.TraceOutputOptions);
+            AddTraceOptionsPart(contentBuilder, configurationObject.TraceOutputOptions);
 
-			AddFilterPart(contentBuilder, configurationObject.Filter);
+            AddFilterPart(contentBuilder, configurationObject.Filter);
 
-			AddFormattersPart(contentBuilder, configurationObject.Formatter, configurationSource);
-		}
+            AddFormattersPart(contentBuilder, configurationObject.Formatter, configurationSource);
+        }
 
         /// <summary>
         /// Overrides the <paramref name="configurationObject"/>'s properties with the Group Policy values from the 
@@ -103,32 +100,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         /// before making modifications to the <paramref name="configurationObject"/> so any error retrieving
         /// the override values will cancel policy processing.</remarks>
         protected override void OverrideWithGroupPolicies(FlatFileTraceListenerData configurationObject, IRegistryKey policyKey)
-		{
-			String fileNameOverride = policyKey.GetStringValue(FileNamePropertyName);
-			String footerOverride = policyKey.GetStringValue(FooterPropertyName);
-			String formatterOverride = GetFormatterPolicyOverride(policyKey);
-			String headerOverride = policyKey.GetStringValue(HeaderPropertyName);
-			TraceOptions? traceOutputOptionsOverride = policyKey.GetEnumValue<TraceOptions>(TraceOutputOptionsPropertyName);
-			SourceLevels? filterOverride = policyKey.GetEnumValue<SourceLevels>(FilterPropertyName);
+        {
+            String fileNameOverride = policyKey.GetStringValue(FileNamePropertyName);
+            String footerOverride = policyKey.GetStringValue(FooterPropertyName);
+            String formatterOverride = GetFormatterPolicyOverride(policyKey);
+            String headerOverride = policyKey.GetStringValue(HeaderPropertyName);
+            TraceOptions? traceOutputOptionsOverride = policyKey.GetEnumValue<TraceOptions>(TraceOutputOptionsPropertyName);
+            SourceLevels? filterOverride = policyKey.GetEnumValue<SourceLevels>(FilterPropertyName);
 
-			configurationObject.FileName = fileNameOverride;
-			configurationObject.Footer = footerOverride;
-			configurationObject.Formatter = formatterOverride;
-			configurationObject.Header = headerOverride;
-			configurationObject.TraceOutputOptions = traceOutputOptionsOverride.Value;
-			configurationObject.Filter = filterOverride.Value;
-		}
-
-        /// <summary>
-        /// Creates the <see cref="ConfigurationSetting"/> instances that describe the 
-        /// configurationObject.
-        /// </summary>
-        /// <param name="configurationObject">The configuration object for instances that must be managed.</param>
-        /// <param name="wmiSettings">A collection to where the generated WMI objects are to be added.</param>
-        protected override void GenerateWmiObjects(FlatFileTraceListenerData configurationObject, 
-			ICollection<ConfigurationSetting> wmiSettings)
-		{
-			FlatFileTraceListenerDataWmiMapper.GenerateWmiObjects(configurationObject, wmiSettings);
-		}
-	}
+            configurationObject.FileName = fileNameOverride;
+            configurationObject.Footer = footerOverride;
+            configurationObject.Formatter = formatterOverride;
+            configurationObject.Header = headerOverride;
+            configurationObject.TraceOutputOptions = traceOutputOptionsOverride.Value;
+            configurationObject.Filter = filterOverride.Value;
+        }
+    }
 }

@@ -10,7 +10,6 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability.Adm;
@@ -23,26 +22,24 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
     /// splits policy overrides processing and WMI objects generation, performing appropriate logging of 
     /// policy processing errors.
     /// </summary>
-	public class CategoryFilterDataManageabilityProvider
-		: ConfigurationElementManageabilityProviderBase<CategoryFilterData>
-	{
+    public class CategoryFilterDataManageabilityProvider
+        : ConfigurationElementManageabilityProviderBase<CategoryFilterData>
+    {
         /// <summary>
         /// The name of the category filter mode property.
         /// </summary>
-		public const String CategoryFilterModePropertyName = "categoryFilterMode";
+        public const String CategoryFilterModePropertyName = "categoryFilterMode";
 
         /// <summary>
         /// The name of the category filter keys property.
         /// </summary>
-		public const String CategoryFiltersKeyName = "categoryFilters";
+        public const String CategoryFiltersKeyName = "categoryFilters";
 
         /// <summary>
         /// Initialize a new instance of the <see cref="CategoryFilterDataManageabilityProvider"/> class.
         /// </summary>
-		public CategoryFilterDataManageabilityProvider()
-		{
-			CategoryFilterDataWmiMapper.RegisterWmiTypes();
-		}
+        public CategoryFilterDataManageabilityProvider()
+        { }
 
         /// <summary>
         /// Adds the ADM parts that represent the properties of
@@ -57,30 +54,30 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         /// Subclasses managing objects that must not create a policy will likely need to include the elements' keys when creating the parts.
         /// </remarks>
         protected override void AddElementAdministrativeTemplateParts(AdmContentBuilder contentBuilder,
-			CategoryFilterData configurationObject,
-			IConfigurationSource configurationSource,
-			String elementPolicyKeyName)
-		{
-			contentBuilder.AddDropDownListPartForEnumeration<CategoryFilterMode>(Resources.CategoryFilterFilterModePartName,
-				CategoryFilterModePropertyName,
-				configurationObject.CategoryFilterMode);
+            CategoryFilterData configurationObject,
+            IConfigurationSource configurationSource,
+            String elementPolicyKeyName)
+        {
+            contentBuilder.AddDropDownListPartForEnumeration<CategoryFilterMode>(Resources.CategoryFilterFilterModePartName,
+                CategoryFilterModePropertyName,
+                configurationObject.CategoryFilterMode);
 
-			contentBuilder.AddTextPart(Resources.CategoryFilterCategoriesPartName);
+            contentBuilder.AddTextPart(Resources.CategoryFilterCategoriesPartName);
 
-			LoggingSettings configurationSection
-				= configurationSource.GetSection(LoggingSettings.SectionName) as LoggingSettings;
-			String logFilterCategoriesKeyName
-				= elementPolicyKeyName + @"\" + CategoryFiltersKeyName;
-			foreach (TraceSourceData category in configurationSection.TraceSources)
-			{
-				contentBuilder.AddCheckboxPart(category.Name,
-					logFilterCategoriesKeyName,
-					category.Name,
-					configurationObject.CategoryFilters.Contains(category.Name),
-					true,
-					false);
-			}
-		}
+            LoggingSettings configurationSection
+                = configurationSource.GetSection(LoggingSettings.SectionName) as LoggingSettings;
+            String logFilterCategoriesKeyName
+                = elementPolicyKeyName + @"\" + CategoryFiltersKeyName;
+            foreach (TraceSourceData category in configurationSection.TraceSources)
+            {
+                contentBuilder.AddCheckboxPart(category.Name,
+                    logFilterCategoriesKeyName,
+                    category.Name,
+                    configurationObject.CategoryFilters.Contains(category.Name),
+                    true,
+                    false);
+            }
+        }
 
         /// <summary>
         /// Gets the template for the name of the policy associated to the object.
@@ -91,12 +88,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         /// to avoid creating a policy must still override this property.
         /// </remarks>
         protected override string ElementPolicyNameTemplate
-		{
-			get
-			{
-				return Resources.FilterPolicyNameTemplate;
-			}
-		}
+        {
+            get
+            {
+                return Resources.FilterPolicyNameTemplate;
+            }
+        }
 
         /// <summary>
         /// Overrides the <paramref name="configurationObject"/>'s properties with the Group Policy values from the 
@@ -109,34 +106,22 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         /// before making modifications to the <paramref name="configurationObject"/> so any error retrieving
         /// the override values will cancel policy processing.</remarks>
         protected override void OverrideWithGroupPolicies(CategoryFilterData configurationObject, IRegistryKey policyKey)
-		{
-			CategoryFilterMode? categoryFilterModelOverride = policyKey.GetEnumValue<CategoryFilterMode>(CategoryFilterModePropertyName);
+        {
+            CategoryFilterMode? categoryFilterModelOverride = policyKey.GetEnumValue<CategoryFilterMode>(CategoryFilterModePropertyName);
 
-			// update the filters. it is ok to get the key here, because it's not mandatory.
-			configurationObject.CategoryFilters.Clear();
-			using (IRegistryKey categoryFiltersOverrideKey = policyKey.OpenSubKey(CategoryFiltersKeyName))
-			{
-				if (categoryFiltersOverrideKey != null)
-				{
-					foreach (String valueName in categoryFiltersOverrideKey.GetValueNames())
-					{
-						configurationObject.CategoryFilters.Add(new CategoryFilterEntry(valueName));
-					}
-				}
-			}
-			configurationObject.CategoryFilterMode = categoryFilterModelOverride.Value;
-		}
-
-        /// <summary>
-        /// Creates the <see cref="ConfigurationSetting"/> instances that describe the 
-        /// configurationObject.
-        /// </summary>
-        /// <param name="configurationObject">The configuration object for instances that must be managed.</param>
-        /// <param name="wmiSettings">A collection to where the generated WMI objects are to be added.</param>
-        protected override void GenerateWmiObjects(CategoryFilterData configurationObject, 
-			ICollection<ConfigurationSetting> wmiSettings)
-		{
-			CategoryFilterDataWmiMapper.GenerateWmiObjects(configurationObject, wmiSettings);
-		}
-	}
+            // update the filters. it is ok to get the key here, because it's not mandatory.
+            configurationObject.CategoryFilters.Clear();
+            using (IRegistryKey categoryFiltersOverrideKey = policyKey.OpenSubKey(CategoryFiltersKeyName))
+            {
+                if (categoryFiltersOverrideKey != null)
+                {
+                    foreach (String valueName in categoryFiltersOverrideKey.GetValueNames())
+                    {
+                        configurationObject.CategoryFilters.Add(new CategoryFilterEntry(valueName));
+                    }
+                }
+            }
+            configurationObject.CategoryFilterMode = categoryFilterModelOverride.Value;
+        }
+    }
 }

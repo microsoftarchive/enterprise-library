@@ -44,9 +44,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
         /// <param name="subProviders">The sub providers.</param>
         public InstrumentationConfigurationSectionManageabilityProvider(IDictionary<Type, ConfigurationElementManageabilityProvider> subProviders)
             : base(subProviders)
-        {
-            InstrumentationConfigurationSectionWmiMapper.RegisterWmiTypes();
-        }
+        { }
 
         /// <summary>
         /// Gets the name of the category that represents the whole configuration section.
@@ -96,20 +94,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
         }
 
         /// <summary>
-        /// Creates the <see cref="ConfigurationSetting"/> instances that describe the <paramref name="configurationSection"/>.
-        /// </summary>
-        /// <param name="configurationSection">The configuration section that must be managed.</param>
-        /// <param name="wmiSettings">A collection to where the generated WMI objects are to be added.</param>
-        protected override void GenerateWmiObjectsForConfigurationSection(InstrumentationConfigurationSection configurationSection,
-                                                                          ICollection<ConfigurationSetting> wmiSettings)
-        {
-            InstrumentationConfigurationSectionWmiMapper.GenerateWmiObjects(configurationSection, wmiSettings);
-        }
-
-        /// <summary>
         /// Overrides the <paramref name="configurationSection"/>'s configuration elements' properties 
-        /// with the Group Policy values from the registry, if any, and creates the <see cref="ConfigurationSetting"/> 
-        /// instances that describe these configuration elements.
+        /// with the Group Policy values from the registry, if any.
         /// </summary>
         /// <param name="configurationSection">The configuration section that must be managed.</param>
         /// <param name="readGroupPolicies"><see langword="true"/> if Group Policy overrides must be applied; otherwise, 
@@ -120,15 +106,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
         /// <param name="userKey">The <see cref="IRegistryKey"/> which holds the Group Policy overrides for the 
         /// configuration section at the user level, or <see langword="null"/> 
         /// if there is no such registry key.</param>
-        /// <param name="generateWmiObjects"><see langword="true"/> if WMI objects must be generated; otherwise, 
-        /// <see langword="false"/>.</param>
-        /// <param name="wmiSettings">A collection to where the generated WMI objects are to be added.</param>
-        protected override void OverrideWithGroupPoliciesAndGenerateWmiObjectsForConfigurationElements(InstrumentationConfigurationSection configurationSection,
+        protected override void OverrideWithGroupPoliciesForConfigurationElements(InstrumentationConfigurationSection configurationSection,
                                                                                                        bool readGroupPolicies,
                                                                                                        IRegistryKey machineKey,
-                                                                                                       IRegistryKey userKey,
-                                                                                                       bool generateWmiObjects,
-                                                                                                       ICollection<ConfigurationSetting> wmiSettings)
+                                                                                                       IRegistryKey userKey)
         {
             // no sub elements for this section
         }

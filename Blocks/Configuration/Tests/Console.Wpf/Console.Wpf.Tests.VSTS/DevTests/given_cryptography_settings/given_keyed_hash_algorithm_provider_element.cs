@@ -49,5 +49,13 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_cryptography_settings
             Assert.AreEqual(typeof(ProtectedKeySettings), keyProperty.PropertyType);
             Assert.IsTrue(((PopupEditorBindableProperty)keyProperty.BindableProperty).TextReadOnly);
         }
+
+        [TestMethod]
+        public void then_key_property_has_no_validation_errors()
+        {
+            var keyProperty = keyedHashProviderElement.Property("Key");
+            keyProperty.Validate();
+            Assert.IsFalse(keyProperty.ValidationErrors.Any());
+        }
     }
 }

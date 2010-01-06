@@ -25,7 +25,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
 	/// </summary>
     [ResourceDescription(typeof(DesignResources), "CustomCacheStorageDataDescription")]
     [ResourceDisplayName(typeof(DesignResources), "CustomCacheStorageDataDisplayName")]
-    [TypePickingCommand(TitleResourceName = "CustomCacheStorageDataAddCommand", TitleResourceType=typeof(DesignResources))]
+    [TypePickingCommand(TitleResourceName = "CustomCacheStorageDataDisplayName", TitleResourceType = typeof(DesignResources), Replace = CommandReplacement.DefaultAddCommandReplacement)]
 	[Browsable(true)]
     public class CustomCacheStorageData
 		: CacheStorageData, IHelperAssistedCustomConfigurationData<CustomCacheStorageData>

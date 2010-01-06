@@ -15,7 +15,6 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability.Adm;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.Manageability.Properties;
-using System.Collections.Generic;
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.Manageability
 {
@@ -24,27 +23,25 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
     /// splits policy overrides processing and WMI objects generation, performing appropriate logging of 
     /// policy processing errors.
     /// </summary>
-	public class CustomHandlerDataManageabilityProvider
-		: CustomProviderDataManageabilityProvider<CustomHandlerData>
-	{
+    public class CustomHandlerDataManageabilityProvider
+        : CustomProviderDataManageabilityProvider<CustomHandlerData>
+    {
         /// <summary>
         /// The name of the provider type property.
         /// </summary>
-		public new const String ProviderTypePropertyName = CustomProviderDataManageabilityProvider<CustomHandlerData>.ProviderTypePropertyName;
+        public new const String ProviderTypePropertyName = CustomProviderDataManageabilityProvider<CustomHandlerData>.ProviderTypePropertyName;
 
         /// <summary>
         /// The name of the attributes property.
         /// </summary>
-		public new const String AttributesPropertyName = CustomProviderDataManageabilityProvider<CustomHandlerData>.AttributesPropertyName;
+        public new const String AttributesPropertyName = CustomProviderDataManageabilityProvider<CustomHandlerData>.AttributesPropertyName;
 
         /// <summary>
         /// Initialize a new instance of the <see cref="CustomHandlerDataManageabilityProvider"/> class.
         /// </summary>
-		public CustomHandlerDataManageabilityProvider()
-			: base("")
-		{
-			CustomExceptionHandlerDataWmiMapper.RegisterWmiTypes();
-		}
+        public CustomHandlerDataManageabilityProvider()
+            : base("")
+        { }
 
         /// <summary>
         /// Adds the ADM instructions that describe the policies that can be used to override the properties of
@@ -63,16 +60,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
         /// Subclasses managing objects that must not create a policy must override this method to just add the parts.
         /// </remarks>
         protected override void AddAdministrativeTemplateDirectives(AdmContentBuilder contentBuilder,
-			CustomHandlerData configurationObject,
-			IConfigurationSource configurationSource,
-			String elementPolicyKeyName)
-		{
-			// directives are parts of the exception type policy
-			AddElementAdministrativeTemplateParts(contentBuilder,
-				configurationObject,
-				configurationSource,
-				elementPolicyKeyName);
-		}
+            CustomHandlerData configurationObject,
+            IConfigurationSource configurationSource,
+            String elementPolicyKeyName)
+        {
+            // directives are parts of the exception type policy
+            AddElementAdministrativeTemplateParts(contentBuilder,
+                configurationObject,
+                configurationSource,
+                elementPolicyKeyName);
+        }
 
         /// <summary>
         /// Adds the ADM parts that represent the properties of
@@ -89,39 +86,27 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
         /// </remarks>
         /// <seealso cref="ConfigurationElementManageabilityProviderBase{T}.AddAdministrativeTemplateDirectives(AdmContentBuilder, T, IConfigurationSource, String)"/>
         protected override void AddElementAdministrativeTemplateParts(AdmContentBuilder contentBuilder,
-			CustomHandlerData configurationObject,
-			IConfigurationSource configurationSource,
-			String elementPolicyKeyName)
-		{
-			contentBuilder.AddTextPart(String.Format(CultureInfo.CurrentCulture,
-													Resources.HandlerPartNameTemplate,
-													configurationObject.Name));
+            CustomHandlerData configurationObject,
+            IConfigurationSource configurationSource,
+            String elementPolicyKeyName)
+        {
+            contentBuilder.AddTextPart(String.Format(CultureInfo.CurrentCulture,
+                                                    Resources.HandlerPartNameTemplate,
+                                                    configurationObject.Name));
 
-			contentBuilder.AddEditTextPart(Resources.CustomHandlerTypePartName,
-				elementPolicyKeyName,
-				ProviderTypePropertyName,
-				configurationObject.Type.AssemblyQualifiedName,
-				1024,
-				true);
+            contentBuilder.AddEditTextPart(Resources.CustomHandlerTypePartName,
+                elementPolicyKeyName,
+                ProviderTypePropertyName,
+                configurationObject.Type.AssemblyQualifiedName,
+                1024,
+                true);
 
-			contentBuilder.AddEditTextPart(Resources.CustomHandlerAttributesPartName,
-				elementPolicyKeyName,
-				AttributesPropertyName,
-				GenerateAttributesString(configurationObject.Attributes),
-				1024,
-				false);
-		}
-
-        /// <summary>
-        /// Creates the <see cref="ConfigurationSetting"/> instances that describe the 
-        /// configurationObject.
-        /// </summary>
-        /// <param name="configurationObject">The configuration object for instances that must be managed.</param>
-        /// <param name="wmiSettings">A collection to where the generated WMI objects are to be added.</param>
-        protected override void GenerateWmiObjects(CustomHandlerData configurationObject, 
-			ICollection<ConfigurationSetting> wmiSettings)
-		{
-			CustomExceptionHandlerDataWmiMapper.GenerateWmiObjects(configurationObject, wmiSettings);
-		}
-	}
+            contentBuilder.AddEditTextPart(Resources.CustomHandlerAttributesPartName,
+                elementPolicyKeyName,
+                AttributesPropertyName,
+                GenerateAttributesString(configurationObject.Attributes),
+                1024,
+                false);
+        }
+    }
 }

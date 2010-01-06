@@ -23,7 +23,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
     /// <summary>
     /// Configuration settings for the <c>HashAlgorithm</c> hash provider.
     /// </summary>	
-    [TypePickingCommand("AlgorithmTypeName", Replace=CommandReplacement.DefaultAddCommandReplacement)]
+    [TypePickingCommand("AlgorithmTypeName", Replace = CommandReplacement.DefaultAddCommandReplacement, CommandModelTypeName = CryptographyDesignTime.CommandTypeNames.AddHashProviderCommand)]
     [ResourceDescription(typeof(DesignResources), "HashAlgorithmProviderDataDescription")]
     [ResourceDisplayName(typeof(DesignResources), "HashAlgorithmProviderDataDisplayName")]
     public class HashAlgorithmProviderData : HashProviderData

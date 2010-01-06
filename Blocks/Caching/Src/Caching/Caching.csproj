@@ -95,9 +95,6 @@
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Management" />
-    <Reference Include="System.Management.Instrumentation">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
@@ -183,32 +180,17 @@
     <Compile Include="Configuration\IsolatedStorageCacheStorageData.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Configuration\Manageability\CacheManagerSetting.cs" />
-    <Compile Include="Configuration\Manageability\CacheManagerBaseSetting.cs" />
     <Compile Include="Configuration\Manageability\CacheManagerSettingsManageabilityProvider.cs" />
-    <Compile Include="Configuration\Manageability\CacheManagerSettingsWmiMapper.cs" />
     <Compile Include="Configuration\Manageability\CacheStorageDataManageabilityProvider.cs" />
-    <Compile Include="Configuration\Manageability\CacheStorageDataWmiMapper.cs" />
-    <Compile Include="Configuration\Manageability\CacheStorageSetting.cs" />
-    <Compile Include="Configuration\Manageability\CachingBlockSetting.cs" />
     <Compile Include="Configuration\Manageability\CustomCacheManagerDataManageabilityProvider.cs" />
-    <Compile Include="Configuration\Manageability\CustomCacheManagerDataWmiMapper.cs" />
-    <Compile Include="Configuration\Manageability\CustomCacheManagerSetting.cs" />
     <Compile Include="Configuration\Manageability\CustomCacheStorageDataManageabilityProvider.cs" />
-    <Compile Include="Configuration\Manageability\CustomCacheStorageDataWmiMapper.cs" />
-    <Compile Include="Configuration\Manageability\CustomCacheStorageProviderSetting.cs" />
     <Compile Include="Configuration\Manageability\IsolatedStorageCacheStorageDataManageabilityProvider.cs" />
-    <Compile Include="Configuration\Manageability\IsolatedStorageCacheStorageSetting.cs" />
-    <Compile Include="Configuration\Manageability\IsolatedStorageCacheStorageDataWmiMapper.cs" />
-    <Compile Include="Configuration\Manageability\NullBackingStoreSetting.cs" />
     <Compile Include="Configuration\Manageability\Properties\AssemblyInfo.cs" />
     <Compile Include="Configuration\Manageability\Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Configuration\Manageability\StorageEncryptionProviderSetting.cs" />
-    <Compile Include="Configuration\Manageability\UnknownCacheManagerSetting.cs" />
     <Compile Include="Configuration\StorageEncryptionProviderData.cs">
       <SubType>Code</SubType>
     </Compile>

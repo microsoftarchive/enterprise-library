@@ -36,19 +36,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
         /// <param name="refresh">true to refresh configuration; otherwise, false.</param>
         /// <param name="manageabilityProviders">The providers used for managment.</param>
         /// <param name="readGroupPolicies">true to read group policy; otherwise, false.</param>
-        /// <param name="generateWmiObjects">true to generate wmi objects; otherwise, false.</param>
         /// <param name="applicationName">The name of the application.</param>
         public ManageableConfigurationSourceImplementation(string configurationFilePath,
                                                            bool refresh,
                                                            IDictionary<string, ConfigurationSectionManageabilityProvider> manageabilityProviders,
                                                            bool readGroupPolicies,
-                                                           bool generateWmiObjects,
                                                            string applicationName)
             : this(configurationFilePath,
-                   new ManageabilityHelper(manageabilityProviders, readGroupPolicies, generateWmiObjects, applicationName),
+                   new ManageabilityHelper(manageabilityProviders, readGroupPolicies, applicationName),
                    new GroupPolicyWatcher(),
                    new ConfigurationChangeWatcherCoordinator(configurationFilePath, refresh),
-                   new ConfigurationChangeNotificationCoordinator()) {}
+                   new ConfigurationChangeNotificationCoordinator()) { }
 
         /// <summary>
         /// Initialize a new instance o the <see cref="ManageableConfigurationSourceImplementation"/> class.
@@ -74,7 +72,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
 
             InitializeConfiguration();
         }
-        
+
         /// <summary>
         /// Gets the manageability helper for the source.
         /// </summary>
@@ -111,7 +109,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
         void AttachManageabilityHelper(IManageabilityHelper manageabilityHelper)
         {
             this.manageabilityHelper = manageabilityHelper;
-            this.manageabilityHelper.ConfigurationSettingChanged += OnConfigurationSettingChanged;
         }
 
         void AttachWatcherCoordinator(ConfigurationChangeWatcherCoordinator watcherCoordinator)
@@ -171,12 +168,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
                                     ConfigurationChangedEventArgs e)
         {
             UpdateConfiguration(e.SectionName);
-        }
-
-        void OnConfigurationSettingChanged(object sender,
-                                           ConfigurationSettingChangedEventArgs e)
-        {
-            UpdateConfigurationSection(e.SectionName);
         }
 
         void OnGroupPolicyUpdated(bool machine)

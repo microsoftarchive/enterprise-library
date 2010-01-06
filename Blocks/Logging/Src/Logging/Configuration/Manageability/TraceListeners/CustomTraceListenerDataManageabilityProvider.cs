@@ -10,7 +10,6 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability.Adm;
@@ -23,21 +22,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
     /// splits policy overrides processing and WMI objects generation, performing appropriate logging of 
     /// policy processing errors.
     /// </summary>
-	public class CustomTraceListenerDataManageabilityProvider
-		: BasicCustomTraceListenerDataManageabilityProvider<CustomTraceListenerData>
-	{
+    public class CustomTraceListenerDataManageabilityProvider
+        : BasicCustomTraceListenerDataManageabilityProvider<CustomTraceListenerData>
+    {
         /// <summary>
         /// The name of the formatter property.
         /// </summary>
-		public const String FormatterPropertyName = "formatter";
+        public const String FormatterPropertyName = "formatter";
 
         /// <summary>
         /// Initialize a new instance of the <see cref="CustomTraceListenerDataManageabilityProvider"/> class.
         /// </summary>
-		public CustomTraceListenerDataManageabilityProvider()
-		{
-			CustomTraceListenerDataWmiMapper.RegisterWmiTypes();
-		}
+        public CustomTraceListenerDataManageabilityProvider()
+        { }
 
         /// <summary>
         /// Adds the ADM parts that represent the properties of
@@ -54,23 +51,23 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         /// </remarks>
         /// <seealso cref="ConfigurationElementManageabilityProviderBase{T}.AddAdministrativeTemplateDirectives(AdmContentBuilder, T, IConfigurationSource, String)"/>
         protected override void AddElementAdministrativeTemplateParts(AdmContentBuilder contentBuilder,
-			CustomTraceListenerData configurationObject,
-			IConfigurationSource configurationSource,
-			String elementPolicyKeyName)
-		{
-			base.AddElementAdministrativeTemplateParts(contentBuilder,
-				configurationObject,
-				configurationSource,
-				elementPolicyKeyName);
+            CustomTraceListenerData configurationObject,
+            IConfigurationSource configurationSource,
+            String elementPolicyKeyName)
+        {
+            base.AddElementAdministrativeTemplateParts(contentBuilder,
+                configurationObject,
+                configurationSource,
+                elementPolicyKeyName);
 
-			LoggingSettings configurationSection = (LoggingSettings)configurationSource.GetSection(LoggingSettings.SectionName);
+            LoggingSettings configurationSection = (LoggingSettings)configurationSource.GetSection(LoggingSettings.SectionName);
 
-			contentBuilder.AddDropDownListPartForNamedElementCollection<FormatterData>(Resources.TraceListenerFormatterPartName,
-				FormatterPropertyName,
-				configurationSection.Formatters,
-				configurationObject.Formatter,
-				true);
-		}
+            contentBuilder.AddDropDownListPartForNamedElementCollection<FormatterData>(Resources.TraceListenerFormatterPartName,
+                FormatterPropertyName,
+                configurationSection.Formatters,
+                configurationObject.Formatter,
+                true);
+        }
 
         /// <summary>
         /// Overrides the <paramref name="configurationObject"/>'s properties with the Group Policy values from the 
@@ -82,24 +79,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         /// <remarks>Subclasses that manage custom provider's configuration objects with additional properties may
         /// override this method to override these properties.</remarks>
         protected override void OverrideWithGroupPolicies(CustomTraceListenerData configurationObject, IRegistryKey policyKey)
-		{
-			String formatterOverride = policyKey.GetStringValue(FormatterPropertyName);
+        {
+            String formatterOverride = policyKey.GetStringValue(FormatterPropertyName);
 
-			base.OverrideWithGroupPolicies(configurationObject, policyKey);
+            base.OverrideWithGroupPolicies(configurationObject, policyKey);
 
-			configurationObject.Formatter = AdmContentBuilder.NoneListItem.Equals(formatterOverride) ? String.Empty : formatterOverride;
-		}
-
-        /// <summary>
-        /// Creates the <see cref="ConfigurationSetting"/> instances that describe the 
-        /// configurationObject.
-        /// </summary>
-        /// <param name="configurationObject">The configuration object for instances that must be managed.</param>
-        /// <param name="wmiSettings">A collection to where the generated WMI objects are to be added.</param>
-        protected override void GenerateWmiObjects(CustomTraceListenerData configurationObject, 
-			ICollection<ConfigurationSetting> wmiSettings)
-		{
-			CustomTraceListenerDataWmiMapper.GenerateWmiObjects(configurationObject, wmiSettings);
-		}
-	}
+            configurationObject.Formatter = AdmContentBuilder.NoneListItem.Equals(formatterOverride) ? String.Empty : formatterOverride;
+        }
+    }
 }

@@ -15,7 +15,6 @@ using System.Reflection;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability.Adm;
-using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration.Manageability;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration.Manageability.Mocks;
 using Microsoft.Practices.EnterpriseLibrary.Data.Oracle.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -28,7 +27,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Manageability
         ConfigurationSectionManageabilityProvider provider;
         MockRegistryKey machineKey;
         MockRegistryKey userKey;
-        IList<ConfigurationSetting> wmiSettings;
         OracleConnectionSettings section;
 
         [TestInitialize]
@@ -37,29 +35,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Manageability
             provider = new OracleConnectionSettingsManageabilityProvider(new Dictionary<Type, ConfigurationElementManageabilityProvider>(0));
             machineKey = new MockRegistryKey(true);
             userKey = new MockRegistryKey(true);
-            wmiSettings = new List<ConfigurationSetting>();
             section = new OracleConnectionSettings();
-        }
-
-        [TestCleanup]
-        public void TearDown()
-        {
-            // preventive unregister to work around WMI.NET 2.0 issues with appdomain unloading
-            ManagementEntityTypesRegistrar.UnregisterAll();
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
         public void ProviderThrowsWithsectionOfWrongType()
         {
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(new TestsConfigurationSection(), true, machineKey, userKey, true, wmiSettings);
-        }
-
-        [TestMethod]
-        public void EmptySectionIsIgnored()
-        {
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
-            Assert.AreEqual(0, wmiSettings.Count);
+            provider.OverrideWithGroupPolicies(new TestsConfigurationSection(), true, machineKey, userKey);
         }
 
         [TestMethod]
@@ -90,7 +73,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Manageability
             connectionData.Packages.Add(new OraclePackageData("package12", "prefix12"));
             section.OracleConnectionsData.Add(connectionData);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual(2, connectionData.Packages.Count);
             Assert.IsNotNull(connectionData.Packages.Get("package11"));
@@ -108,7 +91,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Manageability
             connectionData.Packages.Add(new OraclePackageData("package12", "prefix12"));
             section.OracleConnectionsData.Add(connectionData);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, null, null, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, null, null);
 
             Assert.AreEqual(2, connectionData.Packages.Count);
             Assert.IsNotNull(connectionData.Packages.Get("package11"));
@@ -131,7 +114,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Manageability
             machinePackageKey.AddStringValue(OracleConnectionSettingsManageabilityProvider.PackagesPropertyName,
                                              "package23=prefix23; package24=prefix24; package25=prefix25");
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual(2, connectionData.Packages.Count);
             Assert.IsNotNull(connectionData.Packages.Get("package11"));
@@ -156,7 +139,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Manageability
             machinePackageKey.AddStringValue(OracleConnectionSettingsManageabilityProvider.PackagesPropertyName,
                                              "package13=prefix13; package14=prefix14; package15=prefix15");
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual(3, connectionData.Packages.Count);
             Assert.IsNotNull(connectionData.Packages.Get("package13"));
@@ -199,7 +182,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Manageability
             machinePackage2Key.AddStringValue(OracleConnectionSettingsManageabilityProvider.PackagesPropertyName,
                                               "package24=prefix24");
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual(3, connection1Data.Packages.Count);
             Assert.IsNotNull(connection1Data.Packages.Get("package13"));
@@ -234,7 +217,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Manageability
             machinePackageKey.AddStringValue(OracleConnectionSettingsManageabilityProvider.PackagesPropertyName,
                                              "package13=prefix13; package14=prefix14; package15=prefix15");
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, false, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, false, machineKey, userKey);
 
             Assert.AreEqual(2, connectionData.Packages.Count);
             Assert.IsNotNull(connectionData.Packages.Get("package11"));
@@ -264,7 +247,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Manageability
             machinePackage2Key.AddStringValue(OracleConnectionSettingsManageabilityProvider.PackagesPropertyName,
                                               "package24=prefix24");
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual(1, section.OracleConnectionsData.Count);
             Assert.IsNotNull(section.OracleConnectionsData.Get("data2"));
@@ -291,83 +274,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Manageability
             machinePackage2Key.AddStringValue(OracleConnectionSettingsManageabilityProvider.PackagesPropertyName,
                                               "package24=prefix24");
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, false, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, false, machineKey, userKey);
 
             Assert.AreEqual(2, section.OracleConnectionsData.Count);
             Assert.IsNotNull(section.OracleConnectionsData.Get("data1"));
             Assert.IsNotNull(section.OracleConnectionsData.Get("data2"));
 
             Assert.IsTrue(MockRegistryKey.CheckAllClosed(machinePackage1Key, machinePackage2Key));
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreNotGeneratedIfWmiIsDisabled()
-        {
-            OracleConnectionData connection1Data = new OracleConnectionData();
-            connection1Data.Name = "data1";
-            connection1Data.Packages.Add(new OraclePackageData("package11", "prefix11"));
-            connection1Data.Packages.Add(new OraclePackageData("package12", "prefix12"));
-            section.OracleConnectionsData.Add(connection1Data);
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, false, machineKey, userKey, false, wmiSettings);
-
-            Assert.AreEqual(0, wmiSettings.Count);
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreGeneratedIfWmiIsEnabled()
-        {
-            OracleConnectionData connection1Data = new OracleConnectionData();
-            connection1Data.Name = "data1";
-            connection1Data.Packages.Add(new OraclePackageData("package11", "prefix11"));
-            connection1Data.Packages.Add(new OraclePackageData("package12", "prefix12"));
-            section.OracleConnectionsData.Add(connection1Data);
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, false, machineKey, userKey, true, wmiSettings);
-
-            Assert.AreEqual(1, wmiSettings.Count);
-            Assert.AreSame(typeof(OracleConnectionSetting), wmiSettings[0].GetType());
-
-            Dictionary<String, String> packagesDictionary = new Dictionary<string, string>();
-            foreach (String entry in ((OracleConnectionSetting)wmiSettings[0]).Packages)
-            {
-                KeyValuePairParsingTestHelper.ExtractKeyValueEntries(entry, packagesDictionary);
-            }
-            Assert.AreEqual(2, packagesDictionary.Count);
-            Assert.AreEqual("prefix11", packagesDictionary["package11"]);
-            Assert.AreEqual("prefix12", packagesDictionary["package12"]);
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreGeneratedWithPolicyOverridesIfWmiIsEnabled()
-        {
-            OracleConnectionData connection1Data = new OracleConnectionData();
-            connection1Data.Name = "data1";
-            connection1Data.Packages.Add(new OraclePackageData("package11", "prefix11"));
-            connection1Data.Packages.Add(new OraclePackageData("package12", "prefix12"));
-            section.OracleConnectionsData.Add(connection1Data);
-
-            MockRegistryKey machinePackageKey = new MockRegistryKey(false);
-            machineKey.AddSubKey("data1", machinePackageKey);
-            machinePackageKey.AddStringValue(OracleConnectionSettingsManageabilityProvider.PackagesPropertyName,
-                                             "package13=prefix13; package14=prefix14; package15=prefix15");
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
-
-            Assert.AreEqual(1, wmiSettings.Count);
-            Assert.AreSame(typeof(OracleConnectionSetting), wmiSettings[0].GetType());
-
-            Dictionary<String, String> packagesDictionary = new Dictionary<string, string>();
-            foreach (String entry in ((OracleConnectionSetting)wmiSettings[0]).Packages)
-            {
-                KeyValuePairParsingTestHelper.ExtractKeyValueEntries(entry, packagesDictionary);
-            }
-            Assert.AreEqual(3, packagesDictionary.Count);
-            Assert.AreEqual("prefix13", packagesDictionary["package13"]);
-            Assert.AreEqual("prefix14", packagesDictionary["package14"]);
-            Assert.AreEqual("prefix15", packagesDictionary["package15"]);
-
-            Assert.IsTrue(MockRegistryKey.CheckAllClosed(machinePackageKey));
         }
 
         [TestMethod]

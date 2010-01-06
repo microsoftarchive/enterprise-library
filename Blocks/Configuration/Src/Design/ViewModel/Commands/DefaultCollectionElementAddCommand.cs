@@ -86,6 +86,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         public override void Execute(object parameter)
         {
             addedElementViewModel = ElementCollectionModel.AddNewCollectionElement(ConfigurationElementType);
+            addedElementViewModel.PropertiesShown = true;
+            addedElementViewModel.Select();
             applicationModel.SetDirty();
         }
 

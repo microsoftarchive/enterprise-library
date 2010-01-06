@@ -10,7 +10,6 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability;
@@ -24,46 +23,44 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
     /// splits policy overrides processing and WMI objects generation, performing appropriate logging of 
     /// policy processing errors.
     /// </summary>
-	public class EmailTraceListenerDataManageabilityProvider
-		: TraceListenerDataManageabilityProvider<EmailTraceListenerData>
-	{
+    public class EmailTraceListenerDataManageabilityProvider
+        : TraceListenerDataManageabilityProvider<EmailTraceListenerData>
+    {
         /// <summary>
         /// The name of the from address property.
         /// </summary>
-		public const String FromAddressPropertyName = "fromAddress";
+        public const String FromAddressPropertyName = "fromAddress";
 
         /// <summary>
         /// The name of the smtp port property.
         /// </summary>
-		public const String SmtpPortPropertyName = "smtpPort";
+        public const String SmtpPortPropertyName = "smtpPort";
 
         /// <summary>
         /// The name of the smtp server.
         /// </summary>
-		public const String SmtpServerPropertyName = "smtpServer";
-        
+        public const String SmtpServerPropertyName = "smtpServer";
+
         /// <summary>
         /// The name of the subject line ender property.
         /// </summary>
-		public const String SubjectLineEnderPropertyName = "subjectLineEnder";
+        public const String SubjectLineEnderPropertyName = "subjectLineEnder";
 
         /// <summary>
         /// The name of the subject line starter property.
         /// </summary>
-		public const String SubjectLineStarterPropertyName = "subjectLineStarter";
+        public const String SubjectLineStarterPropertyName = "subjectLineStarter";
 
         /// <summary>
         /// The name of the to address property.
         /// </summary>
-		public const String ToAddressPropertyName = "toAddress";
+        public const String ToAddressPropertyName = "toAddress";
 
         /// <summary>
         /// Initialize a new instance of the <see cref="EmailTraceListenerDataManageabilityProvider"/> class.
         /// </summary>
-		public EmailTraceListenerDataManageabilityProvider()
-		{
-			EmailTraceListenerDataWmiMapper.RegisterWmiTypes();
-		}
+        public EmailTraceListenerDataManageabilityProvider()
+        { }
 
         /// <summary>
         /// Adds the ADM parts that represent the properties of
@@ -78,50 +75,50 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         /// Subclasses managing objects that must not create a policy will likely need to include the elements' keys when creating the parts.
         /// </remarks>
         protected override void AddElementAdministrativeTemplateParts(AdmContentBuilder contentBuilder,
-			EmailTraceListenerData configurationObject,
-			IConfigurationSource configurationSource,
-			String elementPolicyKeyName)
-		{
-			contentBuilder.AddEditTextPart(Resources.EmailTraceListenerFromAddressPartName,
-				FromAddressPropertyName,
-				configurationObject.FromAddress,
-				255,
-				true);
+            EmailTraceListenerData configurationObject,
+            IConfigurationSource configurationSource,
+            String elementPolicyKeyName)
+        {
+            contentBuilder.AddEditTextPart(Resources.EmailTraceListenerFromAddressPartName,
+                FromAddressPropertyName,
+                configurationObject.FromAddress,
+                255,
+                true);
 
-			contentBuilder.AddEditTextPart(Resources.EmailTraceListenerToAddressPartName,
-				ToAddressPropertyName,
-				configurationObject.ToAddress,
-				255,
-				false);
+            contentBuilder.AddEditTextPart(Resources.EmailTraceListenerToAddressPartName,
+                ToAddressPropertyName,
+                configurationObject.ToAddress,
+                255,
+                false);
 
-			contentBuilder.AddNumericPart(Resources.EmailTraceListenerSmtpPortPartName,
-				SmtpPortPropertyName,
-				configurationObject.SmtpPort);
+            contentBuilder.AddNumericPart(Resources.EmailTraceListenerSmtpPortPartName,
+                SmtpPortPropertyName,
+                configurationObject.SmtpPort);
 
-			contentBuilder.AddEditTextPart(Resources.EmailTraceListenerSmtpServerPartName,
-				SmtpServerPropertyName,
-				configurationObject.SmtpServer,
-				255,
-				true);
+            contentBuilder.AddEditTextPart(Resources.EmailTraceListenerSmtpServerPartName,
+                SmtpServerPropertyName,
+                configurationObject.SmtpServer,
+                255,
+                true);
 
-			contentBuilder.AddEditTextPart(Resources.EmailTraceListenerStarterPartName,
-				SubjectLineStarterPropertyName,
-				configurationObject.SubjectLineStarter,
-				255,
-				false);
+            contentBuilder.AddEditTextPart(Resources.EmailTraceListenerStarterPartName,
+                SubjectLineStarterPropertyName,
+                configurationObject.SubjectLineStarter,
+                255,
+                false);
 
-			contentBuilder.AddEditTextPart(Resources.EmailTraceListenerEnderPartName,
-				SubjectLineEnderPropertyName,
-				configurationObject.SubjectLineEnder,
-				255,
-				false);
+            contentBuilder.AddEditTextPart(Resources.EmailTraceListenerEnderPartName,
+                SubjectLineEnderPropertyName,
+                configurationObject.SubjectLineEnder,
+                255,
+                false);
 
-			AddTraceOptionsPart(contentBuilder, configurationObject.TraceOutputOptions);
+            AddTraceOptionsPart(contentBuilder, configurationObject.TraceOutputOptions);
 
-			AddFilterPart(contentBuilder, configurationObject.Filter);
+            AddFilterPart(contentBuilder, configurationObject.Filter);
 
-			AddFormattersPart(contentBuilder, configurationObject.Formatter, configurationSource);
-		}
+            AddFormattersPart(contentBuilder, configurationObject.Formatter, configurationSource);
+        }
 
         /// <summary>
         /// Overrides the <paramref name="configurationObject"/>'s properties with the Group Policy values from the 
@@ -134,38 +131,26 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         /// before making modifications to the <paramref name="configurationObject"/> so any error retrieving
         /// the override values will cancel policy processing.</remarks>
         protected override void OverrideWithGroupPolicies(EmailTraceListenerData configurationObject, IRegistryKey policyKey)
-		{
-			String formatterOverride = GetFormatterPolicyOverride(policyKey);
-			String fromAddressOverride = policyKey.GetStringValue(FromAddressPropertyName);
-			int? smtpPortOverride = policyKey.GetIntValue(SmtpPortPropertyName);
-			String smtpServerOverride = policyKey.GetStringValue(SmtpServerPropertyName);
-			String subjectLineEnderOverride = policyKey.GetStringValue(SubjectLineEnderPropertyName);
-			String subjectLineStarterOverride = policyKey.GetStringValue(SubjectLineStarterPropertyName);
-			String toAddressOverride = policyKey.GetStringValue(ToAddressPropertyName);
-			TraceOptions? traceOutputOptionsOverride = policyKey.GetEnumValue<TraceOptions>(TraceOutputOptionsPropertyName);
-			SourceLevels? filterOverride = policyKey.GetEnumValue<SourceLevels>(FilterPropertyName);
+        {
+            String formatterOverride = GetFormatterPolicyOverride(policyKey);
+            String fromAddressOverride = policyKey.GetStringValue(FromAddressPropertyName);
+            int? smtpPortOverride = policyKey.GetIntValue(SmtpPortPropertyName);
+            String smtpServerOverride = policyKey.GetStringValue(SmtpServerPropertyName);
+            String subjectLineEnderOverride = policyKey.GetStringValue(SubjectLineEnderPropertyName);
+            String subjectLineStarterOverride = policyKey.GetStringValue(SubjectLineStarterPropertyName);
+            String toAddressOverride = policyKey.GetStringValue(ToAddressPropertyName);
+            TraceOptions? traceOutputOptionsOverride = policyKey.GetEnumValue<TraceOptions>(TraceOutputOptionsPropertyName);
+            SourceLevels? filterOverride = policyKey.GetEnumValue<SourceLevels>(FilterPropertyName);
 
-			configurationObject.Formatter = formatterOverride;
-			configurationObject.FromAddress = fromAddressOverride;
-			configurationObject.SmtpPort = smtpPortOverride.Value;
-			configurationObject.SmtpServer = smtpServerOverride;
-			configurationObject.SubjectLineEnder = subjectLineEnderOverride;
-			configurationObject.SubjectLineStarter = subjectLineStarterOverride;
-			configurationObject.ToAddress = toAddressOverride;
-			configurationObject.TraceOutputOptions = traceOutputOptionsOverride.Value;
-			configurationObject.Filter = filterOverride.Value;
-		}
-
-        /// <summary>
-        /// Creates the <see cref="ConfigurationSetting"/> instances that describe the 
-        /// configurationObject.
-        /// </summary>
-        /// <param name="configurationObject">The configuration object for instances that must be managed.</param>
-        /// <param name="wmiSettings">A collection to where the generated WMI objects are to be added.</param>
-        protected override void GenerateWmiObjects(EmailTraceListenerData configurationObject, 
-			ICollection<ConfigurationSetting> wmiSettings)
-		{
-			EmailTraceListenerDataWmiMapper.GenerateWmiObjects(configurationObject, wmiSettings);
-		}
-	}
+            configurationObject.Formatter = formatterOverride;
+            configurationObject.FromAddress = fromAddressOverride;
+            configurationObject.SmtpPort = smtpPortOverride.Value;
+            configurationObject.SmtpServer = smtpServerOverride;
+            configurationObject.SubjectLineEnder = subjectLineEnderOverride;
+            configurationObject.SubjectLineStarter = subjectLineStarterOverride;
+            configurationObject.ToAddress = toAddressOverride;
+            configurationObject.TraceOutputOptions = traceOutputOptionsOverride.Value;
+            configurationObject.Filter = filterOverride.Value;
+        }
+    }
 }

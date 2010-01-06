@@ -10,7 +10,6 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability.Adm;
@@ -40,9 +39,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         /// Initialize an instance of the <see cref="PriorityFilterDataManageabilityProvider"/> class.
         /// </summary>
         public PriorityFilterDataManageabilityProvider()
-        {
-            PriorityFilterDataWmiMapper.RegisterWmiTypes();
-        }
+        { }
 
         /// <summary>
         /// Gets the template for the name of the policy associated to the object.
@@ -87,18 +84,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
                                           configurationObject.MinimumPriority,
                                           0,
                                           999999999);
-        }
-
-        /// <summary>
-        /// Creates the <see cref="ConfigurationSetting"/> instances that describe the 
-        /// configurationObject.
-        /// </summary>
-        /// <param name="configurationObject">The configuration object for instances that must be managed.</param>
-        /// <param name="wmiSettings">A collection to where the generated WMI objects are to be added.</param>
-        protected override void GenerateWmiObjects(PriorityFilterData configurationObject,
-                                                   ICollection<ConfigurationSetting> wmiSettings)
-        {
-            PriorityFilterDataWmiMapper.GenerateWmiObjects(configurationObject, wmiSettings);
         }
 
         /// <summary>

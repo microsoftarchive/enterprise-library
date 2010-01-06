@@ -15,5 +15,4 @@ using Microsoft.Practices.EnterpriseLibrary.Caching.Cryptography.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Cryptography.Configuration.Manageability;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability;
 
-[assembly : WmiConfiguration(@"root\EnterpriseLibrary", HostingModel = ManagementHostingModel.Decoupled, IdentifyLevel = false)]
 [assembly : ConfigurationElementManageabilityProvider(typeof(SymmetricStorageEncryptionProviderDataManageabilityProvider), typeof(SymmetricStorageEncryptionProviderData), typeof(CacheManagerSettingsManageabilityProvider))]

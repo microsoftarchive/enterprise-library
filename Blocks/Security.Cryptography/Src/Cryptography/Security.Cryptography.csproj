@@ -93,9 +93,6 @@
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Management" />
-    <Reference Include="System.Management.Instrumentation">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
     <Reference Include="System.Security" />
     <Reference Include="System.Xml" />
     <ProjectReference Include="..\..\..\Common\Src\Common.csproj">
@@ -146,25 +143,12 @@
     <Compile Include="Configuration\KeyedHashAlgorithmProviderData.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Configuration\Manageability\CryptographyBlockSetting.cs" />
     <Compile Include="Configuration\Manageability\CryptographySettingsManageabilityProvider.cs" />
-    <Compile Include="Configuration\Manageability\CryptographySettingsWmiMapper.cs" />
     <Compile Include="Configuration\Manageability\CustomHashProviderDataManageabilityProvider.cs" />
-    <Compile Include="Configuration\Manageability\CustomHashProviderDataWmiMapper.cs" />
-    <Compile Include="Configuration\Manageability\CustomHashProviderSetting.cs" />
     <Compile Include="Configuration\Manageability\CustomSymmetricCryptoProviderDataManageabilityProvider.cs" />
-    <Compile Include="Configuration\Manageability\CustomSymmetricCryptoProviderDataWmiMapper.cs" />
-    <Compile Include="Configuration\Manageability\CustomSymmetricCryptoProviderSetting.cs" />
     <Compile Include="Configuration\Manageability\DpapiSymmetricCryptoProviderDataManageabilityProvider.cs" />
-    <Compile Include="Configuration\Manageability\DpapiSymmetricCryptoProviderDataWmiMapper.cs" />
-    <Compile Include="Configuration\Manageability\DpapiSymmetricCryptoProviderSetting.cs" />
     <Compile Include="Configuration\Manageability\HashAlgorithmProviderDataManageabilityProvider.cs" />
-    <Compile Include="Configuration\Manageability\HashAlgorithmProviderDataWmiMapper.cs" />
-    <Compile Include="Configuration\Manageability\HashAlgorithmProviderSetting.cs" />
-    <Compile Include="Configuration\Manageability\HashProviderSetting.cs" />
     <Compile Include="Configuration\Manageability\KeyedHashAlgorithmProviderDataManageabilityProvider.cs" />
-    <Compile Include="Configuration\Manageability\KeyedHashAlgorithmProviderDataWmiMapper.cs" />
-    <Compile Include="Configuration\Manageability\KeyedHashAlgorithmProviderSetting.cs" />
     <Compile Include="Configuration\Manageability\Properties\AssemblyInfo.cs" />
     <Compile Include="Configuration\Manageability\Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -172,9 +156,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Configuration\Manageability\SymmetricAlgorithmProviderDataManageabilityProvider.cs" />
-    <Compile Include="Configuration\Manageability\SymmetricAlgorithmProviderDataWmiMapper.cs" />
-    <Compile Include="Configuration\Manageability\SymmetricAlgorithmProviderSetting.cs" />
-    <Compile Include="Configuration\Manageability\SymmetricCryptoProviderSetting.cs" />
     <Compile Include="Configuration\SymmetricAlgorithmProviderData.cs">
       <SubType>Code</SubType>
     </Compile>

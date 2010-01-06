@@ -20,6 +20,7 @@ using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Validation;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
 using Microsoft.Practices.Unity;
+using System.Windows.Input;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
 {
@@ -58,6 +59,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         protected override object CreateBindable()
         {
             return null;
+        }
+
+        private bool isExpanded;
+        public bool IsExpanded
+        {
+            get { return isExpanded; }
+            set 
+            { 
+                isExpanded = value;
+                OnPropertyChanged("IsExpanded");
+            }
         }
 
         public override void Delete()
@@ -152,8 +164,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             return relatedElements;
         }
 
-        #region  Create XXX methods
+        protected override IEnumerable<CommandModel> GetAllCommands()
+        {
+            return base.GetAllCommands().Union(new CommandModel[]{new ToggleExpandedCommand(this)});
+        }
 
+        #region  Create XXX methods
 
         public virtual IEnumerable<CommandModel> CreateCollectionElementAddCommand(Type elementType, ElementCollectionViewModel collection)
         {
@@ -189,9 +205,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
 
             return CreateDefaultElementCollectionAddCommand(collection);
         }
-
-
-
 
         public virtual IEnumerable<CommandModel> CreateCustomCommands(ElementViewModel target, IEnumerable<Attribute> attributes)
         {
@@ -382,6 +395,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
 
             if (replaceCommandAttribute != null)
             {
+
+
                 return (CommandModel)builder.Resolve(replaceCommandAttribute.CommandModelType,
                                             new DependencyOverride(replaceCommandAttribute.GetType(), replaceCommandAttribute),
                                             new DependencyOverride<ConfigurationElementType>(new ConfigurationElementType(elementType)),
@@ -418,8 +433,44 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         }
 
         #endregion
+    }
 
+    public class ToggleExpandedCommand : CommandModel
+    {
+        readonly SectionViewModel sectionViewModel;
+        readonly KeyGestureConverter keyGestureConverter;
 
+        public ToggleExpandedCommand(SectionViewModel sectionViewModel)
+        {
+            this.sectionViewModel = sectionViewModel;
+            this.keyGestureConverter = new KeyGestureConverter();
+        }
+
+        public override void Execute(object parameter)
+        {
+            sectionViewModel.IsExpanded = !sectionViewModel.IsExpanded;
+        }
+
+        public override string Title
+        {
+            get
+            {
+                return "Show/Hide Application Block Elements";
+            }
+        }
+
+        public override string KeyGesture
+        {
+            get
+            {
+                return keyGestureConverter.ConvertToInvariantString(new KeyGesture(Key.Enter));
+            }
+        }
+
+        public override bool CanExecute(object parameter)
+        {
+            return true;
+        }
     }
 
     public class RequirePermissionProperty : CustomProperty<bool>

@@ -120,7 +120,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model
                 .SelectMany(x => x.ChildCommands);
             Assert.IsNotNull(adders.Single(a => a.Title == "Add Wrap Handler"));
             Assert.IsNotNull(adders.Single(a => a.Title == "Add Replace Handler"));
-            Assert.IsNotNull(adders.Single(a => a.Title == "Add Custom Exception Handler."));
+            Assert.IsNotNull(adders.Single(a => a.Title == "Add Custom Exception Handler"));
             Assert.IsFalse(adders.Any(a => a.Title == "Add ExceptionHandlerData"));
         }
 

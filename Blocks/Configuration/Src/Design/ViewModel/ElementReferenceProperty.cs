@@ -198,6 +198,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
                 base.Value = value;
                 EnsureReferenceInitialized(true);
                 Validate();
+
                 OnPropertyChanged("ChildProperties");
                 OnPropertyChanged("HasChildProperties");
             }
@@ -211,12 +212,21 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             }
         }
 
+        public override void Validate()
+        {
+            base.Validate();
+
+            OnPropertyChanged("ChildProperties");
+            OnPropertyChanged("HasChildProperties");
+        }
+
         public override bool HasChildProperties
         {
             get
             {
                 ElementViewModel element = this.ReferencedElement;
                 if (element == null) return false;
+                if (this.ValidationErrors.Count() > 0) return false;
 
                 return (element.Properties.Count > 0);
             }

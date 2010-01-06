@@ -141,7 +141,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Console
                 if ((attributes | FileAttributes.ReadOnly) == attributes)
                 {
                     var overwriteReadonlyDialogResult = uiService.ShowMessageWpf(
-                        Resources.PromptSaveOverFileThatCannotBeReadFromWarningMessage,
+                        string.Format(Resources.Culture, Resources.PromptSaveOverFileThatCannotBeReadFromWarningMessage, configurationFile),
                         Resources.PromptSaveOverFileThatCannotBeReadFromWarningTitle,
                         MessageBoxButton.YesNoCancel);
 
@@ -275,16 +275,29 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Console
             }
         }
 
+        private ElementViewModel selectedElement;
+
         public event PropertyChangedEventHandler PropertyChanged;
 
+        #region IApplicationModel Members
+       
         public void OnSelectedElementChanged(ElementViewModel element)
         {
+            if (selectedElement != null)
+            {
+                selectedElement.IsSelected = false;
+            }
+
+            selectedElement = element;
+            
             var handler = SelectedElementChanged;
             if (handler != null)
             {
                 handler(this, new SelectedElementChangedEventHandlerArgs(element));
             }
         }
+
+
 
         public event EventHandler<SelectedElementChangedEventHandlerArgs> SelectedElementChanged;
 
@@ -293,7 +306,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Console
             IsDirty = true;
         }
 
-        #region IApplicationModel Members
 
         public void Load(string configurationFile)
         {

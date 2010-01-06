@@ -24,6 +24,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
     /// </summary>
     [ResourceDescription(typeof(DesignResources), "LogCallHandlerCategoryEntryDescription")]
     [ResourceDisplayName(typeof(DesignResources), "LogCallHandlerCategoryEntryDisplayName")]
+    [AddSateliteProviderCommand(LoggingSettings.SectionName, typeof(LoggingSettings), "DefaultCategory", "Name")]
     public class LogCallHandlerCategoryEntry : NamedConfigurationElement
     {
         /// <summary>

@@ -16,7 +16,6 @@ using System.Reflection;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability.Adm;
-using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration.Manageability;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration.Manageability.Mocks;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageability.TraceListeners;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -29,7 +28,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         SystemDiagnosticsTraceListenerDataManageabilityProvider provider;
         MockRegistryKey machineKey;
         MockRegistryKey userKey;
-        IList<ConfigurationSetting> wmiSettings;
         SystemDiagnosticsTraceListenerData configurationObject;
 
         [TestInitialize]
@@ -38,15 +36,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             provider = new SystemDiagnosticsTraceListenerDataManageabilityProvider();
             machineKey = new MockRegistryKey(true);
             userKey = new MockRegistryKey(true);
-            wmiSettings = new List<ConfigurationSetting>();
             configurationObject = new SystemDiagnosticsTraceListenerData();
-        }
-
-        [TestCleanup]
-        public void TearDown()
-        {
-            // preventive unregister to work around WMI.NET 2.0 issues with appdomain unloading
-            ManagementEntityTypesRegistrar.UnregisterAll();
         }
 
         [TestMethod]
@@ -77,15 +67,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             configurationObject.Type = typeof(Object);
             configurationObject.InitData = "init data";
             configurationObject.TraceOutputOptions = TraceOptions.None;
-			configurationObject.Filter = SourceLevels.Error;
+            configurationObject.Filter = SourceLevels.Error;
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, null, null, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, null, null);
 
             Assert.AreSame(typeof(Object), configurationObject.Type);
             Assert.AreEqual("init data", configurationObject.InitData);
             Assert.AreEqual(TraceOptions.None, configurationObject.TraceOutputOptions);
-			Assert.AreEqual(SourceLevels.Error, configurationObject.Filter);
-		}
+            Assert.AreEqual(SourceLevels.Error, configurationObject.Filter);
+        }
 
         [TestMethod]
         public void ConfigurationObjectIsModifiedIfThereAreMachinePolicyOverrides()
@@ -94,20 +84,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             configurationObject.Type = typeof(Object);
             configurationObject.InitData = "init data";
             configurationObject.TraceOutputOptions = TraceOptions.None;
-			configurationObject.Filter = SourceLevels.Error;
+            configurationObject.Filter = SourceLevels.Error;
 
             machineKey.AddStringValue(SystemDiagnosticsTraceListenerDataManageabilityProvider.ProviderTypePropertyName, typeof(Object).AssemblyQualifiedName);
             machineKey.AddStringValue(SystemDiagnosticsTraceListenerDataManageabilityProvider.AttributesPropertyName, "");
             machineKey.AddStringValue(SystemDiagnosticsTraceListenerDataManageabilityProvider.InitDataPropertyName, "overriden init data");
             machineKey.AddStringValue(SystemDiagnosticsTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, "ProcessId, ThreadId");
-			machineKey.AddStringValue(SystemDiagnosticsTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
+            machineKey.AddStringValue(SystemDiagnosticsTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, machineKey, null, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, machineKey, null);
 
             Assert.AreEqual("overriden init data", configurationObject.InitData);
             Assert.AreEqual(TraceOptions.ProcessId | TraceOptions.ThreadId, configurationObject.TraceOutputOptions);
-			Assert.AreEqual(SourceLevels.Critical, configurationObject.Filter);
-		}
+            Assert.AreEqual(SourceLevels.Critical, configurationObject.Filter);
+        }
 
         [TestMethod]
         public void ConfigurationObjectIsModifiedIfThereAreUserPolicyOverrides()
@@ -116,20 +106,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             configurationObject.Type = typeof(Object);
             configurationObject.InitData = "init data";
             configurationObject.TraceOutputOptions = TraceOptions.None;
-			configurationObject.Filter = SourceLevels.Error;
+            configurationObject.Filter = SourceLevels.Error;
 
             userKey.AddStringValue(SystemDiagnosticsTraceListenerDataManageabilityProvider.ProviderTypePropertyName, typeof(Object).AssemblyQualifiedName);
             userKey.AddStringValue(SystemDiagnosticsTraceListenerDataManageabilityProvider.AttributesPropertyName, "");
             userKey.AddStringValue(SystemDiagnosticsTraceListenerDataManageabilityProvider.InitDataPropertyName, "overriden init data");
             userKey.AddStringValue(SystemDiagnosticsTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, "ProcessId, ThreadId");
-			userKey.AddStringValue(SystemDiagnosticsTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
+            userKey.AddStringValue(SystemDiagnosticsTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, null, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, null, userKey);
 
             Assert.AreEqual("overriden init data", configurationObject.InitData);
             Assert.AreEqual(TraceOptions.ProcessId | TraceOptions.ThreadId, configurationObject.TraceOutputOptions);
-			Assert.AreEqual(SourceLevels.Critical, configurationObject.Filter);
-		}
+            Assert.AreEqual(SourceLevels.Critical, configurationObject.Filter);
+        }
 
         [TestMethod]
         public void ConfigurationObjectIsNotModifiedIfThereArePolicyOverridesButGroupPoliciesAreDisabled()
@@ -138,48 +128,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             configurationObject.Type = typeof(Object);
             configurationObject.InitData = "init data";
             configurationObject.TraceOutputOptions = TraceOptions.None;
-			configurationObject.Filter = SourceLevels.Error;
+            configurationObject.Filter = SourceLevels.Error;
 
             machineKey.AddStringValue(SystemDiagnosticsTraceListenerDataManageabilityProvider.InitDataPropertyName, "overriden init data");
             machineKey.AddStringValue(SystemDiagnosticsTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, "ProcessId, ThreadId");
-			machineKey.AddStringValue(SystemDiagnosticsTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
+            machineKey.AddStringValue(SystemDiagnosticsTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, false, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, false, machineKey, userKey);
 
             Assert.AreSame(typeof(Object), configurationObject.Type);
             Assert.AreEqual("init data", configurationObject.InitData);
             Assert.AreEqual(TraceOptions.None, configurationObject.TraceOutputOptions);
-			Assert.AreEqual(SourceLevels.Error, configurationObject.Filter);
-		}
-
-        [TestMethod]
-        public void WmiSettingsAreGeneratedIfWmiIsEnabled()
-        {
-            configurationObject.Type = typeof(Object);
-            configurationObject.Attributes.Add("name1", "value1");
-            configurationObject.Attributes.Add("name2", "value2");
-            configurationObject.InitData = "init data";
-            configurationObject.TraceOutputOptions = TraceOptions.None;
-			configurationObject.Filter = SourceLevels.Error;
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, false, machineKey, userKey, true, wmiSettings);
-
-            Assert.AreEqual(1, wmiSettings.Count);
-            Assert.AreSame(typeof(CustomTraceListenerSetting), wmiSettings[0].GetType());
-            Assert.AreEqual(typeof(Object).AssemblyQualifiedName, ((CustomTraceListenerSetting)wmiSettings[0]).ListenerType);
-            Assert.AreEqual("init data", ((CustomTraceListenerSetting)wmiSettings[0]).InitData);
-            Assert.AreEqual(null, ((CustomTraceListenerSetting)wmiSettings[0]).Formatter);
-            Assert.AreEqual(TraceOptions.None.ToString(), ((CustomTraceListenerSetting)wmiSettings[0]).TraceOutputOptions);
-			Assert.AreEqual(configurationObject.Filter.ToString(), ((CustomTraceListenerSetting)wmiSettings[0]).Filter);
-
-            Dictionary<String, String> attributesDictionary = new Dictionary<string, string>();
-            foreach (String entry in ((CustomTraceListenerSetting)wmiSettings[0]).Attributes)
-            {
-                KeyValuePairParsingTestHelper.ExtractKeyValueEntries(entry, attributesDictionary);
-            }
-            Assert.AreEqual(2, attributesDictionary.Count);
-            Assert.AreEqual("value1", attributesDictionary["name1"]);
-            Assert.AreEqual("value2", attributesDictionary["name2"]);
+            Assert.AreEqual(SourceLevels.Error, configurationObject.Filter);
         }
 
         [TestMethod]
@@ -224,11 +184,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             Assert.AreEqual(SystemDiagnosticsTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName,
                             partsEnumerator.Current.ValueName);
 
-			Assert.IsTrue(partsEnumerator.MoveNext());
-			Assert.AreSame(typeof(AdmDropDownListPart), partsEnumerator.Current.GetType());
-			Assert.IsNull(partsEnumerator.Current.KeyName);
-			Assert.AreEqual(SystemDiagnosticsTraceListenerDataManageabilityProvider.FilterPropertyName,
-							partsEnumerator.Current.ValueName);
+            Assert.IsTrue(partsEnumerator.MoveNext());
+            Assert.AreSame(typeof(AdmDropDownListPart), partsEnumerator.Current.GetType());
+            Assert.IsNull(partsEnumerator.Current.KeyName);
+            Assert.AreEqual(SystemDiagnosticsTraceListenerDataManageabilityProvider.FilterPropertyName,
+                            partsEnumerator.Current.ValueName);
 
             Assert.IsFalse(partsEnumerator.MoveNext());
             Assert.IsFalse(policiesEnumerator.MoveNext());

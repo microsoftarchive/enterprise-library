@@ -1,4 +1,15 @@
-﻿using System;
+﻿//===============================================================================
+// Microsoft patterns & practices Enterprise Library
+// Core
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -94,6 +105,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
 
                 var gridSplitter = new GridSplitter() { Width = 2, HorizontalAlignment = HorizontalAlignment.Right };
                 Collection.Children.Add(gridSplitter);
+                gridSplitter.Focusable = false;
                 gridSplitter.SetValue(Grid.RowProperty, 0);
                 gridSplitter.SetValue(Grid.ColumnProperty, i);
                 gridSplitter.SetValue(Grid.RowSpanProperty, viewModel.ChildElements.Count + 1);
@@ -119,6 +131,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
                     var property = element.Property(propertyDescriptor.Name);
 
                     ContentControl contentControl = new ContentControl();
+                    contentControl.Focusable = false;
                     Collection.Children.Add(contentControl);
                     contentControl.SetValue(ContentControl.ContentProperty, property);
                     contentControl.SetValue(Grid.RowProperty, j);

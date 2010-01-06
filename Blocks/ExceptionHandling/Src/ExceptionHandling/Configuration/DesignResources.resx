@@ -127,7 +127,7 @@
     <value>241 - An Exception Handler implemented as a custom class added to Enterprise Library.</value>
   </data>
   <data name="CustomHandlerDataDisplayName" xml:space="preserve">
-    <value>Custom Exception Handler.</value>
+    <value>Custom Exception Handler</value>
   </data>
   <data name="CustomHandlerDataNameDescription" xml:space="preserve">
     <value>243 - The name of the Custom Exception Handler.</value>

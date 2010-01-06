@@ -22,6 +22,8 @@ using Microsoft.Practices.Unity;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design;
+using System.Globalization;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
 {
@@ -157,7 +159,25 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
 
         public void NewEnvironment()
         {
-            LoadEnvironment(new EnvironmentMergeSection() { EnvironmentName =  "Environment"}, string.Empty);
+            string environmentName = FindUniqueNewName("Environment");
+            LoadEnvironment(new EnvironmentMergeSection() { EnvironmentName = environmentName }, string.Empty);
+        }
+
+        private string FindUniqueNewName(string baseName)
+        {
+            int number = 1;
+            while (true)
+            {
+                string proposedName = string.Format(CultureInfo.CurrentUICulture,
+                                                    Resources.NewCollectionElementNameFormat,
+                                                    baseName,
+                                                    number == 1 ? string.Empty : number.ToString()).Trim();
+
+                if (this.Environments.Any(x => x.NameProperty != null && x.NameProperty.BindableProperty.BindableValue == proposedName))
+                    number++;
+                else
+                    return proposedName;
+            }
         }
 
         public void RemoveEnvironment(EnvironmentalOverridesViewModel environnment)
@@ -185,13 +205,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             return Sections.Where(x=>x.SectionName == sectionName).Any();
         }
 
-        public void AddSection(string sectionName, ConfigurationSection section)
+        public SectionViewModel AddSection(string sectionName, ConfigurationSection section)
         {
             var sectionViewModel = SectionViewModel.CreateSection(builder, sectionName, section);
 
             InitializeSection(sectionViewModel, new InitializeContext(null));
 
             sections.Add(sectionViewModel);
+
+            return sectionViewModel;
         }
 
         public void RemoveSection(string sectionName)

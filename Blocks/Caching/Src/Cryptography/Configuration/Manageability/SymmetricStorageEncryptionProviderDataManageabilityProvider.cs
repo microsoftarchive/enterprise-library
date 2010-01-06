@@ -10,7 +10,6 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Cryptography.Configuration.Manageability.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability;
@@ -36,9 +35,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Cryptography.Configurati
         /// Initialize a new instance of the <see cref="SymmetricStorageEncryptionProviderDataManageabilityProvider"/> class.
         /// </summary>
         public SymmetricStorageEncryptionProviderDataManageabilityProvider()
-        {
-            SymmetricStorageEncryptionProviderDataWmiMapper.RegisterWmiTypes();
-        }
+        { }
 
         /// <summary>
         /// Gets the template for the name of the policy associated to the object.
@@ -103,18 +100,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Cryptography.Configurati
                                                                                                cryptographySection.SymmetricCryptoProviders,
                                                                                                configurationObject.SymmetricInstance,
                                                                                                false);
-        }
-
-        /// <summary>
-        /// Creates the <see cref="ConfigurationSetting"/> instances that describe the 
-        /// configurationObject.
-        /// </summary>
-        /// <param name="configurationObject">The configuration object for instances that must be managed.</param>
-        /// <param name="wmiSettings">A collection to where the generated WMI objects are to be added.</param>
-        protected override void GenerateWmiObjects(SymmetricStorageEncryptionProviderData configurationObject,
-                                                   ICollection<ConfigurationSetting> wmiSettings)
-        {
-            SymmetricStorageEncryptionProviderDataWmiMapper.GenerateWmiObjects(configurationObject, wmiSettings);
         }
 
         /// <summary>

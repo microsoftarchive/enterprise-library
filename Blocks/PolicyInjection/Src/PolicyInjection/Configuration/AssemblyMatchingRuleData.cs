@@ -35,6 +35,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         public AssemblyMatchingRuleData()
             : base()
         {
+            base.Type = typeof(FakeRules.AssemblyMatchingRule);
         }
 
         /// <summary>

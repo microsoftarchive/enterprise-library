@@ -93,9 +93,6 @@
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Management" />
-    <Reference Include="System.Management.Instrumentation">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
@@ -135,13 +132,7 @@
     <Compile Include="Configuration\Fluent\IExceptionConfigurationWrapWithProvider.cs" />
     <Compile Include="Configuration\Fluent\IExceptionHandlerExtension.cs" />
     <Compile Include="Configuration\Manageability\CustomExceptionHandlerDataManageabilityProvider.cs" />
-    <Compile Include="Configuration\Manageability\CustomExceptionHandlerDataWmiMapper.cs" />
-    <Compile Include="Configuration\Manageability\CustomHandlerSetting.cs" />
-    <Compile Include="Configuration\Manageability\ExceptionHandlerSetting.cs" />
     <Compile Include="Configuration\Manageability\ExceptionHandlingSettingsManageabilityProvider.cs" />
-    <Compile Include="Configuration\Manageability\ExceptionHandlingSettingsWmiMapper.cs" />
-    <Compile Include="Configuration\Manageability\ExceptionPolicySetting.cs" />
-    <Compile Include="Configuration\Manageability\ExceptionTypeSetting.cs" />
     <Compile Include="Configuration\Manageability\Properties\AssemblyInfo.cs" />
     <Compile Include="Configuration\Manageability\Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -149,11 +140,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Configuration\Manageability\ReplaceHandlerDataManageabilityProvider.cs" />
-    <Compile Include="Configuration\Manageability\ReplaceHandlerDataWmiMapper.cs" />
-    <Compile Include="Configuration\Manageability\ReplaceHandlerSetting.cs" />
     <Compile Include="Configuration\Manageability\WrapHandlerDataManageabilityProvider.cs" />
-    <Compile Include="Configuration\Manageability\WrapHandlerDataWmiMapper.cs" />
-    <Compile Include="Configuration\Manageability\WrapHandlerSetting.cs" />
     <Compile Include="Configuration\ReplaceHandlerData.cs">
       <SubType>Code</SubType>
     </Compile>

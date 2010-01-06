@@ -20,6 +20,8 @@ using Console.Wpf.Tests.VSTS.TestSupport;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.EnterpriseLibrary.Data.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Database.Configuration;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_satelite_provider_add_command
 {
@@ -41,6 +43,15 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_satelite_provider_add_command
         {
             var sourceModel = Container.Resolve<ConfigurationSourceModel>();
             Assert.IsTrue(sourceModel.HasSection(DataAccessDesignTime.ConnectionStringSettingsSectionName));
+        }
+
+        [TestMethod]
+        public void then_provider_reference_is_set_to_default()
+        {
+            var elementLookup = Container.Resolve<ElementLookup>();
+            var sateliteProvider = elementLookup.FindInstancesOfConfigurationType(typeof(FormattedDatabaseTraceListenerData)).FirstOrDefault();
+            Assert.IsFalse(String.IsNullOrEmpty((string)sateliteProvider.Property("DatabaseInstanceName").Value));
+
         }
     }
 }

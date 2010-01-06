@@ -27,7 +27,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Cryptography.Configurati
 	/// </summary>
     [ResourceDescription(typeof(DesignResources), "SymmetricStorageEncryptionProviderDataDescription")]
     [ResourceDisplayName(typeof(DesignResources), "SymmetricStorageEncryptionProviderDataDisplayName")]
-    [AddSateliteProviderCommand(CryptographySettings.SectionName)]
+    [AddSateliteProviderCommand(CryptographySettings.SectionName, typeof(CryptographySettings), "DefaultSymmetricCryptoProviderName", "SymmetricInstance")]
     [System.ComponentModel.Browsable(true)]
 	public class SymmetricStorageEncryptionProviderData : StorageEncryptionProviderData
 	{

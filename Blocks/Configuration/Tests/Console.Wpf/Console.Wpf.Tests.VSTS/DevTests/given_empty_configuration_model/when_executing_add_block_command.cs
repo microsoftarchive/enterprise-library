@@ -76,5 +76,11 @@ namespace Console.Wpf.Tests.VSTS.DevTests
             Assert.IsTrue(commandCanExecuteCalled);
         }
 
+        [TestMethod]
+        public void then_section_is_selected()
+        {
+            var addedSection = configurationModel.Sections.Where(x => x.ConfigurationType == typeof(AppSettingsSection)).Single();
+            Assert.IsTrue(addedSection.IsSelected);
+        }
     }
 }

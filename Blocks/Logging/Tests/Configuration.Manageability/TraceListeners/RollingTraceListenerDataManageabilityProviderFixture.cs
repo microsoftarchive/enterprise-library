@@ -29,7 +29,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         RollingFlatFileTraceListenerDataManageabilityProvider provider;
         MockRegistryKey machineKey;
         MockRegistryKey userKey;
-        IList<ConfigurationSetting> wmiSettings;
         RollingFlatFileTraceListenerData configurationObject;
 
         [TestInitialize]
@@ -38,15 +37,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             provider = new RollingFlatFileTraceListenerDataManageabilityProvider();
             machineKey = new MockRegistryKey(true);
             userKey = new MockRegistryKey(true);
-            wmiSettings = new List<ConfigurationSetting>();
             configurationObject = new RollingFlatFileTraceListenerData();
-        }
-
-        [TestCleanup]
-        public void TearDown()
-        {
-            // preventive unregister to work around WMI.NET 2.0 issues with appdomain unloading
-            ManagementEntityTypesRegistrar.UnregisterAll();
         }
 
         [TestMethod]
@@ -74,7 +65,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         [ExpectedException(typeof(ArgumentException))]
         public void ProviderThrowsWithConfigurationObjectOfWrongType()
         {
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(new TestsConfigurationSection(), true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(new TestsConfigurationSection(), true, machineKey, userKey);
         }
 
         [TestMethod]
@@ -87,11 +78,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             configurationObject.RollSizeKB = 100;
             configurationObject.TimeStampPattern = "pattern";
             configurationObject.TraceOutputOptions = TraceOptions.None;
-			configurationObject.Filter = SourceLevels.Error;
-			configurationObject.Header = "header";
+            configurationObject.Filter = SourceLevels.Error;
+            configurationObject.Header = "header";
             configurationObject.Footer = "footer";
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, null, null, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, null, null);
 
             Assert.AreEqual("file name", configurationObject.FileName);
             Assert.AreEqual("formatter", configurationObject.Formatter);
@@ -100,8 +91,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             Assert.AreEqual(100, configurationObject.RollSizeKB);
             Assert.AreEqual("pattern", configurationObject.TimeStampPattern);
             Assert.AreEqual(TraceOptions.None, configurationObject.TraceOutputOptions);
-			Assert.AreEqual(SourceLevels.Error, configurationObject.Filter);
-			Assert.AreEqual("header", configurationObject.Header);
+            Assert.AreEqual(SourceLevels.Error, configurationObject.Filter);
+            Assert.AreEqual("header", configurationObject.Header);
             Assert.AreEqual("footer", configurationObject.Footer);
         }
 
@@ -115,8 +106,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             configurationObject.RollSizeKB = 100;
             configurationObject.TimeStampPattern = "pattern";
             configurationObject.TraceOutputOptions = TraceOptions.None;
-			configurationObject.Filter = SourceLevels.Error;
-			configurationObject.Header = "header";
+            configurationObject.Filter = SourceLevels.Error;
+            configurationObject.Header = "header";
             configurationObject.Footer = "footer";
 
             machineKey.AddStringValue(RollingFlatFileTraceListenerDataManageabilityProvider.FileNamePropertyName, "overriden file name");
@@ -126,11 +117,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             machineKey.AddIntValue(RollingFlatFileTraceListenerDataManageabilityProvider.RollSizeKBPropertyName, 200);
             machineKey.AddStringValue(RollingFlatFileTraceListenerDataManageabilityProvider.TimeStampPatternPropertyName, "overriden pattern");
             machineKey.AddEnumValue<TraceOptions>(RollingFlatFileTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, TraceOptions.ProcessId | TraceOptions.ThreadId);
-			machineKey.AddEnumValue<SourceLevels>(RollingFlatFileTraceListenerDataManageabilityProvider.FilterPropertyName, SourceLevels.Critical);
-			machineKey.AddStringValue(RollingFlatFileTraceListenerDataManageabilityProvider.HeaderPropertyName, "overriden header");
+            machineKey.AddEnumValue<SourceLevels>(RollingFlatFileTraceListenerDataManageabilityProvider.FilterPropertyName, SourceLevels.Critical);
+            machineKey.AddStringValue(RollingFlatFileTraceListenerDataManageabilityProvider.HeaderPropertyName, "overriden header");
             machineKey.AddStringValue(RollingFlatFileTraceListenerDataManageabilityProvider.FooterPropertyName, "overriden footer");
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, machineKey, null, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, machineKey, null);
 
             Assert.AreEqual("overriden file name", configurationObject.FileName);
             Assert.AreEqual("overriden formatter", configurationObject.Formatter);
@@ -139,8 +130,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             Assert.AreEqual(200, configurationObject.RollSizeKB);
             Assert.AreEqual("overriden pattern", configurationObject.TimeStampPattern);
             Assert.AreEqual(TraceOptions.ProcessId | TraceOptions.ThreadId, configurationObject.TraceOutputOptions);
-			Assert.AreEqual(SourceLevels.Critical, configurationObject.Filter);
-			Assert.AreEqual("overriden header", configurationObject.Header);
+            Assert.AreEqual(SourceLevels.Critical, configurationObject.Filter);
+            Assert.AreEqual("overriden header", configurationObject.Header);
             Assert.AreEqual("overriden footer", configurationObject.Footer);
         }
 
@@ -154,8 +145,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             configurationObject.RollSizeKB = 100;
             configurationObject.TimeStampPattern = "pattern";
             configurationObject.TraceOutputOptions = TraceOptions.None;
-			configurationObject.Filter = SourceLevels.Error;
-			configurationObject.Header = "header";
+            configurationObject.Filter = SourceLevels.Error;
+            configurationObject.Header = "header";
             configurationObject.Footer = "footer";
 
             userKey.AddStringValue(RollingFlatFileTraceListenerDataManageabilityProvider.FileNamePropertyName, "overriden file name");
@@ -165,11 +156,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             userKey.AddIntValue(RollingFlatFileTraceListenerDataManageabilityProvider.RollSizeKBPropertyName, 200);
             userKey.AddStringValue(RollingFlatFileTraceListenerDataManageabilityProvider.TimeStampPatternPropertyName, "overriden pattern");
             userKey.AddEnumValue<TraceOptions>(RollingFlatFileTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, TraceOptions.ProcessId | TraceOptions.ThreadId);
-			userKey.AddEnumValue<SourceLevels>(RollingFlatFileTraceListenerDataManageabilityProvider.FilterPropertyName, SourceLevels.Critical);
-			userKey.AddStringValue(RollingFlatFileTraceListenerDataManageabilityProvider.HeaderPropertyName, "overriden header");
+            userKey.AddEnumValue<SourceLevels>(RollingFlatFileTraceListenerDataManageabilityProvider.FilterPropertyName, SourceLevels.Critical);
+            userKey.AddStringValue(RollingFlatFileTraceListenerDataManageabilityProvider.HeaderPropertyName, "overriden header");
             userKey.AddStringValue(RollingFlatFileTraceListenerDataManageabilityProvider.FooterPropertyName, "overriden footer");
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, null, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, null, userKey);
 
             Assert.AreEqual("overriden file name", configurationObject.FileName);
             Assert.AreEqual("overriden formatter", configurationObject.Formatter);
@@ -178,8 +169,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             Assert.AreEqual(200, configurationObject.RollSizeKB);
             Assert.AreEqual("overriden pattern", configurationObject.TimeStampPattern);
             Assert.AreEqual(TraceOptions.ProcessId | TraceOptions.ThreadId, configurationObject.TraceOutputOptions);
-			Assert.AreEqual(SourceLevels.Critical, configurationObject.Filter);
-			Assert.AreEqual("overriden header", configurationObject.Header);
+            Assert.AreEqual(SourceLevels.Critical, configurationObject.Filter);
+            Assert.AreEqual("overriden header", configurationObject.Header);
             Assert.AreEqual("overriden footer", configurationObject.Footer);
         }
 
@@ -193,8 +184,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             configurationObject.RollSizeKB = 100;
             configurationObject.TimeStampPattern = "pattern";
             configurationObject.TraceOutputOptions = TraceOptions.None;
-			configurationObject.Filter = SourceLevels.Error;
-			configurationObject.Header = "header";
+            configurationObject.Filter = SourceLevels.Error;
+            configurationObject.Header = "header";
             configurationObject.Footer = "footer";
 
             machineKey.AddStringValue(RollingFlatFileTraceListenerDataManageabilityProvider.FileNamePropertyName, "overriden file name");
@@ -204,11 +195,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             machineKey.AddIntValue(RollingFlatFileTraceListenerDataManageabilityProvider.RollSizeKBPropertyName, 200);
             machineKey.AddStringValue(RollingFlatFileTraceListenerDataManageabilityProvider.TimeStampPatternPropertyName, "overriden pattern");
             machineKey.AddEnumValue<TraceOptions>(RollingFlatFileTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, TraceOptions.ProcessId | TraceOptions.ThreadId);
-			machineKey.AddEnumValue<SourceLevels>(RollingFlatFileTraceListenerDataManageabilityProvider.FilterPropertyName, SourceLevels.Critical);
-			machineKey.AddStringValue(RollingFlatFileTraceListenerDataManageabilityProvider.HeaderPropertyName, "overriden header");
+            machineKey.AddEnumValue<SourceLevels>(RollingFlatFileTraceListenerDataManageabilityProvider.FilterPropertyName, SourceLevels.Critical);
+            machineKey.AddStringValue(RollingFlatFileTraceListenerDataManageabilityProvider.HeaderPropertyName, "overriden header");
             machineKey.AddStringValue(RollingFlatFileTraceListenerDataManageabilityProvider.FooterPropertyName, "overriden footer");
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, false, machineKey, null, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, false, machineKey, null);
 
             Assert.AreEqual("file name", configurationObject.FileName);
             Assert.AreEqual("formatter", configurationObject.Formatter);
@@ -217,8 +208,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             Assert.AreEqual(100, configurationObject.RollSizeKB);
             Assert.AreEqual("pattern", configurationObject.TimeStampPattern);
             Assert.AreEqual(TraceOptions.None, configurationObject.TraceOutputOptions);
-			Assert.AreEqual(SourceLevels.Error, configurationObject.Filter);
-			Assert.AreEqual("header", configurationObject.Header);
+            Assert.AreEqual(SourceLevels.Error, configurationObject.Filter);
+            Assert.AreEqual("header", configurationObject.Header);
             Assert.AreEqual("footer", configurationObject.Footer);
         }
 
@@ -234,103 +225,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             machineKey.AddIntValue(RollingFlatFileTraceListenerDataManageabilityProvider.RollSizeKBPropertyName, 200);
             machineKey.AddStringValue(RollingFlatFileTraceListenerDataManageabilityProvider.TimeStampPatternPropertyName, "overriden pattern");
             machineKey.AddEnumValue<TraceOptions>(RollingFlatFileTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, TraceOptions.ProcessId | TraceOptions.ThreadId);
-			machineKey.AddEnumValue<SourceLevels>(RollingFlatFileTraceListenerDataManageabilityProvider.FilterPropertyName, SourceLevels.Critical);
-			machineKey.AddStringValue(RollingFlatFileTraceListenerDataManageabilityProvider.HeaderPropertyName, "overriden header");
+            machineKey.AddEnumValue<SourceLevels>(RollingFlatFileTraceListenerDataManageabilityProvider.FilterPropertyName, SourceLevels.Critical);
+            machineKey.AddStringValue(RollingFlatFileTraceListenerDataManageabilityProvider.HeaderPropertyName, "overriden header");
             machineKey.AddStringValue(RollingFlatFileTraceListenerDataManageabilityProvider.FooterPropertyName, "overriden footer");
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, machineKey, userKey);
 
             Assert.AreEqual("", configurationObject.Formatter);
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreNotGeneratedIfWmiIsDisabled()
-        {
-            configurationObject.FileName = "file name";
-            configurationObject.Formatter = "formatter";
-            configurationObject.RollFileExistsBehavior = RollFileExistsBehavior.Increment;
-            configurationObject.RollInterval = RollInterval.Month;
-            configurationObject.RollSizeKB = 100;
-            configurationObject.TimeStampPattern = "pattern";
-            configurationObject.TraceOutputOptions = TraceOptions.None;
-			configurationObject.Filter = SourceLevels.Error;
-			configurationObject.Header = "header";
-            configurationObject.Footer = "footer";
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, false, machineKey, userKey, false, wmiSettings);
-
-            Assert.AreEqual(0, wmiSettings.Count);
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreGeneratedIfWmiIsEnabled()
-        {
-            configurationObject.FileName = "file name";
-            configurationObject.Formatter = "formatter";
-            configurationObject.RollFileExistsBehavior = RollFileExistsBehavior.Increment;
-            configurationObject.RollInterval = RollInterval.Month;
-            configurationObject.RollSizeKB = 100;
-            configurationObject.TimeStampPattern = "pattern";
-            configurationObject.TraceOutputOptions = TraceOptions.None;
-			configurationObject.Filter = SourceLevels.Error;
-			configurationObject.Header = "header";
-            configurationObject.Footer = "footer";
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, false, machineKey, userKey, true, wmiSettings);
-
-            Assert.AreEqual(1, wmiSettings.Count);
-            Assert.AreSame(typeof(RollingFlatFileTraceListenerSetting), wmiSettings[0].GetType());
-            Assert.AreEqual(configurationObject.FileName, ((RollingFlatFileTraceListenerSetting)wmiSettings[0]).FileName);
-            Assert.AreEqual(configurationObject.Formatter, ((RollingFlatFileTraceListenerSetting)wmiSettings[0]).Formatter);
-            Assert.AreEqual(configurationObject.RollFileExistsBehavior.ToString(), ((RollingFlatFileTraceListenerSetting)wmiSettings[0]).RollFileExistsBehavior);
-            Assert.AreEqual(configurationObject.RollInterval.ToString(), ((RollingFlatFileTraceListenerSetting)wmiSettings[0]).RollInterval);
-            Assert.AreEqual(configurationObject.RollSizeKB, ((RollingFlatFileTraceListenerSetting)wmiSettings[0]).RollSizeKB);
-            Assert.AreEqual(configurationObject.TimeStampPattern, ((RollingFlatFileTraceListenerSetting)wmiSettings[0]).TimeStampPattern);
-            Assert.AreEqual(configurationObject.TraceOutputOptions.ToString(), ((RollingFlatFileTraceListenerSetting)wmiSettings[0]).TraceOutputOptions);
-			Assert.AreEqual(configurationObject.Filter.ToString(), ((RollingFlatFileTraceListenerSetting)wmiSettings[0]).Filter);
-			Assert.AreEqual(configurationObject.Header, ((RollingFlatFileTraceListenerSetting)wmiSettings[0]).Header);
-            Assert.AreEqual(configurationObject.Footer, ((RollingFlatFileTraceListenerSetting)wmiSettings[0]).Footer);
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreGeneratedWithPolicyOverridesIfWmiIsEnabled()
-        {
-            configurationObject.FileName = "file name";
-            configurationObject.Formatter = "formatter";
-            configurationObject.RollFileExistsBehavior = RollFileExistsBehavior.Increment;
-            configurationObject.RollInterval = RollInterval.Month;
-            configurationObject.RollSizeKB = 100;
-            configurationObject.TimeStampPattern = "pattern";
-            configurationObject.TraceOutputOptions = TraceOptions.None;
-			configurationObject.Filter = SourceLevels.Error;
-			configurationObject.Header = "header";
-            configurationObject.Footer = "footer";
-
-            machineKey.AddStringValue(RollingFlatFileTraceListenerDataManageabilityProvider.FileNamePropertyName, "overriden file name");
-            machineKey.AddStringValue(RollingFlatFileTraceListenerDataManageabilityProvider.FormatterPropertyName, AdmContentBuilder.NoneListItem);
-            machineKey.AddEnumValue<RollFileExistsBehavior>(RollingFlatFileTraceListenerDataManageabilityProvider.RollFileExistsBehaviorPropertyName, RollFileExistsBehavior.Overwrite);
-            machineKey.AddEnumValue<RollInterval>(RollingFlatFileTraceListenerDataManageabilityProvider.RollIntervalPropertyName, RollInterval.Day);
-            machineKey.AddIntValue(RollingFlatFileTraceListenerDataManageabilityProvider.RollSizeKBPropertyName, 200);
-            machineKey.AddStringValue(RollingFlatFileTraceListenerDataManageabilityProvider.TimeStampPatternPropertyName, "overriden pattern");
-            machineKey.AddEnumValue<TraceOptions>(RollingFlatFileTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, TraceOptions.ProcessId | TraceOptions.ThreadId);
-			machineKey.AddEnumValue<SourceLevels>(RollingFlatFileTraceListenerDataManageabilityProvider.FilterPropertyName, SourceLevels.Critical);
-			machineKey.AddStringValue(RollingFlatFileTraceListenerDataManageabilityProvider.HeaderPropertyName, "overriden header");
-            machineKey.AddStringValue(RollingFlatFileTraceListenerDataManageabilityProvider.FooterPropertyName, "overriden footer");
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, machineKey, userKey, true, wmiSettings);
-
-            Assert.AreEqual(1, wmiSettings.Count);
-            Assert.AreSame(typeof(RollingFlatFileTraceListenerSetting), wmiSettings[0].GetType());
-            Assert.AreEqual(configurationObject.FileName, ((RollingFlatFileTraceListenerSetting)wmiSettings[0]).FileName);
-            Assert.AreEqual(configurationObject.Formatter, ((RollingFlatFileTraceListenerSetting)wmiSettings[0]).Formatter);
-            Assert.AreEqual(configurationObject.RollFileExistsBehavior.ToString(), ((RollingFlatFileTraceListenerSetting)wmiSettings[0]).RollFileExistsBehavior);
-            Assert.AreEqual(configurationObject.RollInterval.ToString(), ((RollingFlatFileTraceListenerSetting)wmiSettings[0]).RollInterval);
-            Assert.AreEqual(configurationObject.RollSizeKB, ((RollingFlatFileTraceListenerSetting)wmiSettings[0]).RollSizeKB);
-            Assert.AreEqual(configurationObject.TimeStampPattern, ((RollingFlatFileTraceListenerSetting)wmiSettings[0]).TimeStampPattern);
-            Assert.AreEqual(configurationObject.TraceOutputOptions.ToString(), ((RollingFlatFileTraceListenerSetting)wmiSettings[0]).TraceOutputOptions);
-			Assert.AreEqual(configurationObject.Filter.ToString(), ((RollingFlatFileTraceListenerSetting)wmiSettings[0]).Filter);
-			Assert.AreEqual(configurationObject.Header, ((RollingFlatFileTraceListenerSetting)wmiSettings[0]).Header);
-            Assert.AreEqual(configurationObject.Footer, ((RollingFlatFileTraceListenerSetting)wmiSettings[0]).Footer);
         }
 
         [TestMethod]
@@ -401,11 +302,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             Assert.AreEqual(RollingFlatFileTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName,
                             partsEnumerator.Current.ValueName);
 
-			Assert.IsTrue(partsEnumerator.MoveNext());
-			Assert.AreSame(typeof(AdmDropDownListPart), partsEnumerator.Current.GetType());
-			Assert.IsNull(partsEnumerator.Current.KeyName);
-			Assert.AreEqual(RollingFlatFileTraceListenerDataManageabilityProvider.FilterPropertyName,
-							partsEnumerator.Current.ValueName);
+            Assert.IsTrue(partsEnumerator.MoveNext());
+            Assert.AreSame(typeof(AdmDropDownListPart), partsEnumerator.Current.GetType());
+            Assert.IsNull(partsEnumerator.Current.KeyName);
+            Assert.AreEqual(RollingFlatFileTraceListenerDataManageabilityProvider.FilterPropertyName,
+                            partsEnumerator.Current.ValueName);
 
             Assert.IsTrue(partsEnumerator.MoveNext());
             Assert.AreSame(typeof(AdmDropDownListPart), partsEnumerator.Current.GetType());

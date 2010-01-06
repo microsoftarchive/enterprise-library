@@ -54,7 +54,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
 
         public override bool CanExecute(object parameter)
         {
-            return true;
+            return elementViewModel.GetType() !=  typeof(ElementViewModel);
         }
 
         public override void Execute(object parameter)
@@ -66,6 +66,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         public override CommandPlacement Placement
         {
             get { return CommandPlacement.ContextDelete; }
+        }
+
+        public override string KeyGesture
+        {
+            get
+            {
+                return Key.Delete.ToString();
+            }
         }
     }
 }

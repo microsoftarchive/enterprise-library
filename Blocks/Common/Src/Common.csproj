@@ -98,9 +98,6 @@
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Management" />
-    <Reference Include="System.Management.Instrumentation">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
     <Reference Include="System.Security" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -255,7 +252,6 @@
     <Compile Include="Configuration\Manageability\ConfigurationSectionManageabilityProvider.cs" />
     <Compile Include="Configuration\Manageability\ConfigurationSectionManageabilityProviderAttribute.cs" />
     <Compile Include="Configuration\Manageability\ConfigurationSectionManageabilityProviderBase.cs" />
-    <Compile Include="Configuration\Manageability\ConfigurationSettingChangedEventArgs.cs" />
     <Compile Include="Configuration\Manageability\Configuration\ConfigurationElementManageabilityProviderData.cs" />
     <Compile Include="Configuration\Manageability\Configuration\ConfigurationSectionManageabilityProviderData.cs" />
     <Compile Include="Configuration\Manageability\Configuration\ManageableConfigurationSourceElement.cs" />
@@ -272,10 +268,8 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Configuration\Manageability\InstrumentationConfigurationSectionManageabilityProvider.cs" />
-    <Compile Include="Configuration\Manageability\InstrumentationWmiPublisher.cs" />
     <Compile Include="Configuration\Manageability\IRegistryAccessor.cs" />
     <Compile Include="Configuration\Manageability\IRegistryKey.cs" />
-    <Compile Include="Configuration\Manageability\IWmiPublisher.cs" />
     <Compile Include="Configuration\Manageability\KeyValuePairEncoder.cs" />
     <Compile Include="Configuration\Manageability\KeyValuePairParser.cs" />
     <Compile Include="Configuration\Manageability\ManageabilityExtensionsLogger.cs" />
@@ -296,14 +290,6 @@
     <Compile Include="Configuration\Manageability\RegistryKeyBase.cs" />
     <Compile Include="Configuration\Manageability\RegistryKeyWrapper.cs" />
     <Compile Include="Configuration\Manageability\Configuration\ManageabilityProviderBuilder.cs" />
-    <Compile Include="Configuration\Manageability\Wmi\ConfigurationSectionSetting.cs" />
-    <Compile Include="Configuration\Manageability\Wmi\ConfigurationSetting.cs" />
-    <Compile Include="Configuration\Manageability\Wmi\CustomDataWmiMapper.cs" />
-    <Compile Include="Configuration\Manageability\Wmi\InstrumentationConfigurationSectionWmiMapper.cs" />
-    <Compile Include="Configuration\Manageability\Wmi\InstrumentationSetting.cs" />
-    <Compile Include="Configuration\Manageability\Wmi\ManagementEntityTypesRegistrar.cs" />
-    <Compile Include="Configuration\Manageability\Wmi\NamedConfigurationSetting.cs" />
-    <Compile Include="Configuration\Manageability\Wmi\PublishedInstancesManager.cs" />
     <Compile Include="Configuration\NamedConfigurationElement.cs" />
     <Compile Include="Configuration\NamedElementCollection.cs" />
     <Compile Include="Configuration\NameTypeConfigurationElement.cs" />

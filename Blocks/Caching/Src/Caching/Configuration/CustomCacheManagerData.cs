@@ -25,7 +25,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
 	/// </summary>
     [ResourceDescription(typeof(DesignResources), "CustomCacheManagerDataDescription")]
     [ResourceDisplayName(typeof(DesignResources), "CustomCacheManagerDataDisplayName")]
-    [TypePickingCommand(TitleResourceName = "CustomCacheManagerDataAddCommand", TitleResourceType=typeof(DesignResources))]
+    [TypePickingCommand(TitleResourceName = "CustomCacheManagerDataDisplayName", TitleResourceType = typeof(DesignResources), Replace = CommandReplacement.DefaultAddCommandReplacement)]
 	public class CustomCacheManagerData
 		: CacheManagerDataBase, IHelperAssistedCustomConfigurationData<CustomCacheManagerData>
 	{

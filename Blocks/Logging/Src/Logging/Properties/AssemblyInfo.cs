@@ -17,18 +17,17 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 
 
-[assembly : SecurityPermission(SecurityAction.RequestMinimum)]
-[assembly : AssemblyTitle("Enterprise Library Logging Application Block")]
-[assembly : AssemblyDescription("Enterprise Library Logging Application Block")]
-[assembly : AssemblyVersion("4.1.0.0")]
-[assembly : Instrumented(@"root\EnterpriseLibrary")]
-[assembly : WmiConfiguration(@"root\EnterpriseLibrary", HostingModel = ManagementHostingModel.Decoupled, IdentifyLevel = false)]
-[assembly : AllowPartiallyTrustedCallers]
-[assembly : SecurityTransparent]
+[assembly: SecurityPermission(SecurityAction.RequestMinimum)]
+[assembly: AssemblyTitle("Enterprise Library Logging Application Block")]
+[assembly: AssemblyDescription("Enterprise Library Logging Application Block")]
+[assembly: AssemblyVersion("4.1.0.0")]
+[assembly: Instrumented(@"root\EnterpriseLibrary")]
+[assembly: AllowPartiallyTrustedCallers]
+[assembly: SecurityTransparent]
 
-[assembly : HandlesSection(LoggingSettings.SectionName)]
-[assembly:  AddApplicationBlockCommand(
-                LoggingSettings.SectionName, 
+[assembly: HandlesSection(LoggingSettings.SectionName)]
+[assembly: AddApplicationBlockCommand(
+                LoggingSettings.SectionName,
                 typeof(LoggingSettings),
                 TitleResourceName = "AddLoggingSettings",
                 TitleResourceType = typeof(DesignResources),

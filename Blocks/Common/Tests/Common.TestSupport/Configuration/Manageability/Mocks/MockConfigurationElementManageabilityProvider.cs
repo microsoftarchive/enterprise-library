@@ -31,7 +31,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration
 
         public bool called = false;
         public List<ConfigurationElement> configurationObjects;
-        public bool generateWmiObjects;
         public IRegistryKey machineKey;
         public bool readGroupPolicies;
         public IRegistryKey userKey;
@@ -70,19 +69,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration
                 contentBuilder.EndPolicy();
         }
 
-        public override bool OverrideWithGroupPoliciesAndGenerateWmiObjects(ConfigurationElement configurationObject,
+        public override bool OverrideWithGroupPolicies(ConfigurationElement configurationObject,
                                                                             bool readGroupPolicies,
                                                                             IRegistryKey machineKey,
-                                                                            IRegistryKey userKey,
-                                                                            bool generateWmiObjects,
-                                                                            ICollection<ConfigurationSetting> wmiSettings)
+                                                                            IRegistryKey userKey)
         {
             called = true;
             configurationObjects.Add(configurationObject);
             this.readGroupPolicies = readGroupPolicies;
             this.machineKey = machineKey;
             this.userKey = userKey;
-            this.generateWmiObjects = generateWmiObjects;
 
             if (readGroupPolicies)
             {
@@ -93,11 +89,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration
                 {
                     return false;
                 }
-            }
-
-            if (generateWmiObjects)
-            {
-                wmiSettings.Add(new TestConfigurationSettings(configurationObject.ToString()));
             }
 
             return true;

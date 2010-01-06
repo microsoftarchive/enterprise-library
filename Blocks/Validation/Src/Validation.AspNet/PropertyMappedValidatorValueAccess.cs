@@ -81,9 +81,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.AspNet
                 }
             }
 
-            valueAccessFailureMessage = string.Format(CultureInfo.CurrentUICulture,
-                                                      Resources.ErrorNonMappedProperty,
-                                                      propertyName);
+            valueAccessFailureMessage =
+                string.Format(CultureInfo.CurrentCulture, Resources.ErrorNonMappedProperty, propertyName);
             return false;
         }
     }

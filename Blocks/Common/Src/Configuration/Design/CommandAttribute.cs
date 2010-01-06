@@ -130,6 +130,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
         {
             get { return Type.GetType(CommandModelTypeName, true); }
         }
+
+        /// <summary>
+        /// Defines the keyboard gesture for this command.
+        /// </summary>
+        /// <example>
+        ///     command.KeyGesture = "Ctrl+1";
+        /// </example>
+        public string KeyGesture { get; set; }
     }
 
     /// <summary/>

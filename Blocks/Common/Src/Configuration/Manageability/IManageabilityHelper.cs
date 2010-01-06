@@ -9,7 +9,6 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability
 {
@@ -18,11 +17,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
     /// </summary>
     public interface IManageabilityHelper
     {
-        /// <summary>
-        /// The event that is notified when a configuration setting is changed.
-        /// </summary>
-        event EventHandler<ConfigurationSettingChangedEventArgs> ConfigurationSettingChanged;
-
         /// <summary>
         /// Updates configuration management from the given configuration.
         /// </summary>

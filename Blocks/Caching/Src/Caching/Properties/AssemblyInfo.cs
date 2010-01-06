@@ -23,7 +23,6 @@ using Microsoft.Practices.EnterpriseLibrary.Caching.Configuration;
 [assembly : AssemblyDescription("Enterprise Library Caching Application Block")]
 [assembly : AssemblyVersion("4.1.0.0")]
 [assembly : Instrumented(@"root\EnterpriseLibrary")]
-[assembly : WmiConfiguration(@"root\EnterpriseLibrary", HostingModel = ManagementHostingModel.Decoupled, IdentifyLevel = false)]
 [assembly : AllowPartiallyTrustedCallers]
 [assembly : SecurityTransparent]
 

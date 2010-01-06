@@ -15,6 +15,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using System.ComponentModel;
+using System.IO;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services
 {
@@ -29,18 +30,26 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.S
 
         public IEnumerable<Type> FindAvailableConfigurationElementTypes(Type baseType)
         {
+            List<Type> foundTypes = new List<Type>();
             foreach (var assembly in assemblyLocator.Assemblies)
             {
-                var typeList =
-                    assembly.GetExportedTypes().Where(
-                        t => TypeSpecifiesConfigurationElement(t, baseType))
-                        .Select(t => GetDerivedElementType(t));
-
-                foreach (var type in typeList)
+                try
                 {
-                    yield return type;
+                    var typeList =
+                        assembly.GetExportedTypes().Where(
+                            t => TypeSpecifiesConfigurationElement(t, baseType))
+                            .Select(t => GetDerivedElementType(t));
+
+                    foreach (var type in typeList)
+                    {
+                        foundTypes.Add(type);
+                    }
+                }
+                catch(FileNotFoundException)
+                {
                 }
             }
+            return foundTypes;
         }
 
         private static bool TypeSpecifiesConfigurationElement(Type handlerType, Type baseConfigurationElementType)

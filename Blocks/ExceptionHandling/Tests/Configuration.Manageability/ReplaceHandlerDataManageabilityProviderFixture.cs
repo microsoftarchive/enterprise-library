@@ -26,7 +26,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
         ReplaceHandlerDataManageabilityProvider provider;
         MockRegistryKey machineKey;
         MockRegistryKey userKey;
-        IList<ConfigurationSetting> wmiSettings;
         ReplaceHandlerData configurationObject;
 
         [TestInitialize]
@@ -35,15 +34,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
             provider = new ReplaceHandlerDataManageabilityProvider();
             machineKey = new MockRegistryKey(true);
             userKey = new MockRegistryKey(true);
-            wmiSettings = new List<ConfigurationSetting>();
             configurationObject = new ReplaceHandlerData();
-        }
-
-        [TestCleanup]
-        public void TearDown()
-        {
-            // preventive unregister to work around WMI.NET 2.0 issues with appdomain unloading
-            ManagementEntityTypesRegistrar.UnregisterAll();
         }
 
         [TestMethod]
@@ -71,7 +62,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
         [ExpectedException(typeof(ArgumentException))]
         public void ProviderThrowsWithConfigurationObjectOfWrongType()
         {
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(new TestsConfigurationSection(), true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(new TestsConfigurationSection(), true, machineKey, userKey);
         }
 
         [TestMethod]
@@ -80,7 +71,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
             configurationObject.ExceptionMessage = "message";
             configurationObject.ReplaceExceptionType = typeof(ArgumentException);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, null, null, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, null, null);
 
             Assert.AreEqual("message", configurationObject.ExceptionMessage);
             Assert.AreSame(typeof(ArgumentException), configurationObject.ReplaceExceptionType);
@@ -95,7 +86,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
             machineKey.AddStringValue(ReplaceHandlerDataManageabilityProvider.ExceptionMessagePropertyName, "overriden message");
             machineKey.AddStringValue(ReplaceHandlerDataManageabilityProvider.ReplaceExceptionTypePropertyName, typeof(NullReferenceException).AssemblyQualifiedName);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, machineKey, null, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, machineKey, null);
 
             Assert.AreEqual("overriden message", configurationObject.ExceptionMessage);
             Assert.AreSame(typeof(NullReferenceException), configurationObject.ReplaceExceptionType);
@@ -110,7 +101,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
             userKey.AddStringValue(ReplaceHandlerDataManageabilityProvider.ExceptionMessagePropertyName, "overriden message");
             userKey.AddStringValue(ReplaceHandlerDataManageabilityProvider.ReplaceExceptionTypePropertyName, typeof(NullReferenceException).AssemblyQualifiedName);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, null, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, null, userKey);
 
             Assert.AreEqual("overriden message", configurationObject.ExceptionMessage);
             Assert.AreSame(typeof(NullReferenceException), configurationObject.ReplaceExceptionType);
@@ -125,7 +116,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
             machineKey.AddStringValue(ReplaceHandlerDataManageabilityProvider.ExceptionMessagePropertyName, "overriden message");
             machineKey.AddStringValue(ReplaceHandlerDataManageabilityProvider.ReplaceExceptionTypePropertyName, typeof(NullReferenceException).AssemblyQualifiedName);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, false, machineKey, null, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, false, machineKey, null);
 
             Assert.AreEqual("message", configurationObject.ExceptionMessage);
             Assert.AreSame(typeof(ArgumentException), configurationObject.ReplaceExceptionType);
@@ -139,7 +130,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
             machineKey.AddStringValue(ReplaceHandlerDataManageabilityProvider.ExceptionMessagePropertyName, "msg");
             machineKey.AddStringValue(ReplaceHandlerDataManageabilityProvider.ReplaceExceptionTypePropertyName, typeof(NullReferenceException).AssemblyQualifiedName);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, machineKey, null, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, machineKey, null);
 
             Assert.AreSame(typeof(NullReferenceException), configurationObject.ReplaceExceptionType);
         }
@@ -152,51 +143,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
             machineKey.AddStringValue(ReplaceHandlerDataManageabilityProvider.ExceptionMessagePropertyName, "msg");
             machineKey.AddStringValue(ReplaceHandlerDataManageabilityProvider.ReplaceExceptionTypePropertyName, "An invalid type name");
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, machineKey, null, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, machineKey, null);
 
             Assert.AreSame(typeof(ArgumentException), configurationObject.ReplaceExceptionType);
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreNotGeneratedIfWmiIsDisabled()
-        {
-            configurationObject.ExceptionMessage = "message";
-            configurationObject.ReplaceExceptionType = typeof(ArgumentException);
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, false, machineKey, userKey, false, wmiSettings);
-
-            Assert.AreEqual(0, wmiSettings.Count);
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreGeneratedIfWmiIsEnabled()
-        {
-            configurationObject.ExceptionMessage = "message";
-            configurationObject.ReplaceExceptionType = typeof(ArgumentException);
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, false, machineKey, userKey, true, wmiSettings);
-
-            Assert.AreEqual(1, wmiSettings.Count);
-            Assert.AreSame(typeof(ReplaceHandlerSetting), wmiSettings[0].GetType());
-            Assert.AreEqual(configurationObject.ExceptionMessage, ((ReplaceHandlerSetting)wmiSettings[0]).ExceptionMessage);
-            Assert.AreEqual(configurationObject.ReplaceExceptionType.AssemblyQualifiedName, ((ReplaceHandlerSetting)wmiSettings[0]).ReplaceExceptionType);
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreGeneratedWithPolicyOverridesIfWmiIsEnabled()
-        {
-            configurationObject.ExceptionMessage = "message";
-            configurationObject.ReplaceExceptionType = typeof(ArgumentException);
-
-            machineKey.AddStringValue(ReplaceHandlerDataManageabilityProvider.ExceptionMessagePropertyName, "overriden message");
-            machineKey.AddStringValue(ReplaceHandlerDataManageabilityProvider.ReplaceExceptionTypePropertyName, typeof(NullReferenceException).AssemblyQualifiedName);
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, machineKey, userKey, true, wmiSettings);
-
-            Assert.AreEqual(1, wmiSettings.Count);
-            Assert.AreSame(typeof(ReplaceHandlerSetting), wmiSettings[0].GetType());
-            Assert.AreEqual(configurationObject.ExceptionMessage, ((ReplaceHandlerSetting)wmiSettings[0]).ExceptionMessage);
-            Assert.AreEqual(configurationObject.ReplaceExceptionType.AssemblyQualifiedName, ((ReplaceHandlerSetting)wmiSettings[0]).ReplaceExceptionType);
         }
 
         [TestMethod]

@@ -69,6 +69,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         {
             /// <summary/>
             public const string LogPriorityMinMaxValidatorType = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.Logging.LogPriorityMinMaxValidator, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
+
+            /// <summary/>
+            public const string LogFormatterValidator = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.Logging.LogFormatterValidator, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
         }
     }
 }

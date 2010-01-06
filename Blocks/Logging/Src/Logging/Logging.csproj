@@ -58,9 +58,6 @@
     <Reference Include="System.Data" />
     <Reference Include="System.EnterpriseServices" />
     <Reference Include="System.Management" />
-    <Reference Include="System.Management.Instrumentation">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
     <Reference Include="System.Messaging" />
     <Reference Include="System.Runtime.Serialization.Formatters.Soap" />
     <Reference Include="System.Xml" />
@@ -80,31 +77,13 @@
     <Compile Include="Configuration\CustomTraceListenerData.cs" />
     <Compile Include="Configuration\CustomTraceListenerDataHelper.cs" />
     <Compile Include="Configuration\Manageability\Filters\CategoryFilterDataManageabilityProvider.cs" />
-    <Compile Include="Configuration\Manageability\Filters\CategoryFilterDataWmiMapper.cs" />
-    <Compile Include="Configuration\Manageability\Filters\CategoryFilterSetting.cs" />
-    <Compile Include="Configuration\Manageability\Filters\CustomFilterSetting.cs" />
     <Compile Include="Configuration\Manageability\Filters\CustomLogFilterDataManageabilityProvider.cs" />
-    <Compile Include="Configuration\Manageability\Filters\CustomLogFilterDataWmiMapper.cs" />
     <Compile Include="Configuration\Manageability\Filters\LogEnabledFilterDataManageabilityProvider.cs" />
-    <Compile Include="Configuration\Manageability\Filters\LogEnabledFilterDataWmiMapper.cs" />
-    <Compile Include="Configuration\Manageability\Filters\LogEnabledFilterSetting.cs" />
-    <Compile Include="Configuration\Manageability\Filters\LogFilterSetting.cs" />
     <Compile Include="Configuration\Manageability\Filters\PriorityFilterDataManageabilityProvider.cs" />
-    <Compile Include="Configuration\Manageability\Filters\PriorityFilterDataWmiMapper.cs" />
-    <Compile Include="Configuration\Manageability\Filters\PriorityFilterSetting.cs" />
-    <Compile Include="Configuration\Manageability\Formatters\BinaryFormatterSetting.cs" />
     <Compile Include="Configuration\Manageability\Formatters\BinaryLogFormatterDataManageabilityProvider.cs" />
-    <Compile Include="Configuration\Manageability\Formatters\BinaryLogFormatterDataWmiMapper.cs" />
     <Compile Include="Configuration\Manageability\Formatters\CustomFormatterDataManageabilityProvider.cs" />
-    <Compile Include="Configuration\Manageability\Formatters\CustomFormatterDataWmiMapper.cs" />
-    <Compile Include="Configuration\Manageability\Formatters\CustomFormatterSetting.cs" />
-    <Compile Include="Configuration\Manageability\Formatters\FormatterSetting.cs" />
     <Compile Include="Configuration\Manageability\Formatters\TextFormatterDataManageabilityProvider.cs" />
-    <Compile Include="Configuration\Manageability\Formatters\TextFormatterDataWmiMapper.cs" />
-    <Compile Include="Configuration\Manageability\Formatters\TextFormatterSetting.cs" />
-    <Compile Include="Configuration\Manageability\LoggingBlockSetting.cs" />
     <Compile Include="Configuration\Manageability\LoggingSettingsManageabilityProvider.cs" />
-    <Compile Include="Configuration\Manageability\LoggingSettingsWmiMapper.cs" />
     <Compile Include="Configuration\Manageability\Properties\AssemblyInfo.cs" />
     <Compile Include="Configuration\Manageability\Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -112,35 +91,16 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Configuration\Manageability\TraceListeners\BasicCustomTraceListenerDataManageabilityProvider.cs" />
-    <Compile Include="Configuration\Manageability\TraceListeners\CustomTraceListenerDataWmiMapper.cs" />
-    <Compile Include="Configuration\Manageability\TraceListeners\EmailTraceListenerDataWmiMapper.cs" />
-    <Compile Include="Configuration\Manageability\TraceListeners\FlatFileTraceListenerDataWmiMapper.cs" />
-    <Compile Include="Configuration\Manageability\TraceListeners\FormattedEventLogTraceListenerDataWmiMapper.cs" />
-    <Compile Include="Configuration\Manageability\TraceListeners\MsmqTraceListenerDataWmiMapper.cs" />
-    <Compile Include="Configuration\Manageability\TraceListeners\RollingFlatFileTraceListenerDataWmiMapper.cs" />
-    <Compile Include="Configuration\Manageability\TraceListeners\SystemDiagnosticsTraceListenerDataWmiMapper.cs" />
-    <Compile Include="Configuration\Manageability\TraceListeners\WmiTraceListenerDataWmiMapper.cs" />
     <Compile Include="Configuration\Manageability\TraceListeners\XmlTraceListenerDataManageabilityProvider.cs" />
-    <Compile Include="Configuration\Manageability\TraceListeners\XmlTraceListenerDataWmiMapper.cs" />
-    <Compile Include="Configuration\Manageability\TraceListeners\XmlTraceListenerSetting.cs" />
     <Compile Include="Configuration\Manageability\TraceListeners\RollingFlatFileTraceListenerDataManageabilityProvider.cs" />
-    <Compile Include="Configuration\Manageability\TraceListeners\RollingFlatFileTraceListenerSetting.cs" />
     <Compile Include="Configuration\Manageability\TraceListeners\CustomTraceListenerDataManageabilityProvider.cs" />
-    <Compile Include="Configuration\Manageability\TraceListeners\CustomTraceListenerSetting.cs" />
     <Compile Include="Configuration\Manageability\TraceListeners\EmailTraceListenerDataManageabilityProvider.cs" />
-    <Compile Include="Configuration\Manageability\TraceListeners\EmailTraceListenerSetting.cs" />
     <Compile Include="Configuration\Manageability\TraceListeners\FlatFileTraceListenerDataManageabilityProvider.cs" />
-    <Compile Include="Configuration\Manageability\TraceListeners\FlatFileTraceListenerSetting.cs" />
     <Compile Include="Configuration\Manageability\TraceListeners\FormattedEventLogTraceListenerDataManageabilityProvider.cs" />
-    <Compile Include="Configuration\Manageability\TraceListeners\FormattedEventLogTraceListenerSetting.cs" />
     <Compile Include="Configuration\Manageability\TraceListeners\MsmqTraceListenerDataManageabilityProvider.cs" />
-    <Compile Include="Configuration\Manageability\TraceListeners\MsmqTraceListenerSetting.cs" />
     <Compile Include="Configuration\Manageability\TraceListeners\SystemDiagnosticsTraceListenerDataManageabilityProvider.cs" />
     <Compile Include="Configuration\Manageability\TraceListeners\TraceListenerDataManageabilityProvider.cs" />
-    <Compile Include="Configuration\Manageability\TraceListeners\TraceListenerSetting.cs" />
     <Compile Include="Configuration\Manageability\TraceListeners\WmiTraceListenerDataManageabilityProvider.cs" />
-    <Compile Include="Configuration\Manageability\TraceListeners\WmiTraceListenerSetting.cs" />
-    <Compile Include="Configuration\Manageability\TraceSourceSetting.cs" />
     <Compile Include="Configuration\RollingTraceListenerData.cs" />
     <Compile Include="Configuration\SystemDiagnosticsTraceListenerData.cs" />
     <Compile Include="Configuration\BasicCustomTraceListenerDataHelper.cs" />

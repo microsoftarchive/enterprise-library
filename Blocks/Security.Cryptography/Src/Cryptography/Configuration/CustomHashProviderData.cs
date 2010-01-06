@@ -25,7 +25,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
     /// </summary>
     [ResourceDescription(typeof(DesignResources), "CustomHashProviderDataDescription")]
     [ResourceDisplayName(typeof(DesignResources), "CustomHashProviderDataDisplayName")]
-    [TypePickingCommand(TitleResourceName = "CustomHashProviderDataAddCommand", TitleResourceType = typeof(DesignResources))]
+    [TypePickingCommand(TitleResourceName = "CustomHashProviderDataDisplayName", TitleResourceType = typeof(DesignResources), Replace=CommandReplacement.DefaultAddCommandReplacement)]
     public class CustomHashProviderData
         : HashProviderData, IHelperAssistedCustomConfigurationData<CustomHashProviderData>
     {

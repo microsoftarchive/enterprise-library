@@ -80,9 +80,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.C
             return !configurationModel.HasSection(sectionName);
         }
 
+        protected SectionViewModel AddedSection
+        {
+            get;
+            set;
+        }
+
         public override void Execute(object parameter)
         {
-            configurationModel.AddSection(sectionName, CreateConfigurationSection());
+            AddedSection = configurationModel.AddSection(sectionName, CreateConfigurationSection());
+            AddedSection.IsExpanded = true;
+            AddedSection.IsSelected = true;
+
             applicationModel.SetDirty();
             OnCanExecuteChanged();
         }

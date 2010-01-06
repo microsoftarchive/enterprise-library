@@ -10,19 +10,16 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Drawing.Design;
-using System.Threading;
-using System.Reflection;
-using System.Windows.Forms.Design;
-using System.Diagnostics;
-using System.Windows.Forms;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Drawing.Design;
+using System.Reflection;
 using System.Security;
 using System.Security.Permissions;
+using System.Threading;
+using System.Windows.Forms;
+using System.Windows.Forms.Design;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors
 {

@@ -32,11 +32,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         /// </summary>
         /// <param name="commandAttribute"></param>
         protected CommandModel(CommandAttribute commandAttribute)
+            : this()
         {
             Title = commandAttribute.Title;
             HelpText = string.Empty;
             Placement = commandAttribute.CommandPlacement;
             ChildCommands = Enumerable.Empty<CommandModel>();
+            KeyGesture = commandAttribute.KeyGesture;
         }
 
         /// <summary>
@@ -44,6 +46,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         /// </summary>
         protected CommandModel()
         {
+            Browsable = true;
         }
 
         ///<summary>
@@ -54,6 +57,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             get;
             private set;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool Browsable
+        { get; set; }
 
         /// <summary>
         /// Provides the title of the <see cref="CommandModel"/> command.  Typically this will appear as the title to a menu in the configuration tool.
@@ -91,6 +100,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             get;
             private set;
         }
+
+        /// <summary>
+        /// Defines the key gesture used for this command.
+        /// </summary>
+        public virtual string KeyGesture { get; private set; }
 
         /// <summary>
         /// Defines the method that determines whether the command can execute in its current state.

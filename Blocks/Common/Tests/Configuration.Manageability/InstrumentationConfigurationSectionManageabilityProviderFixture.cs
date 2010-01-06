@@ -12,7 +12,6 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability.Tests.Mocks;
 using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration.Manageability.Mocks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -25,7 +24,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
         InstrumentationConfigurationSectionManageabilityProvider provider;
         MockRegistryKey machineKey;
         MockRegistryKey userKey;
-        IList<ConfigurationSetting> wmiSettings;
         InstrumentationConfigurationSection section;
 
         [TestInitialize]
@@ -34,22 +32,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
             provider = new InstrumentationConfigurationSectionManageabilityProvider(new Dictionary<Type, ConfigurationElementManageabilityProvider>(0));
             machineKey = new MockRegistryKey(true);
             userKey = new MockRegistryKey(true);
-            wmiSettings = new List<ConfigurationSetting>();
             section = new InstrumentationConfigurationSection();
-        }
-
-        [TestCleanup]
-        public void TearDown()
-        {
-            // preventive unregister to work around WMI.NET 2.0 issues with appdomain unloading
-            ManagementEntityTypesRegistrar.UnregisterAll();
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
         public void ProviderThrowsWithConfigurationObjectOfWrongType()
         {
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(new TestsConfigurationSection(), true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(new TestsConfigurationSection(), true, machineKey, userKey);
         }
 
         [TestMethod]
@@ -59,7 +49,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
             section.PerformanceCountersEnabled = true;
             section.WmiEnabled = true;
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, null, null, false, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, null, null);
 
             Assert.AreEqual(true, section.EventLoggingEnabled);
             Assert.AreEqual(true, section.PerformanceCountersEnabled);
@@ -73,7 +63,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
             section.PerformanceCountersEnabled = true;
             section.WmiEnabled = true;
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, null, null, false, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, null, null);
 
             Assert.AreEqual(true, section.EventLoggingEnabled);
             Assert.AreEqual(true, section.PerformanceCountersEnabled);
@@ -92,7 +82,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
             machineKey.AddBooleanValue(InstrumentationConfigurationSectionManageabilityProvider.PerformanceCountersEnabledPropertyName, true);
             machineKey.AddBooleanValue(InstrumentationConfigurationSectionManageabilityProvider.WmiEnabledPropertyName, true);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, null, false, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, null);
 
             Assert.AreEqual(false, section.EventLoggingEnabled);
             Assert.AreEqual(true, section.PerformanceCountersEnabled);
@@ -111,7 +101,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
             machineKey.AddBooleanValue(InstrumentationConfigurationSectionManageabilityProvider.PerformanceCountersEnabledPropertyName, false);
             machineKey.AddBooleanValue(InstrumentationConfigurationSectionManageabilityProvider.WmiEnabledPropertyName, true);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, null, false, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, null);
 
             Assert.AreEqual(true, section.EventLoggingEnabled);
             Assert.AreEqual(false, section.PerformanceCountersEnabled);
@@ -130,7 +120,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
             machineKey.AddBooleanValue(InstrumentationConfigurationSectionManageabilityProvider.PerformanceCountersEnabledPropertyName, true);
             machineKey.AddBooleanValue(InstrumentationConfigurationSectionManageabilityProvider.WmiEnabledPropertyName, false);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, null, false, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, null);
 
             Assert.AreEqual(true, section.EventLoggingEnabled);
             Assert.AreEqual(true, section.PerformanceCountersEnabled);
@@ -153,7 +143,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
             userKey.AddBooleanValue(InstrumentationConfigurationSectionManageabilityProvider.PerformanceCountersEnabledPropertyName, false);
             userKey.AddBooleanValue(InstrumentationConfigurationSectionManageabilityProvider.WmiEnabledPropertyName, true);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, false, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual(false, section.EventLoggingEnabled);
             Assert.AreEqual(true, section.PerformanceCountersEnabled);
@@ -176,38 +166,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
             userKey.AddBooleanValue(InstrumentationConfigurationSectionManageabilityProvider.PerformanceCountersEnabledPropertyName, false);
             userKey.AddBooleanValue(InstrumentationConfigurationSectionManageabilityProvider.WmiEnabledPropertyName, true);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, false, machineKey, userKey, false, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, false, machineKey, userKey);
 
             Assert.AreEqual(true, section.EventLoggingEnabled);
             Assert.AreEqual(true, section.PerformanceCountersEnabled);
             Assert.AreEqual(true, section.WmiEnabled);
-        }
-
-        [TestMethod]
-        public void SettingsAreNotCreatedWhenWmiIsDisabled()
-        {
-            section.EventLoggingEnabled = true;
-            section.PerformanceCountersEnabled = true;
-            section.WmiEnabled = true;
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, false, machineKey, userKey, false, wmiSettings);
-
-            Assert.AreEqual(0, wmiSettings.Count);
-        }
-
-        [TestMethod]
-        public void SettingsAreCreatedWhenWmiIsEnabled()
-        {
-            section.EventLoggingEnabled = false;
-            section.PerformanceCountersEnabled = true;
-            section.WmiEnabled = false;
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, false, machineKey, userKey, true, wmiSettings);
-
-            Assert.AreEqual(1, wmiSettings.Count);
-            Assert.AreEqual(false, section.EventLoggingEnabled);
-            Assert.AreEqual(true, section.PerformanceCountersEnabled);
-            Assert.AreEqual(false, section.WmiEnabled);
         }
 
         [TestMethod]

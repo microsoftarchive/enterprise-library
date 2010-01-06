@@ -26,6 +26,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.C
     {
         readonly MenuCommandService commandService;
         readonly AddSateliteProviderCommandAttribute commandAttribute;
+        readonly ElementLookup lookup;
 
         /// <summary>
         /// Intializes a new instance of the <see cref="AddSateliteProviderCommand"/> class.
@@ -37,11 +38,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.C
         /// <param name="collection"></param>
         /// <param name="commandService"></param>
         /// <param name="configurationElementType"></param>
-        public AddSateliteProviderCommand(AddSateliteProviderCommandAttribute commandAttribute, MenuCommandService commandService, ConfigurationElementType configurationElementType, ElementCollectionViewModel collection)
+        public AddSateliteProviderCommand(AddSateliteProviderCommandAttribute commandAttribute, MenuCommandService commandService, ConfigurationElementType configurationElementType, ElementCollectionViewModel collection, ElementLookup lookup)
             : base(commandAttribute, configurationElementType, collection)
         {
             this.commandService = commandService;
             this.commandAttribute = commandAttribute;
+            this.lookup = lookup;
         }
 
         public override void Execute(object parameter)
@@ -50,6 +52,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.C
 
             commandService.ExecuteAddBlockForSection(commandAttribute.SectionName);
 
+            if (commandAttribute.DefaultProviderConfigurationType != null)
+            {
+                var declaringElement = lookup.FindInstancesOfConfigurationType(commandAttribute.DefaultProviderConfigurationType).FirstOrDefault();
+                if (declaringElement != null)
+                {
+                    string defaultProvider = declaringElement.Property(commandAttribute.DefaultProviderConfigurationPropertyName).BindableProperty.BindableValue;
+                    AddedElementViewModel.Property(commandAttribute.SateliteProviderReferencePropertyName).BindableProperty.BindableValue = defaultProvider;
+                }
+            }
         }
     }
 }

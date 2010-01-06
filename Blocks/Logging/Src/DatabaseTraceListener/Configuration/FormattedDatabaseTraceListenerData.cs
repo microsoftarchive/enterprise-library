@@ -18,6 +18,7 @@ using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Data.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Configuration
 {
@@ -26,7 +27,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Configuration
     /// </summary>
     [ResourceDescription(typeof(DesignResources), "FormattedDatabaseTraceListenerDataDescription")]
     [ResourceDisplayName(typeof(DesignResources), "FormattedDatabaseTraceListenerDataDisplayName")]
-    [AddSateliteProviderCommand("connectionStrings")]
+    [AddSateliteProviderCommand("connectionStrings", typeof(DatabaseSettings), "DefaultDatabase", "DatabaseInstanceName")]
     public class FormattedDatabaseTraceListenerData : TraceListenerData
     {
         private const string addCategoryStoredProcNameProperty = "addCategoryStoredProcName";

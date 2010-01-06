@@ -105,6 +105,16 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_logging_configuration
             Assert.IsTrue(loggingViewModel.DescendentElements().Where(x => x.Name == "All Events").Any());
         }
 
+
+        [TestMethod]
+        public void then_view_model_delete_command_on_all_events_is_disabled()
+        {
+            var allEventsViewModel = loggingViewModel.DescendentElements().Where(x => x.Name == "All Events").First();
+            var allEventsDeleteCommand = allEventsViewModel.Commands.OfType<DefaultDeleteCommandModel>().First();
+
+            Assert.IsFalse(allEventsDeleteCommand.CanExecute(null));
+        }
+
         [TestMethod]
         public void then_view_model_has_category_with_name_ErrorsAndWarnings()
         {

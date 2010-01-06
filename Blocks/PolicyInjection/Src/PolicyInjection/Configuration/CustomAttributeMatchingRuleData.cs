@@ -39,6 +39,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// </summary>
         public CustomAttributeMatchingRuleData()
         {
+            base.Type = typeof(FakeRules.CustomAttributeMatchingRule);
         }
 
         /// <summary>

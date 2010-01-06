@@ -117,8 +117,36 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AdmGenerationDialogErrorTitle" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="AdmTemplateDialogFilter" xml:space="preserve">
+    <value>ADM Files(*.adm)|*.adm</value>
+  </data>
+  <data name="DuplicateExceptionTypeMessage" xml:space="preserve">
+    <value>The selected type '{0}' already exists in the collection.</value>
+  </data>
+  <data name="DuplicationExceptionTypeTitle" xml:space="preserve">
+    <value>Add exception type</value>
+  </data>
   <data name="EnvironmentDeltaFileFilter" xml:space="preserve">
     <value>Delta Configuration files (*.dconfig)|*.dconfig|All Files (*.*)|*.*</value>
+  </data>
+  <data name="ErrorGeneratingAdmFile" xml:space="preserve">
+    <value>An error occurred creating the ADM template.
+{0}</value>
+  </data>
+  <data name="ErrorGenericTypeParameterNotSet" xml:space="preserve">
+    <value>Type argument not set for parameter {0}.</value>
+  </data>
+  <data name="ErrorNoSelectedType" xml:space="preserve">
+    <value>No type has been selected.</value>
+  </data>
+  <data name="ErrorResolvingType" xml:space="preserve">
+    <value>There was an error resolving the type: {0}</value>
+  </data>
+  <data name="ErrorResolvingTypeCaption" xml:space="preserve">
+    <value>Error resolving type</value>
   </data>
   <data name="ExceptionCollectionElementEditorNeedsTemplateAttribute" xml:space="preserve">
     <value>Property {0} has a CollectionElementEditor specified, but not the required  CollectionEditorTemplateAttribute.</value>
@@ -128,6 +156,9 @@
   </data>
   <data name="ExceptionStringNullOrEmpty" xml:space="preserve">
     <value>The value can not be null or an empty string.</value>
+  </data>
+  <data name="GenerateAdmTemplateCommandText" xml:space="preserve">
+    <value>Generate ADM Template</value>
   </data>
   <data name="NewCollectionElementNameFormat" xml:space="preserve">
     <value>{0} {1}</value>
@@ -158,6 +189,15 @@
   </data>
   <data name="ReferencePropertyInvalidType" xml:space="preserve">
     <value>ElementReferenceProperty may only be created for properties of type string.  Check property on which the ReferenceAttribute is supplied.</value>
+  </data>
+  <data name="ReferencePropertyNoReference" xml:space="preserve">
+    <value>&lt;none&gt;</value>
+  </data>
+  <data name="SaveApplicationBeforeExportingAdmRequest" xml:space="preserve">
+    <value>The application has not been saved, would you like to save before exporting?</value>
+  </data>
+  <data name="SaveApplicationCaption" xml:space="preserve">
+    <value>Save Application</value>
   </data>
   <data name="SaveConfigurationFileDialogFilter" xml:space="preserve">
     <value>Configuration files (*.config)|*.config|All Files (*.*)|*.*</value>

@@ -10,7 +10,6 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageability.Properties;
 
@@ -21,33 +20,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
     /// splits policy overrides processing and WMI objects generation, performing appropriate logging of 
     /// policy processing errors.
     /// </summary>
-	public class CustomFormatterDataManageabilityProvider
-		: CustomProviderDataManageabilityProvider<CustomFormatterData>
-	{
+    public class CustomFormatterDataManageabilityProvider
+        : CustomProviderDataManageabilityProvider<CustomFormatterData>
+    {
         /// <summary>
         /// The name of the attributes property.
         /// </summary>
-		public new const String AttributesPropertyName = CustomProviderDataManageabilityProvider<CustomFormatterData>.AttributesPropertyName;
+        public new const String AttributesPropertyName = CustomProviderDataManageabilityProvider<CustomFormatterData>.AttributesPropertyName;
 
         /// <summary>
         /// Initialize a new instance of the <see cref="CustomFormatterDataManageabilityProvider"/> class.
         /// </summary>
-		public CustomFormatterDataManageabilityProvider()
-			: base(Resources.FormatterPolicyNameTemplate)
-		{
-			CustomFormatterDataWmiMapper.RegisterWmiTypes();
-		}
-
-        /// <summary>
-        /// Creates the <see cref="ConfigurationSetting"/> instances that describe the 
-        /// configurationObject.
-        /// </summary>
-        /// <param name="configurationObject">The configuration object for instances that must be managed.</param>
-        /// <param name="wmiSettings">A collection to where the generated WMI objects are to be added.</param>
-        protected override void GenerateWmiObjects(CustomFormatterData configurationObject, 
-			ICollection<ConfigurationSetting> wmiSettings)
-		{
-			CustomFormatterDataWmiMapper.GenerateWmiObjects(configurationObject, wmiSettings);
-		}
-	}
+        public CustomFormatterDataManageabilityProvider()
+            : base(Resources.FormatterPolicyNameTemplate)
+        { }
+    }
 }

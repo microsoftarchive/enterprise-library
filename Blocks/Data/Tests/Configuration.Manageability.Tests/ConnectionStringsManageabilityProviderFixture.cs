@@ -27,7 +27,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Manageability
         ConnectionStringsManageabilityProvider provider;
         MockRegistryKey machineKey;
         MockRegistryKey userKey;
-        IList<ConfigurationSetting> wmiSettings;
         ConnectionStringsSection section;
 
         [TestInitialize]
@@ -36,29 +35,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Manageability
             provider = new ConnectionStringsManageabilityProvider(new Dictionary<Type, ConfigurationElementManageabilityProvider>(0));
             machineKey = new MockRegistryKey(true);
             userKey = new MockRegistryKey(true);
-            wmiSettings = new List<ConfigurationSetting>();
             section = new ConnectionStringsSection();
-        }
-
-        [TestCleanup]
-        public void TearDown()
-        {
-            // preventive unregister to work around WMI.NET 2.0 issues with appdomain unloading
-            ManagementEntityTypesRegistrar.UnregisterAll();
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
         public void ProviderThrowsWithConfigurationObjectOfWrongType()
         {
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(new TestsConfigurationSection(), true, machineKey, userKey, true, wmiSettings);
-        }
-
-        [TestMethod]
-        public void EmptySectionIsIgnored()
-        {
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
-            Assert.AreEqual(0, wmiSettings.Count);
+            provider.OverrideWithGroupPolicies(new TestsConfigurationSection(), true, machineKey, userKey);
         }
 
         [TestMethod]
@@ -67,7 +51,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Manageability
             ConnectionStringSettings connectionString = new ConnectionStringSettings("cs1", "connectionString", "providerName");
             section.ConnectionStrings.Add(connectionString);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, false, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual("connectionString", connectionString.ConnectionString);
             Assert.AreEqual("providerName", connectionString.ProviderName);
@@ -79,7 +63,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Manageability
             ConnectionStringSettings connectionString = new ConnectionStringSettings("cs1", "connectionString", "providerName");
             section.ConnectionStrings.Add(connectionString);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, null, null, false, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, null, null);
 
             Assert.AreEqual("connectionString", connectionString.ConnectionString);
             Assert.AreEqual("providerName", connectionString.ProviderName);
@@ -96,7 +80,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Manageability
             overrideKey.AddStringValue(ConnectionStringsManageabilityProvider.ProviderNamePropertyName, "overridenProviderName");
             machineKey.AddSubKey("cs2", overrideKey);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, false, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual("connectionString", connectionString.ConnectionString);
             Assert.AreEqual("providerName", connectionString.ProviderName);
@@ -116,7 +100,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Manageability
             overrideKey.AddStringValue(ConnectionStringsManageabilityProvider.ProviderNamePropertyName, "overridenProviderName");
             machineKey.AddSubKey("cs1", overrideKey);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, false, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual("overridenConnectionString", connectionString.ConnectionString);
             Assert.AreEqual("overridenProviderName", connectionString.ProviderName);
@@ -135,7 +119,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Manageability
             overrideKey.AddStringValue(ConnectionStringsManageabilityProvider.ProviderNamePropertyName, "overridenProviderName");
             machineKey.AddSubKey("cs1", overrideKey);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, false, machineKey, userKey, false, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, false, machineKey, userKey);
 
             Assert.AreEqual("connectionString", connectionString.ConnectionString);
             Assert.AreEqual("providerName", connectionString.ProviderName);
@@ -155,7 +139,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Manageability
             overrideKey.AddStringValue(ConnectionStringsManageabilityProvider.ProviderNamePropertyName, "overridenProviderName");
             userKey.AddSubKey("cs1", overrideKey);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, false, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual("overridenConnectionString", connectionString.ConnectionString);
             Assert.AreEqual("overridenProviderName", connectionString.ProviderName);
@@ -174,7 +158,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Manageability
             overrideKey.AddStringValue(ConnectionStringsManageabilityProvider.ProviderNamePropertyName, "overridenProviderName");
             userKey.AddSubKey("cs1", overrideKey);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, false, machineKey, userKey, false, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, false, machineKey, userKey);
 
             Assert.AreEqual("connectionString", connectionString.ConnectionString);
             Assert.AreEqual("providerName", connectionString.ProviderName);
@@ -198,7 +182,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Manageability
             userOverrideKey.AddStringValue(ConnectionStringsManageabilityProvider.ProviderNamePropertyName, "userOverridenProviderName");
             userKey.AddSubKey("cs1", userOverrideKey);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, false, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual("machineOverridenConnectionString", connectionString.ConnectionString);
             Assert.AreEqual("machineOverridenProviderName", connectionString.ProviderName);
@@ -221,7 +205,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Manageability
             machineKey.AddSubKey("cs2", machineConnectionString2Key);
             machineConnectionString2Key.AddBooleanValue(AdmContentBuilder.AvailableValueName, true);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual(1, section.ConnectionStrings.Count);
             Assert.IsNotNull(section.ConnectionStrings["cs2"]);
@@ -244,67 +228,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Manageability
             machineKey.AddSubKey("cs2", machineConnectionString2Key);
             machineConnectionString2Key.AddBooleanValue(AdmContentBuilder.AvailableValueName, true);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, false, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, false, machineKey, userKey);
 
             Assert.AreEqual(2, section.ConnectionStrings.Count);
             Assert.IsNotNull(section.ConnectionStrings["cs1"]);
             Assert.IsNotNull(section.ConnectionStrings["cs2"]);
 
             Assert.IsTrue(MockRegistryKey.CheckAllClosed(machineConnectionString1Key, machineConnectionString2Key));
-        }
-
-        // wmi
-        [TestMethod]
-        public void SettingsAreNotCreatedWhenWmiIsDisabled()
-        {
-            ConnectionStringSettings connectionString = new ConnectionStringSettings("cs1", "connectionString", "providerName");
-            section.ConnectionStrings.Add(connectionString);
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, false, machineKey, userKey, false, wmiSettings);
-
-            Assert.AreEqual(0, wmiSettings.Count);
-        }
-
-        [TestMethod]
-        public void SettingsAreCreatedForSingleConnectionStringWhenWmiIsEnabled()
-        {
-            ConnectionStringSettings connectionString = new ConnectionStringSettings("cs1", "connectionString", "providerName");
-            section.ConnectionStrings.Add(connectionString);
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, false, machineKey, userKey, true, wmiSettings);
-
-            Assert.AreEqual(1, wmiSettings.Count);
-
-            ConnectionStringSetting setting = GetSetting(wmiSettings, "cs1");
-            Assert.IsNotNull(setting);
-            Assert.IsNull(setting.ApplicationName);
-            Assert.IsNull(setting.SectionName);
-            Assert.AreEqual("connectionString", setting.ConnectionString);
-            Assert.AreEqual("providerName", setting.ProviderName);
-        }
-
-        [TestMethod]
-        public void SettingsAreCreatedForManyConnectionStringsWhenWmiIsEnabled()
-        {
-            ConnectionStringSettings connectionString = new ConnectionStringSettings("cs1", "connectionString", "providerName");
-            section.ConnectionStrings.Add(connectionString);
-            connectionString = new ConnectionStringSettings("cs2", "connectionString2", "providerName2");
-            section.ConnectionStrings.Add(connectionString);
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, false, machineKey, userKey, true, wmiSettings);
-
-            ConnectionStringSetting setting = GetSetting(wmiSettings, "cs1");
-            Assert.IsNotNull(setting);
-            Assert.IsNull(setting.ApplicationName);
-            Assert.IsNull(setting.SectionName);
-            Assert.AreEqual("connectionString", setting.ConnectionString);
-            Assert.AreEqual("providerName", setting.ProviderName);
-            setting = GetSetting(wmiSettings, "cs2");
-            Assert.IsNotNull(setting);
-            Assert.IsNull(setting.ApplicationName);
-            Assert.IsNull(setting.SectionName);
-            Assert.AreEqual("connectionString2", setting.ConnectionString);
-            Assert.AreEqual("providerName2", setting.ProviderName);
         }
 
         [TestMethod]
@@ -369,19 +299,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Manageability
             IEnumerator<AdmPolicy> sectionPoliciesEnumerator = categoriesEnumerator.Current.Policies.GetEnumerator();
             Assert.IsFalse(sectionPoliciesEnumerator.MoveNext());
             Assert.IsFalse(categoriesEnumerator.MoveNext());
-        }
-
-        ConnectionStringSetting GetSetting(IEnumerable<ConfigurationSetting> wmiSettings,
-                                           String name)
-        {
-            foreach (ConfigurationSetting setting in wmiSettings)
-            {
-                ConnectionStringSetting connectionStringSetting = setting as ConnectionStringSetting;
-                if (connectionStringSetting != null && connectionStringSetting.Name.Equals(name))
-                    return connectionStringSetting;
-            }
-
-            return null;
         }
     }
 }

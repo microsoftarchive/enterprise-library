@@ -18,8 +18,7 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability.A
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability
 {
     /// <summary>
-    /// Represents the behavior required to provide Group Policy updates and to publish the 
-    /// <see cref="ConfigurationSetting"/> instances associated to a <see cref="ConfigurationSection"/>.
+    /// Represents the behavior required to provide Group Policy updates for a <see cref="ConfigurationSection"/>.
     /// </summary>
     /// <remarks>
     /// Subclasses define the implementation necessary to provide manageability for a specific type of configuration
@@ -231,8 +230,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
 
         /// <summary>
         /// Overrides the <paramref name="configurationObject"/>'s and its internal configuration elements' properties 
-        /// with the Group Policy values from the registry, if any, and creates the <see cref="ConfigurationSetting"/> 
-        /// instances that describe the configuration.
+        /// with the Group Policy values from the registry, if any.
         /// </summary>
         /// <param name="configurationObject">The configuration section that must be managed.</param>
         /// <param name="readGroupPolicies"><see langword="true"/> if Group Policy overrides must be applied; otherwise, 
@@ -243,24 +241,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
         /// <param name="userKey">The <see cref="IRegistryKey"/> which holds the Group Policy overrides for the 
         /// configuration section at the user level, or <see langword="null"/> 
         /// if there is no such registry key.</param>
-        /// <param name="generateWmiObjects"><see langword="true"/> if WMI objects must be generated; otherwise, 
-        /// <see langword="false"/>.</param>
-        /// <param name="wmiSettings">A collection to where the generated WMI objects are to be added.</param>
         /// <returns><see langword="true"/> if the policy settings do not disable the configuration section, otherwise
         /// <see langword="false"/>.</returns>
         /// <exception cref="ArgumentException">when the type of <paramref name="configurationObject"/> is not 
         /// the type <typeparamref name="T"/>.</exception>
-        public abstract bool OverrideWithGroupPoliciesAndGenerateWmiObjects(
+        public abstract bool OverrideWithGroupPolicies(
             ConfigurationSection configurationObject,
             bool readGroupPolicies,
             IRegistryKey machineKey,
-            IRegistryKey userKey,
-            bool generateWmiObjects,
-            ICollection<ConfigurationSetting> wmiSettings);
+            IRegistryKey userKey);
 
         /// <summary>
-        /// Overrides the properties for the configuration element and creates the 
-        /// <see cref="ConfigurationSetting"/> instances that describe it.
+        /// Overrides the properties for the configuration element.
         /// </summary>
         /// <typeparam name="T">The base type for the configuration elements collection.</typeparam>
         /// <param name="element">The configuration element.</param>
@@ -274,9 +266,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
         /// <param name="userKey">The <see cref="IRegistryKey"/> which holds the Group Policy overrides for the 
         /// configuration section at the user level, or <see langword="null"/> 
         /// if there is no such registry key.</param>
-        /// <param name="generateWmiObjects"><see langword="true"/> if WMI objects must be generated; otherwise, 
-        /// <see langword="false"/>.</param>
-        /// <param name="wmiSettings">A collection to where the generated WMI objects are to be added.</param>
         /// <returns><see langword="true"/> if the policy settings do not disable the configuration element, otherwise
         /// <see langword="false"/>.</returns>
         /// <remarks>
@@ -287,23 +276,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
         /// <see cref="ConfigurationSectionManageabilityProvider.AddElementsPolicies{T}"/> can be invoked during the construction
         /// of the ADM template to generate it.
         /// </remarks>
-        protected static bool OverrideWithGroupPoliciesAndGenerateWmiObjectsForElement<T>(T element,
-                                                                                          ConfigurationElementManageabilityProvider subProvider,
-                                                                                          bool readGroupPolicies,
-                                                                                          IRegistryKey machineKey,
-                                                                                          IRegistryKey userKey,
-                                                                                          bool generateWmiObjects,
-                                                                                          ICollection<ConfigurationSetting> wmiSettings)
+        protected static bool OverrideWithGroupPolicies<T>(T element,
+                                                          ConfigurationElementManageabilityProvider subProvider,
+                                                          bool readGroupPolicies,
+                                                          IRegistryKey machineKey,
+                                                          IRegistryKey userKey)
             where T : NamedConfigurationElement, new()
         {
-            return subProvider.OverrideWithGroupPoliciesAndGenerateWmiObjects(element,
-                                                                              readGroupPolicies, machineKey, userKey,
-                                                                              generateWmiObjects, wmiSettings);
+            return subProvider.OverrideWithGroupPolicies(element,
+                                                                              readGroupPolicies, machineKey, userKey);
         }
 
         /// <summary>
-        /// Overrides the properties for the configuration elements in the given collection, and creates the 
-        /// <see cref="ConfigurationSetting"/> instances that describe each element.
+        /// Overrides the properties for the configuration elements in the given collection.
         /// </summary>
         /// <typeparam name="T">The base type for the configuration elements collection.</typeparam>
         /// <param name="elements">The collection of configuration elements.</param>
@@ -317,9 +302,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
         /// <param name="userKey">The <see cref="IRegistryKey"/> which holds the Group Policy overrides for the 
         /// configuration section at the user level, or <see langword="null"/> 
         /// if there is no such registry key.</param>
-        /// <param name="generateWmiObjects"><see langword="true"/> if WMI objects must be generated; otherwise, 
-        /// <see langword="false"/>.</param>
-        /// <param name="wmiSettings">A collection to where the generated WMI objects are to be added.</param>
         /// <remarks>
         /// This method assumes a specific layout for the policy values: there is a registry key representing the collection
         /// of elements, and a sub key with the policy values for each element. An element's sub key may also contains a value
@@ -333,13 +315,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
         /// existing 'elements' method parameter that uses the generic parameter T.
         /// </devdoc>
         [SuppressMessage("Microsoft.Design", "CA1004")]
-        protected void OverrideWithGroupPoliciesAndGenerateWmiObjectsForElementCollection<T>(NamedElementCollection<T> elements,
-                                                                                             String keyName,
-                                                                                             bool readGroupPolicies,
-                                                                                             IRegistryKey machineKey,
-                                                                                             IRegistryKey userKey,
-                                                                                             bool generateWmiObjects,
-                                                                                             ICollection<ConfigurationSetting> wmiSettings)
+        protected void OverrideWithGroupPoliciesForElementCollection<T>(NamedElementCollection<T> elements,
+                                                                         String keyName,
+                                                                         bool readGroupPolicies,
+                                                                         IRegistryKey machineKey,
+                                                                         IRegistryKey userKey)
             where T : NamedConfigurationElement, new()
         {
             List<T> elementsToRemove = new List<T>();
@@ -366,10 +346,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
 
                         ConfigurationElementManageabilityProvider subProvider = GetSubProvider(element.GetType());
 
-                        if (subProvider != null && !OverrideWithGroupPoliciesAndGenerateWmiObjectsForElement<T>(element,
-                                                                                                                subProvider,
-                                                                                                                readGroupPolicies, machineElementKey, userElementKey,
-                                                                                                                generateWmiObjects, wmiSettings))
+                        if (subProvider != null && !OverrideWithGroupPolicies<T>(element,
+                                                                                subProvider,
+                                                                                readGroupPolicies, machineElementKey, userElementKey))
                         {
                             elementsToRemove.Add(element);
                         }
@@ -406,7 +385,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
                     {
                         key.Close();
                     }
-                    catch (Exception) {}
+                    catch (Exception) { }
                 }
             }
         }

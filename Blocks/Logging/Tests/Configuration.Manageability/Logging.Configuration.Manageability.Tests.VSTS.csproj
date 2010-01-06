@@ -43,9 +43,6 @@
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Management" />
-    <Reference Include="System.Management.Instrumentation">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
     <Reference Include="System.Messaging" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -73,23 +70,6 @@
     <Compile Include="TraceListeners\FormattedEventLogTraceListenerDataManageabilityProviderFixture.cs" />
     <Compile Include="TraceListeners\FlatFileTraceListenerDataManageabilityProviderFixture.cs" />
     <Compile Include="TraceListeners\EmailTraceListenerDataManageabilityProviderFixture.cs" />
-    <Compile Include="WMI\Filters\CategoryFilterSettingFixture.cs" />
-    <Compile Include="WMI\Filters\CustomFilterSettingFixture.cs" />
-    <Compile Include="WMI\Filters\LogEnabledFilterSettingFixture.cs" />
-    <Compile Include="WMI\Filters\PriorityFilterSettingFixture.cs" />
-    <Compile Include="WMI\Formatters\BinaryFormatterSettingFixture.cs" />
-    <Compile Include="WMI\Formatters\CustomFormatterSettingFixture.cs" />
-    <Compile Include="WMI\Formatters\TextFormatterSettingFixture.cs" />
-    <Compile Include="WMI\LoggingBlockSettingFixture.cs" />
-    <Compile Include="WMI\TraceListeners\FormattedEventLogTraceListenerSettingFixture.cs" />
-    <Compile Include="WMI\TraceListeners\CustomTraceListenerSettingFixture.cs" />
-    <Compile Include="WMI\TraceListeners\EmailTraceListenerSettingFixture.cs" />
-    <Compile Include="WMI\TraceListeners\FlatFileTraceListenerSettingFixture.cs" />
-    <Compile Include="WMI\TraceListeners\MsmqTraceListenerSettingFixture.cs" />
-    <Compile Include="WMI\TraceListeners\RollingFlatFileTraceListenerSettingFixture.cs" />
-    <Compile Include="WMI\TraceListeners\WmiTraceListenerSettingFixture.cs" />
-    <Compile Include="WMI\TraceListeners\XmlTraceListenerSettingFixture.cs" />
-    <Compile Include="WMI\TraceSourceSettingFixture.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\Src\Common.csproj">

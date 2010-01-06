@@ -10,7 +10,6 @@
 //===============================================================================
 
 using System.ComponentModel;
-using System.Configuration.Install;
 using System.Management.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation;
 
@@ -21,16 +20,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
     /// Let the system know that the InstallUtil.exe tool will be run against this assembly
     /// </summary>
     [RunInstaller(true)]
-    public partial class ProjectInstaller : DefaultManagementProjectInstaller 
+    public partial class ProjectInstaller : DefaultManagementProjectInstaller
     {
         /// <summary>
         /// Represents the installer for the instrumentation events. Not intended for direct use.
         /// </summary>
         public ProjectInstaller()
         {
-			Installers.Add(new ReflectionInstaller<EventLogInstallerBuilder>());
-			Installers.Add(new ReflectionInstaller<PerformanceCounterInstallerBuilder>());
-			Installers.Add(new DefaultManagementInstaller());
-		}
+            Installers.Add(new ReflectionInstaller<EventLogInstallerBuilder>());
+            Installers.Add(new ReflectionInstaller<PerformanceCounterInstallerBuilder>());
+        }
     }
 }

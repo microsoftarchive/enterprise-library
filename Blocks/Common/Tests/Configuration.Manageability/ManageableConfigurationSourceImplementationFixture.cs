@@ -77,7 +77,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
                                                                        false,
                                                                        manageabilityProviders,
                                                                        true,
-                                                                       true,
                                                                        "TestApplication");
         }
 
@@ -131,21 +130,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
             Assert.IsTrue(manageabilityHelper.updateCalled);
             Assert.AreEqual(1, watcherCoordinator.WatchedConfigSources.Count);
             Assert.IsTrue(watcherCoordinator.WatchedConfigSources.Contains(ConfigurationChangeWatcherCoordinator.MainConfigurationFileSource));
-        }
-
-        [TestMethod]
-        [DeploymentItem("test.external.config")]
-        public void InstanceCreationAttachesConfigurationSettingChangedEvent()
-        {
-            MockManageabilityHelper manageabilityHelper = new MockManageabilityHelper();
-
-            instance = new ManageableConfigurationSourceImplementation(testConfigurationFile,
-                                                                       manageabilityHelper,
-                                                                       groupPolicyWatcher,
-                                                                       watcherCoordinator,
-                                                                       notificationCoordinator);
-
-            Assert.IsTrue(manageabilityHelper.addHandlerCalled);
         }
 
         [TestMethod]

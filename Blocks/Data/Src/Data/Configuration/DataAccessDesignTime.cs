@@ -51,6 +51,21 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration
         /// <summary/>
         public static class MetadataTypes
         {
+            /// <summary>
+            /// 
+            /// </summary>
+            public abstract class DbProviderMappingMetadata
+            {
+                /// <summary>
+                /// 
+                /// </summary>
+                [TypeConverter(ConverterTypeNames.SystemDataConverter)]
+                public string Name
+                {
+                    get;
+                    set;
+                }
+            }
 
             /// <summary/>
             [ViewModel(ViewModelTypeNames.DataSectionViewModel)]
@@ -89,7 +104,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration
                 [DisplayName("Connection String")]
                 [ResourceDisplayName(typeof(DesignResources), "ConnectionStringSettingsMetadataConnectionStringDisplayName")]
                 [ResourceDescription(typeof(DesignResources), "ConnectionStringSettingsMetadataConnectionStringDescription")]
-                //[Editor(EditorTypes.ConnectionStringEditor, EditorTypes.UITypeEditor)]
+                //[Editor(CommonDesignTime.EditorTypes.ConnectionStringEditor, CommonDesignTime.EditorTypes.UITypeEditor)]
                 public string ConnectionString
                 {
                     get;

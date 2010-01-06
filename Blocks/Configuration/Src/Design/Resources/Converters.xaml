@@ -14,4 +14,5 @@
 	<Converters:SuggestedValueTypeConverter x:Key="SuggestedValueTypeConverter" />
     <Converters:MidpointConverter x:Key="MidpointConverter" />
     <Converters:ErrorsToStringConverter x:Key="ErrorsToStringConverter" />
+    <Converters:NullOrEmptyToBooleanConverter x:Key="NullOrEmptyToBooleanConverter" />
 </ResourceDictionary>

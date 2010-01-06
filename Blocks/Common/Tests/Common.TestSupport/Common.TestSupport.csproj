@@ -73,7 +73,6 @@
     <Compile Include="Configuration\Manageability\Mocks\MockRegistryAccessor.cs" />
     <Compile Include="Configuration\Manageability\Mocks\MockRegistryKey.cs" />
     <Compile Include="Configuration\Manageability\Mocks\TestConfigurationSection.cs" />
-    <Compile Include="Configuration\Manageability\Mocks\TestConfigurationSettings.cs" />
     <Compile Include="Configuration\MockCustomProviderBase.cs" />
     <Compile Include="Configuration\SectionBuilder.cs" />
     <Compile Include="ContextBase\ArrangeActAssert.cs" />

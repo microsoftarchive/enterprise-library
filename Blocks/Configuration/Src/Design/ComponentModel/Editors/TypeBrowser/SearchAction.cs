@@ -1,8 +1,19 @@
-﻿using System;
-using System.Linq;
-using System.Windows.Threading;
+﻿//===============================================================================
+// Microsoft patterns & practices Enterprise Library
+// Core
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
+using System.Windows.Threading;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors
 {
@@ -16,8 +27,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
 
         public event EventHandler<SearchActionEventArgs> Completed;
 
-        private string searchText;
-        private IEnumerable<AssemblyGroupNode> nodes;
+        private readonly string searchText;
+        private readonly IEnumerable<AssemblyGroupNode> nodes;
         private DispatcherOperation dispatcherOperation;
 
         private static readonly Func<TypeNode, string, bool> MatchTypeName = (t, s) =>
@@ -45,7 +56,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
         private TypeNode OnRun()
         {
             bool noText = false;
-            bool hasDot = false;
             Func<TypeNode, string, bool> match = null;
             if (!string.IsNullOrEmpty(this.searchText))
             {

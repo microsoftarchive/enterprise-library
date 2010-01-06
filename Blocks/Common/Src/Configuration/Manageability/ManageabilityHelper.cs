@@ -24,30 +24,23 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
     public class ManageabilityHelper : IManageabilityHelper
     {
         readonly string applicationName;
-        bool generateWmiObjects;
         readonly IDictionary<string, ConfigurationSectionManageabilityProvider> manageabilityProviders;
-        readonly IDictionary<string, IEnumerable<ConfigurationSetting>> publishedSettingsMapping;
         readonly bool readGroupPolicies;
         readonly IRegistryAccessor registryAccessor;
-        readonly IWmiPublisher wmiPublisher;
 
         ///<summary>
         /// Initialize a new instance of a <see cref="ManageabilityHelper"/> class.
         ///</summary>
         ///<param name="manageabilityProviders">The manageability propvodiers.</param>
         ///<param name="readGroupPolicies">true to read group policies; otherwise, false.</param>
-        ///<param name="generateWmiObjects">true to generate wmi objects; othrewise, false.</param>
         ///<param name="applicationName">The application name.</param>
         public ManageabilityHelper(IDictionary<string, ConfigurationSectionManageabilityProvider> manageabilityProviders,
                                    bool readGroupPolicies,
-                                   bool generateWmiObjects,
                                    string applicationName)
             : this(manageabilityProviders,
                    readGroupPolicies,
                    new RegistryAccessor(),
-                   generateWmiObjects,
-                   new InstrumentationWmiPublisher(),
-                   applicationName) {}
+                   applicationName) { }
 
         ///<summary>
         /// Initialize a new instance of the <see cref="ManageabilityHelper"/> class.
@@ -55,24 +48,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
         ///<param name="manageabilityProviders">The manageability providers.</param>
         ///<param name="readGroupPolicies">true to read group policies; otherwise, false.</param>
         ///<param name="registryAccessor">A registry accessor.</param>
-        ///<param name="generateWmiObjects">true to generate wmi objects; othrewise, false.</param>
-        ///<param name="wmiPublisher">The wmi publisher.</param>
         ///<param name="applicationName">The application name.</param>
         public ManageabilityHelper(IDictionary<string, ConfigurationSectionManageabilityProvider> manageabilityProviders,
                                    bool readGroupPolicies,
                                    IRegistryAccessor registryAccessor,
-                                   bool generateWmiObjects,
-                                   IWmiPublisher wmiPublisher,
                                    string applicationName)
         {
             this.manageabilityProviders = manageabilityProviders;
             this.readGroupPolicies = readGroupPolicies;
             this.registryAccessor = registryAccessor;
-            this.generateWmiObjects = generateWmiObjects;
-            this.wmiPublisher = wmiPublisher;
             this.applicationName = applicationName;
-
-            publishedSettingsMapping = new Dictionary<string, IEnumerable<ConfigurationSetting>>();
         }
 
         /// <summary>
@@ -104,26 +89,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
             return Path.Combine(Path.Combine(@"Software\Policies\", applicationName), sectionName);
         }
 
-        /// <summary>
-        /// The event that is notified when a configuration setting is changed.
-        /// </summary>
-        public event EventHandler<ConfigurationSettingChangedEventArgs> ConfigurationSettingChanged;
-
         void DoUpdateConfigurationSectionManageability(IConfigurationAccessor configurationAccessor,
                                                        String sectionName)
         {
-            if (publishedSettingsMapping.ContainsKey(sectionName))
-            {
-                RevokeAll(publishedSettingsMapping[sectionName]);
-            }
-
             ConfigurationSectionManageabilityProvider manageabilityProvider = manageabilityProviders[sectionName];
 
             ConfigurationSection section = configurationAccessor.GetSection(sectionName);
             if (section != null)
             {
-                ICollection<ConfigurationSetting> wmiSettings = new List<ConfigurationSetting>();
-
                 IRegistryKey machineKey = null;
                 IRegistryKey userKey = null;
 
@@ -131,16 +104,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
                 {
                     LoadPolicyRegistryKeys(sectionName, out machineKey, out userKey);
 
-                    if (manageabilityProvider
-                        .OverrideWithGroupPoliciesAndGenerateWmiObjects(section,
-                                                                        readGroupPolicies, machineKey, userKey,
-                                                                        generateWmiObjects, wmiSettings))
-                    {
-                        publishedSettingsMapping[sectionName] = wmiSettings;
-
-                        PublishAll(wmiSettings, sectionName);
-                    }
-                    else
+                    if (!manageabilityProvider
+                        .OverrideWithGroupPolicies(section, readGroupPolicies, machineKey, userKey))
                     {
                         configurationAccessor.RemoveSection(sectionName);
                     }
@@ -173,29 +138,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
             }
         }
 
-        void OnConfigurationSettingChanged(object source,
-                                           EventArgs args)
-        {
-            ConfigurationSetting setting = source as ConfigurationSetting;
-
-            if (ConfigurationSettingChanged != null && setting != null)
-            {
-                ConfigurationSettingChanged(this, new ConfigurationSettingChangedEventArgs(setting.SectionName));
-            }
-        }
-
-        void PublishAll(IEnumerable<ConfigurationSetting> instances,
-                        String sectionName)
-        {
-            foreach (ConfigurationSetting instance in instances)
-            {
-                instance.ApplicationName = applicationName;
-                instance.SectionName = sectionName;
-                instance.Changed += OnConfigurationSettingChanged;
-                wmiPublisher.Publish(instance);
-            }
-        }
-
         static void ReleasePolicyRegistryKeys(IRegistryKey machineKey,
                                               IRegistryKey userKey)
         {
@@ -205,7 +147,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
                 {
                     machineKey.Close();
                 }
-                catch (Exception) {}
+                catch (Exception) { }
             }
 
             if (userKey != null)
@@ -214,22 +156,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
                 {
                     userKey.Close();
                 }
-                catch (Exception) {}
-            }
-        }
-
-        /// <summary>
-        /// Revoke all instances from WMI.
-        /// </summary>
-        /// <param name="instances">
-        /// The instances to revoke.
-        /// </param>
-        public void RevokeAll(IEnumerable<ConfigurationSetting> instances)
-        {
-            foreach (ConfigurationSetting instance in instances)
-            {
-                instance.Changed -= OnConfigurationSettingChanged;
-                wmiPublisher.Revoke(instance);
+                catch (Exception) { }
             }
         }
 

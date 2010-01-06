@@ -16,5 +16,4 @@ using Microsoft.Practices.EnterpriseLibrary.Security.Cache.CachingStore.Configur
 using Microsoft.Practices.EnterpriseLibrary.Security.Configuration.Manageability;
 
 [assembly : Instrumented(@"root\EnterpriseLibrary")]
-[assembly : WmiConfiguration(@"root\EnterpriseLibrary", HostingModel = ManagementHostingModel.Decoupled, IdentifyLevel = false)]
 [assembly : ConfigurationElementManageabilityProvider(typeof(CachingStoreProviderDataManageabilityProvider), typeof(CachingStoreProviderData), typeof(SecuritySettingsManageabilityProvider))]

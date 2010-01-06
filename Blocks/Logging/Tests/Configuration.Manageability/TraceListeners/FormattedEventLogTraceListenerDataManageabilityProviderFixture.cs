@@ -28,7 +28,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         FormattedEventLogTraceListenerDataManageabilityProvider provider;
         MockRegistryKey machineKey;
         MockRegistryKey userKey;
-        IList<ConfigurationSetting> wmiSettings;
         FormattedEventLogTraceListenerData configurationObject;
 
         [TestInitialize]
@@ -37,15 +36,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             provider = new FormattedEventLogTraceListenerDataManageabilityProvider();
             machineKey = new MockRegistryKey(true);
             userKey = new MockRegistryKey(true);
-            wmiSettings = new List<ConfigurationSetting>();
             configurationObject = new FormattedEventLogTraceListenerData();
-        }
-
-        [TestCleanup]
-        public void TearDown()
-        {
-            // preventive unregister to work around WMI.NET 2.0 issues with appdomain unloading
-            ManagementEntityTypesRegistrar.UnregisterAll();
         }
 
         [TestMethod]
@@ -73,7 +64,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         [ExpectedException(typeof(ArgumentException))]
         public void ProviderThrowsWithConfigurationObjectOfWrongType()
         {
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(new TestsConfigurationSection(), true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(new TestsConfigurationSection(), true, machineKey, userKey);
         }
 
         [TestMethod]
@@ -84,17 +75,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             configurationObject.MachineName = "machine name";
             configurationObject.Source = "source";
             configurationObject.TraceOutputOptions = TraceOptions.None;
-			configurationObject.Filter = SourceLevels.Error;
+            configurationObject.Filter = SourceLevels.Error;
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, null, null, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, null, null);
 
             Assert.AreEqual("formatter", configurationObject.Formatter);
             Assert.AreEqual("log", configurationObject.Log);
             Assert.AreEqual("machine name", configurationObject.MachineName);
             Assert.AreEqual("source", configurationObject.Source);
             Assert.AreEqual(TraceOptions.None, configurationObject.TraceOutputOptions);
-			Assert.AreEqual(SourceLevels.Error, configurationObject.Filter);
-		}
+            Assert.AreEqual(SourceLevels.Error, configurationObject.Filter);
+        }
 
         [TestMethod]
         public void ConfigurationObjectIsModifiedIfThereAreMachinePolicyOverrides()
@@ -104,24 +95,24 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             configurationObject.MachineName = "machine name";
             configurationObject.Source = "source";
             configurationObject.TraceOutputOptions = TraceOptions.None;
-			configurationObject.Filter = SourceLevels.Error;
+            configurationObject.Filter = SourceLevels.Error;
 
             machineKey.AddStringValue(FormattedEventLogTraceListenerDataManageabilityProvider.FormatterPropertyName, "overriden formatter");
             machineKey.AddStringValue(FormattedEventLogTraceListenerDataManageabilityProvider.LogPropertyName, "overriden log");
             machineKey.AddStringValue(FormattedEventLogTraceListenerDataManageabilityProvider.MachineNamePropertyName, "overriden machine name");
             machineKey.AddStringValue(FormattedEventLogTraceListenerDataManageabilityProvider.SourcePropertyName, "overriden source");
             machineKey.AddStringValue(FormattedEventLogTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, "ProcessId, ThreadId");
-			machineKey.AddStringValue(FormattedEventLogTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
+            machineKey.AddStringValue(FormattedEventLogTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, machineKey, null, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, machineKey, null);
 
             Assert.AreEqual("overriden formatter", configurationObject.Formatter);
             Assert.AreEqual("overriden log", configurationObject.Log);
             Assert.AreEqual("overriden machine name", configurationObject.MachineName);
             Assert.AreEqual("overriden source", configurationObject.Source);
             Assert.AreEqual(TraceOptions.ProcessId | TraceOptions.ThreadId, configurationObject.TraceOutputOptions);
-			Assert.AreEqual(SourceLevels.Critical, configurationObject.Filter);
-		}
+            Assert.AreEqual(SourceLevels.Critical, configurationObject.Filter);
+        }
 
         [TestMethod]
         public void ConfigurationObjectIsModifiedIfThereAreUserPolicyOverrides()
@@ -131,24 +122,24 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             configurationObject.MachineName = "machine name";
             configurationObject.Source = "source";
             configurationObject.TraceOutputOptions = TraceOptions.None;
-			configurationObject.Filter = SourceLevels.Error;
+            configurationObject.Filter = SourceLevels.Error;
 
             userKey.AddStringValue(FormattedEventLogTraceListenerDataManageabilityProvider.FormatterPropertyName, "overriden formatter");
             userKey.AddStringValue(FormattedEventLogTraceListenerDataManageabilityProvider.LogPropertyName, "overriden log");
             userKey.AddStringValue(FormattedEventLogTraceListenerDataManageabilityProvider.MachineNamePropertyName, "overriden machine name");
             userKey.AddStringValue(FormattedEventLogTraceListenerDataManageabilityProvider.SourcePropertyName, "overriden source");
             userKey.AddStringValue(FormattedEventLogTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, "ProcessId, ThreadId");
-			userKey.AddStringValue(FormattedEventLogTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
+            userKey.AddStringValue(FormattedEventLogTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, null, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, null, userKey);
 
             Assert.AreEqual("overriden formatter", configurationObject.Formatter);
             Assert.AreEqual("overriden log", configurationObject.Log);
             Assert.AreEqual("overriden machine name", configurationObject.MachineName);
             Assert.AreEqual("overriden source", configurationObject.Source);
             Assert.AreEqual(TraceOptions.ProcessId | TraceOptions.ThreadId, configurationObject.TraceOutputOptions);
-			Assert.AreEqual(SourceLevels.Critical, configurationObject.Filter);
-		}
+            Assert.AreEqual(SourceLevels.Critical, configurationObject.Filter);
+        }
 
         [TestMethod]
         public void ConfigurationObjectIsNotModifiedIfThereArePolicyOverridesButGroupPoliciesAreDisabled()
@@ -158,24 +149,24 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             configurationObject.MachineName = "machine name";
             configurationObject.Source = "source";
             configurationObject.TraceOutputOptions = TraceOptions.None;
-			configurationObject.Filter = SourceLevels.Error;
+            configurationObject.Filter = SourceLevels.Error;
 
             machineKey.AddStringValue(FormattedEventLogTraceListenerDataManageabilityProvider.FormatterPropertyName, "overriden formatter");
             machineKey.AddStringValue(FormattedEventLogTraceListenerDataManageabilityProvider.LogPropertyName, "overriden log");
             machineKey.AddStringValue(FormattedEventLogTraceListenerDataManageabilityProvider.MachineNamePropertyName, "overriden machine name");
             machineKey.AddStringValue(FormattedEventLogTraceListenerDataManageabilityProvider.SourcePropertyName, "overriden source");
             machineKey.AddStringValue(FormattedEventLogTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, "ProcessId, ThreadId");
-			machineKey.AddStringValue(FormattedEventLogTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
+            machineKey.AddStringValue(FormattedEventLogTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, false, machineKey, null, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, false, machineKey, null);
 
             Assert.AreEqual("formatter", configurationObject.Formatter);
             Assert.AreEqual("log", configurationObject.Log);
             Assert.AreEqual("machine name", configurationObject.MachineName);
             Assert.AreEqual("source", configurationObject.Source);
             Assert.AreEqual(TraceOptions.None, configurationObject.TraceOutputOptions);
-			Assert.AreEqual(SourceLevels.Error, configurationObject.Filter);
-		}
+            Assert.AreEqual(SourceLevels.Error, configurationObject.Filter);
+        }
 
         [TestMethod]
         public void ConfigurationObjectIsModifiedWithFormatterOverrideWithListItemNone()
@@ -187,78 +178,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             machineKey.AddStringValue(FormattedEventLogTraceListenerDataManageabilityProvider.MachineNamePropertyName, "overriden machine name");
             machineKey.AddStringValue(FormattedEventLogTraceListenerDataManageabilityProvider.SourcePropertyName, "overriden source");
             machineKey.AddStringValue(FormattedEventLogTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, "ProcessId, ThreadId");
-			machineKey.AddStringValue(FormattedEventLogTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
+            machineKey.AddStringValue(FormattedEventLogTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, machineKey, userKey);
 
             Assert.AreEqual("", configurationObject.Formatter);
         }
-
-        [TestMethod]
-        public void WmiSettingsAreNotGeneratedIfWmiIsDisabled()
-        {
-            configurationObject.Formatter = "formatter";
-            configurationObject.Log = "log";
-            configurationObject.MachineName = "machine name";
-            configurationObject.Source = "source";
-            configurationObject.TraceOutputOptions = TraceOptions.None;
-			configurationObject.Filter = SourceLevels.Error;
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, false, machineKey, userKey, false, wmiSettings);
-
-            Assert.AreEqual(0, wmiSettings.Count);
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreGeneratedIfWmiIsEnabled()
-        {
-            configurationObject.Formatter = "formatter";
-            configurationObject.Log = "log";
-            configurationObject.MachineName = "machine name";
-            configurationObject.Source = "source";
-            configurationObject.TraceOutputOptions = TraceOptions.None;
-			configurationObject.Filter = SourceLevels.Error;
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, false, machineKey, userKey, true, wmiSettings);
-
-            Assert.AreEqual(1, wmiSettings.Count);
-            Assert.AreSame(typeof(FormattedEventLogTraceListenerSetting), wmiSettings[0].GetType());
-            Assert.AreEqual(configurationObject.Formatter, ((FormattedEventLogTraceListenerSetting)wmiSettings[0]).Formatter);
-            Assert.AreEqual(configurationObject.Log, ((FormattedEventLogTraceListenerSetting)wmiSettings[0]).Log);
-            Assert.AreEqual(configurationObject.MachineName, ((FormattedEventLogTraceListenerSetting)wmiSettings[0]).MachineName);
-            Assert.AreEqual(configurationObject.Source, ((FormattedEventLogTraceListenerSetting)wmiSettings[0]).Source);
-            Assert.AreEqual(configurationObject.TraceOutputOptions.ToString(), ((FormattedEventLogTraceListenerSetting)wmiSettings[0]).TraceOutputOptions);
-			Assert.AreEqual(configurationObject.Filter.ToString(), ((FormattedEventLogTraceListenerSetting)wmiSettings[0]).Filter);
-		}
-
-        [TestMethod]
-        public void WmiSettingsAreGeneratedWithPolicyOverridesIfWmiIsEnabled()
-        {
-            configurationObject.Formatter = "formatter";
-            configurationObject.Log = "log";
-            configurationObject.MachineName = "machine name";
-            configurationObject.Source = "source";
-            configurationObject.TraceOutputOptions = TraceOptions.None;
-			configurationObject.Filter = SourceLevels.Error;
-
-            machineKey.AddStringValue(FormattedEventLogTraceListenerDataManageabilityProvider.FormatterPropertyName, "overriden formatter");
-            machineKey.AddStringValue(FormattedEventLogTraceListenerDataManageabilityProvider.LogPropertyName, "overriden log");
-            machineKey.AddStringValue(FormattedEventLogTraceListenerDataManageabilityProvider.MachineNamePropertyName, "overriden machine name");
-            machineKey.AddStringValue(FormattedEventLogTraceListenerDataManageabilityProvider.SourcePropertyName, "overriden source");
-            machineKey.AddStringValue(FormattedEventLogTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, "ProcessId, ThreadId");
-			machineKey.AddStringValue(FormattedEventLogTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, machineKey, userKey, true, wmiSettings);
-
-            Assert.AreEqual(1, wmiSettings.Count);
-            Assert.AreSame(typeof(FormattedEventLogTraceListenerSetting), wmiSettings[0].GetType());
-            Assert.AreEqual(configurationObject.Formatter, ((FormattedEventLogTraceListenerSetting)wmiSettings[0]).Formatter);
-            Assert.AreEqual(configurationObject.Log, ((FormattedEventLogTraceListenerSetting)wmiSettings[0]).Log);
-            Assert.AreEqual(configurationObject.MachineName, ((FormattedEventLogTraceListenerSetting)wmiSettings[0]).MachineName);
-            Assert.AreEqual(configurationObject.Source, ((FormattedEventLogTraceListenerSetting)wmiSettings[0]).Source);
-            Assert.AreEqual(configurationObject.TraceOutputOptions.ToString(), ((FormattedEventLogTraceListenerSetting)wmiSettings[0]).TraceOutputOptions);
-			Assert.AreEqual(configurationObject.Filter.ToString(), ((FormattedEventLogTraceListenerSetting)wmiSettings[0]).Filter);
-		}
 
         [TestMethod]
         public void ManageabilityProviderGeneratesProperAdmContent()
@@ -304,11 +229,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             Assert.AreEqual(FlatFileTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName,
                             partsEnumerator.Current.ValueName);
 
-			Assert.IsTrue(partsEnumerator.MoveNext());
-			Assert.AreSame(typeof(AdmDropDownListPart), partsEnumerator.Current.GetType());
-			Assert.IsNull(partsEnumerator.Current.KeyName);
-			Assert.AreEqual(FlatFileTraceListenerDataManageabilityProvider.FilterPropertyName,
-							partsEnumerator.Current.ValueName);
+            Assert.IsTrue(partsEnumerator.MoveNext());
+            Assert.AreSame(typeof(AdmDropDownListPart), partsEnumerator.Current.GetType());
+            Assert.IsNull(partsEnumerator.Current.KeyName);
+            Assert.AreEqual(FlatFileTraceListenerDataManageabilityProvider.FilterPropertyName,
+                            partsEnumerator.Current.ValueName);
 
             Assert.IsTrue(partsEnumerator.MoveNext());
             Assert.AreSame(typeof(AdmDropDownListPart), partsEnumerator.Current.GetType());

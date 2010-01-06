@@ -36,6 +36,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
         {
             /// <summary/>
             public const string AddCachingBlockCommand = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.AddCachingBlockCommand, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
+
+            /// <summary/>
+            public const string AddCacheManagerCommand = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.AddCacheManagerCommand, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
         }
     }
 }

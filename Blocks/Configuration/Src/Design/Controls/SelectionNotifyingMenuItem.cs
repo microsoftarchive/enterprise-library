@@ -16,6 +16,8 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Data;
+
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls
 {
@@ -41,10 +43,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls
              new RoutedPropertyChangedEventHandler<bool>(OnIsSelectedChanged));
         }
 
+        public SelectionNotifyingMenuItem()
+        {
+            Binding inputGestureBinding = new Binding("KeyGesture");
+            base.SetBinding(MenuItem.InputGestureTextProperty, inputGestureBinding);
+        }
+
         private static void OnIsSelectedChanged(object sender, RoutedPropertyChangedEventArgs<bool> e)
         {
-
-
             if (sender == e.OriginalSource) return;
 
             var parentMenu = (SelectionNotifyingMenuItem)sender;

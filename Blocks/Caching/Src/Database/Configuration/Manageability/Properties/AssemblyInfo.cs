@@ -9,11 +9,9 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System.Management.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Configuration.Manageability;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Database.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Database.Configuration.Manageability;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability;
 
-[assembly : WmiConfiguration(@"root\EnterpriseLibrary", HostingModel = ManagementHostingModel.Decoupled, IdentifyLevel = false)]
-[assembly : ConfigurationElementManageabilityProvider(typeof(DataCacheStorageDataManageabilityProvider), typeof(DataCacheStorageData), typeof(CacheManagerSettingsManageabilityProvider))]
+[assembly: ConfigurationElementManageabilityProvider(typeof(DataCacheStorageDataManageabilityProvider), typeof(DataCacheStorageData), typeof(CacheManagerSettingsManageabilityProvider))]

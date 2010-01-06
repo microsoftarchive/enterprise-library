@@ -27,7 +27,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration
 	/// </summary>
     [ResourceDescription(typeof(DesignResources), "CustomSecurityCacheProviderDataDescription")]
     [ResourceDisplayName(typeof(DesignResources), "CustomSecurityCacheProviderDataDisplayName")]
-    [TypePickingCommand(TitleResourceName="CustomSecurityCacheProviderDataAddCommand", TitleResourceType=typeof(DesignResources))]
+    [TypePickingCommand(TitleResourceName = "CustomSecurityCacheProviderDataDisplayName", TitleResourceType = typeof(DesignResources), Replace = CommandReplacement.DefaultAddCommandReplacement)]
 	public class CustomSecurityCacheProviderData
 		: SecurityCacheProviderData, IHelperAssistedCustomConfigurationData<CustomSecurityCacheProviderData>
 	{

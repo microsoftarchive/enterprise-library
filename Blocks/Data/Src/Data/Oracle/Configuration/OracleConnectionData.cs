@@ -22,6 +22,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Oracle.Configuration
     /// </summary>
     [ResourceDescription(typeof(DesignResources), "OracleConnectionDataDescription")]
     [ResourceDisplayName(typeof(DesignResources), "OracleConnectionDataDisplayName")]
+    [NameProperty("Name", NamePropertyDisplayFormat = "Oracle Packages for {0}")]
     public class OracleConnectionData : NamedConfigurationElement
     {
         private const string packagesProperty = "packages";

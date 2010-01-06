@@ -54,7 +54,25 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             }
            
         }
- 
+
+        private Type createdElementTypeInstance;
+
+        public Type CreatedElementType
+        {
+            set
+            {
+                createdElementTypeInstance = value;
+            }
+            get
+            {
+                if (createdElementTypeInstance == null)
+                {
+                    createdElementTypeInstance = ConfigurationElementType;
+                }
+
+                return createdElementTypeInstance;
+            }
+        }
 
         public override void Execute(object parameter)
         {
@@ -62,7 +80,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
 
             if (selectedType != null && AfterSelectType(selectedType))
             {
-                var createdElement = ElementCollectionModel.AddNewCollectionElement(ConfigurationElementType);
+                var createdElement = ElementCollectionModel.AddNewCollectionElement(CreatedElementType);
 
                 SetProperties(createdElement, selectedType);
             }
@@ -75,7 +93,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
 
         protected virtual void SetProperties(ElementViewModel createdElement, Type selectedType)
         {
-            createdElement.Property("Name").Value = selectedType.Name;
+            if (createdElement.NameProperty != null)
+            {
+                createdElement.NameProperty.Value = ElementCollectionModel.FindUniqueNewName(selectedType.Name);
+            }
             createdElement.Property(propertyToSet).Value = selectedType.AssemblyQualifiedName;
         }
 

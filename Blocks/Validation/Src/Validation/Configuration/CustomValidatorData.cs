@@ -28,7 +28,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 	/// </remarks>
     [ResourceDescription(typeof(DesignResources), "CustomValidatorDataDescription")]
     [ResourceDisplayName(typeof(DesignResources), "CustomValidatorDataDisplayName")]
-    [TypePickingCommand(TitleResourceName="CustomValidatorDataAddCommand", TitleResourceType=typeof(DesignResources))]
+    [TypePickingCommand(TitleResourceName = "CustomValidatorDataDisplayName", TitleResourceType = typeof(DesignResources), Replace=CommandReplacement.DefaultAddCommandReplacement)]
 	public class CustomValidatorData : ValidatorData,
 		IHelperAssistedCustomConfigurationData<CustomValidatorData>
 	{

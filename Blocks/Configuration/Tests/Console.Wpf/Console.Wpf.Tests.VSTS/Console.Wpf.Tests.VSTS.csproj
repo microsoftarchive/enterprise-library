@@ -249,10 +249,15 @@
     <Compile Include="Contexts\NewConfigurationSourceModelContext.cs" />
     <Compile Include="BlockSpecific\Logging\when_logging_filter_priorities_invalid.cs" />
     <Compile Include="Contexts\CachingConfigurationContext.cs" />
+    <Compile Include="Controls\given_elementcontainer\when_creating_new_container.cs" />
+    <Compile Include="Controls\given_elementcontainer\when_is_selected_changes_on_bound_element.cs" />
+    <Compile Include="Controls\given_elementcontainer\when_properties_shown_changes_on_bound_element.cs" />
     <Compile Include="Controls\TypeBrowser\NodesFixture.cs" />
     <Compile Include="Controls\TypeBrowser\SearchOperationFixture.cs" />
     <Compile Include="Controls\TypeBrowser\TreeAssert.cs" />
     <Compile Include="Controls\TypeBrowser\TypeBrowserViewModelFixture.cs" />
+    <Compile Include="Controls\TypeBrowser\TypeFilterFixture.cs" />
+    <Compile Include="Converters\given_reference_property_converter.cs" />
     <Compile Include="Converters\given_midpoint_value_converter.cs" />
     <Compile Include="DevTests\given_add_application_block_command\when_executing_add_application_block_command.cs" />
     <Compile Include="DevTests\given_application_model\when_opening_composed_source.cs" />
@@ -265,10 +270,24 @@
     <Compile Include="DevTests\given_app_settings_configuration\when_saving_application_settings_after_adding_new_settings.cs" />
     <Compile Include="DevTests\given_an_exception_policy_add_command\when_adding_an_exception_policy.cs" />
     <Compile Include="Contexts\SectionWithValidatablePropertiesContext.cs" />
+    <Compile Include="DevTests\given_caching_configuraton\when_adding_cache_manager.cs" />
+    <Compile Include="DevTests\given_command_attribute.cs" />
+    <Compile Include="DevTests\given_app_settings_view_model\when_getting_all_properties.cs" />
+    <Compile Include="DevTests\given_configuration_source_model\when_removing_an_environment.cs" />
+    <Compile Include="DevTests\given_cryptography_settings\when_creating_add_command_for_keyed_hash_provider_with_child_commands.cs" />
+    <Compile Include="DevTests\given_cryptography_settings\when_creating_add_command_for_keyed_hash_provider.cs" />
+    <Compile Include="DevTests\given_data_configuration\when_executing_add_database_section_command.cs" />
     <Compile Include="DevTests\given_default_add_command\when_executing_default_add_command.cs" />
     <Compile Include="DevTests\given_delete_element_command\when_executing_default_delete_command.cs" />
+    <Compile Include="DevTests\given_exception_configuration\when_selecting_a_formatter.cs" />
     <Compile Include="DevTests\given_save_environment_delta_command\when_saving_environment_delta_file_with_non_rooted_filename.cs" />
+    <Compile Include="DevTests\given_section_view_model\when_accessing_section_commands.cs" />
     <Compile Include="DevTests\given_system_data_provider_converter\when_getting_standard_values.cs" />
+    <Compile Include="DevTests\given_toggle_section_expanded_command\given_toggle_section_expanded_command.cs" />
+    <Compile Include="DevTests\given_view_model_and_config_collection\SectionWithMultipleChildrenContext.cs" />
+    <Compile Include="DevTests\given_view_model_and_config_collection\when_moving_collection_elements_down.cs" />
+    <Compile Include="DevTests\given_view_model_and_config_collection\when_moving_collection_elements_up.cs" />
+    <Compile Include="DevTests\given_view_model_and_config_collection\when_removing_an_element.cs" />
     <Compile Include="Mocks\CollectionHasItemValidator.cs" />
     <Compile Include="Mocks\ErrorProducingValidator.cs" />
     <Compile Include="DevTests\given_property_to_validate\when_applying_type_validation.cs" />
@@ -301,6 +320,7 @@
     <Compile Include="DevTests\given_open_environment_delta_command\when_opening_environment_delta_file.cs" />
     <Compile Include="DevTests\given_satelite_provider_add_command\when_executing_satelite_provider.cs" />
     <Compile Include="DevTests\given_save_environment_delta_command\when_saving_environment_delta_file_without_file_name.cs" />
+    <Compile Include="Mocks\FakeElementViewModel.cs" />
     <None Include="merge_environment.dconfig">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -328,6 +348,9 @@
     <None Include="test.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="BlockSpecific\Cryptography\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

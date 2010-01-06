@@ -13,10 +13,14 @@ using System;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
 using System.Windows.Automation.Peers;
+using System.ComponentModel;
+using System.Windows.Threading;
+using System.Diagnostics;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls
 {
@@ -24,72 +28,65 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls
     public class ElementModelContainer : ContentControl
     {
         private Control Title;
-        public static TogglePropertiesCommand ToggleProperties { get; set; }
+        private readonly SelectionHelper selectionHelper;
 
         #region Custom Dependency Properties
-        private static readonly DependencyProperty IsExpandedProperty = DependencyProperty.Register("IsExpanded", typeof(Boolean), typeof(ElementModelContainer), new PropertyMetadata(false));
+
+        private static readonly DependencyProperty IsExpandedProperty = DependencyProperty.Register(
+            "IsExpanded",
+            typeof (bool),
+            typeof (ElementModelContainer),
+            new PropertyMetadata(false));
+
         public Boolean IsExpanded
         {
             get { return (Boolean)GetValue(IsExpandedProperty); }
-            set 
-            { 
-                SetValue(IsExpandedProperty, value);
-                if (Section != null) Section.ClearAdorners();
-            }
+            set { SetValue(IsExpandedProperty, value); }
         }
         #endregion
-
-        public static readonly RoutedEvent ShowPropertiesEvent = EventManager.RegisterRoutedEvent(
-        "ShowProperties", RoutingStrategy.Bubble, typeof(PropertiesRoutedEventHandler), typeof(ElementModelContainer));
-        
 
         static ElementModelContainer()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(ElementModelContainer),
                                                      new FrameworkPropertyMetadata(typeof(ElementModelContainer)));
-
         }
 
-        private BlockVisualizer Section;
         private ElementViewModel ElementModel;
-        
-        
+
         public ElementModelContainer()
         {
-            ToggleProperties = new TogglePropertiesCommand();
-            DataContextChanged += new DependencyPropertyChangedEventHandler(ElementModelContainer_DataContextChanged);
-            MouseLeftButtonDown += new MouseButtonEventHandler(ElementModelContainer_MouseLeftButtonDown);
+            DataContextChanged += ElementModelContainer_DataContextChanged;
+            
+            selectionHelper = new SelectionHelper(this);
 
-            IsExpanded = true;
-        }
+            CreateElementBindings();
 
-        void ElementModelContainer_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            Section.SetSelectedElement(this);
-            ElementModel.Select();
         }
 
         void ElementModelContainer_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
+            if (ElementModel != null)
+            {
+                BindingOperations.ClearBinding(this, IsExpandedProperty);
+            }
+
             ElementModel = e.NewValue as ElementViewModel;
+
+            if (ElementModel == null) return;
+            selectionHelper.Attach(ElementModel);
+
+            CreateElementBindings();
         }
 
         void ElementModelContainer_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            ToggleProperties.Execute(this);
-        }
-
-        protected override void OnVisualParentChanged(DependencyObject oldParent)
-        {
-            base.OnVisualParentChanged(oldParent);
-
-            Section = VisualTreeWalker.TryFindParent<BlockVisualizer>(this);
+            IsExpanded = !IsExpanded;
         }
 
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
-            
+
             Title = (Control)Template.FindName("Title", this);
             Title.MouseDoubleClick += new MouseButtonEventHandler(ElementModelContainer_MouseDoubleClick);
         }
@@ -102,6 +99,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls
         protected override System.Windows.Automation.Peers.AutomationPeer OnCreateAutomationPeer()
         {
             return new ElementModelContainerAutomationPeer(this);
+        }
+
+        private void CreateElementBindings()
+        {
+           var propertyExpansionBinding = new Binding("PropertiesShown")
+           {
+               Source = ElementModel,
+               Mode = BindingMode.TwoWay,
+           };
+
+           BindingOperations.SetBinding(this, IsExpandedProperty, propertyExpansionBinding);
         }
     }
 
@@ -134,25 +142,5 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls
         {
             return AutomationControlType.Header;
         }
-    }
-
-
-    public class TogglePropertiesCommand : ICommand
-    {
-        public void Execute(object parameter)
-        {
-            var container = parameter as ElementModelContainer;
-            if (container != null)
-            {
-                container.RaiseEvent(new PropertiesRoutedEventArgs(ElementModelContainer.ShowPropertiesEvent));
-            }
-        }
-
-        public bool CanExecute(object parameter)
-        {
-            return true;
-        }
-
-        public event EventHandler CanExecuteChanged;
     }
 }

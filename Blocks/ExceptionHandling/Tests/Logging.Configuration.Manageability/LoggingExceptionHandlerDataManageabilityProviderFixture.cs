@@ -29,7 +29,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Config
         LoggingExceptionHandlerDataManageabilityProvider provider;
         MockRegistryKey machineKey;
         MockRegistryKey userKey;
-        IList<ConfigurationSetting> wmiSettings;
         LoggingExceptionHandlerData configurationObject;
 
         [TestInitialize]
@@ -38,15 +37,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Config
             provider = new LoggingExceptionHandlerDataManageabilityProvider();
             machineKey = new MockRegistryKey(true);
             userKey = new MockRegistryKey(true);
-            wmiSettings = new List<ConfigurationSetting>();
             configurationObject = new LoggingExceptionHandlerData();
-        }
-
-        [TestCleanup]
-        public void TearDown()
-        {
-            // preventive unregister to work around WMI.NET 2.0 issues with appdomain unloading
-            ManagementEntityTypesRegistrar.UnregisterAll();
         }
 
         [TestMethod]
@@ -74,7 +65,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Config
         [ExpectedException(typeof(ArgumentException))]
         public void ProviderThrowsWithConfigurationObjectOfWrongType()
         {
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(new TestsConfigurationSection(), true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(new TestsConfigurationSection(), true, machineKey, userKey);
         }
 
         [TestMethod]
@@ -87,7 +78,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Config
             configurationObject.Severity = TraceEventType.Error;
             configurationObject.Title = "title";
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, null, null, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, null, null);
 
             Assert.AreEqual(100, configurationObject.EventId);
             Assert.AreSame(typeof(ExceptionFormatter), configurationObject.FormatterType);
@@ -114,7 +105,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Config
             machineKey.AddStringValue(LoggingExceptionHandlerDataManageabilityProvider.SeverityPropertyName, TraceEventType.Critical.ToString());
             machineKey.AddStringValue(LoggingExceptionHandlerDataManageabilityProvider.TitlePropertyName, "overriden title");
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, machineKey, null, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, machineKey, null);
 
             Assert.AreEqual(200, configurationObject.EventId);
             Assert.AreSame(typeof(Object), configurationObject.FormatterType);
@@ -141,7 +132,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Config
             userKey.AddStringValue(LoggingExceptionHandlerDataManageabilityProvider.SeverityPropertyName, TraceEventType.Critical.ToString());
             userKey.AddStringValue(LoggingExceptionHandlerDataManageabilityProvider.TitlePropertyName, "overriden title");
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, null, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, null, userKey);
 
             Assert.AreEqual(200, configurationObject.EventId);
             Assert.AreSame(typeof(Object), configurationObject.FormatterType);
@@ -168,7 +159,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Config
             machineKey.AddStringValue(LoggingExceptionHandlerDataManageabilityProvider.SeverityPropertyName, TraceEventType.Critical.ToString());
             machineKey.AddStringValue(LoggingExceptionHandlerDataManageabilityProvider.TitlePropertyName, "overriden title");
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, false, machineKey, null, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, false, machineKey, null);
 
             Assert.AreEqual(100, configurationObject.EventId);
             Assert.AreSame(typeof(ExceptionFormatter), configurationObject.FormatterType);
@@ -176,72 +167,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Config
             Assert.AreEqual(50, configurationObject.Priority);
             Assert.AreEqual(TraceEventType.Error, configurationObject.Severity);
             Assert.AreEqual("title", configurationObject.Title);
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreNotGeneratedIfWmiIsDisabled()
-        {
-            configurationObject.EventId = 100;
-            configurationObject.FormatterType = typeof(ExceptionFormatter);
-            configurationObject.LogCategory = "category";
-            configurationObject.Priority = 50;
-            configurationObject.Severity = TraceEventType.Error;
-            configurationObject.Title = "title";
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, false, machineKey, userKey, false, wmiSettings);
-
-            Assert.AreEqual(0, wmiSettings.Count);
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreGeneratedIfWmiIsEnabled()
-        {
-            configurationObject.EventId = 100;
-            configurationObject.FormatterType = typeof(ExceptionFormatter);
-            configurationObject.LogCategory = "category";
-            configurationObject.Priority = 50;
-            configurationObject.Severity = TraceEventType.Error;
-            configurationObject.Title = "title";
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, false, machineKey, userKey, true, wmiSettings);
-
-            Assert.AreEqual(1, wmiSettings.Count);
-            Assert.AreSame(typeof(LoggingExceptionHandlerSetting), wmiSettings[0].GetType());
-            Assert.AreEqual(100, ((LoggingExceptionHandlerSetting)wmiSettings[0]).EventId);
-            Assert.AreEqual(typeof(ExceptionFormatter).AssemblyQualifiedName, ((LoggingExceptionHandlerSetting)wmiSettings[0]).FormatterType);
-            Assert.AreEqual("category", ((LoggingExceptionHandlerSetting)wmiSettings[0]).LogCategory);
-            Assert.AreEqual(50, ((LoggingExceptionHandlerSetting)wmiSettings[0]).Priority);
-            Assert.AreEqual(TraceEventType.Error.ToString(), ((LoggingExceptionHandlerSetting)wmiSettings[0]).Severity);
-            Assert.AreEqual("title", ((LoggingExceptionHandlerSetting)wmiSettings[0]).Title);
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreGeneratedWithPolicyOverridesIfWmiIsEnabled()
-        {
-            configurationObject.EventId = 100;
-            configurationObject.FormatterType = typeof(ExceptionFormatter);
-            configurationObject.LogCategory = "category";
-            configurationObject.Priority = 50;
-            configurationObject.Severity = TraceEventType.Error;
-            configurationObject.Title = "title";
-
-            machineKey.AddIntValue(LoggingExceptionHandlerDataManageabilityProvider.EventIdPropertyName, 200);
-            machineKey.AddStringValue(LoggingExceptionHandlerDataManageabilityProvider.FormatterTypePropertyName, typeof(Object).AssemblyQualifiedName);
-            machineKey.AddStringValue(LoggingExceptionHandlerDataManageabilityProvider.LogCategoryPropertyName, "overriden category");
-            machineKey.AddIntValue(LoggingExceptionHandlerDataManageabilityProvider.PriorityPropertyName, 150);
-            machineKey.AddStringValue(LoggingExceptionHandlerDataManageabilityProvider.SeverityPropertyName, TraceEventType.Critical.ToString());
-            machineKey.AddStringValue(LoggingExceptionHandlerDataManageabilityProvider.TitlePropertyName, "overriden title");
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, machineKey, userKey, true, wmiSettings);
-
-            Assert.AreEqual(1, wmiSettings.Count);
-            Assert.AreSame(typeof(LoggingExceptionHandlerSetting), wmiSettings[0].GetType());
-            Assert.AreEqual(200, ((LoggingExceptionHandlerSetting)wmiSettings[0]).EventId);
-            Assert.AreEqual(typeof(Object).AssemblyQualifiedName, ((LoggingExceptionHandlerSetting)wmiSettings[0]).FormatterType);
-            Assert.AreEqual("overriden category", ((LoggingExceptionHandlerSetting)wmiSettings[0]).LogCategory);
-            Assert.AreEqual(150, ((LoggingExceptionHandlerSetting)wmiSettings[0]).Priority);
-            Assert.AreEqual(TraceEventType.Critical.ToString(), ((LoggingExceptionHandlerSetting)wmiSettings[0]).Severity);
-            Assert.AreEqual("overriden title", ((LoggingExceptionHandlerSetting)wmiSettings[0]).Title);
         }
 
         [TestMethod]

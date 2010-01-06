@@ -64,6 +64,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
                 {
                     visual = new ContentControl()
                     {
+                        Focusable = false,
                         Content = Bindable
                     };
                 }

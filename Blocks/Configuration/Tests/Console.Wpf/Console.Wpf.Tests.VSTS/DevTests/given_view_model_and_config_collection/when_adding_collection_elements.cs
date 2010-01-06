@@ -24,28 +24,6 @@ using Microsoft.Practices.Unity;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model_and_config_collection
 {
-    public class SectionWithMultipleChildrenContext : ContainerContext
-    {
-        protected override void Arrange()
-        {
-            base.Arrange();
-
-            var section = new MockSectionWithMultipleChildCollections();
-            BuildSection(section);
-            ViewModel = SectionViewModel.CreateSection(Container, "name", section);
-            
-        }
-
-        protected virtual void BuildSection(MockSectionWithMultipleChildCollections section)
-        {
-            section.Children.Add(new TestHandlerData() { Name = "One" });
-            section.Children.Add(new TestHandlerData() { Name = "Two" });
-            section.Children.Add(new TestHandlerData() { Name = "Three" });
-        }
-
-        protected SectionViewModel ViewModel { get; set; }
-    }
-
     [TestClass]
     public class when_adding_collection_elements : SectionWithMultipleChildrenContext
     {
@@ -73,6 +51,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model_and_config_collection
     public class when_adding_collection_elements_via_add_commands : SectionWithMultipleChildrenContext
     {
         private bool descendentElementsChangedFired;
+        private ElementViewModel addedElement;
 
         protected override void Arrange()
         {
@@ -90,6 +69,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model_and_config_collection
 
             var command = collectionViewModel.Commands.OfType<DefaultCollectionElementAddCommand>().Where(c => c.ConfigurationElementType == typeof(TestHandlerData)).First();
             command.Execute(null);
+            addedElement = collectionViewModel.ChildElements.Last();
         }
 
         [TestMethod]
@@ -97,151 +77,18 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model_and_config_collection
         {
             Assert.IsTrue(descendentElementsChangedFired);
         }
-    }
 
-    [TestClass]
-    public class when_moving_collection_elements_up : SectionWithMultipleChildrenContext
-    {
-        private bool descendentElementsChangedFired;
-
-        protected override void Arrange()
+        [TestMethod]
+        public void then_new_element_is_selected()
         {
-            base.Arrange();
-            descendentElementsChangedFired = false;
-            ViewModel.DescendentElementsChanged += (s, e) => { descendentElementsChangedFired = true; };
-        }
-
-        protected override void Act()
-        {
-            var handler = ViewModel.DescendentElements(x => x.ConfigurationType == typeof(TestHandlerData)).OfType<CollectionElementViewModel>()
-                                .Where(x => x.Name == "Two").First();
-
-            handler.MoveUp.Execute(null);
+            Assert.IsTrue(addedElement.IsSelected);
         }
 
         [TestMethod]
-        public void then_can_execute_move_up_on_all_but_first_element()
+        public void then_new_element_shows_properties()
         {
-            var handlers =
-                ViewModel.DescendentElements(x => x.ConfigurationType == typeof(TestHandlerData))
-                    .OfType<CollectionElementViewModel>();
-
-            var handlersThatCanMoveUp = handlers.Where(x => x.MoveUp.CanExecute(null)).ToArray();
-            var handlersExceptFirst = handlers.Skip(1).ToArray();
-
-            CollectionAssert.AreEquivalent(
-                handlersExceptFirst,
-                handlersThatCanMoveUp);
+            Assert.IsTrue(addedElement.PropertiesShown);
         }
-
-        [TestMethod]
-        public void then_can_excute_move_down_on_all_but_last_element()
-        {
-            var handlers =
-                ViewModel.DescendentElements(x => x.ConfigurationType == typeof(TestHandlerData))
-                    .OfType<CollectionElementViewModel>();
-
-            CollectionAssert.AreEquivalent(
-                handlers.Where(x => x != handlers.Last()).ToArray(),
-                handlers.Where(x => x.MoveDown.CanExecute(null)).ToArray());
-        }
-
-
-        [TestMethod]
-        public void then_elements_are_reordered()
-        {
-            var handlerNames =
-                ViewModel.DescendentElements(x => x.ConfigurationType == typeof(TestHandlerData)).Select(x => x.Name);
-
-            CollectionAssert.AreEqual(new[] { "Two", "One", "Three" }, handlerNames.ToArray());
-        }
-
-        [TestMethod]
-        public void then_change_notification_fires()
-        {
-            Assert.IsTrue(descendentElementsChangedFired);
-        }
-    }
-
-    [TestClass]
-    public class when_moving_collection_elements_down : SectionWithMultipleChildrenContext
-    {
-        private bool descendentElementsChangedFired;
-
-        protected override void Arrange()
-        {
-            base.Arrange();
-            descendentElementsChangedFired = false;
-            base.ViewModel.DescendentElementsChanged += (s, e) => { descendentElementsChangedFired = true; };
-        }
-
-        protected override void Act()
-        {
-            var handler = ViewModel.DescendentElements(x => x.ConfigurationType == typeof(TestHandlerData)).OfType<CollectionElementViewModel>().Where(
-                x => x.Name == "Two").First();
-
-            handler.MoveDown.Execute(null);
-        }
-
-
-        [TestMethod]
-        public void then_elements_are_reordered()
-        {
-            var handlerNames =
-                ViewModel.DescendentElements(x => x.ConfigurationType == typeof(TestHandlerData)).Select(x => x.Name);
-
-            CollectionAssert.AreEqual(new[] { "One", "Three", "Two" }, handlerNames.ToArray());
-        }
-
-        [TestMethod]
-        public void then_change_notification_fires()
-        {
-            Assert.IsTrue(descendentElementsChangedFired);
-        }
-    }
-
-    [TestClass]
-    public class when_removing_an_element : SectionWithMultipleChildrenContext
-    {
-        private bool deletedFired;
-        private bool descendentElementsChangedFired;
-
-        protected override void Arrange()
-        {
-            base.Arrange();
-            descendentElementsChangedFired = false;
-            base.ViewModel.DescendentElementsChanged += (s, e) => { descendentElementsChangedFired = true; };
-        }
-
-        protected override void Act()
-        {
-            var handler = ViewModel.DescendentElements(x => x.ConfigurationType == typeof(TestHandlerData))
-                            .OfType<CollectionElementViewModel>()
-                            .First(x => x.Name == "Two");
-
-            handler.Deleted += (s, e) => { deletedFired = true; };
-            handler.DeleteCommand.Execute(null);
-        }
-
-        [TestMethod]
-        public void then_item_is_removed_from_descendents()
-        {
-            Assert.IsFalse(ViewModel.DescendentElements(x => x.ConfigurationType == typeof(TestHandlerData))
-                               .OfType<CollectionElementViewModel>().Any(x => x.Name == "Two"));
-        }
-
-        [TestMethod]
-        public void then_collection_change_is_raised()
-        {
-            Assert.IsTrue(descendentElementsChangedFired);
-        }
-
-        [TestMethod]
-        public void then_deleted_was_fired_on_element()
-        {
-            Assert.IsTrue(deletedFired);
-        }
-
     }
 
     [TestClass]
@@ -288,6 +135,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model_and_config_collection
         }
 
         public SectionViewModel ViewModel { get; set; }
+        
         [TestMethod]
         public void then_new_child_is_added_to_collection()
         {

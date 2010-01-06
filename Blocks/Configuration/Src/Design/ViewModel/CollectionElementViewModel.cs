@@ -47,7 +47,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
 
         protected override IEnumerable<CommandModel> GetAllCommands()
         {
-            return base.GetAllCommands().Union( new CommandModel[]{ MoveUp, MoveDown });
+            return base.GetAllCommands().Union( 
+                new CommandModel[]{ MoveUp, MoveDown });
         }
 
         public override void Delete()
@@ -72,6 +73,5 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             builder.Append("]");
             return builder.ToString() ;
         }
-
     }
 }

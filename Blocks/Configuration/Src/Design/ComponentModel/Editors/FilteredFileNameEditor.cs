@@ -73,7 +73,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
             }
             return base.EditValue(context, provider, value);
         }
-
+        
         /// <summary>
         /// Initializes the open file dialog when it is created.
         /// </summary>
@@ -85,6 +85,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
             base.InitializeDialog(openFileDialog);
             if (this.editorAttribute != null)
             {
+                openFileDialog.CheckFileExists = this.editorAttribute.CheckFileExists;
                 openFileDialog.Filter = this.editorAttribute.Filter;
                 if (!String.IsNullOrEmpty(file))
                 {

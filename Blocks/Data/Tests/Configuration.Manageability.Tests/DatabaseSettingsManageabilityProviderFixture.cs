@@ -29,7 +29,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Manageability
         DatabaseSettingsManageabilityProvider provider;
         MockRegistryKey machineKey;
         MockRegistryKey userKey;
-        IList<ConfigurationSetting> wmiSettings;
         DatabaseSettings section;
 
         [TestInitialize]
@@ -38,22 +37,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Manageability
             provider = new DatabaseSettingsManageabilityProvider(new Dictionary<Type, ConfigurationElementManageabilityProvider>(0));
             machineKey = new MockRegistryKey(true);
             userKey = new MockRegistryKey(true);
-            wmiSettings = new List<ConfigurationSetting>();
             section = new DatabaseSettings();
-        }
-
-        [TestCleanup]
-        public void TearDown()
-        {
-            // preventive unregister to work around WMI.NET 2.0 issues with appdomain unloading
-            ManagementEntityTypesRegistrar.UnregisterAll();
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
         public void ProviderThrowsWithConfigurationObjectOfWrongType()
         {
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(new TestsConfigurationSection(), true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(new TestsConfigurationSection(), true, machineKey, userKey);
         }
 
         [TestMethod]
@@ -61,7 +52,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Manageability
         {
             section.DefaultDatabase = "default";
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, false, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual("default", section.DefaultDatabase);
         }
@@ -71,7 +62,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Manageability
         {
             section.DefaultDatabase = "default";
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, null, null, false, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, null, null);
 
             Assert.AreEqual("default", section.DefaultDatabase);
         }
@@ -84,7 +75,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Manageability
             machineKey.AddBooleanValue(DatabaseSettingsManageabilityProvider.PolicyValueName, true);
             machineKey.AddStringValue(DatabaseSettingsManageabilityProvider.DefaultDatabasePropertyName, "overridenDefault");
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, false, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual("overridenDefault", section.DefaultDatabase);
         }
@@ -97,7 +88,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Manageability
             userKey.AddBooleanValue(DatabaseSettingsManageabilityProvider.PolicyValueName, true);
             userKey.AddStringValue(DatabaseSettingsManageabilityProvider.DefaultDatabasePropertyName, "overridenDefault");
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, false, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual("overridenDefault", section.DefaultDatabase);
         }
@@ -112,7 +103,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Manageability
             userKey.AddBooleanValue(DatabaseSettingsManageabilityProvider.PolicyValueName, true);
             userKey.AddStringValue(DatabaseSettingsManageabilityProvider.DefaultDatabasePropertyName, "userOverridenDefault");
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, false, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual("machineOverridenDefault", section.DefaultDatabase);
         }
@@ -125,7 +116,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Manageability
             userKey.AddBooleanValue(DatabaseSettingsManageabilityProvider.PolicyValueName, true);
             userKey.AddStringValue(DatabaseSettingsManageabilityProvider.DefaultDatabasePropertyName, "overridenDefault");
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, false, machineKey, userKey, false, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, false, machineKey, userKey);
 
             Assert.AreEqual("default", section.DefaultDatabase);
         }
@@ -136,7 +127,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Manageability
             DbProviderMapping providerMapping = new DbProviderMapping("provider1", typeof(SqlDatabase));
             section.ProviderMappings.Add(providerMapping);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, false, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreSame(typeof(SqlDatabase), providerMapping.DatabaseType);
         }
@@ -156,7 +147,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Manageability
             machineKey.AddSubKey(DatabaseSettingsManageabilityProvider.ProviderMappingsKeyName,
                                  providerMappingsKey);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, false, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreSame(typeof(OracleDatabase), providerMapping.DatabaseType);
 
@@ -178,7 +169,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Manageability
             userKey.AddSubKey(DatabaseSettingsManageabilityProvider.ProviderMappingsKeyName,
                               providerMappingsKey);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, false, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreSame(typeof(OracleDatabase), providerMapping.DatabaseType);
 
@@ -209,7 +200,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Manageability
             machineKey.AddSubKey(DatabaseSettingsManageabilityProvider.ProviderMappingsKeyName,
                                  providerMappingsMachineKey);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, false, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreSame(typeof(OracleDatabase), providerMapping.DatabaseType);
 
@@ -231,7 +222,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Manageability
             userKey.AddSubKey(DatabaseSettingsManageabilityProvider.ProviderMappingsKeyName,
                               providerMappingsKey);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, false, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreSame(typeof(SqlDatabase), providerMapping.DatabaseType);
 
@@ -264,7 +255,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Manageability
             machineKey.AddSubKey(DatabaseSettingsManageabilityProvider.ProviderMappingsKeyName,
                                  providerMappingsMachineKey);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, false, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreSame(typeof(GenericDatabase), providerMapping1.DatabaseType);
             Assert.AreSame(typeof(OracleDatabase), providerMapping2.DatabaseType);
@@ -287,7 +278,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Manageability
             providerMappingMachineKey.AddStringValue(DatabaseSettingsManageabilityProvider.DatabaseTypePropertyName,
                                                      "invalid type name");
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, false, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreSame(typeof(SqlDatabase), providerMapping.DatabaseType);
 
@@ -316,7 +307,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Manageability
             providerMapping2MachineKey.AddStringValue(DatabaseSettingsManageabilityProvider.DatabaseTypePropertyName,
                                                       typeof(GenericDatabase).AssemblyQualifiedName);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual(1, section.ProviderMappings.Count);
             Assert.IsNotNull(section.ProviderMappings.Get("provider2"));
@@ -344,43 +335,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Manageability
                                                  providerMapping2MachineKey);
             providerMapping2MachineKey.AddBooleanValue(AdmContentBuilder.AvailableValueName, true);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, false, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, false, machineKey, userKey);
 
             Assert.AreEqual(2, section.ProviderMappings.Count);
             Assert.IsNotNull(section.ProviderMappings.Get("provider1"));
             Assert.IsNotNull(section.ProviderMappings.Get("provider2"));
 
             Assert.IsTrue(MockRegistryKey.CheckAllClosed(providerMapping1MachineKey, providerMapping2MachineKey, providerMappingsMachineKey));
-        }
-
-        [TestMethod]
-        public void SettingsAreNotCreatedWhenWmiIsDisabled()
-        {
-            section.DefaultDatabase = "default";
-            section.ProviderMappings.Add(new DbProviderMapping("test", typeof(SqlDatabase)));
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, false, machineKey, userKey, false, wmiSettings);
-
-            Assert.AreEqual(0, wmiSettings.Count);
-        }
-
-        [TestMethod]
-        public void SettingsAreCreatedWhenWmiIsEnabled()
-        {
-            section.DefaultDatabase = "default";
-            section.ProviderMappings.Add(new DbProviderMapping("test", typeof(SqlDatabase)));
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, false, machineKey, userKey, true, wmiSettings);
-
-            Assert.AreEqual(2, wmiSettings.Count);
-            Assert.AreSame(typeof(DatabaseBlockSetting), wmiSettings[0].GetType());
-            Assert.IsNull(wmiSettings[0].ApplicationName);
-            Assert.IsNull(wmiSettings[0].SectionName);
-            Assert.AreEqual("default", ((DatabaseBlockSetting)wmiSettings[0]).DefaultDatabase);
-            Assert.AreSame(typeof(ProviderMappingSetting), wmiSettings[1].GetType());
-            Assert.AreEqual("test", ((ProviderMappingSetting)wmiSettings[1]).Name);
-            Assert.AreEqual(typeof(SqlDatabase).AssemblyQualifiedName,
-                            ((ProviderMappingSetting)wmiSettings[1]).DatabaseType);
         }
 
         [TestMethod]

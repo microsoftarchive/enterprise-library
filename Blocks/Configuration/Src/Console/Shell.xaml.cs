@@ -21,6 +21,7 @@ using Microsoft.Practices.Unity;
 using Microsoft.Win32;
 using System.Collections.ObjectModel;
 using System.Windows.Data;
+using System.Windows.Input;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Console
 {
@@ -82,6 +83,55 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Console
             Binding titleBinding = new Binding("ApplicationTitle");
             titleBinding.Source = applicationModel;
             SetBinding(Window.TitleProperty, titleBinding);
+
+            newConfigurationCommand = new DelegateCommand(x => NewConfiguration());
+            saveConfigurationCommand = new DelegateCommand(x => SaveConfiguration());
+            saveConfigurationAsCommand = new DelegateCommand(x => SaveAsConfiguration());
+            openConfigurationCommand = new DelegateCommand(x => OpenConfiguration());
+            exitCommand = new DelegateCommand(x => Close());
+
+            InputBindings.Add(new InputBinding(newConfigurationCommand, new KeyGesture(Key.N, ModifierKeys.Control)));
+            InputBindings.Add(new InputBinding(saveConfigurationCommand, new KeyGesture(Key.S, ModifierKeys.Control)));
+            InputBindings.Add(new InputBinding(saveConfigurationAsCommand, new KeyGesture(Key.A, ModifierKeys.Control)));
+            InputBindings.Add(new InputBinding(openConfigurationCommand, new KeyGesture(Key.O, ModifierKeys.Control)));
+        }
+
+
+        private ICommand newConfigurationCommand;
+        private ICommand saveConfigurationCommand;
+        private ICommand saveConfigurationAsCommand;
+        private ICommand openConfigurationCommand;
+        private ICommand exitCommand;
+
+
+
+        private void NewConfiguration()
+        {
+            var service = container.Resolve<ApplicationViewModel>();
+            service.New();
+        }
+
+        private void SaveConfiguration()
+        {
+            var shellService = container.Resolve<ApplicationViewModel>();
+            shellService.Save();
+        }
+
+        private void SaveAsConfiguration()
+        {
+            var shellService = container.Resolve<ApplicationViewModel>();
+            shellService.SaveAs();
+        }
+
+        private void OpenConfiguration()
+        {
+            var service = container.Resolve<ApplicationViewModel>();
+            service.OpenConfigurationSource();
+        }
+
+        private void Exit()
+        {
+            this.Close();
         }
 
         protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
@@ -97,8 +147,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Console
 
         private void FileMenu_Open_Click(object sender, RoutedEventArgs e)
         {
-            var service = container.Resolve<ApplicationViewModel>();
-            service.OpenConfigurationSource();
+            OpenConfiguration();
         }
 
         private void EnvironemntMenu_Open_Click(object sender, RoutedEventArgs e)
@@ -115,25 +164,22 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Console
 
         private void FileMenu_SaveAs_Click(object sender, RoutedEventArgs e)
         {
-            var shellService = container.Resolve<ApplicationViewModel>();
-            shellService.SaveAs();
+            SaveAsConfiguration();
         }
 
         private void FileMenu_Save_Click(object sender, RoutedEventArgs e)
         {
-            var shellService = container.Resolve<ApplicationViewModel>();
-            shellService.Save();
+            SaveConfiguration();
         }
 
         private void FileMenu_New_Click(object sender, RoutedEventArgs e)
         {
-            var service = container.Resolve<ApplicationViewModel>();
-            service.New();
+            NewConfiguration();
         }
 
         private void FileMenu_Exit_Click(object sender, RoutedEventArgs e)
         {
-            this.Close();
+            Exit();
         }
 
         #region infrastructural services 
@@ -237,5 +283,26 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Console
             return MessageBox.Show(message, caption, buttons);
         }
 
+
+        private class DelegateCommand : ICommand
+        {
+            Action<object> action;
+
+            public DelegateCommand(Action<object> action)
+            {
+                this.action = action;
+            }
+            public bool CanExecute(object parameter)
+            {
+                return true;
+            }
+
+            public event EventHandler CanExecuteChanged;
+
+            public void Execute(object parameter)
+            {
+                action(parameter);
+            }
+        }
     }
 }

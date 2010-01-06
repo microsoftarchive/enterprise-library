@@ -1,15 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿//===============================================================================
+// Microsoft patterns & practices Enterprise Library
+// Core
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+
+using System;
+using System.Globalization;
+using System.IO;
+using System.Reflection;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using Microsoft.Win32;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors
 {
@@ -18,6 +23,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
     /// </summary>
     public partial class TypeBrowser : Window
     {
+        private const string AssembliesFilter = "Assemblies|*.dll;*.exe";
+
         public TypeBrowser()
         {
             InitializeComponent();
@@ -29,19 +36,82 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
             this.DataContext = viewModel;
         }
 
-        private void TypesTree_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private void Ok_Click(object sender, RoutedEventArgs e)
         {
+            try
+            {
+                this.SelectedType = ((TypeBrowserViewModel)this.DataContext).ResolveType();
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show(
+                    string.Format(
+                        CultureInfo.CurrentCulture,
+                        Properties.Resources.ErrorResolvingType,
+                        exception.Message),
+                    Properties.Resources.ErrorResolvingTypeCaption);
+            }
 
+            if (this.SelectedType != null)
+            {
+                this.DialogResult = true;
+            }
         }
 
-        private void TypesTree_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void AddFromGac_Click(object sender, RoutedEventArgs e)
         {
+            var dialog = new SelectGacAssembliesDialog();
+            dialog.Owner = this;
+            dialog.ShowDialog();
 
+            if (dialog.DialogResult.HasValue && dialog.DialogResult.Value)
+            {
+            }
         }
 
-        private void TypesTree_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        private void AddFromFile_Click(object sender, RoutedEventArgs e)
         {
+            var dialog =
+                new OpenFileDialog()
+                {
+                    AddExtension = true,
+                    CheckFileExists = true,
+                    CheckPathExists = true,
+                    Filter = AssembliesFilter,
+                    Multiselect = true,
+                    ValidateNames = true
+                };
+            var dialogResult = dialog.ShowDialog(this);
 
+            if (dialogResult.HasValue && dialogResult.Value)
+            {
+                var viewModel = (TypeBrowserViewModel)this.DataContext;
+
+                foreach (var assemblyFileName in dialog.FileNames)
+                {
+                    string originalAssemblyFileName = assemblyFileName;
+                    string referenceDirectory = Path.GetDirectoryName(originalAssemblyFileName);
+
+                    using (AssemblyLoader loaderHook = new AssemblyLoader(originalAssemblyFileName, referenceDirectory))
+                    {
+                        Assembly newAssembly = null;
+
+                        try
+                        {
+                            newAssembly = Assembly.LoadFrom(loaderHook.CopiedAssemblyPath);
+                        }
+                        catch (Exception)
+                        {
+                        }
+
+                        if (newAssembly != null)
+                        {
+                        }
+                    }
+                }
+            }
         }
+
+        public Type SelectedType { get; private set; }
     }
 }

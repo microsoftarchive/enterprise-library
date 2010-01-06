@@ -26,7 +26,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
     /// </summary>
     [ResourceDescription(typeof(DesignResources), "CustomHandlerDataDescription")]
     [ResourceDisplayName(typeof(DesignResources), "CustomHandlerDataDisplayName")]
-    [TypePickingCommand(TitleResourceName ="CustomHandlerDataAddCommand", TitleResourceType=typeof(DesignResources))]
+    [TypePickingCommand(TitleResourceName = "CustomHandlerDataDisplayName", TitleResourceType = typeof(DesignResources), Replace = CommandReplacement.DefaultAddCommandReplacement)]
     public class CustomHandlerData
         : ExceptionHandlerData, IHelperAssistedCustomConfigurationData<CustomHandlerData>
     {

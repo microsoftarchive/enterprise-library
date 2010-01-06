@@ -35,7 +35,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
         public void CanCreateInstance()
         {
             ManageableConfigurationSource configurationSource
-                = new ManageableConfigurationSource("test.config", noProviders, true, true, "app");
+                = new ManageableConfigurationSource("test.config", noProviders, true, "app");
         }
 
         [TestMethod]
@@ -44,7 +44,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
         public void CreatedInstanceHasImplementation()
         {
             ManageableConfigurationSource configurationSource
-                = new ManageableConfigurationSource("test.config", noProviders, true, true, "app");
+                = new ManageableConfigurationSource("test.config", noProviders, true, "app");
             Assert.IsNotNull(configurationSource.Implementation);
         }
 
@@ -110,7 +110,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
         public void CreateInstanceWithNullApplicationNameThrows()
         {
             ManageableConfigurationSource configurationSource
-                = new ManageableConfigurationSource("test.config", noProviders, true, true, null);
+                = new ManageableConfigurationSource("test.config", noProviders, true, null);
         }
 
         [TestMethod]
@@ -118,7 +118,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
         public void CreateInstanceWithLongApplicationNameThrows()
         {
             ManageableConfigurationSource configurationSource
-                = new ManageableConfigurationSource("test.config", noProviders, true, true, new String('A', 256));
+                = new ManageableConfigurationSource("test.config", noProviders, true, new String('A', 256));
         }
 
         [TestMethod]
@@ -126,7 +126,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
         public void CreateInstanceWithNullConfigurationFilNameThrows()
         {
             ManageableConfigurationSource configurationSource
-                = new ManageableConfigurationSource(null, noProviders, true, true, "app");
+                = new ManageableConfigurationSource(null, noProviders, true, "app");
         }
 
         [TestMethod]
@@ -134,7 +134,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
         public void CreateInstanceWithNullProvidersDictionaryThrows()
         {
             ManageableConfigurationSource configurationSource
-                = new ManageableConfigurationSource("test.config", null, true, true, "app");
+                = new ManageableConfigurationSource("test.config", null, true, "app");
         }
     }
 }

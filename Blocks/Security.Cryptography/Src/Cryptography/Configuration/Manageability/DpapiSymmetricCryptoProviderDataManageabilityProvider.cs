@@ -10,7 +10,6 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
 using System.Security.Cryptography;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability;
@@ -37,7 +36,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         /// </summary>
         public DpapiSymmetricCryptoProviderDataManageabilityProvider()
         {
-            DpapiSymmetricCryptoProviderDataWmiMapper.RegisterWmiTypes();
         }
 
         /// <summary>
@@ -73,18 +71,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
             contentBuilder.AddDropDownListPartForEnumeration(Resources.DpapiSymmetricProviderScopePartName,
                                                              ScopePropertyName,
                                                              configurationObject.Scope);
-        }
-
-        /// <summary>
-        /// Creates the <see cref="ConfigurationSetting"/> instances that describe the 
-        /// configurationObject.
-        /// </summary>
-        /// <param name="configurationObject">The configuration object for instances that must be managed.</param>
-        /// <param name="wmiSettings">A collection to where the generated WMI objects are to be added.</param>
-        protected override void GenerateWmiObjects(DpapiSymmetricCryptoProviderData configurationObject,
-                                                   ICollection<ConfigurationSetting> wmiSettings)
-        {
-            DpapiSymmetricCryptoProviderDataWmiMapper.GenerateWmiObjects(configurationObject, wmiSettings);
         }
 
         /// <summary>

@@ -28,7 +28,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Con
     /// </summary>
     [ResourceDescription(typeof(DesignResources), "AuthorizationCallHandlerDataDescription")]
     [ResourceDisplayName(typeof(DesignResources), "AuthorizationCallHandlerDataDisplayName")]
-    [AddSateliteProviderCommand(SecuritySettings.SectionName)]
+    [AddSateliteProviderCommand(SecuritySettings.SectionName, typeof(SecuritySettings), "DefaultAuthorizationProviderName", "AuthorizationProvider")]
     public class AuthorizationCallHandlerData : CallHandlerData
     {
         private const string AuthorizationProviderPropertyName = "authorizationProvider";

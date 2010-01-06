@@ -23,9 +23,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
     /// <summary>
     /// <para>Configuration settings for the <c>KeyedHashAlgorithm</c> hash provider.</para>
     /// </summary>
-    [TypePickingCommand("AlgorithmTypeName", Replace = CommandReplacement.DefaultAddCommandReplacement, CommandModelTypeName= CryptographyDesignTime.CommandTypeNames.AddKeyedHashProviderCommand)]
-    [ResourceDescription(typeof(DesignResources), "KeyedHashAlgorithmProviderDataDescription")]
-    [ResourceDisplayName(typeof(DesignResources), "KeyedHashAlgorithmProviderDataDisplayName")]
+    [Command(CommonDesignTime.CommandTypeNames.HiddenCommand, 
+           CommandPlacement = CommandPlacement.ContextAdd,
+            Replace = CommandReplacement.DefaultAddCommandReplacement)]
     [ViewModel(CryptographyDesignTime.ViewModelTypeNames.KeyedHashAlgorithmProviderDataViewModel)]
     public class KeyedHashAlgorithmProviderData : HashAlgorithmProviderData
     {

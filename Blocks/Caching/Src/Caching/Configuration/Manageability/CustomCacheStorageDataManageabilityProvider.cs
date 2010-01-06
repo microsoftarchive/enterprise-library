@@ -10,7 +10,6 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Configuration.Manageability.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability;
@@ -41,9 +40,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration.Manageabil
         /// </summary>
         public CustomCacheStorageDataManageabilityProvider()
             : base("")
-        {
-            CustomCacheStorageDataWmiMapper.RegisterWmiTypes();
-        }
+        { }
 
         /// <summary>
         /// Adds the ADM instructions that describe the policies that can be used to override the properties of
@@ -105,18 +102,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration.Manageabil
                                            GenerateAttributesString(configurationObject.Attributes),
                                            1024,
                                            false);
-        }
-
-        /// <summary>
-        /// Creates the <see cref="ConfigurationSetting"/> instances that describe the 
-        /// configurationObject.
-        /// </summary>
-        /// <param name="configurationObject">The configuration object for instances that must be managed.</param>
-        /// <param name="wmiSettings">A collection to where the generated WMI objects are to be added.</param>
-        protected override void GenerateWmiObjects(CustomCacheStorageData configurationObject,
-                                                   ICollection<ConfigurationSetting> wmiSettings)
-        {
-            CustomCacheStorageDataWmiMapper.GenerateWmiObjects(configurationObject, wmiSettings);
         }
     }
 }

@@ -25,7 +25,6 @@ using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration;
 [assembly: AssemblyVersion("4.1.0.0")]
 
 [assembly: Instrumented(@"root\EnterpriseLibrary")]
-[assembly: WmiConfiguration(@"root\EnterpriseLibrary", HostingModel = ManagementHostingModel.Decoupled, IdentifyLevel = false)]
 
 [assembly: AllowPartiallyTrustedCallers]
 [assembly: SecurityTransparent]

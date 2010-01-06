@@ -31,7 +31,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
         public void AppropriateDefaultsAreSet()
         {
             ManageableConfigurationSourceElement element = new ManageableConfigurationSourceElement();
-            Assert.AreEqual(true, element.EnableWmi);
             Assert.AreEqual(true, element.EnableGroupPolicies);
             Assert.AreEqual(string.Empty, element.FilePath);
             Assert.AreEqual("Application", element.ApplicationName);
@@ -159,8 +158,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
                     "manageable",
                     AppDomain.CurrentDomain.SetupInformation.ConfigurationFile,
                     "testapp",
-                    true,
-                    false);
+                    true);
             element.ConfigurationManageabilityProviders.Add(new ConfigurationSectionManageabilityProviderData("section1", typeof(MockConfigurationSectionManageabilityProvider)));
             element.ConfigurationManageabilityProviders.Get(0).ManageabilityProviders.Add(new ConfigurationElementManageabilityProviderData("1", typeof(MockConfigurationElementManageabilityProvider), typeof(String)));
             element.ConfigurationManageabilityProviders.Add(new ConfigurationSectionManageabilityProviderData("section2", typeof(MockConfigurationSectionManageabilityProvider)));

@@ -15,14 +15,11 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type local:SectionModelContainer}">
-                    <Expander Style="{StaticResource SectionExpander}" >
+                    <Expander Focusable="False" IsExpanded="{Binding IsExpanded, Mode=TwoWay}" Style="{StaticResource SectionExpander}" >
                         <Expander.Header>
-                            <DockPanel x:Name="PART_Header">
+                            <ContentControl Focusable="true" x:Name="PART_Header">
                                 <TextBlock DockPanel.Dock="Left" Text="{Binding Name}" />
-                                <DockPanel.ContextMenu>
-                                    <local:SelectionNotifyingContextMenu ItemsSource="{Binding Commands}" Style="{StaticResource ContextMenuStyle}"  />
-                                </DockPanel.ContextMenu>
-                            </DockPanel>
+                            </ContentControl>
                         </Expander.Header>
 
                         <local:BlockVisualizer Grid.IsSharedSizeScope="True" />

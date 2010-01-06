@@ -130,7 +130,7 @@
     <value>1011 - The name of the Symmetric Cryptography Provider to use when code does specify the name of a configured Symmetric Cryptography Provider.</value>
   </data>
   <data name="CryptographySettingsDefaultSymmetricCryptoProviderNameDisplayName" xml:space="preserve">
-    <value>Default Crypto Provider</value>
+    <value>Default Symmetric Crypto Provider</value>
   </data>
   <data name="CryptographySettingsDescription" xml:space="preserve">
     <value>1007 - Configuration settings for the Cryptography Application Block.</value>

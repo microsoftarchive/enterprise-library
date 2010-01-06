@@ -43,9 +43,6 @@
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Management" />
-    <Reference Include="System.Management.Instrumentation">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
@@ -57,10 +54,6 @@
     <Compile Include="CustomAuthorizationProviderDataManageabilityProviderFixture.cs" />
     <Compile Include="SecuritySettingsManageabilityProviderFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="WMI\AuthorizationRuleProviderSettingFixture.cs" />
-    <Compile Include="WMI\CustomAuthorizationProviderSettingFixture.cs" />
-    <Compile Include="WMI\CustomSecurityCacheProviderSettingFixture.cs" />
-    <Compile Include="WMI\SecurityBlockSettingFixture.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\Src\Common.csproj">

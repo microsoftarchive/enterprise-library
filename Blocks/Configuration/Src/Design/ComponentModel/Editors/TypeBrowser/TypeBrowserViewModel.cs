@@ -1,35 +1,87 @@
-﻿using System;
+﻿//===============================================================================
+// Microsoft patterns & practices Enterprise Library
+// Core
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Drawing.Design;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
+using System.Windows.Input;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors
 {
     public class TypeBrowserViewModel : INotifyPropertyChanged, INodeCreator
     {
         public TypeBrowserViewModel(IEnumerable<AssemblyGroup> assemblyGroups)
+            : this(assemblyGroups, null)
+        { }
+
+        public TypeBrowserViewModel(IEnumerable<AssemblyGroup> assemblyGroups, Func<Type, bool> typeFilter)
         {
-            this.AssemblyGroups =
-                new ObservableCollection<AssemblyGroupNode>(
-                    assemblyGroups.Select(ag => new AssemblyGroupNode(ag, this)));
-            this.GenericTypeParameters =
-                new ObservableCollection<GenericTypeParameter>();
+            this.typeFilter = typeFilter;
+
+            this.AssemblyGroups = new ObservableCollection<AssemblyGroupNode>();
+            this.GenericTypeParameters = new ObservableCollection<GenericTypeParameter>();
+
+            this.UpdateAssemblyGroups(assemblyGroups);
+        }
+
+        public void UpdateAssemblyGroups(IEnumerable<AssemblyGroup> assemblyGroups)
+        {
+            this.AssemblyGroups.Clear();
+            foreach (var group in assemblyGroups)
+            {
+                this.AssemblyGroups.Add(new AssemblyGroupNode(group, this));
+            }
+        }
+
+        public Type ResolveType()
+        {
+            var resolvedType = this.concreteType;
+            if (resolvedType != null)
+            {
+                if (resolvedType.IsGenericTypeDefinition)
+                {
+                    var genericTypeArguments =
+                        this.GenericTypeParameters.Select(
+                        gtp =>
+                        {
+                            if (gtp.TypeArgument == null)
+                            {
+                                throw new InvalidOperationException(
+                                    string.Format(
+                                        CultureInfo.CurrentCulture,
+                                        Properties.Resources.ErrorGenericTypeParameterNotSet,
+                                        gtp.TypeParameter.Name));
+                            }
+                            return gtp.TypeArgument;
+                        }).ToArray();
+
+                    resolvedType = resolvedType.MakeGenericType(genericTypeArguments);
+                }
+
+                return resolvedType;
+            }
+
+            throw new InvalidOperationException(Properties.Resources.ErrorNoSelectedType);
         }
 
         public ObservableCollection<AssemblyGroupNode> AssemblyGroups { get; private set; }
 
         public ObservableCollection<GenericTypeParameter> GenericTypeParameters { get; private set; }
-
-        public bool HasType
-        {
-            get
-            {
-                return this.selectedTypeNode != null;
-            }
-        }
 
         public bool HasGenericParameters
         {
@@ -58,6 +110,30 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
             }
         }
 
+        public Type ConcreteType
+        {
+            get { return this.concreteType; }
+            set
+            {
+                if (this.concreteType != value)
+                {
+                    this.concreteType = value;
+
+                    this.Notify("ConcreteType");
+                }
+            }
+        }
+
+        public ICommand OkCommand
+        {
+            get { return new OkCommand(); }
+        }
+
+        public ICommand AddAssembliesCommand
+        {
+            get { return new AddAssembliesCommand(); }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected void Notify(string property)
@@ -72,7 +148,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
         {
             if (!updateFromSelection)
             {
-                var newSearch = new SearchAction(this.typeName, this.AssemblyGroups);
+                var typeName = this.typeName;
+                var newSearch = new SearchAction(typeName, this.AssemblyGroups);
+
                 newSearch.Completed += (s, args) =>
                 {
                     SearchAction completedSearch = s as SearchAction;
@@ -125,7 +203,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
         private void UpdateSelection(TypeNode entry)
         {
             this.selectedTypeNode = entry;
-            Notify("HasType");
 
             this.GenericTypeParameters.Clear();
             if (this.selectedTypeNode != null && this.selectedTypeNode.Data.IsGenericTypeDefinition)
@@ -136,6 +213,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
                 }
             }
             Notify("HasGenericParameters");
+
+            this.ConcreteType = entry != null ? entry.Data : null;
         }
 
         #region INodeCreator implementation
@@ -155,16 +234,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
 
         AssemblyNode INodeCreator.CreateAssemblyNode(Assembly assembly)
         {
-            return new AssemblyNode(assembly, this);
+            return new AssemblyNode(assembly, this, this.typeFilter);
         }
 
         #endregion
 
-        private bool hasType;
+        private readonly Func<Type, bool> typeFilter;
+
         private bool updateFromSelection;
         private string typeName;
         private TypeNode selectedTypeNode;
         private Type concreteType;
+
         private SearchAction currentSearch;
     }
 
@@ -313,13 +394,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
         private readonly Assembly assembly;
         private readonly string displayName;
         private readonly INodeCreator nodeCreator;
+        private readonly Func<Type, bool> typeFilter;
         private ObservableCollection<NamespaceNode> namespaces;
 
-        public AssemblyNode(Assembly assembly, INodeCreator nodeCreator)
+        public AssemblyNode(Assembly assembly, INodeCreator nodeCreator, Func<Type, bool> typeFilter)
         {
             this.assembly = assembly;
             this.displayName = assembly.GetName().Name;
             this.nodeCreator = nodeCreator;
+            this.typeFilter = typeFilter ?? (t => true);
         }
 
         public string DisplayName
@@ -340,7 +423,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
 
                     var types =
                         this.assembly.GetTypes()
-                            .Where(t => true)
+                            .Where(this.typeFilter)
                             .OrderBy(t => t.Namespace)
                             .ThenBy(t => t.Name);
 
@@ -403,14 +486,103 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
 
     #endregion
 
-    public class GenericTypeParameter
+    public class GenericTypeParameter : Property
     {
-        public GenericTypeParameter(Type argument)
+        public GenericTypeParameter(Type typeParameter)
+            : base(null, null, null, new Attribute[] { new EditorAttribute(typeof(TypeSelectionEditor), typeof(UITypeEditor)) })
         {
-            this.TypeArgument = argument;
+            this.TypeParameter = typeParameter;
         }
 
-        public Type TypeArgument { get; private set; }
-        public Type Type { get; set; }
+        public Type TypeParameter { get; private set; }
+        public Type TypeArgument { get; set; }
+
+        public override string Description
+        {
+            get
+            {
+                return "Generic parameter";
+            }
+        }
+
+        public override string DisplayName
+        {
+            get
+            {
+                return this.TypeParameter.Name;
+            }
+        }
+
+        public override bool IsRequired
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        public override string PropertyName
+        {
+            get
+            {
+                return this.TypeParameter.Name;
+            }
+        }
+
+        public override Type PropertyType
+        {
+            get
+            {
+                return typeof(Type);
+            }
+        }
+
+        protected override object GetValue()
+        {
+            return this.TypeArgument;
+        }
+
+        protected override void SetValue(object value)
+        {
+            var valueAsString = value as string;
+            if (valueAsString != null)
+            {
+                this.TypeArgument = Type.GetType(valueAsString);
+            }
+            else
+            {
+                this.TypeArgument = (Type)value;
+            }
+        }
+    }
+
+    internal class OkCommand : ICommand
+    {
+        public bool CanExecute(object parameter)
+        {
+            throw new NotImplementedException();
+        }
+
+        public event EventHandler CanExecuteChanged;
+
+        public void Execute(object parameter)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    internal class AddAssembliesCommand : ICommand
+    {
+        public bool CanExecute(object parameter)
+        {
+            throw new NotImplementedException();
+        }
+
+        public event EventHandler CanExecuteChanged;
+
+        public void Execute(object parameter)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

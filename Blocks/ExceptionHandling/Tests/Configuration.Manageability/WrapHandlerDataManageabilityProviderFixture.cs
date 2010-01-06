@@ -26,7 +26,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
         WrapHandlerDataManageabilityProvider provider;
         MockRegistryKey machineKey;
         MockRegistryKey userKey;
-        IList<ConfigurationSetting> wmiSettings;
         WrapHandlerData configurationObject;
 
         [TestInitialize]
@@ -35,15 +34,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
             provider = new WrapHandlerDataManageabilityProvider();
             machineKey = new MockRegistryKey(true);
             userKey = new MockRegistryKey(true);
-            wmiSettings = new List<ConfigurationSetting>();
             configurationObject = new WrapHandlerData();
-        }
-
-        [TestCleanup]
-        public void TearDown()
-        {
-            // preventive unregister to work around WMI.NET 2.0 issues with appdomain unloading
-            ManagementEntityTypesRegistrar.UnregisterAll();
         }
 
         [TestMethod]
@@ -71,7 +62,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
         [ExpectedException(typeof(ArgumentException))]
         public void ProviderThrowsWithConfigurationObjectOfWrongType()
         {
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(new TestsConfigurationSection(), true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(new TestsConfigurationSection(), true, machineKey, userKey);
         }
 
         [TestMethod]
@@ -80,7 +71,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
             configurationObject.ExceptionMessage = "message";
             configurationObject.WrapExceptionType = typeof(ArgumentException);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, null, null, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, null, null);
 
             Assert.AreEqual("message", configurationObject.ExceptionMessage);
             Assert.AreSame(typeof(ArgumentException), configurationObject.WrapExceptionType);
@@ -95,7 +86,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
             machineKey.AddStringValue(WrapHandlerDataManageabilityProvider.ExceptionMessagePropertyName, "overriden message");
             machineKey.AddStringValue(WrapHandlerDataManageabilityProvider.WrapExceptionTypePropertyName, typeof(NullReferenceException).AssemblyQualifiedName);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, machineKey, null, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, machineKey, null);
 
             Assert.AreEqual("overriden message", configurationObject.ExceptionMessage);
             Assert.AreSame(typeof(NullReferenceException), configurationObject.WrapExceptionType);
@@ -110,7 +101,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
             userKey.AddStringValue(WrapHandlerDataManageabilityProvider.ExceptionMessagePropertyName, "overriden message");
             userKey.AddStringValue(WrapHandlerDataManageabilityProvider.WrapExceptionTypePropertyName, typeof(NullReferenceException).AssemblyQualifiedName);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, null, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, null, userKey);
 
             Assert.AreEqual("overriden message", configurationObject.ExceptionMessage);
             Assert.AreSame(typeof(NullReferenceException), configurationObject.WrapExceptionType);
@@ -125,7 +116,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
             machineKey.AddStringValue(WrapHandlerDataManageabilityProvider.ExceptionMessagePropertyName, "overriden message");
             machineKey.AddStringValue(WrapHandlerDataManageabilityProvider.WrapExceptionTypePropertyName, typeof(NullReferenceException).AssemblyQualifiedName);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, false, machineKey, null, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, false, machineKey, null);
 
             Assert.AreEqual("message", configurationObject.ExceptionMessage);
             Assert.AreSame(typeof(ArgumentException), configurationObject.WrapExceptionType);
@@ -139,7 +130,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
             machineKey.AddStringValue(WrapHandlerDataManageabilityProvider.ExceptionMessagePropertyName, "msg");
             machineKey.AddStringValue(WrapHandlerDataManageabilityProvider.WrapExceptionTypePropertyName, typeof(NullReferenceException).AssemblyQualifiedName);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, machineKey, null, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, machineKey, null);
 
             Assert.AreSame(typeof(NullReferenceException), configurationObject.WrapExceptionType);
         }
@@ -152,52 +143,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
             machineKey.AddStringValue(WrapHandlerDataManageabilityProvider.ExceptionMessagePropertyName, "msg");
             machineKey.AddStringValue(WrapHandlerDataManageabilityProvider.WrapExceptionTypePropertyName, "An invalid type name");
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, machineKey, null, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, machineKey, null);
 
             Assert.AreSame(typeof(ArgumentException), configurationObject.WrapExceptionType);
         }
 
-        [TestMethod]
-        public void WmiSettingsAreNotGeneratedIfWmiIsDisabled()
-        {
-            configurationObject.ExceptionMessage = "message";
-            configurationObject.WrapExceptionType = typeof(ArgumentException);
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, false, machineKey, userKey, false, wmiSettings);
-
-            Assert.AreEqual(0, wmiSettings.Count);
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreGeneratedIfWmiIsEnabled()
-        {
-            configurationObject.ExceptionMessage = "message";
-            configurationObject.WrapExceptionType = typeof(ArgumentException);
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, false, machineKey, userKey, true, wmiSettings);
-
-            Assert.AreEqual(1, wmiSettings.Count);
-            Assert.AreSame(typeof(WrapHandlerSetting), wmiSettings[0].GetType());
-            Assert.AreEqual(configurationObject.ExceptionMessage, ((WrapHandlerSetting)wmiSettings[0]).ExceptionMessage);
-            Assert.AreEqual(configurationObject.WrapExceptionType.AssemblyQualifiedName, ((WrapHandlerSetting)wmiSettings[0]).WrapExceptionType);
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreGeneratedWithPolicyOverridesIfWmiIsEnabled()
-        {
-            configurationObject.ExceptionMessage = "message";
-            configurationObject.WrapExceptionType = typeof(ArgumentException);
-
-            machineKey.AddStringValue(WrapHandlerDataManageabilityProvider.ExceptionMessagePropertyName, "overriden message");
-            machineKey.AddStringValue(WrapHandlerDataManageabilityProvider.WrapExceptionTypePropertyName, typeof(NullReferenceException).AssemblyQualifiedName);
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, machineKey, userKey, true, wmiSettings);
-
-            Assert.AreEqual(1, wmiSettings.Count);
-            Assert.AreSame(typeof(WrapHandlerSetting), wmiSettings[0].GetType());
-            Assert.AreEqual(configurationObject.ExceptionMessage, ((WrapHandlerSetting)wmiSettings[0]).ExceptionMessage);
-            Assert.AreEqual(configurationObject.WrapExceptionType.AssemblyQualifiedName, ((WrapHandlerSetting)wmiSettings[0]).WrapExceptionType);
-        }
 
         [TestMethod]
         public void ManageabilityProviderGeneratesProperAdmContent()

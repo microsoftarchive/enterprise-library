@@ -43,16 +43,12 @@
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Management" />
-    <Reference Include="System.Management.Instrumentation">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\..\GlobalAssemblyInfo.cs">
       <Link>GlobalAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="CacheManagerSettingsWmiMapperFixture.cs" />
     <Compile Include="CacheStorageDataManageabilityProviderFixture.cs" />
     <Compile Include="CacheManagerSettingsManageabilityProviderFixture.cs" />
     <Compile Include="CustomCacheStorageDataManageabilityProviderFixture.cs" />
@@ -60,13 +56,6 @@
     <Compile Include="IsolatedStorageCacheStorageDataManageabilityProviderFixture.cs" />
     <Compile Include="MockCacheManagerData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="WMI\CacheManagerSettingFixture.cs" />
-    <Compile Include="WMI\CustomCacheManagerSettingFixture.cs" />
-    <Compile Include="WMI\CachingBlockSettingFixture.cs" />
-    <Compile Include="WMI\UnknownCacheManagerSettingFixture.cs" />
-    <Compile Include="WMI\CustomCacheStorageSettingFixture.cs" />
-    <Compile Include="WMI\IsolatedStorageCacheStorageSettingFixture.cs" />
-    <Compile Include="WMI\NullBackingStoreSettingFixture.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\Tests\Common.TestSupport\Common.TestSupport.csproj">

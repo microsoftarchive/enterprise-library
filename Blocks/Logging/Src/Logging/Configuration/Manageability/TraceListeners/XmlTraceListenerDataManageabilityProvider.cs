@@ -10,7 +10,6 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability;
@@ -36,9 +35,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         /// Initialize a new instance of the <see cref="XmlTraceListenerDataManageabilityProvider"/> class.
         /// </summary>
         public XmlTraceListenerDataManageabilityProvider()
-        {
-            XmlTraceListenerDataWmiMapper.RegisterWmiTypes();
-        }
+        { }
 
         /// <summary>
         /// Adds the ADM parts that represent the properties of
@@ -65,19 +62,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
 
             AddTraceOptionsPart(contentBuilder, configurationObject.TraceOutputOptions);
 
-			AddFilterPart(contentBuilder, configurationObject.Filter);
-		}
-
-        /// <summary>
-        /// Creates the <see cref="ConfigurationSetting"/> instances that describe the 
-        /// configurationObject.
-        /// </summary>
-        /// <param name="configurationObject">The configuration object for instances that must be managed.</param>
-        /// <param name="wmiSettings">A collection to where the generated WMI objects are to be added.</param>
-        protected override void GenerateWmiObjects(XmlTraceListenerData configurationObject,
-                                                   ICollection<ConfigurationSetting> wmiSettings)
-        {
-            XmlTraceListenerDataWmiMapper.GenerateWmiObjects(configurationObject, wmiSettings);
+            AddFilterPart(contentBuilder, configurationObject.Filter);
         }
 
         /// <summary>
@@ -95,11 +80,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         {
             String fileNameOverride = policyKey.GetStringValue(FileNamePropertyName);
             TraceOptions? traceOutputOptionsOverride = policyKey.GetEnumValue<TraceOptions>(TraceOutputOptionsPropertyName);
-			SourceLevels? filterOverride = policyKey.GetEnumValue<SourceLevels>(FilterPropertyName);
+            SourceLevels? filterOverride = policyKey.GetEnumValue<SourceLevels>(FilterPropertyName);
 
             configurationObject.FileName = fileNameOverride;
             configurationObject.TraceOutputOptions = traceOutputOptionsOverride.Value;
-			configurationObject.Filter = filterOverride.Value;
-		}
+            configurationObject.Filter = filterOverride.Value;
+        }
     }
 }

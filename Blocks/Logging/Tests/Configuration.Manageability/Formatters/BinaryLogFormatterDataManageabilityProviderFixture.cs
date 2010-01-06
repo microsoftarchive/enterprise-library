@@ -17,7 +17,6 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability.Adm;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration.Manageability.Mocks;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageability.Formatters;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageability.Properties;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageability.Tests.Formatters
@@ -26,22 +25,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
     public class BinaryLogFormatterDataManageabilityProviderFixture
     {
         BinaryLogFormatterDataManageabilityProvider provider;
-        IList<ConfigurationSetting> wmiSettings;
         BinaryLogFormatterData configurationObject;
 
         [TestInitialize]
         public void SetUp()
         {
             provider = new BinaryLogFormatterDataManageabilityProvider();
-            wmiSettings = new List<ConfigurationSetting>();
             configurationObject = new BinaryLogFormatterData();
-        }
-
-        [TestCleanup]
-        public void TearDown()
-        {
-            // preventive unregister to work around WMI.NET 2.0 issues with appdomain unloading
-            ManagementEntityTypesRegistrar.UnregisterAll();
         }
 
         [TestMethod]
@@ -69,24 +59,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         [ExpectedException(typeof(ArgumentException))]
         public void ProviderThrowsWithConfigurationObjectOfWrongType()
         {
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(new TestsConfigurationSection(), true, null, null, true, wmiSettings);
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreNotGeneratedIfWmiIsDisabled()
-        {
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, false, null, null, false, wmiSettings);
-
-            Assert.AreEqual(0, wmiSettings.Count);
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreGeneratedIfWmiIsEnabled()
-        {
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, false, null, null, true, wmiSettings);
-
-            Assert.AreEqual(1, wmiSettings.Count);
-            Assert.AreSame(typeof(BinaryFormatterSetting), wmiSettings[0].GetType());
+            provider.OverrideWithGroupPolicies(new TestsConfigurationSection(), true, null, null);
         }
 
         [TestMethod]

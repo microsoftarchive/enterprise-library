@@ -28,7 +28,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Security.Configuration.
         SecuritySettingsManageabilityProvider provider;
         MockRegistryKey machineKey;
         MockRegistryKey userKey;
-        IList<ConfigurationSetting> wmiSettings;
         SecuritySettings section;
         DictionaryConfigurationSource configurationSource;
 
@@ -38,17 +37,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Security.Configuration.
             provider = new SecuritySettingsManageabilityProvider(new Dictionary<Type, ConfigurationElementManageabilityProvider>(0));
             machineKey = new MockRegistryKey(true);
             userKey = new MockRegistryKey(true);
-            wmiSettings = new List<ConfigurationSetting>();
             section = new SecuritySettings();
             configurationSource = new DictionaryConfigurationSource();
             configurationSource.Add(SecuritySettings.SectionName, section);
-        }
-
-        [TestCleanup]
-        public void TearDown()
-        {
-            // preventive unregister to work around WMI.NET 2.0 issues with appdomain unloading
-            ManagementEntityTypesRegistrar.UnregisterAll();
         }
 
         [TestMethod]
@@ -75,7 +66,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Security.Configuration.
         [ExpectedException(typeof(ArgumentException))]
         public void ProviderThrowsWithConfigurationObjectOfWrongType()
         {
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(new TestsConfigurationSection(), true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(new TestsConfigurationSection(), true, machineKey, userKey);
         }
 
         [TestMethod]
@@ -84,7 +75,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Security.Configuration.
             section.DefaultAuthorizationProviderName = "default authorization";
             section.DefaultSecurityCacheProviderName = "default securitycache";
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual("default authorization", section.DefaultAuthorizationProviderName);
             Assert.AreEqual("default securitycache", section.DefaultSecurityCacheProviderName);
@@ -96,7 +87,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Security.Configuration.
             section.DefaultAuthorizationProviderName = "default authorization";
             section.DefaultSecurityCacheProviderName = "default securitycache";
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, null, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, null, userKey);
         }
 
         [TestMethod]
@@ -105,7 +96,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Security.Configuration.
             section.DefaultAuthorizationProviderName = "default authorization";
             section.DefaultSecurityCacheProviderName = "default securitycache";
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, null, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, null);
         }
 
         [TestMethod]
@@ -118,7 +109,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Security.Configuration.
             machineKey.AddStringValue(SecuritySettingsManageabilityProvider.DefaultAuthorizationProviderPropertyName, "machine authorization");
             machineKey.AddStringValue(SecuritySettingsManageabilityProvider.DefaultSecurityCacheProviderPropertyName, "machine securitycache");
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual("machine authorization", section.DefaultAuthorizationProviderName);
             Assert.AreEqual("machine securitycache", section.DefaultSecurityCacheProviderName);
@@ -134,7 +125,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Security.Configuration.
             userKey.AddStringValue(SecuritySettingsManageabilityProvider.DefaultAuthorizationProviderPropertyName, "user authorization");
             userKey.AddStringValue(SecuritySettingsManageabilityProvider.DefaultSecurityCacheProviderPropertyName, "user securitycache");
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, userKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, userKey, userKey);
 
             Assert.AreEqual("user authorization", section.DefaultAuthorizationProviderName);
             Assert.AreEqual("user securitycache", section.DefaultSecurityCacheProviderName);
@@ -150,7 +141,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Security.Configuration.
             userKey.AddStringValue(SecuritySettingsManageabilityProvider.DefaultAuthorizationProviderPropertyName, AdmContentBuilder.NoneListItem);
             userKey.AddStringValue(SecuritySettingsManageabilityProvider.DefaultSecurityCacheProviderPropertyName, "user securitycache");
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual("", section.DefaultAuthorizationProviderName);
             Assert.AreEqual("user securitycache", section.DefaultSecurityCacheProviderName);
@@ -166,7 +157,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Security.Configuration.
             userKey.AddStringValue(SecuritySettingsManageabilityProvider.DefaultAuthorizationProviderPropertyName, "user authorization");
             userKey.AddStringValue(SecuritySettingsManageabilityProvider.DefaultSecurityCacheProviderPropertyName, AdmContentBuilder.NoneListItem);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual("user authorization", section.DefaultAuthorizationProviderName);
             Assert.AreEqual("", section.DefaultSecurityCacheProviderName);
@@ -193,7 +184,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Security.Configuration.
             machineAuthorizationProvidersKey.AddSubKey("authorizationProvider2", machineAuthorizationProvider2Key);
             machineAuthorizationProvider2Key.AddBooleanValue(SecuritySettingsManageabilityProvider.PolicyValueName, false);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual(1, section.AuthorizationProviders.Count);
             Assert.IsNotNull(section.AuthorizationProviders.Get("authorizationProvider1"));
@@ -222,7 +213,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Security.Configuration.
             machineAuthorizationProvidersKey.AddSubKey("authorizationProvider2", machineAuthorizationProvider2Key);
             machineAuthorizationProvider2Key.AddBooleanValue(SecuritySettingsManageabilityProvider.PolicyValueName, false);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, false, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, false, machineKey, userKey);
 
             Assert.AreEqual(2, section.AuthorizationProviders.Count);
             Assert.IsNotNull(section.AuthorizationProviders.Get("authorizationProvider1"));
@@ -252,7 +243,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Security.Configuration.
             machineSecurityCacheProvidersKey.AddSubKey("securityCacheProvider2", machineSecurityCacheProvider2Key);
             machineSecurityCacheProvider2Key.AddBooleanValue(SecuritySettingsManageabilityProvider.PolicyValueName, false);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual(1, section.SecurityCacheProviders.Count);
             Assert.IsNotNull(section.SecurityCacheProviders.Get("securityCacheProvider1"));
@@ -281,7 +272,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Security.Configuration.
             machineSecurityCacheProvidersKey.AddSubKey("securityCacheProvider2", machineSecurityCacheProvider2Key);
             machineSecurityCacheProvider2Key.AddBooleanValue(SecuritySettingsManageabilityProvider.PolicyValueName, false);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, false, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, false, machineKey, userKey);
 
             Assert.AreEqual(2, section.SecurityCacheProviders.Count);
             Assert.IsNotNull(section.SecurityCacheProviders.Get("securityCacheProvider1"));
@@ -303,7 +294,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Security.Configuration.
             AuthorizationRuleProviderData authorizationProviderData = new AuthorizationRuleProviderData("authorizationProvider1");
             section.AuthorizationProviders.Add(authorizationProviderData);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.IsTrue(registeredProvider.called);
             Assert.AreSame(authorizationProviderData, registeredProvider.LastConfigurationObject);
@@ -338,7 +329,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Security.Configuration.
             MockRegistryKey userOtherauthorizationProviderKey = new MockRegistryKey(false);
             userauthorizationProvidersKey.AddSubKey("authorizationProvider2", userOtherauthorizationProviderKey);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.IsTrue(registeredProvider.called);
             Assert.AreSame(authorizationProviderData, registeredProvider.LastConfigurationObject);
@@ -363,7 +354,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Security.Configuration.
             CustomSecurityCacheProviderData securitycacheProviderData = new CustomSecurityCacheProviderData("securitycacheProvider1", typeof(Object));
             section.SecurityCacheProviders.Add(securitycacheProviderData);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.IsTrue(registeredProvider.called);
             Assert.AreSame(securitycacheProviderData, registeredProvider.LastConfigurationObject);
@@ -398,7 +389,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Security.Configuration.
             MockRegistryKey userOthersecuritycacheProviderKey = new MockRegistryKey(false);
             usersecuritycacheProvidersKey.AddSubKey("securitycacheProvider2", userOthersecuritycacheProviderKey);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.IsTrue(registeredProvider.called);
             Assert.AreSame(securitycacheProviderData, registeredProvider.LastConfigurationObject);
@@ -408,31 +399,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Security.Configuration.
             Assert.IsTrue(
                 MockRegistryKey.CheckAllClosed(machinesecuritycacheProvidersKey, machinesecuritycacheProviderKey, machineOthersecuritycacheProviderKey,
                                                usersecuritycacheProvidersKey, usersecuritycacheProviderKey, userOthersecuritycacheProviderKey));
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreNotGeneratedIfWmiIsDisabled()
-        {
-            section.DefaultAuthorizationProviderName = "default authorization";
-            section.DefaultSecurityCacheProviderName = "default securitycache";
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, false, machineKey, userKey, false, wmiSettings);
-
-            Assert.AreEqual(0, wmiSettings.Count);
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreGeneratedIfWmiIsEnabled()
-        {
-            section.DefaultAuthorizationProviderName = "default authorization";
-            section.DefaultSecurityCacheProviderName = "default securitycache";
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(section, false, machineKey, userKey, true, wmiSettings);
-
-            Assert.AreEqual(1, wmiSettings.Count);
-            Assert.AreSame(typeof(SecurityBlockSetting), wmiSettings[0].GetType());
-            Assert.AreEqual("default authorization", ((SecurityBlockSetting)wmiSettings[0]).DefaultAuthorizationProvider);
-            Assert.AreEqual("default securitycache", ((SecurityBlockSetting)wmiSettings[0]).DefaultSecurityCacheProvider);
         }
 
         [TestMethod]

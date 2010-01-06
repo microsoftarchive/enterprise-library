@@ -28,7 +28,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cache.CachingStore.Conf
         CachingStoreProviderDataManageabilityProvider provider;
         MockRegistryKey machineKey;
         MockRegistryKey userKey;
-        IList<ConfigurationSetting> wmiSettings;
         CachingStoreProviderData configurationObject;
 
         [TestInitialize]
@@ -37,15 +36,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cache.CachingStore.Conf
             provider = new CachingStoreProviderDataManageabilityProvider();
             machineKey = new MockRegistryKey(true);
             userKey = new MockRegistryKey(true);
-            wmiSettings = new List<ConfigurationSetting>();
             configurationObject = new CachingStoreProviderData();
-        }
-
-        [TestCleanup]
-        public void TearDown()
-        {
-            // preventive unregister to work around WMI.NET 2.0 issues with appdomain unloading
-            ManagementEntityTypesRegistrar.UnregisterAll();
         }
 
         [TestMethod]
@@ -73,7 +64,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cache.CachingStore.Conf
         [ExpectedException(typeof(ArgumentException))]
         public void ProviderThrowsWithConfigurationObjectOfWrongType()
         {
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(new TestsConfigurationSection(), true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(new TestsConfigurationSection(), true, machineKey, userKey);
         }
 
         [TestMethod]
@@ -83,7 +74,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cache.CachingStore.Conf
             configurationObject.AbsoluteExpiration = 100;
             configurationObject.SlidingExpiration = 200;
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, null, null, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, null, null);
 
             Assert.AreEqual("cache manager", configurationObject.CacheManager);
             Assert.AreEqual(100, configurationObject.AbsoluteExpiration);
@@ -101,7 +92,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cache.CachingStore.Conf
             machineKey.AddIntValue(CachingStoreProviderDataManageabilityProvider.AbsoluteExpirationPropertyName, 150);
             machineKey.AddIntValue(CachingStoreProviderDataManageabilityProvider.SlidingExpirationPropertyName, 250);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, machineKey, userKey);
 
             Assert.AreEqual("machine cache manager", configurationObject.CacheManager);
             Assert.AreEqual(150, configurationObject.AbsoluteExpiration);
@@ -119,7 +110,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cache.CachingStore.Conf
             userKey.AddIntValue(CachingStoreProviderDataManageabilityProvider.AbsoluteExpirationPropertyName, 150);
             userKey.AddIntValue(CachingStoreProviderDataManageabilityProvider.SlidingExpirationPropertyName, 250);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, null, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, true, null, userKey);
 
             Assert.AreEqual("user cache manager", configurationObject.CacheManager);
             Assert.AreEqual(150, configurationObject.AbsoluteExpiration);
@@ -137,59 +128,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cache.CachingStore.Conf
             machineKey.AddIntValue(CachingStoreProviderDataManageabilityProvider.AbsoluteExpirationPropertyName, 150);
             machineKey.AddIntValue(CachingStoreProviderDataManageabilityProvider.SlidingExpirationPropertyName, 250);
 
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, false, machineKey, userKey, true, wmiSettings);
+            provider.OverrideWithGroupPolicies(configurationObject, false, machineKey, userKey);
 
             Assert.AreEqual("cache manager", configurationObject.CacheManager);
             Assert.AreEqual(100, configurationObject.AbsoluteExpiration);
             Assert.AreEqual(200, configurationObject.SlidingExpiration);
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreNotGeneratedIfWmiIsDisabled()
-        {
-            configurationObject.CacheManager = "cache manager";
-            configurationObject.AbsoluteExpiration = 100;
-            configurationObject.SlidingExpiration = 200;
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, false, machineKey, userKey, false, wmiSettings);
-
-            Assert.AreEqual(0, wmiSettings.Count);
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreGeneratedIfWmiIsEnabled()
-        {
-            configurationObject.CacheManager = "cache manager";
-            configurationObject.AbsoluteExpiration = 100;
-            configurationObject.SlidingExpiration = 200;
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, false, machineKey, userKey, true, wmiSettings);
-
-            Assert.AreEqual(1, wmiSettings.Count);
-            Assert.AreSame(typeof(CachingStoreProviderSetting), wmiSettings[0].GetType());
-            Assert.AreEqual("cache manager", ((CachingStoreProviderSetting)wmiSettings[0]).CacheManager);
-            Assert.AreEqual(100, ((CachingStoreProviderSetting)wmiSettings[0]).AbsoluteExpiration);
-            Assert.AreEqual(200, ((CachingStoreProviderSetting)wmiSettings[0]).SlidingExpiration);
-        }
-
-        [TestMethod]
-        public void WmiSettingsAreGeneratedWithPolicyOverridesIfWmiIsEnabled()
-        {
-            configurationObject.CacheManager = "cache manager";
-            configurationObject.AbsoluteExpiration = 100;
-            configurationObject.SlidingExpiration = 200;
-
-            machineKey.AddStringValue(CachingStoreProviderDataManageabilityProvider.CacheManagerPropertyName, "machine cache manager");
-            machineKey.AddIntValue(CachingStoreProviderDataManageabilityProvider.AbsoluteExpirationPropertyName, 150);
-            machineKey.AddIntValue(CachingStoreProviderDataManageabilityProvider.SlidingExpirationPropertyName, 250);
-
-            provider.OverrideWithGroupPoliciesAndGenerateWmiObjects(configurationObject, true, machineKey, userKey, true, wmiSettings);
-
-            Assert.AreEqual(1, wmiSettings.Count);
-            Assert.AreSame(typeof(CachingStoreProviderSetting), wmiSettings[0].GetType());
-            Assert.AreEqual("machine cache manager", ((CachingStoreProviderSetting)wmiSettings[0]).CacheManager);
-            Assert.AreEqual(150, ((CachingStoreProviderSetting)wmiSettings[0]).AbsoluteExpiration);
-            Assert.AreEqual(250, ((CachingStoreProviderSetting)wmiSettings[0]).SlidingExpiration);
         }
 
         [TestMethod]
