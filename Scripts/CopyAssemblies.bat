@@ -85,9 +85,9 @@ if not Exist %binDir% mkdir %binDir%
 @ECHO ----------------------------------------
 @ECHO.
 
-if Exist ..\Lib\Microsoft.Practices.ObjectBuilder2.dll copy /V ..\Lib\Microsoft.Practices.ObjectBuilder2.dll %binDir%\.
+if Exist ..\Lib\Microsoft.Practices.ServiceLocation.dll copy /V ..\Lib\Microsoft.Practices.ServiceLocation.dll %binDir%\.
 @if errorlevel 1 goto :error
-if Exist ..\Lib\Microsoft.Practices.ObjectBuilder2.xml copy /V ..\Lib\Microsoft.Practices.ObjectBuilder2.xml %binDir%\.
+if Exist ..\Lib\Microsoft.Practices.ServiceLocation.xml copy /V ..\Lib\Microsoft.Practices.ServiceLocation.xml %binDir%\.
 @if errorlevel 1 goto :error
 
 if Exist ..\Lib\Microsoft.Practices.Unity.dll copy /V ..\Lib\Microsoft.Practices.Unity.dll %binDir%\.
@@ -105,12 +105,13 @@ if Exist ..\Lib\Microsoft.Practices.Unity.Interception.dll copy /V ..\Lib\Micros
 if Exist ..\Lib\Microsoft.Practices.Unity.Interception.xml copy /V ..\Lib\Microsoft.Practices.Unity.Interception.xml %binDir%\.
 @if errorlevel 1 goto :error
 
-if Exist ..\Lib\Microsoft.Practices.Unity.Interception.Configuration.dll copy /V ..\Lib\Microsoft.Practices.Unity.Interception.Configuration.dll %binDir%\.
-@if errorlevel 1 goto :error
-if Exist ..\Lib\Microsoft.Practices.Unity.Interception.Configuration.xml copy /V ..\Lib\Microsoft.Practices.Unity.Interception.Configuration.xml %binDir%\.
+if Exist ..\Lib\Microsoft.Practices.EnterpriseLibrary.Configuration.Design.HostAdapter.dll copy /V ..\Lib\Microsoft.Practices.EnterpriseLibrary.Configuration.Design.HostAdapter.dll %binDir%\.
 @if errorlevel 1 goto :error
 
-if Exist ..\Lib\Microsoft.Practices.EnterpriseLibrary.Configuration.Design.HostAdapter.dll copy /V ..\Lib\Microsoft.Practices.EnterpriseLibrary.Configuration.Design.HostAdapter.dll %binDir%\.
+if Exist ..\Lib\Microsoft.Practices.EnterpriseLibrary.Configuration.Design.HostAdapterV5.dll copy /V ..\Lib\Microsoft.Practices.EnterpriseLibrary.Configuration.Design.HostAdapterV5.dll %binDir%\.
+@if errorlevel 1 goto :error
+
+if Exist ..\Lib\WPFToolkit.dll copy /V ..\Lib\WPFToolkit.dll %binDir%\.
 @if errorlevel 1 goto :error
 
 @ECHO.
@@ -124,29 +125,14 @@ if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Cac
 if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Caching.xml copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Caching.xml %binDir%\.
 @if errorlevel 1 goto :error
 
-if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Caching.Configuration.Design.dll copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Caching.Configuration.Design.dll %binDir%\.
-@if errorlevel 1 goto :error
-if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Caching.Configuration.Design.xml copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Caching.Configuration.Design.xml %binDir%\.
-@if errorlevel 1 goto :error
-
 if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Caching.Cryptography.dll copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Caching.Cryptography.dll %binDir%\.
 @if errorlevel 1 goto :error
 if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Caching.Cryptography.xml copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Caching.Cryptography.xml %binDir%\.
 @if errorlevel 1 goto :error
 
-if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Caching.Cryptography.Configuration.Design.dll copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Caching.Cryptography.Configuration.Design.dll %binDir%\.
-@if errorlevel 1 goto :error
-if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Caching.Cryptography.Configuration.Design.xml copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Caching.Cryptography.Configuration.Design.xml %binDir%\.
-@if errorlevel 1 goto :error
-
 if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Caching.Database.dll copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Caching.Database.dll %binDir%\.
 @if errorlevel 1 goto :error
 if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Caching.Database.xml copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Caching.Database.xml %binDir%\.
-@if errorlevel 1 goto :error
-
-if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Caching.Database.Configuration.Design.dll copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Caching.Database.Configuration.Design.dll %binDir%\.
-@if errorlevel 1 goto :error
-if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Caching.Database.Configuration.Design.xml copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Caching.Database.Configuration.Design.xml %binDir%\.
 @if errorlevel 1 goto :error
 
 @ECHO.
@@ -166,19 +152,9 @@ if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Com
 @ECHO ----------------------------------------
 @ECHO.
 
-if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.AppSettings.Configuration.Design.dll copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.AppSettings.Configuration.Design.dll %binDir%\.
+if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Configuration.DesignTime.dll copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Configuration.DesignTime.dll %binDir%\.
 @if errorlevel 1 goto :error
-if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.AppSettings.Configuration.Design.xml copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.AppSettings.Configuration.Design.xml %binDir%\.
-@if errorlevel 1 goto :error
-
-if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Configuration.Design.dll copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Configuration.Design.dll %binDir%\.
-@if errorlevel 1 goto :error
-if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Configuration.Design.xml copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Configuration.Design.xml %binDir%\.
-@if errorlevel 1 goto :error
-
-if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Configuration.Design.UI.dll copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Configuration.Design.UI.dll %binDir%\.
-@if errorlevel 1 goto :error
-if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Configuration.Design.UI.xml copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Configuration.Design.UI.xml %binDir%\.
+if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Configuration.DesignTime.xml copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Configuration.DesignTime.xml %binDir%\.
 @if errorlevel 1 goto :error
 
 if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides.dll copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides.dll %binDir%\.
@@ -195,11 +171,6 @@ if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Con
 if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Data.dll copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Data.dll %binDir%\.
 @if errorlevel 1 goto :error
 if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Data.xml copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Data.xml %binDir%\.
-@if errorlevel 1 goto :error
-
-if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Design.dll copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Design.dll %binDir%\.
-@if errorlevel 1 goto :error
-if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Design.xml copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Design.xml %binDir%\.
 @if errorlevel 1 goto :error
 
 if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Data.SqlCe.dll copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Data.SqlCe.dll %binDir%\.
@@ -219,29 +190,14 @@ if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Exc
 if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.xml copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.xml %binDir%\.
 @if errorlevel 1 goto :error
 
-if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.Design.dll copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.Design.dll %binDir%\.
-@if errorlevel 1 goto :error
-if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.Design.xml copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.Design.xml %binDir%\.
-@if errorlevel 1 goto :error
-
 if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.dll copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.dll %binDir%\.
 @if errorlevel 1 goto :error
 if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.xml copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.xml %binDir%\.
 @if errorlevel 1 goto :error
 
-if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Configuration.Design.dll copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Configuration.Design.dll %binDir%\.
-@if errorlevel 1 goto :error
-if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Configuration.Design.xml copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Configuration.Design.xml %binDir%\.
-@if errorlevel 1 goto :error
-
 if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.dll copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.dll %binDir%\.
 @if errorlevel 1 goto :error
 if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.xml copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.xml %binDir%\.
-@if errorlevel 1 goto :error
-
-if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.Configuration.Design.dll copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.Configuration.Design.dll %binDir%\.
-@if errorlevel 1 goto :error
-if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.Configuration.Design.xml copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.Configuration.Design.xml %binDir%\.
 @if errorlevel 1 goto :error
 
 @ECHO.
@@ -255,26 +211,16 @@ if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Log
 if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Logging.xml copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Logging.xml %binDir%\.
 @if errorlevel 1 goto :error
 
-if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Design.dll copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Design.dll %binDir%\.
-@if errorlevel 1 goto :error
-if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Design.xml copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Design.xml %binDir%\.
-@if errorlevel 1 goto :error
-
 if Exist %solutionDir%\bin\%buildType%\MSMQDistributor.exe copy /V %solutionDir%\bin\%buildType%\MSMQDistributor.exe %binDir%\.
 @if errorlevel 1 goto :error
 if Exist %solutionDir%\bin\%buildType%\MsmqDistributor.exe.config copy /V %solutionDir%\bin\%buildType%\MsmqDistributor.exe.config %binDir%\.
 @if errorlevel 1 goto :error
-if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.xml copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.xml %binDir%\.
+if Exist %solutionDir%\bin\%buildType%\MsmqDistributor.xml copy /V %solutionDir%\bin\%buildType%\MsmqDistributor.xml %binDir%\.
 @if errorlevel 1 goto :error
 
 if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Logging.Database.dll copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Logging.Database.dll %binDir%\.
 @if errorlevel 1 goto :error
 if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Logging.Database.xml copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Logging.Database.xml %binDir%\.
-@if errorlevel 1 goto :error
-
-if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Logging.Database.Configuration.Design.dll copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Logging.Database.Configuration.Design.dll %binDir%\.
-@if errorlevel 1 goto :error
-if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Logging.Database.Configuration.Design.xml copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Logging.Database.Configuration.Design.xml %binDir%\.
 @if errorlevel 1 goto :error
 
 @ECHO.
@@ -286,21 +232,6 @@ if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Log
 if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.PolicyInjection.dll copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.PolicyInjection.dll %binDir%\.
 @if errorlevel 1 goto :error
 if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.PolicyInjection.xml copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.PolicyInjection.xml %binDir%\.
-@if errorlevel 1 goto :error
-
-if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.dll copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.dll %binDir%\.
-@if errorlevel 1 goto :error
-if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.xml copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.xml %binDir%\.
-@if errorlevel 1 goto :error
-
-if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration.Design.dll copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration.Design.dll %binDir%\.
-@if errorlevel 1 goto :error
-if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration.Design.xml copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration.Design.xml %binDir%\.
-@if errorlevel 1 goto :error
-
-if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Configuration.Design.dll copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Configuration.Design.dll %binDir%\.
-@if errorlevel 1 goto :error
-if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Configuration.Design.xml copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Configuration.Design.xml %binDir%\.
 @if errorlevel 1 goto :error
 
 @ECHO.
@@ -319,34 +250,14 @@ if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Sec
 if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Security.AzMan.xml copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Security.AzMan.xml %binDir%\.
 @if errorlevel 1 goto :error
 
-if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Security.AzMan.Configuration.Design.dll copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Security.AzMan.Configuration.Design.dll %binDir%\.
-@if errorlevel 1 goto :error
-if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Security.AzMan.Configuration.Design.xml copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Security.AzMan.Configuration.Design.xml %binDir%\.
-@if errorlevel 1 goto :error
-
 if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Security.Cache.CachingStore.dll copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Security.Cache.CachingStore.dll %binDir%\.
 @if errorlevel 1 goto :error
 if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Security.Cache.CachingStore.xml copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Security.Cache.CachingStore.xml %binDir%\.
 @if errorlevel 1 goto :error
 
-if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Security.Cache.Configuration.Design.dll copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Security.Cache.Configuration.Design.dll %binDir%\.
-@if errorlevel 1 goto :error
-if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Security.Cache.Configuration.Design.xml copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Security.Cache.Configuration.Design.xml %binDir%\.
-@if errorlevel 1 goto :error
-
-if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Security.Configuration.Design.dll copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Security.Configuration.Design.dll %binDir%\.
-@if errorlevel 1 goto :error
-if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Security.Configuration.Design.xml copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Security.Configuration.Design.xml %binDir%\.
-@if errorlevel 1 goto :error
-
 if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.dll copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.dll %binDir%\.
 @if errorlevel 1 goto :error
 if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.xml copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.xml %binDir%\.
-@if errorlevel 1 goto :error
-
-if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration.Design.dll copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration.Design.dll %binDir%\.
-@if errorlevel 1 goto :error
-if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration.Design.xml copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration.Design.xml %binDir%\.
 @if errorlevel 1 goto :error
 
 @ECHO.
@@ -380,11 +291,6 @@ if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Val
 if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WinForms.xml copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WinForms.xml %binDir%\.
 @if errorlevel 1 goto :error
 
-if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.Design.dll copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.Design.dll %binDir%\.
-@if errorlevel 1 goto :error
-if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.Design.xml copy /V %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.Design.xml %binDir%\.
-@if errorlevel 1 goto :error
-
 @ECHO.
 @ECHO -----------------------------------------------
 @ECHO Copy Configuration Tool files with verification
@@ -394,6 +300,21 @@ if Exist %solutionDir%\bin\%buildType%\Microsoft.Practices.EnterpriseLibrary.Val
 if Exist %solutionDir%\bin\%buildType%\EntLibConfig.exe copy /V %solutionDir%\bin\%buildType%\EntLibConfig.exe %binDir%\.
 @if errorlevel 1 goto :error
 if Exist %solutionDir%\bin\%buildType%\EntLibConfig.exe.config copy /V %solutionDir%\bin\%buildType%\EntLibConfig.exe.config %binDir%\.
+@if errorlevel 1 goto :error
+
+if Exist %solutionDir%\bin\%buildType%\EntLibConfig-32.exe copy /V %solutionDir%\bin\%buildType%\EntLibConfig-32.exe %binDir%\.
+@if errorlevel 1 goto :error
+if Exist %solutionDir%\bin\%buildType%\EntLibConfig-32.exe.config copy /V %solutionDir%\bin\%buildType%\EntLibConfig-32.exe.config %binDir%\.
+@if errorlevel 1 goto :error
+
+if Exist %solutionDir%\bin\%buildType%\EntLibConfig.NET4.exe copy /V %solutionDir%\bin\%buildType%\EntLibConfig.NET4.exe %binDir%\.
+@if errorlevel 1 goto :error
+if Exist %solutionDir%\bin\%buildType%\EntLibConfig.NET4.exe.config copy /V %solutionDir%\bin\%buildType%\EntLibConfig.NET4.exe.config %binDir%\.
+@if errorlevel 1 goto :error
+
+if Exist %solutionDir%\bin\%buildType%\EntLibConfig.NET4-32.exe copy /V %solutionDir%\bin\%buildType%\EntLibConfig.NET4-32.exe %binDir%\.
+@if errorlevel 1 goto :error
+if Exist %solutionDir%\bin\%buildType%\EntLibConfig.NET4-32.exe.config copy /V %solutionDir%\bin\%buildType%\EntLibConfig.NET4-32.exe.config %binDir%\.
 @if errorlevel 1 goto :error
 
 if Exist %solutionDir%\bin\%buildType%\MergeConfiguration.exe copy /V %solutionDir%\bin\%buildType%\MergeConfiguration.exe %binDir%\.

@@ -13,6 +13,7 @@ using System;
 using System.Diagnostics;
 using System.Reflection;
 using System.Text;
+using System.Globalization;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.ExtraInformation.Helpers
 {
@@ -76,7 +77,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.ExtraInformation.Helpers
                     {
 						stringBuilder.Append(
 							String.Format(
-								Properties.Resources.Culture, 
+                                CultureInfo.CurrentCulture, 
 								Properties.Resources.DebugInfo_SchemaHelperLine, 
 								fileName, 
 								stackFrame.GetFileLineNumber()));

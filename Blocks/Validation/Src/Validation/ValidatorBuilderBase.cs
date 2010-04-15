@@ -184,6 +184,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         /// <returns></returns>
         protected CompositeValidatorBuilder GetCompositeValidatorBuilderForProperty(IValidatedElement validatedElement)
         {
+            if (validatedElement == null) throw new ArgumentNullException("validatedElement");
+
             return this.memberAccessValidatorFactory.GetPropertyValueAccessValidatorBuilder(validatedElement.MemberInfo as PropertyInfo,
                 validatedElement);
         }
@@ -205,6 +207,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         /// <returns></returns>
         protected CompositeValidatorBuilder GetCompositeValidatorBuilderForField(IValidatedElement validatedElement)
         {
+            if (validatedElement == null) throw new ArgumentNullException("validatedElement");
+
             return this.memberAccessValidatorFactory.GetFieldValueAccessValidatorBuilder(validatedElement.MemberInfo as FieldInfo,
                 validatedElement);
         }
@@ -216,6 +220,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         /// <returns></returns>
         protected CompositeValidatorBuilder GetCompositeValidatorBuilderForMethod(IValidatedElement validatedElement)
         {
+            if (validatedElement == null) throw new ArgumentNullException("validatedElement");
+
             return this.memberAccessValidatorFactory.GetMethodValueAccessValidatorBuilder(validatedElement.MemberInfo as MethodInfo,
                 validatedElement);
         }
@@ -227,6 +233,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         /// <returns></returns>
         protected CompositeValidatorBuilder GetCompositeValidatorBuilderForType(IValidatedElement validatedElement)
         {
+            if (validatedElement == null) throw new ArgumentNullException("validatedElement");
+
             return this.memberAccessValidatorFactory.GetTypeValidatorBuilder(validatedElement.MemberInfo as Type,
                 validatedElement);
         }

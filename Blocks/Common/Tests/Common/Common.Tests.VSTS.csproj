@@ -48,7 +48,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Lib\Microsoft.Practices.Unity.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Practices.Unity.Interception, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.Practices.Unity.Interception, Version=2.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Lib\Microsoft.Practices.Unity.Interception.dll</HintPath>
     </Reference>
@@ -72,7 +72,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="APTCAFixture.cs" />
+    <Compile Include="APTCAFixture.2008.cs" />
     <Compile Include="Configuration\ComposedConfigurationFileFixture.cs" />
     <Compile Include="Configuration\CompositeConfigurationSourceHandlerFixture.cs">
       <SubType>Code</SubType>
@@ -83,6 +83,8 @@
     <Compile Include="Configuration\ConfigurationSectionClonerFixture.cs" />
     <Compile Include="Configuration\ConfigurationSourceBuilderFixture.cs" />
     <Compile Include="Configuration\ConfigurationSourceHandlerFixture.cs" />
+    <Compile Include="Configuration\CustomConfigurationElementCollectionFixture.cs" />
+    <Compile Include="Configuration\SystemConfigurationSourceImplementationFixture.2008.cs" />
     <Compile Include="Configuration\Fluent\TypeRegistrationProviderConfigurationSourceBuilderExtensionFixture.cs" />
     <Compile Include="Configuration\HierarchicalConfigurationSourceHandlerFixture.cs" />
     <Compile Include="Configuration\HierarchicalConfigurationSourceHandlerFixture.Events.cs" />
@@ -144,8 +146,7 @@
     <Compile Include="Instrumentation\PerformanceCounterInstallerBuilderFixture.cs" />
     <Compile Include="Instrumentation\PerformanceCounterInstanceNameFixture.cs" />
     <Compile Include="Instrumentation\ReflectionInstrumentationBinderMocks.cs" />
-    <Compile Include="Instrumentation\TestEventMessage.cs" />
-    <Compile Include="Instrumentation\WMIEventPublishingFixture.cs" />
+    <None Include="Properties\AssemblyInfo.2010.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -185,6 +186,7 @@
     <None Include="ComposedConfigurationFile.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <EmbeddedResource Include="Configuration\ConfigSourceWithInvalidType.config" />
     <None Include="Configuration\dummy.external.config" />
     <None Include="MergedConfigurationFile.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

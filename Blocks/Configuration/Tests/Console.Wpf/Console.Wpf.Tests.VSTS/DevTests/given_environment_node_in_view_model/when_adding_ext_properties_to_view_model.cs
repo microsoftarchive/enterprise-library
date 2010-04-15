@@ -12,8 +12,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -34,8 +32,9 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_extension_provider_in_view_model
 
         protected override void Act()
         {
-            ehabModel = SectionViewModel.CreateSection(Container, ExceptionHandlingSettings.SectionName, Section);
-            sectionWithExtendedPropertyProvider = SectionViewModel.CreateSection(Container, "extended", new ConfigurationSectionWithExtendedPropertyProvider());
+            var configurationSourceModel = Container.Resolve<ConfigurationSourceModel>();
+            ehabModel = configurationSourceModel.AddSection(ExceptionHandlingSettings.SectionName, Section);
+            sectionWithExtendedPropertyProvider = configurationSourceModel.AddSection("extended", new ConfigurationSectionWithExtendedPropertyProvider());
         }
 
         [TestMethod]
@@ -57,10 +56,20 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_extension_provider_in_view_model
         public void then_extended_properties_are_discovered_after_properties_collection_was_accessed()
         {
             var aWrapHandler = ehabModel.DescendentElements(x => x.ConfigurationType == typeof(WrapHandlerData)).First();
-            var propeties = aWrapHandler.Properties;
 
-            sectionWithExtendedPropertyProvider = SectionViewModel.CreateSection(Container, "mock section", new ConfigurationSectionWithExtendedPropertyProvider());
+            var sourceModel = Container.Resolve<ConfigurationSourceModel>();
+            sectionWithExtendedPropertyProvider = sourceModel.AddSection("mock section", new ConfigurationSectionWithExtendedPropertyProvider());
             Assert.AreEqual(2, aWrapHandler.Properties.Where(x => x.PropertyName == "Extended Property").Count());
+        }
+
+        [TestMethod]
+        public void then_extended_properties_value_can_be_accessed()
+        {
+            var aWrapHandler = ehabModel.DescendentElements(x => x.ConfigurationType == typeof(WrapHandlerData)).First();
+            var properties = aWrapHandler.Properties.Where(x => x.PropertyName == "Extended Property").First();
+
+            properties.Value = "SomeValue";
+            Assert.AreEqual("SomeValue", properties.Value);
         }
     }
 
@@ -88,7 +97,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_extension_provider_in_view_model
         {
             if (element.ConfigurationType == typeof(WrapHandlerData))
             {
-                yield return new Property(builder.Resolve<IServiceProvider>(), element, new ExtendedPropertyDescriptor(element));
+                yield return new Property(builder.Resolve<IServiceProvider>(), this, new ExtendedPropertyDescriptor(element));
             }
         }
 

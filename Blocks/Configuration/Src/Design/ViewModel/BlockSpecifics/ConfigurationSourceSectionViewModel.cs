@@ -21,23 +21,30 @@ using System.Windows;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics
 {
+
+#pragma warning disable 1591
+
+    /// <summary>
+    /// This class supports block-specific configuration design-time and is not
+    /// intended to be used directly from your code.
+    /// </summary>
     public class ConfigurationSourceSectionViewModel : SectionViewModel
     {
         public ConfigurationSourceSectionViewModel(IUnityContainer builder, string sectionName, ConfigurationSection section)
-            : base(builder, sectionName, section) 
+            : base(builder, sectionName, section)
         {
         }
 
-       
-
         protected override object CreateBindable()
         {
-            var sources = DescendentElements().Where(x => x.ConfigurationType == typeof(NameTypeConfigurationElementCollection<ConfigurationSourceElement, ConfigurationSourceElement>)).First();
+            var sources = DescendentElements().Where(x => x.ConfigurationType == typeof(CustomConfigurationElementCollection<ConfigurationSourceElement, ConfigurationSourceElement>)).First();
             var redirectedSections = DescendentElements().Where(x => x.ConfigurationType == typeof(NamedElementCollection<RedirectedSectionElement>)).First();
 
-            return new HorizontalListViewModel(
-                    new HeaderedListViewModel(sources), 
-                    new HeaderedListViewModel(redirectedSections));
-        }     
+            return new HorizontalListLayout(
+                    new HeaderedListLayout(sources),
+                    new HeaderedListLayout(redirectedSections));
+        }
     }
+
+#pragma warning restore 1591
 }

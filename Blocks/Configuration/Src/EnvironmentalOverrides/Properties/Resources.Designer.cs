@@ -127,7 +127,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverr
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Don&apos;t Override Properties.
+        ///   Looks up a localized string similar to "Don&apos;t Override Properties".
         /// </summary>
         internal static string DontOverrideProperties {
             get {

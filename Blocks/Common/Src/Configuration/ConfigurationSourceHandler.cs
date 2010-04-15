@@ -16,6 +16,7 @@ using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Properties;
+using System.Globalization;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 {
@@ -224,27 +225,91 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         /// <summary>
         /// Performs re-intialization logic for this <see cref="ConfigurationSourceHandler"/>.
         /// </summary>
-        protected virtual void Refresh()
+        protected void Refresh()
         {
             lock (LockObject)
             {
-                RefreshSubordinateSources();
-                RefreshExistingSectionMappings();
-
+                DoRefresh();
                 DoConfigurationSourceChanged(sectionMappings.Keys);
             }
         }
 
+        /// <summary>
+        /// Perform required refresh actions as needed when source changes.
+        /// </summary>
+        /// <returns>Sequence of changed sections</returns>
+        protected virtual void DoRefresh()
+        {
+            RefreshSubordinateSources();
+            RefreshExistingSectionMappings();
+        }
+
         private void RefreshSubordinateSources()
         {
-            if (subordinateSourcesByName.Count > 0)
+            var removedSources = SourceNamesToRemove();
+            ClearRemovedSubordinateSources(removedSources);
+            ClearRemovedSubordinateSections(removedSources);
+            RefreshExistingSubordinateSources();
+        }
+
+        private IEnumerable<string> SourceNamesToRemove()
+        {
+            var configSourceSection =
+                (ConfigurationSourceSection)configurationSource.GetSection(ConfigurationSourceSection.SectionName);
+
+            // If we don't have a configuration sources section, that means things were built up
+            // manually for some reason, so don't muck with it.
+            if (configSourceSection == null)
+                return Enumerable.Empty<string>();
+
+            var sourcesThatStay =
+                from sourceName in subordinateSourcesByName.Keys
+                    join sourceElement in configSourceSection.Sources
+                        on sourceName equals sourceElement.Name
+                    select sourceName;
+
+
+            var sourcesToRemove = new HashSet<string>(subordinateSourcesByName.Keys);
+            foreach(var source in sourcesThatStay)
             {
-                foreach (var subordinateSource in subordinateSourcesByName.Values.ToArray())
-                {
-                    subordinateSource.Refresh();
-                }
+                sourcesToRemove.Remove(source);
+            }
+
+            return sourcesToRemove;
+        }
+
+        private void ClearRemovedSubordinateSources(IEnumerable<string> sourcesToRemove)
+        {
+            foreach(var sourceToRemove in sourcesToRemove)
+            {
+                var subordinate = subordinateSourcesByName[sourceToRemove];
+                subordinate.Dispose();
+                subordinateSourcesByName.Remove(sourceToRemove);
             }
         }
+
+        private void ClearRemovedSubordinateSections(IEnumerable<string> removedSources)
+        {
+            var sectionNamesToRemove = sectionMappings.Join(
+                removedSources,
+                section => section.Key,
+                removedName => removedName,
+                (section, removedName) => removedName).ToList();
+
+            foreach(var sectionNameToRemove in sectionNamesToRemove)
+            {
+                sectionMappings.Remove(sectionNameToRemove);
+            }
+        }
+
+        private void RefreshExistingSubordinateSources()
+        {
+            foreach (var subordinateSource in subordinateSourcesByName.Values.ToArray())
+            {
+                subordinateSource.Refresh();
+            }
+        }
+
 
         private void RefreshExistingSectionMappings()
         {
@@ -352,7 +417,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
                 {
                     if (throwWhenNotFound)
                     {
-                        string message = string.Format(Resources.Culture, 
+                        string message = string.Format(CultureInfo.CurrentCulture, 
                             Resources.ExceptionConfigurationSourceNotFound, 
                             sourceName, 
                             ConfigurationSourceSection.SectionName);
@@ -427,7 +492,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         private class SubordinateSource : IDisposable
         {
             string subordinateSourceName;
-            IConfigurationSource subordinateSource;
+            IConfigurationSource subordinateConfigurationSource;
             ConfigurationSourceHandler compositeConfigurationSource;
             bool customSource;
 
@@ -439,11 +504,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
             public SubordinateSource(ConfigurationSourceHandler compositeConfigurationSource, string subordinateSourceName, IConfigurationSource subordinateSource, bool customSource)
             {
                 this.subordinateSourceName = subordinateSourceName;
-                this.subordinateSource = subordinateSource;
+                this.subordinateConfigurationSource = subordinateSource;
                 this.compositeConfigurationSource = compositeConfigurationSource;
                 this.customSource = customSource;
 
-                this.subordinateSource.SourceChanged += new EventHandler<ConfigurationSourceChangedEventArgs>(compositeConfigurationSource_ConfigurationSourceChanged);
+                this.subordinateConfigurationSource.SourceChanged += new EventHandler<ConfigurationSourceChangedEventArgs>(compositeConfigurationSource_ConfigurationSourceChanged);
             }
 
             void compositeConfigurationSource_ConfigurationSourceChanged(object sender, ConfigurationSourceChangedEventArgs e)
@@ -455,30 +520,31 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
             {
                 get
                 {
-                    return subordinateSource;
+                    return subordinateConfigurationSource;
                 }
             }
 
             public void Refresh()
             {
                 if (customSource) return;
-                if (subordinateSource != null)
+                if (subordinateConfigurationSource != null)
                 {
-                    subordinateSource.Dispose();
+                    subordinateConfigurationSource.SourceChanged -= compositeConfigurationSource_ConfigurationSourceChanged;
+                    subordinateConfigurationSource.Dispose();
                 }
 
-                subordinateSource = compositeConfigurationSource.CreateSubordinateSource(subordinateSourceName, false);
-                if (subordinateSource != null)
+                subordinateConfigurationSource = compositeConfigurationSource.CreateSubordinateSource(subordinateSourceName, false);
+                if (subordinateConfigurationSource != null)
                 {
-                    this.subordinateSource.SourceChanged += new EventHandler<ConfigurationSourceChangedEventArgs>(compositeConfigurationSource_ConfigurationSourceChanged);
+                    this.subordinateConfigurationSource.SourceChanged += compositeConfigurationSource_ConfigurationSourceChanged;
                 }
             }
 
             public void Dispose()
             {
-                if (!customSource && subordinateSource != null)
+                if (!customSource && subordinateConfigurationSource != null)
                 {
-                    subordinateSource.Dispose();
+                    subordinateConfigurationSource.Dispose();
                 }
             }
         }
@@ -489,14 +555,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
             string sectionName;
             IConfigurationSource subordinateSource;
             ConfigurationSourceHandler configurationSourceHandler;
-            ConfigurationChangedEventHandler sectionChangeHandler;
 
             public SectionInSubordinateSource(ConfigurationSourceHandler configurationSourceHandler, string sectionName, string subordinateSourceName, IConfigurationSource subordinateSource)
             {
                 this.sectionName = sectionName;
                 this.subordinateSourceName = subordinateSourceName;
                 this.configurationSourceHandler = configurationSourceHandler;
-
                 Refresh(subordinateSource);
             }
 
@@ -515,17 +579,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
                 get { return subordinateSourceName; }
             }
 
-            public void Refresh(IConfigurationSource subordinateSource)
+            public void Refresh(IConfigurationSource newSubordinateSource)
             {
-                this.subordinateSource = subordinateSource;
+                if(subordinateSource != null)
+                {
+                    subordinateSource.RemoveSectionChangeHandler(sectionName, ChildConfigurationSectionChanged);
+                }
 
-                sectionChangeHandler = new ConfigurationChangedEventHandler(ChildConfigurationSectionChanged);
-                subordinateSource.AddSectionChangeHandler(sectionName, sectionChangeHandler);
+                subordinateSource = newSubordinateSource;
+                subordinateSource.AddSectionChangeHandler(sectionName, ChildConfigurationSectionChanged);
             }
 
             public void StopWatchingForSectionChangedEvent()
             {
-                subordinateSource.RemoveSectionChangeHandler(sectionName, sectionChangeHandler);
+                subordinateSource.RemoveSectionChangeHandler(sectionName, ChildConfigurationSectionChanged);
             }
 
         }

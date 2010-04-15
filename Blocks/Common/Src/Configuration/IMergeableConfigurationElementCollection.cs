@@ -28,7 +28,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         /// <param name="configurationElements">The new contents of this <see cref="ConfigurationElementCollection"/>.</param>
         void ResetCollection(IEnumerable<ConfigurationElement> configurationElements);
 
-        /// <summary/>
+        /// <summary>
+        /// Creates a new <see cref="ConfigurationElement"/> for the specifies <paramref name="configurationType" />.
+        /// </summary>
+        /// <param name="configurationType">The type of <see cref="ConfigurationElement"/> that should be created.</param>
         ConfigurationElement CreateNewElement(Type configurationType);
     }
 

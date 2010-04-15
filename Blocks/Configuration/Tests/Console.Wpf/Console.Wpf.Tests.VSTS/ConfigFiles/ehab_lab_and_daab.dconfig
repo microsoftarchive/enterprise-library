@@ -1,0 +1,43 @@
+<configuration>
+    <configSections>
+        <section name="environmentallyOverriddenProperties" type="Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides.Configuration.EnvironmentalOverridesSection, Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides, Version=5.0.208.0, Culture=neutral, PublicKeyToken=null" requirePermission="true" />
+    </configSections>
+  <environmentallyOverriddenProperties environmentName="Environment">
+    <designtimeLogicalPropertyGroups>
+            <override logicalParentElementPath="/configuration/connectionStrings/add[@name='another connection string']">
+                <overriddenProperties>
+                    <property containingConfigurationSectionName="connectionStrings"
+                              containingSectionXPath="/configuration/connectionStrings"
+                              attribute="connectionString" 
+                              containingElementXPath="/configuration/connectionStrings/add[@name='another connection string']"
+                              overridenValue="overridden connection string" />
+                  
+                    <property containingConfigurationSectionName="connectionStrings"
+                              containingSectionXPath="/configuration/connectionStrings"
+                              attribute="providerName" 
+                              containingElementXPath="/configuration/connectionStrings/add[@name='another connection string']"
+                              overridenValue="System.Data.SqlClient" />
+                </overriddenProperties>
+            </override>
+            <override logicalParentElementPath="/configuration/exceptionHandling/exceptionPolicies/add[@name='Policy']/exceptionTypes/add[@name='All Exceptions']/exceptionHandlers/add[@name='Wrap Handler']">
+                <overriddenProperties>
+                    <property attribute="exceptionMessage"
+                              containingConfigurationSectionName="exceptionHandling"
+                              containingSectionXPath="/configuration/exceptionHandling"
+                              containingElementXPath="/configuration/exceptionHandling/exceptionPolicies/add[@name='Policy']/exceptionTypes/add[@name='All Exceptions']/exceptionHandlers/add[@name='Wrap Handler']"
+                              overridenValue="Overridden Message" />
+                  
+                </overriddenProperties>
+            </override>
+            <override logicalParentElementPath="/configuration/loggingConfiguration/formatters/add[@name='Text Formatter']">
+                <overriddenProperties>
+                    <property attribute="template"
+                              containingSectionXPath="/configuration/loggingConfiguration"
+                              containingConfigurationSectionName="loggingConfiguration" 
+                              containingElementXPath="/configuration/loggingConfiguration/formatters/add[@name='Text Formatter']"
+                              overridenValue="overridden template" />
+                </overriddenProperties>
+            </override>
+        </designtimeLogicalPropertyGroups>
+    </environmentallyOverriddenProperties>
+</configuration>

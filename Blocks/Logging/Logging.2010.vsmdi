@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestLists xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <TestList name="Lists of Tests" id="8c43106b-9dc1-4907-a29f-aa66a61bf5b6">
+    <RunConfiguration id="b30ab5c0-4c61-4809-bc08-afc893741cba" name="EnterpriseLibrary" storage="..\enterpriselibrary.2010.testrunconfig" type="Microsoft.VisualStudio.TestTools.Common.TestRunConfiguration, Microsoft.VisualStudio.QualityTools.Common,   PublicKeyToken=b03f5f7f11d50a3a" />
+  </TestList>
+  <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d">
+    <TestLinks>
+      <TestLink id="10d2cdba-1ac4-94a4-fffe-8c2c9497b3ef" name="ServiceFailureWithoutExceptionFiresWmiEvent" storage="tests\msmqdistributor\bin\debug\microsoft.practices.enterpriselibrary.logging.msmqdistributor.tests.dll" enabled="false" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel,   PublicKeyToken=b03f5f7f11d50a3a" />
+      <TestLink id="d51ad105-7711-6f1c-b13a-d9a2c3905748" name="FailureToAcquireWriteLockLogsException" storage="tests\logging\bin\debug\microsoft.practices.enterpriselibrary.logging.tests.dll" enabled="false" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel,   PublicKeyToken=b03f5f7f11d50a3a" />
+      <TestLink id="70ade609-d25a-bd08-250d-02abfa900709" name="ServiceResumedFiresWmiEvent" storage="tests\msmqdistributor\bin\debug\microsoft.practices.enterpriselibrary.logging.msmqdistributor.tests.dll" enabled="false" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel,   PublicKeyToken=b03f5f7f11d50a3a" />
+      <TestLink id="9742aaec-fb0d-badd-c1f6-555e433e8b83" name="FailureToAcquireReadLockLogsException" storage="tests\logging\bin\debug\microsoft.practices.enterpriselibrary.logging.tests.dll" enabled="false" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel,   PublicKeyToken=b03f5f7f11d50a3a" />
+    </TestLinks>
+  </TestList>
+</TestLists>

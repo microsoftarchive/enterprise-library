@@ -14,11 +14,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.ComponentModel.Design;
+using Microsoft.Practices.Unity;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_validation_configuration_section
 {
@@ -92,7 +94,8 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_validation_configuration_section
 
         protected override void Act()
         {
-            validationModel = SectionViewModel.CreateSection(Container, ValidationSettings.SectionName, ValidationSection);
+            var configurationSource = Container.Resolve<ConfigurationSourceModel>();
+            validationModel = configurationSource.AddSection(ValidationSettings.SectionName, ValidationSection);
             stringTypeReference = validationModel.DescendentElements(x => x.ConfigurationType == typeof(ValidatedTypeReference)).First();
         }
 
@@ -102,6 +105,14 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_validation_configuration_section
             var defaultRuleSetProperty = stringTypeReference.Property("DefaultRuleset");
             Assert.AreEqual(2, ((SuggestedValuesBindableProperty)defaultRuleSetProperty.BindableProperty).BindableSuggestedValues.Count());
             Assert.IsFalse(((SuggestedValuesBindableProperty)defaultRuleSetProperty.BindableProperty).BindableSuggestedValues.Any( x=> x == "int-rules"));
+        }
+
+        [TestMethod]
+        public void then_type_name_does_not_include_qualified_full_name()
+        {
+            var type = validationModel.ChildElements.First().ChildElements.First();
+
+            Assert.AreEqual(typeof(string).Name, type.Name);
         }
     }
 }

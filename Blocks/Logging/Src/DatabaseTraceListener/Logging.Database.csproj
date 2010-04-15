@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -8,11 +9,9 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Microsoft.Practices.EnterpriseLibrary.Logging.Database</RootNamespace>
-    <AssemblyName>Microsoft.Practices.EnterpriseLibrary.Logging.Database</AssemblyName><FileUpgradeFlags>
-    </FileUpgradeFlags>
+    <AssemblyName>Microsoft.Practices.EnterpriseLibrary.Logging.Database</AssemblyName><FileUpgradeFlags></FileUpgradeFlags>
     <OldToolsVersion>2.0</OldToolsVersion>
-    <UpgradeBackupLocation>
-    </UpgradeBackupLocation>
+    <UpgradeBackupLocation></UpgradeBackupLocation>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -54,6 +53,9 @@
     <Compile Include="..\..\..\GlobalAssemblyInfo.cs">
       <Link>GlobalAssemblyInfo.cs</Link>
     </Compile>
+    <None Include="..\..\..\GlobalAssemblyInfo.2010.cs">
+      <Link>GlobalAssemblyInfo.2010.cs</Link>
+    </None>
     <Compile Include="Configuration\DesignResources.Designer.cs">
       <DependentUpon>DesignResources.resx</DependentUpon>
       <AutoGen>True</AutoGen>

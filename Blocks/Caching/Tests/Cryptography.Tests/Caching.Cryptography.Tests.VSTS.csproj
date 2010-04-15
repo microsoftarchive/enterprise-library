@@ -59,7 +59,7 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="APTCAFixture.cs" />
+    <Compile Include="APTCAFixture.2008.cs" />
     <Compile Include="Configuration\Fluent\EncryptItemsWithSharedSymmetricProviderExtensionFixture.cs" />
     <Compile Include="Configuration\SymmetricStorageEncryptionProviderContainerModelFixture.cs" />
     <Compile Include="Configuration\SymmetricStorageEncryptionProviderDataFixture.cs" />
@@ -96,6 +96,11 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="test.exe.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSHARP.Targets" />
 </Project>

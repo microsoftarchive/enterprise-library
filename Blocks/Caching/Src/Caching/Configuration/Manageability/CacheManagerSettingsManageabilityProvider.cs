@@ -27,7 +27,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration.Manageabil
     /// the creation of the ADM template categories and policies required to edit Group Policy Objects for the block.
     /// </summary>
     /// <remarks>
-    /// This class performs the actual Group Policy update and Wmi object generation for the <see cref="CacheManagerSettings"/>
+    /// This class performs the actual Group Policy update for the <see cref="CacheManagerSettings"/>
     /// configuration section and the <see cref="CacheManagerData"/> instances contained by it. Processing for 
     /// <see cref="CacheStorageData"/> and <see cref="StorageEncryptionProviderData"/> instances is delegated to 
     /// <see cref="ConfigurationElementManageabilityProvider"/> objects registered to the configuration object data types.

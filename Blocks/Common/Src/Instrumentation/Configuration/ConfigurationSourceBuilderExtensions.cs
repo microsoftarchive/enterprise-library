@@ -10,11 +10,8 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Configuration;
 using System.ComponentModel;
+using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 {
@@ -39,7 +36,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         {
 
             IConfigurationSourceBuilder root;
-            InstrumentationConfigurationSection section = new InstrumentationConfigurationSection(false, false, false);
+            InstrumentationConfigurationSection section = new InstrumentationConfigurationSection(false, false);
 
             internal InstrumentationConfigurationSectionBuilder(IConfigurationSourceBuilder configurationSourceBuilderRoot)
             {
@@ -66,13 +63,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
             }
 
 
-            IInstrumentationConfiguration IInstrumentationConfiguration.EnableWmi()
-            {
-                section.WmiEnabled = true;
-                return this;
-            }
-
-
             IInstrumentationConfiguration IInstrumentationConfiguration.ForApplicationInstance(string application)
             {
                 section.ApplicationInstanceName = application;
@@ -80,11 +70,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
             }
         }
     }
-    
+
     /// <summary>
     /// Defines instrumentation configuration options.
     /// </summary>
-    [EditorBrowsable(EditorBrowsableState.Never)]    
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public interface IInstrumentationConfiguration : IFluentInterface
     {
         /// <summary>
@@ -98,12 +88,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         /// </summary>
         /// <returns></returns>
         IInstrumentationConfiguration EnablePerformanceCounters();
-
-        /// <summary>
-        /// Enable WMI instrumentation
-        /// </summary>
-        /// <returns></returns>
-        IInstrumentationConfiguration EnableWmi();
 
         /// <summary>
         /// Set application instance for instrumentation.

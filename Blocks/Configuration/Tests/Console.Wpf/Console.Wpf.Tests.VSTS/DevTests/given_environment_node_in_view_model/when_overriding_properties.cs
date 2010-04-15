@@ -9,20 +9,48 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides.Configuration;
 using Console.Wpf.Tests.VSTS.TestSupport;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides.Configuration;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_environment_node_in_view_model
 {
+    [TestClass]
+    public class when_not_overriding_properties : given_environmental_overrides_and_ehab
+    {
+        Property overridenWrapTypeProperty;
+        PropertyChangedListener overridenWrapTypePropertyChangedListener;
+        private const string UpdatedValue = "updated value";
+
+        protected override void Arrange()
+        {
+            base.Arrange();
+
+            overridenWrapTypeProperty = base.OverridesProperty.ChildProperties.Where(x => x.PropertyName == "WrapExceptionTypeName").FirstOrDefault();
+
+            overridenWrapTypePropertyChangedListener = new PropertyChangedListener(overridenWrapTypeProperty.BindableProperty);
+
+            OverridesProperty.Value = OverridesProperty.Converter.ConvertFromString(OverridesProperty, "Override Properties");
+        }
+
+        protected override void Act()
+        {
+            OverriddenExceptionMessage.BindableProperty.Value = UpdatedValue;
+
+            OverridesProperty.Value = OverridesProperty.Converter.ConvertFromString(OverridesProperty, "Don't Override Properties");
+
+        }
+        [TestMethod]
+        public void then_overriden_properties_are_not_reset()
+        {
+            Assert.AreEqual(UpdatedValue, OverriddenExceptionMessage.BindableProperty.Value);
+        }
+    }
+
     [TestClass]
     public class when_overriding_properties : given_environmental_overrides_and_ehab
     {
@@ -36,6 +64,25 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_environment_node_in_view_model
 
             OverridesProperty.Value = OverridesProperty.Converter.ConvertFromString(OverridesProperty, "Override Properties");
             
+        }
+
+        [TestMethod]
+        public void then_suggested_values_are_of_type_bool()
+        {
+            Assert.IsTrue(OverridesProperty.SuggestedValues.Any());
+            Assert.IsTrue(OverridesProperty.SuggestedValues.All(x=> x is bool));
+        }
+
+        [TestMethod]
+        public void then_overrides_property_converter_can_convert_from_string()
+        {
+            Assert.IsTrue(OverridesProperty.Converter.CanConvertFrom(null, typeof(string)));
+        }
+
+        [TestMethod]
+        public void then_overrides_property_converter_can_convert_to_bool()
+        {
+            Assert.IsTrue(OverridesProperty.Converter.CanConvertTo(null, typeof(bool)));
         }
 
         [TestMethod]
@@ -64,15 +111,6 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_environment_node_in_view_model
         }
 
         [TestMethod]
-        public void then_setting_main_property_doesnt_update_overridden_property()
-        {
-            string oldValue = (string) MainExceptionMessage.Value;
-            MainExceptionMessage.Value = "New Root Value";
-
-            Assert.AreEqual(oldValue, OverriddenExceptionMessage.Value);
-        }
-
-        [TestMethod]
         public void then_base_class_attribute_can_be_accessed_through_overriden_property()
         {
             Assert.IsTrue(overridenWrapTypeProperty.Attributes.OfType<BaseTypeAttribute>().Any());
@@ -83,12 +121,16 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_environment_node_in_view_model
         {
             OverriddenExceptionMessage.Value = "new exception message";
 
-            var mergeElements = EnvironmentSection.MergeElements.OfType<EnvironmentNodeMergeElement>();
-            var mergeRecord = mergeElements.Where(x => x.ConfigurationNodePath == base.WrapHandler.Path).FirstOrDefault();
+            var mergeElements = EnvironmentSection.MergeElements.OfType<EnvironmentalOverridesElement>();
+            var mergeRecord = mergeElements.Where(x => x.LogicalParentElementPath == base.WrapHandler.Path).FirstOrDefault();
 
             Assert.IsNotNull(mergeRecord);
-            Assert.IsTrue(mergeRecord.OverriddenProperties.AllKeys.Contains("exceptionMessage"));
-            Assert.AreEqual("new exception message", mergeRecord.OverriddenProperties["exceptionMessage"].Value);
+
+            var overriddenPropertyConfiguration =
+                mergeRecord.OverriddenProperties.Cast<EnvironmentOverriddenPropertyElement>().FirstOrDefault(
+                    x => x.Attribute == "exceptionMessage");
+            Assert.IsNotNull(overriddenPropertyConfiguration);
+            Assert.AreEqual("new exception message", overriddenPropertyConfiguration.OverriddenValue);
         }
 
         [TestMethod]
@@ -97,8 +139,8 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_environment_node_in_view_model
             OverriddenExceptionMessage.Value = "new exception message";
             WrapHandler.Property("Name").Value = "New Name";
 
-            var mergeElements = EnvironmentSection.MergeElements.OfType<EnvironmentNodeMergeElement>();
-            var mergeRecord = mergeElements.Where(x => x.ConfigurationNodePath == base.WrapHandler.Path).FirstOrDefault();
+            var mergeElements = EnvironmentSection.MergeElements.OfType<EnvironmentalOverridesElement>();
+            var mergeRecord = mergeElements.Where(x => x.LogicalParentElementPath == base.WrapHandler.Path).FirstOrDefault();
 
             Assert.IsNotNull(mergeRecord);
         }
@@ -109,8 +151,8 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_environment_node_in_view_model
             OverriddenExceptionMessage.Value = "new exception message";
             ((ElementCollectionViewModel)WrapHandler.ParentElement).Delete((CollectionElementViewModel)WrapHandler);
 
-            var mergeElements = EnvironmentSection.MergeElements.OfType<EnvironmentNodeMergeElement>();
-            var mergeRecord = mergeElements.Where(x => x.ConfigurationNodePath == base.WrapHandler.Path).FirstOrDefault();
+            var mergeElements = EnvironmentSection.MergeElements.OfType<EnvironmentalOverridesElement>();
+            var mergeRecord = mergeElements.Where(x => x.LogicalParentElementPath == base.WrapHandler.Path).FirstOrDefault();
 
             Assert.IsNull(mergeRecord);
         }

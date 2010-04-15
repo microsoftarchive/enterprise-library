@@ -137,6 +137,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Oracle
             ParameterDirection direction, bool nullable, byte precision, byte scale, string sourceColumn,
             DataRowVersion sourceVersion, object value)
         {
+            if (command == null) throw new ArgumentNullException("command");
+
             OracleParameter param = CreateParameter(name, DbType.AnsiString, size, direction, nullable, precision, scale, sourceColumn, sourceVersion, value) as OracleParameter;
             param.OracleType = oracleType;
             command.Parameters.Add(param);
@@ -153,7 +155,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Oracle
         public override IDataReader ExecuteReader(DbCommand command)
         {
             PrepareCWRefCursor(command);
-            return new OracleDataReaderWrapper((OracleDataReader)base.ExecuteReader(command));
+            return base.ExecuteReader(command);
+        }
+
+        /// <summary>
+        /// All data readers get wrapped in objects so that they properly manage connections.
+        /// Some derived Database classes will need to create a different wrapper, so this
+        /// method is provided so that they can do this.
+        /// </summary>
+        /// <param name="connection">Connection + refcount.</param>
+        /// <param name="innerReader">The reader to wrap.</param>
+        /// <returns>The new reader.</returns>
+        protected override IDataReader CreateWrappedReader(DatabaseConnectionWrapper connection, IDataReader innerReader)
+        {
+            return new RefCountingOracleDataReaderWrapper(connection, (OracleDataReader) innerReader);
         }
 
         /// <summary>
@@ -170,7 +185,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Oracle
         public override IDataReader ExecuteReader(DbCommand command, DbTransaction transaction)
         {
             PrepareCWRefCursor(command);
-            return new OracleDataReaderWrapper((OracleDataReader)base.ExecuteReader(command, transaction));
+            return new OracleDataReaderWrapper((OracleDataReader) base.ExecuteReader(command, transaction));
         }
 
         /// <summary>
@@ -254,6 +269,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Oracle
         /// <returns>The value of the parameter.</returns>
         public override object GetParameterValue(DbCommand command, string parameterName)
         {
+            if (command == null) throw new ArgumentNullException("command");
+
             object convertedValue = base.GetParameterValue(command, parameterName);
 
             ParameterTypeRegistry registry = GetParameterTypeRegistry(command.CommandText);
@@ -285,6 +302,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Oracle
         /// <param name="value">The parameter value.</param>
         public override void SetParameterValue(DbCommand command, string parameterName, object value)
         {
+            if (command == null) throw new ArgumentNullException("command");
+
             object convertedValue = value;
 
             ParameterTypeRegistry registry = GetParameterTypeRegistry(command.CommandText);
@@ -437,6 +456,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Oracle
         /// <param name="parameterValues">The parameter values that will be assigned to the command.</param>
         public override void AssignParameters(DbCommand command, object[] parameterValues)
         {
+            if (command == null) throw new ArgumentNullException("command");
+
             // need to do this before of eventual parameter discovery
             string updatedStoredProcedureName = TranslatePackageSchema(command.CommandText);
 

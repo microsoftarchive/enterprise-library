@@ -16,29 +16,27 @@ using System.Text;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
 {
-    /// <summary/>
-    public static class CachingDesignTime
+    internal static class CachingDesignTime
     {
-        ///<summary/>
         public static class ViewModelTypeNames
         {
-            ///<summary/>
             public const string CacheManagerBackingStoreProperty =
-                "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.CacheManagerBackingStoreProperty, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
+                "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.CacheManagerBackingStoreProperty, Microsoft.Practices.EnterpriseLibrary.Configuration.DesignTime";
 
-            ///<summary/>
             public const string CacheManagerSectionViewModel =
-                "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.CacheManagerSectionViewModel, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
+                "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.CacheManagerSectionViewModel, Microsoft.Practices.EnterpriseLibrary.Configuration.DesignTime";
         }
 
-        /// <summary/>
         public static class CommandTypeNames
         {
-            /// <summary/>
-            public const string AddCachingBlockCommand = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.AddCachingBlockCommand, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
+            public const string AddCachingBlockCommand = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.AddCachingBlockCommand, Microsoft.Practices.EnterpriseLibrary.Configuration.DesignTime";
 
-            /// <summary/>
-            public const string AddCacheManagerCommand = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.AddCacheManagerCommand, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
+            public const string AddCacheManagerCommand = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.AddCacheManagerCommand, Microsoft.Practices.EnterpriseLibrary.Configuration.DesignTime";
+        }
+
+        public static class ValidatorTypes
+        {
+            public const string NameValueCollectionValidator = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Validation.NameValueCollectionValidator, Microsoft.Practices.EnterpriseLibrary.Configuration.DesignTime";
         }
     }
 }

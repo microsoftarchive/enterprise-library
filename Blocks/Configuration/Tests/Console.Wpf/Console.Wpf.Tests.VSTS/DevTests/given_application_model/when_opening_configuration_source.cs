@@ -10,27 +10,26 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
+using System.Configuration;
+using System.IO;
 using System.Linq;
-using System.Text;
+using System.Windows;
 using Console.Wpf.Tests.VSTS.DevTests.Contexts;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Console;
+using Console.Wpf.Tests.VSTS.TestSupport;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Configuration.Design.HostAdapterV5;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Hosting;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
 using Microsoft.Practices.Unity;
-using Moq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Win32;
-using System.IO;
-using Console.Wpf.Tests.VSTS.TestSupport;
-using System.Configuration;
-using System.Windows;
+using Moq;
 
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_shell_service
 {
     [DeploymentItem("test.config")]
-    public abstract class given_clean_appllication_model : ContainerContext
+    public abstract class given_clean_application_model : ContainerContext
     {
         protected static string TestConfigurationFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "test.config");
 
@@ -48,11 +47,12 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_shell_service
     }
 
     [TestClass]
-    public class when_user_cancels_open_file_dialog : given_clean_appllication_model
+    public class when_user_cancels_open_file_dialog : given_clean_application_model
     {
         protected override void Act()
         {
             UIServiceMock.Setup(x => x.ShowFileDialog(It.IsAny<FileDialog>())).Returns(new FileDialogResult { DialogResult = false });
+            UIServiceMock.Setup(x => x.ShowWindow(It.IsAny<Window>()));
             ApplicationModel.OpenConfigurationSource();
         }
 
@@ -71,7 +71,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_shell_service
     }
 
     [TestClass]
-    public class when_user_opens_configuration_file : given_clean_appllication_model
+    public class when_user_opens_configuration_file : given_clean_application_model
     {
         PropertyChangedListener shellServiceChangedListener;
 
@@ -80,12 +80,13 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_shell_service
         {
             base.Arrange();
 
+            UIServiceMock.Setup(x => x.ShowFileDialog(It.IsAny<FileDialog>())).Returns(new FileDialogResult { DialogResult = true, FileName = TestConfigurationFilePath });
+            UIServiceMock.Setup(x => x.ShowWindow(It.IsAny<WaitDialog>())).Verifiable("Wait dialog not displayed");
             shellServiceChangedListener = new PropertyChangedListener(ApplicationModel);
         }
 
         protected override void Act()
         {
-            UIServiceMock.Setup(x => x.ShowFileDialog(It.IsAny<FileDialog>())).Returns(new FileDialogResult { DialogResult = true, FileName = TestConfigurationFilePath });
             ApplicationModel.OpenConfigurationSource();
         }
 
@@ -101,7 +102,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_shell_service
         {
             Assert.IsFalse(ApplicationModel.IsDirty);
         }
-        
+
         [TestMethod]
         public void then_setting_property_makes_ui_dirty()
         {
@@ -133,20 +134,21 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_shell_service
         }
 
         [TestMethod]
-        public void then_file_is_added_to_most_recently_used_list()
+        public void then_wait_dialog_is_displayed_during_load()
         {
-            Assert.IsTrue(ApplicationModel.MostRecentlyUsed.Contains(TestConfigurationFilePath));
+            UIServiceMock.Verify();
         }
     }
 
     [TestClass]
-    public class when_adding_section_to_source_model : given_clean_appllication_model
+    public class when_adding_section_to_source_model : given_clean_application_model
     {
         protected override void Act()
         {
             UIServiceMock.Setup(x => x.ShowFileDialog(It.IsAny<FileDialog>())).Returns(new FileDialogResult { DialogResult = true, FileName = TestConfigurationFilePath });
+            UIServiceMock.Setup(x => x.ShowWindow(It.IsAny<Window>()));
             ApplicationModel.OpenConfigurationSource();
-            
+
             Assert.IsFalse(ApplicationModel.IsDirty);
             ApplicationModelChangedListener.ChangedProperties.Clear();
 
@@ -167,13 +169,15 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_shell_service
         }
     }
 
-    public abstract class given_dirty_application_model : given_clean_appllication_model
+    public abstract class given_dirty_application_model : given_clean_application_model
     {
         protected override void Arrange()
         {
             base.Arrange();
 
             UIServiceMock.Setup(x => x.ShowFileDialog(It.IsAny<OpenFileDialog>())).Returns(new FileDialogResult { DialogResult = true, FileName = TestConfigurationFilePath });
+            UIServiceMock.Setup(x => x.ShowWindow(It.IsAny<Window>()));
+
             ApplicationModel.OpenConfigurationSource();
 
             ConfigurationSourceModel sourceModel = Container.Resolve<ConfigurationSourceModel>();
@@ -195,6 +199,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_shell_service
                          .Verifiable();
 
             UIServiceMock.Setup(x => x.ShowFileDialog(It.IsAny<OpenFileDialog>())).Callback(() => Assert.Fail());
+            
         }
 
         protected override void Act()
@@ -246,4 +251,33 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_shell_service
 
     }
 
+    [TestClass]
+    public class when_opening_configuration_file_while_dirty_with_environments : given_dirty_application_model
+    {
+        protected override void Arrange()
+        {
+            base.Arrange();
+
+            ApplicationModel.NewEnvironment();
+            ApplicationModel.Environments.ElementAt(0).EnvironmentDeltaFile = string.Format("unused{0}.dconfig", Guid.NewGuid().ToString("D"));
+
+            UIServiceMock.Setup(x => x.ShowMessageWpf(It.IsAny<string>(), It.IsAny<string>(), MessageBoxButton.YesNoCancel))
+                         .Returns(MessageBoxResult.Yes)
+                         .Verifiable();
+
+        }
+
+        protected override void Act()
+        {
+            ApplicationModel.OpenConfigurationSource();
+        }
+
+        [TestMethod]
+        public void then_environments_are_cleared()
+        {
+            Assert.AreEqual(0, ApplicationModel.Environments.Count());
+        }
+    }
+
+    
 }

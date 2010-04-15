@@ -9,6 +9,10 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using System;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design;
@@ -151,6 +155,53 @@ namespace Console.Wpf.Tests.VSTS.Controls.TypeBrowser
         }
 
         [TestMethod]
+        public void AcceptsTypesFromDifferentLoadContext()
+        {
+            string newAssemblyName = Path.GetRandomFileName();
+            File.Copy(Assembly.GetExecutingAssembly().Location, newAssemblyName);
+
+            var testDomain = AppDomain.CreateDomain("test", null, AppDomain.CurrentDomain.SetupInformation);
+            var helper = new TestHelper { AssemblyFileName = newAssemblyName };
+            try
+            {
+                testDomain.DoCallBack(helper.DoTestAcceptsTypesFromDifferentLoadContext);
+            }
+            finally
+            {
+                AppDomain.Unload(testDomain);
+                File.Delete(newAssemblyName);
+            }
+        }
+
+        [Serializable]
+        public class TestHelper
+        {
+            public string AssemblyFileName { get; set; }
+
+            public void DoTestAcceptsTypesFromDifferentLoadContext()
+            {
+                var newAssembly = Assembly.LoadFrom(AssemblyFileName);
+
+                var constraint =
+                    new TypeBuildNodeConstraint(
+                        typeof(IBase),
+                        null,
+                        TypeSelectorIncludes.Interfaces | TypeSelectorIncludes.AbstractTypes | TypeSelectorIncludes.BaseType | TypeSelectorIncludes.NonpublicTypes);
+
+                Assert.IsTrue(constraint.Matches(newAssembly.GetType(typeof(BaseType).FullName, true)));
+                Assert.IsTrue(constraint.Matches(newAssembly.GetType(typeof(DerivedType).FullName, true)));
+                Assert.IsFalse(constraint.Matches(newAssembly.GetType(typeof(DerivedType.NestedType).FullName, true)));
+                Assert.IsFalse(constraint.Matches(newAssembly.GetType(typeof(DerivedType.NestedInternalType).FullName, true)));
+                Assert.IsFalse(constraint.Matches(newAssembly.GetType(typeof(AbstractType).FullName, true)));
+                Assert.IsFalse(constraint.Matches(newAssembly.GetType(typeof(DerivedFromAbstractType).FullName, true)));
+                Assert.IsTrue(constraint.Matches(newAssembly.GetType(typeof(IBase).FullName, true)));
+                Assert.IsTrue(constraint.Matches(newAssembly.GetType(typeof(IDerived).FullName, true)));
+                Assert.IsFalse(constraint.Matches(newAssembly.GetType(typeof(InternalType).FullName, true)));
+                Assert.IsFalse(constraint.Matches(newAssembly.GetType(typeof(InternalAbstractType).FullName, true)));
+            }
+        }
+
+        [TestMethod]
         public void AcceptsOnlyTypesWithTheConfigurationElementTypeIfSpecified()
         {
             var constraint =
@@ -171,6 +222,28 @@ namespace Console.Wpf.Tests.VSTS.Controls.TypeBrowser
             Assert.IsFalse(constraint.Matches(typeof(InternalType)));
             Assert.IsFalse(constraint.Matches(typeof(InternalAbstractType)));
         }
+
+        [TestMethod]
+        public void ObjectIsReferredToAsAnyInDisplayString()
+        {
+            var constraint = new TypeBuildNodeConstraint(typeof(object), null, TypeSelectorIncludes.None);
+            Assert.IsTrue(constraint.GetDisplayString().IndexOf("any", StringComparison.OrdinalIgnoreCase) > -1);
+        }
+
+        [TestMethod]
+        public void BaseTypeIsReferredToInDisplayString()
+        {
+            var constraint = new TypeBuildNodeConstraint(typeof(Guid), null, TypeSelectorIncludes.None);
+            Assert.IsTrue(constraint.GetDisplayString().IndexOf("Guid", StringComparison.OrdinalIgnoreCase) > -1);
+        }
+
+        [TestMethod]
+        public void ConfigurationElementTypeIsReferredToInDisplayString()
+        {
+            var constraint = new TypeBuildNodeConstraint(typeof(Guid), typeof(double), TypeSelectorIncludes.None);
+            Assert.IsTrue(constraint.GetDisplayString().IndexOf("double", StringComparison.OrdinalIgnoreCase) > -1);
+        }
+
 
         public class BaseType : IBase { }
         [ConfigurationElementType(typeof(string))]

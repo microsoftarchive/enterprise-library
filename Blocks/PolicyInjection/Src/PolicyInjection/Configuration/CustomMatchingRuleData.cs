@@ -19,6 +19,7 @@ using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
 using System.ComponentModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design.Validation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
 {
@@ -102,7 +103,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// <summary>
         /// Gets or sets custom configuration attributes.
         /// </summary>
-        /// <value>The attribute collection.</value>        		
+        /// <value>The attribute collection.</value>  
+        [Validation(PolicyInjectionDesignTime.Validators.NameValueCollectionValidator)]
         public NameValueCollection Attributes
         {
             get { return helper.Attributes; }

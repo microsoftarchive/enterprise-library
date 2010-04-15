@@ -26,7 +26,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 	/// <seealso cref="ValidatedTypeReference"/>
     [ResourceDescription(typeof(DesignResources), "ValidationRulesetDataDescription")]
     [ResourceDisplayName(typeof(DesignResources), "ValidationRulesetDataDisplayName")]
-    [Command("Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.SelectValidatedTypeReferenceMembersCommand, Microsoft.Practices.EnterpriseLibrary.Configuration.Design")]
+    [Command(ValidationDesignTime.CommandTypeNames.SelectValidatedTypeReferenceMembersCommand)]
     [ViewModel(ValidationDesignTime.ViewModelTypeNames.ValidationRulesetDataViewModel)]
 	public class ValidationRulesetData : NamedConfigurationElement
 	{

@@ -72,5 +72,33 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WPF.Tests
             Assert.IsTrue(SWC.Validation.GetHasError(textBox));
             Assert.AreEqual("invalid string: vab", SWC.Validation.GetErrors(textBox).First().ErrorContent);
         }
+
+
+        [TestMethod]
+        public void TwoWayBindingFiresValidationWhenUIChanges()
+        {
+            var control = new ControlWithImplicitRuleWithRulesetAndSource();
+            var textBox = control.TextBoxWithTwoWayBinding;
+
+            textBox.Text = "bbbbbbbbbbb";
+
+            Assert.IsTrue(SWC.Validation.GetHasError(textBox));
+
+            Assert.AreEqual("String must be one character", SWC.Validation.GetErrors(textBox).First().ErrorContent);
+        }
+
+        [TestMethod]
+        public void TwoWayBindingFiresValidationWhenSourceChanges()
+        {
+            var control = new ControlWithImplicitRuleWithRulesetAndSource();
+            var textBox = control.TextBoxWithTwoWayBinding;
+            var source = (ValidatedObject) control.Resources["validated"];
+
+            source.TwoWayValidatedStringProperty = "Hello";
+
+            Assert.IsTrue(SWC.Validation.GetHasError(textBox));
+
+            Assert.AreEqual("String must be one character", SWC.Validation.GetErrors(textBox).First().ErrorContent);
+        }
     }
 }

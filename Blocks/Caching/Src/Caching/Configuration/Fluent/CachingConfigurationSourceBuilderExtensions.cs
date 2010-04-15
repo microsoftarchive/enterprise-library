@@ -30,6 +30,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         /// <returns>A fluent interface to further configure the caching configuration section.</returns>
         public static ICachingConfiguration ConfigureCaching(this IConfigurationSourceBuilder configurationSourceBuilder)
         {
+            if (configurationSourceBuilder == null) throw new ArgumentNullException("configurationSourceBuilder");
+
             CacheManagerSettings cacheSettings = new CacheManagerSettings();
             configurationSourceBuilder.AddSection(CacheManagerSettings.SectionName, cacheSettings);
 

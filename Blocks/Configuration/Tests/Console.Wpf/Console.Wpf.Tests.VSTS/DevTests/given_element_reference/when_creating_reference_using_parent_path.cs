@@ -31,7 +31,8 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_element_reference
 
         protected override void Act()
         {
-            ehabModel = SectionViewModel.CreateSection(Container, ExceptionHandlingSettings.SectionName, base.Section);
+            var configurationSourceModel = Container.Resolve<ConfigurationSourceModel>();
+            ehabModel = configurationSourceModel.AddSection(ExceptionHandlingSettings.SectionName, base.Section);
             lookup = Container.Resolve<ElementLookup>();
         }
 
@@ -157,9 +158,10 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_element_reference
         public void then_reference_can_be_fixed_by_loading_section()
         {
             ElementLookup elementLookup = Container.Resolve<ElementLookup>();
-            var reference = elementLookup.CreateReference("/configuration/" + ExceptionHandlingSettings.SectionName, typeof(ConfigurationElement), "Policies");
+            var reference = elementLookup.CreateReference("/configuration/" + ExceptionHandlingSettings.SectionName + "/exceptionPolicies", typeof(ExceptionPolicyData), "SomePolicy");
 
-            SectionViewModel.CreateSection(Container, ExceptionHandlingSettings.SectionName, base.Section);
+            var sourceModel = Container.Resolve<ConfigurationSourceModel>();
+            sourceModel.AddSection(ExceptionHandlingSettings.SectionName, base.Section);
 
             Assert.IsNotNull(reference.Element);
         }
@@ -174,7 +176,8 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_element_reference
 
             reference.ElementFound += (s, a) => elementFoundSignalled = true;
 
-            SectionViewModel.CreateSection(Container, ExceptionHandlingSettings.SectionName, base.Section);
+            var sourceModel = Container.Resolve<ConfigurationSourceModel>();
+            sourceModel.AddSection(ExceptionHandlingSettings.SectionName, base.Section);
 
             Assert.IsTrue(elementFoundSignalled);
 

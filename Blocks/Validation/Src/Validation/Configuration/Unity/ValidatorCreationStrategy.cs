@@ -32,8 +32,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.Unity
         /// <param name="context">Context of the build operation.</param>
         public override void PreBuildUp(IBuilderContext context)
         {
-            if (!(context.BuildKey is NamedTypeBuildKey)) return;
-            var key = (NamedTypeBuildKey) context.BuildKey;
+            if (context == null) throw new ArgumentNullException("context");
+
+            var key = context.BuildKey;
 
             if(!RequestIsForValidatorOfT(key)) return;
 

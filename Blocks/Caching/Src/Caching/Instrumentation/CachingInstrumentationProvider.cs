@@ -13,12 +13,13 @@ using System;
 using System.Diagnostics;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation;
+using System.Globalization;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation
 {
     /// <summary>
     /// Implementation of <see cref="ICachingInstrumentationProvider"/> that generates
-    /// performance counter updates and WMI events in response to instrumentation activities.
+    /// performance counter updates in response to instrumentation activities.
     /// </summary>
     [HasInstallableResourcesAttribute]
     [PerformanceCountersDefinition(CounterCategoryName, "CounterCategoryHelpResourceName")]
@@ -110,14 +111,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation
         /// <param name="instanceName">The name of the <see cref="CacheManager"/> instance this instrumentation listener is created for.</param>
         /// <param name="performanceCountersEnabled"><b>true</b> if performance counters should be updated.</param>
         /// <param name="eventLoggingEnabled"><b>true</b> if event log entries should be written.</param>
-        /// <param name="wmiEnabled"><b>true</b> if WMI events should be fired.</param>
         /// <param name="applicationInstanceName">The application instance name.</param>
         public CachingInstrumentationProvider(string instanceName,
                                               bool performanceCountersEnabled,
                                               bool eventLoggingEnabled,
-                                              bool wmiEnabled,
                                               string applicationInstanceName)
-            : this(instanceName, performanceCountersEnabled, eventLoggingEnabled, wmiEnabled, new AppDomainNameFormatter(applicationInstanceName)) {}
+            : this(instanceName, performanceCountersEnabled, eventLoggingEnabled, new AppDomainNameFormatter(applicationInstanceName)) { }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CachingInstrumentationProvider"/> class.
@@ -125,14 +124,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation
         /// <param name="instanceName">The name of the <see cref="CacheManager"/> instance this instrumentation listener is created for.</param>
         /// <param name="performanceCountersEnabled"><b>true</b> if performance counters should be updated.</param>
         /// <param name="eventLoggingEnabled"><b>true</b> if event log entries should be written.</param>
-        /// <param name="wmiEnabled"><b>true</b> if WMI events should be fired.</param>
         /// <param name="nameFormatter">The <see cref="IPerformanceCounterNameFormatter"/> that is used to creates unique name for each <see cref="PerformanceCounter"/> instance.</param>
         public CachingInstrumentationProvider(string instanceName,
                                               bool performanceCountersEnabled,
                                               bool eventLoggingEnabled,
-                                              bool wmiEnabled,
                                               IPerformanceCounterNameFormatter nameFormatter)
-            : base(new [] { instanceName }, performanceCountersEnabled, eventLoggingEnabled, wmiEnabled, nameFormatter)
+            : base(new[] { instanceName }, performanceCountersEnabled, eventLoggingEnabled, nameFormatter)
         {
             this.instanceName = instanceName;
             counterInstanceName = CreateInstanceName(instanceName);
@@ -205,10 +202,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation
                 cacheScavengedItemsCounter.IncrementBy(itemsScavenged);
                 totalCacheScavengedItemsCounter.IncrementBy(itemsScavenged);
             }
-            if (WmiEnabled)
-            {
-                FireManagementInstrumentation(new CacheScavengedEvent(instanceName, itemsScavenged));
-            }
         }
 
         /// <summary>
@@ -219,15 +212,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation
         /// <param name="exception">The exception causing the failure.</param>
         public void FireCacheCallbackFailed(string key, Exception exception)
         {
-            if (WmiEnabled)
-            {
-                FireManagementInstrumentation(new CacheCallbackFailureEvent(instanceName, key, exception.ToString()));
-            }
+            if (exception == null) throw new ArgumentNullException("exception");
+
             if (EventLoggingEnabled)
             {
                 string errorMessage
                     = string.Format(
-                        Resources.Culture,
+                        CultureInfo.CurrentCulture,
                         Resources.ErrorCacheCallbackFailedMessage,
                         instanceName,
                         key);
@@ -244,15 +235,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation
         /// <param name="exception">The message that represents the exception causing the failure.</param>
         public void FireCacheFailed(string errorMessage, Exception exception)
         {
-            if (WmiEnabled)
-            {
-                FireManagementInstrumentation(new CacheFailureEvent(instanceName, errorMessage, exception.ToString()));
-            }
+            if(exception == null) throw new ArgumentNullException("exception");
             if (EventLoggingEnabled)
             {
                 string message
                     = string.Format(
-                        Resources.Culture,
+                        CultureInfo.CurrentCulture,
                         Resources.ErrorCacheOperationFailedMessage,
                         instanceName);
                 string entryText = eventLogEntryFormatter.GetEntryText(message, exception, errorMessage);

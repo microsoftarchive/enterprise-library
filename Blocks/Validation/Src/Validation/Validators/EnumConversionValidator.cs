@@ -125,16 +125,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
 			get { return Resources.EnumConversionNegatedDefaultMessageTemplate; }
 		}
 
-		#region test only properties
-
         /// <summary>
-        /// 
+        /// Enum type to convert to.
         /// </summary>
         public Type EnumType
 		{
 			get { return enumType; }
 		}
-
-		#endregion
 	}
 }

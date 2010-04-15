@@ -33,6 +33,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
         /// <param name="pollTimer"></param>
         public CacheManager(Cache realCache, BackgroundScheduler backgroundScheduler, ExpirationPollTimer pollTimer)
 		{
+            if (pollTimer == null) throw new ArgumentNullException("pollTimer");
+
 			this.realCache = realCache;
 			this.pollTimer = pollTimer;
             this.backgroundScheduler = backgroundScheduler;

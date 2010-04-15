@@ -22,7 +22,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Config
 {
     /// <summary>
     /// Provides an implementation for <see cref="LoggingExceptionHandlerData"/> that
-    /// splits policy overrides processing and WMI objects generation, performing appropriate logging of 
+    /// processes policy overrides, performing appropriate logging of 
     /// policy processing errors.
     /// </summary>
     public class LoggingExceptionHandlerDataManageabilityProvider

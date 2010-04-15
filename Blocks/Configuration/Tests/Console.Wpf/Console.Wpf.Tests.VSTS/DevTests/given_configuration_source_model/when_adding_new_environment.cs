@@ -12,6 +12,7 @@
 using System.Globalization;
 using System.Linq;
 using Console.Wpf.Tests.VSTS.DevTests.Contexts;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides.Configuration;
 using Microsoft.Practices.Unity;
@@ -24,35 +25,42 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_configuration_source_model
     {
         protected override void Act()
         {
-            var sourceModel = Container.Resolve<ConfigurationSourceModel>();
-            sourceModel.NewEnvironment();
+            var applicationModel = Container.Resolve<ApplicationViewModel>();
+            applicationModel.NewEnvironment();
         }
 
         [TestMethod]
-        public void then_environment_is_contained_in_sections()
+        public void then_environment_is_not_contained_in_sections()
         {
             var sourceModel = Container.Resolve<ConfigurationSourceModel>();
-            Assert.IsTrue(sourceModel.Sections.Where(x=>x.ConfigurationType == typeof(EnvironmentMergeSection)).Any());
+            Assert.IsFalse(sourceModel.Sections.Where(x=>x.ConfigurationType == typeof(EnvironmentalOverridesSection)).Any());
+        }
+
+        [TestMethod]
+        public void then_environment_is_contained_in_environments()
+        {
+            var applicationViewModel = Container.Resolve<ApplicationViewModel>();
+            Assert.IsTrue(applicationViewModel.Environments.Where(x=>x.ConfigurationType == typeof(EnvironmentalOverridesSection)).Any());
         }
 
         [TestMethod]
         public void then_environment_name_is_calculated_correctly()
         {
             const string EnvironmentName = "Environment";
-            var sourceModel = Container.Resolve<ConfigurationSourceModel>();
+            var applicationViewModel = Container.Resolve<ApplicationViewModel>();
 
-            Assert.AreEqual(EnvironmentName, sourceModel.Environments.Last().Name);
+            Assert.AreEqual(EnvironmentName, applicationViewModel.Environments.Last().Name);
 
             for (var i = 2; i < 5; i++)
             {
-                sourceModel.NewEnvironment();
+                applicationViewModel.NewEnvironment();
 
-                string correctName = string.Format(CultureInfo.CurrentUICulture,
+                string correctName = string.Format(CultureInfo.CurrentCulture,
                                                   "{0} {1}",
                                                   EnvironmentName,
                                                   i.ToString()).Trim();
 
-                var environmentName = sourceModel.Environments.Last().Name;
+                var environmentName = applicationViewModel.Environments.Last().Name;
                 Assert.AreEqual(correctName, environmentName);
             }
         }

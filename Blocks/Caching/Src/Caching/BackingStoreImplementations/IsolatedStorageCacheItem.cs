@@ -42,6 +42,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.BackingStoreImplementati
 		/// <param name="encryptionProvider">Encryption provider</param>
 		public IsolatedStorageCacheItem(IsolatedStorageFile storage, string itemDirectoryRoot, IStorageEncryptionProvider encryptionProvider)
 		{
+		    if (storage == null) throw new ArgumentNullException("storage");
+
 			int retriesLeft = MaxRetries;
 			while (true)
 			{
@@ -103,6 +105,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.BackingStoreImplementati
 		/// <param name="itemToStore">The <see cref="CacheItem"/> to store.</param>
 		public void Store(CacheItem itemToStore)
 		{
+		    if (itemToStore == null) throw new ArgumentNullException("itemToStore");
+
 			keyField.Write(itemToStore.Key, false);
 			valueField.Write(itemToStore.Value, true);
 			scavengingPriorityField.Write(itemToStore.ScavengingPriority, false);

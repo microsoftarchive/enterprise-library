@@ -33,12 +33,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         }
 
         /// <summary>
-        /// 
+        /// Retrieves a value from <paramref name="source"/>.
         /// </summary>
-        /// <param name="source"></param>
-        /// <param name="value"></param>
-        /// <param name="valueAccessFailureMessage"></param>
-        /// <returns></returns>
+        /// <param name="source">The source for the value.</param>
+        /// <param name="value">The value retrieved from the <paramref name="source"/>.</param>
+        /// <param name="valueAccessFailureMessage">A message describing the failure to access the value, if any.</param>
+        /// <returns><see langword="true"/> when the retrieval was successful; <see langword="false"/> otherwise.</returns>
+        /// <remarks>Subclasses provide concrete value accessing behaviors.</remarks>
         public override bool GetValue(object source, out object value, out string valueAccessFailureMessage)
         {
             value = null;
@@ -69,7 +70,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         }
 
         /// <summary>
-        /// 
+        /// Key used to retrieve data. In this case, it's just the method name.
         /// </summary>
         public override string Key
         {

@@ -58,12 +58,27 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests.Conf
         }
 
         [TestMethod]
+        public void ThenCryptographyManagerRegistrationIsPublic()
+        {
+            cryptoManagerRegistration.AssertForServiceType(typeof (CryptographyManager))
+                .IsPublicName();
+        }
+
+        [TestMethod]
         public void ThenDefaultInstrumentationProviderRegistrationIsDefault()
         {
             instrumentationRegistration
                 .AssertForServiceType(typeof(IDefaultCryptographyInstrumentationProvider))
                 .ForImplementationType(typeof(DefaultCryptographyEventLogger))
                 .IsDefault();
+        }
+
+        [TestMethod]
+        public void ThenDefaultInstrumentationProviderIsNotPublicName()
+        {
+            instrumentationRegistration
+                .AssertForServiceType(typeof (IDefaultCryptographyInstrumentationProvider))
+                .IsNotPublicName();
         }
     }
 
@@ -119,7 +134,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests.Conf
             registration
                 .AssertForServiceType(typeof(IHashProvider))
                 .ForName("name")
-                .ForImplementationType(typeof(HashAlgorithmProvider));
+                .ForImplementationType(typeof(HashAlgorithmProvider))
+                .IsPublicName();
 
             registration.AssertConstructor()
                 .WithValueConstructorParameter(typeof(RijndaelManaged))
@@ -169,7 +185,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests.Conf
             registration
                 .AssertForServiceType(typeof(IHashProvider))
                 .ForName("keyed")
-                .ForImplementationType(typeof(KeyedHashAlgorithmProvider));
+                .ForImplementationType(typeof(KeyedHashAlgorithmProvider))
+                .IsPublicName();
 
             registration.AssertConstructor()
                 .WithValueConstructorParameter(typeof(RijndaelManaged))
@@ -237,7 +254,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests.Conf
             registration
                 .AssertForServiceType(typeof(IHashProvider))
                 .ForName("custom")
-                .ForImplementationType(typeof(MockCustomHashProvider));
+                .ForImplementationType(typeof(MockCustomHashProvider))
+                .IsPublicName();
 
             registration.AssertConstructor()
                 .WithValueConstructorParameter(customHashProviderData.Attributes)
@@ -334,7 +352,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests.Conf
             registration
                 .AssertForServiceType(typeof(ISymmetricCryptoProvider))
                 .ForName("symmetric algorithm")
-                .ForImplementationType(typeof(SymmetricAlgorithmProvider));
+                .ForImplementationType(typeof(SymmetricAlgorithmProvider))
+                .IsPublicName();
 
             registration.AssertConstructor()
                 .WithValueConstructorParameter(typeof(RijndaelManaged))
@@ -400,7 +419,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests.Conf
             registration
                 .AssertForServiceType(typeof(ISymmetricCryptoProvider))
                 .ForName("dpapi")
-                .ForImplementationType(typeof(DpapiSymmetricCryptoProvider));
+                .ForImplementationType(typeof(DpapiSymmetricCryptoProvider))
+                .IsPublicName();
 
             registration.AssertConstructor()
                 .WithValueConstructorParameter(DataProtectionScope.LocalMachine)
@@ -456,7 +476,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests.Conf
             registration
                 .AssertForServiceType(typeof(ISymmetricCryptoProvider))
                 .ForName("custom")
-                .ForImplementationType(typeof(MockCustomSymmetricProvider));
+                .ForImplementationType(typeof(MockCustomSymmetricProvider))
+                .IsPublicName();
 
             registration.AssertConstructor()
                 .WithValueConstructorParameter(customSymmetricCryptoProviderData.Attributes)

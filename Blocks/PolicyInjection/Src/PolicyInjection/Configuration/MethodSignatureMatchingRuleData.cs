@@ -215,6 +215,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         [ConfigurationProperty(NamePropertyName, IsKey = true, IsRequired = true)]
         [ResourceDescription(typeof(DesignResources), "ParameterTypeElementNameDescription")]
         [ResourceDisplayName(typeof(DesignResources), "ParameterTypeElementNameDisplayName")]
+        [ViewModel(CommonDesignTime.ViewModelTypeNames.CollectionEditorContainedElementProperty)]
         public string Name
         {
             get { return (string)base[NamePropertyName]; }
@@ -229,6 +230,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         [ResourceDescription(typeof(DesignResources), "ParameterTypeElementParameterTypeNameDescription")]
         [ResourceDisplayName(typeof(DesignResources), "ParameterTypeElementParameterTypeNameDisplayName")]
         [Editor(CommonDesignTime.EditorTypes.TypeSelector, CommonDesignTime.EditorTypes.UITypeEditor)]
+        [ViewModel(CommonDesignTime.ViewModelTypeNames.CollectionEditorContainedElementProperty)]
         public string ParameterTypeName
         {
             get { return (string)base[ParameterTypeNamePropertyName]; }

@@ -59,7 +59,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
                 .AssertConstructor()
                 .WithValueConstructorParameter(false)
                 .WithValueConstructorParameter(false)
-                .WithValueConstructorParameter(false)
                 .WithValueConstructorParameter(string.Empty)
                 .VerifyConstructorParameters();
         }
@@ -172,7 +171,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
 
             instrumentationProviderRegistration
                 .AssertConstructor()
-                .WithValueConstructorParameter(false)
                 .WithValueConstructorParameter(false)
                 .WithValueConstructorParameter(false)
                 .WithValueConstructorParameter(string.Empty)

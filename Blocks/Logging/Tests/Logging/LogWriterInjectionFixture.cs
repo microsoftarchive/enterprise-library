@@ -11,12 +11,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Diagnostics;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel.Unity;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Filters;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport.TraceListeners;
@@ -52,7 +47,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
                         false,
                         false,
                         false),
-                    new LoggingInstrumentationProvider(false, false, false, null),
+                    new LoggingInstrumentationProvider(false, false, null),
                     coordinator);
 
             Assert.AreSame(logWriter, coordinator.AddedLoggingUpdateHandler);
@@ -74,19 +69,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
         [ExpectedException(typeof(ArgumentNullException))]
         public void WhenUpdateCoordinateIsInjectedOnLogWriter_ThenArgumentNullExceptionIsThrown()
         {
-                new LogWriterImpl(
-                    new LogWriterStructureHolder(
-                        new ILogFilter[0],
-                        new Dictionary<string, LogSource>(),
-                        new LogSource(null),
-                        new LogSource(null),
-                        new LogSource(null),
-                        null,
-                        false,
-                        false,
-                        false),
-                    new LoggingInstrumentationProvider(false, false, false, null),
-                    coordinator);
+            new LogWriterImpl(
+                new LogWriterStructureHolder(
+                    new ILogFilter[0],
+                    new Dictionary<string, LogSource>(),
+                    new LogSource(null),
+                    new LogSource(null),
+                    new LogSource(null),
+                    null,
+                    false,
+                    false,
+                    false),
+                new LoggingInstrumentationProvider(false, false, null),
+                coordinator);
         }
     }
 
@@ -112,7 +107,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
                         false,
                         false,
                         false),
-                    new LoggingInstrumentationProvider(false, false, false, null),
+                    new LoggingInstrumentationProvider(false, false, null),
                     coordinator);
         }
 

@@ -18,4 +18,4 @@ using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration.Man
 
 [assembly: AssemblyTitle("Enterprise Library Shared Library Manageability Tests")]
 [assembly: AssemblyDescription("Enterprise Library Shared Library Manageability Tests")]
-[assembly: AssemblyVersion("4.1.0.0")]
+[assembly: AssemblyVersion("5.0.414.0")]

@@ -27,7 +27,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
     public class TextFormatterData : FormatterData
     {
         /// <summary>
-        /// TODO: once designtime is refactored, make internal or store in resources...
+        /// 
         /// </summary>
         public const string DefaultTemplate = "Timestamp: {timestamp}{newline}\nMessage: {message}{newline}\nCategory: {category}{newline}\nPriority: {priority}{newline}\nEventId: {eventid}{newline}\nSeverity: {severity}{newline}\nTitle:{title}{newline}\nMachine: {localMachine}{newline}\nApp Domain: {localAppDomain}{newline}\nProcessId: {localProcessId}{newline}\nProcess Name: {localProcessName}{newline}\nThread Name: {threadName}{newline}\nWin32 ThreadId:{win32ThreadId}{newline}\nExtended Properties: {dictionary({key} - {value}{newline})}";
         private const string templateProperty = "template";

@@ -10,18 +10,14 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Console.Wpf.Tests.VSTS.DevTests.Contexts;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides.Configuration;
 using Microsoft.Practices.Unity;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Console;
 using System.IO;
-using Console.Wpf.Tests.VSTS.TestSupport;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_save_environment_delta_command
 {
@@ -29,7 +25,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_save_environment_delta_command
     [TestClass]
     public class when_saving_environment_delta_file_with_non_rooted_filename : ContainerContext
     {
-        EnvironmentalOverridesViewModel overridesModel;
+        EnvironmentSourceViewModel overridesModel;
         string targetFile;
 
         protected override void Arrange()
@@ -39,7 +35,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_save_environment_delta_command
             ApplicationViewModel applicationModel = base.Container.Resolve<ApplicationViewModel>();
             applicationModel.ConfigurationFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "main.config");
 
-            overridesModel = (EnvironmentalOverridesViewModel)SectionViewModel.CreateSection(Container, EnvironmentMergeSection.EnvironmentMergeData, new EnvironmentMergeSection
+            overridesModel = (EnvironmentSourceViewModel)SectionViewModel.CreateSection(Container, EnvironmentalOverridesSection.EnvironmentallyOverriddenProperties, new EnvironmentalOverridesSection
             {
                 EnvironmentName = "environment"
             });

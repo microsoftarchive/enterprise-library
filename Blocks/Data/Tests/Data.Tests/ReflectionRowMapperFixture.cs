@@ -322,7 +322,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
             {
                 Assert.IsTrue(ice.Message.Contains("Int"));
                 Assert.IsTrue(ice.Message.Contains("GUID"));
-                int a = 2;
             }
         }
     }
@@ -354,7 +353,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
             catch (InvalidCastException ice)
             {
                 Assert.IsTrue(ice.Message.Contains("Int"));
-                int a = 2;
             }
         }
 

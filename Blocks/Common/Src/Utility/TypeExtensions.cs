@@ -29,6 +29,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Utility
         ///<returns>The found parent that is a closed generic of the <paramref name="parentType"/> or null</returns>
         public static Type FindGenericParent(this Type rootType, Type parentType)
         {
+            if (parentType == null) throw new ArgumentNullException("parentType");
+            if (rootType == null) throw new ArgumentNullException("rootType");
+
             if (!parentType.IsGenericType) return null;
 
             Type currentType = rootType;

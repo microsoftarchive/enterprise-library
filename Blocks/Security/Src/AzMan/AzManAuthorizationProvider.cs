@@ -87,7 +87,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.AzMan
 		/// <summary>
 		/// Evaluates the specified authority against the specified context that is either a task or operation in Authorization Manager. If the context is an operation it should be prefixed by "O".
 		/// </summary>
-		/// <param name="principal">Principal object containing a windows identity.</param>
+		/// <param name="principal">Principal object containing a Windows identity.</param>
 		/// <param name="context">Name of the task or operation to evaluate.</param>
 		/// <returns><strong>True</strong> if AzMan evaluates to true,
 		/// otherwise <strong>false</strong>.</returns>

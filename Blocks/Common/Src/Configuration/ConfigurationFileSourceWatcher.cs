@@ -67,7 +67,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         /// </summary>
         /// <param name="configurationFilepath">The path for the main configuration file.</param>
         /// <param name="configSource">The configuration source to watch.</param>
-        /// <returns>The path to the configuration file to watch. It will be the same as <paramref name="configurationFilePath"/>
+        /// <returns>The path to the configuration file to watch. It will be the same as <paramref name="configurationFilepath"/>
         /// if <paramref name="configSource"/> is empty, or the full path for <paramref name="configSource"/> considered as a 
         /// file name relative to the main configuration file.</returns>
         public static string GetFullFileName(string configurationFilepath, string configSource)

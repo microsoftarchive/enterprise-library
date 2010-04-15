@@ -44,7 +44,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerMo
         {
             if (expression == null) throw new ArgumentNullException("expression");
             if (serviceType == null) throw new ArgumentNullException("serviceType");
-            if (!serviceType.IsAssignableFrom(expression.Body.Type))
+
+            var body = GetEffectiveBody(expression);
+
+            if (!serviceType.IsAssignableFrom(body.Type))
             {
                 throw new ArgumentException(
                     string.Format(
@@ -55,13 +58,24 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerMo
                     "serviceType");
             }
 
-            if (expression.Body.NodeType != ExpressionType.New && expression.Body.NodeType != ExpressionType.MemberInit)
+            if (body.NodeType != ExpressionType.New && body.NodeType != ExpressionType.MemberInit)
             {
                 throw new ArgumentException(Properties.Resources.ExceptionRegistrationTypeExpressionMustBeNewLambda);
             }
 
             LambdaExpression = expression;
             ServiceType = serviceType;
+        }
+
+        private static Expression GetEffectiveBody(LambdaExpression expression)
+        {
+            var body = expression.Body;
+
+            if (body.NodeType == ExpressionType.Convert)
+            {
+                body = ((UnaryExpression)body).Operand;
+            }
+            return body;
         }
 
         /// <summary>
@@ -82,12 +96,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerMo
         {
             get
             {
-                if (LambdaExpression.Body.NodeType == ExpressionType.New)
+                var body = GetEffectiveBody(LambdaExpression);
+
+                if (body.NodeType == ExpressionType.New)
                 {
-                    return (NewExpression)LambdaExpression.Body;
+                    return (NewExpression)body;
                 }
 
-                return ((MemberInitExpression)LambdaExpression.Body).NewExpression;
+                return ((MemberInitExpression)body).NewExpression;
             }
         }
 
@@ -99,7 +115,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerMo
         /// <summary>
         /// Gets the name under which the entry should be registered to the container.
         /// </summary>
-        public string Name 
+        public string Name
         {
             get
             {
@@ -113,6 +129,21 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerMo
         }
 
         /// <summary>
+        /// Is this registration for a type that is part of a public API? If
+        /// true, configurators should not transform the name in any way. If
+        /// false, this is an internal implementation class that users will not
+        /// be resolving directly, and as such the name can be manipulated safely
+        /// without interfering with the public API.
+        /// </summary>
+        /// <remarks>Some containers have restrictions on the allowed names (for example,
+        /// many require names to be globally unique). Some object names need to be
+        /// left alone (for example, Database or Exception policies) becuase that is
+        /// what the user will use to get those objects. Other names (like for instrumentation
+        /// providers) are internal and can be freely changed by the configurator as
+        /// needed to fit into the container.</remarks>
+        public bool IsPublicName { get; set; }
+
+        /// <summary>
         /// Returns the default name for a type that will be returned if no name
         /// is otherwise specified.
         /// </summary>
@@ -120,6 +151,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerMo
         /// <returns>Default name that will be used.</returns>
         public static string DefaultName(Type serviceType)
         {
+            if (serviceType == null) throw new ArgumentNullException("serviceType");
+
             return serviceType.Name + "." + "__default__";
         }
 
@@ -170,7 +203,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerMo
         {
             get
             {
-                MemberInitExpression memberInitExpression = LambdaExpression.Body as MemberInitExpression;
+                MemberInitExpression memberInitExpression = GetEffectiveBody(LambdaExpression) as MemberInitExpression;
 
                 if (memberInitExpression != null)
                 {

@@ -13,7 +13,6 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport;
-using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Instrumentation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -37,7 +36,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Tests
         {
             DistributorEventLogger logger = new DistributorEventLogger();
 
-            using(var eventLog = new EventLogTracker(GetEventLog()))
+            using (var eventLog = new EventLogTracker(GetEventLog()))
             {
                 logger.LogServiceStarted();
 
@@ -47,26 +46,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Tests
         }
 
         [TestMethod]
-        public void ServiceStartedFiresWmiEvent()
-        {
-            DistributorEventLogger logger = new DistributorEventLogger(TestEventSource);
-
-            using (WmiEventWatcher eventListener = new WmiEventWatcher(1))
-            {
-                logger.LogServiceStarted();
-
-                eventListener.WaitForEvents();
-                Assert.AreEqual(1, eventListener.EventsReceived.Count);
-                Assert.AreEqual("DistributorServiceLifecycleEvent", eventListener.EventsReceived[0].ClassPath.ClassName);
-                Assert.AreEqual(true, eventListener.EventsReceived[0].GetPropertyValue("Started"));
-            }
-        }
-
-        [TestMethod]
         public void ServiceStoppedWritesToEventLog()
         {
             DistributorEventLogger logger = new DistributorEventLogger();
-            using(var eventLog = new EventLogTracker(GetEventLog()))
+            using (var eventLog = new EventLogTracker(GetEventLog()))
             {
                 logger.LogServiceStopped();
 
@@ -75,27 +58,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Tests
         }
 
         [TestMethod]
-        public void ServiceStoppedFiresWmiEvent()
-        {
-            DistributorEventLogger logger = new DistributorEventLogger(TestEventSource);
-
-            using (WmiEventWatcher eventListener = new WmiEventWatcher(1))
-            {
-                logger.LogServiceStopped();
-
-                eventListener.WaitForEvents();
-                Assert.AreEqual(1, eventListener.EventsReceived.Count);
-                Assert.AreEqual("DistributorServiceLifecycleEvent", eventListener.EventsReceived[0].ClassPath.ClassName);
-                Assert.AreEqual(false, eventListener.EventsReceived[0].GetPropertyValue("Started"));
-            }
-        }
-
-        [TestMethod]
         public void ServicePausedWritesToEventLog()
         {
             DistributorEventLogger logger = new DistributorEventLogger();
 
-            using(var eventLog = new EventLogTracker(GetEventLog()))
+            using (var eventLog = new EventLogTracker(GetEventLog()))
             {
                 logger.LogServicePaused();
 
@@ -111,27 +78,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Tests
         }
 
         [TestMethod]
-        public void ServicePausedFiresWmiEvent()
-        {
-            DistributorEventLogger logger = new DistributorEventLogger(TestEventSource);
-
-            using (WmiEventWatcher eventListener = new WmiEventWatcher(1))
-            {
-                logger.LogServicePaused();
-
-                eventListener.WaitForEvents();
-                Assert.AreEqual(1, eventListener.EventsReceived.Count);
-                Assert.AreEqual("DistributorServiceLifecycleEvent", eventListener.EventsReceived[0].ClassPath.ClassName);
-                Assert.AreEqual(false, eventListener.EventsReceived[0].GetPropertyValue("Started"));
-            }
-        }
-
-        [TestMethod]
         public void ServiceResumedWritesToEventLog()
         {
             DistributorEventLogger logger = new DistributorEventLogger(TestEventSource);
 
-            using(var eventLog = new EventLogTracker(GetEventLog()))
+            using (var eventLog = new EventLogTracker(GetEventLog()))
             {
                 logger.LogServiceResumed();
 
@@ -140,33 +91,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Tests
         }
 
         [TestMethod]
-        [Ignore]    // review in build server
-        public void ServiceResumedFiresWmiEvent()
-        {
-            DistributorEventLogger logger = new DistributorEventLogger(TestEventSource);
-
-            using (WmiEventWatcher eventListener = new WmiEventWatcher(1))
-            {
-                logger.LogServiceResumed();
-
-                eventListener.WaitForEvents();
-                Assert.AreEqual(1, eventListener.EventsReceived.Count);
-                Assert.AreEqual("DistributorServiceLifecycleEvent", eventListener.EventsReceived[0].ClassPath.ClassName);
-                Assert.AreEqual(true, eventListener.EventsReceived[0].GetPropertyValue("Started"));
-            }
-        }
-
-        [TestMethod]
         public void ServiceFailureWithoutExceptionWritesToEventLog()
         {
             DistributorEventLogger logger = new DistributorEventLogger(TestEventSource);
-            using(var eventLog = new EventLogTracker(GetEventLog()))
+            using (var eventLog = new EventLogTracker(GetEventLog()))
             {
                 logger.LogServiceFailure(message, null, TraceEventType.Error);
 
                 Assert.AreEqual(1,
                     eventLog.NewEntries().Count(ev => EventIsFromLogger(ev, logger)));
-                
+
             }
         }
 
@@ -175,45 +109,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Tests
         {
             DistributorEventLogger logger = new DistributorEventLogger(TestEventSource);
 
-            using(var eventLog = new EventLogTracker(GetEventLog()))
+            using (var eventLog = new EventLogTracker(GetEventLog()))
             {
                 logger.LogServiceFailure(message, GetException(), TraceEventType.Error);
 
                 Assert.AreEqual(1,
                     eventLog.NewEntries().Count(ev => EventIsFromLogger(ev, logger)));
-            }
-        }
-
-        [TestMethod]
-        [Ignore]    // review in build server
-        public void ServiceFailureWithoutExceptionFiresWmiEvent()
-        {
-            DistributorEventLogger logger = new DistributorEventLogger(TestEventSource);
-
-            using (WmiEventWatcher eventListener = new WmiEventWatcher(1))
-            {
-                logger.LogServiceFailure(message, null, TraceEventType.Error);
-
-                eventListener.WaitForEvents();
-                Assert.AreEqual(1, eventListener.EventsReceived.Count);
-                Assert.AreEqual("DistributorServiceFailureEvent", eventListener.EventsReceived[0].ClassPath.ClassName);
-                Assert.IsTrue(((string)eventListener.EventsReceived[0].GetPropertyValue("FailureMessage")).StartsWith(message));
-            }
-        }
-
-        [TestMethod]
-        public void ServiceFailureWithExceptionFiresWmiEvent()
-        {
-            DistributorEventLogger logger = new DistributorEventLogger(TestEventSource);
-
-            using (WmiEventWatcher eventListener = new WmiEventWatcher(1))
-            {
-                logger.LogServiceFailure(message, GetException(), TraceEventType.Error);
-
-                eventListener.WaitForEvents();
-                Assert.AreEqual(1, eventListener.EventsReceived.Count);
-                Assert.AreEqual("DistributorServiceFailureEvent", eventListener.EventsReceived[0].ClassPath.ClassName);
-                Assert.IsTrue(((string)eventListener.EventsReceived[0].GetPropertyValue("FailureMessage")).StartsWith(message));
             }
         }
 

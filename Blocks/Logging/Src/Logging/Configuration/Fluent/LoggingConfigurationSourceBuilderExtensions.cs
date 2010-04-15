@@ -38,6 +38,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         /// <returns></returns>
         public static ILoggingConfigurationStart ConfigureLogging(this IConfigurationSourceBuilder configurationSourceBuilder)
         {
+            if(configurationSourceBuilder == null) throw new ArgumentNullException("configurationSourceBuilder");
+
             LoggingSettings loggingSettings = new LoggingSettings();
             configurationSourceBuilder.AddSection(LoggingSettings.SectionName, loggingSettings);
 

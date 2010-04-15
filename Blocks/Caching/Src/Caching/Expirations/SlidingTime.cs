@@ -102,6 +102,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Expirations
         /// <param name="owningCacheItem">CacheItem to which this expiration belongs.</param>
         public void Initialize(CacheItem owningCacheItem)
         {
+            if (owningCacheItem == null) throw new ArgumentNullException("owningCacheItem");
+
             timeLastUsed = owningCacheItem.LastAccessedTime;
         }
 

@@ -43,6 +43,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 		/// <param name="reader">The <see cref="XmlReader"/> that reads the configuration source located at the element that describes the configuration section.</param>
 		public void ReadXml(XmlReader reader)
 		{
+            if (reader == null) throw new ArgumentNullException("reader");
+
 			reader.Read();
 			DeserializeSection(reader);
 
@@ -53,7 +55,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 		/// </summary>
 		/// <param name="writer">The <see cref="XmlWriter"/> that writes to the configuration source.</param>
 		public void WriteXml(XmlWriter writer)
-		{
+        {
+            if (writer == null) throw new ArgumentNullException("writer");
+
 			String serialized = SerializeSection(this, "SerializableConfigurationSection", ConfigurationSaveMode.Full);
 			writer.WriteRaw(serialized);
 		}

@@ -16,6 +16,7 @@ using System.Text;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Properties;
 using System.ComponentModel;
+using System.Globalization;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 {
@@ -27,7 +28,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
     public class CompositeConfigurationSourceHandler : ConfigurationSourceHandler, IDisposable
     {
         Dictionary<string, string> sectionRedirectTable = new Dictionary<string, string>();
-        IConfigurationSource mainConfigurationSource;
+        readonly IConfigurationSource mainConfigurationSource;
 
         /// <summary>
         /// Creates a new instance of <see cref="CompositeConfigurationSourceHandler"/>.
@@ -40,7 +41,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         }
 
         /// <summary>
-        /// Performs intialization logic for this <see cref="HierarchicalConfigurationSourceHandler"/>.
+        /// Performs intialization logic for this <see cref="CompositeConfigurationSourceHandler"/>.
         /// </summary>
         protected override void Initialize()
         {
@@ -50,12 +51,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         }
 
         /// <summary>
-        /// Performs re-intialization logic for this <see cref="HierarchicalConfigurationSourceHandler"/>.
+        /// Performs re-intialization logic for this <see cref="CompositeConfigurationSourceHandler"/>.
         /// </summary>
-        protected override void Refresh()
+        protected override void DoRefresh()
         {
-            base.Refresh();
-
+            base.DoRefresh();
             sectionRedirectTable = GetSectionRedirectTable();
         }
 
@@ -79,6 +79,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         /// <param name="configurationSection">The section that was retrieved from configuration.</param>
         /// <returns>The resulting <see cref="ConfigurationSection"/> instance.</returns>
         /// <seealso cref="IConfigurationSource.GetSection(string)"/>
+        /// <exception cref="ConfigurationSourceErrorsException">Thrown if a section does not exist in a registered source.</exception>
         protected override ConfigurationSection DoCheckGetSection(string sectionName, ConfigurationSection configurationSection)
         {
             string sourceNameForSection;
@@ -97,8 +98,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 
             EnsurePropagatingSectionChangeEvents(sourceNameForSection, sectionName);
 
-            return subordinateSource.GetSection(sectionName);
-             
+            var section = subordinateSource.GetSection(sectionName);
+
+            if (section == null)
+                throw new ConfigurationSourceErrorsException(
+                    string.Format(CultureInfo.CurrentCulture, 
+                    Resources.ExceptionRedirectedConfigurationSectionNotFound, 
+                    sectionName, 
+                    sourceNameForSection));
+
+            return section;
         }
 
         /// <summary>

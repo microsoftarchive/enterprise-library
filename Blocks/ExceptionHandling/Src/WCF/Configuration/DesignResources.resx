@@ -118,67 +118,79 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ExceptionShieldingElementDescription" xml:space="preserve">
-    <value>321 - The configuration element that specifies exception shielding features for a Windows Communication Foundation (WCF) service.</value>
+    <value>The configuration element that specifies exception shielding features for a Windows Communication Foundation (WCF) service.</value>
   </data>
   <data name="ExceptionShieldingElementDisplayName" xml:space="preserve">
     <value>Exception Shielding Element</value>
   </data>
   <data name="ExceptionShieldingElementExceptionPolicyNameDescription" xml:space="preserve">
-    <value>323 - The name of the Exception Policy to use in the WCF service when sending exception to this policy.</value>
+    <value>The name of the Exception Policy to use in the WCF service when sending exception to this policy.</value>
   </data>
   <data name="ExceptionShieldingElementExceptionPolicyNameDisplayName" xml:space="preserve">
     <value>Exception Policy Name</value>
   </data>
+  <data name="FaultContractDataExceptionMessageResourceNameDescription" xml:space="preserve">
+    <value>The key in an external resource file for the localized string to use as the message for the Fault Contract exception.</value>
+  </data>
+  <data name="FaultContractDataExceptionMessageResourceNameDisplayName" xml:space="preserve">
+    <value>Message Resource Name</value>
+  </data>
+  <data name="FaultContractDataExceptionMessageResourceTypeDescription" xml:space="preserve">
+    <value>The type of the external resource file containing the localized string to use as the message for the Fault Contract exception.</value>
+  </data>
+  <data name="FaultContractDataExceptionMessageResourceTypeDisplayName" xml:space="preserve">
+    <value>Message Resource Type</value>
+  </data>
   <data name="FaultContractExceptionHandlerDataDescription" xml:space="preserve">
-    <value>325 - Provides exception shielding for WCF services by allowing the service to execute a policy and return an appropriate fault message.</value>
+    <value>Provides exception shielding for WCF services by allowing the service to execute a policy and return an appropriate fault message.</value>
   </data>
   <data name="FaultContractExceptionHandlerDataDisplayName" xml:space="preserve">
     <value>Fault Contract Exception Handler</value>
   </data>
   <data name="FaultContractExceptionHandlerDataExceptionMessageDescription" xml:space="preserve">
-    <value>327 - The message for the fault contract exception.</value>
+    <value>The message for the fault contract exception.</value>
   </data>
   <data name="FaultContractExceptionHandlerDataExceptionMessageDisplayName" xml:space="preserve">
     <value>Exception Message</value>
   </data>
   <data name="FaultContractExceptionHandlerDataFaultContractTypeDescription" xml:space="preserve">
-    <value>329 - The fully qualified type name of the Fault Contract to use with this handler.</value>
+    <value>The fully qualified type name of the Fault Contract to use with this handler.</value>
   </data>
   <data name="FaultContractExceptionHandlerDataFaultContractTypeDisplayName" xml:space="preserve">
     <value>Fault Contract Type</value>
   </data>
   <data name="FaultContractExceptionHandlerDataNameDescription" xml:space="preserve">
-    <value>331 - The name of this Fault Contract Handler.</value>
+    <value>The name of this Fault Contract Handler.</value>
   </data>
   <data name="FaultContractExceptionHandlerDataNameDisplayName" xml:space="preserve">
     <value>Name</value>
   </data>
   <data name="FaultContractExceptionHandlerDataPropertyMappingsDescription" xml:space="preserve">
-    <value>333 - Mappings from the properties of the source exception to the properties of the Fault Contract.</value>
+    <value>Mappings from the properties of the source exception to the properties of the Fault Contract.</value>
   </data>
   <data name="FaultContractExceptionHandlerDataPropertyMappingsDisplayName" xml:space="preserve">
     <value>Property Mappings</value>
   </data>
   <data name="FaultContractExceptionHandlerDataTypeNameDescription" xml:space="preserve">
-    <value>335 - The fully qualified type name of the Fault Contract Exception Handler.</value>
+    <value>The fully qualified type name of the Fault Contract Exception Handler.</value>
   </data>
   <data name="FaultContractExceptionHandlerDataTypeNameDisplayName" xml:space="preserve">
     <value>Type</value>
   </data>
   <data name="FaultContractExceptionHandlerMappingDataDescription" xml:space="preserve">
-    <value>337 - An individual mapping between a property of the source exception (or a GUID) and a property of the Fault Contract.</value>
+    <value>An individual mapping between a property of the source exception (or a GUID) and a property of the Fault Contract.</value>
   </data>
   <data name="FaultContractExceptionHandlerMappingDataDisplayName" xml:space="preserve">
     <value>Fault Contract Mapping</value>
   </data>
   <data name="FaultContractExceptionHandlerMappingDataNameDescription" xml:space="preserve">
-    <value>339 - The name of the Fault Contract Mapping.</value>
+    <value>The name of the Fault Contract Mapping.</value>
   </data>
   <data name="FaultContractExceptionHandlerMappingDataNameDisplayName" xml:space="preserve">
     <value>Name</value>
   </data>
   <data name="FaultContractExceptionHandlerMappingDataSourceDescription" xml:space="preserve">
-    <value>341 - The source property of a Fault Contract Mapping.</value>
+    <value>The source property of a Fault Contract Mapping.</value>
   </data>
   <data name="FaultContractExceptionHandlerMappingDataSourceDisplayName" xml:space="preserve">
     <value>Source</value>

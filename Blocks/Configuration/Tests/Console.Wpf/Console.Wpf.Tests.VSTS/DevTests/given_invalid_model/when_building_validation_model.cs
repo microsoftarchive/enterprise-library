@@ -24,6 +24,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Console.Wpf.Tests.VSTS.DevTests.Contexts;
 using Microsoft.Practices.Unity;
 using Moq;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.TestSupport;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_invalid_model
 {
@@ -62,15 +63,21 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_invalid_model
         }
 
         [TestMethod]
-        public void then_validation_model_reflects_errors()
+        public void then_validation_model_reflects_property_and_element_errors()
         {
             var validationErrors =
                 SourceModel.Sections.SelectMany(
-                    s => s.Properties.SelectMany(p => p.ValidationErrors)
-                        .Union(s.DescendentElements().SelectMany(e => e.Properties).SelectMany(p => p.ValidationErrors))
+                    s => s.Properties.SelectMany(p => p.ValidationResults)
+                        .Union(s.DescendentElements().SelectMany(e => e.Properties).SelectMany(p => p.ValidationResults))
                     );
 
-            CollectionAssert.AreEquivalent(validationErrors.ToArray(), ValidationModel.ValidationErrors.ToArray());
+            var elementErrors =
+                SourceModel.Sections.SelectMany(
+                    s => s.ValidationResults.Union(
+                             s.DescendentElements().SelectMany(d => d.ValidationResults)));
+
+            var allErrors = validationErrors.Union(elementErrors);
+            CollectionAssert.AreEquivalent(allErrors.ToArray(), ValidationModel.ValidationResults.ToArray());
         }
     }
 
@@ -85,7 +92,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_invalid_model
             base.Arrange();
             this.ValidationModel = Container.Resolve<ValidationModel>();
 
-            ((INotifyCollectionChanged)this.ValidationModel.ValidationErrors)
+            ((INotifyCollectionChanged)this.ValidationModel.ValidationResults)
                         .CollectionChanged += (o, e) =>
                                             {
                                                 collectionChanged = true;
@@ -102,7 +109,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_invalid_model
         [TestMethod]
         public void then_results_updated()
         {
-            Assert.IsFalse(ValidationModel.ValidationErrors.Any(e => e.PropertyName == property.DisplayName));
+            Assert.IsFalse(ValidationModel.ValidationResults.Any(e => e.PropertyName == property.DisplayName));
         }
 
         [TestMethod]
@@ -123,7 +130,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_invalid_model
             base.Arrange();
             this.ValidationModel = Container.Resolve<ValidationModel>();
 
-            ((INotifyCollectionChanged)this.ValidationModel.ValidationErrors)
+            ((INotifyCollectionChanged)this.ValidationModel.ValidationResults)
                         .CollectionChanged += (o, e) =>
                         {
                             collectionChanged = true;
@@ -138,13 +145,13 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_invalid_model
             var newElement = elementCollection.AddNewCollectionElement(typeof(TestNamedElement));
             property = newElement.Property("Name");
             property.BindableProperty.BindableValue = "";
-            Assert.IsTrue(property.ValidationErrors.Any());
+            Assert.IsTrue(property.ValidationResults.Any());
         }
 
         [TestMethod]
         public void then_new_errors_are_available()
         {
-            CollectionAssert.IsSubsetOf(property.ValidationErrors.ToArray(), ValidationModel.ValidationErrors.ToArray());
+            CollectionAssert.IsSubsetOf(property.ValidationResults.ToArray(), ValidationModel.ValidationResults.ToArray());
         }
 
         [TestMethod]
@@ -155,7 +162,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_invalid_model
     }
 
     [TestClass]
-    public class when_invalide_element_removed : ValidatedSourceModel
+    public class when_invalid_element_removed : ValidatedSourceModel
     {
         private bool collectionChanged;
         private ElementViewModel newElement;
@@ -167,7 +174,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_invalid_model
             base.Arrange();
             this.ValidationModel = Container.Resolve<ValidationModel>();
 
-            ((INotifyCollectionChanged)this.ValidationModel.ValidationErrors)
+            ((INotifyCollectionChanged)this.ValidationModel.ValidationResults)
                         .CollectionChanged += (o, e) =>
                         {
                             collectionChanged = true;
@@ -179,7 +186,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_invalid_model
             var property = newElement.Property("Name");
             propertyName = property.DisplayName;
             property.BindableProperty.BindableValue = "";
-            Assert.IsTrue(property.ValidationErrors.Any(e => e.PropertyName == propertyName));
+            Assert.IsTrue(property.ValidationResults.Any(e => e.PropertyName == propertyName));
         }
 
         protected override void Act()
@@ -191,7 +198,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_invalid_model
         [TestMethod]
         public void then_property_errors_removed_from_collection()
         {
-            Assert.IsFalse(ValidationModel.ValidationErrors.Any(e => e.PropertyName == propertyName));
+            Assert.IsFalse(ValidationModel.ValidationResults.Any(e => e.PropertyName == propertyName));
         }
 
         [TestMethod]
@@ -202,7 +209,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_invalid_model
     }
 
     [TestClass]
-    public class when_new_propeties_are_added : ValidatedSourceModel
+    public class when_new_properties_are_added : ValidatedSourceModel
     {
         private Property property;
         private bool collectionChanged;
@@ -212,7 +219,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_invalid_model
             base.Arrange();
             this.ValidationModel = Container.Resolve<ValidationModel>();
 
-            ((INotifyCollectionChanged)this.ValidationModel.ValidationErrors)
+            ((INotifyCollectionChanged)this.ValidationModel.ValidationResults)
                         .CollectionChanged += (o, e) =>
                         {
                             collectionChanged = true;
@@ -223,13 +230,19 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_invalid_model
         {
             property = new MockCustomProperty("TestAddedProperty");
             Section.Properties.Add(property);
-            Assert.IsTrue(property.ValidationErrors.Any());
+            Assert.IsTrue(property.ValidationResults.Any());
         }
 
         [TestMethod]
         public void then_new_properties_errors_in_collection()
         {
-            CollectionAssert.IsSubsetOf(property.ValidationErrors.ToArray(), ValidationModel.ValidationErrors.ToArray());
+            CollectionAssert.IsSubsetOf(property.ValidationResults.ToArray(), ValidationModel.ValidationResults.ToArray());
+        }
+
+        [TestMethod]
+        public void then_collection_change_invoked()
+        {
+            Assert.IsTrue(collectionChanged);
         }
     }
 
@@ -238,22 +251,15 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_invalid_model
     {
         private Property property;
         private const string propertyName = "TestAddedProperty";
-        private bool collectionChanged;
         protected ValidationModel ValidationModel { get; private set; }
         protected override void Arrange()
         {
             base.Arrange();
             this.ValidationModel = Container.Resolve<ValidationModel>();
 
-            ((INotifyCollectionChanged)this.ValidationModel.ValidationErrors)
-                        .CollectionChanged += (o, e) =>
-                        {
-                            collectionChanged = true;
-                        };
-
             property = new MockCustomProperty(propertyName);
             Section.Properties.Add(property);
-            Assert.IsTrue(property.ValidationErrors.Any(e => e.PropertyName == propertyName));
+            Assert.IsTrue(property.ValidationResults.Any(e => e.PropertyName == propertyName));
 
         }
 
@@ -265,7 +271,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_invalid_model
         [TestMethod]
         public void then_property_errors_removed()
         {
-            Assert.IsFalse(ValidationModel.ValidationErrors.Any(e => e.PropertyName == propertyName));
+            Assert.IsFalse(ValidationModel.ValidationResults.Any(e => e.PropertyName == propertyName));
         }
     }
 
@@ -287,29 +293,92 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_invalid_model
         }
 
         [TestMethod]
-        public void then_childrens_validation_errors_are_reported_through_parent()
+        public void then_childrens_validation_errors_are_not_reported_through_parent()
         {
-            CollectionAssert.IsSubsetOf(
+            CollectionAssert.IsNotSubsetOf(
                 property.ChildProperties
                     .Where(p => p.PropertyName == "ChildProperty").Single()
-                    .ValidationErrors.ToArray(),
-                property.ValidationErrors.ToArray());
+                    .ValidationResults.ToArray(),
+                property.ValidationResults.ToArray());
         }
 
         [TestMethod]
         public void then_parent_errors_are_available()
         {
             Assert.IsTrue(
-                property.ValidationErrors.Any(e => e.PropertyName == property.PropertyName));
+                property.ValidationResults.Any(e => e.PropertyName == property.PropertyName));
         }
     }
-    
+
+    [TestClass]
+    public class when_element_validation_adds_error : ValidatedSourceModel
+    {
+        private ValidationModel ValidationModel;
+
+        protected override void Arrange()
+        {
+            base.Arrange();
+            this.ValidationModel = Container.Resolve<ValidationModel>();
+
+            Assert.IsFalse(
+               this.ValidationModel.ValidationResults.Any(v => v.Message == CollectionCountOneValidator.Message));
+        }
+
+        protected override void Act()
+        {
+            var collection = Section.DescendentConfigurationsOfType<NamedElementCollection<TestNamedElement>>().Where(
+                e => e.Name == "ValidatedCollection").OfType<ElementCollectionViewModel>().First();
+
+            collection.AddNewCollectionElement(typeof(TestNamedElement));
+        }
+
+        [TestMethod]
+        public void then_validation_model_reflects_new_error()
+        {
+            Assert.IsTrue(
+                this.ValidationModel.ValidationResults.Any(v => v.Message == CollectionCountOneValidator.Message));
+        }
+    }
+
+    [TestClass]
+    public class when_element_validation_removes_error : ValidatedSourceModel
+    {
+        private ValidationModel ValidationModel;
+        private ElementViewModel addedElement;
+
+        protected override void Arrange()
+        {
+            base.Arrange();
+            this.ValidationModel = Container.Resolve<ValidationModel>();
+
+            var collection = Section.DescendentConfigurationsOfType<NamedElementCollection<TestNamedElement>>().Where(
+                    e => e.Name == "ValidatedCollection").OfType<ElementCollectionViewModel>().First();
+
+            addedElement = collection.AddNewCollectionElement(typeof(TestNamedElement));
+
+            Assert.IsTrue(
+               this.ValidationModel.ValidationResults.Any(v => v.Message == CollectionCountOneValidator.Message));
+        }
+
+        protected override void Act()
+        {
+            addedElement.Delete();
+        }
+
+        [TestMethod]
+        public void then_validation_model_reflects_new_error()
+        {
+            Assert.IsFalse(
+                this.ValidationModel.ValidationResults.Any(v => v.Message == CollectionCountOneValidator.Message));
+        }
+    }
+
     class MockCustomProperty : CustomProperty<string>
     {
         public MockCustomProperty(string propertyName)
             : base(new Mock<IServiceProvider>().Object, propertyName)
         {
-            InternalErrors.Add(new ValidationError(this, "MockCustomProperty Error Message"));
+            ResetValidationResults(new [] {new PropertyValidationResult(this, "MockCustomProperty Error Message")});
         }
     }
 
@@ -320,7 +389,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_invalid_model
         public MockCustomPropertyWithChildren(string propertyName)
             : base(new Mock<IServiceProvider>().Object, propertyName)
         {
-            InternalErrors.Add(new ValidationError(this, "MockCustomPropertyWithChildren Error Message"));
+            ResetValidationResults(new[] { new PropertyValidationResult(this, "MockCustomProperty Error Message") });
 
             childProperty = new MockCustomProperty("ChildProperty");
         }

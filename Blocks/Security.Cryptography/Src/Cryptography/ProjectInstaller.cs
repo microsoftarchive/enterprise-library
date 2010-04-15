@@ -10,7 +10,7 @@
 //===============================================================================
 
 using System.ComponentModel;
-using System.Management.Instrumentation;
+using System.Configuration.Install;
 using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography
@@ -19,7 +19,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography
     /// Represents the installer for the instrumentation events. Not intended for direct use.
     /// </summary>
     [RunInstaller(true)]
-    public partial class ProjectInstaller : DefaultManagementProjectInstaller
+    public partial class ProjectInstaller : Installer
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ProjectInstaller"/> class.

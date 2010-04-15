@@ -16,9 +16,16 @@ using System.Text;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 using System.ComponentModel;
+using Microsoft.Practices.Unity;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics
 {
+#pragma warning disable 1591
+    /// <summary>
+    /// This class supports block-specific configuration design-time and is not
+    /// intended to be used directly from your code.
+    /// </summary>
     public class CustomTraceListenerDataViewModel : CollectionElementViewModel
     {
         PropertyDescriptor formatterPropertyDescriptor;
@@ -37,8 +44,21 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
             return base.GetAllProperties()
                 .Union( new Property[]
                 {
-                    ContainingSection.CreateElementProperty(this, formatterPropertyDescriptor)
+                    
+                    ContainingSection.CreateProperty<CustomTraceListenerFormatterProperty>( 
+                        new DependencyOverride<ElementViewModel>(this), 
+                        new DependencyOverride<PropertyDescriptor>(formatterPropertyDescriptor))
                 });
         }
+
+
+        private class CustomTraceListenerFormatterProperty : ElementReferenceProperty
+        {
+            public CustomTraceListenerFormatterProperty(IServiceProvider serviceProvider, ElementLookup lookup, ElementViewModel parent, PropertyDescriptor declaringProperty)
+                : base(serviceProvider, lookup, parent, declaringProperty, new Attribute[] { new ConfigurationPropertyAttribute("formatter") })
+            {
+            }
+        }
     }
+#pragma warning restore 1591
 }

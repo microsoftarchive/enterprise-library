@@ -34,7 +34,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Cryptography.Configurati
 		private const string symmetricInstanceProperty = "symmetricInstance";
 
 		/// <summary>
-		/// Initializs an instance of a <see cref="SymmetricStorageEncryptionProviderData"/> class.
+		/// Initializes an instance of a <see cref="SymmetricStorageEncryptionProviderData"/> class.
 		/// </summary>
 		public SymmetricStorageEncryptionProviderData() : base(typeof(SymmetricStorageEncryptionProvider))
 		{
@@ -55,7 +55,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Cryptography.Configurati
 		/// Name of symmetric instance
 		/// </summary>       
         [ConfigurationProperty(symmetricInstanceProperty, IsRequired = true)]
-        [Reference(typeof(NameTypeConfigurationElementCollection<SymmetricProviderData, CustomSymmetricCryptoProviderData>), typeof(SymmetricAlgorithmProviderData))]
+        [Reference(typeof(NameTypeConfigurationElementCollection<SymmetricProviderData, CustomSymmetricCryptoProviderData>), typeof(SymmetricProviderData))]
         [ResourceDescription(typeof(DesignResources), "SymmetricStorageEncryptionProviderDataSymmetricInstanceDescription")]
         [ResourceDisplayName(typeof(DesignResources), "SymmetricStorageEncryptionProviderDataSymmetricInstanceDisplayName")]
 		public string SymmetricInstance

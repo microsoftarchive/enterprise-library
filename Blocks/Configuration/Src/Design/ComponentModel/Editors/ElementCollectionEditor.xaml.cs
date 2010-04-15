@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
@@ -31,16 +32,27 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors
 {
     /// <summary>
-    /// Interaction logic for ElementCollectionEditor.xaml
+    /// An editor that displays a collection of elements in a grid-like layout for editing as part of
+    /// a parent element.
+    /// <br/>
+    /// This is used by the design-time infrastructure and is not intended to be used directly from your code.
     /// </summary>
     public partial class ElementCollectionEditor : UserControl
     {
         ElementCollectionViewModel viewModel;
+        
+        ///<summary>
+        /// Initializes a new instance of <see cref="ElementCollectionEditor"/>.
+        ///</summary>
         public ElementCollectionEditor()
         {
             InitializeComponent();
         }
 
+        /// <summary>
+        /// Establishing the grid based on the property count of the children.
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "childProperty")]
         public override void OnApplyTemplate()
         {
             BindableProperty property = DataContext as BindableProperty;
@@ -73,7 +85,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
 
                 Redraw();
 
-                viewModel.ChildElements.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(ChildElements_CollectionChanged);
+                viewModel.ChildElementsCollectionChange += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(ChildElements_CollectionChanged);
             }
         }
 
@@ -89,7 +101,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
         {
             var properties = TypeDescriptor.GetProperties(viewModel.CollectionElementType).OfType<PropertyDescriptor>().Where(x => x.Attributes.OfType<ConfigurationPropertyAttribute>().Any()).ToArray();
 
-            for (int n = 0; n <= viewModel.ChildElements.Count + 1; n++)
+            for (int n = 0; n <= viewModel.ChildElements.Count() + 1; n++)
             {
                 Collection.RowDefinitions.Add(new RowDefinition());
             }
@@ -108,20 +120,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
                 gridSplitter.Focusable = false;
                 gridSplitter.SetValue(Grid.RowProperty, 0);
                 gridSplitter.SetValue(Grid.ColumnProperty, i);
-                gridSplitter.SetValue(Grid.RowSpanProperty, viewModel.ChildElements.Count + 1);
+                gridSplitter.SetValue(Grid.RowSpanProperty, viewModel.ChildElements.Count() + 1);
                 i++;
             }
 
             ContextMenuButton addButton = new ContextMenuButton();
             Collection.Children.Add(addButton);
-            addButton.Command = viewModel.AddCommands.First();
+            CommandModel addCommand = viewModel.AddCommands.First();
+            addButton.Command = addCommand;
             addButton.SetValue(Grid.RowProperty, 0);
             addButton.SetValue(Grid.ColumnProperty, i);
             addButton.Style = FindResource("ContextAdderButtonMenuStyle") as Style;
             addButton.VerticalAlignment = VerticalAlignment.Center;
-
-
-
+            addButton.SetValue(AutomationProperties.AutomationIdProperty, addCommand.Title);
+            
             int j = 1;
             foreach (var element in viewModel.ChildElements)
             {
@@ -133,7 +145,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
                     ContentControl contentControl = new ContentControl();
                     contentControl.Focusable = false;
                     Collection.Children.Add(contentControl);
-                    contentControl.SetValue(ContentControl.ContentProperty, property);
+                    contentControl.SetValue(ContentControl.ContentProperty, property.BindableProperty);
                     contentControl.SetValue(Grid.RowProperty, j);
                     contentControl.SetValue(Grid.ColumnProperty, i);
 
@@ -142,11 +154,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
 
                 Button deleteButton = new Button();
                 Collection.Children.Add(deleteButton);
-                deleteButton.Command = element.Commands.Where(x => x.Placement == CommandPlacement.ContextDelete).First();
+                CommandModel deleteCommand = element.Commands.Where(x => x.Placement == CommandPlacement.ContextDelete).First();
+                deleteButton.Command = deleteCommand;
                 deleteButton.SetValue(Grid.RowProperty, j);
                 deleteButton.SetValue(Grid.ColumnProperty, i);
                 deleteButton.Style = FindResource("DeleteButtonStyle") as Style;
                 deleteButton.VerticalAlignment = VerticalAlignment.Center;
+                deleteButton.SetValue(AutomationProperties.AutomationIdProperty, deleteCommand.Title);
 
                 j++;
             }

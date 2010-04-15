@@ -10,23 +10,24 @@
 //===============================================================================
 
 using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Security.Cryptography;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
-using System.Collections.Generic;
-using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration
 {
     /// <summary>
     /// <para>Configuration settings for the <c>KeyedHashAlgorithm</c> hash provider.</para>
     /// </summary>
-    [Command(CommonDesignTime.CommandTypeNames.HiddenCommand, 
+    [Command(CommonDesignTime.CommandTypeNames.HiddenCommand,
            CommandPlacement = CommandPlacement.ContextAdd,
             Replace = CommandReplacement.DefaultAddCommandReplacement)]
     [ViewModel(CryptographyDesignTime.ViewModelTypeNames.KeyedHashAlgorithmProviderDataViewModel)]
+    [Command(CryptographyDesignTime.CommandTypeNames.ExportKeyCommand, TitleResourceType = typeof(DesignResources), TitleResourceName = "ExportCyrptographyKeyCommandTitle")]
     public class KeyedHashAlgorithmProviderData : HashAlgorithmProviderData
     {
         private const string protectedKeyFilename = "protectedKeyFilename";
@@ -35,7 +36,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         /// <summary>
         /// <para>Initializes a new instance of <see cref="KeyedHashAlgorithmProviderData"/> class.</para>
         /// </summary>
-        public KeyedHashAlgorithmProviderData() : base(typeof(KeyedHashAlgorithmProvider))
+        public KeyedHashAlgorithmProviderData()
+            : base(typeof(KeyedHashAlgorithmProvider))
         {
         }
 
@@ -85,6 +87,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         /// <summary>
         /// 
         /// </summary>
+        [DesignTimeReadOnly(true)]
         [System.ComponentModel.Editor(CommonDesignTime.EditorTypes.TypeSelector, CommonDesignTime.EditorTypes.UITypeEditor)]
         [BaseType(typeof(KeyedHashAlgorithm))]
         [ResourceDescription(typeof(DesignResources), "KeyedHashAlgorithmProviderDataAlgorithmTypeNameDescription")]

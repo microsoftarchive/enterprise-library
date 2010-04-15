@@ -91,7 +91,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration 
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 241 - An Exception Handler implemented as a custom class added to Enterprise Library..
+        ///   Looks up a localized string similar to An Exception Handler implemented as a custom class added to Enterprise Library..
         /// </summary>
         internal static string CustomHandlerDataDescription {
             get {
@@ -109,7 +109,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration 
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 243 - The name of the Custom Exception Handler..
+        ///   Looks up a localized string similar to The name of the Custom Exception Handler..
         /// </summary>
         internal static string CustomHandlerDataNameDescription {
             get {
@@ -127,7 +127,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration 
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 245 - The fully qualified type name of the Custom Exception Handler..
+        ///   Looks up a localized string similar to The fully qualified type name of the Custom Exception Handler..
         /// </summary>
         internal static string CustomHandlerDataTypeNameDescription {
             get {
@@ -145,7 +145,101 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration 
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 247 - Handles an exception passed to the block and performs an action on it, such as wrapping or logging it, and then passes it on to the next exception handler or returns it to the caller..
+        ///   Looks up a localized string similar to A Call Handler that provides the capability to manage and process exceptions in a standard way. 
+        ///This handler uses the Exception Handling Application Block to handle exceptions raised by the target object..
+        /// </summary>
+        internal static string ExceptionCallHandlerDataDescription {
+            get {
+                return ResourceManager.GetString("ExceptionCallHandlerDataDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Exception Handling Call Handler.
+        /// </summary>
+        internal static string ExceptionCallHandlerDataDisplayName {
+            get {
+                return ResourceManager.GetString("ExceptionCallHandlerDataDisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The name of the exception handling policy to use, as configured in the Exception Handling Application Block..
+        /// </summary>
+        internal static string ExceptionCallHandlerDataExceptionPolicyNameDescription {
+            get {
+                return ResourceManager.GetString("ExceptionCallHandlerDataExceptionPolicyNameDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Exception Policy Name.
+        /// </summary>
+        internal static string ExceptionCallHandlerDataExceptionPolicyNameDisplayName {
+            get {
+                return ResourceManager.GetString("ExceptionCallHandlerDataExceptionPolicyNameDisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The name of the Exception Handling Call Handler..
+        /// </summary>
+        internal static string ExceptionCallHandlerDataNameDescription {
+            get {
+                return ResourceManager.GetString("ExceptionCallHandlerDataNameDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Name.
+        /// </summary>
+        internal static string ExceptionCallHandlerDataNameDisplayName {
+            get {
+                return ResourceManager.GetString("ExceptionCallHandlerDataNameDisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The position of the handler within the policy handler chain, starting from 1. 
+        ///The default value is zero, which means that there is no explicit order specified for the handler in relation to other 
+        ///handlers in the same handler chain..
+        /// </summary>
+        internal static string ExceptionCallHandlerDataOrderDescription {
+            get {
+                return ResourceManager.GetString("ExceptionCallHandlerDataOrderDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Order.
+        /// </summary>
+        internal static string ExceptionCallHandlerDataOrderDisplayName {
+            get {
+                return ResourceManager.GetString("ExceptionCallHandlerDataOrderDisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The fully qualified type name of the Exception Handling Call Handler..
+        /// </summary>
+        internal static string ExceptionCallHandlerDataTypeNameDescription {
+            get {
+                return ResourceManager.GetString("ExceptionCallHandlerDataTypeNameDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Type.
+        /// </summary>
+        internal static string ExceptionCallHandlerDataTypeNameDisplayName {
+            get {
+                return ResourceManager.GetString("ExceptionCallHandlerDataTypeNameDisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Handles an exception passed to the block and performs an action on it, such as wrapping or logging it, 
+        ///and then passes it on to the next exception handler or returns it to the caller..
         /// </summary>
         internal static string ExceptionHandlerDataDescription {
             get {
@@ -163,7 +257,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration 
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 249 - The name of the Exception Handler..
+        ///   Looks up a localized string similar to The name of the Exception Handler..
         /// </summary>
         internal static string ExceptionHandlerDataNameDescription {
             get {
@@ -181,7 +275,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration 
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 251 - The fully qualified type name of the Exception Handler..
+        ///   Looks up a localized string similar to The fully qualified type name of the Exception Handler..
         /// </summary>
         internal static string ExceptionHandlerDataTypeNameDescription {
             get {
@@ -199,7 +293,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration 
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 253 - Configuration settings for the Exception Handling Application Block..
+        ///   Looks up a localized string similar to Configuration settings for the Exception Handling Application Block..
         /// </summary>
         internal static string ExceptionHandlingSettingsDescription {
             get {
@@ -217,7 +311,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration 
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 255 - Configuration settings for all Exception Handling Policies..
+        ///   Looks up a localized string similar to Configuration settings for all Exception Handling Policies..
         /// </summary>
         internal static string ExceptionHandlingSettingsExceptionPoliciesDescription {
             get {
@@ -235,7 +329,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration 
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 257 - A policy defines the exceptions it will handle, and the set of Exception Handlers that it will execute when one of the specified exceptions is passed to the block..
+        ///   Looks up a localized string similar to A policy defines the exceptions it will handle, and the set of Exception Handlers that it will execute when 
+        ///one of the specified exceptions is passed to the block..
         /// </summary>
         internal static string ExceptionPolicyDataDescription {
             get {
@@ -253,7 +348,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration 
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 259 - The Exception types configured for the Exception Handling Block..
+        ///   Looks up a localized string similar to The Exception types configured for the Exception Handling Block..
         /// </summary>
         internal static string ExceptionPolicyDataExceptionTypesDescription {
             get {
@@ -271,7 +366,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration 
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 261 - The name of the Exception Handling Policy..
+        ///   Looks up a localized string similar to The name of the Exception Handling Policy..
         /// </summary>
         internal static string ExceptionPolicyDataNameDescription {
             get {
@@ -289,7 +384,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration 
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 263 - Each Exception Type configured for a policy can specify a series of Exception Handlers that will execute when a exception of the specified type is sent to the blcok for handling by this policy..
+        ///   Looks up a localized string similar to Each Exception Type configured for a policy can specify a series of Exception Handlers that will 
+        ///execute when an exception of the specified type is sent to the block for handling by this policy..
         /// </summary>
         internal static string ExceptionTypeDataDescription {
             get {
@@ -307,7 +403,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration 
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 265 - The Exception Handlers configured for this Exception type..
+        ///   Looks up a localized string similar to The Exception Handlers configured for this Exception type..
         /// </summary>
         internal static string ExceptionTypeDataExceptionHandlersDescription {
             get {
@@ -325,7 +421,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration 
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 267 - The name of the Exception..
+        ///   Looks up a localized string similar to The name of the Exception..
         /// </summary>
         internal static string ExceptionTypeDataNameDescription {
             get {
@@ -343,7 +439,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration 
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 269 - The action the ExceptionHandling Block will take after executing all of the handlers for this Exception type.  None means that the block will return false to the application allowing it to  resume execution. NotifyRethrow means that the block will return true to the application, which should re-throw the original exception. ThrowNewException means that the block will throw the exception that exists after the final handler runs. However, if you use the overload of the HandleException method that takes  [rest of string was truncated]&quot;;.
+        ///   Looks up a localized string similar to The action the Exception Handling Block will take after executing all of the handlers for this Exception type.  
+        ///None means that the block will return false to the application allowing it to resume execution. 
+        ///NotifyRethrow means that the block will return true to the application, which should re-throw the original exception.
+        ///ThrowNewException means that the block will throw the exception that exists after the final handler runs. 
+        ///However, if you use the overload of the HandleException method that takes [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ExceptionTypeDataPostHandlingActionDescription {
             get {
@@ -361,7 +461,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration 
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 271 - The fully qualified type name of the Exception..
+        ///   Looks up a localized string similar to The fully qualified type name of the Exception..
         /// </summary>
         internal static string ExceptionTypeDataTypeNameDescription {
             get {
@@ -379,7 +479,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration 
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 273 - Replaces the exception sent to the block with another exception type. The message can be specified for the replacement exception type..
+        ///   Looks up a localized string similar to Replaces the exception sent to the block with another exception type. 
+        ///The message can be specified for the replacement exception type..
         /// </summary>
         internal static string ReplaceHandlerDataDescription {
             get {
@@ -397,7 +498,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration 
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 275 - The message for the replacement exception..
+        ///   Looks up a localized string similar to The message for the replacement exception..
         /// </summary>
         internal static string ReplaceHandlerDataExceptionMessageDescription {
             get {
@@ -415,7 +516,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration 
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 277 - The key in an external resource file for the localized string to use as the message for the replacement exception. .
+        ///   Looks up a localized string similar to The key in an external resource file for the localized string to use as the message for the replacement exception. .
         /// </summary>
         internal static string ReplaceHandlerDataExceptionMessageResourceNameDescription {
             get {
@@ -433,7 +534,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration 
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 279 - The type of the external resource file containing the localized string to use as the message for the replacement exception. .
+        ///   Looks up a localized string similar to The type of the external resource file containing the localized string to use as the message for the replacement exception. .
         /// </summary>
         internal static string ReplaceHandlerDataExceptionMessageResourceTypeDescription {
             get {
@@ -451,7 +552,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration 
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 281 - The name of the Replace Exception Handler..
+        ///   Looks up a localized string similar to The name of the Replace Exception Handler..
         /// </summary>
         internal static string ReplaceHandlerDataNameDescription {
             get {
@@ -469,7 +570,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration 
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 283 - The fully qualified type name of the replacement exception..
+        ///   Looks up a localized string similar to The fully qualified type name of the replacement exception..
         /// </summary>
         internal static string ReplaceHandlerDataReplaceExceptionTypeNameDescription {
             get {
@@ -487,7 +588,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration 
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 285 - The fully qualified type name of the Replace Exception Handler..
+        ///   Looks up a localized string similar to The fully qualified type name of the Replace Exception Handler..
         /// </summary>
         internal static string ReplaceHandlerDataTypeNameDescription {
             get {
@@ -505,7 +606,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration 
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 287 - Wraps the exception sent to the block as the inner exception of a new exception type. The message can be specified for the wrapping exception type..
+        ///   Looks up a localized string similar to Wraps the exception sent to the block as the inner exception of a new exception type. 
+        ///The message can be specified for the wrapping exception type..
         /// </summary>
         internal static string WrapHandlerDataDescription {
             get {
@@ -523,7 +625,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration 
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 289 - The message for the wrapping exception..
+        ///   Looks up a localized string similar to The message for the wrapping exception..
         /// </summary>
         internal static string WrapHandlerDataExceptionMessageDescription {
             get {
@@ -541,7 +643,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration 
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 291 - The key in an external resource file for the localized string to use as the message for the wrapping exception. .
+        ///   Looks up a localized string similar to The key in an external resource file for the localized string to use as the message for the wrapping exception. .
         /// </summary>
         internal static string WrapHandlerDataExceptionMessageResourceNameDescription {
             get {
@@ -559,7 +661,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration 
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 293 - The type of the external resource file containing the localized string to use as the message for the wrapping exception. .
+        ///   Looks up a localized string similar to The type of the external resource file containing the localized string to use as the message for the wrapping exception. .
         /// </summary>
         internal static string WrapHandlerDataExceptionMessageResourceTypeDescription {
             get {
@@ -577,7 +679,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration 
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 295 - The name of the Wrap Exception Handler..
+        ///   Looks up a localized string similar to The name of the Wrap Exception Handler..
         /// </summary>
         internal static string WrapHandlerDataNameDescription {
             get {
@@ -595,7 +697,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration 
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 297 - The fully qualified type name of the Wrap Exception Handler..
+        ///   Looks up a localized string similar to The fully qualified type name of the Wrap Exception Handler..
         /// </summary>
         internal static string WrapHandlerDataTypeNameDescription {
             get {
@@ -613,7 +715,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration 
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 299 - The fully qualified type name of the wrapping exception..
+        ///   Looks up a localized string similar to The fully qualified type name of the wrapping exception..
         /// </summary>
         internal static string WrapHandlerDataWrapExceptionTypeNameDescription {
             get {

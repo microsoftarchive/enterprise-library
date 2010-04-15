@@ -11,45 +11,51 @@
 
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using System.ComponentModel;
 using System.IO;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Extensions;
+using Microsoft.Practices.EnterpriseLibrary.Validation;
+using Microsoft.Practices.Unity;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services
 {
+    /// <summary>
+    /// Service class used to find configuration classes that are used to configure Enterprise Library providers.
+    /// </summary>
+    /// <remarks>
+    /// In order to get an instance of this class, declare it as a constructor argument on the consuming component or use the <see cref="IUnityContainer"/> to obtain an instance from code.
+    /// </remarks>
     public class DiscoverDerivedConfigurationTypesService
     {
         private readonly AssemblyLocator assemblyLocator;
 
+        /// <summary>
+        /// This constructor supports the configuration design-time and is not intended to be used directly from your code.
+        /// </summary>
         public DiscoverDerivedConfigurationTypesService(AssemblyLocator assemblyLocator)
         {
             this.assemblyLocator = assemblyLocator;
         }
 
+        /// <summary>
+        /// Finds all the configuration classes that are used to configure a specific Enterprise Library provider base-type, such as <see cref="Validator"/>.
+        /// </summary>
+        /// <param name="baseType">The Enterprise Library provider base-type, such as <see cref="Validator"/>.</param>
+        /// <returns>A list of <see cref="ConfigurationElement"/> types that can be used to configure providers derived of <paramref name="baseType"/>.</returns>
         public IEnumerable<Type> FindAvailableConfigurationElementTypes(Type baseType)
         {
-            List<Type> foundTypes = new List<Type>();
-            foreach (var assembly in assemblyLocator.Assemblies)
-            {
-                try
-                {
-                    var typeList =
-                        assembly.GetExportedTypes().Where(
-                            t => TypeSpecifiesConfigurationElement(t, baseType))
-                            .Select(t => GetDerivedElementType(t));
+            IEnumerable<Type> typeList =
+                assemblyLocator.Assemblies
+                    .FilterSelectManySafe(a =>
+                                    a.GetExportedTypes()
+                                        .Where(t => TypeSpecifiesConfigurationElement(t, baseType))
+                                        .FilterSelectSafe(t => GetDerivedElementType(t))).ToArray();
 
-                    foreach (var type in typeList)
-                    {
-                        foundTypes.Add(type);
-                    }
-                }
-                catch(FileNotFoundException)
-                {
-                }
-            }
-            return foundTypes;
+            return typeList;
         }
 
         private static bool TypeSpecifiesConfigurationElement(Type handlerType, Type baseConfigurationElementType)
@@ -62,17 +68,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.S
 
         private static ConfigurationElementTypeAttribute GetConfigurationElementTypeAttribute(Type handlerType)
         {
-            var configAttribute = 
-                (from attr in handlerType.GetCustomAttributes(typeof(ConfigurationElementTypeAttribute), true)
-                 select (ConfigurationElementTypeAttribute)attr)
-                    .FirstOrDefault();
+            var configAttribute =
+                handlerType.GetCustomAttributes(typeof(ConfigurationElementTypeAttribute), true)
+                .Select(attr => (ConfigurationElementTypeAttribute)attr)
+                .FirstOrDefault();
             return configAttribute;
         }
 
         private static Type GetDerivedElementType(Type handlerType)
         {
             var configAttribute = GetConfigurationElementTypeAttribute(handlerType);
-            if (configAttribute == null) return null; //todo: if the caller of this function receives null, it would return null's in its Ienum
+            
             return configAttribute.ConfigurationType;
         }
 

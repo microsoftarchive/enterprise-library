@@ -11,7 +11,6 @@
 
 using System;
 using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation;
-using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Security.Instrumentation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -36,8 +35,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Tests
         {
             formatter = new AppDomainNameFormatter();
             formattedInstanceName = formatter.CreateName(instanceName);
-            enabledInstrumentationProvider = new AuthorizationProviderInstrumentationProvider(instanceName, true, true, true, formatter);
-            disabledInstrumentationProvider = new AuthorizationProviderInstrumentationProvider(instanceName, false, false, false, formatter);
+            enabledInstrumentationProvider = new AuthorizationProviderInstrumentationProvider(instanceName, true, true, formatter);
+            disabledInstrumentationProvider = new AuthorizationProviderInstrumentationProvider(instanceName, false, false, formatter);
             totalAuthorizationCheckFailedCounter = new EnterpriseLibraryPerformanceCounter(AuthorizationProviderInstrumentationProvider.PerformanceCountersCategoryName, AuthorizationProviderInstrumentationProvider.TotalAuthorizationCheckFailedCounterName, formattedInstanceName);
             totalAuthorizationCheckPerformedCounter = new EnterpriseLibraryPerformanceCounter(AuthorizationProviderInstrumentationProvider.PerformanceCountersCategoryName, AuthorizationProviderInstrumentationProvider.TotalAuthorizationCheckPerformedCounterName, formattedInstanceName);
 
@@ -67,30 +66,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Tests
         }
 
         [TestMethod]
-        public void AuthorizationCheckDoesNotifyWmiIfEnabled()
-        {
-            using (WmiEventWatcher eventListener = new WmiEventWatcher(numberOfEvents))
-            {
-                FireAuthorizationCheckPerformed(enabledInstrumentationProvider);
-                eventListener.WaitForEvents();
-
-                Assert.AreEqual(numberOfEvents, eventListener.EventsReceived.Count);
-            }
-        }
-
-        [TestMethod]
-        public void AuthorizationCheckDoesNotNotifyWmiIfDisabled()
-        {
-            using (WmiEventWatcher eventListener = new WmiEventWatcher(numberOfEvents))
-            {
-                FireAuthorizationCheckPerformed(disabledInstrumentationProvider);
-                eventListener.WaitForEvents();
-
-                Assert.AreEqual(0, eventListener.EventsReceived.Count);
-            }
-        }
-
-        [TestMethod]
         public void AuthorizationCheckDoesUpdatePerformanceCountersIfEnabled()
         {
             EnterpriseLibraryPerformanceCounter performanceCounter
@@ -116,30 +91,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Tests
 
             // Timing dependant
             Assert.IsTrue(performanceCounter.GetValueFor(formattedInstanceName) == 0);
-        }
-
-        [TestMethod]
-        public void AuthorizationFailureDoesNotifyWmiIfEnabled()
-        {
-            using (WmiEventWatcher eventListener = new WmiEventWatcher(numberOfEvents))
-            {
-                FireAuthorizationCheckFailed(enabledInstrumentationProvider);
-                eventListener.WaitForEvents();
-
-                Assert.AreEqual(numberOfEvents, eventListener.EventsReceived.Count);
-            }
-        }
-
-        [TestMethod]
-        public void AuthorizationFailureDoesNotNotifyWmiIfDisabled()
-        {
-            using (WmiEventWatcher eventListener = new WmiEventWatcher(numberOfEvents))
-            {
-                FireAuthorizationCheckFailed(disabledInstrumentationProvider);
-                eventListener.WaitForEvents();
-
-                Assert.AreEqual(0, eventListener.EventsReceived.Count);
-            }
         }
 
         [TestMethod]

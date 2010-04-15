@@ -22,6 +22,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
@@ -31,14 +32,24 @@ using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Converters;
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors
 {
     /// <summary>
-    /// Interaction logic for CustomAttributesEditor.xaml
+    /// The <see cref="CustomAttributesEditor"/> provides a grid-like editor
+    /// for editing attributes on Enterprise Library custom configuration data instances.
+    /// <br />
+    /// This is used by the design-time infrastructure and is not intended to be used directly from your code.
     /// </summary>
+    /// <remarks>
+    /// The <see cref="CustomAttributesEditor"/> should get automatically connected to any configuration element
+    /// implementing <see cref="ICustomProviderData"/> by <see cref="CustomAttributesPropertyExtender"/>.
+    /// </remarks>
     public partial class CustomAttributesEditor : UserControl
     {
         List<ChangeMonitor> changeMonitors = new List<ChangeMonitor>();
         ObservableCollection<KeyValueItem> list = new ObservableCollection<KeyValueItem>();
         BindableProperty property;
 
+        ///<summary>
+        /// Initializes a new instance of <see cref="CustomAttributesEditor"/>.
+        ///</summary>
         public CustomAttributesEditor()
         {
             InitializeComponent();
@@ -50,7 +61,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
         {
             property = (BindableProperty)e.NewValue;
             CustomEditorBinder.BindProperty(this, property);
-            
+
             NameValueCollection value = (NameValueCollection)property.Value;
             list = new ObservableCollection<KeyValueItem>();
             foreach (string key in value)
@@ -58,6 +69,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
                 var item = new KeyValueItem { Key = key, Value = value[key] };
                 item.DeleteCommand = new KeyValueItemDeleteCommand(this, item);
                 ChangeMonitor monitor = new ChangeMonitor(this, item);
+                monitor.PropertyChanged += new PropertyChangedEventHandler(monitor_PropertyChanged);
                 changeMonitors.Add(monitor);
                 list.Add(item);
             }
@@ -70,7 +82,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
         internal void UpdateValue()
         {
             var items = list.Where(x => !x.IsEmpty);
-            NameValueCollection value = (NameValueCollection)property.Value;
+            NameValueCollection value = new NameValueCollection();
 
             foreach (string k in value.AllKeys.ToArray())
             {
@@ -84,6 +96,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
             {
                 value[item.Key] = item.Value;
             }
+
+            property.Value = value;
+        }
+
+        ///<summary>
+        /// Retrieves the editor attributes.
+        ///</summary>
+        ///<returns></returns>
+        public IEnumerable<KeyValuePair<string, string>> GetEditorAttributes()
+        {
+            return list.Where(x => !x.IsNew).Select(x => new KeyValuePair<string, string>(x.Key, x.Value));
         }
 
         internal void AddNewItem()
@@ -91,14 +114,21 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
             var item = new KeyValueItem { IsNew = true };
             item.DeleteCommand = new KeyValueItemDeleteCommand(this, item);
             ChangeMonitor monitor = new ChangeMonitor(this, item);
+            monitor.PropertyChanged += new PropertyChangedEventHandler(monitor_PropertyChanged);
             changeMonitors.Add(monitor);
             list.Add(item);
+        }
+
+        void monitor_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            property.Property.Validate();
         }
 
         private class ChangeMonitor
         {
             CustomAttributesEditor editor;
             KeyValueItem item;
+            public event PropertyChangedEventHandler PropertyChanged;
             
             public ChangeMonitor(CustomAttributesEditor editor, KeyValueItem item)
             {
@@ -116,6 +146,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
                     editor.AddNewItem();
                 }
                 editor.UpdateValue();
+
+                var handler = PropertyChanged;
+
+                if (handler != null)
+                {
+                    handler(this, e);
+                }
             }
         }
 
@@ -134,12 +171,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
                 return true;
             }
 
+#pragma warning disable 67
             public event EventHandler CanExecuteChanged;
+#pragma warning restore 67
 
             public void Execute(object parameter)
             {
                 if (editor.list.Count < 2)
                 {
+                    editor.list[0].IsNew = false;
                     item.Key = string.Empty;
                     item.Value = string.Empty;
                 }
@@ -147,6 +187,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
                 {
                     editor.list.Remove(item);
                     editor.UpdateValue();
+                }
+
+                if (editor.list.Count == 1)
+                {
+                    editor.list[0].IsNew = true;
                 }
             }
         }
@@ -204,6 +249,5 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
 
             public event PropertyChangedEventHandler  PropertyChanged;
         }
-
     }
 }

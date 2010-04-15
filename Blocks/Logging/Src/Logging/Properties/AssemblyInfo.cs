@@ -20,7 +20,7 @@ using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 [assembly: SecurityPermission(SecurityAction.RequestMinimum)]
 [assembly: AssemblyTitle("Enterprise Library Logging Application Block")]
 [assembly: AssemblyDescription("Enterprise Library Logging Application Block")]
-[assembly: AssemblyVersion("4.1.0.0")]
+[assembly: AssemblyVersion("5.0.414.0")]
 [assembly: Instrumented(@"root\EnterpriseLibrary")]
 [assembly: AllowPartiallyTrustedCallers]
 [assembly: SecurityTransparent]

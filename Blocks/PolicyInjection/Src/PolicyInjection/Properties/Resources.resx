@@ -117,6 +117,15 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AverageCallDurationBaseCounterHelp" xml:space="preserve">
+    <value>Base counter used to calculate average call time.</value>
+  </data>
+  <data name="AverageCallDurationCounterHelp" xml:space="preserve">
+    <value>Tracks the average length of time for a monitored method to complete.</value>
+  </data>
+  <data name="CallsPerSecondCounterHelp" xml:space="preserve">
+    <value>Tracks calls / second to the monitored methods.</value>
+  </data>
   <data name="CouldNotFindPolicyInConfiguration" xml:space="preserve">
     <value>The configuration information for Policy '{0}' can not be found in the configuration source</value>
     <comment>{0} = Name of the policy that cannot be found</comment>
@@ -124,13 +133,28 @@
   <data name="ExceptionAttributeNoSubclassOfAttribute" xml:space="preserve">
     <value>Type must be a subclass of System.Attribute.</value>
   </data>
+  <data name="ExceptionsPerSecondCounterHelp" xml:space="preserve">
+    <value>Tracks the number of exceptions / second thrown by the monitored methods.</value>
+  </data>
   <data name="InterceptionNotSupported" xml:space="preserve">
     <value>The type {0} is not interceptable.</value>
     <comment>{0} = Name of the type that caused the exception</comment>
   </data>
+  <data name="NoCategoryErrorMessage" xml:space="preserve">
+    <value>You must specify the /category=&lt;name&gt;(;&lt;name&gt;) switch on the command line.</value>
+  </data>
   <data name="NoHandlersInPolicy" xml:space="preserve">
     <value>The policy {0} does not have any handlers.</value>
     <comment>{0} = name of the policy that has no handlers</comment>
+  </data>
+  <data name="NumberOfCallsCounterHelp" xml:space="preserve">
+    <value>Records the total number of calls to the monitored methods.</value>
+  </data>
+  <data name="NumberOfExceptionsCounterHelp" xml:space="preserve">
+    <value>Records the total number of exceptions thrown by the monitored methods.</value>
+  </data>
+  <data name="PerformanceCounterCategoryHelp" xml:space="preserve">
+    <value>Performance counters that are updated by the Policy Injection Application Block.</value>
   </data>
   <data name="PlaceholderRule" xml:space="preserve">
     <value>This rule is not intended to be used directly. Use the rules from the Microsoft.Practices.Unity.Interception assembly instead.</value>

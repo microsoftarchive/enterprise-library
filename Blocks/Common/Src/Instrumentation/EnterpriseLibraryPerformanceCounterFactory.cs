@@ -35,6 +35,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation
 		/// <returns>The new counter instance.</returns>
 		public EnterpriseLibraryPerformanceCounter CreateCounter(string categoryName, string counterName, string[] instanceNames)
 		{
+            if (instanceNames == null) throw new ArgumentNullException("instanceNames");
+
 			string combinedCounterNameRoot = categoryName.ToLowerInvariant() + counterName.ToLowerInvariant();
 
 			PerformanceCounter[] counters = new PerformanceCounter[instanceNames.Length];

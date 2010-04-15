@@ -12,6 +12,7 @@
 using System;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Properties;
+using System.Globalization;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 {
@@ -48,7 +49,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 			{
 				throw new ConfigurationErrorsException(
 					string.Format(
-						Resources.Culture,
+                        CultureInfo.CurrentCulture,
 						Resources.ExceptionNamedConfigurationNotFound,
 						name,
 						"ConfigurationSourceFactory"));

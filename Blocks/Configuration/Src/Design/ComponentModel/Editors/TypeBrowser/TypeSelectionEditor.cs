@@ -10,20 +10,32 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Design;
 using System.Linq;
+using System.Security.Permissions;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Configuration.Design.HostAdapterV5;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors
 {
+    /// <summary>
+    /// Editor for type name properties that opens a type browser.
+    /// </summary>
+    [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
     public class TypeSelectionEditor : UITypeEditor
     {
+        /// <summary>
+        /// Edits the value of the specified object.
+        /// </summary>
+        /// <param name="context">An <see cref="ITypeDescriptorContext"/> that can be used to gain
+        /// additional context information.</param>
+        /// <param name="provider">An <see cref="IServiceProvider"/> that this editor can use to obtain services.</param>
+        /// <param name="value">The object to edit.</param>
+        /// <returns>The new value of the object. If the value of the object has not changed, this should return the same object it was passed.</returns>
         public override object EditValue(ITypeDescriptorContext context, IServiceProvider provider, object value)
         {
-            var currentType = value as Type;
-
             var baseTypeAttribute = GetBaseTypeAttribute(context);
             var constraint =
                     new TypeBuildNodeConstraint(
@@ -31,24 +43,40 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
                         baseTypeAttribute.ConfigurationType,
                         baseTypeAttribute.TypeSelectorIncludes);
 
-            var assemblyGroups = GetAssemblyGroups(context);
+            var model = new TypeBrowserViewModel(constraint, provider);
+            var window =
+                new TypeBrowser(model, (IAssemblyDiscoveryService)provider.GetService(typeof(IAssemblyDiscoveryService)));
 
-            var model = new TypeBrowserViewModel(assemblyGroups, constraint.Matches);
-
-            var window = new TypeBrowser { DataContext = model };
-            window.ShowDialog();
+            var service = (IUIServiceWpf)provider.GetService(typeof(IUIServiceWpf));
+            if (service != null)
+            {
+                service.ShowDialog(window);
+            }
+            else
+            {
+                window.ShowDialog();
+            }
 
             if (window.DialogResult.HasValue && window.DialogResult.Value)
             {
-                return model.ConcreteType != null ? model.ConcreteType.AssemblyQualifiedName : null;
+                return window.SelectedType != null ? window.SelectedType.AssemblyQualifiedName : null;
             }
 
             return value;
         }
 
-        private IEnumerable<AssemblyGroup> GetAssemblyGroups(ITypeDescriptorContext context)
+        /// <summary>
+        /// Gets the editor style used by the <seealso cref="UITypeEditor.EditValue(ITypeDescriptorContext, IServiceProvider, object)"/> method.
+        /// </summary>
+        /// <param name="context">
+        /// An <see cref="ITypeDescriptorContext"/> that can be used to gain additional context information
+        /// </param>
+        /// <returns>
+        /// <see cref="UITypeEditorEditStyle.Modal"/> for this editor.
+        /// </returns>
+        public override UITypeEditorEditStyle GetEditStyle(ITypeDescriptorContext context)
         {
-            return new[] { new AssemblyGroup("all", AppDomain.CurrentDomain.GetAssemblies()) };
+            return UITypeEditorEditStyle.Modal;
         }
 
         /// <devdoc>
@@ -63,12 +91,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
                 attribute = context.PropertyDescriptor.Attributes.OfType<BaseTypeAttribute>().FirstOrDefault();
             }
 
-            return attribute ?? new BaseTypeAttribute(typeof(object));
+            return attribute ?? new BaseTypeAttribute(typeof(object), TypeSelectorIncludes.All);
         }
-    }
-
-    public interface IAssemblyProvider
-    {
-
     }
 }

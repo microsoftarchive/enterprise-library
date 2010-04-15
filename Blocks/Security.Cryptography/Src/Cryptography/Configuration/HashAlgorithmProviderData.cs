@@ -10,13 +10,13 @@
 //===============================================================================
 
 using System;
+using System.Collections.Generic;
 using System.Configuration;
+using System.Security.Cryptography;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
-using System.Collections.Generic;
-using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
-using System.Security.Cryptography;
+using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration
 {
@@ -36,7 +36,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         /// <summary>
         /// Initializes with default configuration.
         /// </summary>
-        public HashAlgorithmProviderData() : base(typeof(HashAlgorithmProvider))
+        public HashAlgorithmProviderData()
+            : base(typeof(HashAlgorithmProvider))
         {
         }
 
@@ -89,6 +90,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         /// <value>
         /// The fully qualified type name of the type of <see cref="System.Security.Cryptography.HashAlgorithm"/>.
         /// </value>
+        [DesignTimeReadOnly(true)]
         [ConfigurationProperty(algorithmTypeProperty, IsRequired = true)]
         [System.ComponentModel.Editor(CommonDesignTime.EditorTypes.TypeSelector, CommonDesignTime.EditorTypes.UITypeEditor)]
         [BaseType(typeof(HashAlgorithm))]
@@ -103,7 +105,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         /// <summary>
         /// Gets or sets the salt enabled flag.
         /// </summary>
-        [ConfigurationProperty(saltEnabledProperty, IsRequired = true, DefaultValue=true)]
+        [ConfigurationProperty(saltEnabledProperty, IsRequired = true, DefaultValue = true)]
         [ResourceDescription(typeof(DesignResources), "HashAlgorithmProviderDataSaltEnabledDescription")]
         [ResourceDisplayName(typeof(DesignResources), "HashAlgorithmProviderDataSaltEnabledDisplayName")]
         public bool SaltEnabled

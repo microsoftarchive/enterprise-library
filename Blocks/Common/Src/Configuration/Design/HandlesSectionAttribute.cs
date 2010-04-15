@@ -41,5 +41,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
         {
             get { return sectionName; }
         }
+
+        /// <summary>
+        /// Indicates this section should be cleared during save, but there is no 
+        /// direct handler for it.
+        /// </summary>
+        public bool ClearOnly { get; set; }
     }
 }

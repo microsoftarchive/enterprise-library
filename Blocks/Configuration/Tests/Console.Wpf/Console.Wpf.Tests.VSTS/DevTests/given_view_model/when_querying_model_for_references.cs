@@ -28,7 +28,8 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model
 
         protected override void Act()
         {
-            viewModel = SectionViewModel.CreateSection(Container, ExceptionHandlingSettings.SectionName, Section);
+            var configurationSourceModel = Container.Resolve<ConfigurationSourceModel>();
+            viewModel = configurationSourceModel.AddSection(ExceptionHandlingSettings.SectionName, Section);
             lookup = Container.Resolve<ElementLookup>();
         }
 

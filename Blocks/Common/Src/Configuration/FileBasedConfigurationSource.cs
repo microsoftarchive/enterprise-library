@@ -50,7 +50,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 
         private readonly CompositeConfigurationSourceHandler CompositeConfigurationHandler;
         private readonly HierarchicalConfigurationSourceHandler HierarchicalConfigurationHandler;
-        
+
         /// <summary>
         /// Initializes a new instance of the <see cref="FileBasedConfigurationSource"/> class.
         /// </summary>
@@ -82,12 +82,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 
         void handler_ConfigurationSourceChanged(object sender, ConfigurationSourceChangedEventArgs e)
         {
-            NotifyUpdatedSections(e.ChangedSectionNames);
+            this.OnSourceChanged(new ConfigurationSourceChangedEventArgs(this, e.ChangedSectionNames));
         }
 
         void handler_ConfigurationSectionChanged(object sender, ConfigurationChangedEventArgs e)
         {
-            NotifyUpdatedSections(new[] { e.SectionName });
+            this.DoNotifyUpdatedSection(e.SectionName);
         }
 
         #region IConfigurationSource members
@@ -146,9 +146,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         /// </summary>
         /// <remarks>
         /// If a configuration section with the specified name already exists it will be replaced.
+        /// If a configuration section was retrieved from an instance of <see cref="FileBasedConfigurationSource"/>, a <see cref="System.InvalidOperationException"/> will be thrown.
         /// </remarks>
         /// <param name="sectionName">The name by which the <paramref name="configurationSection"/> should be added.</param>
         /// <param name="configurationSection">The configuration section to add.</param>
+        /// <exception cref="System.InvalidOperationException">The configuration section was retrieved from an instance of  <see cref="FileBasedConfigurationSource"/> or <see cref="Configuration"/> and cannot be added to the current source.</exception>
         public void Add(
             string sectionName,
             ConfigurationSection configurationSection)
@@ -159,7 +161,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
             }
         }
 
-        /// <summary/>
+        /// <summary>
+        /// When implemented in a derived class, adds a <see cref="ConfigurationSection"/> to the configuration and saves the configuration source.
+        /// </summary>
+        /// <remarks>
+        /// If a configuration section with the specified name already exists it should be replaced.
+        /// </remarks>
+        /// <param name="sectionName">The name by which the <paramref name="configurationSection"/> should be added.</param>
+        /// <param name="configurationSection">The configuration section to add.</param>
         public abstract void DoAdd(
             string sectionName,
             ConfigurationSection configurationSection);
@@ -176,8 +185,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
                 DoRemove(sectionName);
             }
         }
-        
-        /// <summary/>
+
+        /// <summary>
+        /// When implemented in a derived class, removes a <see cref="ConfigurationSection"/> from the configuration and saves the configuration source.
+        /// </summary>
+        /// <param name="sectionName">The name of the section to remove.</param>
         public abstract void DoRemove(string sectionName);
 
         #endregion
@@ -336,7 +348,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
             }
         }
 
-        /// <summary/>
+        /// <summary>
+        /// Releases the resources used by the change watchers.
+        /// </summary>
         public void Dispose()
         {
             Dispose(true);
@@ -365,33 +379,38 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 
             foreach (string sectionName in sectionsToNotify)
             {
-                Delegate[] invocationList;
+                this.DoNotifyUpdatedSection(sectionName);
+            }
+        }
 
-                lock (eventHandlersLock)
-                {
-                    ConfigurationChangedEventHandler callbacks = (ConfigurationChangedEventHandler)eventHandlers[sectionName];
-                    if (callbacks == null)
-                    {
-                        continue;
-                    }
-                    invocationList = callbacks.GetInvocationList();
-                }
+        private void DoNotifyUpdatedSection(string sectionName)
+        {
+            Delegate[] invocationList;
 
-                ConfigurationChangedEventArgs eventData = new ConfigurationChangedEventArgs(sectionName);
-                try
+            lock (eventHandlersLock)
+            {
+                ConfigurationChangedEventHandler callbacks = (ConfigurationChangedEventHandler)eventHandlers[sectionName];
+                if (callbacks == null)
                 {
-                    foreach (ConfigurationChangedEventHandler callback in invocationList)
+                    return;
+                }
+                invocationList = callbacks.GetInvocationList();
+            }
+
+            ConfigurationChangedEventArgs eventData = new ConfigurationChangedEventArgs(sectionName);
+            try
+            {
+                foreach (ConfigurationChangedEventHandler callback in invocationList)
+                {
+                    if (callback != null)
                     {
-                        if (callback != null)
-                        {
-                            callback(this, eventData);
-                        }
+                        callback(this, eventData);
                     }
                 }
-                catch // (Exception e)
-                {
-                    //EventLog.WriteEntry(GetEventSourceName(), Resources.ExceptionEventRaisingFailed + GetType().FullName + " :" + e.Message);
-                }
+            }
+            catch // (Exception e)
+            {
+                //EventLog.WriteEntry(GetEventSourceName(), Resources.ExceptionEventRaisingFailed + GetType().FullName + " :" + e.Message);
             }
         }
 

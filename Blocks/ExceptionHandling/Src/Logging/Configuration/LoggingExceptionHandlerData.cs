@@ -195,8 +195,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Config
         [ResourceDisplayName(typeof(DesignResources), "LoggingExceptionHandlerDataFormatterTypeNameDisplayName")]
         [Editor(CommonDesignTime.EditorTypes.TypeSelector, CommonDesignTime.EditorTypes.UITypeEditor)]
         [BaseType(typeof(ExceptionFormatter))]
-        [DesigntimeDefault("Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.TextExceptionFormatter, Microsoft.Practices.EnterpriseLibrary.ExceptionHandling")]
-        [Validation(LoggingDesignTime.ValidatorTypes.LogFormatterValidator)]
+        [DesigntimeDefaultAttribute("Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.TextExceptionFormatter, Microsoft.Practices.EnterpriseLibrary.ExceptionHandling")]
+        [Validation(ExceptionHandlingLoggingDesigntime.ValidatorTypes.LogFormatterValidator)]
         public string FormatterTypeName
         {
             get { return (string)this[formatterType]; }

@@ -23,22 +23,9 @@ using Microsoft.Practices.Unity;
 namespace Console.Wpf.Tests.VSTS.DevTests.given_app_settings_view_model
 {
     [TestClass]
-    public class when_getting_all_properties : ContainerContext
+    public class when_getting_all_properties : given_application_settings
     {
         IEnumerable<Property> properties;
-        MockAppSettingsViewModel settings;
-
-        protected override void Arrange()
-        {
-            base.Arrange();
-
-            AppSettingsSection AppSettings = new AppSettingsSection();
-
-            AppSettings.Settings.Add(new KeyValueConfigurationElement("Setting1", "Value1"));
-            AppSettings.Settings.Add(new KeyValueConfigurationElement("Setting2", "Value2"));
-
-            settings = new MockAppSettingsViewModel(Container, "appSettings", AppSettings);
-        }
 
         protected override void Act()
         {
@@ -54,16 +41,4 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_app_settings_view_model
         }
     }
 
-    public class MockAppSettingsViewModel : AppSettingsViewModel
-    {
-        public MockAppSettingsViewModel(IUnityContainer builder, string sectionName, ConfigurationSection section)
-            : base(builder, sectionName, section)
-        {
-        }
-
-        public IEnumerable<Property> GetProperties()
-        {
-            return base.GetAllProperties();
-        }
-    }
 }

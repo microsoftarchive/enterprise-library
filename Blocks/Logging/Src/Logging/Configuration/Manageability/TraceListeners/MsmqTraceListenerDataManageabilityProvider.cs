@@ -22,7 +22,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
 {
     /// <summary>
     /// Provides an implementation for <see cref="FormattedEventLogTraceListenerData"/> that
-    /// splits policy overrides processing and WMI objects generation, performing appropriate logging of 
+    /// processes policy overrides, performing appropriate logging of 
     /// policy processing errors.
     /// </summary>
     public class MsmqTraceListenerDataManageabilityProvider
@@ -138,7 +138,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
                                            UseEncryptionPropertyName,
                                            configurationObject.UseEncryption);
 
-            AddTraceOptionsPart(contentBuilder, configurationObject.TraceOutputOptions);
+            AddTraceOptionsPart(contentBuilder, elementPolicyKeyName, configurationObject.TraceOutputOptions);
 
             AddFilterPart(contentBuilder, configurationObject.Filter);
 
@@ -154,7 +154,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             if (!TimeSpan.TryParse(overrideValue, out result))
             {
                 throw new RegistryAccessException(
-                    String.Format(Resources.Culture,
+                    String.Format(CultureInfo.CurrentCulture,
                                   Resources.ExceptionErrorValueNotTimeSpan,
                                   policyKey.Name,
                                   propertyName,
@@ -183,10 +183,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             bool? recoverableOverride = policyKey.GetBoolValue(RecoverablePropertyName);
             TimeSpan timeToBeReceivedOverride = GetTimeSpanOverride(policyKey, TimeToBeReceivedPropertyName);
             TimeSpan timeToReachQueueOverride = GetTimeSpanOverride(policyKey, TimeToReachQueuePropertyName);
-            TraceOptions? traceOutputOptionsOverride = policyKey.GetEnumValue<TraceOptions>(TraceOutputOptionsPropertyName);
+            TraceOptions? traceOutputOptionsOverride =
+                GetFlagsEnumOverride<TraceOptions>(policyKey, TraceOutputOptionsPropertyName);
             SourceLevels? filterOverride = policyKey.GetEnumValue<SourceLevels>(FilterPropertyName);
-            MessageQueueTransactionType? transactionTypeOverride
-                = policyKey.GetEnumValue<MessageQueueTransactionType>(TransactionTypePropertyName);
+            MessageQueueTransactionType? transactionTypeOverride =
+                policyKey.GetEnumValue<MessageQueueTransactionType>(TransactionTypePropertyName);
             bool? usedAuthenticationOverride = policyKey.GetBoolValue(UseAuthenticationPropertyName);
             bool? useDeadLetterOverride = policyKey.GetBoolValue(UseDeadLetterQueuePropertyName);
             bool? useEncryptionOverride = policyKey.GetBoolValue(UseEncryptionPropertyName);

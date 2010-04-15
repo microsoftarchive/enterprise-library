@@ -47,7 +47,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.BackingStoreImplementati
         /// <summary>
         /// Disposing method as used in the Dispose pattern
         /// </summary>
-        /// <param name="disposing">True if we are called during Dispose. False if we are called from finalizer</param>
+        /// <param name="disposing">True if called during Dispose. False if called from finalizer</param>
         protected virtual void Dispose(bool disposing)
         {
         }
@@ -68,6 +68,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.BackingStoreImplementati
         /// </remarks>
         public void Remove(string key)
         {
+            if (key == null) throw new ArgumentNullException("key");
+
             Remove(key.GetHashCode());
         }
 
@@ -94,6 +96,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.BackingStoreImplementati
         /// </remarks>
         public void UpdateLastAccessedTime(string key, DateTime timestamp)
         {
+            if (key == null) throw new ArgumentNullException("key");
+
             UpdateLastAccessedTime(key.GetHashCode(), timestamp);
         }
 
@@ -129,6 +133,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.BackingStoreImplementati
         /// </remarks>
         public virtual void Add(CacheItem newCacheItem)
         {
+            if (newCacheItem == null) throw new ArgumentNullException("newCacheItem");
+
             try
             {
                 RemoveOldItem(newCacheItem.Key.GetHashCode());

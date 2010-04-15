@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.ComponentModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
 {
@@ -21,7 +22,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
     /// Attribute class used to indicate whether a property can be overwritten per environment.<br/>
     /// The default behavior is that any property can be overwritten.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Class, AllowMultiple = false)]
     public sealed class EnvironmentalOverridesAttribute : Attribute
     {
         private readonly bool canOverride;
@@ -41,6 +42,25 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
         public bool CanOverride
         {
             get { return canOverride; }
+        }
+
+        /// <summary>
+        /// Specifies a custom property type for the overrides property.<br/>
+        /// </summary>
+        public Type CustomOverridesPropertyType
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Specifies a <see cref="TypeConverter"/> that should be used to serialize the overriden value to the delta configuration file. <br/>
+        /// This can be used to overwrite a property that doesnt implement <see cref="IConvertible"/>.  <br/>
+        /// </summary>
+        public Type StorageConverterType
+        {
+            get;
+            set;
         }
     }
 }

@@ -9,22 +9,17 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel.Design;
 using System.Linq;
-using System.Text;
-using System.Windows.Input;
 using Console.Wpf.Tests.VSTS.DevTests.Contexts;
 using Console.Wpf.Tests.VSTS.TestSupport;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Commands;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Configuration.Design.HostAdapterV5;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
+using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
+using Microsoft.Practices.Unity;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model
 {
@@ -32,6 +27,14 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model
     public class when_creating_hierarchical_section_model : ExceptionHandlingSettingsContext
     {
         private SectionViewModel sectionViewModel;
+        private Mock<IAssemblyDiscoveryService> discoveryService;
+
+        protected override void Arrange()
+        {
+            base.Arrange();
+            this.discoveryService = new Mock<IAssemblyDiscoveryService>();
+            this.Container.RegisterInstance(this.discoveryService.Object);
+        }
 
         protected override void Act()
         {
@@ -62,7 +65,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model
                 );
         }
 
-     
+
         [TestMethod]
         public void then_child_adders_returns_collections_add_commands()
         {
@@ -74,19 +77,19 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model
                         .Select(x => x.Title);
 
 
-            var policyAdders = policyElement.Commands                                
+            var policyAdders = policyElement.Commands
                                 .OfType<DefaultCollectionElementAddCommand>()
                                 .Select(x => x.Title);
 
-            CollectionAssert.AreEquivalent(childAdders.ToArray(), 
-                                            policyAdders.ToArray());            
+            CollectionAssert.AreEquivalent(childAdders.ToArray(),
+                                            policyAdders.ToArray());
         }
 
         [TestMethod]
         public void then_has_add_command()
         {
             var exceptionPolicy = sectionViewModel.GetDescendentsOfType<ExceptionPolicyData>().First();
-            Assert.IsTrue(exceptionPolicy.Commands.Where(x=>x.Placement == CommandPlacement.ContextAdd).Any());
+            Assert.IsTrue(exceptionPolicy.Commands.Where(x => x.Placement == CommandPlacement.ContextAdd).Any());
         }
 
 

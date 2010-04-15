@@ -10,20 +10,21 @@
 //===============================================================================
 
 using System;
+using System.Diagnostics;
 using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Properties;
-using System.Diagnostics;
+using System.Globalization;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Instrumentation
 {
-	/// <summary>
+    /// <summary>
     /// Defines the logical events that can be instrumented for symmetric cryptography providers.
-	/// </summary>
+    /// </summary>
     [HasInstallableResourcesAttribute]
     [PerformanceCountersDefinition(counterCategoryName, "CryptographyHelpResourceName")]
     [EventLogDefinition("Application", "Enterprise Library Cryptography")]
     public class SymmetricAlgorithmInstrumentationProvider : InstrumentationListener, ISymmetricAlgorithmInstrumentationProvider
-	{
+    {
         static EnterpriseLibraryPerformanceCounterFactory factory = new EnterpriseLibraryPerformanceCounterFactory();
 
         /// <summary>
@@ -53,83 +54,80 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Instrument
         /// </summary>
         public const string counterCategoryName = "Enterprise Library Cryptography Counters";
 
-		private string instanceName;
+        private string instanceName;
 
-		/// <summary>
+        /// <summary>
         /// Initializes a new instance of the <see cref="SymmetricAlgorithmInstrumentationProvider"/> class.
-		/// </summary>
-		/// <param name="instanceName">The name of the <see cref="ISymmetricCryptoProvider"/> instance this instrumentation listener is created for.</param>
-		/// <param name="performanceCountersEnabled"><b>true</b> if performance counters should be updated.</param>
-		/// <param name="eventLoggingEnabled"><b>true</b> if event log entries should be written.</param>
-		/// <param name="wmiEnabled"><b>true</b> if WMI events should be fired.</param>
+        /// </summary>
+        /// <param name="instanceName">The name of the <see cref="ISymmetricCryptoProvider"/> instance this instrumentation listener is created for.</param>
+        /// <param name="performanceCountersEnabled"><b>true</b> if performance counters should be updated.</param>
+        /// <param name="eventLoggingEnabled"><b>true</b> if event log entries should be written.</param>
         /// <param name="applicationInstanceName">The application instance name.</param>
-		public SymmetricAlgorithmInstrumentationProvider(string instanceName,
-										   bool performanceCountersEnabled,
-										   bool eventLoggingEnabled,
-										   bool wmiEnabled,
-                                           string applicationInstanceName)
-            : this(instanceName, performanceCountersEnabled, eventLoggingEnabled, wmiEnabled, new AppDomainNameFormatter(applicationInstanceName))
-		{
-		}
-
-		/// <summary>
-		/// </summary>
-		/// <param name="instanceName">The name of the <see cref="ISymmetricCryptoProvider"/> instance this instrumentation listener is created for.</param>
-		/// <param name="performanceCountersEnabled"><b>true</b> if performance counters should be updated.</param>
-		/// <param name="eventLoggingEnabled"><b>true</b> if event log entries should be written.</param>
-		/// <param name="wmiEnabled"><b>true</b> if WMI events should be fired.</param>
-		/// <param name="nameFormatter">The <see cref="IPerformanceCounterNameFormatter"/> that is used to creates unique name for each <see cref="PerformanceCounter"/> instance.</param>
         public SymmetricAlgorithmInstrumentationProvider(string instanceName,
-										   bool performanceCountersEnabled,
-										   bool eventLoggingEnabled,
-										   bool wmiEnabled,
-										   IPerformanceCounterNameFormatter nameFormatter)
-			: base(instanceName, performanceCountersEnabled, eventLoggingEnabled, wmiEnabled, nameFormatter)
-		{
-			this.instanceName = instanceName;
-		}
-
-		/// <summary>
-		/// </summary>
-		/// <param name="message">The message that describes the failure.</param>
-		/// <param name="exception">The exception thrown during the failure.</param>
-		public void FireCyptographicOperationFailed(string message, Exception exception)
+                                           bool performanceCountersEnabled,
+                                           bool eventLoggingEnabled,
+                                           string applicationInstanceName)
+            : this(instanceName, performanceCountersEnabled, eventLoggingEnabled, new AppDomainNameFormatter(applicationInstanceName))
         {
+        }
+
+        /// <summary>
+        /// </summary>
+        /// <param name="instanceName">The name of the <see cref="ISymmetricCryptoProvider"/> instance this instrumentation listener is created for.</param>
+        /// <param name="performanceCountersEnabled"><b>true</b> if performance counters should be updated.</param>
+        /// <param name="eventLoggingEnabled"><b>true</b> if event log entries should be written.</param>
+        /// <param name="nameFormatter">The <see cref="IPerformanceCounterNameFormatter"/> that is used to creates unique name for each <see cref="PerformanceCounter"/> instance.</param>
+        public SymmetricAlgorithmInstrumentationProvider(string instanceName,
+                                           bool performanceCountersEnabled,
+                                           bool eventLoggingEnabled,
+                                           IPerformanceCounterNameFormatter nameFormatter)
+            : base(instanceName, performanceCountersEnabled, eventLoggingEnabled, nameFormatter)
+        {
+            this.instanceName = instanceName;
+        }
+
+        /// <summary>
+        /// </summary>
+        /// <param name="message">The message that describes the failure.</param>
+        /// <param name="exception">The exception thrown during the failure.</param>
+        public void FireCyptographicOperationFailed(string message, Exception exception)
+        {
+            if (exception == null) throw new ArgumentNullException("exception");
+
             if (EventLoggingEnabled)
             {
                 string errorMessage
                     = string.Format(
-                        Resources.Culture,
+                        CultureInfo.CurrentCulture,
                         Resources.ErrorCryptographicOperationFailed,
                         instanceName);
                 string entryText = new EventLogEntryFormatter(Resources.BlockName).GetEntryText(errorMessage, exception, message);
 
                 EventLog.WriteEntry(GetEventSourceName(), entryText, EventLogEntryType.Error);
             }
-            if (WmiEnabled) FireManagementInstrumentation(new SymmetricOperationFailedEvent(instanceName, message, exception.ToString()));
-		}
+        }
 
-		/// <summary>
-		/// </summary>
-		public void FireSymmetricEncryptionPerformed()
+        /// <summary>
+        /// </summary>
+        public void FireSymmetricEncryptionPerformed()
         {
             if (PerformanceCountersEnabled)
             {
                 symmetricEncryptionPerformedCounter.Increment();
                 totalSymmetricEncryptionPerformedCounter.Increment();
             }
-		}
+        }
 
-		/// <summary>
-		/// </summary>
-		public void FireSymmetricDecryptionPerformed()
+        /// <summary>
+        /// </summary>
+        public void FireSymmetricDecryptionPerformed()
         {
             if (PerformanceCountersEnabled)
             {
                 symmetricDecryptionPerformedCounter.Increment();
                 totalSymmetricDecryptionPerformedCounter.Increment();
             }
-		}
+        }
 
 
         /// <summary>
@@ -147,5 +145,5 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Instrument
             totalSymmetricDecryptionPerformedCounter
                 = factory.CreateCounter(counterCategoryName, TotalSymmetricDecryptionPerformedCounterName, instanceNames);
         }
-	}
+    }
 }

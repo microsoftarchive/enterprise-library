@@ -11,7 +11,7 @@
       <CodeCoverageItem binaryFile="Microsoft.Practices.EnterpriseLibrary.Caching.Database.dll" pdbFile="Microsoft.Practices.EnterpriseLibrary.Caching.Database.pdb" />
       <CodeCoverageItem binaryFile="Microsoft.Practices.EnterpriseLibrary.Caching.dll" pdbFile="Microsoft.Practices.EnterpriseLibrary.Caching.pdb" />
       <CodeCoverageItem binaryFile="Microsoft.Practices.EnterpriseLibrary.Common.dll" pdbFile="Microsoft.Practices.EnterpriseLibrary.Common.pdb" />
-      <CodeCoverageItem binaryFile="Microsoft.Practices.EnterpriseLibrary.Configuration.Design.dll" pdbFile="Microsoft.Practices.EnterpriseLibrary.Configuration.Design.pdb" />
+      <CodeCoverageItem binaryFile="Microsoft.Practices.EnterpriseLibrary.Configuration.DesignTime.dll" pdbFile="Microsoft.Practices.EnterpriseLibrary.Configuration.DesignTime.pdb" />
       <CodeCoverageItem binaryFile="Microsoft.Practices.EnterpriseLibrary.Configuration.Design.HostAdapter.dll" pdbFile="Microsoft.Practices.EnterpriseLibrary.Configuration.Design.HostAdapter.pdb" />
       <CodeCoverageItem binaryFile="Microsoft.Practices.EnterpriseLibrary.Configuration.Design.UI.dll" pdbFile="Microsoft.Practices.EnterpriseLibrary.Configuration.Design.UI.pdb" />
       <CodeCoverageItem binaryFile="Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides.dll" pdbFile="Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides.pdb" />

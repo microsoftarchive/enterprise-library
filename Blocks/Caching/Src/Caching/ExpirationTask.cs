@@ -57,6 +57,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
 		/// </returns>
         public virtual int MarkAsExpired(Hashtable liveCacheRepresentation)
         {
+		    if (liveCacheRepresentation == null) throw new ArgumentNullException("liveCacheRepresentation");
+
             int markedCount = 0;
             foreach (CacheItem cacheItem in liveCacheRepresentation.Values)
             {
@@ -81,6 +83,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
 		/// </param>
 		public virtual int SweepExpiredItemsFromCache(Hashtable liveCacheRepresentation)
         {
+		    if (liveCacheRepresentation == null) throw new ArgumentNullException("liveCacheRepresentation");
+
 			int expiredItems = 0;
 
             foreach (CacheItem cacheItem in liveCacheRepresentation.Values)

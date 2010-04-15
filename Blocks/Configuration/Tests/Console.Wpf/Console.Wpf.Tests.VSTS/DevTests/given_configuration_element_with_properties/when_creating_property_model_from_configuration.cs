@@ -21,6 +21,7 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using System.ComponentModel.Design;
 using Console.Wpf.Tests.VSTS.DevTests.Contexts;
 using Microsoft.Practices.Unity;
+using System.Windows.Controls;
 
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_configuration_element_with_properties
@@ -208,7 +209,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_configuration_element_with_prope
         public void then_property_has_no_editor()
         {
             Property numberProperty = properties.Where(x => x.PropertyName == "Number").FirstOrDefault();
-            Assert.AreEqual(EditorBehavior.None, numberProperty.EditorBehavior);
+            Assert.AreEqual(typeof(BindableProperty), numberProperty.BindableProperty.GetType());
         }
 
         [TestMethod]

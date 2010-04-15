@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using Microsoft.Practices.ServiceLocation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests
 {
@@ -37,6 +38,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests
 
             Assert.IsNotNull(dummy);
             context.Verify();
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void WhenCallingConfigureWithNullConfigurator_ThenArgumentNullExceptionIsThrown()
+        {
+            Microsoft.Practices.EnterpriseLibrary.Common.Configuration.EnterpriseLibraryContainer.ConfigureContainer(null, new DictionaryConfigurationSource());
         }
     }
 

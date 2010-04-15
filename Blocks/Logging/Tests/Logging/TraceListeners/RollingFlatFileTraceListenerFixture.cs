@@ -19,7 +19,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners
 {
     [TestClass]
-    public class RollingFlatFileTraceListenerFixture
+    public partial class RollingFlatFileTraceListenerFixture
     {
         string fileNameWithoutExtension;
         string fileName;
@@ -648,34 +648,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners
 
             File.Delete(expandedFileName);
             Assert.AreEqual(expectedFileName, expandedFileName);
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(InvalidOperationException))]
-        public void RollingFlatFileTraceListenerReplacedEnviromentVariablesWillFallBackIfNotPrivilegesToRead()
-        {
-            string environmentVariable = "%USERPROFILE%";
-            string fileName = Path.Combine(environmentVariable, "foo.log");
-
-            EnvironmentPermission denyPermission = new EnvironmentPermission(PermissionState.Unrestricted);
-            denyPermission.Deny();
-
-            try
-            {
-                RollingFlatFileTraceListener listener = new RollingFlatFileTraceListener(fileName, "header", "footer", null, 1, "", RollFileExistsBehavior.Increment, RollInterval.Day);
-                listener.TraceData(new TraceEventCache(), "source", TraceEventType.Error, 1, "This is a test");
-                listener.Dispose();
-            }
-            catch (InvalidOperationException)
-            {
-                throw;
-            }
-            finally
-            {
-                EnvironmentPermission.RevertAll();
-            }
-
-            Assert.Fail("Permission was not denied.");
         }
 
         class MockDateTimeProvider : RollingFlatFileTraceListener.DateTimeProvider

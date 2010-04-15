@@ -9,26 +9,18 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using Console.Wpf.Tests.VSTS.DevTests.Contexts;
-using Console.Wpf.Tests.VSTS.Mocks;
-using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
-using Moq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.ComponentModel.Design;
 using System.Configuration;
+using System.Linq;
+using Console.Wpf.Tests.VSTS.DevTests.Contexts;
 using Console.Wpf.Tests.VSTS.TestSupport;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics;
-using Console.Wpf.Tests.VSTS.DevTests;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Configuration.Design.HostAdapterV5;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
+using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
+using Microsoft.Practices.Unity;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model
 {
@@ -36,6 +28,12 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model
     public class when_creating_view_model_for_section : ExceptionHandlingSettingsContext
     {
         SectionViewModel viewModel;
+
+        protected override void Arrange()
+        {
+            base.Arrange();
+            this.Container.RegisterInstance(new Mock<IAssemblyDiscoveryService>().Object);
+        }
 
         protected override void Act()
         {
@@ -215,8 +213,6 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model
             section = new ConnectionStringsSection();
             section.ConnectionStrings.Add(new ConnectionStringSettings("name", "conn1"));
             section.ConnectionStrings.Add(new ConnectionStringSettings("name2", "conn2"));
-
-            ConnectionStringsDecorator.DecorateConnectionStringsSection(new AnnotationService());
         }
 
         protected override void Act()
@@ -255,8 +251,9 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model
 
             startingCount =
                 handlerCollection.ChildElements.Count(
-                    x => typeof (WrapHandlerData).IsAssignableFrom(x.ConfigurationType));
+                    x => typeof(WrapHandlerData).IsAssignableFrom(x.ConfigurationType));
 
+            this.Container.RegisterInstance(new Mock<IAssemblyDiscoveryService>().Object);
         }
 
         protected override void Act()
@@ -273,7 +270,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model
         {
             Assert.AreEqual(startingCount + 1,
                             handlerCollection.ChildElements.Count(
-                                x => typeof (WrapHandlerData).IsAssignableFrom(x.ConfigurationType)));
+                                x => typeof(WrapHandlerData).IsAssignableFrom(x.ConfigurationType)));
         }
 
         [TestMethod]

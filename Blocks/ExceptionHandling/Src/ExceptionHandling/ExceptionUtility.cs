@@ -33,6 +33,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
         /// <returns>The formatted message.</returns>
         public static string FormatExceptionMessage(string message, Guid handlingInstanceId)
         {
+            if(message == null) throw new ArgumentNullException(message);
             return message.Replace(HandlingInstanceToken, handlingInstanceId.ToString());
         }
 
@@ -45,6 +46,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
         /// <param name="originalException">The original exception.</param>		
 		public static string FormatExceptionHandlingExceptionMessage(string policyName, Exception offendingException, Exception chainException, Exception originalException)
         {
+            if(policyName == null) throw new ArgumentNullException("policyName");
+
             StringBuilder message = new StringBuilder();
             StringWriter writer = null;
 			string result = null;
@@ -54,7 +57,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
 
                 if (policyName.Length > 0)
                 {
-                    writer.WriteLine(string.Format(Resources.Culture, Resources.PolicyName, policyName));
+                    writer.WriteLine(string.Format(CultureInfo.CurrentCulture, Resources.PolicyName, policyName));
                 }
 
                 FormatHandlingException(writer, Resources.OffendingException, offendingException);

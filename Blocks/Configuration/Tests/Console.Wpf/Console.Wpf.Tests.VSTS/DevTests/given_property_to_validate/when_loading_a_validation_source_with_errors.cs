@@ -21,6 +21,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Console.Wpf.Tests.VSTS.DevTests.Contexts;
 using Microsoft.Practices.Unity;
 using Moq;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.TestSupport;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_a_validation_service
 {
@@ -53,7 +54,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_a_validation_service
         public void then_after_load_validation_errors_populated()
         {
             var property = Section.Property("DefaultTestElement");
-            Assert.IsTrue(property.ValidationErrors.Any());
+            Assert.IsTrue(property.ValidationResults.Any());
         }
     }
 }

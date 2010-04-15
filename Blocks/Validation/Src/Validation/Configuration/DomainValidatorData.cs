@@ -75,7 +75,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 			{
 				if (typeConverter != null)
 				{
-					domainObjects.Add(typeConverter.ConvertFromString(null, CultureInfo.CurrentCulture, domainConfigurationElement.Name));
+					domainObjects.Add(typeConverter.ConvertFromInvariantString(null, domainConfigurationElement.Name));
 				}
 				else
 				{	

@@ -13,7 +13,7 @@ using System;
 using System.Diagnostics;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation;
-using ManagementInstrumentation = System.Management.Instrumentation.Instrumentation;
+using System.Globalization;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation
 {
@@ -32,13 +32,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DefaultCachingEventLogger"/> class, specifying whether 
-        /// logging to the event log and firing WMI events is allowed.
+        /// logging to the event log is allowed.
         /// </summary>
         /// <param name="eventLoggingEnabled"><b>true</b> if writing to the event log is allowed, <b>false</b> otherwise.</param>
-        /// <param name="wmiEnabled"><b>true</b> if firing WMI events is allowed, <b>false</b> otherwise.</param>
-        public DefaultCachingEventLogger(bool eventLoggingEnabled,
-                                         bool wmiEnabled)
-            : base((string)null, false, eventLoggingEnabled, wmiEnabled, null)
+        public DefaultCachingEventLogger(bool eventLoggingEnabled)
+            : base((string)null, false, eventLoggingEnabled, null)
         {
             eventLogEntryFormatter = new EventLogEntryFormatter(Resources.BlockName);
         }
@@ -49,15 +47,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation
         /// </summary>
         /// <param name="instanceName">Name of the <see cref="CacheManager"/> instance in which the configuration error was detected.</param>
         /// <param name="exception">The exception raised for the configuration error.</param>
-        public void LogConfigurationError(string instanceName,
-                                          Exception exception)
+        public void LogConfigurationError(string instanceName, Exception exception)
         {
-            if (WmiEnabled) FireManagementInstrumentation(new CacheConfigurationFailureEvent(instanceName, exception.ToString()));
+            if(exception == null) throw new ArgumentNullException("exception");
             if (EventLoggingEnabled)
             {
                 string errorMessage
                     = string.Format(
-                        Resources.Culture,
+                        CultureInfo.CurrentCulture,
                         Resources.ErrorCacheConfigurationFailedMessage,
                         instanceName);
                 string entryText = eventLogEntryFormatter.GetEntryText(errorMessage, exception);

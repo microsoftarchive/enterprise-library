@@ -10,33 +10,37 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Configuration.Design.HostAdapterV5;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics
 {
+#pragma warning disable 1591
+    /// <summary>
+    /// This class supports block-specific configuration design-time and is not
+    /// intended to be used directly from your code.
+    /// </summary>
     public class AddExceptionPolicyCommand : DefaultCollectionElementAddCommand
     {
-        public AddExceptionPolicyCommand(ElementCollectionViewModel collection)
-            :base(new ConfigurationElementType(typeof(ExceptionPolicyData)), collection)
+        public AddExceptionPolicyCommand(ElementCollectionViewModel collection, IUIServiceWpf uiService)
+            : base(new ConfigurationElementType(typeof(ExceptionPolicyData)), collection, uiService)
         {
 
         }
 
-        public override void Execute(object parameter)
+        protected override void InnerExecute(object parameter)
         {
-            base.Execute(parameter);
+            base.InnerExecute(parameter);
 
             if (AddedElementViewModel != null)
             {
                 var exceptionTypesElement = (ElementCollectionViewModel)AddedElementViewModel.ChildElement("ExceptionTypes");
                 var addedExceptionType = exceptionTypesElement.AddNewCollectionElement(typeof(ExceptionTypeData));
-                
+
                 addedExceptionType.Property("Name").Value = "All Exceptions";
                 addedExceptionType.Property("TypeName").Value = typeof(Exception).AssemblyQualifiedName;
             }
         }
     }
+#pragma warning restore 1591
 }

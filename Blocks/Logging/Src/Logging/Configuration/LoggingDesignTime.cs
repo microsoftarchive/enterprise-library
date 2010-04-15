@@ -9,69 +9,54 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 {
-    /// <summary>
-    /// Defines design-time constants for custom Logging view models and commands.
-    /// </summary>
-    public static class LoggingDesignTime
+    internal static class LoggingDesignTime
     {
-        /// <summary>
-        /// Custom logging view model type names.
-        /// </summary>
-        public static class ViewModelTypeNames
+        internal static class ViewModelTypeNames
         {
-            ///<summary/>
-            public const string LogggingSectionViewModel = 
-                "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.LoggingSectionViewModel, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
+            public const string LogggingSectionViewModel =
+                "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.LoggingSectionViewModel, Microsoft.Practices.EnterpriseLibrary.Configuration.DesignTime";
 
-            ///<summary/>
-            public const string SystemDiagnosticsTraceListenerDataViewModel = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.SystemDiagnosticsTraceListenerDataViewModel, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
-            
-            ///<summary/>
-            public const string CustomTraceListenerDataViewModel = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.CustomTraceListenerDataViewModel, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
+            public const string SystemDiagnosticsTraceListenerDataViewModel = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.SystemDiagnosticsTraceListenerDataViewModel, Microsoft.Practices.EnterpriseLibrary.Configuration.DesignTime";
 
-            ///<summary />
+            public const string CustomTraceListenerDataViewModel = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.CustomTraceListenerDataViewModel, Microsoft.Practices.EnterpriseLibrary.Configuration.DesignTime";
+
             public const string TraceListenerReferenceViewModel =
-                "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.TraceListenerReferenceViewModel, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
+                "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.TraceListenerReferenceViewModel, Microsoft.Practices.EnterpriseLibrary.Configuration.DesignTime";
 
-            /// <summary />
-            public const string TraceListenerReferenceNameProperty =
-                "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.TraceListenerReferenceNameProperty, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
+            public const string TraceListenerElementCollectionViewModel =
+                "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.TraceListenerElementCollectionViewModel, Microsoft.Practices.EnterpriseLibrary.Configuration.DesignTime";
 
-            ///<summary/>
-            public const string TraceListenerElementCollectionViewModel = 
-                "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.TraceListenerElementCollectionViewModel, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
-        }
-        
-        ///<summary/>
-        public static class EditorTypeNames
-        {
-            ///<summary/>
-            public const string OverridenTraceListenerCollectionEditor = 
-                "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.OverridenTraceListenerCollectionEditor, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
+            public const string TypeNameElementProperty =
+                "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.ElementProperty, Microsoft.Practices.EnterpriseLibrary.Configuration.DesignTime";
+
+            public const string EmailTraceListenerPropertyViewModel =
+                "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.Logging.EmailTraceListenerPasswordProperty, Microsoft.Practices.EnterpriseLibrary.Configuration.DesignTime";
+
+            public const string SourceLevelsProperty =
+                "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.Logging.SourceLevelsProperty, Microsoft.Practices.EnterpriseLibrary.Configuration.DesignTime";
         }
 
-        /// <summary/>
-        public static class CommandTypeNames
+        internal static class EditorTypeNames
         {
-            /// <summary/>
-            public const string AddLoggingBlockCommand = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.AddLoggingBlockCommand, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
+            public const string OverridenTraceListenerCollectionEditor =
+                "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.OverriddenTraceListenerCollectionEditor, Microsoft.Practices.EnterpriseLibrary.Configuration.DesignTime";
         }
 
-        /// <summary/>
-        public static class ValidatorTypes
+        internal static class CommandTypeNames
         {
-            /// <summary/>
-            public const string LogPriorityMinMaxValidatorType = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.Logging.LogPriorityMinMaxValidator, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
+            public const string AddLoggingBlockCommand = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.AddLoggingBlockCommand, Microsoft.Practices.EnterpriseLibrary.Configuration.DesignTime";
+        }
 
-            /// <summary/>
-            public const string LogFormatterValidator = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.Logging.LogFormatterValidator, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
+        internal static class ValidatorTypes
+        {
+            public const string EmailTraceListenerAuthenticationValidator = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.Logging.EmailTraceListenerAuthenticationValidator, Microsoft.Practices.EnterpriseLibrary.Configuration.DesignTime";
+
+            public const string LogPriorityMinMaxValidatorType = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.Logging.LogPriorityMinMaxValidator, Microsoft.Practices.EnterpriseLibrary.Configuration.DesignTime";
+
+            public const string NameValueCollectionValidator = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Validation.NameValueCollectionValidator, Microsoft.Practices.EnterpriseLibrary.Configuration.DesignTime";
         }
     }
 }

@@ -13,6 +13,7 @@ using System;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent;
 using Microsoft.Practices.EnterpriseLibrary.Common.Properties;
+using System.Globalization;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 {
@@ -88,7 +89,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
                 if (typeRegistrationsProviderType == null) throw new ArgumentNullException("typeRegistrationsProviderType");
 
                 if (!typeof(ITypeRegistrationsProvider).IsAssignableFrom(typeRegistrationsProviderType))
-                    throw new ArgumentException(string.Format(Resources.Culture,
+                    throw new ArgumentException(string.Format(CultureInfo.CurrentCulture,
                         Resources.ExceptionTypeMustImplementInterface, typeof(ITypeRegistrationsProvider)), "typeRegistrationsProviderType");
 
                 currentTypeRegistration.ProviderTypeName = typeRegistrationsProviderType.AssemblyQualifiedName;

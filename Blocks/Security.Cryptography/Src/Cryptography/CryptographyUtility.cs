@@ -70,7 +70,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography
         /// <returns><para>The byte array representing the hexidecimal.</para></returns>
         public static byte[] GetBytesFromHexString(string hexidecimalNumber)
         {
-            StringBuilder sb = new StringBuilder(hexidecimalNumber.ToUpper(CultureInfo.CurrentCulture));
+            if (hexidecimalNumber == null) throw new ArgumentNullException("hexidecimalNumber");
+
+            StringBuilder sb = new StringBuilder(hexidecimalNumber.ToUpperInvariant());
 
             if (sb[0].Equals('0') && sb[1].Equals('X'))
             {
@@ -129,6 +131,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography
         /// <returns><para>The combined byte arrays.</para></returns>
         public static byte[] CombineBytes(byte[] buffer1, byte[] buffer2)
         {
+            if (buffer1 == null) throw new ArgumentNullException("buffer1");
+            if (buffer2 == null) throw new ArgumentNullException("buffer2");
+
             byte[] combinedBytes = new byte[buffer1.Length + buffer2.Length];
             Buffer.BlockCopy(buffer1, 0, combinedBytes, 0, buffer1.Length);
             Buffer.BlockCopy(buffer2, 0, combinedBytes, buffer1.Length, buffer2.Length);
@@ -181,6 +186,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography
 		/// if necessary.</returns>
 		public static byte[] Transform(ICryptoTransform transform, byte[] buffer)
 		{
+		    if (buffer == null) throw new ArgumentNullException("buffer");
+
 			byte[] transformBuffer = null;
 
 			using (MemoryStream ms = new MemoryStream())

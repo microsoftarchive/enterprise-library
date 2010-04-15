@@ -18,6 +18,7 @@ using System.Collections.Specialized;
 using Microsoft.Practices.EnterpriseLibrary.Caching;
 using Microsoft.Practices.EnterpriseLibrary.Common.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent;
+using System.Globalization;
 
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
@@ -62,7 +63,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         /// <typeparam name="TCustomCacheStorageType">The implementation type of <see cref="IBackingStore"/> that should be used.</typeparam>
         /// <param name="context">Fluent interface extension point.</param>
         /// <param name="backingStoreName">The name of the <see cref="IBackingStore"/> instance.</param>
-        /// <param name="attributes">Attributes that should be passed to <paramref name="customCacheManagerType"/> when creating an instance.</param>
+        /// <param name="attributes">Attributes that should be passed to <typeparamref name="TCustomCacheStorageType"/> when creating an instance.</param>
         /// <returns>Fluent interface to further configure the custom <see cref="IBackingStore"/> implementation.</returns>
         /// <seealso cref="CustomCacheStorageData"/>
         public static IStoreInCustomStore StoreInCustomStore<TCustomCacheStorageType>(this ICachingConfigurationCacheManager context, string backingStoreName, NameValueCollection attributes)
@@ -77,7 +78,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         /// <param name="context">Fluent interface extension point.</param>
         /// <param name="backingStoreName">The name of the <see cref="IBackingStore"/> instance.</param>
         /// <param name="customCacheStoreType">The implementation type of <see cref="IBackingStore"/> that should be used.</param>
-        /// <param name="attributes">Attributes that should be passed to <paramref name="customCacheManagerType"/> when creating an instance.</param>
+        /// <param name="attributes">Attributes that should be passed to <paramref name="customCacheStoreType"/> when creating an instance.</param>
         /// <returns>Fluent interface to further configure the custom <see cref="IBackingStore"/> implementation.</returns>
         /// <seealso cref="CustomCacheStorageData"/>
         public static IStoreInCustomStore StoreInCustomStore(this ICachingConfigurationCacheManager context, string backingStoreName, Type customCacheStoreType, NameValueCollection attributes)
@@ -87,7 +88,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
             if (attributes == null) throw new ArgumentNullException("attributes");
             
             if (!typeof(IBackingStore).IsAssignableFrom(customCacheStoreType))
-                throw new ArgumentException(string.Format(Resources.Culture, 
+                throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, 
                     Resources.ExceptionTypeMustImplementInterface, typeof(IBackingStore)), "customCacheStoreType");
 
             return new StoreInCustomStoreBuilder(context, backingStoreName, customCacheStoreType, attributes);

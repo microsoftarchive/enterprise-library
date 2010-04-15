@@ -39,10 +39,6 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_app_settings_configuration
             AppSettings = new AppSettingsSection();
             AppSettings.Settings.Add(new KeyValueConfigurationElement("Setting1", "Value1"));
             AppSettings.Settings.Add(new KeyValueConfigurationElement("Setting2", "Value2"));
-            
-            AnnotationService metadataService = Container.Resolve<AnnotationService>();
-
-            AppSettingsDecorator.DecorateAppSettingsSection(metadataService);
 
             AppSettingsView = SectionViewModel.CreateSection(Container, "appSettings", AppSettings);
         }
@@ -51,8 +47,6 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_app_settings_configuration
     [TestClass]
     public class when_creating_app_settings_view_model : given_app_settings_configuration
     {
-        SectionViewModel appSettingsView;
-
         [TestMethod]
         public void then_appsetting_collection_has_display_name_attribute()
         {

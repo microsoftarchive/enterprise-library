@@ -103,7 +103,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
                 () => new ExceptionHandlingInstrumentationProvider(Name,
                                                                       instrumentationSection.PerformanceCountersEnabled,
                                                                       instrumentationSection.EventLoggingEnabled,
-                                                                      instrumentationSection.WmiEnabled,
                                                                       instrumentationSection.ApplicationInstanceName))
                        {
                            Name = Name,

@@ -20,16 +20,22 @@ using Microsoft.Practices.Unity;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Hosting
 {
+    /// <summary>
+    /// <see cref="IComponent"/> implemention for <see cref="ElementViewModel"/> classes.
+    /// </summary>
     public class ComponentModelElement : IComponent, ICustomTypeDescriptor , INotifyPropertyChanged
     {
-        ElementViewModel elementViewModel;
         ViewModelTypeDescriptorProxy typeDescriptorProxy;
         SiteImpl site;
-
+        
+        /// <summary>
+        /// Initializes a new instance of <see cref="ComponentModelElement"/>.
+        /// </summary>
+        /// <param name="elementViewModel">The <see cref="ElementViewModel"/> that will be represented by this <see cref="IComponent"/>.</param>
+        /// <param name="serviceProvider">A <see cref="IServiceProvider"/> instance that will be used to obtain services.</param>
         public ComponentModelElement(ElementViewModel elementViewModel, IServiceProvider serviceProvider)
         {
             this.site = new SiteImpl(this, serviceProvider);    
-            this.elementViewModel = elementViewModel;
             this.typeDescriptorProxy = new ViewModelTypeDescriptorProxy(elementViewModel);
 
             foreach (PropertyDescriptor property in ((ICustomTypeDescriptor)this).GetProperties())
@@ -114,8 +120,26 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Hosting
 
         #region IComponent Members
 
+        /// <summary>
+        /// Occurs when the <see cref="IComponent"/> is disposed.
+        /// </summary>
         public event EventHandler Disposed;
 
+        private void OnDisposed()
+        {
+            var handlers = Disposed;
+            if (handlers != null)
+            {
+                handlers(this, EventArgs.Empty);
+            }
+        }
+
+        /// <summary>
+        /// Gets the <see cref="ISite"/> of the Component.
+        /// </summary>
+        /// <remarks>
+        /// This <see cref="IComponent"/> implementation does not allow the site to be set.
+        /// </remarks>
         public ISite Site
         {
             get
@@ -131,8 +155,22 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Hosting
 
         #region IDisposable Members
 
+        /// <summary>
+        /// Releases the unmanaged resources used by the <see cref="ComponentModelElement"/> and optionally releases the managed resources.
+        /// </summary>
+        /// <param name="disposing"><see langword="true"/> to release both managed and unmanaged resources; <see langword="false"/> to release only unmanaged resources. </param>
+        protected virtual void Dispose(bool disposing)
+        {
+            OnDisposed();    
+        }
+
+        /// <summary>
+        /// Releases all resources used by the <see cref="ComponentModelElement"/>.
+        /// </summary>
         public void Dispose()
         {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         #endregion
@@ -197,6 +235,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Hosting
 
         #region INotifyPropertyChanged Members
 
+        /// <summary>
+        /// Occurs when a property value changed.
+        /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
 
         #endregion

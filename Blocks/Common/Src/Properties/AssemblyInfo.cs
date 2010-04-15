@@ -9,26 +9,23 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System.Management.Instrumentation;
+using System.Configuration;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.ConstrainedExecution;
 using System.Security;
 using System.Security.Permissions;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using System.Configuration;
 
-[assembly : SecurityPermission(SecurityAction.RequestMinimum)]
-[assembly : ReliabilityContract(Consistency.WillNotCorruptState, Cer.None)]
-[assembly : AssemblyTitle("Enterprise Library Shared Library")]
-[assembly : AssemblyDescription("Enterprise Library Shared Library")]
-[assembly : AssemblyVersion("4.1.0.0")]
-[assembly : Instrumented(@"root\EnterpriseLibrary")]
-[assembly : ReflectionPermission(SecurityAction.RequestMinimum)]
-[assembly : AllowPartiallyTrustedCallers]
-[assembly : SecurityTransparent]
+[assembly: SecurityPermission(SecurityAction.RequestMinimum)]
+[assembly: ReliabilityContract(Consistency.WillNotCorruptState, Cer.None)]
+[assembly: AssemblyTitle("Enterprise Library Shared Library")]
+[assembly: AssemblyDescription("Enterprise Library Shared Library")]
+[assembly: AssemblyVersion("5.0.414.0")]
+[assembly: ReflectionPermission(SecurityAction.RequestMinimum)]
+[assembly: AllowPartiallyTrustedCallers]
+[assembly: SecurityTransparent]
 
 
 
@@ -40,7 +37,8 @@ using System.Configuration;
                 InstrumentationConfigurationSection.SectionName,
                 typeof(InstrumentationConfigurationSection),
                 TitleResourceType = typeof(DesignResources),
-                TitleResourceName = "AddInstrumentationSettingsTitle")]
+                TitleResourceName = "AddInstrumentationSettingsTitle",
+                CommandModelTypeName = CommonDesignTime.CommandTypeNames.AddInstrumentationApplicationBlockCommand)]
 
 [assembly: AddApplicationBlockCommand(
                 AppSettingsDesignTime.AppSettingsSectionName,

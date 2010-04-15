@@ -25,7 +25,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
     /// <summary>
     /// A <see cref="ConfigurationSection"/> that stores the policy set in configuration.
     /// </summary>
-    [ViewModel(PolicyInjectionDesignTime.ViewModelTypeNames.PiabSectionViewModel)]
+    [ViewModel(PolicyInjectionDesignTime.ViewModelTypeNames.PolicyInjectionSectionViewModel)]
     [ResourceDescription(typeof(DesignResources), "PolicyInjectionSettingsDescription")]
     [ResourceDisplayName(typeof(DesignResources), "PolicyInjectionSettingsDisplayName")]
     public class PolicyInjectionSettings : SerializableConfigurationSection, ITypeRegistrationsProvider

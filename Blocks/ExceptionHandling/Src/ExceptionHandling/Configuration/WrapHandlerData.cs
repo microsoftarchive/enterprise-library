@@ -10,14 +10,13 @@
 //===============================================================================
 
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Microsoft.Practices.EnterpriseLibrary.Common.Utility;
-using System.Collections.Generic;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Properties;
-using System.ComponentModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
 {

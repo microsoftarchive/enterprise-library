@@ -51,10 +51,27 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.Configurat
 		[ConfigurationProperty(SourcePropertyName)]
         [ResourceDescription(typeof(DesignResources), "FaultContractExceptionHandlerMappingDataSourceDescription")]
         [ResourceDisplayName(typeof(DesignResources), "FaultContractExceptionHandlerMappingDataSourceDisplayName")]
+        [ViewModel(CommonDesignTime.ViewModelTypeNames.CollectionEditorContainedElementProperty)]
 		public string Source
 		{
 			get { return (string)this[SourcePropertyName]; }
 			set { this[SourcePropertyName] = value; }
 		}
+
+        /// <summary>
+        /// Gets or sets the name of the element.
+        /// </summary>
+        /// <value>
+        /// The name of the element.
+        /// </value>
+        /// <remarks>
+        /// Overriden in order to annotate with designtime attribute.
+        /// </remarks>
+        [ViewModel(CommonDesignTime.ViewModelTypeNames.CollectionEditorContainedElementProperty)]
+        public override string Name
+        {
+            get { return base.Name; }
+            set { base.Name = value; }
+        }
 	}
 }

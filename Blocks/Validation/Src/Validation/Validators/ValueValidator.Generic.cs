@@ -12,7 +12,7 @@
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
 {
     /// <summary>
-    /// Base class for strongly typed validators on simple values.
+    /// Base class for strongly-typed validators on simple values.
     /// </summary>
     /// <typeparam name="T">The type of value to validate.</typeparam>
     /// <remarks>Validating values of types different that <typeparamref name="T"/> results

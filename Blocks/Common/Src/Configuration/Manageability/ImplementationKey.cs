@@ -28,10 +28,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
         public String ApplicationName;
 
         /// <summary>
-        /// Gets or sets weather to enable group policies.
+        /// Gets or sets weather to enable Group Policies.
         /// </summary>
         /// <value>
-        /// true to enable group policies; otherwise false.
+        /// true to enable Group Policies; otherwise false.
         /// </value>
         public Boolean EnableGroupPolicies;
 
@@ -46,15 +46,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
         /// <summary>
         /// Initialize a new instance of the <see cref="ImplementationKey"/> struct.
         /// </summary>
-        /// <param name="fileName">The configuraiton file name.</param>
+        /// <param name="fileName">The configuration file name.</param>
         /// <param name="applicationName">The application name.</param>
-        /// <param name="enableGroupPolicies">true to enable group policy; otherwise, false.</param>
+        /// <param name="enableGroupPolicies">true to enable Group Policy; otherwise, false.</param>
         public ImplementationKey(String fileName,
                                  String applicationName,
                                  Boolean enableGroupPolicies)
         {
-            FileName = fileName != null ? fileName.ToLower(CultureInfo.CurrentCulture) : null;
-            ApplicationName = applicationName != null ? applicationName.ToLower(CultureInfo.CurrentCulture) : null;
+            FileName = fileName != null ? fileName.ToLowerInvariant() : null;
+            ApplicationName = applicationName != null ? applicationName.ToLowerInvariant() : null;
             EnableGroupPolicies = enableGroupPolicies;
         }
     }

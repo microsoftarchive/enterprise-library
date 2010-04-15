@@ -22,10 +22,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.TestSupport
     //
     // Here is a sumary of the "stories" we wanted to support when you're using TransactionScope:
     //
-    //	*	Different modes: Require, RequireNew, None
-    //	*	Use either connection string as key
-    //	*	Scopes are thread local by default
-    //	*	Can create transaction with behavior
+    //  *  Different modes: Require, RequireNew, None
+    //  *  Use either connection string as key
+    //  *  Scopes are thread local by default
+    //  *  Can create transaction with behavior
     //
     public class TransactionScopeFixture
     {
@@ -40,7 +40,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.TestSupport
             this.db = db;
         }
 
-        public void Clenaup()
+        public void Cleanup()
         {
             db.ExecuteNonQuery(CommandType.Text, "delete from Region where RegionID >= 77");
         }
@@ -66,14 +66,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.TestSupport
 
             using (TransactionScope scope = new TransactionScope(TransactionScopeOption.RequiresNew))
             {
-                DbConnection connection = TransactionScopeConnections.GetConnection(db);
-                connection.Disposed += delegate(object sender,
-                                                EventArgs e)
-                                       {
-                                           disposeCount++;
-                                       };
-                Assert.IsNotNull(connection);
-                scope.Complete();
+                using(DatabaseConnectionWrapper wrapper = TransactionScopeConnections.GetConnection(db))
+                {
+                    DbConnection connection = wrapper.Connection;
+                    connection.Disposed += (sender, e) => { disposeCount++; };
+ 
+                    Assert.IsNotNull(connection);
+                    scope.Complete();
+                   
+                }
             }
             //for (int i = 0; i < 10 && disposeCount == 0; i++)
             //{
@@ -184,9 +185,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.TestSupport
                 db.ExecuteNonQuery(CommandType.Text, insertString);
 
                 DbCommand command = db.GetSqlStringCommand("select * from region where regionid=77");
-                IDataReader reader = db.ExecuteReader(command);
-                Assert.IsNotNull(reader);
-                Assert.IsTrue(reader.Read());
+                using(IDataReader reader = db.ExecuteReader(command))
+                {
+                    Assert.IsNotNull(reader);
+                    Assert.IsTrue(reader.Read());
+                }
             }
         }
 
@@ -196,9 +199,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.TestSupport
             {
                 db.ExecuteNonQuery(CommandType.Text, insertString);
 
-                IDataReader reader = db.ExecuteReader(CommandType.Text, "select * from region where regionid=77");
-                Assert.IsNotNull(reader);
-                Assert.IsTrue(reader.Read());
+                using(IDataReader reader = db.ExecuteReader(CommandType.Text, "select * from region where regionid=77"))
+                {
+                    Assert.IsNotNull(reader);
+                    Assert.IsTrue(reader.Read());
+                }
             }
         }
 
@@ -208,13 +213,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.TestSupport
             {
                 db.ExecuteNonQuery(CommandType.Text, insertString);
 
-                IDataReader reader = db.ExecuteReader("RegionSelect");
-                Assert.IsNotNull(reader);
-                int numRows = 0;
-                while (reader.Read())
-                    numRows++;
-
-                Assert.AreEqual(5, numRows);
+                using (IDataReader reader = db.ExecuteReader("RegionSelect"))
+                {
+                    Assert.IsNotNull(reader);
+                    int numRows = 0;
+                    while (reader.Read())
+                        numRows++;
+                    Assert.AreEqual(5, numRows);
+                }
             }
         }
 
@@ -302,13 +308,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.TestSupport
 
             using (TransactionScope scope = new TransactionScope(TransactionScopeOption.RequiresNew))
             {
-                DbConnection connection = TransactionScopeConnections.GetConnection(db);
-                connection.Disposed += delegate(object sender,
-                                                EventArgs e)
-                                       {
-                                           disposeCount++;
-                                       };
-                Assert.IsNotNull(connection);
+                using(DatabaseConnectionWrapper wrapper = TransactionScopeConnections.GetConnection(db))
+                {
+                    Assert.IsNotNull(wrapper.Connection);
+                    wrapper.Connection.Disposed += (sender,e) => { disposeCount++; };
+                }
             }
             for (int i = 0; i < 10 && disposeCount == 0; i++)
             {

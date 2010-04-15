@@ -39,7 +39,8 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model_and_config_collection
 
         protected override void Act()
         {
-            collection = ViewModel.GetDescendentsOfType<UnnamedChildCollection>().OfType<ElementCollectionViewModel>().First();
+            collection =
+                ViewModel.GetDescendentsOfType<UnnamedChildCollection>().OfType<ElementCollectionViewModel>().First();
             collection.AddNewCollectionElement(typeof (UnnamedChild));
         }
 

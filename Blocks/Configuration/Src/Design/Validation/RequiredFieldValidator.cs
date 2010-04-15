@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Properties;
@@ -19,15 +20,21 @@ using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Validation
 {
     ///<summary>
-    /// Validates that a <see cref="Property.Value" /> has a required value.
+    /// A <see cref="PropertyValidator" /> class that validates whether a required value is not empty.
     ///</summary>
     public class RequiredFieldValidator : PropertyValidator
     {
-        protected override void ValidateCore(Property property, string value, IList<ValidationError> errors)
+        /// <summary>
+        /// Validates whether <paramref name="value"/> is not <see langword="null"/> or an empty string.
+        /// </summary>
+        /// <param name="property">The Property that declares the <paramref name="value"/>.</param>
+        /// <param name="value">Value to validate</param>
+        /// <param name="results">The collection to wich any results that occur during the validation can be added.</param>		
+        protected override void ValidateCore(Property property, string value, IList<ValidationResult> results)
         {
             if (string.IsNullOrEmpty(value))
             {
-                errors.Add(new ValidationError(property, string.Format(Resources.ValidationRequiredPropertyValueMissing, property.DisplayName)));
+                results.Add(new PropertyValidationResult(property, string.Format(CultureInfo.CurrentCulture, Resources.ValidationRequiredPropertyValueMissing, property.DisplayName)));
             }
         }
     }

@@ -229,6 +229,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Tests
         }
 
         [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void GetCategoryHelpTextWithNullAttributeThrows()
+        {
+            string translatedHelp = PerformanceCounterInstallerBuilder.GetCategoryHelp(null, GetType().Assembly);
+        }
+
+
+        [TestMethod]
         public void CanGetCounterHelpText()
         {
             PerformanceCounterAttribute attribute = new PerformanceCounterAttribute("counter", "CategoryHelp", PerformanceCounterType.NumberOfItems64);

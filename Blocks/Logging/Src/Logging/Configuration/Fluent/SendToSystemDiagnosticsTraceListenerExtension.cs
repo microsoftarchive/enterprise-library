@@ -21,6 +21,7 @@ using System.Collections.Specialized;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent;
 using Microsoft.Practices.EnterpriseLibrary.Common.Properties;
+using System.Globalization;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 {
@@ -66,7 +67,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
                 if (tracelistenerType == null) throw new ArgumentNullException("tracelistenerType");
 
                 if (!typeof(TraceListener).IsAssignableFrom(tracelistenerType))
-                    throw new ArgumentException(string.Format(Resources.Culture,
+                    throw new ArgumentException(string.Format(CultureInfo.CurrentCulture,
                         Resources.ExceptionTypeMustDeriveFromType, typeof(TraceListener)), "tracelistenerType");
 
                 systemDiagnosticsData.Type = tracelistenerType;

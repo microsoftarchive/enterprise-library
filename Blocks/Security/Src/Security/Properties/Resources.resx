@@ -222,4 +222,7 @@
   <data name="AddCustomAuthorizationProviderDataDescription" xml:space="preserve">
     <value>Add a custom authorization provider by selecting its type.</value>
   </data>
+  <data name="AuthorizationFailed" xml:space="preserve">
+    <value>Authorization failed</value>
+  </data>
 </root>

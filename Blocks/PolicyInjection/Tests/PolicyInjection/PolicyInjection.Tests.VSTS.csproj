@@ -49,6 +49,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
+    <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -57,7 +58,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="APTCAFixture.cs" />
+    <Compile Include="APTCAFixture.2008.cs" />
+    <Compile Include="CallHandlers\PerfCounterForCallHandlerTestsInstaller.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CallHandlers\PerformanceCounterCallHandlerAttributeFixture.cs" />
+    <Compile Include="CallHandlers\PerformanceCounterCallHandlerFixture.cs" />
+    <Compile Include="ConfigFiles\ConfigFileLocator.cs" />
     <Compile Include="Configuration\AssemblyMatchingRuleDataFixture.cs" />
     <Compile Include="Configuration\ConfigurationStructureFixture.cs" />
     <Compile Include="Configuration\CustomAttributeMatchingRuleDataFixture.cs" />
@@ -68,13 +75,16 @@
     <Compile Include="Configuration\MethodSignatureMatchingRuleDataFixture.cs" />
     <Compile Include="Configuration\NamespaceMatchingRuleDataFixture..cs" />
     <Compile Include="Configuration\ParameterTypeMatchingRuleDataFixture.cs" />
+    <Compile Include="Configuration\PerformanceCounterCallHandlerDataFixture.cs" />
     <Compile Include="Configuration\PolicyDataFixture.cs" />
     <Compile Include="Configuration\PolicyInjectionSettingsFixture.cs" />
+    <Compile Include="Configuration\PolicyInjectionSettingsMergeFixture.cs" />
     <Compile Include="Configuration\PolicyInjectionUpdateableSettingsFixture.cs" />
     <Compile Include="Configuration\PropertyMatchingRuleDataFixture.cs" />
     <Compile Include="Configuration\ReturnTypeMatchingRuleDataFixture.cs" />
     <Compile Include="Configuration\TagAttributeMatchingRuleFixture.cs" />
     <Compile Include="Configuration\TypeMatchingRuleDataFixture.cs" />
+    <Compile Include="Installer\PerformanceCountersInstallerFixture.cs" />
     <Compile Include="PolicyInjectorFixture.cs" />
     <Compile Include="RuleCreationFixture.cs" />
     <Compile Include="PolicyInjectionFixture.cs" />
@@ -82,6 +92,10 @@
     <Compile Include="TransparentProxyInjectionMemberFixture.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Validation\Src\Validation\Validation.csproj">
+      <Project>{E814A5DC-C15B-4BA4-AB7C-B7C9A34AC2FD}</Project>
+      <Name>Validation</Name>
+    </ProjectReference>
     <ProjectReference Include="..\PolicyInjection.TestSupport\PolicyInjection.TestSupport.csproj">
       <Project>{EBCB52B8-C189-4958-9BB2-B7670BCB49FB}</Project>
       <Name>PolicyInjection.TestSupport</Name>
@@ -98,10 +112,6 @@
       <Project>{6AC97717-899D-4F72-BC5B-2C37959CD4FF}</Project>
       <Name>Logging</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Src\CallHandlers\PolicyInjection.CallHandlers.csproj">
-      <Project>{88316009-DEDF-434C-A6A8-BE79D8A1B502}</Project>
-      <Name>PolicyInjection.CallHandlers</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Src\PolicyInjection\PolicyInjection.csproj">
       <Project>{3E6129C8-18E4-410D-89FC-0DBBE6009FC5}</Project>
       <Name>PolicyInjection</Name>
@@ -112,6 +122,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <EmbeddedResource Include="ConfigFiles\main.config" />
+    <EmbeddedResource Include="ConfigFiles\subordinate.config" />
     <None Include="OldStyle.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

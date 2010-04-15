@@ -32,7 +32,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
         /// </summary>
         /// <param name="sectionName">The name of the configuran section, used to identify the block dependency.</param>
         public AddSateliteProviderCommandAttribute(string sectionName) 
-            : base(CommonDesignTime.CommandTypeNames.AddSateliteProviderCommand)
+            : base(CommonDesignTime.CommandTypeNames.AddSatelliteProviderCommand)
         {
             if (string.IsNullOrEmpty(sectionName)) 
                 throw new ArgumentException(Resources.ExceptionStringNullOrEmpty, "sectionName");
@@ -43,12 +43,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
         }
 
         /// <summary>
-        /// 
+        /// Initializes a new instance of the <see cref="AddSateliteProviderCommandAttribute"/> specifying the block dependency by its configuration section name and will assign the value of a default provider to the added element.<br/>
         /// </summary>
-        /// <param name="sectionName"></param>
-        /// <param name="defaultProviderConfigurationType"></param>
-        /// <param name="defaultProviderConfigurationPropertyName"></param>
-        /// <param name="sateliteProviderReferencePropertyName"></param>
+        /// <param name="sectionName">The name of the configuran section, used to identify the block dependency.</param>
+        /// <param name="defaultProviderConfigurationType">The configuration type of the element that declares the default proviiders name.</param>
+        /// <param name="defaultProviderConfigurationPropertyName">The property that will be used to determine the name of the default provider.</param>
+        /// <param name="sateliteProviderReferencePropertyName">The property on the created element that will be assigned the name of the default provider.</param>
         public AddSateliteProviderCommandAttribute(string sectionName, Type defaultProviderConfigurationType, string defaultProviderConfigurationPropertyName, string sateliteProviderReferencePropertyName)
             :this(sectionName)
         {
@@ -67,7 +67,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
         }
 
         /// <summary>
-        /// 
+        /// If a configuration element exists that specifies a default property, gets the configuration type of the declaring element.
         /// </summary>
         public Type DefaultProviderConfigurationType
         {
@@ -78,7 +78,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
         }
 
         /// <summary>
-        /// 
+        /// If a configuration element exists that specifies a default property, gets the property that contains the name of the default value.
         /// </summary>
         public string DefaultProviderConfigurationPropertyName
         {
@@ -88,8 +88,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
             }
         }
 
+
         /// <summary>
-        /// 
+        /// If the provider has a property that should be assigned the name of the default provider, gets the name of the property.
         /// </summary>
         public string SateliteProviderReferencePropertyName
         {

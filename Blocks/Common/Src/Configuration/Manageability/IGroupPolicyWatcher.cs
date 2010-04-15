@@ -13,7 +13,7 @@ using System;
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability
 {
     /// <summary>
-    /// Defines a watcher for group policy.
+    /// Defines a watcher for Group Policy.
     /// </summary>
 	public interface IGroupPolicyWatcher : IDisposable
 	{
@@ -23,19 +23,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
 		event GroupPolicyUpdateDelegate GroupPolicyUpdated;
 
         /// <summary>
-        /// Starts watching group policy.
+        /// Starts watching Group Policy.
         /// </summary>
 		void StartWatching();
 
         /// <summary>
-        /// Stops watching group policy.
+        /// Stops watching Group Policy.
         /// </summary>
 		void StopWatching();
 	}
     
     /// <summary>
-    /// The delegate used to update the group policy based on machine.
+    /// The delegate used to update the Group Policy based on machine.
     /// </summary>
-    /// <param name="machine">The machine where group policy is updated.</param>
+    /// <param name="machine">The machine where Group Policy is updated.</param>
 	public delegate void GroupPolicyUpdateDelegate(bool machine);
 }

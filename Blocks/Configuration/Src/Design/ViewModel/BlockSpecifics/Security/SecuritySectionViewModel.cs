@@ -19,9 +19,16 @@ using Microsoft.Practices.EnterpriseLibrary.Security.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls;
 using System.Windows;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics
 {
+#pragma warning disable 1591
+
+    /// <summary>
+    /// This class supports block-specific configuration design-time and is not
+    /// intended to be used directly from your code.
+    /// </summary>
     public class SecuritySectionViewModel : SectionViewModel
     {
         public SecuritySectionViewModel(IUnityContainer builder, string sectionName, ConfigurationSection section)
@@ -35,16 +42,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
             var securityCacheProviders = DescendentElements().Where(x => x.ConfigurationType == typeof(NameTypeConfigurationElementCollection<SecurityCacheProviderData, CustomSecurityCacheProviderData>)).First();
             var authorizationProviders = DescendentElements().Where(x => x.ConfigurationType == typeof(NameTypeConfigurationElementCollection<AuthorizationProviderData, CustomAuthorizationProviderData>)).First();
 
-            return new HorizontalListViewModel(
-                    new HeaderViewModel(authorizationProviders.Name, authorizationProviders.Commands),
-                    new HeaderViewModel("Authorization Rules")
+            return new HorizontalListLayout(
+                    new HeaderLayout(authorizationProviders.Name, authorizationProviders.Commands),
+                    new HeaderLayout(Resources.SecurityAuthorizationRulesHeader)
                 )
                 {
-                    Contained = new TwoVerticalVisualsViewModel(
-                        new ElementListViewModel(authorizationProviders.ChildElements),
-                        new TwoColumnsViewModel(new HeaderedListViewModel(securityCacheProviders), null) { ColumnName = "Column0" }
+                    Contained = new TwoVerticalsLayout(
+                        new ElementListLayout(authorizationProviders.ChildElements),
+                        new HorizontalColumnBindingLayout(new HeaderedListLayout(securityCacheProviders), 0)
                     )
                 };
         }
     }
+#pragma warning restore 1591
 }

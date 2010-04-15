@@ -54,7 +54,7 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="APTCAFixture.cs" />
+    <Compile Include="APTCAFixture.2008.cs" />
     <Compile Include="ConfigurationFixture.cs" />
     <Compile Include="Configuration\ConfigurationSerializationFixture.cs" />
     <Compile Include="Configuration\ConfigurationSourceBuilderExtensionsFixture.cs" />

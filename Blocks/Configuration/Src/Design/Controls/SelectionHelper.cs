@@ -9,29 +9,37 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows.Controls;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
 using System.ComponentModel;
-using System.Windows.Input;
 using System.Windows;
-using System.Windows.Data;
-using System.Windows.Controls.Primitives;
+using System.Windows.Controls;
+using System.Windows.Input;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
+using Microsoft.Practices.Unity.Utility;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls
 {
+
+    /// <summary>
+    /// A utility class that coordinates between an <see cref="ElementViewModel"/> and 
+    /// connections with the user-interface, such as focus and input binding.
+    /// <br/>
+    /// This is used by the design-time infrastructure and is not intended to be used directly from your code.    
+    /// </summary>
     public class SelectionHelper
     {
         private readonly Control control;
         private readonly PropertyChangedEventHandler attachedElementPropertyChangedHandler;
         private ElementViewModel attachedViewModel;
-        
 
+
+        ///<summary>
+        /// Initializes a new instance of <see cref="SelectionHelper"/>.
+        ///</summary>
+        ///<param name="control">The control to coordinate with.</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Validated with Guard class")]
         public SelectionHelper(Control control)
         {
+            Guard.ArgumentNotNull(control, "control");
             this.control = control;
             this.control.GotFocus += new System.Windows.RoutedEventHandler(control_GotFocus);
             this.control.MouseLeftButtonDown += new System.Windows.Input.MouseButtonEventHandler(control_MouseLeftButtonDown);
@@ -56,9 +64,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls
             }
         }
 
-
+        /// <summary>
+        /// Attaches an <see cref="ElementViewModel"/> and begins monitoring for property changes.
+        /// </summary>
+        /// <param name="viewModel">The element to attach.</param>
+        /// <remarks>
+        /// When attached begins monitoring the <see cref="INotifyPropertyChanged.PropertyChanged"/> event of the <see cref="ElementViewModel"/>
+        /// and establishes <see cref="KeyGesture"/> bindings based on the <see cref="ElementViewModel.Commands"/>.
+        /// </remarks>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Validated with Guard class")]
         public void Attach(ElementViewModel viewModel)
         {
+            Guard.ArgumentNotNull(viewModel, "viewModel");
+
             if (attachedViewModel != null)
             {
                 attachedViewModel.PropertyChanged -= attachedElementPropertyChangedHandler;
@@ -66,13 +84,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls
 
             attachedViewModel = viewModel;
             attachedViewModel.PropertyChanged += attachedElementPropertyChangedHandler;
-
             CreateKeyBindings(attachedViewModel);
         }
 
         void control_Loaded(object sender, System.Windows.RoutedEventArgs e)
         {
-            SetFocusIfSelected();   
+            SetFocusIfSelected();
         }
 
         void control_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -100,6 +117,21 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls
                             )
                         );
                 }
+            }
+        }
+
+        /// <summary>
+        /// Clears the attached view model and unhooks the <see cref="UIElement.InputBindings"/>.
+        /// </summary>
+        public void Clear()
+        {
+            if (attachedViewModel != null)
+            {
+                attachedViewModel.PropertyChanged -= attachedElementPropertyChangedHandler;
+
+                control.InputBindings.Clear();
+
+                attachedViewModel = null;
             }
         }
     }

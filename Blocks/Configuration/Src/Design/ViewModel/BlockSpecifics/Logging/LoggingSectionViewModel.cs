@@ -20,19 +20,22 @@ using Microsoft.Practices.Unity;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics
 {
+#pragma warning disable 1591
+    /// <summary>
+    /// This class supports block-specific configuration design-time and is not
+    /// intended to be used directly from your code.
+    /// </summary>
     public class LoggingSectionViewModel : SectionViewModel
     {
         private LoggingSettings loggingSettings;
-        private ElementLookup lookup;
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly")]
         public LoggingSectionViewModel(IUnityContainer builder, string sectionName, ConfigurationSection section)
             : base(builder, sectionName, section)
         {
             if (section as LoggingSettings == null) throw new ArgumentException("section");
 
             loggingSettings = section as LoggingSettings;
-            lookup = builder.Resolve<ElementLookup>();
-
 
             loggingSettings.SpecialTraceSources.AllEventsTraceSource.Name = "All Events";
             loggingSettings.SpecialTraceSources.ErrorsTraceSource.Name = "Logging Errors & Warnings";
@@ -46,16 +49,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
 
             if (typeof (TraceSourceData).IsAssignableFrom(element.ConfigurationType))
             {
-                var listenerNames =
+                var listenerReferenceNames =
                     element.DescendentElements(x => x.ConfigurationType == typeof (TraceListenerReferenceData))
-                        .Select(x => x.Name)
+                        .Select(x => x.NamePropertyInternalValue)
                         .ToArray();
 
                 var actualListeners =
                     DescendentElements(
                         x =>
                         typeof (TraceListenerData).IsAssignableFrom(x.ConfigurationType) &&
-                        listenerNames.Contains(x.Name));
+                        listenerReferenceNames.Contains(x.NamePropertyInternalValue));
 
                 related.AddRange(actualListeners);
             }
@@ -66,8 +69,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
                 {
                     var sourceTraceListenerReferences =
                         source.DescendentElements(x => typeof (TraceListenerReferenceData) == x.ConfigurationType);
+
                     var sourceTraceListenerReferencesThatMatchMe =
-                        sourceTraceListenerReferences.Where(x => x.Name == element.Name);
+                        sourceTraceListenerReferences.Select(x => x.Property("Name")).
+                                                      Cast<ElementReferenceProperty>().
+                                                      Where(x => x.ReferencedElement != null && x.ReferencedElement.ElementId == element.ElementId);
 
                     if (sourceTraceListenerReferencesThatMatchMe.Any())
                     {
@@ -99,14 +105,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
                     x.ConfigurationType ==
                     typeof (NameTypeConfigurationElementCollection<LogFilterData, CustomLogFilterData>)).First();
 
-            return new HorizontalListViewModel(
-                new TwoVerticalVisualsViewModel(
-                    new HeaderedListViewModel(traceSources),
-                    new TwoVerticalVisualsViewModel(
-                        new HeaderedListViewModel(specialTraceSources, Enumerable.Empty<CommandModel>()),
-                        new HeaderedListViewModel(categoryFilters))),
-                new HeaderedListViewModel(traceListeners),
-                new HeaderedListViewModel(formatters));
+            return new HorizontalListLayout(
+                new TwoVerticalsLayout(
+                    new HeaderedListLayout(traceSources),
+                    new TwoVerticalsLayout(
+                        new HeaderedListLayout(specialTraceSources, Enumerable.Empty<CommandModel>()),
+                        new HeaderedListLayout(categoryFilters))),
+                new HeaderedListLayout(traceListeners),
+                new HeaderedListLayout(formatters));
         }
     }
+#pragma warning restore 1591
 }

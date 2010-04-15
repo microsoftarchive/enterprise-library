@@ -68,10 +68,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
             get { return null; }
         }
 
-        #region test only properties
-
         /// <summary>
-        /// 
+        /// The children of this validator that are run with tthe results anded together.
         /// </summary>
         public IEnumerable<Validator> Validators
         {
@@ -80,7 +78,5 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
                 return this.validators;
             }
         }
-
-        #endregion
     }
 }

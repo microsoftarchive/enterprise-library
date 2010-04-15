@@ -48,6 +48,7 @@ using System.Configuration;
 [assembly: AssemblyFileVersion("1.0.0.0")]
 
 [assembly: HandlesSection("testSection")]
+[assembly: HandlesSection("clearOnlySection", ClearOnly = true)]
 
 
 public class TestSection : ConfigurationSection

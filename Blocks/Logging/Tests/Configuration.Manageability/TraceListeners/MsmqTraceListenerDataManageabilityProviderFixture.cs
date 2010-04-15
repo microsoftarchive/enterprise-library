@@ -29,7 +29,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
     {
         MsmqTraceListenerDataManageabilityProvider provider;
         MockRegistryKey machineKey;
+        MockRegistryKey machineOptionsKey;
         MockRegistryKey userKey;
+        MockRegistryKey userOptionsKey;
         MsmqTraceListenerData configurationObject;
 
         [TestInitialize]
@@ -37,7 +39,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         {
             provider = new MsmqTraceListenerDataManageabilityProvider();
             machineKey = new MockRegistryKey(true);
+            machineOptionsKey = new MockRegistryKey(false);
             userKey = new MockRegistryKey(true);
+            userOptionsKey = new MockRegistryKey(false);
             configurationObject = new MsmqTraceListenerData();
         }
 
@@ -123,12 +127,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             machineKey.AddBooleanValue(MsmqTraceListenerDataManageabilityProvider.RecoverablePropertyName, false);
             machineKey.AddStringValue(MsmqTraceListenerDataManageabilityProvider.TimeToBeReceivedPropertyName, Convert.ToString(TimeSpan.FromSeconds(100), CultureInfo.CurrentCulture));
             machineKey.AddStringValue(MsmqTraceListenerDataManageabilityProvider.TimeToReachQueuePropertyName, Convert.ToString(TimeSpan.FromSeconds(200), CultureInfo.CurrentCulture));
-            machineKey.AddStringValue(MsmqTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, "ProcessId, ThreadId");
             machineKey.AddStringValue(MsmqTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
             machineKey.AddStringValue(MsmqTraceListenerDataManageabilityProvider.TransactionTypePropertyName, MessageQueueTransactionType.Single.ToString());
             machineKey.AddBooleanValue(MsmqTraceListenerDataManageabilityProvider.UseAuthenticationPropertyName, true);
             machineKey.AddBooleanValue(MsmqTraceListenerDataManageabilityProvider.UseDeadLetterQueuePropertyName, false);
             machineKey.AddBooleanValue(MsmqTraceListenerDataManageabilityProvider.UseEncryptionPropertyName, true);
+            machineKey.AddSubKey(MsmqTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, machineOptionsKey);
+            machineOptionsKey.AddIntValue(TraceOptions.ProcessId.ToString(), 1);
+            machineOptionsKey.AddIntValue(TraceOptions.ThreadId.ToString(), 1);
 
             provider.OverrideWithGroupPolicies(configurationObject, true, machineKey, null);
 
@@ -155,7 +161,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             configurationObject.Recoverable = true;
             configurationObject.TimeToBeReceived = TimeSpan.MaxValue;
             configurationObject.TimeToReachQueue = TimeSpan.MinValue;
-            configurationObject.TraceOutputOptions = TraceOptions.None;
+            configurationObject.TraceOutputOptions = TraceOptions.Callstack;
             configurationObject.Filter = SourceLevels.Error;
             configurationObject.TransactionType = MessageQueueTransactionType.None;
             configurationObject.UseAuthentication = false;
@@ -168,7 +174,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             userKey.AddBooleanValue(MsmqTraceListenerDataManageabilityProvider.RecoverablePropertyName, false);
             userKey.AddStringValue(MsmqTraceListenerDataManageabilityProvider.TimeToBeReceivedPropertyName, Convert.ToString(TimeSpan.FromSeconds(100), CultureInfo.CurrentCulture));
             userKey.AddStringValue(MsmqTraceListenerDataManageabilityProvider.TimeToReachQueuePropertyName, Convert.ToString(TimeSpan.FromSeconds(200), CultureInfo.CurrentCulture));
-            userKey.AddStringValue(MsmqTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, "ProcessId, ThreadId");
             userKey.AddStringValue(MsmqTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
             userKey.AddStringValue(MsmqTraceListenerDataManageabilityProvider.TransactionTypePropertyName, MessageQueueTransactionType.Single.ToString());
             userKey.AddBooleanValue(MsmqTraceListenerDataManageabilityProvider.UseAuthenticationPropertyName, true);
@@ -183,7 +188,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             Assert.AreEqual(false, configurationObject.Recoverable);
             Assert.AreEqual(TimeSpan.FromSeconds(100), configurationObject.TimeToBeReceived);
             Assert.AreEqual(TimeSpan.FromSeconds(200), configurationObject.TimeToReachQueue);
-            Assert.AreEqual(TraceOptions.ProcessId | TraceOptions.ThreadId, configurationObject.TraceOutputOptions);
+            Assert.AreEqual(TraceOptions.None, configurationObject.TraceOutputOptions);
             Assert.AreEqual(SourceLevels.Critical, configurationObject.Filter);
             Assert.AreEqual(MessageQueueTransactionType.Single, configurationObject.TransactionType);
             Assert.AreEqual(true, configurationObject.UseAuthentication);
@@ -258,7 +263,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             machineKey.AddBooleanValue(MsmqTraceListenerDataManageabilityProvider.RecoverablePropertyName, false);
             machineKey.AddStringValue(MsmqTraceListenerDataManageabilityProvider.TimeToBeReceivedPropertyName, "invalid");
             machineKey.AddStringValue(MsmqTraceListenerDataManageabilityProvider.TimeToReachQueuePropertyName, "invalid");
-            machineKey.AddStringValue(MsmqTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, "ProcessId, ThreadId");
             machineKey.AddStringValue(MsmqTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
             machineKey.AddStringValue(MsmqTraceListenerDataManageabilityProvider.TransactionTypePropertyName, MessageQueueTransactionType.Single.ToString());
             machineKey.AddBooleanValue(MsmqTraceListenerDataManageabilityProvider.UseAuthenticationPropertyName, true);
@@ -383,10 +387,40 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
                             partsEnumerator.Current.ValueName);
 
             Assert.IsTrue(partsEnumerator.MoveNext());
-            Assert.AreSame(typeof(AdmDropDownListPart), partsEnumerator.Current.GetType());
+            Assert.AreSame(typeof(AdmTextPart), partsEnumerator.Current.GetType());
             Assert.IsNull(partsEnumerator.Current.KeyName);
-            Assert.AreEqual(MsmqTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName,
-                            partsEnumerator.Current.ValueName);
+            Assert.IsNull(partsEnumerator.Current.ValueName);
+
+            // trace output options checkboxes
+            Assert.IsTrue(partsEnumerator.MoveNext());
+            Assert.AreSame(typeof(AdmCheckboxPart), partsEnumerator.Current.GetType());
+            Assert.IsNotNull(partsEnumerator.Current.KeyName);
+            Assert.AreEqual("LogicalOperationStack", partsEnumerator.Current.ValueName);
+
+            Assert.IsTrue(partsEnumerator.MoveNext());
+            Assert.AreSame(typeof(AdmCheckboxPart), partsEnumerator.Current.GetType());
+            Assert.IsNotNull(partsEnumerator.Current.KeyName);
+            Assert.AreEqual("DateTime", partsEnumerator.Current.ValueName);
+
+            Assert.IsTrue(partsEnumerator.MoveNext());
+            Assert.AreSame(typeof(AdmCheckboxPart), partsEnumerator.Current.GetType());
+            Assert.IsNotNull(partsEnumerator.Current.KeyName);
+            Assert.AreEqual("Timestamp", partsEnumerator.Current.ValueName);
+
+            Assert.IsTrue(partsEnumerator.MoveNext());
+            Assert.AreSame(typeof(AdmCheckboxPart), partsEnumerator.Current.GetType());
+            Assert.IsNotNull(partsEnumerator.Current.KeyName);
+            Assert.AreEqual("ProcessId", partsEnumerator.Current.ValueName);
+
+            Assert.IsTrue(partsEnumerator.MoveNext());
+            Assert.AreSame(typeof(AdmCheckboxPart), partsEnumerator.Current.GetType());
+            Assert.IsNotNull(partsEnumerator.Current.KeyName);
+            Assert.AreEqual("ThreadId", partsEnumerator.Current.ValueName);
+
+            Assert.IsTrue(partsEnumerator.MoveNext());
+            Assert.AreSame(typeof(AdmCheckboxPart), partsEnumerator.Current.GetType());
+            Assert.IsNotNull(partsEnumerator.Current.KeyName);
+            Assert.AreEqual("Callstack", partsEnumerator.Current.ValueName);
 
             Assert.IsTrue(partsEnumerator.MoveNext());
             Assert.AreSame(typeof(AdmDropDownListPart), partsEnumerator.Current.GetType());

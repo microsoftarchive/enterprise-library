@@ -13,11 +13,21 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Practices.Unity;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services
 {
+    /// <summary>
+    /// Service class used to receive an event if the designers content is cleared, e.g. if the user opens a new configuration file.
+    /// </summary>
+    /// <remarks>
+    /// In order to get an instance of this class, declare it as a constructor argument on the consuming component or use the <see cref="IUnityContainer"/> to obtain an instance from code.
+    /// </remarks>
     public class ConfigurationSourceDependency
     {
+        /// <summary>
+        /// Raises the <see cref="Cleared"/> event.
+        /// </summary>
         public void OnCleared()
         {
             var handler = Cleared;
@@ -27,6 +37,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.S
             }
         }
 
+        /// <summary>
+        /// Occurs when the designers content is cleared, e.g. if the user opens a new configuration file.
+        /// </summary>
         public event EventHandler Cleared;
 
 

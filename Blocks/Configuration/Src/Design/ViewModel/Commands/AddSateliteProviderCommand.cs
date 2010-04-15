@@ -9,11 +9,9 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Configuration.Design.HostAdapterV5;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Commands
@@ -22,33 +20,40 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.C
     /// Command Model implementation that will add a provider to the designer and ensures that its block dependency is available.<br/>
     /// This Command Model can be used by annotating a providers configuration element with the <see cref="AddSateliteProviderCommandAttribute"/> attribute.<br/>
     /// </summary>
-    public class AddSateliteProviderCommand : DefaultCollectionElementAddCommand
+    public class AddSatelliteProviderCommand : DefaultCollectionElementAddCommand
     {
         readonly MenuCommandService commandService;
         readonly AddSateliteProviderCommandAttribute commandAttribute;
         readonly ElementLookup lookup;
 
         /// <summary>
-        /// Intializes a new instance of the <see cref="AddSateliteProviderCommand"/> class.
+        /// Initializes a new instance of the <see cref="AddSatelliteProviderCommand"/> class.
         /// </summary>
         /// <remarks>
-        /// This class is intended to be intialized by the <see cref="SectionViewModel.CreateElementCollectionAddCommands"/>.
+        /// This class is intended to be initialized by the <see cref="SectionViewModel.CreateElementCollectionAddCommands"/>.
         /// </remarks>
-        /// <param name="commandAttribute">The <see cref="AddSateliteProviderCommandAttribute"/> that specifes metadata for this <see cref="AddSateliteProviderCommand"/> to be initialized with.</param>
+        /// <param name="commandAttribute">The <see cref="AddSateliteProviderCommandAttribute"/> that specifes metadata for this <see cref="AddSatelliteProviderCommand"/> to be initialized with.</param>
         /// <param name="collection"></param>
         /// <param name="commandService"></param>
         /// <param name="configurationElementType"></param>
-        public AddSateliteProviderCommand(AddSateliteProviderCommandAttribute commandAttribute, MenuCommandService commandService, ConfigurationElementType configurationElementType, ElementCollectionViewModel collection, ElementLookup lookup)
-            : base(commandAttribute, configurationElementType, collection)
+        /// <param name="lookup"></param>
+        /// <param name="uiService"></param>
+        public AddSatelliteProviderCommand(AddSateliteProviderCommandAttribute commandAttribute, MenuCommandService commandService, ConfigurationElementType configurationElementType, ElementCollectionViewModel collection, ElementLookup lookup, IUIServiceWpf uiService)
+            : base(commandAttribute, configurationElementType, collection, uiService)
         {
             this.commandService = commandService;
             this.commandAttribute = commandAttribute;
             this.lookup = lookup;
         }
 
-        public override void Execute(object parameter)
+        /// <summary>
+        /// The method invoked during execution.
+        /// </summary>
+        /// <param name="parameter">Data used by the command.  If the command does not require data to be passed, this object can be set to null.
+        ///                 </param>
+        protected override void InnerExecute(object parameter)
         {
-            base.Execute(parameter);
+            base.InnerExecute(parameter);
 
             commandService.ExecuteAddBlockForSection(commandAttribute.SectionName);
 
@@ -57,8 +62,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.C
                 var declaringElement = lookup.FindInstancesOfConfigurationType(commandAttribute.DefaultProviderConfigurationType).FirstOrDefault();
                 if (declaringElement != null)
                 {
-                    string defaultProvider = declaringElement.Property(commandAttribute.DefaultProviderConfigurationPropertyName).BindableProperty.BindableValue;
-                    AddedElementViewModel.Property(commandAttribute.SateliteProviderReferencePropertyName).BindableProperty.BindableValue = defaultProvider;
+                    object defaultProviderValue = declaringElement.Property(commandAttribute.DefaultProviderConfigurationPropertyName).Value;
+                    AddedElementViewModel.Property(commandAttribute.SateliteProviderReferencePropertyName).Value = defaultProviderValue;
                 }
             }
         }

@@ -32,7 +32,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Unity
         /// </summary>
         /// <remarks>
         /// When overridden in a derived class, this method will modify the given
-        ///             <see cref="T:Microsoft.Practices.Unity.ExtensionContext"/> by adding strategies, policies, etc. to
+        ///             <see cref="T:Microsoft.Practices.Unity.ExtensionContext"/> by adding strategies, policies, and so forth. to
         ///             install it's functions into the container.
         /// </remarks>
         protected override void Initialize()

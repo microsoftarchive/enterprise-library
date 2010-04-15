@@ -73,7 +73,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverr
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 195 - Represents a configuration section that contains the difference (or delta) between two deployable configuration files..
+        ///   Looks up a localized string similar to Represents a configuration section that contains the difference (or delta) between two deployable configuration files..
         /// </summary>
         internal static string EnvironmentMergeSectionDescription {
             get {
@@ -91,7 +91,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverr
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 197 - The path to the deployable configuration that can be generated from this configuration..
+        ///   Looks up a localized string similar to The path to the deployable configuration that can be generated from this configuration..
         /// </summary>
         internal static string EnvironmentMergeSectionEnvironmentDeltaFileDescription {
             get {
@@ -118,7 +118,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverr
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 199 - The name of the environment..
+        ///   Looks up a localized string similar to The name of the environment..
         /// </summary>
         internal static string EnvironmentMergeSectionEnvironmentNameDescription {
             get {
@@ -136,7 +136,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverr
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 201 - A collection of elements that will be merged to create the final configuration..
+        ///   Looks up a localized string similar to A collection of elements that will be merged to create the final configuration..
         /// </summary>
         internal static string EnvironmentMergeSectionMergeElementsDescription {
             get {
@@ -154,7 +154,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverr
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 211 - A collection of Environment Node Merge elements..
+        ///   Looks up a localized string similar to A collection of Environment Node Merge elements..
         /// </summary>
         internal static string EnvironmentNodeMergeElementCollectionDescription {
             get {
@@ -172,7 +172,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverr
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 205 - The path to the configuration node to which the overridden settings apply..
+        ///   Looks up a localized string similar to The path to the configuration node to which the overridden settings apply..
         /// </summary>
         internal static string EnvironmentNodeMergeElementConfigurationNodePathDescription {
             get {
@@ -190,7 +190,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverr
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 203 - The overridden configuration settings for one specific configuration node..
+        ///   Looks up a localized string similar to The overridden configuration settings for one specific configuration node..
         /// </summary>
         internal static string EnvironmentNodeMergeElementDescription {
             get {
@@ -208,7 +208,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverr
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 207 - A collection of overridden settings, indexed by the name of the setting that should apply at designtime..
+        ///   Looks up a localized string similar to A collection of overridden settings, indexed by the name of the setting that should apply at design time..
         /// </summary>
         internal static string EnvironmentNodeMergeElementOverriddenPropertiesDescription {
             get {
@@ -226,7 +226,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverr
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 209 - Determines if the settings in this configuration element will override the main configurations settings at design time..
+        ///   Looks up a localized string similar to Determines if the settings in this configuration element will override the main configurations settings at design time..
         /// </summary>
         internal static string EnvironmentNodeMergeElementOverridePropertiesDescription {
             get {
@@ -240,6 +240,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverr
         internal static string EnvironmentNodeMergeElementOverridePropertiesDisplayName {
             get {
                 return ResourceManager.GetString("EnvironmentNodeMergeElementOverridePropertiesDisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Environment Delta File.
+        /// </summary>
+        internal static string OverridesDeltaFileDisplayName {
+            get {
+                return ResourceManager.GetString("OverridesDeltaFileDisplayName", resourceCulture);
             }
         }
     }

@@ -10,67 +10,123 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Drawing.Design;
+using System.Security.Permissions;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Forms;
 using System.Windows.Forms.Design;
 using System.Windows.Forms.Integration;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
-using System.ComponentModel;
-using Winforms=System.Windows.Forms;
-using System.Windows.Controls;
-using System.Windows.Forms;
+using Microsoft.Practices.Unity.Utility;
+using Winforms = System.Windows.Forms;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Hosting
 {
-    public class FrameworkElementUITypeEditor : UITypeEditor
+    /// <summary>
+    /// <see cref="UITypeEditor"/> implementation that allows to edit an component's value using a <see cref="FrameworkElement"/>.
+    /// </summary>
+    /// <seealso cref="Property"/>
+    /// <seealso cref="BindableProperty"/>
+    [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]        
+    public class FrameworkElementUITypeEditor : UITypeEditor, IDisposable
     {
-        Property property;
-        Winforms.UserControl hosthost;
-        ElementHost host;
-        ScrollViewer scrollViewer;
+        readonly Winforms.UserControl hostContainer;
+        readonly ElementHost host;
+        readonly ScrollViewer scrollViewer;
+        private readonly Property property;
 
-        public FrameworkElementUITypeEditor(Property property)
+        /// <summary>
+        /// Initializes a new instance of <see cref="FrameworkElementUITypeEditor"/>.
+        /// </summary>
+        /// <param name="property">The <see cref="Property"/> instance that should be edited.</param>
+        /// <param name="bindableProperty">The <see cref="FrameworkEditorBindableProperty"/> instance that contains the UI interaction logic for <paramref name="property"/>.</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Validated with Guard class")]
+        public FrameworkElementUITypeEditor(Property property, FrameworkEditorBindableProperty bindableProperty)
         {
+            Guard.ArgumentNotNull(bindableProperty, "bindableProperty");
+
             this.property = property;
 
-
-            var editor = property.Attributes.OfType<EditorAttribute>().Where(x => Type.GetType(x.EditorBaseTypeName) == typeof(FrameworkElement)).FirstOrDefault();
-
-            Type editorType = Type.GetType(editor.EditorTypeName);
-            FrameworkElement editorInstance = property.CreateCustomVisual();
-            editorInstance.DataContext = property;
+            FrameworkElement editorInstance = bindableProperty.CreateEditorInstance();
+            editorInstance.DataContext = bindableProperty;
             scrollViewer = new ScrollViewer { HorizontalAlignment = System.Windows.HorizontalAlignment.Stretch, VerticalAlignment = VerticalAlignment.Stretch };
             scrollViewer.Content = editorInstance;
             host = new ElementHost { Child = scrollViewer, Dock = DockStyle.Fill };
 
-            host.Resize += new EventHandler(host_Resize);
-            hosthost = new Winforms.UserControl();
-            hosthost.Controls.Add(host);
+            host.Resize += HostResize;
+            hostContainer = new Winforms.UserControl();
+            hostContainer.Controls.Add(host);
         }
 
-        void host_Resize(object sender, EventArgs e)
+        void HostResize(object sender, EventArgs e)
         {
             scrollViewer.UpdateLayout();
         }
 
+        /// <summary>
+        /// Gets a value indicating whether drop-down editors should be resizable by the user.
+        /// </summary>
+        /// <value>
+        /// Always returns <see langword="true"/>.
+        /// </value>
         public override bool IsDropDownResizable
         {
             get { return true; }
         }
 
+        /// <summary>
+        /// Gets the editor style used by the <see cref="EditValue"/>  method.
+        /// </summary>
+        /// <returns>Always returns <see cref="UITypeEditorEditStyle.DropDown"/>.</returns>
         public override UITypeEditorEditStyle GetEditStyle(System.ComponentModel.ITypeDescriptorContext context)
         {
             return UITypeEditorEditStyle.DropDown;
         }
 
+        /// <summary>
+        /// Displays the editor, a <see cref="FrameworkElement"/>, and returns the value provided by the user.
+        /// </summary>
+        /// <param name="context">An <see cref="System.ComponentModel.ITypeDescriptorContext" /> instance that can be used to gain additional context information on the property being edited.</param>
+        /// <param name="provider">An <see cref="IServiceProvider"/> that this editor can use to obtain services.</param>
+        /// <param name="value">The value to edit.</param>
+        /// <returns>The value provided by the user.</returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Validated with Guard class")]
         public override object EditValue(System.ComponentModel.ITypeDescriptorContext context, IServiceProvider provider, object value)
         {
+            Guard.ArgumentNotNull(provider, "provider");
+
             IWindowsFormsEditorService editorSvc = (IWindowsFormsEditorService)provider.GetService(typeof(IWindowsFormsEditorService));
-            editorSvc.DropDownControl(hosthost);
-            return context.PropertyDescriptor.GetValue(property);    
+            editorSvc.DropDownControl(hostContainer);
+            return context.PropertyDescriptor.GetValue(property);
         }
+
+        #region IDisposable Members
+
+        /// <summary>
+        /// Releases the unmanaged resources used by the <see cref="FrameworkElementUITypeEditor"/> and optionally releases the managed resources.
+        /// </summary>
+        /// <param name="disposing"><see langword="true"/> to release both managed and unmanaged resources; <see langword="false"/> to release only unmanaged resources. </param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                host.Resize -= HostResize;
+                host.Dispose();
+
+                hostContainer.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// Releases all resources used by the <see cref="FrameworkElementUITypeEditor"/>.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        #endregion
     }
 }

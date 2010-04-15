@@ -124,181 +124,224 @@
     <value>Custom Handler (using type picker)</value>
   </data>
   <data name="CustomHandlerDataDescription" xml:space="preserve">
-    <value>241 - An Exception Handler implemented as a custom class added to Enterprise Library.</value>
+    <value>An Exception Handler implemented as a custom class added to Enterprise Library.</value>
   </data>
   <data name="CustomHandlerDataDisplayName" xml:space="preserve">
     <value>Custom Exception Handler</value>
   </data>
   <data name="CustomHandlerDataNameDescription" xml:space="preserve">
-    <value>243 - The name of the Custom Exception Handler.</value>
+    <value>The name of the Custom Exception Handler.</value>
   </data>
   <data name="CustomHandlerDataNameDisplayName" xml:space="preserve">
     <value>Name</value>
   </data>
   <data name="CustomHandlerDataTypeNameDescription" xml:space="preserve">
-    <value>245 - The fully qualified type name of the Custom Exception Handler.</value>
+    <value>The fully qualified type name of the Custom Exception Handler.</value>
   </data>
   <data name="CustomHandlerDataTypeNameDisplayName" xml:space="preserve">
     <value>Type</value>
   </data>
+  <data name="ExceptionCallHandlerDataDescription" xml:space="preserve">
+    <value>A Call Handler that provides the capability to manage and process exceptions in a standard way. 
+This handler uses the Exception Handling Application Block to handle exceptions raised by the target object.</value>
+  </data>
+  <data name="ExceptionCallHandlerDataDisplayName" xml:space="preserve">
+    <value>Exception Handling Call Handler</value>
+  </data>
+  <data name="ExceptionCallHandlerDataExceptionPolicyNameDescription" xml:space="preserve">
+    <value>The name of the exception handling policy to use, as configured in the Exception Handling Application Block.</value>
+  </data>
+  <data name="ExceptionCallHandlerDataExceptionPolicyNameDisplayName" xml:space="preserve">
+    <value>Exception Policy Name</value>
+  </data>
+  <data name="ExceptionCallHandlerDataNameDescription" xml:space="preserve">
+    <value>The name of the Exception Handling Call Handler.</value>
+  </data>
+  <data name="ExceptionCallHandlerDataNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="ExceptionCallHandlerDataOrderDescription" xml:space="preserve">
+    <value>The position of the handler within the policy handler chain, starting from 1. 
+The default value is zero, which means that there is no explicit order specified for the handler in relation to other 
+handlers in the same handler chain.</value>
+  </data>
+  <data name="ExceptionCallHandlerDataOrderDisplayName" xml:space="preserve">
+    <value>Order</value>
+  </data>
+  <data name="ExceptionCallHandlerDataTypeNameDescription" xml:space="preserve">
+    <value>The fully qualified type name of the Exception Handling Call Handler.</value>
+  </data>
+  <data name="ExceptionCallHandlerDataTypeNameDisplayName" xml:space="preserve">
+    <value>Type</value>
+  </data>
   <data name="ExceptionHandlerDataDescription" xml:space="preserve">
-    <value>247 - Handles an exception passed to the block and performs an action on it, such as wrapping or logging it, and then passes it on to the next exception handler or returns it to the caller.</value>
+    <value>Handles an exception passed to the block and performs an action on it, such as wrapping or logging it, 
+and then passes it on to the next exception handler or returns it to the caller.</value>
   </data>
   <data name="ExceptionHandlerDataDisplayName" xml:space="preserve">
     <value>Exception Handler</value>
   </data>
   <data name="ExceptionHandlerDataNameDescription" xml:space="preserve">
-    <value>249 - The name of the Exception Handler.</value>
+    <value>The name of the Exception Handler.</value>
   </data>
   <data name="ExceptionHandlerDataNameDisplayName" xml:space="preserve">
     <value>Name</value>
   </data>
   <data name="ExceptionHandlerDataTypeNameDescription" xml:space="preserve">
-    <value>251 - The fully qualified type name of the Exception Handler.</value>
+    <value>The fully qualified type name of the Exception Handler.</value>
   </data>
   <data name="ExceptionHandlerDataTypeNameDisplayName" xml:space="preserve">
     <value>Type</value>
   </data>
   <data name="ExceptionHandlingSettingsDescription" xml:space="preserve">
-    <value>253 - Configuration settings for the Exception Handling Application Block.</value>
+    <value>Configuration settings for the Exception Handling Application Block.</value>
   </data>
   <data name="ExceptionHandlingSettingsDisplayName" xml:space="preserve">
     <value>Exception Handling Settings</value>
   </data>
   <data name="ExceptionHandlingSettingsExceptionPoliciesDescription" xml:space="preserve">
-    <value>255 - Configuration settings for all Exception Handling Policies.</value>
+    <value>Configuration settings for all Exception Handling Policies.</value>
   </data>
   <data name="ExceptionHandlingSettingsExceptionPoliciesDisplayName" xml:space="preserve">
     <value>Policies</value>
   </data>
   <data name="ExceptionPolicyDataDescription" xml:space="preserve">
-    <value>257 - A policy defines the exceptions it will handle, and the set of Exception Handlers that it will execute when one of the specified exceptions is passed to the block.</value>
+    <value>A policy defines the exceptions it will handle, and the set of Exception Handlers that it will execute when 
+one of the specified exceptions is passed to the block.</value>
   </data>
   <data name="ExceptionPolicyDataDisplayName" xml:space="preserve">
     <value>Policy</value>
   </data>
   <data name="ExceptionPolicyDataExceptionTypesDescription" xml:space="preserve">
-    <value>259 - The Exception types configured for the Exception Handling Block.</value>
+    <value>The Exception types configured for the Exception Handling Block.</value>
   </data>
   <data name="ExceptionPolicyDataExceptionTypesDisplayName" xml:space="preserve">
     <value>Exception Types</value>
   </data>
   <data name="ExceptionPolicyDataNameDescription" xml:space="preserve">
-    <value>261 - The name of the Exception Handling Policy.</value>
+    <value>The name of the Exception Handling Policy.</value>
   </data>
   <data name="ExceptionPolicyDataNameDisplayName" xml:space="preserve">
     <value>Name</value>
   </data>
   <data name="ExceptionTypeDataDescription" xml:space="preserve">
-    <value>263 - Each Exception Type configured for a policy can specify a series of Exception Handlers that will execute when a exception of the specified type is sent to the blcok for handling by this policy.</value>
+    <value>Each Exception Type configured for a policy can specify a series of Exception Handlers that will 
+execute when an exception of the specified type is sent to the block for handling by this policy.</value>
   </data>
   <data name="ExceptionTypeDataDisplayName" xml:space="preserve">
     <value>Exception Type</value>
   </data>
   <data name="ExceptionTypeDataExceptionHandlersDescription" xml:space="preserve">
-    <value>265 - The Exception Handlers configured for this Exception type.</value>
+    <value>The Exception Handlers configured for this Exception type.</value>
   </data>
   <data name="ExceptionTypeDataExceptionHandlersDisplayName" xml:space="preserve">
     <value>Handlers</value>
   </data>
   <data name="ExceptionTypeDataNameDescription" xml:space="preserve">
-    <value>267 - The name of the Exception.</value>
+    <value>The name of the Exception.</value>
   </data>
   <data name="ExceptionTypeDataNameDisplayName" xml:space="preserve">
     <value>Name</value>
   </data>
   <data name="ExceptionTypeDataPostHandlingActionDescription" xml:space="preserve">
-    <value>269 - The action the ExceptionHandling Block will take after executing all of the handlers for this Exception type.  None means that the block will return false to the application allowing it to  resume execution. NotifyRethrow means that the block will return true to the application, which should re-throw the original exception. ThrowNewException means that the block will throw the exception that exists after the final handler runs. However, if you use the overload of the HandleException method that takes an out parameter that returns the final exception from the handlers, it does not automatically throw the exception, and you must do this in your code.</value>
+    <value>The action the Exception Handling Block will take after executing all of the handlers for this Exception type.  
+None means that the block will return false to the application allowing it to resume execution. 
+NotifyRethrow means that the block will return true to the application, which should re-throw the original exception.
+ThrowNewException means that the block will throw the exception that exists after the final handler runs. 
+However, if you use the overload of the HandleException method that takes an out parameter that returns the final exception from the handlers, 
+it does not automatically throw the exception, and you must do this in your code.</value>
   </data>
   <data name="ExceptionTypeDataPostHandlingActionDisplayName" xml:space="preserve">
     <value>Post handling action</value>
   </data>
   <data name="ExceptionTypeDataTypeNameDescription" xml:space="preserve">
-    <value>271 - The fully qualified type name of the Exception.</value>
+    <value>The fully qualified type name of the Exception.</value>
   </data>
   <data name="ExceptionTypeDataTypeNameDisplayName" xml:space="preserve">
     <value>Type name</value>
   </data>
   <data name="ReplaceHandlerDataDescription" xml:space="preserve">
-    <value>273 - Replaces the exception sent to the block with another exception type. The message can be specified for the replacement exception type.</value>
+    <value>Replaces the exception sent to the block with another exception type. 
+The message can be specified for the replacement exception type.</value>
   </data>
   <data name="ReplaceHandlerDataDisplayName" xml:space="preserve">
     <value>Replace Handler</value>
   </data>
   <data name="ReplaceHandlerDataExceptionMessageDescription" xml:space="preserve">
-    <value>275 - The message for the replacement exception.</value>
+    <value>The message for the replacement exception.</value>
   </data>
   <data name="ReplaceHandlerDataExceptionMessageDisplayName" xml:space="preserve">
     <value>Exception Message</value>
   </data>
   <data name="ReplaceHandlerDataExceptionMessageResourceNameDescription" xml:space="preserve">
-    <value>277 - The key in an external resource file for the localized string to use as the message for the replacement exception. </value>
+    <value>The key in an external resource file for the localized string to use as the message for the replacement exception. </value>
   </data>
   <data name="ReplaceHandlerDataExceptionMessageResourceNameDisplayName" xml:space="preserve">
     <value>Message Resource Name</value>
   </data>
   <data name="ReplaceHandlerDataExceptionMessageResourceTypeDescription" xml:space="preserve">
-    <value>279 - The type of the external resource file containing the localized string to use as the message for the replacement exception. </value>
+    <value>The type of the external resource file containing the localized string to use as the message for the replacement exception. </value>
   </data>
   <data name="ReplaceHandlerDataExceptionMessageResourceTypeDisplayName" xml:space="preserve">
     <value>Message Resource Type</value>
   </data>
   <data name="ReplaceHandlerDataNameDescription" xml:space="preserve">
-    <value>281 - The name of the Replace Exception Handler.</value>
+    <value>The name of the Replace Exception Handler.</value>
   </data>
   <data name="ReplaceHandlerDataNameDisplayName" xml:space="preserve">
     <value>Name</value>
   </data>
   <data name="ReplaceHandlerDataReplaceExceptionTypeNameDescription" xml:space="preserve">
-    <value>283 - The fully qualified type name of the replacement exception.</value>
+    <value>The fully qualified type name of the replacement exception.</value>
   </data>
   <data name="ReplaceHandlerDataReplaceExceptionTypeNameDisplayName" xml:space="preserve">
     <value>Replace Exception Type </value>
   </data>
   <data name="ReplaceHandlerDataTypeNameDescription" xml:space="preserve">
-    <value>285 - The fully qualified type name of the Replace Exception Handler.</value>
+    <value>The fully qualified type name of the Replace Exception Handler.</value>
   </data>
   <data name="ReplaceHandlerDataTypeNameDisplayName" xml:space="preserve">
     <value>Type</value>
   </data>
   <data name="WrapHandlerDataDescription" xml:space="preserve">
-    <value>287 - Wraps the exception sent to the block as the inner exception of a new exception type. The message can be specified for the wrapping exception type.</value>
+    <value>Wraps the exception sent to the block as the inner exception of a new exception type. 
+The message can be specified for the wrapping exception type.</value>
   </data>
   <data name="WrapHandlerDataDisplayName" xml:space="preserve">
     <value>Wrap Handler</value>
   </data>
   <data name="WrapHandlerDataExceptionMessageDescription" xml:space="preserve">
-    <value>289 - The message for the wrapping exception.</value>
+    <value>The message for the wrapping exception.</value>
   </data>
   <data name="WrapHandlerDataExceptionMessageDisplayName" xml:space="preserve">
     <value>Exception Message</value>
   </data>
   <data name="WrapHandlerDataExceptionMessageResourceNameDescription" xml:space="preserve">
-    <value>291 - The key in an external resource file for the localized string to use as the message for the wrapping exception. </value>
+    <value>The key in an external resource file for the localized string to use as the message for the wrapping exception. </value>
   </data>
   <data name="WrapHandlerDataExceptionMessageResourceNameDisplayName" xml:space="preserve">
     <value>Message Resource Name</value>
   </data>
   <data name="WrapHandlerDataExceptionMessageResourceTypeDescription" xml:space="preserve">
-    <value>293 - The type of the external resource file containing the localized string to use as the message for the wrapping exception. </value>
+    <value>The type of the external resource file containing the localized string to use as the message for the wrapping exception. </value>
   </data>
   <data name="WrapHandlerDataExceptionMessageResourceTypeDisplayName" xml:space="preserve">
     <value>Message Resource Type</value>
   </data>
   <data name="WrapHandlerDataNameDescription" xml:space="preserve">
-    <value>295 - The name of the Wrap Exception Handler.</value>
+    <value>The name of the Wrap Exception Handler.</value>
   </data>
   <data name="WrapHandlerDataNameDisplayName" xml:space="preserve">
     <value>Name</value>
   </data>
   <data name="WrapHandlerDataTypeNameDescription" xml:space="preserve">
-    <value>297 - The fully qualified type name of the Wrap Exception Handler.</value>
+    <value>The fully qualified type name of the Wrap Exception Handler.</value>
   </data>
   <data name="WrapHandlerDataTypeNameDisplayName" xml:space="preserve">
     <value>Type</value>
   </data>
   <data name="WrapHandlerDataWrapExceptionTypeNameDescription" xml:space="preserve">
-    <value>299 - The fully qualified type name of the wrapping exception.</value>
+    <value>The fully qualified type name of the wrapping exception.</value>
   </data>
   <data name="WrapHandlerDataWrapExceptionTypeNameDisplayName" xml:space="preserve">
     <value>Wrap Exception Type</value>

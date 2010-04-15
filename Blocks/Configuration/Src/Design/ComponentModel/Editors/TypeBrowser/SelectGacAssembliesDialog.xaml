@@ -20,7 +20,12 @@
     <Grid>
         <DockPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
             <UniformGrid HorizontalAlignment="Right" Rows="1" Columns="2" DockPanel.Dock="Bottom" Margin="5">
-                <Button IsDefault="True" DockPanel.Dock="Right" Margin="0, 0, 5, 0" MinWidth="75">
+                <Button IsDefault="True" 
+                        DockPanel.Dock="Right" 
+                        Margin="0, 0, 5, 0" 
+                        MinWidth="100" 
+                        Click="OKButton_Click"
+                        AutomationProperties.AutomationId="OK">
                     <Button.Style>
                         <Style>
                             <Style.Triggers>
@@ -32,9 +37,15 @@
                     </Button.Style>
                     Ok
                 </Button>
-                <Button IsCancel="True" DockPanel.Dock="Right" Grid.Column="1">Cancel</Button>
+                <Button IsCancel="True" DockPanel.Dock="Right" Grid.Column="1" AutomationProperties.AutomationId="Cancel">
+                    Cancel
+                </Button>
             </UniformGrid>
-            <ListView x:Name="Assemblies"  DockPanel.Dock="Bottom" Margin=" 5, 5, 5, 0" ItemsSource="{Binding Source={StaticResource AssemblyNamesView}}">
+            <ListView x:Name="Assemblies"  
+                      DockPanel.Dock="Bottom" 
+                      Margin=" 5, 5, 5, 0" 
+                      ItemsSource="{Binding Source={StaticResource AssemblyNamesView}}"
+                      AutomationProperties.AutomationId="Assemblies">
                 <ListView.View>
                     <GridView>
                         <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}" Width="300"/>

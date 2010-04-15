@@ -10,6 +10,7 @@
 //===============================================================================
 
 using System;
+using System.Data;
 using System.Data.Common;
 using System.Data.SqlServerCe;
 using Microsoft.Practices.EnterpriseLibrary.Data;
@@ -27,6 +28,7 @@ namespace Data.SqlCe.Tests.VSTS
         const string queryString = "Select * from Region";
         Database db;
         ExecuteReaderFixture baseFixture;
+        private DbCommand queryCommand;
 
         [TestInitialize]
         public void TestInitialize()
@@ -36,7 +38,7 @@ namespace Data.SqlCe.Tests.VSTS
             db = new SqlCeDatabase(testConnection.ConnectionString);
 
             DbCommand insertCommand = db.GetSqlStringCommand(insertString);
-            DbCommand queryCommand = db.GetSqlStringCommand(queryString);
+            queryCommand = db.GetSqlStringCommand(queryString);
 
             baseFixture = new ExecuteReaderFixture(db, insertString, insertCommand, queryString, queryCommand);
         }
@@ -75,7 +77,24 @@ namespace Data.SqlCe.Tests.VSTS
         [TestMethod]
         public void CanExecuteReaderFromDbCommand()
         {
-            baseFixture.CanExecuteReaderFromDbCommand();
+            // Repeating this from base instead of calling base class because base
+            // asserts don't match SQL CE database close semantics - we do explicit
+            // pooling in CE, so connection doesn't actually close on close.
+            IDataReader reader = db.ExecuteReader(queryCommand);
+            DbConnection connection = queryCommand.Connection;
+            string accumulator = "";
+            while (reader.Read())
+            {
+                accumulator += ((string)reader["RegionDescription"]).Trim();
+            }
+            reader.Close();
+
+            Assert.AreEqual("EasternWesternNorthernSouthern", accumulator);
+            Assert.AreEqual(ConnectionState.Open, connection.State);
+
+            // Forcing pool closed should close the connection
+            SqlCeConnectionPool.CloseSharedConnection(db);
+            Assert.AreEqual(ConnectionState.Closed, connection.State);
         }
 
         [TestMethod]

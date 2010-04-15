@@ -19,9 +19,15 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls;
 using System.Windows;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics
 {
+#pragma warning disable 1591
+    /// <summary>
+    /// This class supports block-specific configuration design-time and is not
+    /// intended to be used directly from your code.
+    /// </summary>
     public class ExceptionHandlingSectionViewModel : SectionViewModel
     {
         public ExceptionHandlingSectionViewModel(IUnityContainer builder, string sectionName, ConfigurationSection section)
@@ -33,13 +39,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
         {
             var policiesCollection = DescendentElements().Where(x => x.ConfigurationType == typeof(NamedElementCollection<ExceptionPolicyData>)).First();
 
-            return new HorizontalListViewModel(
-                        new HeaderViewModel(policiesCollection.Name, policiesCollection.AddCommands),
-                        new HeaderViewModel("Exception Types"),
-                        new HeaderViewModel("Handlers"))
+            return new HorizontalListLayout(
+                        new HeaderLayout(policiesCollection.Name, policiesCollection.AddCommands),
+                        new HeaderLayout(Resources.ExceptionHandlingExceptionTypesHeader),
+                        new HeaderLayout(Resources.ExceptionHandlingHandlersHeader))
                         {
-                            Contained = new ElementListViewModel(policiesCollection.ChildElements)
+                            Contained = new ElementListLayout(policiesCollection.ChildElements)
                         };
         }
     }
+#pragma warning restore 1591
 }

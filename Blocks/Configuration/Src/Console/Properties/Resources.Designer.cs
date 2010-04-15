@@ -70,5 +70,53 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Console.Properties
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Loaded assemblies.
+        /// </summary>
+        internal static string LoadedAssembliesGroup {
+            get {
+                return ResourceManager.GetString("LoadedAssembliesGroup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0}
+        ///
+        ///Error message : {1}.
+        /// </summary>
+        internal static string ShowErrorMessageFormat {
+            get {
+                return ResourceManager.GetString("ShowErrorMessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error.
+        /// </summary>
+        internal static string ShowErrorTitle {
+            get {
+                return ResourceManager.GetString("ShowErrorTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An unhandled exception occurred in the configuration tool.  
+        ///{0}.
+        /// </summary>
+        internal static string UnhandledExceptionMessageFormat {
+            get {
+                return ResourceManager.GetString("UnhandledExceptionMessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unhandled Exception.
+        /// </summary>
+        internal static string UnhandledExceptionMessageTitle {
+            get {
+                return ResourceManager.GetString("UnhandledExceptionMessageTitle", resourceCulture);
+            }
+        }
     }
 }

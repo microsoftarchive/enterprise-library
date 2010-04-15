@@ -55,9 +55,9 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_a_validation_service
             {
             }
 
-            public override void Validate()
+            public override void Validate(string value)
             {
-                base.Validate();
+                base.Validate(value);
                 ValidationInvoked = true;
             }
 

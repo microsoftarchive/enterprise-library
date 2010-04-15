@@ -121,103 +121,103 @@
     <value>Add Caching Settings</value>
   </data>
   <data name="CacheManagerDataBaseDescription" xml:space="preserve">
-    <value>11 - Persists the cached data in memory, and optionaly interacts with a persistent backing store.</value>
+    <value>Persists the cached data in memory, and optionally interacts with a persistent backing store.</value>
   </data>
   <data name="CacheManagerDataBaseDisplayName" xml:space="preserve">
     <value>Cache Manager</value>
   </data>
   <data name="CacheManagerDataBaseNameDescription" xml:space="preserve">
-    <value>13 - The name of the Cache Manager.</value>
+    <value>The name of the Cache Manager.</value>
   </data>
   <data name="CacheManagerDataBaseNameDisplayName" xml:space="preserve">
     <value>Name</value>
   </data>
   <data name="CacheManagerDataBaseTypeNameDescription" xml:space="preserve">
-    <value>15 - The fully qualified type name of the Cache Manager.</value>
+    <value>The fully qualified type name of the Cache Manager.</value>
   </data>
   <data name="CacheManagerDataBaseTypeNameDisplayName" xml:space="preserve">
     <value>Type Name</value>
   </data>
   <data name="CacheManagerDataCacheStorageDescription" xml:space="preserve">
-    <value>3 - The name of the Backing Store to use for this Cache Manager.</value>
+    <value>The name of the Backing Store to use for this Cache Manager.</value>
   </data>
   <data name="CacheManagerDataCacheStorageDisplayName" xml:space="preserve">
     <value>Backing Store</value>
   </data>
   <data name="CacheManagerDataDescription" xml:space="preserve">
-    <value>1 - Persists the cached data in memory, and optionaly interacts with a persistent backing store.</value>
+    <value>Persists the cached data in memory, and optionally interacts with a persistent backing store.</value>
   </data>
   <data name="CacheManagerDataDisplayName" xml:space="preserve">
     <value>Cache Manager</value>
   </data>
   <data name="CacheManagerDataExpirationPollFrequencyInSecondsDescription" xml:space="preserve">
-    <value>5 - Time in seconds between each cycle that removes expired cached items.</value>
+    <value>Time in seconds between each cycle that removes expired cached items.</value>
   </data>
   <data name="CacheManagerDataExpirationPollFrequencyInSecondsDisplayName" xml:space="preserve">
     <value>Expiration Polling Frequency (seconds)</value>
   </data>
   <data name="CacheManagerDataMaximumElementsInCacheBeforeScavengingDescription" xml:space="preserve">
-    <value>7 - Maximum number of items in the cache before adding another causes scavenging to occur.</value>
+    <value>Maximum number of items in the cache before adding another causes scavenging to occur.</value>
   </data>
   <data name="CacheManagerDataMaximumElementsInCacheBeforeScavengingDisplayName" xml:space="preserve">
     <value>Max. Elements In Cache Before Scavenging</value>
   </data>
   <data name="CacheManagerDataNumberToRemoveWhenScavengingDescription" xml:space="preserve">
-    <value>9 - Number of items to remove from the cache during each scavenging cycle.</value>
+    <value>Number of items to remove from the cache during each scavenging cycle.</value>
   </data>
   <data name="CacheManagerDataNumberToRemoveWhenScavengingDisplayName" xml:space="preserve">
     <value>Number to Remove when Scavenging</value>
   </data>
   <data name="CacheManagerSettingsBackingStoresDescription" xml:space="preserve">
-    <value>19 - Persist the cached items to a store such as a database or Insolated Storage.</value>
+    <value>Persists the cached items to a store such as a database or Isolated Storage.</value>
   </data>
   <data name="CacheManagerSettingsBackingStoresDisplayName" xml:space="preserve">
     <value>Backing Stores</value>
   </data>
   <data name="CacheManagerSettingsCacheManagersDescription" xml:space="preserve">
-    <value>21 - The Cache Managers configured for the Caching Application Block</value>
+    <value>The Cache Managers configured for the Caching Application Block</value>
   </data>
   <data name="CacheManagerSettingsCacheManagersDisplayName" xml:space="preserve">
     <value>Cache Managers</value>
   </data>
   <data name="CacheManagerSettingsDefaultCacheManagerDescription" xml:space="preserve">
-    <value>23 - The default Cache Manager to use when code does not specify a named Cache Manager.</value>
+    <value>The default Cache Manager to use when code does not specify a named Cache Manager.</value>
   </data>
   <data name="CacheManagerSettingsDefaultCacheManagerDisplayName" xml:space="preserve">
     <value>Default Cache Manager</value>
   </data>
   <data name="CacheManagerSettingsDescription" xml:space="preserve">
-    <value>17 - Configuration settings for the Caching Application Block</value>
+    <value>Configuration settings for the Caching Application Block</value>
   </data>
   <data name="CacheManagerSettingsDisplayName" xml:space="preserve">
     <value>Caching Settings</value>
   </data>
   <data name="CacheManagerSettingsEncryptionProvidersDescription" xml:space="preserve">
-    <value>25 - Provide encryption of the data persisted in a backing store, but not in memory.</value>
+    <value>Provide encryption of the data persisted in a backing store, but not in memory.</value>
   </data>
   <data name="CacheManagerSettingsEncryptionProvidersDisplayName" xml:space="preserve">
     <value>Encryption Providers</value>
   </data>
   <data name="CacheStorageDataDescription" xml:space="preserve">
-    <value>27 - The name of the referenced Backing Store for this Cache Manager.</value>
+    <value>The name of the referenced Backing Store for this Cache Manager.</value>
   </data>
   <data name="CacheStorageDataDisplayName" xml:space="preserve">
     <value>Cache Storage</value>
   </data>
   <data name="CacheStorageDataNameDescription" xml:space="preserve">
-    <value>29 - The name of the backing store.</value>
+    <value>The name of the backing store.</value>
   </data>
   <data name="CacheStorageDataNameDisplayName" xml:space="preserve">
     <value>Name</value>
   </data>
   <data name="CacheStorageDataStorageEncryptionDescription" xml:space="preserve">
-    <value>31 - The name of the Encryption Provider to use for this Backing Store.</value>
+    <value>The name of the Encryption Provider to use for this Backing Store.</value>
   </data>
   <data name="CacheStorageDataStorageEncryptionDisplayName" xml:space="preserve">
     <value>Encryption Provider</value>
   </data>
   <data name="CacheStorageDataTypeNameDescription" xml:space="preserve">
-    <value>33 - The fully qualified type name of the Backing Store.</value>
+    <value>The fully qualified type name of the Backing Store.</value>
   </data>
   <data name="CacheStorageDataTypeNameDisplayName" xml:space="preserve">
     <value>Type Name</value>
@@ -226,19 +226,19 @@
     <value>Custom Cache Manager (using type picker)</value>
   </data>
   <data name="CustomCacheManagerDataDescription" xml:space="preserve">
-    <value>35 - Custom implementation that persists the cached data in memory, and optionaly interacts with a persistent backing store.</value>
+    <value>Custom implementation that persists the cached data in memory, and optionally interacts with a persistent backing store.</value>
   </data>
   <data name="CustomCacheManagerDataDisplayName" xml:space="preserve">
     <value>Custom Cache Manager</value>
   </data>
   <data name="CustomCacheManagerDataNameDescription" xml:space="preserve">
-    <value>37 - The name of the Custom Cache Manager.</value>
+    <value>The name of the Custom Cache Manager.</value>
   </data>
   <data name="CustomCacheManagerDataNameDisplayName" xml:space="preserve">
     <value>Name</value>
   </data>
   <data name="CustomCacheManagerDataTypeNameDescription" xml:space="preserve">
-    <value>39 - The fully qualified type name of the Custom Cache Manager.</value>
+    <value>The fully qualified type name of the Custom Cache Manager.</value>
   </data>
   <data name="CustomCacheManagerDataTypeNameDisplayName" xml:space="preserve">
     <value>Type Name</value>
@@ -247,73 +247,74 @@
     <value>Custom Cache Store (using type picker)</value>
   </data>
   <data name="CustomCacheStorageDataDescription" xml:space="preserve">
-    <value>41 - A Backing Store implementated as a custom class that persists the cached data, and added to Enterprise Library.</value>
+    <value>A Backing Store implemented as a custom class that persists the cached data, and is added to Enterprise Library.</value>
   </data>
   <data name="CustomCacheStorageDataDisplayName" xml:space="preserve">
     <value>Custom Cache Storage</value>
   </data>
   <data name="CustomCacheStorageDataNameDescription" xml:space="preserve">
-    <value>43 - The name of the Custom Backing Store.</value>
+    <value>The name of the Custom Backing Store.</value>
   </data>
   <data name="CustomCacheStorageDataNameDisplayName" xml:space="preserve">
     <value>Name</value>
   </data>
   <data name="CustomCacheStorageDataStorageEncryptionDescription" xml:space="preserve">
-    <value>45 - The name of the Encryption Provider for this Backing Store.</value>
+    <value>The name of the Encryption Provider for this Backing Store.</value>
   </data>
   <data name="CustomCacheStorageDataStorageEncryptionDisplayName" xml:space="preserve">
     <value>Encryption Provider</value>
   </data>
   <data name="CustomCacheStorageDataTypeNameDescription" xml:space="preserve">
-    <value>47 - The fully qualified type name of the Custom Backing Store.</value>
+    <value>The fully qualified type name of the Custom Backing Store.</value>
   </data>
   <data name="CustomCacheStorageDataTypeNameDisplayName" xml:space="preserve">
     <value>Type Name</value>
   </data>
   <data name="IsolatedStorageCacheStorageDataDescription" xml:space="preserve">
-    <value>49 - Stores the cached data in a persistant Isolated Storage store on the local machine.</value>
+    <value>Stores the cached data in a persistent Isolated Storage store on the local machine.</value>
   </data>
   <data name="IsolatedStorageCacheStorageDataDisplayName" xml:space="preserve">
     <value>Isolated Storage Cache Store</value>
   </data>
   <data name="IsolatedStorageCacheStorageDataNameDescription" xml:space="preserve">
-    <value>51 - The name of the Isolated Storage Cache Store</value>
+    <value>The name of the Isolated Storage Cache Store</value>
   </data>
   <data name="IsolatedStorageCacheStorageDataNameDisplayName" xml:space="preserve">
     <value>Name</value>
   </data>
   <data name="IsolatedStorageCacheStorageDataPartitionNameDescription" xml:space="preserve">
-    <value>53 - The section or partition of the Isolated Storage area for the cached data.This allows different users to cache data on the same machine safely, and prevents different users accessing the same cached data.</value>
+    <value>The section or partition of the Isolated Storage area for the cached data. 
+This allows different users to cache data on the same machine safely, and prevents different users accessing the same cached data.</value>
   </data>
   <data name="IsolatedStorageCacheStorageDataPartitionNameDisplayName" xml:space="preserve">
     <value>Partition Name</value>
   </data>
   <data name="IsolatedStorageCacheStorageDataStorageEncryptionDescription" xml:space="preserve">
-    <value>55 - The name of the Encryption Provider to use for this Isolated Storage Cache Store.</value>
+    <value>The name of the Encryption Provider to use for this Isolated Storage Cache Store.</value>
   </data>
   <data name="IsolatedStorageCacheStorageDataStorageEncryptionDisplayName" xml:space="preserve">
     <value>Encryption Provider</value>
   </data>
   <data name="IsolatedStorageCacheStorageDataTypeNameDescription" xml:space="preserve">
-    <value>57 - The fully qualified type name of the Isolated Storage Cache Store.</value>
+    <value>The fully qualified type name of the Isolated Storage Cache Store.</value>
   </data>
   <data name="IsolatedStorageCacheStorageDataTypeNameDisplayName" xml:space="preserve">
     <value>Type Name</value>
   </data>
   <data name="StorageEncryptionProviderDataDescription" xml:space="preserve">
-    <value>59 - Encrypts the data in the bacing store (but not in memory) using a Cryptography Provider defined in the Cryptography Application Block.</value>
+    <value>Encrypts the data in the backing store (but not in memory) using a Cryptography Provider defined in the Cryptography Application Block.</value>
   </data>
   <data name="StorageEncryptionProviderDataDisplayName" xml:space="preserve">
     <value>Encryption Provider</value>
   </data>
   <data name="StorageEncryptionProviderDataNameDescription" xml:space="preserve">
-    <value>61 - The name of the Encryption Provider.</value>
+    <value>The name of the Encryption Provider.</value>
   </data>
   <data name="StorageEncryptionProviderDataNameDisplayName" xml:space="preserve">
     <value>Name</value>
   </data>
   <data name="StorageEncryptionProviderDataTypeNameDescription" xml:space="preserve">
-    <value>63 - The fully qualified type name of the Encryption Provider.</value>
+    <value>The fully qualified type name of the Encryption Provider.</value>
   </data>
   <data name="StorageEncryptionProviderDataTypeNameDisplayName" xml:space="preserve">
     <value>Type Name</value>

@@ -98,6 +98,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography
 		/// <param name="passphrase">User-provided passphrase used to encrypt the key in the arhive.</param>
 		public void Archive(Stream outputStream, ProtectedKey keyToBeArchived, string passphrase)
 		{
+		    if (outputStream == null) throw new ArgumentNullException("outputStream");
+
 			byte[] versionNumberBytes = BitConverter.GetBytes(versionNumber);
 			byte[] salt = GenerateSalt();
 			byte[] encryptedKey = GetEncryptedKey(keyToBeArchived, passphrase, salt);

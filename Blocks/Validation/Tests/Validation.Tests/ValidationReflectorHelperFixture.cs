@@ -196,8 +196,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
     {
         private class TypeWithMetadataTypeWithMatchingFieldMetadata
         {
+            // Unused field warning - used for reflection only
+#pragma warning disable 649
             [Derived(Description = "from metadata")]
             public int MyField;
+#pragma warning restore 649
         }
 
         public int MyField;

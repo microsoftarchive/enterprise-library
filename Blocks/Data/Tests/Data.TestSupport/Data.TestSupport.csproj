@@ -50,6 +50,9 @@
     <Compile Include="..\..\..\GlobalAssemblyInfo.cs">
       <Link>GlobalAssemblyInfo.cs</Link>
     </Compile>
+    <None Include="..\..\..\GlobalAssemblyInfo.2010.cs">
+      <Link>GlobalAssemblyInfo.2010.cs</Link>
+    </None>
     <Compile Include="DataAccessTestsFixture.cs" />
     <Compile Include="ExecuteNonQueryFixture.cs" />
     <Compile Include="ExecuteReaderFixture.cs" />

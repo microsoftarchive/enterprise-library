@@ -18,15 +18,30 @@ namespace Console.Wpf.Tests.VSTS.Mocks
 {
     public class ErrorProducingValidator : Validator
     {
-        protected override void ValidateCore(object instance, string value, IList<ValidationError> errors)
+        public static readonly string ErrorMessage = "Test Validation Error";
+
+        protected override void ValidateCore(object instance, string value, IList<ValidationResult> results)
         {
             var property = instance as ElementProperty;
             if (property == null)
             {
-                throw new ArgumentException("Property was not ElementProperty");
+                throw new ArgumentException("instance was not ElementProperty");
             }
 
-            errors.Add(new ValidationError(property, "Test Validation Error"));
+            results.Add(new PropertyValidationResult(property, ErrorMessage ));
+        }
+    }
+
+    public class ElementErrorProducingValidator : Validator
+    {
+        public static readonly string ErrorMessage = "Test Element Validation Error";
+
+        protected override void ValidateCore(object instance, string value, IList<ValidationResult> results)
+        {
+            var element = instance as ElementViewModel;
+            if (element == null) throw new ArgumentException("instance was not ElementViewModel");
+
+            results.Add(new ElementValidationResult(element, ErrorMessage));
         }
     }
 }

@@ -13,13 +13,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Practices.EnterpriseLibrary.Common.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
 {
     /// <summary>
     /// Attribute class used to specify a specific View Model derivement or visual representation to be used on the target element.
-    /// 
-    /// TODO: add more information here, possibly a reference to other documentation.
     /// </summary>
     /// <remarks>
     /// 
@@ -27,58 +26,30 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
     /// As this attribute can be applied to the configuration directly and we dont want to force a dependency on the Configuration.Design assembly <br/>
     /// You can specify the View Model Type in a loosy coupled fashion, passing a qualified name of the type.</para>
     ///
-    /// <para>TODO: The Model Visual Type should derive from the xXXX? add more info here</para>
     /// </remarks>
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Property, AllowMultiple = false)]
     public sealed class ViewModelAttribute : Attribute
     {
         private readonly string modelTypeName;
-        private readonly string modelVisualTypeName;
 
         ///<summary>
         /// Initializes a new instance of the <see cref="ViewModelAttribute"/> class.
         ///</summary>
         ///<param name="modelType">The type of the View Model that should be used for the annotated element.</param>
         public ViewModelAttribute(Type modelType)
-            : this(modelType.AssemblyQualifiedName)
+            : this(modelType != null ? modelType.AssemblyQualifiedName : null)
         { }
 
-
-        ///<summary>
-        /// Initializes a new instance of the <see cref="ViewModelAttribute"/> class.
-        ///</summary>
-        ///<param name="modelType">The type of the View Model that should be used for the annotated element.</param>
-        ///<param name="modelVisualType">The type of the Model Visual that should be used to display the annotated element.</param>
-        public ViewModelAttribute(Type modelType, Type modelVisualType)
-            : this(modelType.AssemblyQualifiedName, modelVisualType.AssemblyQualifiedName)
-        { }
 
         ///<summary>
         /// Initializes a new instance of the <see cref="ViewModelAttribute"/> class.
         ///</summary>
         ///<param name="modelTypeName">The type name of the View Model that should be used for the annotated element.</param>
         public ViewModelAttribute(string modelTypeName)
-            : this(modelTypeName, string.Empty)
-        { }
-
-
-        ///<summary>
-        /// Initializes a new instance of the <see cref="ViewModelAttribute"/> class.
-        ///</summary>
-        ///<param name="modelTypeName">The type name of the View Model Type that should be used for the annotated element.</param>
-        ///<param name="modelVisualTypeName">The name type of the Model Visual Type that should be used to display the annotated element.</param>
-        public ViewModelAttribute(string modelTypeName, string modelVisualTypeName)
         {
+            if (String.IsNullOrEmpty(modelTypeName)) throw new ArgumentException(Resources.ExceptionStringNullOrEmpty, "modelTypeName");
+
             this.modelTypeName = modelTypeName;
-            this.modelVisualTypeName = modelVisualTypeName;
-        }
-
-        ///<summary>
-        /// Gets the Model Visual Type that should be used to display the annotated element.
-        ///</summary>
-        public Type ModelVisualType
-        {
-            get { return string.IsNullOrEmpty(modelVisualTypeName) ? null : Type.GetType(modelVisualTypeName, true, true); }
         }
 
         ///<summary>

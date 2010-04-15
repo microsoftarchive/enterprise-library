@@ -26,43 +26,43 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
     /// <remarks>
     /// The basic configuration for a custom provider includes the provider type and a collection of attributes.
     /// </remarks>
-	public abstract class BasicCustomTraceListenerDataManageabilityProvider<T>
-		: CustomProviderDataManageabilityProvider<T>
-		where T : BasicCustomTraceListenerData
-	{
+    public abstract class BasicCustomTraceListenerDataManageabilityProvider<T>
+        : CustomProviderDataManageabilityProvider<T>
+        where T : BasicCustomTraceListenerData
+    {
         /// <summary>
         /// The name of the initial data property.
         /// </summary>
-		public const String InitDataPropertyName = "initData";
+        public const String InitDataPropertyName = "initializeData";
 
         /// <summary>
         /// The name of the trace output options property.
         /// </summary>
-		public const String TraceOutputOptionsPropertyName = "traceOutputOptions";
+        public const String TraceOutputOptionsPropertyName = "traceOutputOptions";
 
-		/// <summary>
-		/// The name of the filter property.
-		/// </summary>
-		public const String FilterPropertyName = "filter";
-    
+        /// <summary>
+        /// The name of the filter property.
+        /// </summary>
+        public const String FilterPropertyName = "filter";
+
         /// <summary>
         /// The name of the attribute property.
         /// </summary>
-		public new const String AttributesPropertyName =
-			CustomProviderDataManageabilityProvider<CustomTraceListenerData>.AttributesPropertyName;
+        public new const String AttributesPropertyName =
+            CustomProviderDataManageabilityProvider<CustomTraceListenerData>.AttributesPropertyName;
 
         /// <summary>
         /// The name of the provider type property.
         /// </summary>
-		public new const String ProviderTypePropertyName =
-			CustomProviderDataManageabilityProvider<CustomTraceListenerData>.ProviderTypePropertyName;
+        public new const String ProviderTypePropertyName =
+            CustomProviderDataManageabilityProvider<CustomTraceListenerData>.ProviderTypePropertyName;
 
         /// <summary>
         /// Initialize a new instance of the <see cref="BasicCustomTraceListenerDataManageabilityProvider{T}"/> class.
         /// </summary>
-		protected BasicCustomTraceListenerDataManageabilityProvider()
-			: base(Resources.TraceListenerPolicyNameTemplate)
-		{ }
+        protected BasicCustomTraceListenerDataManageabilityProvider()
+            : base(Resources.TraceListenerPolicyNameTemplate)
+        { }
 
         /// <summary>
         /// Adds the ADM parts that represent the properties of
@@ -78,27 +78,32 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         /// override this method to add the corresponding parts.
         /// </remarks>
         /// <seealso cref="ConfigurationElementManageabilityProviderBase{T}.AddAdministrativeTemplateDirectives(AdmContentBuilder, T, IConfigurationSource, String)"/>
-        protected override void AddElementAdministrativeTemplateParts(AdmContentBuilder contentBuilder, T configurationObject, IConfigurationSource configurationSource, string elementPolicyKeyName)
-		{
-			base.AddElementAdministrativeTemplateParts(contentBuilder,
-				configurationObject,
-				configurationSource,
-				elementPolicyKeyName);
+        protected override void AddElementAdministrativeTemplateParts(
+            AdmContentBuilder contentBuilder,
+            T configurationObject,
+            IConfigurationSource configurationSource,
+            string elementPolicyKeyName)
+        {
+            base.AddElementAdministrativeTemplateParts(contentBuilder,
+                configurationObject,
+                configurationSource,
+                elementPolicyKeyName);
 
-			contentBuilder.AddEditTextPart(Resources.CustomTraceListenerInitializationPartName,
-				InitDataPropertyName,
-				configurationObject.InitData,
-				1024,
-				false);
+            contentBuilder.AddEditTextPart(Resources.CustomTraceListenerInitializationPartName,
+                InitDataPropertyName,
+                configurationObject.InitData,
+                1024,
+                false);
 
-			contentBuilder.AddDropDownListPartForEnumeration<TraceOptions>(Resources.TraceListenerTraceOptionsPartName,
-				TraceOutputOptionsPropertyName,
-				configurationObject.TraceOutputOptions);
+            contentBuilder.AddTextPart(Resources.TraceListenerTraceOptionsPartName);
 
-			contentBuilder.AddDropDownListPartForEnumeration<SourceLevels>(Resources.TraceListenerFilterPartName,
-				FilterPropertyName,
-				configurationObject.Filter);
-		}
+            var traceOptionsKey = elementPolicyKeyName + @"\" + TraceOutputOptionsPropertyName;
+            AddCheckboxPartsForFlagsEnumeration<TraceOptions>(contentBuilder, traceOptionsKey, configurationObject.TraceOutputOptions);
+
+            contentBuilder.AddDropDownListPartForEnumeration<SourceLevels>(Resources.TraceListenerFilterPartName,
+                FilterPropertyName,
+                configurationObject.Filter);
+        }
 
         /// <summary>
         /// Overrides the <paramref name="configurationObject"/>'s properties with the Group Policy values from the 
@@ -110,16 +115,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         /// <remarks>Subclasses that manage custom provider's configuration objects with additional properties may
         /// override this method to override these properties.</remarks>
         protected override void OverrideWithGroupPolicies(T configurationObject, IRegistryKey policyKey)
-		{
-			String initDataOverride = policyKey.GetStringValue(InitDataPropertyName);
-			TraceOptions? traceOutputOptionsOverride = policyKey.GetEnumValue<TraceOptions>(TraceOutputOptionsPropertyName);
-			SourceLevels? filterOverride = policyKey.GetEnumValue<SourceLevels>(FilterPropertyName);
+        {
+            String initDataOverride = policyKey.GetStringValue(InitDataPropertyName);
+            TraceOptions? traceOutputOptionsOverride =
+                GetFlagsEnumOverride<TraceOptions>(policyKey, TraceOutputOptionsPropertyName);
+            SourceLevels? filterOverride = policyKey.GetEnumValue<SourceLevels>(FilterPropertyName);
 
-			base.OverrideWithGroupPolicies(configurationObject, policyKey);
+            base.OverrideWithGroupPolicies(configurationObject, policyKey);
 
-			configurationObject.InitData = initDataOverride;
-			configurationObject.TraceOutputOptions = traceOutputOptionsOverride.Value;
-			configurationObject.Filter = filterOverride.Value;
-		}
-	}
+            configurationObject.InitData = initDataOverride;
+            configurationObject.TraceOutputOptions = traceOutputOptionsOverride.Value;
+            configurationObject.Filter = filterOverride.Value;
+        }
+    }
 }

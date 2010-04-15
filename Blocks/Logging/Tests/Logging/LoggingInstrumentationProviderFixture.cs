@@ -14,61 +14,11 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport;
-using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
 {
-    [TestClass]
-    public class GivenALoggingInstrumentationProviderWithWmiEnabled
-    {
-        private LoggingInstrumentationProvider provider;
-
-        [TestInitialize]
-        public void Setup()
-        {
-            this.provider = new LoggingInstrumentationProvider(false, false, true, "application");
-        }
-
-        [TestMethod]
-        public void WhenAReconfigurationErrorIsNotified_ThenItIsLoggedThroughWmi()
-        {
-            using (WmiEventWatcher eventListener = new WmiEventWatcher(1, "LoggingReconfigurationFailureEvent"))
-            {
-                this.provider.FireReconfigurationErrorEvent(new Exception("test message"));
-
-                eventListener.WaitForEvents();
-                Assert.AreEqual(1, eventListener.EventsReceived.Count);
-                Assert.IsTrue(((string)eventListener.EventsReceived[0].GetPropertyValue("ExceptionMessage")).Contains("test message"));
-            }
-        }
-    }
-
-    [TestClass]
-    public class GivenALoggingInstrumentationProviderWithWmiDisabled
-    {
-        private LoggingInstrumentationProvider provider;
-
-        [TestInitialize]
-        public void Setup()
-        {
-            this.provider = new LoggingInstrumentationProvider(false, false, false, "application");
-        }
-
-        [TestMethod]
-        public void WhenAReconfigurationErrorIsNotified_ThenItIsLoggedThroughWmi()
-        {
-            using (WmiEventWatcher eventListener = new WmiEventWatcher(1, "LoggingReconfigurationFailureEvent"))
-            {
-                this.provider.FireReconfigurationErrorEvent(new Exception("test message"));
-
-                eventListener.WaitForEvents();
-                Assert.AreEqual(0, eventListener.EventsReceived.Count);
-            }
-        }
-    }
-
     [TestClass]
     public class GivenALoggingInstrumentationProviderWithEventLogEnabled
     {
@@ -77,7 +27,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
         [TestInitialize]
         public void Setup()
         {
-            this.provider = new LoggingInstrumentationProvider(false, true, false, "application");
+            this.provider = new LoggingInstrumentationProvider(false, true, "application");
         }
 
         [TestMethod]
@@ -106,7 +56,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
         [TestInitialize]
         public void Setup()
         {
-            this.provider = new LoggingInstrumentationProvider(false, false, false, "application");
+            this.provider = new LoggingInstrumentationProvider(false, false, "application");
         }
 
         [TestMethod]

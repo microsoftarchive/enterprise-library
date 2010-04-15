@@ -75,6 +75,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         [System.ComponentModel.Editor(CommonDesignTime.EditorTypes.TypeSelector, CommonDesignTime.EditorTypes.UITypeEditor)]
         [BaseType(typeof(System.Diagnostics.TraceListener))]
         [System.ComponentModel.Browsable(true)]
+        [DesignTimeReadOnly(false)]
+        [ViewModel(LoggingDesignTime.ViewModelTypeNames.TypeNameElementProperty)]
         public override string TypeName
         {
             get

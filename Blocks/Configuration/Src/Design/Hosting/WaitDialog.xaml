@@ -1,0 +1,18 @@
+﻿<Window x:Class="Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Hosting.WaitDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="" 
+    WindowStartupLocation="CenterOwner"
+    ShowInTaskbar="False"
+    Height="74" Width="253" ResizeMode="NoResize" WindowStyle="None">
+	<Window.Background>
+		<LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+			<GradientStop Color="#FFF4DCBF" Offset="0"/>
+			<GradientStop Color="#FFD1AD89" Offset="1"/>
+		</LinearGradientBrush>
+	</Window.Background>
+    <Grid>
+        <Image HorizontalAlignment="Left" Margin="3.158,0,0,8" Width="48" Source="/Microsoft.Practices.EnterpriseLibrary.Configuration.DesignTime;Component/Images/entlib_new_icon_48x48.ico" Stretch="None" Height="48"/>
+        <TextBlock x:Name="WaitMessage" Margin="65,8,8,8" Text="Loading" TextWrapping="Wrap"/>
+    </Grid>
+</Window>

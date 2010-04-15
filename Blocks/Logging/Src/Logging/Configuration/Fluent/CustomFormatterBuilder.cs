@@ -48,7 +48,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent
         }
 
         /// <summary>
-        /// Redeclaration that hides the <see cref="object.GetHashCode()"/> method from intellisense.
+        /// Redeclaration that hides the <see cref="object.GetHashCode()"/> method from IntelliSense.
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         public override int GetHashCode()
@@ -57,7 +57,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent
         }
 
         /// <summary>
-        /// Redeclaration that hides the <see cref="object.ToString()"/> method from intellisense.
+        /// Redeclaration that hides the <see cref="object.ToString()"/> method from IntelliSense.
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         public override string ToString()
@@ -66,7 +66,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent
         }
 
         /// <summary>
-        /// Redeclaration that hides the <see cref="object.Equals(object)"/> method from intellisense.
+        /// Redeclaration that hides the <see cref="object.Equals(object)"/> method from IntelliSense.
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         public override bool Equals(object obj)

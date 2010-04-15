@@ -17,46 +17,68 @@ using System.Reflection;
 using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using System.ComponentModel;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Extensions;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services
 {
+    /// <summary>
+    /// This class supports the configuration design-time and is not
+    /// intended to be used directly from your code.
+    /// </summary>
+    /// <remarks>
+    /// Use the <see cref="ConfigurationSectionLocator"/> to obtain a list of configuration section names available in the configuration designer.
+    /// </remarks>
+    /// <seealso cref="ConfigurationSectionLocator"/>
     public class AssemblyAttributeSectionLocator : ConfigurationSectionLocator
     {
-        List<string> sectionNames;
+        readonly List<HandlesSectionAttribute> sectionHandleAttributes = new List<HandlesSectionAttribute>();
 
+        /// <summary>
+        /// This constructor supports the configuration design-time and is not
+        /// intended to be used directly from your code.
+        /// </summary>
         public AssemblyAttributeSectionLocator(AssemblyLocator assemblyLocator)
         {
-            sectionNames = CollectSectionNames(assemblyLocator.Assemblies);
+            CollectSectionNames(assemblyLocator.Assemblies);
         }
 
-        private static List<string> CollectSectionNames(IEnumerable<Assembly> assemblies)
+        private void CollectSectionNames(IEnumerable<Assembly> assemblies)
         {
-            List<String> sectionNames = new List<string>();
-            foreach (var assembly in assemblies)
-            {
-                foreach (var attribute in assembly.GetCustomAttributes<HandlesSectionAttribute>())
-                {
-                    sectionNames.Add(attribute.SectionName);
-                }
-            }
+            var handlesSectionAttributes =
+                assemblies.FilterSelectManySafe(
+                    a => a.GetCustomAttributes(typeof(HandlesSectionAttribute), true).OfType<HandlesSectionAttribute>());
 
-            return sectionNames;
+            foreach (var handlesSectionAttribute in handlesSectionAttributes)
+            {
+                sectionHandleAttributes.Add(handlesSectionAttribute);
+            }
         }
 
+        /// <summary>
+        /// This property supports the configuration design-time and is not
+        /// intended to be used directly from your code.
+        /// </summary>
+        /// <remarks>
+        /// Use the <see cref="ConfigurationSectionLocator"/> class instead.
+        /// </remarks>
         public override IEnumerable<string> ConfigurationSectionNames
         {
             get
             {
-                return sectionNames;
+                return sectionHandleAttributes.Where(a => !a.ClearOnly).Select(a => a.SectionName);
             }
         }
-    }
 
-    static class AssemblyExtensions
-    {
-        public static IEnumerable<T> GetCustomAttributes<T>(this Assembly assembly)
+        /// <summary>
+        /// This property supports the configuration design-time and is not
+        /// intended to be used directly from your code.
+        /// </summary>
+        /// <remarks>
+        /// Use the <see cref="ConfigurationSectionLocator"/> class instead.
+        /// </remarks>
+        public override IEnumerable<string> ClearableConfigurationSectionNames
         {
-            return assembly.GetCustomAttributes(typeof (T), false).OfType<T>();
+            get { return sectionHandleAttributes.Select(a => a.SectionName); }
         }
     }
 }

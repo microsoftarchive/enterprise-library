@@ -209,6 +209,13 @@
             The registered lifetime manager instance.
             </summary>
         </member>
+        <member name="P:Microsoft.Practices.Unity.ContainerRegistration.LifetimeManager">
+            <summary>
+            The lifetime manager for this registration.
+            </summary>
+            <remarks>
+            This property will be null if this registration is for an open generic.</remarks>
+        </member>
         <member name="T:Microsoft.Practices.Unity.DependencyOverride">
             <summary>
             A <see cref="T:Microsoft.Practices.Unity.ResolverOverride"/> class that overrides
@@ -319,68 +326,33 @@
             <param name="value">Value to store in the resolver.</param>
             <returns>The created <see cref="T:Microsoft.Practices.Unity.ResolverOverride"/>.</returns>
         </member>
-        <member name="T:Microsoft.Practices.Unity.InjectionFactory">
+        <member name="T:Microsoft.Practices.Unity.ChildContainerCreatedEventArgs">
             <summary>
-            A class that lets you specify a factory method the container
-            will use to create the object.
-            </summary>
-            <remarks>This is a significantly easier way to do the same
-            thing the old static factory extension was used for.</remarks>
-        </member>
-        <member name="T:Microsoft.Practices.Unity.InjectionMember">
-            <summary>
-            Base class for objects that can be used to configure what
-            class members get injected by the container.
+            Event argument class for the <see cref="E:Microsoft.Practices.Unity.ExtensionContext.ChildContainerCreated"/> event.
             </summary>
         </member>
-        <member name="M:Microsoft.Practices.Unity.InjectionMember.AddPolicies(System.Type,Microsoft.Practices.ObjectBuilder2.IPolicyList)">
+        <member name="M:Microsoft.Practices.Unity.ChildContainerCreatedEventArgs.#ctor(Microsoft.Practices.Unity.ExtensionContext)">
             <summary>
-            Add policies to the <paramref name="policies"/> to configure the
-            container to call this constructor with the appropriate parameter values.
+            Construct a new <see cref="T:Microsoft.Practices.Unity.ChildContainerCreatedEventArgs"/> object with the
+            given child container object.
             </summary>
-            <param name="typeToCreate">Type to register.</param>
-            <param name="policies">Policy list to add policies to.</param>
+            <param name="childContext">An <see cref="T:Microsoft.Practices.Unity.ExtensionContext"/> for the newly created child
+            container.</param>
         </member>
-        <member name="M:Microsoft.Practices.Unity.InjectionMember.AddPolicies(System.Type,System.Type,System.String,Microsoft.Practices.ObjectBuilder2.IPolicyList)">
+        <member name="P:Microsoft.Practices.Unity.ChildContainerCreatedEventArgs.ChildContainer">
             <summary>
-            Add policies to the <paramref name="policies"/> to configure the
-            container to call this constructor with the appropriate parameter values.
-            </summary>
-            <param name="serviceType">Type of interface being registered. If no interface,
-            this will be null.</param>
-            <param name="implementationType">Type of concrete type being registered.</param>
-            <param name="name">Name used to resolve the type object.</param>
-            <param name="policies">Policy list to add policies to.</param>
-        </member>
-        <member name="M:Microsoft.Practices.Unity.InjectionFactory.#ctor(System.Func{Microsoft.Practices.Unity.IUnityContainer,System.Object})">
-            <summary>
-            Create a new instance of <see cref="T:Microsoft.Practices.Unity.InjectionFactory"/> with
-            the given factory function.
-            </summary>
-            <param name="factoryFunc">Factory function.</param>
-        </member>
-        <member name="M:Microsoft.Practices.Unity.InjectionFactory.AddPolicies(System.Type,System.Type,System.String,Microsoft.Practices.ObjectBuilder2.IPolicyList)">
-            <summary>
-            Add policies to the <paramref name="policies"/> to configure the
-            container to call this constructor with the appropriate parameter values.
-            </summary>
-            <param name="serviceType">Type of interface being registered. If no interface,
-            this will be null. This parameter is ignored in this implementation.</param>
-            <param name="implementationType">Type of concrete type being registered.</param>
-            <param name="name">Name used to resolve the type object.</param>
-            <param name="policies">Policy list to add policies to.</param>
-        </member>
-        <member name="T:Microsoft.Practices.Unity.OptionalParameter">
-            <summary>
-            A <see cref="T:Microsoft.Practices.Unity.InjectionParameterValue"/> that can be passed to
-            <see cref="M:Microsoft.Practices.Unity.IUnityContainer.RegisterType(System.Type,System.Type,System.String,Microsoft.Practices.Unity.LifetimeManager,Microsoft.Practices.Unity.InjectionMember[])"/> to configure a
-            parameter or property as an optional dependency.
+            The newly created child container.
             </summary>
         </member>
-        <member name="T:Microsoft.Practices.Unity.TypedInjectionValue">
+        <member name="P:Microsoft.Practices.Unity.ChildContainerCreatedEventArgs.ChildContext">
             <summary>
-            A base class for implementing <see cref="T:Microsoft.Practices.Unity.InjectionParameterValue"/> classes
-            that deal in explicit types.
+            An extension context for the created child container.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Practices.Unity.GenericParameterBase">
+            <summary>
+            Base class for <see cref="T:Microsoft.Practices.Unity.InjectionParameterValue"/> subclasses that let you specify that
+            an instance of a generic type parameter should be resolved.
             </summary>
         </member>
         <member name="T:Microsoft.Practices.Unity.InjectionParameterValue">
@@ -431,6 +403,155 @@
             <summary>
             Name for the type represented by this <see cref="T:Microsoft.Practices.Unity.InjectionParameterValue"/>.
             This may be an actual type name or a generic argument name.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.GenericParameterBase.#ctor(System.String)">
+            <summary>
+            Create a new <see cref="T:Microsoft.Practices.Unity.GenericParameter"/> instance that specifies
+            that the given named generic parameter should be resolved.
+            </summary>
+            <param name="genericParameterName">The generic parameter name to resolve.</param>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.GenericParameterBase.#ctor(System.String,System.String)">
+            <summary>
+            Create a new <see cref="T:Microsoft.Practices.Unity.GenericParameter"/> instance that specifies
+            that the given named generic parameter should be resolved.
+            </summary>
+            <param name="genericParameterName">The generic parameter name to resolve.</param>
+            <param name="resolutionKey">name to use when looking up in the container.</param>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.GenericParameterBase.MatchesType(System.Type)">
+            <summary>
+            Test to see if this parameter value has a matching type for the given type.
+            </summary>
+            <param name="t">Type to check.</param>
+            <returns>True if this parameter value is compatible with type <paramref name="t"/>,
+            false if not.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.GenericParameterBase.GetResolverPolicy(System.Type)">
+            <summary>
+            Return a <see cref="T:Microsoft.Practices.ObjectBuilder2.IDependencyResolverPolicy"/> instance that will
+            return this types value for the parameter.
+            </summary>
+            <param name="typeToBuild">Type that contains the member that needs this parameter. Used
+            to resolve open generic parameters.</param>
+            <returns>The <see cref="T:Microsoft.Practices.ObjectBuilder2.IDependencyResolverPolicy"/>.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.GenericParameterBase.DoGetResolverPolicy(System.Type,System.String)">
+            <summary>
+            Return a <see cref="T:Microsoft.Practices.ObjectBuilder2.IDependencyResolverPolicy"/> instance that will
+            return this types value for the parameter.
+            </summary>
+            <param name="typeToResolve">The actual type to resolve.</param>
+            <param name="resolutionKey">The resolution key.</param>
+            <returns>The <see cref="T:Microsoft.Practices.ObjectBuilder2.IDependencyResolverPolicy"/>.</returns>
+        </member>
+        <member name="P:Microsoft.Practices.Unity.GenericParameterBase.ParameterTypeName">
+            <summary>
+            Name for the type represented by this <see cref="T:Microsoft.Practices.Unity.InjectionParameterValue"/>.
+            This may be an actual type name or a generic argument name.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Practices.Unity.OptionalGenericParameter">
+            <summary>
+            A <see cref="T:Microsoft.Practices.Unity.InjectionParameterValue"/> that lets you specify that
+            an instance of a generic type parameter should be resolved, providing the <see langword="null"/>
+            value if resolving fails.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.OptionalGenericParameter.#ctor(System.String)">
+            <summary>
+            Create a new <see cref="T:Microsoft.Practices.Unity.GenericParameter"/> instance that specifies
+            that the given named generic parameter should be resolved.
+            </summary>
+            <param name="genericParameterName">The generic parameter name to resolve.</param>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.OptionalGenericParameter.#ctor(System.String,System.String)">
+            <summary>
+            Create a new <see cref="T:Microsoft.Practices.Unity.GenericParameter"/> instance that specifies
+            that the given named generic parameter should be resolved.
+            </summary>
+            <param name="genericParameterName">The generic parameter name to resolve.</param>
+            <param name="resolutionKey">name to use when looking up in the container.</param>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.OptionalGenericParameter.DoGetResolverPolicy(System.Type,System.String)">
+            <summary>
+            Return a <see cref="T:Microsoft.Practices.ObjectBuilder2.IDependencyResolverPolicy"/> instance that will
+            return this types value for the parameter.
+            </summary>
+            <param name="typeToResolve">The actual type to resolve.</param>
+            <param name="resolutionKey">The resolution key.</param>
+            <returns>The <see cref="T:Microsoft.Practices.ObjectBuilder2.IDependencyResolverPolicy"/>.</returns>
+        </member>
+        <member name="T:Microsoft.Practices.Unity.InjectionFactory">
+            <summary>
+            A class that lets you specify a factory method the container
+            will use to create the object.
+            </summary>
+            <remarks>This is a significantly easier way to do the same
+            thing the old static factory extension was used for.</remarks>
+        </member>
+        <member name="T:Microsoft.Practices.Unity.InjectionMember">
+            <summary>
+            Base class for objects that can be used to configure what
+            class members get injected by the container.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.InjectionMember.AddPolicies(System.Type,Microsoft.Practices.ObjectBuilder2.IPolicyList)">
+            <summary>
+            Add policies to the <paramref name="policies"/> to configure the
+            container to call this constructor with the appropriate parameter values.
+            </summary>
+            <param name="typeToCreate">Type to register.</param>
+            <param name="policies">Policy list to add policies to.</param>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.InjectionMember.AddPolicies(System.Type,System.Type,System.String,Microsoft.Practices.ObjectBuilder2.IPolicyList)">
+            <summary>
+            Add policies to the <paramref name="policies"/> to configure the
+            container to call this constructor with the appropriate parameter values.
+            </summary>
+            <param name="serviceType">Type of interface being registered. If no interface,
+            this will be null.</param>
+            <param name="implementationType">Type of concrete type being registered.</param>
+            <param name="name">Name used to resolve the type object.</param>
+            <param name="policies">Policy list to add policies to.</param>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.InjectionFactory.#ctor(System.Func{Microsoft.Practices.Unity.IUnityContainer,System.Object})">
+            <summary>
+            Create a new instance of <see cref="T:Microsoft.Practices.Unity.InjectionFactory"/> with
+            the given factory function.
+            </summary>
+            <param name="factoryFunc">Factory function.</param>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.InjectionFactory.#ctor(System.Func{Microsoft.Practices.Unity.IUnityContainer,System.Type,System.String,System.Object})">
+            <summary>
+            Create a new instance of <see cref="T:Microsoft.Practices.Unity.InjectionFactory"/> with
+            the given factory function.
+            </summary>
+            <param name="factoryFunc">Factory function.</param>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.InjectionFactory.AddPolicies(System.Type,System.Type,System.String,Microsoft.Practices.ObjectBuilder2.IPolicyList)">
+            <summary>
+            Add policies to the <paramref name="policies"/> to configure the
+            container to call this constructor with the appropriate parameter values.
+            </summary>
+            <param name="serviceType">Type of interface being registered. If no interface,
+            this will be null. This parameter is ignored in this implementation.</param>
+            <param name="implementationType">Type of concrete type being registered.</param>
+            <param name="name">Name used to resolve the type object.</param>
+            <param name="policies">Policy list to add policies to.</param>
+        </member>
+        <member name="T:Microsoft.Practices.Unity.OptionalParameter">
+            <summary>
+            A <see cref="T:Microsoft.Practices.Unity.InjectionParameterValue"/> that can be passed to
+            <see cref="M:Microsoft.Practices.Unity.IUnityContainer.RegisterType(System.Type,System.Type,System.String,Microsoft.Practices.Unity.LifetimeManager,Microsoft.Practices.Unity.InjectionMember[])"/> to configure a
+            parameter or property as an optional dependency.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Practices.Unity.TypedInjectionValue">
+            <summary>
+            A base class for implementing <see cref="T:Microsoft.Practices.Unity.InjectionParameterValue"/> classes
+            that deal in explicit types.
             </summary>
         </member>
         <member name="M:Microsoft.Practices.Unity.TypedInjectionValue.#ctor(System.Type)">
@@ -607,7 +728,7 @@
             <remarks>
             Don't do anything that could throw in this method,
             it will cause later recover operations to get skipped
-            and play real havok with the stack trace.
+            and play real havoc with the stack trace.
             </remarks>
         </member>
         <member name="M:Microsoft.Practices.Unity.SynchronizedLifetimeManager.GetValue">
@@ -656,7 +777,7 @@
             <remarks>
             Don't do anything that could throw in this method,
             it will cause later recover operations to get skipped
-            and play real havok with the stack trace.
+            and play real havoc with the stack trace.
             </remarks>
         </member>
         <member name="M:Microsoft.Practices.Unity.ContainerControlledLifetimeManager.SynchronizedGetValue">
@@ -874,6 +995,145 @@
             Name this resolver will resolve.
             </summary>
         </member>
+        <member name="T:Microsoft.Practices.ObjectBuilder2.PolicyListExtensions">
+            <summary>
+            Extension methods on <see cref="T:Microsoft.Practices.ObjectBuilder2.IPolicyList"/> to provide convenience
+            overloads (generic versions, mostly).
+            </summary>
+        </member>
+        <member name="M:Microsoft.Practices.ObjectBuilder2.PolicyListExtensions.Clear``1(Microsoft.Practices.ObjectBuilder2.IPolicyList,System.Object)">
+            <summary>
+            Removes an individual policy type for a build key.
+            </summary>
+            <typeparam name="TPolicyInterface">The type the policy was registered as.</typeparam>
+            <param name="policies"><see cref="T:Microsoft.Practices.ObjectBuilder2.IPolicyList"/> to remove the policy from.</param>
+            <param name="buildKey">The key the policy applies.</param>
+        </member>
+        <member name="M:Microsoft.Practices.ObjectBuilder2.PolicyListExtensions.ClearDefault``1(Microsoft.Practices.ObjectBuilder2.IPolicyList)">
+            <summary>
+            Removes a default policy.
+            </summary>
+            <typeparam name="TPolicyInterface">The type the policy was registered as.</typeparam>
+            <param name="policies"><see cref="T:Microsoft.Practices.ObjectBuilder2.IPolicyList"/> to remove the policy from.</param>
+        </member>
+        <member name="M:Microsoft.Practices.ObjectBuilder2.PolicyListExtensions.Get``1(Microsoft.Practices.ObjectBuilder2.IPolicyList,System.Object)">
+            <summary>
+            Gets an individual policy.
+            </summary>
+            <typeparam name="TPolicyInterface">The interface the policy is registered under.</typeparam>
+            <param name="policies"><see cref="T:Microsoft.Practices.ObjectBuilder2.IPolicyList"/> to search.</param>
+            <param name="buildKey">The key the policy applies.</param>
+            <returns>The policy in the list, if present; returns null otherwise.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.ObjectBuilder2.PolicyListExtensions.Get``1(Microsoft.Practices.ObjectBuilder2.IPolicyList,System.Object,Microsoft.Practices.ObjectBuilder2.IPolicyList@)">
+            <summary>
+            Gets an individual policy.
+            </summary>
+            <typeparam name="TPolicyInterface">The interface the policy is registered under.</typeparam>
+            <param name="policies"><see cref="T:Microsoft.Practices.ObjectBuilder2.IPolicyList"/> to search.</param>
+            <param name="buildKey">The key the policy applies.</param>
+            <param name="containingPolicyList">The policy list that actually contains the returned policy.</param>
+            <returns>The policy in the list, if present; returns null otherwise.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.ObjectBuilder2.PolicyListExtensions.Get(Microsoft.Practices.ObjectBuilder2.IPolicyList,System.Type,System.Object)">
+            <summary>
+            Gets an individual policy.
+            </summary>
+            <param name="policies"><see cref="T:Microsoft.Practices.ObjectBuilder2.IPolicyList"/> to search.</param>
+            <param name="policyInterface">The interface the policy is registered under.</param>
+            <param name="buildKey">The key the policy applies.</param>
+            <returns>The policy in the list, if present; returns null otherwise.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.ObjectBuilder2.PolicyListExtensions.Get(Microsoft.Practices.ObjectBuilder2.IPolicyList,System.Type,System.Object,Microsoft.Practices.ObjectBuilder2.IPolicyList@)">
+            <summary>
+            Gets an individual policy.
+            </summary>
+            <param name="policies"><see cref="T:Microsoft.Practices.ObjectBuilder2.IPolicyList"/> to search.</param>
+            <param name="policyInterface">The interface the policy is registered under.</param>
+            <param name="buildKey">The key the policy applies.</param>
+            <param name="containingPolicyList">The policy list that actually contains the returned policy.</param>
+            <returns>The policy in the list, if present; returns null otherwise.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.ObjectBuilder2.PolicyListExtensions.Get``1(Microsoft.Practices.ObjectBuilder2.IPolicyList,System.Object,System.Boolean)">
+            <summary>
+            Gets an individual policy.
+            </summary>
+            <typeparam name="TPolicyInterface">The interface the policy is registered under.</typeparam>
+            <param name="policies"><see cref="T:Microsoft.Practices.ObjectBuilder2.IPolicyList"/> to search.</param>
+            <param name="buildKey">The key the policy applies.</param>
+            <param name="localOnly">true if the policy searches local only; otherwise false to seach up the parent chain.</param>
+            <returns>The policy in the list, if present; returns null otherwise.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.ObjectBuilder2.PolicyListExtensions.Get``1(Microsoft.Practices.ObjectBuilder2.IPolicyList,System.Object,System.Boolean,Microsoft.Practices.ObjectBuilder2.IPolicyList@)">
+            <summary>
+            Gets an individual policy.
+            </summary>
+            <typeparam name="TPolicyInterface">The interface the policy is registered under.</typeparam>
+            <param name="policies"><see cref="T:Microsoft.Practices.ObjectBuilder2.IPolicyList"/> to search.</param>
+            <param name="buildKey">The key the policy applies.</param>
+            <param name="localOnly">true if the policy searches local only; otherwise false to seach up the parent chain.</param>
+            <param name="containingPolicyList">The policy list that actually contains the returned policy.</param>
+            <returns>The policy in the list, if present; returns null otherwise.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.ObjectBuilder2.PolicyListExtensions.Get(Microsoft.Practices.ObjectBuilder2.IPolicyList,System.Type,System.Object,System.Boolean)">
+            <summary>
+            Gets an individual policy.
+            </summary>
+            <param name="policies"><see cref="T:Microsoft.Practices.ObjectBuilder2.IPolicyList"/> to search.</param>
+            <param name="policyInterface">The interface the policy is registered under.</param>
+            <param name="buildKey">The key the policy applies.</param>
+            <param name="localOnly">true if the policy searches local only; otherwise false to seach up the parent chain.</param>
+            <returns>The policy in the list, if present; returns null otherwise.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.ObjectBuilder2.PolicyListExtensions.GetNoDefault``1(Microsoft.Practices.ObjectBuilder2.IPolicyList,System.Object,System.Boolean)">
+            <summary>
+            Get the non default policy.
+            </summary>
+            <typeparam name="TPolicyInterface">The interface the policy is registered under.</typeparam>
+            <param name="policies"><see cref="T:Microsoft.Practices.ObjectBuilder2.IPolicyList"/> to search.</param>
+            <param name="buildKey">The key the policy applies.</param>
+            <param name="localOnly">true if the policy searches local only; otherwise false to seach up the parent chain.</param>
+            <returns>The policy in the list, if present; returns null otherwise.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.ObjectBuilder2.PolicyListExtensions.GetNoDefault``1(Microsoft.Practices.ObjectBuilder2.IPolicyList,System.Object,System.Boolean,Microsoft.Practices.ObjectBuilder2.IPolicyList@)">
+            <summary>
+            Get the non default policy.
+            </summary>
+            <typeparam name="TPolicyInterface">The interface the policy is registered under.</typeparam>
+            <param name="policies"><see cref="T:Microsoft.Practices.ObjectBuilder2.IPolicyList"/> to search.</param>
+            <param name="buildKey">The key the policy applies.</param>
+            <param name="localOnly">true if the policy searches local only; otherwise false to seach up the parent chain.</param>
+            <param name="containingPolicyList">The policy list that actually contains the returned policy.</param>
+            <returns>The policy in the list, if present; returns null otherwise.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.ObjectBuilder2.PolicyListExtensions.GetNoDefault(Microsoft.Practices.ObjectBuilder2.IPolicyList,System.Type,System.Object,System.Boolean)">
+            <summary>
+            Get the non default policy.
+            </summary>
+            <param name="policies"><see cref="T:Microsoft.Practices.ObjectBuilder2.IPolicyList"/> to search.</param>
+            <param name="policyInterface">The interface the policy is registered under.</param>
+            <param name="buildKey">The key the policy applies.</param>
+            <param name="localOnly">true if the policy searches local only; otherwise false to seach up the parent chain.</param>
+            <returns>The policy in the list, if present; returns null otherwise.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.ObjectBuilder2.PolicyListExtensions.Set``1(Microsoft.Practices.ObjectBuilder2.IPolicyList,``0,System.Object)">
+            <summary>
+            Sets an individual policy.
+            </summary>
+            <typeparam name="TPolicyInterface">The interface the policy is registered under.</typeparam>
+            <param name="policies"><see cref="T:Microsoft.Practices.ObjectBuilder2.IPolicyList"/> to add the policy to.</param>
+            <param name="policy">The policy to be registered.</param>
+            <param name="buildKey">The key the policy applies.</param>
+        </member>
+        <member name="M:Microsoft.Practices.ObjectBuilder2.PolicyListExtensions.SetDefault``1(Microsoft.Practices.ObjectBuilder2.IPolicyList,``0)">
+            <summary>
+            Sets a default policy. When checking for a policy, if no specific individual policy
+            is available, the default will be used.
+            </summary>
+            <typeparam name="TPolicyInterface">The interface to register the policy under.</typeparam>
+            <param name="policies"><see cref="T:Microsoft.Practices.ObjectBuilder2.IPolicyList"/> to add the policy to.</param>
+            <param name="policy">The default policy to be registered.</param>
+        </member>
         <member name="T:Microsoft.Practices.ObjectBuilder2.BuildOperation">
             <summary>
             Base class for the current operation stored in the build context.
@@ -889,6 +1149,34 @@
             <summary>
              The type that's currently being built.
             </summary>
+        </member>
+        <member name="T:Microsoft.Practices.ObjectBuilder2.DeferredResolveBuildPlanPolicy">
+            <summary>
+            Build plan for <see cref="T:System.Func`1"/> that will
+            return a func that will resolve the requested type
+            through this container later.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Practices.ObjectBuilder2.IBuildPlanPolicy">
+            <summary>
+            A build plan is an object that, when invoked, will create a new object
+            or fill in a given existing one. It encapsulates all the information
+            gathered by the strategies to construct a particular object.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Practices.ObjectBuilder2.IBuildPlanPolicy.BuildUp(Microsoft.Practices.ObjectBuilder2.IBuilderContext)">
+            <summary>
+            Creates an instance of this build plan's type, or fills
+            in the existing type if passed in.
+            </summary>
+            <param name="context">Context used to build up the object.</param>
+        </member>
+        <member name="M:Microsoft.Practices.ObjectBuilder2.OverriddenBuildPlanMarkerPolicy.BuildUp(Microsoft.Practices.ObjectBuilder2.IBuilderContext)">
+            <summary>
+            Creates an instance of this build plan's type, or fills
+            in the existing type if passed in.
+            </summary>
+            <param name="context">Context used to build up the object.</param>
         </member>
         <member name="T:Microsoft.Practices.ObjectBuilder2.EnumerableExtensions">
             <summary>
@@ -1567,13 +1855,6 @@
             A custom collection over <see cref="T:Microsoft.Practices.ObjectBuilder2.IBuilderPolicy"/> objects.
             </summary>
         </member>
-        <member name="M:Microsoft.Practices.ObjectBuilder2.IPolicyList.Clear``1(System.Object)">
-            <summary>
-            Removes an individual policy type for a build key.
-            </summary>
-            <typeparam name="TPolicyInterface">The type the policy was registered as.</typeparam>
-            <param name="buildKey">The key the policy applies.</param>
-        </member>
         <member name="M:Microsoft.Practices.ObjectBuilder2.IPolicyList.Clear(System.Type,System.Object)">
             <summary>
             Removes an individual policy type for a build key.
@@ -1586,77 +1867,33 @@
             Removes all policies from the list.
             </summary>
         </member>
-        <member name="M:Microsoft.Practices.ObjectBuilder2.IPolicyList.ClearDefault``1">
-            <summary>
-            Removes a default policy.
-            </summary>
-            <typeparam name="TPolicyInterface">The type the policy was registered as.</typeparam>
-        </member>
         <member name="M:Microsoft.Practices.ObjectBuilder2.IPolicyList.ClearDefault(System.Type)">
             <summary>
             Removes a default policy.
             </summary>
             <param name="policyInterface">The type the policy was registered as.</param>
         </member>
-        <member name="M:Microsoft.Practices.ObjectBuilder2.IPolicyList.Get``1(System.Object)">
-            <summary>
-            Gets an individual policy.
-            </summary>
-            <typeparam name="TPolicyInterface">The interface the policy is registered under.</typeparam>
-            <param name="buildKey">The key the policy applies.</param>
-            <returns>The policy in the list, if present; returns null otherwise.</returns>
-        </member>
-        <member name="M:Microsoft.Practices.ObjectBuilder2.IPolicyList.Get(System.Type,System.Object)">
-            <summary>
-            Gets an individual policy.
-            </summary>
-            <param name="policyInterface">The interface the policy is registered under.</param>
-            <param name="buildKey">The key the policy applies.</param>
-            <returns>The policy in the list, if present; returns null otherwise.</returns>
-        </member>
-        <member name="M:Microsoft.Practices.ObjectBuilder2.IPolicyList.Get``1(System.Object,System.Boolean)">
-            <summary>
-            Gets an individual policy.
-            </summary>
-            <typeparam name="TPolicyInterface">The interface the policy is registered under.</typeparam>
-            <param name="buildKey">The key the policy applies.</param>
-            <param name="localOnly">true if the policy searches local only; otherwise false to seach up the parent chain.</param>
-            <returns>The policy in the list, if present; returns null otherwise.</returns>
-        </member>
-        <member name="M:Microsoft.Practices.ObjectBuilder2.IPolicyList.Get(System.Type,System.Object,System.Boolean)">
+        <member name="M:Microsoft.Practices.ObjectBuilder2.IPolicyList.Get(System.Type,System.Object,System.Boolean,Microsoft.Practices.ObjectBuilder2.IPolicyList@)">
             <summary>
             Gets an individual policy.
             </summary>
             <param name="policyInterface">The interface the policy is registered under.</param>
             <param name="buildKey">The key the policy applies.</param>
             <param name="localOnly">true if the policy searches local only; otherwise false to seach up the parent chain.</param>
+            <param name="containingPolicyList">The policy list in the chain that the searched for policy was found in, null if the policy was
+            not found.</param>
             <returns>The policy in the list, if present; returns null otherwise.</returns>
         </member>
-        <member name="M:Microsoft.Practices.ObjectBuilder2.IPolicyList.GetNoDefault``1(System.Object,System.Boolean)">
-            <summary>
-            Get the non default policy.
-            </summary>
-            <typeparam name="TPolicyInterface">The interface the policy is registered under.</typeparam>
-            <param name="buildKey">The key the policy applies.</param>
-            <param name="localOnly">true if the policy searches local only; otherwise false to seach up the parent chain.</param>
-            <returns>The policy in the list, if present; returns null otherwise.</returns>
-        </member>
-        <member name="M:Microsoft.Practices.ObjectBuilder2.IPolicyList.GetNoDefault(System.Type,System.Object,System.Boolean)">
+        <member name="M:Microsoft.Practices.ObjectBuilder2.IPolicyList.GetNoDefault(System.Type,System.Object,System.Boolean,Microsoft.Practices.ObjectBuilder2.IPolicyList@)">
             <summary>
             Get the non default policy.
             </summary>
             <param name="policyInterface">The interface the policy is registered under.</param>
-            <param name="buildKey">The key the policy applies.</param>
-            <param name="localOnly">true if the policy searches local only; otherwise false to seach up the parent chain.</param>
-            <returns>The policy in the list, if present; returns null otherwise.</returns>
-        </member>
-        <member name="M:Microsoft.Practices.ObjectBuilder2.IPolicyList.Set``1(``0,System.Object)">
-            <summary>
-            Sets an individual policy.
-            </summary>
-            <typeparam name="TPolicyInterface">The interface the policy is registered under.</typeparam>
-            <param name="policy">The policy to be registered.</param>
-            <param name="buildKey">The key the policy applies.</param>
+            <param name="buildKey">The key the policy applies to.</param>
+            <param name="localOnly">True if the search should be in the local policy list only; otherwise false to search up the parent chain.</param>
+            <param name="containingPolicyList">The policy list in the chain that the searched for policy was found in, null if the policy was
+            not found.</param>
+            <returns>The policy in the list if present; returns null otherwise.</returns>
         </member>
         <member name="M:Microsoft.Practices.ObjectBuilder2.IPolicyList.Set(System.Type,Microsoft.Practices.ObjectBuilder2.IBuilderPolicy,System.Object)">
             <summary>
@@ -1665,14 +1902,6 @@
             <param name="policyInterface">The <see cref="T:System.Type"/> of the policy.</param>
             <param name="policy">The policy to be registered.</param>
             <param name="buildKey">The key the policy applies.</param>
-        </member>
-        <member name="M:Microsoft.Practices.ObjectBuilder2.IPolicyList.SetDefault``1(``0)">
-            <summary>
-            Sets a default policy. When checking for a policy, if no specific individual policy
-            is available, the default will be used.
-            </summary>
-            <typeparam name="TPolicyInterface">The interface to register the policy under.</typeparam>
-            <param name="policy">The default policy to be registered.</param>
         </member>
         <member name="M:Microsoft.Practices.ObjectBuilder2.IPolicyList.SetDefault(System.Type,Microsoft.Practices.ObjectBuilder2.IBuilderPolicy)">
             <summary>
@@ -1698,13 +1927,6 @@
             </summary>
             <param name="innerPolicyList">An inner policy list to search.</param>
         </member>
-        <member name="M:Microsoft.Practices.ObjectBuilder2.PolicyList.Clear``1(System.Object)">
-            <summary>
-            Removes an individual policy type for a build key.
-            </summary>
-            <typeparam name="TPolicyInterface">The type the policy was registered as.</typeparam>
-            <param name="buildKey">The key the policy applies.</param>
-        </member>
         <member name="M:Microsoft.Practices.ObjectBuilder2.PolicyList.Clear(System.Type,System.Object)">
             <summary>
             Removes an individual policy type for a build key.
@@ -1717,77 +1939,33 @@
             Removes all policies from the list.
             </summary>
         </member>
-        <member name="M:Microsoft.Practices.ObjectBuilder2.PolicyList.ClearDefault``1">
-            <summary>
-            Removes a default policy.
-            </summary>
-            <typeparam name="TPolicyInterface">The type the policy was registered as.</typeparam>
-        </member>
         <member name="M:Microsoft.Practices.ObjectBuilder2.PolicyList.ClearDefault(System.Type)">
             <summary>
             Removes a default policy.
             </summary>
             <param name="policyInterface">The type the policy was registered as.</param>
         </member>
-        <member name="M:Microsoft.Practices.ObjectBuilder2.PolicyList.Get``1(System.Object)">
-            <summary>
-            Gets an individual policy.
-            </summary>
-            <typeparam name="TPolicyInterface">The interface the policy is registered under.</typeparam>
-            <param name="buildKey">The key the policy applies.</param>
-            <returns>The policy in the list, if present; returns null otherwise.</returns>
-        </member>
-        <member name="M:Microsoft.Practices.ObjectBuilder2.PolicyList.Get(System.Type,System.Object)">
-            <summary>
-            Gets an individual policy.
-            </summary>
-            <param name="policyInterface">The interface the policy is registered under.</param>
-            <param name="buildKey">The key the policy applies.</param>
-            <returns>The policy in the list, if present; returns null otherwise.</returns>
-        </member>
-        <member name="M:Microsoft.Practices.ObjectBuilder2.PolicyList.Get``1(System.Object,System.Boolean)">
-            <summary>
-            Gets an individual policy.
-            </summary>
-            <typeparam name="TPolicyInterface">The interface the policy is registered under.</typeparam>
-            <param name="buildKey">The key the policy applies.</param>
-            <param name="localOnly">true if the policy searches local only; otherwise false to seach up the parent chain.</param>
-            <returns>The policy in the list, if present; returns null otherwise.</returns>
-        </member>
-        <member name="M:Microsoft.Practices.ObjectBuilder2.PolicyList.Get(System.Type,System.Object,System.Boolean)">
+        <member name="M:Microsoft.Practices.ObjectBuilder2.PolicyList.Get(System.Type,System.Object,System.Boolean,Microsoft.Practices.ObjectBuilder2.IPolicyList@)">
             <summary>
             Gets an individual policy.
             </summary>
             <param name="policyInterface">The interface the policy is registered under.</param>
             <param name="buildKey">The key the policy applies.</param>
             <param name="localOnly">true if the policy searches local only; otherwise false to seach up the parent chain.</param>
+            <param name="containingPolicyList">The policy list in the chain that the searched for policy was found in, null if the policy was
+            not found.</param>
             <returns>The policy in the list, if present; returns null otherwise.</returns>
         </member>
-        <member name="M:Microsoft.Practices.ObjectBuilder2.PolicyList.GetNoDefault``1(System.Object,System.Boolean)">
-            <summary>
-            Get the non default policy.
-            </summary>
-            <typeparam name="TPolicyInterface">The interface the policy is registered under.</typeparam>
-            <param name="buildKey">The key the policy applies.</param>
-            <param name="localOnly">true if the policy searches local only; otherwise false to seach up the parent chain.</param>
-            <returns>The policy in the list, if present; returns null otherwise.</returns>
-        </member>
-        <member name="M:Microsoft.Practices.ObjectBuilder2.PolicyList.GetNoDefault(System.Type,System.Object,System.Boolean)">
+        <member name="M:Microsoft.Practices.ObjectBuilder2.PolicyList.GetNoDefault(System.Type,System.Object,System.Boolean,Microsoft.Practices.ObjectBuilder2.IPolicyList@)">
             <summary>
             Get the non default policy.
             </summary>
             <param name="policyInterface">The interface the policy is registered under.</param>
-            <param name="buildKey">The key the policy applies.</param>
-            <param name="localOnly">true if the policy searches local only; otherwise false to seach up the parent chain.</param>
-            <returns>The policy in the list, if present; returns null otherwise.</returns>
-        </member>
-        <member name="M:Microsoft.Practices.ObjectBuilder2.PolicyList.Set``1(``0,System.Object)">
-            <summary>
-            Sets an individual policy.
-            </summary>
-            <typeparam name="TPolicyInterface">The interface the policy is registered under.</typeparam>
-            <param name="policy">The policy to be registered.</param>
-            <param name="buildKey">The key the policy applies.</param>
+            <param name="buildKey">The key the policy applies to.</param>
+            <param name="localOnly">True if the search should be in the local policy list only; otherwise false to search up the parent chain.</param>
+            <param name="containingPolicyList">The policy list in the chain that the searched for policy was found in, null if the policy was
+            not found.</param>
+            <returns>The policy in the list if present; returns null otherwise.</returns>
         </member>
         <member name="M:Microsoft.Practices.ObjectBuilder2.PolicyList.Set(System.Type,Microsoft.Practices.ObjectBuilder2.IBuilderPolicy,System.Object)">
             <summary>
@@ -1796,14 +1974,6 @@
             <param name="policyInterface">The <see cref="T:System.Type"/> of the policy.</param>
             <param name="policy">The policy to be registered.</param>
             <param name="buildKey">The key the policy applies.</param>
-        </member>
-        <member name="M:Microsoft.Practices.ObjectBuilder2.PolicyList.SetDefault``1(``0)">
-            <summary>
-            Sets a default policy. When checking for a policy, if no specific individual policy
-            is available, the default will be used.
-            </summary>
-            <typeparam name="TPolicyInterface">The interface to register the policy under.</typeparam>
-            <param name="policy">The default policy to be registered.</param>
         </member>
         <member name="M:Microsoft.Practices.ObjectBuilder2.PolicyList.SetDefault(System.Type,Microsoft.Practices.ObjectBuilder2.IBuilderPolicy)">
             <summary>
@@ -1934,11 +2104,14 @@
             Represents a builder policy for mapping build keys.
             </summary>
         </member>
-        <member name="M:Microsoft.Practices.ObjectBuilder2.IBuildKeyMappingPolicy.Map(Microsoft.Practices.ObjectBuilder2.NamedTypeBuildKey)">
+        <member name="M:Microsoft.Practices.ObjectBuilder2.IBuildKeyMappingPolicy.Map(Microsoft.Practices.ObjectBuilder2.NamedTypeBuildKey,Microsoft.Practices.ObjectBuilder2.IBuilderContext)">
             <summary>
             Maps the build key.
             </summary>
             <param name="buildKey">The build key to map.</param>
+            <param name="context">Current build context. Used for contextual information
+            if writing a more sophisticated mapping. This parameter can be null
+            (called when getting container registrations).</param>
             <returns>The new build key.</returns>
         </member>
         <member name="M:Microsoft.Practices.ObjectBuilder2.BuildKeyMappingPolicy.#ctor(Microsoft.Practices.ObjectBuilder2.NamedTypeBuildKey)">
@@ -1947,11 +2120,13 @@
             </summary>
             <param name="newBuildKey">The new build key.</param>
         </member>
-        <member name="M:Microsoft.Practices.ObjectBuilder2.BuildKeyMappingPolicy.Map(Microsoft.Practices.ObjectBuilder2.NamedTypeBuildKey)">
+        <member name="M:Microsoft.Practices.ObjectBuilder2.BuildKeyMappingPolicy.Map(Microsoft.Practices.ObjectBuilder2.NamedTypeBuildKey,Microsoft.Practices.ObjectBuilder2.IBuilderContext)">
             <summary>
-            Map the <paramref name="buildKey"/> to a new build key.
+            Maps the build key.
             </summary>
-            <param name="buildKey">The build key to mapl</param>
+            <param name="buildKey">The build key to map.</param>
+            <param name="context">Current build context. Used for contextual information
+            if writing a more sophisticated mapping, unused in this implementation.</param>
             <returns>The new build key.</returns>
         </member>
         <member name="T:Microsoft.Practices.ObjectBuilder2.BuildKeyMappingStrategy">
@@ -1979,11 +2154,13 @@
             </summary>
             <param name="destinationKey">Build key to map to. This must be or contain an open generic type.</param>
         </member>
-        <member name="M:Microsoft.Practices.ObjectBuilder2.GenericTypeBuildKeyMappingPolicy.Map(Microsoft.Practices.ObjectBuilder2.NamedTypeBuildKey)">
+        <member name="M:Microsoft.Practices.ObjectBuilder2.GenericTypeBuildKeyMappingPolicy.Map(Microsoft.Practices.ObjectBuilder2.NamedTypeBuildKey,Microsoft.Practices.ObjectBuilder2.IBuilderContext)">
             <summary>
             Maps the build key.
             </summary>
             <param name="buildKey">The build key to map.</param>
+            <param name="context">Current build context. Used for contextual information
+            if writing a more sophisticated mapping.</param>
             <returns>The new build key.</returns>
         </member>
         <member name="T:Microsoft.Practices.ObjectBuilder2.BuildPlanStrategy">
@@ -2022,20 +2199,23 @@
             will determine which constructor to call from the build plan.
             </summary>
         </member>
-        <member name="M:Microsoft.Practices.ObjectBuilder2.IConstructorSelectorPolicy.SelectConstructor(Microsoft.Practices.ObjectBuilder2.IBuilderContext)">
+        <member name="M:Microsoft.Practices.ObjectBuilder2.IConstructorSelectorPolicy.SelectConstructor(Microsoft.Practices.ObjectBuilder2.IBuilderContext,Microsoft.Practices.ObjectBuilder2.IPolicyList)">
             <summary>
             Choose the constructor to call for the given type.
             </summary>
             <param name="context">Current build context</param>
+            <param name="resolverPolicyDestination">The <see cref="T:Microsoft.Practices.ObjectBuilder2.IPolicyList"/> to add any
+            generated resolver objects into.</param>
             <returns>The chosen constructor.</returns>
         </member>
-        <member name="M:Microsoft.Practices.ObjectBuilder2.ConstructorSelectorPolicyBase`1.SelectConstructor(Microsoft.Practices.ObjectBuilder2.IBuilderContext)">
-             <summary>
-             Choose the constructor to call for the given type.
-             </summary>
-             <param name="context">Current build context.</param>
-             <returns>The chosen constructor.</returns>
-            <exception cref="T:System.InvalidOperationException">Thrown when the constructor to choose is ambiguous.</exception>
+        <member name="M:Microsoft.Practices.ObjectBuilder2.ConstructorSelectorPolicyBase`1.SelectConstructor(Microsoft.Practices.ObjectBuilder2.IBuilderContext,Microsoft.Practices.ObjectBuilder2.IPolicyList)">
+            <summary>
+            Choose the constructor to call for the given type.
+            </summary>
+            <param name="context">Current build context</param>
+            <param name="resolverPolicyDestination">The <see cref="T:Microsoft.Practices.ObjectBuilder2.IPolicyList"/> to add any
+            generated resolver objects into.</param>
+            <returns>The chosen constructor.</returns>
         </member>
         <member name="M:Microsoft.Practices.ObjectBuilder2.ConstructorSelectorPolicyBase`1.CreateResolver(System.Reflection.ParameterInfo)">
             <summary>
@@ -2067,7 +2247,7 @@
         </member>
         <member name="T:Microsoft.Practices.ObjectBuilder2.SelectedConstructor">
             <summary>
-            Objects of this type are the return value from <see cref="M:Microsoft.Practices.ObjectBuilder2.IConstructorSelectorPolicy.SelectConstructor(Microsoft.Practices.ObjectBuilder2.IBuilderContext)"/>.
+            Objects of this type are the return value from <see cref="M:Microsoft.Practices.ObjectBuilder2.IConstructorSelectorPolicy.SelectConstructor(Microsoft.Practices.ObjectBuilder2.IBuilderContext,Microsoft.Practices.ObjectBuilder2.IPolicyList)"/>.
             It encapsulates the desired <see cref="T:System.Reflection.ConstructorInfo"/> with the string keys
             needed to look up the <see cref="T:Microsoft.Practices.ObjectBuilder2.IDependencyResolverPolicy"/> for each
             parameter.
@@ -2394,20 +2574,6 @@
             given delegate to execute the plan.
             </summary>
         </member>
-        <member name="T:Microsoft.Practices.ObjectBuilder2.IBuildPlanPolicy">
-            <summary>
-            A build plan is an object that, when invoked, will create a new object
-            or fill in a given existing one. It encapsulates all the information
-            gathered by the strategies to construct a particular object.
-            </summary>
-        </member>
-        <member name="M:Microsoft.Practices.ObjectBuilder2.IBuildPlanPolicy.BuildUp(Microsoft.Practices.ObjectBuilder2.IBuilderContext)">
-            <summary>
-            Creates an instance of this build plan's type, or fills
-            in the existing type if passed in.
-            </summary>
-            <param name="context">Context used to build up the object.</param>
-        </member>
         <member name="T:Microsoft.Practices.ObjectBuilder2.DynamicMethodBuildPlanCreatorPolicy">
             <summary>
             An <see cref="T:Microsoft.Practices.ObjectBuilder2.IBuildPlanCreatorPolicy"/> implementation
@@ -2627,11 +2793,13 @@
             that should be called as part of building the object.
             </summary>
         </member>
-        <member name="M:Microsoft.Practices.ObjectBuilder2.IMethodSelectorPolicy.SelectMethods(Microsoft.Practices.ObjectBuilder2.IBuilderContext)">
+        <member name="M:Microsoft.Practices.ObjectBuilder2.IMethodSelectorPolicy.SelectMethods(Microsoft.Practices.ObjectBuilder2.IBuilderContext,Microsoft.Practices.ObjectBuilder2.IPolicyList)">
             <summary>
             Return the sequence of methods to call while building the target object.
             </summary>
             <param name="context">Current build context.</param>
+            <param name="resolverPolicyDestination">The <see cref="T:Microsoft.Practices.ObjectBuilder2.IPolicyList"/> to add any
+            generated resolver objects into.</param>
             <returns>Sequence of methods to call.</returns>
         </member>
         <member name="T:Microsoft.Practices.ObjectBuilder2.MethodSelectorPolicy`1">
@@ -2651,11 +2819,13 @@
             <typeparam name="TMarkerAttribute">Attribute that marks methods that should
             be called.</typeparam>
         </member>
-        <member name="M:Microsoft.Practices.ObjectBuilder2.MethodSelectorPolicyBase`1.SelectMethods(Microsoft.Practices.ObjectBuilder2.IBuilderContext)">
+        <member name="M:Microsoft.Practices.ObjectBuilder2.MethodSelectorPolicyBase`1.SelectMethods(Microsoft.Practices.ObjectBuilder2.IBuilderContext,Microsoft.Practices.ObjectBuilder2.IPolicyList)">
             <summary>
             Return the sequence of methods to call while building the target object.
             </summary>
             <param name="context">Current build context.</param>
+            <param name="resolverPolicyDestination">The <see cref="T:Microsoft.Practices.ObjectBuilder2.IPolicyList"/> to add any
+            generated resolver objects into.</param>
             <returns>Sequence of methods to call.</returns>
         </member>
         <member name="M:Microsoft.Practices.ObjectBuilder2.MethodSelectorPolicyBase`1.CreateResolver(System.Reflection.ParameterInfo)">
@@ -2676,7 +2846,7 @@
         </member>
         <member name="T:Microsoft.Practices.ObjectBuilder2.SelectedMethod">
             <summary>
-            Objects of this type are the return value from <see cref="M:Microsoft.Practices.ObjectBuilder2.IMethodSelectorPolicy.SelectMethods(Microsoft.Practices.ObjectBuilder2.IBuilderContext)"/>.
+            Objects of this type are the return value from <see cref="M:Microsoft.Practices.ObjectBuilder2.IMethodSelectorPolicy.SelectMethods(Microsoft.Practices.ObjectBuilder2.IBuilderContext,Microsoft.Practices.ObjectBuilder2.IPolicyList)"/>.
             It encapsulates the desired <see cref="T:System.Reflection.MethodInfo"/> with the string keys
             needed to look up the <see cref="T:Microsoft.Practices.ObjectBuilder2.IDependencyResolverPolicy"/> for each
             parameter.
@@ -2700,12 +2870,14 @@
             of properties that should be injected for the given type.
             </summary>
         </member>
-        <member name="M:Microsoft.Practices.ObjectBuilder2.IPropertySelectorPolicy.SelectProperties(Microsoft.Practices.ObjectBuilder2.IBuilderContext)">
+        <member name="M:Microsoft.Practices.ObjectBuilder2.IPropertySelectorPolicy.SelectProperties(Microsoft.Practices.ObjectBuilder2.IBuilderContext,Microsoft.Practices.ObjectBuilder2.IPolicyList)">
             <summary>
             Returns sequence of properties on the given type that
             should be set as part of building that object.
             </summary>
             <param name="context">Current build context.</param>
+            <param name="resolverPolicyDestination">The <see cref="T:Microsoft.Practices.ObjectBuilder2.IPolicyList"/> to add any
+            generated resolver objects into.</param>
             <returns>Sequence of <see cref="T:System.Reflection.PropertyInfo"/> objects
             that contain the properties to set.</returns>
         </member>
@@ -2715,12 +2887,14 @@
             which lets you override how the parameter resolvers are created.
             </summary>
         </member>
-        <member name="M:Microsoft.Practices.ObjectBuilder2.PropertySelectorBase`1.SelectProperties(Microsoft.Practices.ObjectBuilder2.IBuilderContext)">
+        <member name="M:Microsoft.Practices.ObjectBuilder2.PropertySelectorBase`1.SelectProperties(Microsoft.Practices.ObjectBuilder2.IBuilderContext,Microsoft.Practices.ObjectBuilder2.IPolicyList)">
             <summary>
             Returns sequence of properties on the given type that
             should be set as part of building that object.
             </summary>
-            <param name="context">current build context.</param>
+            <param name="context">Current build context.</param>
+            <param name="resolverPolicyDestination">The <see cref="T:Microsoft.Practices.ObjectBuilder2.IPolicyList"/> to add any
+            generated resolver objects into.</param>
             <returns>Sequence of <see cref="T:System.Reflection.PropertyInfo"/> objects
             that contain the properties to set.</returns>
         </member>
@@ -2751,7 +2925,7 @@
         <member name="T:Microsoft.Practices.ObjectBuilder2.SelectedProperty">
             <summary>
             Objects of this type are returned from
-            <see cref="M:Microsoft.Practices.ObjectBuilder2.IPropertySelectorPolicy.SelectProperties(Microsoft.Practices.ObjectBuilder2.IBuilderContext)"/>.
+            <see cref="M:Microsoft.Practices.ObjectBuilder2.IPropertySelectorPolicy.SelectProperties(Microsoft.Practices.ObjectBuilder2.IBuilderContext,Microsoft.Practices.ObjectBuilder2.IPolicyList)"/>.
             This class combines the <see cref="T:System.Reflection.PropertyInfo"/> about
             the property with the string key used to look up the resolver
             for this property's value.
@@ -2936,63 +3110,6 @@
             phase and executes in reverse order from the PreBuildUp calls.
             </summary>
             <param name="context">Context of the build operation.</param>
-        </member>
-        <member name="T:Microsoft.Practices.ObjectBuilder2.SingletonLifetimePolicy">
-            <summary>
-            A <see cref="T:Microsoft.Practices.ObjectBuilder2.ILifetimePolicy"/> that stores objects in the locator and
-            lifetime container provided by the context.
-            </summary>
-        </member>
-        <member name="M:Microsoft.Practices.ObjectBuilder2.SingletonLifetimePolicy.GetValue">
-            <summary>
-            Retrieve a value from the backing store associated with this Lifetime policy.
-            </summary>
-            <returns>the object desired, or null if no such object is currently stored.</returns>
-        </member>
-        <member name="M:Microsoft.Practices.ObjectBuilder2.SingletonLifetimePolicy.SetValue(System.Object)">
-            <summary>
-            Stores the given value into backing store for retrieval later.
-            </summary>
-            <param name="newValue">The object being stored.</param>
-        </member>
-        <member name="M:Microsoft.Practices.ObjectBuilder2.SingletonLifetimePolicy.RemoveValue">
-            <summary>
-            Remove the given object from backing store.
-            </summary>
-        </member>
-        <member name="M:Microsoft.Practices.ObjectBuilder2.SingletonLifetimePolicy.Recover">
-            <summary>
-            A method that does whatever is needed to clean up
-            as part of cleaning up after an exception.
-            </summary>
-            <remarks>
-            Don't do anything that could throw in this method,
-            it will cause later recover operations to get skipped
-            and play real havok with the stack trace.
-            </remarks>
-        </member>
-        <member name="T:Microsoft.Practices.ObjectBuilder2.TransientLifetimePolicy">
-            <summary>
-            An implementation of <see cref="T:Microsoft.Practices.ObjectBuilder2.ILifetimePolicy"/> that does nothing,
-            ensuring that a new object gets created every time.
-            </summary>
-        </member>
-        <member name="M:Microsoft.Practices.ObjectBuilder2.TransientLifetimePolicy.GetValue">
-            <summary>
-            Retrieve a value from the backing store associated with this Lifetime policy.
-            </summary>
-            <returns>the object desired, or null if no such object is currently stored.</returns>
-        </member>
-        <member name="M:Microsoft.Practices.ObjectBuilder2.TransientLifetimePolicy.SetValue(System.Object)">
-            <summary>
-            Stores the given value into backing store for retrieval later.
-            </summary>
-            <param name="newValue">The object being stored.</param>
-        </member>
-        <member name="M:Microsoft.Practices.ObjectBuilder2.TransientLifetimePolicy.RemoveValue">
-            <summary>
-            Remove the given object from backing store.
-            </summary>
         </member>
         <member name="T:Microsoft.Practices.ObjectBuilder2.StagedStrategyChain`1">
             <summary>
@@ -3235,6 +3352,17 @@
             <param name="arguments">The items to put into the collection.</param>
             <returns>An array that contains the values of the <paramref name="arguments"/>.</returns>
         </member>
+        <member name="M:Microsoft.Practices.ObjectBuilder2.Sequence.Zip``2(System.Collections.Generic.IEnumerable{``0},System.Collections.Generic.IEnumerable{``1})">
+            <summary>
+            Given two sequences, return a new sequence containing the corresponding values
+            from each one.
+            </summary>
+            <typeparam name="TFirstSequenceElement">Type of first sequence.</typeparam>
+            <typeparam name="TSecondSequenceElement">Type of second sequence.</typeparam>
+            <param name="sequence1">First sequence of items.</param>
+            <param name="sequence2">Second sequence of items.</param>
+            <returns>New sequence of pairs. This sequence ends when the shorter of sequence1 and sequence2 does.</returns>
+        </member>
         <member name="T:Microsoft.Practices.Unity.ResolutionFailedException">
             <summary>
             The exception thrown by the Unity container when
@@ -3342,7 +3470,7 @@
         <member name="M:Microsoft.Practices.Unity.StaticFactory.StaticFactoryExtension.RegisterFactory``1(System.String,System.Func{Microsoft.Practices.Unity.IUnityContainer,System.Object})">
             <summary>
             Register the given factory delegate to be called when the container is
-            asked to resolve <typeparamref name="=TTypeToBuild"/> and <paramref name="name"/>.
+            asked to resolve <typeparamref name="TTypeToBuild"/> and <paramref name="name"/>.
             </summary>
             <typeparam name="TTypeToBuild">Type that will be requested from the container.</typeparam>
             <param name="name">The name that will be used when requesting to resolve this type.</param>
@@ -3352,7 +3480,7 @@
         <member name="M:Microsoft.Practices.Unity.StaticFactory.StaticFactoryExtension.RegisterFactory``1(System.Func{Microsoft.Practices.Unity.IUnityContainer,System.Object})">
             <summary>
             Register the given factory delegate to be called when the container is
-            asked to resolve <typeparamref name="=TTypeToBuild"/>.
+            asked to resolve <typeparamref name="TTypeToBuild"/>.
             </summary>
             <typeparam name="TTypeToBuild">Type that will be requested from the container.</typeparam>
             <param name="factoryMethod">Delegate to invoke to create the instance.</param>
@@ -3852,7 +3980,7 @@
             Creates a new extension object and adds it to the container.
             </summary>
             <typeparam name="TExtension">Type of <see cref="T:Microsoft.Practices.Unity.UnityContainerExtension"/> to add. The extension type
-            must have a zero-argument public constructor.</typeparam>
+            will be resolved from within the supplied <paramref name="container"/>.</typeparam>
             <param name="container">Container to add the extension to.</param>
             <returns>The <see cref="T:Microsoft.Practices.Unity.UnityContainer"/> object that this method was called on (this in C#, Me in Visual Basic).</returns>
         </member>
@@ -3986,6 +4114,12 @@
             or one of its overloads, is called.
             </summary>
         </member>
+        <member name="E:Microsoft.Practices.Unity.ExtensionContext.ChildContainerCreated">
+            <summary>
+            This event is raised when the <see cref="M:Microsoft.Practices.Unity.IUnityContainer.CreateChildContainer"/> method is called, providing 
+            the newly created child container to extensions to act on as they see fit.
+            </summary>
+        </member>
         <member name="T:Microsoft.Practices.Unity.NamedEventArgs">
             <summary>
             An EventArgs class that holds a string Name.
@@ -4098,28 +4232,14 @@
             <param name="genericParameterName">The generic parameter name to resolve.</param>
             <param name="resolutionKey">name to use when looking up in the container.</param>
         </member>
-        <member name="M:Microsoft.Practices.Unity.GenericParameter.MatchesType(System.Type)">
-            <summary>
-            Test to see if this parameter value has a matching type for the given type.
-            </summary>
-            <param name="t">Type to check.</param>
-            <returns>True if this parameter value is compatible with type <paramref name="t"/>,
-            false if not.</returns>
-        </member>
-        <member name="M:Microsoft.Practices.Unity.GenericParameter.GetResolverPolicy(System.Type)">
+        <member name="M:Microsoft.Practices.Unity.GenericParameter.DoGetResolverPolicy(System.Type,System.String)">
             <summary>
             Return a <see cref="T:Microsoft.Practices.ObjectBuilder2.IDependencyResolverPolicy"/> instance that will
             return this types value for the parameter.
             </summary>
-            <param name="typeToBuild">Type that contains the member that needs this parameter. Used
-            to resolve open generic parameters.</param>
+            <param name="typeToResolve">The actual type to resolve.</param>
+            <param name="resolutionKey">The resolution key.</param>
             <returns>The <see cref="T:Microsoft.Practices.ObjectBuilder2.IDependencyResolverPolicy"/>.</returns>
-        </member>
-        <member name="P:Microsoft.Practices.Unity.GenericParameter.ParameterTypeName">
-            <summary>
-            Name for the type represented by this <see cref="T:Microsoft.Practices.Unity.InjectionParameterValue"/>.
-            This may be an actual type name or a generic argument name.
-            </summary>
         </member>
         <member name="T:Microsoft.Practices.Unity.GenericResolvedArrayParameter">
             <summary>
@@ -4813,11 +4933,13 @@
             <param name="parameterValues">Set of <see cref="T:Microsoft.Practices.Unity.InjectionParameterValue"/> objects
             that describes how to obtain the values for the constructor parameters.</param>
         </member>
-        <member name="M:Microsoft.Practices.Unity.ObjectBuilder.SpecifiedConstructorSelectorPolicy.SelectConstructor(Microsoft.Practices.ObjectBuilder2.IBuilderContext)">
+        <member name="M:Microsoft.Practices.Unity.ObjectBuilder.SpecifiedConstructorSelectorPolicy.SelectConstructor(Microsoft.Practices.ObjectBuilder2.IBuilderContext,Microsoft.Practices.ObjectBuilder2.IPolicyList)">
             <summary>
             Choose the constructor to call for the given type.
             </summary>
             <param name="context">Current build context</param>
+            <param name="resolverPolicyDestination">The <see cref="T:Microsoft.Practices.ObjectBuilder2.IPolicyList"/> to add any
+            generated resolver objects into.</param>
             <returns>The chosen constructor.</returns>
         </member>
         <member name="T:Microsoft.Practices.Unity.ObjectBuilder.SpecifiedMemberSelectorHelper">
@@ -4844,18 +4966,20 @@
         <member name="M:Microsoft.Practices.Unity.ObjectBuilder.SpecifiedMethodsSelectorPolicy.AddMethodAndParameters(System.Reflection.MethodInfo,System.Collections.Generic.IEnumerable{Microsoft.Practices.Unity.InjectionParameterValue})">
             <summary>
             Add the given method and parameter collection to the list of methods
-            that will be returned when the selector's <see cref="M:Microsoft.Practices.ObjectBuilder2.IMethodSelectorPolicy.SelectMethods(Microsoft.Practices.ObjectBuilder2.IBuilderContext)"/>
+            that will be returned when the selector's <see cref="M:Microsoft.Practices.ObjectBuilder2.IMethodSelectorPolicy.SelectMethods(Microsoft.Practices.ObjectBuilder2.IBuilderContext,Microsoft.Practices.ObjectBuilder2.IPolicyList)"/>
             method is called.
             </summary>
             <param name="method">Method to call.</param>
             <param name="parameters">sequence of <see cref="T:Microsoft.Practices.Unity.InjectionParameterValue"/> objects
             that describe how to create the method parameter values.</param>
         </member>
-        <member name="M:Microsoft.Practices.Unity.ObjectBuilder.SpecifiedMethodsSelectorPolicy.SelectMethods(Microsoft.Practices.ObjectBuilder2.IBuilderContext)">
+        <member name="M:Microsoft.Practices.Unity.ObjectBuilder.SpecifiedMethodsSelectorPolicy.SelectMethods(Microsoft.Practices.ObjectBuilder2.IBuilderContext,Microsoft.Practices.ObjectBuilder2.IPolicyList)">
             <summary>
             Return the sequence of methods to call while building the target object.
             </summary>
             <param name="context">Current build context.</param>
+            <param name="resolverPolicyDestination">The <see cref="T:Microsoft.Practices.ObjectBuilder2.IPolicyList"/> to add any
+            generated resolver objects into.</param>
             <returns>Sequence of methods to call.</returns>
         </member>
         <member name="T:Microsoft.Practices.Unity.ObjectBuilder.SpecifiedPropertiesSelectorPolicy">
@@ -4867,18 +4991,20 @@
         <member name="M:Microsoft.Practices.Unity.ObjectBuilder.SpecifiedPropertiesSelectorPolicy.AddPropertyAndValue(System.Reflection.PropertyInfo,Microsoft.Practices.Unity.InjectionParameterValue)">
             <summary>
             Add a property that will be par of the set returned when the 
-            <see cref="M:Microsoft.Practices.Unity.ObjectBuilder.SpecifiedPropertiesSelectorPolicy.SelectProperties(Microsoft.Practices.ObjectBuilder2.IBuilderContext)"/> is called.
+            <see cref="M:Microsoft.Practices.Unity.ObjectBuilder.SpecifiedPropertiesSelectorPolicy.SelectProperties(Microsoft.Practices.ObjectBuilder2.IBuilderContext,Microsoft.Practices.ObjectBuilder2.IPolicyList)"/> is called.
             </summary>
             <param name="property">The property to set.</param>
             <param name="value"><see cref="T:Microsoft.Practices.Unity.InjectionParameterValue"/> object describing
             how to create the value to inject.</param>
         </member>
-        <member name="M:Microsoft.Practices.Unity.ObjectBuilder.SpecifiedPropertiesSelectorPolicy.SelectProperties(Microsoft.Practices.ObjectBuilder2.IBuilderContext)">
+        <member name="M:Microsoft.Practices.Unity.ObjectBuilder.SpecifiedPropertiesSelectorPolicy.SelectProperties(Microsoft.Practices.ObjectBuilder2.IBuilderContext,Microsoft.Practices.ObjectBuilder2.IPolicyList)">
             <summary>
             Returns sequence of properties on the given type that
             should be set as part of building that object.
             </summary>
             <param name="context">Current build context.</param>
+            <param name="resolverPolicyDestination">The <see cref="T:Microsoft.Practices.ObjectBuilder2.IPolicyList"/> to add any
+            generated resolver objects into.</param>
             <returns>Sequence of <see cref="T:System.Reflection.PropertyInfo"/> objects
             that contain the properties to set.</returns>
         </member>
@@ -4932,6 +5058,44 @@
             generic type and name.
             </summary>
             <param name="name">Name to use to resolve this parameter.</param>
+        </member>
+        <member name="T:Microsoft.Practices.Unity.UnityServiceLocator">
+            <summary>
+            An implementation of <see cref="T:Microsoft.Practices.ServiceLocation.IServiceLocator"/> that wraps a Unity container.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.UnityServiceLocator.#ctor(Microsoft.Practices.Unity.IUnityContainer)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.Practices.Unity.UnityServiceLocator"/> class for a container.
+            </summary>
+            <param name="container">The <see cref="T:Microsoft.Practices.Unity.IUnityContainer"/> to wrap with the <see cref="T:Microsoft.Practices.ServiceLocation.IServiceLocator"/>
+            interface implementation.</param>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.UnityServiceLocator.Dispose">
+            <summary>
+            Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+            </summary>
+            <filterpriority>2</filterpriority>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.UnityServiceLocator.DoGetInstance(System.Type,System.String)">
+            <summary>
+            When implemented by inheriting classes, this method will do the actual work of resolving
+                        the requested service instance.
+            </summary>
+            <param name="serviceType">Type of instance requested.</param><param name="key">Name of registered service you want. May be null.</param>
+            <returns>
+            The requested service instance.
+            </returns>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.UnityServiceLocator.DoGetAllInstances(System.Type)">
+            <summary>
+            When implemented by inheriting classes, this method will do the actual work of
+                        resolving all the requested service instances.
+            </summary>
+            <param name="serviceType">Type of service requested.</param>
+            <returns>
+            Sequence of service instance objects.
+            </returns>
         </member>
         <member name="T:Microsoft.Practices.Unity.Utility.Guard">
             <summary>
@@ -5133,6 +5297,11 @@
               Looks up a localized string similar to The lifetime manager is already registered. Lifetime managers cannot be reused, please create a new one..
             </summary>
         </member>
+        <member name="P:Microsoft.Practices.Unity.Properties.Resources.MarkerBuildPlanInvoked">
+            <summary>
+              Looks up a localized string similar to The override marker build plan policy has been invoked. This should never happen, looks like a bug in the container..
+            </summary>
+        </member>
         <member name="P:Microsoft.Practices.Unity.Properties.Resources.MethodArgumentResolveOperation">
             <summary>
               Looks up a localized string similar to Resolving parameter &quot;{0}&quot; of method {1}.{2}.
@@ -5190,7 +5359,7 @@
         </member>
         <member name="P:Microsoft.Practices.Unity.Properties.Resources.NoSuchProperty">
             <summary>
-              Looks up a localized string similar to The type {0} does not contain a property named {1}..
+              Looks up a localized string similar to The type {0} does not contain an instance property named {1}..
             </summary>
         </member>
         <member name="P:Microsoft.Practices.Unity.Properties.Resources.NotAGenericType">
@@ -5265,7 +5434,7 @@
         </member>
         <member name="P:Microsoft.Practices.Unity.Properties.Resources.TypeIsNotConstructable">
             <summary>
-              Looks up a localized string similar to The type {0} is cannot be constructed. You must configure the container to supply this value..
+              Looks up a localized string similar to The type {0} cannot be constructed. You must configure the container to supply this value..
             </summary>
         </member>
         <member name="P:Microsoft.Practices.Unity.Properties.Resources.TypesAreNotAssignable">
@@ -5641,8 +5810,8 @@
         <member name="M:Microsoft.Practices.Unity.Utility.ReflectionHelper.GetNamedGenericParameter(System.String)">
             <summary>
             Given a generic argument name, return the corresponding type for this
-            closed type. For example, if the current type is Foo&lt;User&gt;, and the
-            corresponding definition was Foo&lt;TSomething&gt;, calling this method
+            closed type. For example, if the current type is SomeType&lt;User&gt;, and the
+            corresponding definition was SomeType&lt;TSomething&gt;, calling this method
             and passing "TSomething" will return typeof(User).
             </summary>
             <param name="parameterName">Name of the generic parameter.</param>
@@ -5664,6 +5833,21 @@
             Is this type an open generic (no type parameter specified)
             </summary>
         </member>
+        <member name="P:Microsoft.Practices.Unity.Utility.ReflectionHelper.IsArray">
+            <summary>
+            Is this type an array type?
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Unity.Utility.ReflectionHelper.IsGenericArray">
+            <summary>
+            Is this type an array of generic elements?
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Unity.Utility.ReflectionHelper.ArrayElementType">
+            <summary>
+            The type of the elements in this type (if it's an array).
+            </summary>
+        </member>
         <member name="M:Microsoft.Practices.Unity.Utility.ParameterReflectionHelper.#ctor(System.Reflection.ParameterInfo)">
             <summary>
             Create a new instance of <see cref="T:Microsoft.Practices.Unity.Utility.ParameterReflectionHelper"/> that
@@ -5680,7 +5864,7 @@
         <member name="M:Microsoft.Practices.Unity.Utility.StaticReflection.GetMethodInfo(System.Linq.Expressions.Expression{System.Action})">
             <summary>
             Pull out a <see cref="T:System.Reflection.MethodInfo"/> object from an expression of the form
-            () =&gt; SomeClass.Foo()
+            () =&gt; SomeClass.SomeMethod()
             </summary>
             <param name="expression">Expression describing the method to call.</param>
             <returns>Corresponding <see cref="T:System.Reflection.MethodInfo"/>.</returns>
@@ -5688,7 +5872,7 @@
         <member name="M:Microsoft.Practices.Unity.Utility.StaticReflection.GetMethodInfo``1(System.Linq.Expressions.Expression{System.Action{``0}})">
             <summary>
             Pull out a <see cref="T:System.Reflection.MethodInfo"/> object from an expression of the form
-            x =&gt; x.Foo()
+            x =&gt; x.SomeMethod()
             </summary>
             <typeparam name="T">The type where the method is defined.</typeparam>
             <param name="expression">Expression describing the method to call.</param>
@@ -5697,7 +5881,7 @@
         <member name="M:Microsoft.Practices.Unity.Utility.StaticReflection.GetPropertyGetMethodInfo``2(System.Linq.Expressions.Expression{System.Func{``0,``1}})">
             <summary>
             Pull out a <see cref="T:System.Reflection.MethodInfo"/> object for the get method from an expression of the form
-            x =&gt; x.Foo
+            x =&gt; x.SomeProperty
             </summary>
             <typeparam name="T">The type where the method is defined.</typeparam>
             <typeparam name="TProperty">The type for the property.</typeparam>
@@ -5707,7 +5891,7 @@
         <member name="M:Microsoft.Practices.Unity.Utility.StaticReflection.GetPropertySetMethodInfo``2(System.Linq.Expressions.Expression{System.Func{``0,``1}})">
             <summary>
             Pull out a <see cref="T:System.Reflection.MethodInfo"/> object for the set method from an expression of the form
-            x =&gt; x.Foo
+            x =&gt; x.SomeProperty
             </summary>
             <typeparam name="T">The type where the method is defined.</typeparam>
             <typeparam name="TProperty">The type for the property.</typeparam>

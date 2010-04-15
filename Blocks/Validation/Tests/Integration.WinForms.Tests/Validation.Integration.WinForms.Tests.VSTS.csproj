@@ -50,7 +50,10 @@
     <Compile Include="..\..\..\GlobalAssemblyInfo.cs">
       <Link>GlobalAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="APTCAFixture.cs" />
+    <None Include="..\..\..\GlobalAssemblyInfo.2010.cs">
+      <Link>GlobalAssemblyInfo.2010.cs</Link>
+    </None>
+    <Compile Include="APTCAFixture.2008.cs" />
     <Compile Include="PropertyMappedControlValueAccessFixture.cs" />
     <Compile Include="TestClasses\MockControl.cs">
       <SubType>Component</SubType>

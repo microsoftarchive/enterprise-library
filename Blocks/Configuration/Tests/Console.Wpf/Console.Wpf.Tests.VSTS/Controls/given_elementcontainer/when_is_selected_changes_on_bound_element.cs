@@ -20,15 +20,20 @@ using Console.Wpf.Tests.VSTS.Mocks;
 using Console.Wpf.Tests.VSTS.TestSupport;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Windows.Input;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
+using Microsoft.Practices.Unity;
 
 namespace Console.Wpf.Tests.VSTS.Controls.given_elementcontainer
 {
     public abstract class PopulatedElementModelContainer : ContainerContext
     {
-        
+        protected IApplicationModel ApplicationModel;
+
         protected override void Arrange()
         {
             base.Arrange();
+
+            ApplicationModel = Container.Resolve<IApplicationModel>();
 
             var configurationSection = new MockSectionWithSingleChild
             {
@@ -40,7 +45,7 @@ namespace Console.Wpf.Tests.VSTS.Controls.given_elementcontainer
 
             SectionViewModel sectionViewmodel = SectionViewModel.CreateSection(Container, "MockSection", configurationSection);
             Element = sectionViewmodel.GetDescendentsOfType<TestHandlerDataWithChildren>().First();
-            Element.IsSelected = false;
+            ApplicationModel.OnSelectedElementChanged(null);
             ElementContainer = new ElementModelContainer { DataContext = Element };
         }
 
@@ -54,7 +59,7 @@ namespace Console.Wpf.Tests.VSTS.Controls.given_elementcontainer
 
         protected override void Act()
         {
-            Element.IsSelected = true;
+            Element.Select();
         }
 
         [TestMethod]

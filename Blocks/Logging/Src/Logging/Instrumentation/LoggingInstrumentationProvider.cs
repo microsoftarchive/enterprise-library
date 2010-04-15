@@ -48,13 +48,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation
         /// </summary>
         /// <param name="performanceCountersEnabled"><code>true</code> if performance counters should be updated.</param>
         /// <param name="eventLoggingEnabled"><code>true</code> if event log entries should be written.</param>
-        /// <param name="wmiEnabled"><code>true</code> if WMI events should be fired.</param>
         /// <param name="applicationInstanceName">The application instance name.</param>
         public LoggingInstrumentationProvider(bool performanceCountersEnabled,
                                               bool eventLoggingEnabled,
-                                              bool wmiEnabled,
                                               string applicationInstanceName)
-            : base(performanceCountersEnabled, eventLoggingEnabled, wmiEnabled, new AppDomainNameFormatter(applicationInstanceName))
+            : base(performanceCountersEnabled, eventLoggingEnabled, new AppDomainNameFormatter(applicationInstanceName))
         {
             this.eventLogEntryFormatter = new EventLogEntryFormatter(Resources.BlockName);
         }
@@ -65,14 +63,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation
         /// <param name="instanceName">The instance name.</param>
         /// <param name="performanceCountersEnabled"><code>true</code> if performance counters should be updated.</param>
         /// <param name="eventLoggingEnabled"><code>true</code> if event log entries should be written.</param>
-        /// <param name="wmiEnabled"><code>true</code> if WMI events should be fired.</param>
         /// <param name="applicationInstanceName">The application instance name.</param>
         public LoggingInstrumentationProvider(string instanceName,
                                               bool performanceCountersEnabled,
                                               bool eventLoggingEnabled,
-                                              bool wmiEnabled,
                                               string applicationInstanceName)
-            : base(instanceName, performanceCountersEnabled, eventLoggingEnabled, wmiEnabled, new AppDomainNameFormatter(applicationInstanceName))
+            : base(instanceName, performanceCountersEnabled, eventLoggingEnabled, new AppDomainNameFormatter(applicationInstanceName))
         {
             this.eventLogEntryFormatter = new EventLogEntryFormatter(Resources.BlockName);
         }
@@ -95,7 +91,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation
         /// <param name="exception">The exception that describes the reconfiguration error.</param>
         public void FireReconfigurationErrorEvent(Exception exception)
         {
-            if (WmiEnabled) FireManagementInstrumentation(new LoggingReconfigurationFailureEvent(exception.Message));
+            if(exception == null) throw new ArgumentNullException("exception");
             if (EventLoggingEnabled)
             {
                 string entryText = eventLogEntryFormatter.GetEntryText(Resources.ReconfigurationFailure, exception);
@@ -109,7 +105,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation
         /// <param name="exception">The exception that caused the failure..</param>
         public void FireFailureLoggingErrorEvent(string message, Exception exception)
         {
-            if (WmiEnabled) FireManagementInstrumentation(new LoggingFailureLoggingErrorEvent(message, exception.ToString()));
+            if(exception == null) throw new ArgumentNullException("exception");
             if (EventLoggingEnabled)
             {
                 string entryText = eventLogEntryFormatter.GetEntryText(message, exception);
@@ -123,7 +119,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation
         /// <param name="configurationException">The exception that describes the configuration error.</param>
         public void FireConfigurationFailureEvent(Exception configurationException)
         {
-            if (WmiEnabled) FireManagementInstrumentation(new LoggingConfigurationFailureEvent(configurationException.Message));
+            if(configurationException == null) throw new ArgumentNullException("configurationException");
             if (EventLoggingEnabled)
             {
                 string entryText = eventLogEntryFormatter.GetEntryText(Resources.ConfigurationFailureUpdating, configurationException);

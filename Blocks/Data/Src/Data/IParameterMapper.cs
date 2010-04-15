@@ -18,7 +18,7 @@ using System.Data.Common;
 namespace Microsoft.Practices.EnterpriseLibrary.Data
 {
     /// <summary>
-    /// Interface used to interpret parameters passed to an <see cref="IDataAccessor&lt;TResult&gt;.Execute(object[])"/> method
+    /// Interface used to interpret parameters passed to an <see cref="DataAccessor{TResult}.Execute(object[])"/> method
     /// and assign them to the <see cref="DbCommand"/> that will be executed.
     /// </summary>
     public interface IParameterMapper

@@ -69,11 +69,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
         public void ConfigurationObjectIsNotModifiedIfThereAreNoPolicyOverrides()
         {
             configurationObject.ExceptionMessage = "message";
+            configurationObject.ExceptionMessageResourceType = typeof(object).AssemblyQualifiedName;
+            configurationObject.ExceptionMessageResourceName = "resource";
             configurationObject.ReplaceExceptionType = typeof(ArgumentException);
 
             provider.OverrideWithGroupPolicies(configurationObject, true, null, null);
 
             Assert.AreEqual("message", configurationObject.ExceptionMessage);
+            Assert.AreEqual(typeof(object).AssemblyQualifiedName, configurationObject.ExceptionMessageResourceType);
+            Assert.AreEqual("resource", configurationObject.ExceptionMessageResourceName);
             Assert.AreSame(typeof(ArgumentException), configurationObject.ReplaceExceptionType);
         }
 
@@ -81,14 +85,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
         public void ConfigurationObjectIsModifiedIfThereAreMachinePolicyOverrides()
         {
             configurationObject.ExceptionMessage = "message";
+            configurationObject.ExceptionMessageResourceType = typeof(object).AssemblyQualifiedName;
+            configurationObject.ExceptionMessageResourceName = "resource";
             configurationObject.ReplaceExceptionType = typeof(ArgumentException);
 
-            machineKey.AddStringValue(ReplaceHandlerDataManageabilityProvider.ExceptionMessagePropertyName, "overriden message");
+            machineKey.AddStringValue(ReplaceHandlerDataManageabilityProvider.ExceptionMessagePropertyName, "overridden message");
+            machineKey.AddStringValue(ReplaceHandlerDataManageabilityProvider.ExceptionMessageResourceTypePropertyName, typeof(int).AssemblyQualifiedName);
+            machineKey.AddStringValue(ReplaceHandlerDataManageabilityProvider.ExceptionMessageResourceNamePropertyName, "overridden resource");
             machineKey.AddStringValue(ReplaceHandlerDataManageabilityProvider.ReplaceExceptionTypePropertyName, typeof(NullReferenceException).AssemblyQualifiedName);
 
             provider.OverrideWithGroupPolicies(configurationObject, true, machineKey, null);
 
-            Assert.AreEqual("overriden message", configurationObject.ExceptionMessage);
+            Assert.AreEqual("overridden message", configurationObject.ExceptionMessage);
+            Assert.AreEqual(typeof(int).AssemblyQualifiedName, configurationObject.ExceptionMessageResourceType);
+            Assert.AreEqual("overridden resource", configurationObject.ExceptionMessageResourceName);
             Assert.AreSame(typeof(NullReferenceException), configurationObject.ReplaceExceptionType);
         }
 
@@ -96,14 +106,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
         public void ConfigurationObjectIsModifiedIfThereAreUserPolicyOverrides()
         {
             configurationObject.ExceptionMessage = "message";
+            configurationObject.ExceptionMessageResourceType = typeof(object).AssemblyQualifiedName;
+            configurationObject.ExceptionMessageResourceName = "resource";
             configurationObject.ReplaceExceptionType = typeof(ArgumentException);
 
-            userKey.AddStringValue(ReplaceHandlerDataManageabilityProvider.ExceptionMessagePropertyName, "overriden message");
+            userKey.AddStringValue(ReplaceHandlerDataManageabilityProvider.ExceptionMessagePropertyName, "overridden message");
+            userKey.AddStringValue(ReplaceHandlerDataManageabilityProvider.ExceptionMessageResourceTypePropertyName, typeof(int).AssemblyQualifiedName);
+            userKey.AddStringValue(ReplaceHandlerDataManageabilityProvider.ExceptionMessageResourceNamePropertyName, "overridden resource");
             userKey.AddStringValue(ReplaceHandlerDataManageabilityProvider.ReplaceExceptionTypePropertyName, typeof(NullReferenceException).AssemblyQualifiedName);
 
             provider.OverrideWithGroupPolicies(configurationObject, true, null, userKey);
 
-            Assert.AreEqual("overriden message", configurationObject.ExceptionMessage);
+            Assert.AreEqual("overridden message", configurationObject.ExceptionMessage);
+            Assert.AreEqual(typeof(int).AssemblyQualifiedName, configurationObject.ExceptionMessageResourceType);
+            Assert.AreEqual("overridden resource", configurationObject.ExceptionMessageResourceName);
             Assert.AreSame(typeof(NullReferenceException), configurationObject.ReplaceExceptionType);
         }
 
@@ -111,23 +127,31 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
         public void ConfigurationObjectIsNotModifiedIfThereArePolicyOverridesButGroupPoliciesAreDisabled()
         {
             configurationObject.ExceptionMessage = "message";
+            configurationObject.ExceptionMessageResourceType = typeof(object).AssemblyQualifiedName;
+            configurationObject.ExceptionMessageResourceName = "resource";
             configurationObject.ReplaceExceptionType = typeof(ArgumentException);
 
-            machineKey.AddStringValue(ReplaceHandlerDataManageabilityProvider.ExceptionMessagePropertyName, "overriden message");
+            machineKey.AddStringValue(ReplaceHandlerDataManageabilityProvider.ExceptionMessagePropertyName, "overridden message");
+            machineKey.AddStringValue(ReplaceHandlerDataManageabilityProvider.ExceptionMessageResourceTypePropertyName, typeof(int).AssemblyQualifiedName);
+            machineKey.AddStringValue(ReplaceHandlerDataManageabilityProvider.ExceptionMessageResourceNamePropertyName, "overridden resource");
             machineKey.AddStringValue(ReplaceHandlerDataManageabilityProvider.ReplaceExceptionTypePropertyName, typeof(NullReferenceException).AssemblyQualifiedName);
 
             provider.OverrideWithGroupPolicies(configurationObject, false, machineKey, null);
 
             Assert.AreEqual("message", configurationObject.ExceptionMessage);
+            Assert.AreEqual(typeof(object).AssemblyQualifiedName, configurationObject.ExceptionMessageResourceType);
+            Assert.AreEqual("resource", configurationObject.ExceptionMessageResourceName);
             Assert.AreSame(typeof(ArgumentException), configurationObject.ReplaceExceptionType);
         }
 
         [TestMethod]
-        public void ExceptionTypeIsOverridenIfValueIsValid()
+        public void ExceptionTypeIsoverriddenIfValueIsValid()
         {
             configurationObject.ReplaceExceptionType = typeof(ArgumentException);
 
             machineKey.AddStringValue(ReplaceHandlerDataManageabilityProvider.ExceptionMessagePropertyName, "msg");
+            machineKey.AddStringValue(ReplaceHandlerDataManageabilityProvider.ExceptionMessageResourceTypePropertyName, typeof(int).AssemblyQualifiedName);
+            machineKey.AddStringValue(ReplaceHandlerDataManageabilityProvider.ExceptionMessageResourceNamePropertyName, "overridden resource");
             machineKey.AddStringValue(ReplaceHandlerDataManageabilityProvider.ReplaceExceptionTypePropertyName, typeof(NullReferenceException).AssemblyQualifiedName);
 
             provider.OverrideWithGroupPolicies(configurationObject, true, machineKey, null);
@@ -136,11 +160,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
         }
 
         [TestMethod]
-        public void TypeIsNotOverridenIfValueIsInvalid()
+        public void TypeIsNotoverriddenIfValueIsInvalid()
         {
             configurationObject.ReplaceExceptionType = typeof(ArgumentException);
 
             machineKey.AddStringValue(ReplaceHandlerDataManageabilityProvider.ExceptionMessagePropertyName, "msg");
+            machineKey.AddStringValue(ReplaceHandlerDataManageabilityProvider.ExceptionMessageResourceTypePropertyName, typeof(int).AssemblyQualifiedName);
+            machineKey.AddStringValue(ReplaceHandlerDataManageabilityProvider.ExceptionMessageResourceNamePropertyName, "overridden resource");
             machineKey.AddStringValue(ReplaceHandlerDataManageabilityProvider.ReplaceExceptionTypePropertyName, "An invalid type name");
 
             provider.OverrideWithGroupPolicies(configurationObject, true, machineKey, null);
@@ -175,11 +201,25 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
             Assert.IsNotNull(((AdmEditTextPart)partsEnumerator.Current).KeyName);
             Assert.AreEqual(ReplaceHandlerDataManageabilityProvider.ExceptionMessagePropertyName,
                             partsEnumerator.Current.ValueName);
+            Assert.IsFalse(((AdmEditTextPart)partsEnumerator.Current).Required);
+            Assert.IsTrue(partsEnumerator.MoveNext());
+            Assert.AreSame(typeof(AdmEditTextPart), partsEnumerator.Current.GetType());
+            Assert.IsNotNull(((AdmEditTextPart)partsEnumerator.Current).KeyName);
+            Assert.AreEqual(ReplaceHandlerDataManageabilityProvider.ExceptionMessageResourceTypePropertyName,
+                            partsEnumerator.Current.ValueName);
+            Assert.IsFalse(((AdmEditTextPart)partsEnumerator.Current).Required);
+            Assert.IsTrue(partsEnumerator.MoveNext());
+            Assert.AreSame(typeof(AdmEditTextPart), partsEnumerator.Current.GetType());
+            Assert.IsNotNull(((AdmEditTextPart)partsEnumerator.Current).KeyName);
+            Assert.AreEqual(ReplaceHandlerDataManageabilityProvider.ExceptionMessageResourceNamePropertyName,
+                            partsEnumerator.Current.ValueName);
+            Assert.IsFalse(((AdmEditTextPart)partsEnumerator.Current).Required);
             Assert.IsTrue(partsEnumerator.MoveNext());
             Assert.AreSame(typeof(AdmEditTextPart), partsEnumerator.Current.GetType());
             Assert.IsNotNull(((AdmEditTextPart)partsEnumerator.Current).KeyName);
             Assert.AreEqual(ReplaceHandlerDataManageabilityProvider.ReplaceExceptionTypePropertyName,
                             partsEnumerator.Current.ValueName);
+            Assert.IsTrue(((AdmEditTextPart)partsEnumerator.Current).Required);
             Assert.IsFalse(partsEnumerator.MoveNext());
         }
     }

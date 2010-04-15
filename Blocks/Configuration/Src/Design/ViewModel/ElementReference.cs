@@ -20,8 +20,8 @@ using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
 {
     /// <summary>
-    /// Class that represents a reference to a <see cref="ElementViewModel"/> instance.<br/>
-    /// The referred element will resolve once its loaded to the <see cref="ConfigurationSourceModel"/>. <br/>
+    /// The <see cref="ElementReference"/> represents a reference to a <see cref="ElementViewModel"/> instance.<br/>
+    /// The referred element will resolve once it becomes available in the <see cref="ElementLookup"/>. <br/>
     /// Once the referred element is resolved, a <see cref="ElementFound"/> event is triggered. <br/>
     /// An instance of <see cref="ElementReference"/> provides basic facilities to keep track of changes to the referred element.<br/>
     /// </summary>
@@ -36,6 +36,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         PropertyChangedEventHandler elementPropertyChanged;
         EventHandler elementDeleted;
 
+        /// <summary>
+        /// Initializes a new instance of <see cref="ElementReference"/>.
+        /// </summary>
+        /// <param name="element">The elment to monitor.</param>
         protected ElementReference(ElementViewModel element)
         {
             this.element = element;
@@ -60,6 +64,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             get { return element; }
         }
 
+        /// <summary>
+        /// Occurs when the referenced element was resolved. <br/>
+        /// </summary>
+        public event EventHandler ElementFound;
+
+        /// <summary>
+        /// Raises the <see cref="ElementFound"/> event.
+        /// </summary>
+        /// <param name="element">The discovered <see cref="ElementViewModel"/></param>
         protected virtual void OnElementFound(ElementViewModel element)
         {
             this.element = element;
@@ -106,10 +119,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         }
 
         /// <summary>
-        /// Occurs when the refered element was resolved. <br/>
+        /// Raises the <see cref="ElementDeleted"/> event.
         /// </summary>
-        public event EventHandler ElementFound;
-
         protected virtual void OnElementDeleted()
         {
             element.PropertyChanged -= elementPropertyChanged;
@@ -125,22 +136,27 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         }
 
         /// <summary>
-        /// Occurs when the refered element was deleted. <br/>
+        /// Occurs when the referenced element is deleted. <br/>
         /// </summary>
         public event EventHandler ElementDeleted;
 
         /// <summary>
-        /// Occurs when the <see cref="ElementViewModel.Name"/> of the refered element changed. <br/>
+        /// Occurs when the <see cref="ElementViewModel.Name"/> of the referenced element changed. <br/>
         /// </summary>
         public event PropertyValueChangedEventHandler<string> NameChanged;
 
 
         /// <summary>
-        /// Occurs when the <see cref="ElementViewModel.Path"/> of the refered element changed. <br/>
+        /// Occurs when the <see cref="ElementViewModel.Path"/> of the referenced element changed. <br/>
         /// </summary>
         public event PropertyValueChangedEventHandler<string> PathChanged;
 
-        public virtual void Dispose(bool disposing)
+        /// <summary>
+        /// Indicates the object is being disposed.
+        /// </summary>
+        /// <param name="disposing">Indicates <see cref="Dispose(bool)"/> was invoked through an explicit call to <see cref="Dispose()"/> instead of a finalizer call.</param>
+        /// <filterpriority>2</filterpriority>
+        protected virtual void Dispose(bool disposing)
         {
             if (disposing)
             {
@@ -152,22 +168,46 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             }
         }
 
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        /// <filterpriority>2</filterpriority>
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
     }
 
-    public delegate void PropertyValueChangedEventHandler<T>(object sender, PropertyValueChangedEventArgs<T> args);
+    /// <summary>
+    /// Defines a property changed delegate over a specific type.
+    /// </summary>
+    /// <typeparam name="T">The property type for the property changed handler.</typeparam>
+    /// <param name="sender">The invoker of the property changed value.</param>
+    /// <param name="e">The property value changed event arguments.</param>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1003:UseGenericEventHandlerInstances")]
+    public delegate void PropertyValueChangedEventHandler<T>(object sender, PropertyValueChangedEventArgs<T> e);
 
+    /// <summary>
+    /// The event arguments for <see cref="PropertyValueChangedEventHandler{T}"/>.
+    /// </summary>
+    /// <typeparam name="T">The type for the property value.</typeparam>
     public class PropertyValueChangedEventArgs<T> : EventArgs
     {
         readonly T value;
+
+        /// <summary>
+        /// Initializes a new instance of <see cref="PropertyValueChangedEventArgs{T}"/>.
+        /// </summary>
+        /// <param name="value">The propety value.</param>
         public PropertyValueChangedEventArgs(T value)
         {
             this.value = value;
         }
 
+        /// <summary>
+        /// Gets the value of the property changed.
+        /// </summary>
         public T Value { get { return value; } }
     }
 }

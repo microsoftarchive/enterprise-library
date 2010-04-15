@@ -10,16 +10,16 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration;
 using System.Globalization;
 using System.Linq;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using System.Windows.Input;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Configuration.Design.HostAdapterV5;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
 using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.Utility;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
 {
@@ -28,62 +28,120 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
     /// </summary>
     public class DefaultCollectionElementAddCommand : CommandModel
     {
-        private readonly string helpText;
+        private string helpText;
+        private bool helpTextLoaded;
         private readonly CommandPlacement commandPlacement;
         private ElementViewModel addedElementViewModel;
         private IApplicationModel applicationModel;
 
-        public DefaultCollectionElementAddCommand(ConfigurationElementType configurationElementType, ElementCollectionViewModel collection)
+        ///<summary>
+        /// Initializes a new instance of <see cref="DefaultCollectionElementAddCommand"/>.
+        ///</summary>
+        ///<param name="configurationElementType">The configuration element type to add when executed.</param>
+        ///<param name="collection">The collection to add the element to.</param>
+        ///<param name="uiService">The user-interface service to use when displaying dialogs and windows to the user.</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Validated with Guard class")]
+        public DefaultCollectionElementAddCommand(ConfigurationElementType configurationElementType, ElementCollectionViewModel collection, IUIServiceWpf uiService)
+            : base(uiService)
         {
+            Guard.ArgumentNotNull(configurationElementType, "configurationElementType");
+
             this.ConfigurationElementType = configurationElementType.ElementType;
             this.ElementCollectionModel = collection;
 
-            helpText = GetHelpText(ConfigurationElementType);
             commandPlacement = CommandPlacement.ContextAdd;
         }
 
-        protected DefaultCollectionElementAddCommand(CommandAttribute commandAttribute, ConfigurationElementType configurationElementType, ElementCollectionViewModel collection)
-            :base(commandAttribute)
+        ///<summary>
+        /// Initializes a new instance of <see cref="DefaultCollectionElementAddCommand"/>.
+        ///</summary>
+        ///<param name="commandAttribute">The <see cref="CommandAttribute"/> providing context for this command.</param>
+        ///<param name="configurationElementType">The configuration element type to add when executed.</param>
+        ///<param name="collection">The collection to add the element to.</param>
+        ///<param name="uiService">The user-interface service to use when displaying dialogs and windows to the user.</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Validated with Guard class")]
+        protected DefaultCollectionElementAddCommand(CommandAttribute commandAttribute, ConfigurationElementType configurationElementType, ElementCollectionViewModel collection, IUIServiceWpf uiService)
+            : base(commandAttribute, uiService)
         {
+            Guard.ArgumentNotNull(configurationElementType, "configurationElementType");
+
             this.ConfigurationElementType = configurationElementType.ElementType;
             this.ElementCollectionModel = collection;
 
-            helpText = GetHelpText(ConfigurationElementType);
             commandPlacement = commandAttribute.CommandPlacement;
         }
 
+        ///<summary>
+        /// Additional initialization dependencies for <see cref="DefaultCollectionElementAddCommand"/>.
+        ///</summary>
+        ///<param name="applicationModel">The design-time application model.</param>
         [InjectionMethod]
         public void DefaultCollectionElementAddCommandInitialization(IApplicationModel applicationModel)
         {
             this.applicationModel = applicationModel;
         }
 
+        ///<summary>
+        /// Gets the <see cref="ConfigurationElementType"/> being added to the collection.
+        ///</summary>
         public virtual Type ConfigurationElementType { get; private set; }
+
+        /// <summary>
+        /// Gets the collection where the new element will be added.
+        /// </summary>
         protected ElementCollectionViewModel ElementCollectionModel { get; private set; }
 
+        /// <summary>
+        /// Provides the title of the <see cref="CommandModel"/> command.  Typically this will appear as the title to a menu in the configuration tool.
+        /// </summary>
         public override string Title
         {
             get
             {
                 string baseTitle = base.Title;
-                if (string.IsNullOrEmpty(baseTitle)) 
-                    baseTitle = GetDisplayName(ConfigurationElementType);  
+                if (string.IsNullOrEmpty(baseTitle))
+                    baseTitle = GetDisplayName(ConfigurationElementType);
 
-                return string.Format("Add {0}", baseTitle); // todo: move to resource
+                return string.Format(CultureInfo.CurrentCulture, Resources.DefaultCollectionElementCommandTitle, baseTitle);
             }
         }
 
+        /// <summary>
+        /// The added element view model created during execution of the command.
+        /// </summary>
         public ElementViewModel AddedElementViewModel
         {
             get { return addedElementViewModel; }
         }
 
-        public override string  HelpText
+        ///<summary>
+        /// The command's related help text.
+        ///</summary>
+        public override string HelpText
         {
-            get { return helpText; }
+            get
+            {
+                if (!helpTextLoaded)
+                {
+                    helpText = GetHelpText(ConfigurationElementType);
+                    helpTextLoaded = true;
+                }
+
+                return helpText;
+            }
         }
 
-        public override void Execute(object parameter)
+        /// <summary>
+        /// Adds a new child element to <see cref="ElementCollectionModel"/>.
+        /// </summary>
+        /// <param name="parameter">
+        /// Data used by the command.  If the command does not require data to be passed, this object can be set to null.
+        /// </param>
+        /// <remarks>
+        /// Adds a new element to the collection through <see cref="ElementCollectionViewModel.AddNewCollectionElement"/>
+        /// and makes the new element the selected element.
+        /// </remarks>
+        protected override void InnerExecute(object parameter)
         {
             addedElementViewModel = ElementCollectionModel.AddNewCollectionElement(ConfigurationElementType);
             addedElementViewModel.PropertiesShown = true;
@@ -91,6 +149,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             applicationModel.SetDirty();
         }
 
+        ///<summary>
+        /// The logical placement of the command.
+        ///</summary>
         public override CommandPlacement Placement
         {
             get
@@ -100,7 +161,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         }
 
 
-        public override bool CanExecute(object parameter)
+        /// <summary>
+        /// When implemented by a child, determines if the command can execute.
+        /// </summary>
+        /// <returns>
+        /// Returns <see langword="true"/> if this command can be executed; otherwise, <see langword="false"/>.
+        /// </returns>
+        /// <param name="parameter">Data used by the command.  If the command does not require data to be passed, this object can be set to null.
+        ///                 </param>
+        protected override bool InnerCanExecute(object parameter)
         {
             return true;
         }

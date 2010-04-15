@@ -27,7 +27,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
     {
         XmlTraceListenerDataManageabilityProvider provider;
         MockRegistryKey machineKey;
+        MockRegistryKey machineOptionsKey;
         MockRegistryKey userKey;
+        MockRegistryKey userOptionsKey;
         XmlTraceListenerData configurationObject;
 
         [TestInitialize]
@@ -35,7 +37,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         {
             provider = new XmlTraceListenerDataManageabilityProvider();
             machineKey = new MockRegistryKey(true);
+            machineOptionsKey = new MockRegistryKey(false);
             userKey = new MockRegistryKey(true);
+            userOptionsKey = new MockRegistryKey(false);
             configurationObject = new XmlTraceListenerData();
         }
 
@@ -89,8 +93,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             configurationObject.Filter = SourceLevels.Error;
 
             machineKey.AddStringValue(XmlTraceListenerDataManageabilityProvider.FileNamePropertyName, "overriden file name");
-            machineKey.AddStringValue(XmlTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, "ProcessId, ThreadId");
             machineKey.AddStringValue(XmlTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
+            machineKey.AddSubKey(MsmqTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, machineOptionsKey);
+            machineOptionsKey.AddIntValue(TraceOptions.ProcessId.ToString(), 1);
+            machineOptionsKey.AddIntValue(TraceOptions.ThreadId.ToString(), 1);
 
             provider.OverrideWithGroupPolicies(configurationObject, true, machineKey, null);
 
@@ -107,8 +113,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             configurationObject.Filter = SourceLevels.Error;
 
             userKey.AddStringValue(XmlTraceListenerDataManageabilityProvider.FileNamePropertyName, "overriden file name");
-            userKey.AddStringValue(XmlTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, "ProcessId, ThreadId");
             userKey.AddStringValue(XmlTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
+            userKey.AddSubKey(MsmqTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, userOptionsKey);
+            userOptionsKey.AddIntValue(TraceOptions.ProcessId.ToString(), 1);
+            userOptionsKey.AddIntValue(TraceOptions.ThreadId.ToString(), 1);
 
             provider.OverrideWithGroupPolicies(configurationObject, true, null, userKey);
 
@@ -125,8 +133,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             configurationObject.Filter = SourceLevels.Error;
 
             machineKey.AddStringValue(XmlTraceListenerDataManageabilityProvider.FileNamePropertyName, "overriden file name");
-            machineKey.AddStringValue(XmlTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, "ProcessId, ThreadId");
             machineKey.AddStringValue(XmlTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
+            machineKey.AddSubKey(MsmqTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, machineOptionsKey);
+            machineOptionsKey.AddIntValue(TraceOptions.ProcessId.ToString(), 1);
+            machineOptionsKey.AddIntValue(TraceOptions.ThreadId.ToString(), 1);
 
             provider.OverrideWithGroupPolicies(configurationObject, false, machineKey, null);
 
@@ -162,10 +172,40 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
                             partsEnumerator.Current.ValueName);
 
             Assert.IsTrue(partsEnumerator.MoveNext());
-            Assert.AreSame(typeof(AdmDropDownListPart), partsEnumerator.Current.GetType());
+            Assert.AreSame(typeof(AdmTextPart), partsEnumerator.Current.GetType());
             Assert.IsNull(partsEnumerator.Current.KeyName);
-            Assert.AreEqual(XmlTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName,
-                            partsEnumerator.Current.ValueName);
+            Assert.IsNull(partsEnumerator.Current.ValueName);
+
+            // trace output options checkboxes
+            Assert.IsTrue(partsEnumerator.MoveNext());
+            Assert.AreSame(typeof(AdmCheckboxPart), partsEnumerator.Current.GetType());
+            Assert.IsNotNull(partsEnumerator.Current.KeyName);
+            Assert.AreEqual("LogicalOperationStack", partsEnumerator.Current.ValueName);
+
+            Assert.IsTrue(partsEnumerator.MoveNext());
+            Assert.AreSame(typeof(AdmCheckboxPart), partsEnumerator.Current.GetType());
+            Assert.IsNotNull(partsEnumerator.Current.KeyName);
+            Assert.AreEqual("DateTime", partsEnumerator.Current.ValueName);
+
+            Assert.IsTrue(partsEnumerator.MoveNext());
+            Assert.AreSame(typeof(AdmCheckboxPart), partsEnumerator.Current.GetType());
+            Assert.IsNotNull(partsEnumerator.Current.KeyName);
+            Assert.AreEqual("Timestamp", partsEnumerator.Current.ValueName);
+
+            Assert.IsTrue(partsEnumerator.MoveNext());
+            Assert.AreSame(typeof(AdmCheckboxPart), partsEnumerator.Current.GetType());
+            Assert.IsNotNull(partsEnumerator.Current.KeyName);
+            Assert.AreEqual("ProcessId", partsEnumerator.Current.ValueName);
+
+            Assert.IsTrue(partsEnumerator.MoveNext());
+            Assert.AreSame(typeof(AdmCheckboxPart), partsEnumerator.Current.GetType());
+            Assert.IsNotNull(partsEnumerator.Current.KeyName);
+            Assert.AreEqual("ThreadId", partsEnumerator.Current.ValueName);
+
+            Assert.IsTrue(partsEnumerator.MoveNext());
+            Assert.AreSame(typeof(AdmCheckboxPart), partsEnumerator.Current.GetType());
+            Assert.IsNotNull(partsEnumerator.Current.KeyName);
+            Assert.AreEqual("Callstack", partsEnumerator.Current.ValueName);
 
             Assert.IsTrue(partsEnumerator.MoveNext());
             Assert.AreSame(typeof(AdmDropDownListPart), partsEnumerator.Current.GetType());

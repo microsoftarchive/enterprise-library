@@ -25,6 +25,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_host_adapter
         Property expirationPollFrequency;
         PropertyDescriptor componentModelExpirationPollFrequency;
         bool expirationPollFrequencyChanged;
+
         protected override void Arrange()
         {
             base.Arrange();
@@ -53,6 +54,13 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_host_adapter
         public void then_property_descriptor_throws_exception_on_validation_error()
         {
             componentModelExpirationPollFrequency.SetValue(null, "invalidvalue");
+        }
+
+        [TestMethod]
+        public void then_propery_descriptor_type_is_property_type()
+        {
+            Assert.AreEqual(typeof(int), componentModelExpirationPollFrequency.PropertyType);
+            Assert.IsInstanceOfType(componentModelExpirationPollFrequency.GetValue(null), typeof(int));
         }
     }
 }

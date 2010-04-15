@@ -15,30 +15,63 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Drawing.Design;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
-using System.Windows.Input;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Extensions;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors
 {
+    /// <summary>
+    /// View model for the <see cref="TypeBrowser"/>.
+    /// </summary>
     public class TypeBrowserViewModel : INotifyPropertyChanged, INodeCreator
     {
-        public TypeBrowserViewModel(IEnumerable<AssemblyGroup> assemblyGroups)
-            : this(assemblyGroups, null)
+        readonly string typeConstraintDisplay;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TypeBrowserViewModel"/> class with a type filter predicate.
+        /// </summary>
+        /// <param name="typeFilter">The type filter predicate.</param>
+        public TypeBrowserViewModel(Func<Type, bool> typeFilter)
+            : this(typeFilter, new NullServiceProvider())
         { }
 
-        public TypeBrowserViewModel(IEnumerable<AssemblyGroup> assemblyGroups, Func<Type, bool> typeFilter)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TypeBrowserViewModel"/> class with a 
+        /// <see cref="TypeBuildNodeConstraint"/> and a service provider.
+        /// </summary>
+        /// <param name="constraint">The constraint to use when filtering types.</param>
+        /// <param name="serviceProvider">The service provider.</param>
+        public TypeBrowserViewModel(TypeBuildNodeConstraint constraint, IServiceProvider serviceProvider)
+            : this(constraint.Matches, serviceProvider)
+        {
+            typeConstraintDisplay = constraint.GetDisplayString();
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TypeBrowserViewModel"/> class with a 
+        /// type filter predicate and a service provider.
+        /// </summary>
+        /// <param name="typeFilter">The type filter predicate.</param>
+        /// <param name="serviceProvider">The service provider.</param>
+        public TypeBrowserViewModel(Func<Type, bool> typeFilter, IServiceProvider serviceProvider)
         {
             this.typeFilter = typeFilter;
+            this.serviceProvider = serviceProvider;
 
             this.AssemblyGroups = new ObservableCollection<AssemblyGroupNode>();
             this.GenericTypeParameters = new ObservableCollection<GenericTypeParameter>();
-
-            this.UpdateAssemblyGroups(assemblyGroups);
         }
 
+        /// <summary>
+        /// Updates the assembly groups for the view model.
+        /// </summary>
+        /// <param name="assemblyGroups">The new set of assembly groups.</param>
         public void UpdateAssemblyGroups(IEnumerable<AssemblyGroup> assemblyGroups)
         {
             this.AssemblyGroups.Clear();
@@ -48,6 +81,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
             }
         }
 
+        /// <summary>
+        /// Resolves the type represented by the current selection and the values for the generic type 
+        /// parameters, if any.
+        /// </summary>
+        /// <returns>Returns the type represented by the current selection.</returns>
         public Type ResolveType()
         {
             var resolvedType = this.concreteType;
@@ -79,10 +117,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
             throw new InvalidOperationException(Properties.Resources.ErrorNoSelectedType);
         }
 
+        /// <summary>
+        /// Gets the collection of assembly groups.
+        /// </summary>
         public ObservableCollection<AssemblyGroupNode> AssemblyGroups { get; private set; }
 
+        /// <summary>
+        /// Gets the collection of generic type parameters associated to the currently selected type.
+        /// </summary>
         public ObservableCollection<GenericTypeParameter> GenericTypeParameters { get; private set; }
 
+        /// <summary>
+        /// Gets a value indicating whether the currently selected type has generic parameters.
+        /// </summary>
         public bool HasGenericParameters
         {
             get
@@ -91,6 +138,21 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
             }
         }
 
+        /// <summary>
+        /// Gets the title for the view model.
+        /// </summary>
+        public string Title
+        {
+            get
+            {
+                return string.Format(CultureInfo.CurrentCulture, Resources.TypeBrowserTitleFormat, typeConstraintDisplay);
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the type name input for the view model.
+        /// </summary>
+        /// <remarks>Setting a value triggers a search.</remarks>
         public string TypeName
         {
             get
@@ -110,6 +172,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
             }
         }
 
+        /// <summary>
+        /// Gets or sets the currently selected type.
+        /// </summary>
         public Type ConcreteType
         {
             get { return this.concreteType; }
@@ -124,18 +189,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
             }
         }
 
-        public ICommand OkCommand
-        {
-            get { return new OkCommand(); }
-        }
-
-        public ICommand AddAssembliesCommand
-        {
-            get { return new AddAssembliesCommand(); }
-        }
-
+        /// <summary>
+        /// Event raised when a property has changed.
+        /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
 
+        /// <summary>
+        /// Notifies that a property has changed its value.
+        /// </summary>
+        /// <param name="property">The name of the changed property.</param>
         protected void Notify(string property)
         {
             if (this.PropertyChanged != null)
@@ -173,9 +235,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
                 {
                     this.currentSearch.Abort();
                 }
-                //this.ClearSelection();
+                this.ClearSelection();
                 this.currentSearch = newSearch;
                 this.currentSearch.Run();
+            }
+        }
+
+        private void ClearSelection()
+        {
+            if (this.selectedTypeNode != null)
+            {
+                this.selectedTypeNode.IsSelected = false;
             }
         }
 
@@ -209,7 +279,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
             {
                 foreach (var argument in this.selectedTypeNode.Data.GetGenericArguments())
                 {
-                    this.GenericTypeParameters.Add(new GenericTypeParameter(argument));
+                    this.GenericTypeParameters.Add(new GenericTypeParameter(argument, this.serviceProvider));
                 }
             }
             Notify("HasGenericParameters");
@@ -239,7 +309,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
 
         #endregion
 
+        private class NullServiceProvider : IServiceProvider
+        {
+            public object GetService(Type serviceType)
+            {
+                return null;
+            }
+        }
+
         private readonly Func<Type, bool> typeFilter;
+        private readonly IServiceProvider serviceProvider;
 
         private bool updateFromSelection;
         private string typeName;
@@ -249,23 +328,47 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
         private SearchAction currentSearch;
     }
 
+    /// <summary>
+    /// Interface for the creation of nodes.
+    /// </summary>
     public interface INodeCreator
     {
+        /// <summary>
+        /// Creates a new type node.
+        /// </summary>
         TypeNode CreateTypeNode(Type type);
+
+        /// <summary>
+        /// Creates a new namespace node.
+        /// </summary>
         NamespaceNode CreateNamespaceNode(string name);
+
+        /// <summary>
+        /// Creates a new assembly node.
+        /// </summary>
         AssemblyNode CreateAssemblyNode(Assembly assembly);
     }
 
     #region Node classes
 
+    /// <summary>
+    /// Base class for nodes in the type browser view model.
+    /// </summary>
     public class Node : INotifyPropertyChanged
     {
         private bool isExpanded;
         private bool isSelected;
         private Visibility visibility;
 
+        /// <summary>
+        /// Event raised when a property has changed.
+        /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
 
+        /// <summary>
+        /// Notifies that a property has changed its value.
+        /// </summary>
+        /// <param name="property">The name of the changed property.</param>
         protected void Notify(string property)
         {
             if (this.PropertyChanged != null)
@@ -274,6 +377,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
             }
         }
 
+        /// <summary>
+        /// Gets or sets the expanded state.
+        /// </summary>
         public bool IsExpanded
         {
             get
@@ -290,6 +396,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
             }
         }
 
+        /// <summary>
+        /// Gets or sets the selection state.
+        /// </summary>
         public bool IsSelected
         {
             get
@@ -306,6 +415,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
             }
         }
 
+        /// <summary>
+        /// Gets or sets the visibility.
+        /// </summary>
         public Visibility Visibility
         {
             get
@@ -323,19 +435,34 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
         }
     }
 
+    /// <summary>
+    /// Represents a type.
+    /// </summary>
     public class TypeNode : Node
     {
         private string displayName;
         private string fullName;
         private Type type;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TypeNode"/> class for a type.
+        /// </summary>
+        /// <param name="type">The represented type.</param>
         public TypeNode(Type type)
         {
             this.type = type;
-            this.displayName = type.Name;
+            this.displayName = GetTypeName(type);
             this.fullName = type.FullName;
         }
 
+        private string GetTypeName(Type type)
+        {
+            return type.IsNested ? GetTypeName(type.DeclaringType) + '+' + type.Name : type.Name;
+        }
+
+        /// <summary>
+        /// Gets the represented type.
+        /// </summary>
         public Type Data
         {
             get
@@ -344,6 +471,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
             }
         }
 
+        /// <summary>
+        /// Gets the display name.
+        /// </summary>
         public string DisplayName
         {
             get
@@ -352,6 +482,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
             }
         }
 
+        /// <summary>
+        /// Gets the full name.
+        /// </summary>
         public string FullName
         {
             get
@@ -361,17 +494,27 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
         }
     }
 
+    /// <summary>
+    /// Represents a namespace.
+    /// </summary>
     public class NamespaceNode : Node
     {
         private string displayName;
         private ObservableCollection<TypeNode> types;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NamespaceNode"/> class for a namespace name.
+        /// </summary>
+        /// <param name="name">The namespace name.</param>
         public NamespaceNode(string name)
         {
             this.displayName = name ?? "";
             this.types = new ObservableCollection<TypeNode>();
         }
 
+        /// <summary>
+        /// Gets the display name.
+        /// </summary>
         public string DisplayName
         {
             get
@@ -380,6 +523,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
             }
         }
 
+        /// <summary>
+        /// Gets the nodes representing the types in the represented namespace.
+        /// </summary>
         public ObservableCollection<TypeNode> Types
         {
             get
@@ -389,6 +535,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
         }
     }
 
+    /// <summary>
+    /// Represents an assembly.
+    /// </summary>
     public class AssemblyNode : Node
     {
         private readonly Assembly assembly;
@@ -397,14 +546,24 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
         private readonly Func<Type, bool> typeFilter;
         private ObservableCollection<NamespaceNode> namespaces;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AssemblyNode"/> class.
+        /// </summary>
+        /// <param name="assembly">The represented assembly.</param>
+        /// <param name="nodeCreator">The node creator.</param>
+        /// <param name="typeFilter">The type filter predicate.</param>
         public AssemblyNode(Assembly assembly, INodeCreator nodeCreator, Func<Type, bool> typeFilter)
         {
             this.assembly = assembly;
             this.displayName = assembly.GetName().Name;
             this.nodeCreator = nodeCreator;
             this.typeFilter = typeFilter ?? (t => true);
+            this.Visibility = this.Namespaces.Count == 0 ? Visibility.Collapsed : Visibility.Visible;
         }
 
+        /// <summary>
+        /// Gets the display name.
+        /// </summary>
         public string DisplayName
         {
             get
@@ -413,6 +572,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
             }
         }
 
+        /// <summary>
+        /// Gets the nodes representing the namespaces in the represented assembly.
+        /// </summary>
         public ObservableCollection<NamespaceNode> Namespaces
         {
             get
@@ -421,16 +583,27 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
                 {
                     this.namespaces = new ObservableCollection<NamespaceNode>();
 
-                    var types =
-                        this.assembly.GetTypes()
-                            .Where(this.typeFilter)
-                            .OrderBy(t => t.Namespace)
-                            .ThenBy(t => t.Name);
+                    IEnumerable<Type> types;
+                    try
+                    {
+                        types = this.assembly.GetTypes()
+                                    .Where(this.typeFilter)
+                                    .OrderBy(t => t.Namespace)
+                                    .ThenBy(t => t.FullName);
+                    }
+                    catch (FileLoadException)
+                    {
+                        types = Enumerable.Empty<Type>();
+                    }
+                    catch (TypeLoadException)
+                    {
+                        types = Enumerable.Empty<Type>();
+                    }
 
                     NamespaceNode namespaceNode = null;
                     foreach (var type in types)
                     {
-                        var namespaceName = type.Namespace;
+                        var namespaceName = type.Namespace ?? string.Empty;
                         if (namespaceNode == null
                             || !StringComparer.Ordinal.Equals(namespaceNode.DisplayName, namespaceName))
                         {
@@ -446,6 +619,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
         }
     }
 
+    /// <summary>
+    /// Represents an assembly group.
+    /// </summary>
     public class AssemblyGroupNode : Node
     {
         private readonly AssemblyGroup assemblyGroup;
@@ -453,14 +629,23 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
         private readonly INodeCreator nodeCreator;
         private ObservableCollection<AssemblyNode> assemblies;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AssemblyGroupNode"/> class.
+        /// </summary>
+        /// <param name="assemblyGroup">The represented assembly group.</param>
+        /// <param name="nodeCreator">The node creator.</param>
         public AssemblyGroupNode(AssemblyGroup assemblyGroup, INodeCreator nodeCreator)
         {
             this.assemblyGroup = assemblyGroup;
             this.displayName = assemblyGroup.Name;
             this.nodeCreator = nodeCreator;
             this.IsExpanded = true;
+            this.Visibility = this.Assemblies.Count == 0 ? Visibility.Collapsed : Visibility.Visible;
         }
 
+        /// <summary>
+        /// Gets the display name.
+        /// </summary>
         public string DisplayName
         {
             get
@@ -469,6 +654,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
             }
         }
 
+        /// <summary>
+        /// Gets the nodes representing the assemblies in the represented assembly group.
+        /// </summary>
         public ObservableCollection<AssemblyNode> Assemblies
         {
             get
@@ -477,7 +665,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
                 {
                     this.assemblies =
                         new ObservableCollection<AssemblyNode>(
-                            this.assemblyGroup.Assemblies.Select(a => this.nodeCreator.CreateAssemblyNode(a)));
+                            this.assemblyGroup.Assemblies
+                                .OrderBy(a => a.GetName().Name)
+                                .FilterSelectSafe(a => this.nodeCreator.CreateAssemblyNode(a)));
                 }
                 return this.assemblies;
             }
@@ -486,33 +676,41 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
 
     #endregion
 
+    /// <summary>
+    /// Represents a generic type parameter in a generic type.
+    /// </summary>
     public class GenericTypeParameter : Property
     {
-        public GenericTypeParameter(Type typeParameter)
-            : base(null, null, null, new Attribute[] { new EditorAttribute(typeof(TypeSelectionEditor), typeof(UITypeEditor)) })
+        private static readonly Attribute[] attributes = new Attribute[] { 
+            new EditorAttribute(typeof(TypeSelectionEditor), typeof(UITypeEditor)),
+            new EditorWithReadOnlyTextAttribute(true),
+            new ResourceDescriptionAttribute(typeof(Properties.Resources), "GenericTypeParameter"),
+            };
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GenericTypeParameter"/> class.
+        /// </summary>
+        /// <param name="typeParameter">The represented generic type parameter.</param>
+        /// <param name="serviceProvider">A service provider.</param>
+        public GenericTypeParameter(Type typeParameter, IServiceProvider serviceProvider)
+            : base(serviceProvider, null, null, attributes)
         {
             this.TypeParameter = typeParameter;
         }
 
+        /// <summary>
+        /// Gets the represented type parameter.
+        /// </summary>
         public Type TypeParameter { get; private set; }
+
+        /// <summary>
+        /// Gets or sets the concrete type specified for the represented type parameter.
+        /// </summary>
         public Type TypeArgument { get; set; }
 
-        public override string Description
-        {
-            get
-            {
-                return "Generic parameter";
-            }
-        }
-
-        public override string DisplayName
-        {
-            get
-            {
-                return this.TypeParameter.Name;
-            }
-        }
-
+        /// <summary>
+        /// Gets a value indicating if the property is required.
+        /// </summary>
         public override bool IsRequired
         {
             get
@@ -521,6 +719,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
             }
         }
 
+        /// <summary>
+        /// Gets the name of the property.
+        /// </summary>
         public override string PropertyName
         {
             get
@@ -529,6 +730,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
             }
         }
 
+        /// <summary>
+        /// Gets the <see cref="Type"/> of the property.
+        /// </summary>
         public override Type PropertyType
         {
             get
@@ -537,11 +741,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
             }
         }
 
+        /// <summary>
+        /// Gets the underlying, stored value.
+        /// </summary>
         protected override object GetValue()
         {
             return this.TypeArgument;
         }
 
+        /// <summary>
+        /// Sets the underlying, stored value.
+        /// </summary>
         protected override void SetValue(object value)
         {
             var valueAsString = value as string;
@@ -553,36 +763,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
             {
                 this.TypeArgument = (Type)value;
             }
-        }
-    }
-
-    internal class OkCommand : ICommand
-    {
-        public bool CanExecute(object parameter)
-        {
-            throw new NotImplementedException();
-        }
-
-        public event EventHandler CanExecuteChanged;
-
-        public void Execute(object parameter)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    internal class AddAssembliesCommand : ICommand
-    {
-        public bool CanExecute(object parameter)
-        {
-            throw new NotImplementedException();
-        }
-
-        public event EventHandler CanExecuteChanged;
-
-        public void Execute(object parameter)
-        {
-            throw new NotImplementedException();
         }
     }
 }

@@ -28,7 +28,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
         /// <para>Initializes a new instance of the <see cref="ObjectValidatorData"/> class.</para>
         /// </summary>
         public ObjectValidatorData()
-        { }
+        {
+            this.Type = typeof(ObjectValidator);
+        }
 
         /// <summary>
         /// <para>Initializes a new instance of the <see cref="ObjectValidatorData"/> class with a name.</para>

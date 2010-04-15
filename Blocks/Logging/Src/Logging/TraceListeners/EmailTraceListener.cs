@@ -23,12 +23,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
     [ConfigurationElementType(typeof(EmailTraceListenerData))]
     public class EmailTraceListener : FormattedTraceListenerBase
     {
-        string toAddress = String.Empty;
-        string fromAddress = String.Empty;
-        string subjectLineStarter = String.Empty;
-        string subjectLineEnder = String.Empty;
-        string smtpServer = String.Empty;
-        int smtpPort = 25;
+        private string toAddress = String.Empty;
+        private string fromAddress = String.Empty;
+        private string subjectLineStarter = String.Empty;
+        private string subjectLineEnder = String.Empty;
+        private string smtpServer = String.Empty;
+        private int smtpPort = 25;
+        private EmailAuthenticationMode authenticationMode = EmailAuthenticationMode.None;
+        private string userName = string.Empty;
+        private string password = string.Empty;
+        private bool useSSL = false;
 
         /// <summary>
         /// Initializes a new instance of <see cref="EmailTraceListener"/> with a toaddress, fromaddress, 
@@ -88,6 +92,50 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         /// <param name="subjectLineStarter">Starting text for the subject line.</param>
         /// <param name="subjectLineEnder">Ending text for the subject line.</param>
         /// <param name="smtpServer">The name of the SMTP server.</param>
+        /// <param name="smtpPort">The port on the SMTP server to use for sending the email.</param>
+        /// <param name="formatter">The Formatter <see cref="ILogFormatter"/> which determines how the 
+        /// email message should be formatted</param>
+        /// <param name="authenticationMode">Authentication style to use when connecting to SMTP server.</param>
+        /// <param name="userName">User name to use for authentication if using username/password authentication.</param>
+        /// <param name="password">Password to use for authentication if using username/password authentication.</param>
+        /// <param name="useSSL">Use SSL to connect to mail server if true, regular socket if false.</param>
+
+        public EmailTraceListener(
+            string toAddress,
+            string fromAddress,
+            string subjectLineStarter,
+            string subjectLineEnder,
+            string smtpServer,
+            int smtpPort,
+            ILogFormatter formatter,
+            EmailAuthenticationMode authenticationMode,
+            string userName,
+            string password,
+            bool useSSL)
+            : base(formatter)
+        {
+            this.toAddress = toAddress;
+            this.fromAddress = fromAddress;
+            this.subjectLineStarter = subjectLineStarter;
+            this.subjectLineEnder = subjectLineEnder;
+            this.smtpServer = smtpServer;
+            this.smtpPort = smtpPort;
+            this.authenticationMode = authenticationMode;
+            this.userName = userName;
+            this.password = password;
+            this.useSSL = useSSL;
+        }
+        
+        /// <summary>
+        /// Initializes a new instance of <see cref="EmailTraceListener"/> with a toaddress, fromaddress, 
+        /// subjectlinestarter, subjectlinender, smtpserver, smtpport, and a formatter
+        /// a <see cref="ILogFormatter"/>.
+        /// </summary>
+        /// <param name="toAddress">A semicolon delimited string the represents to whom the email should be sent.</param>
+        /// <param name="fromAddress">Represents from whom the email is sent.</param>
+        /// <param name="subjectLineStarter">Starting text for the subject line.</param>
+        /// <param name="subjectLineEnder">Ending text for the subject line.</param>
+        /// <param name="smtpServer">The name of the SMTP server.</param>
         public EmailTraceListener(
             string toAddress,
             string fromAddress,
@@ -99,8 +147,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
 
         /// <summary>
         /// Initializes a new instance of <see cref="EmailTraceListener"/> with a toaddress, fromaddress, 
-        /// subjectlinestarter, subjectlinender, smtpserver, smtpport, and a formatter
-        /// a <see cref="ILogFormatter"/>.
+        /// subjectlinestarter, subjectlinender, smtpserver, smtpport.
         /// </summary>
         /// <param name="toAddress">A semicolon delimited string the represents to whom the email should be sent.</param>
         /// <param name="fromAddress">Represents from whom the email is sent.</param>
@@ -109,6 +156,26 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         /// <param name="smtpServer">The name of the SMTP server.</param>
         /// <param name="smtpPort">The port on the SMTP server to use for sending the email.</param>
         public EmailTraceListener(string toAddress, string fromAddress, string subjectLineStarter, string subjectLineEnder, string smtpServer, int smtpPort)
+            : this(toAddress, fromAddress, subjectLineStarter, subjectLineEnder, smtpServer, smtpPort, EmailAuthenticationMode.None, null, null, false)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of <see cref="EmailTraceListener"/> with a toaddress, fromaddress, 
+        /// subjectlinestarter, subjectlinender, smtpserver, smtpport and authentication information.
+        /// </summary>
+        /// <param name="toAddress">A semicolon delimited string the represents to whom the email should be sent.</param>
+        /// <param name="fromAddress">Represents from whom the email is sent.</param>
+        /// <param name="subjectLineStarter">Starting text for the subject line.</param>
+        /// <param name="subjectLineEnder">Ending text for the subject line.</param>
+        /// <param name="smtpServer">The name of the SMTP server.</param>
+        /// <param name="smtpPort">The port on the SMTP server to use for sending the email.</param>
+        /// <param name="authenticationMode">Authentication style to use when connecting to SMTP server.</param>
+        /// <param name="userName">User name to use for authentication if using username/password authentication.</param>
+        /// <param name="password">Password to use for authentication if using username/password authentication.</param>
+        /// <param name="useSSL">Use SSL to connect to mail server if true, regular socket if false.</param>
+        public EmailTraceListener(string toAddress, string fromAddress, string subjectLineStarter, string subjectLineEnder, string smtpServer, int smtpPort,
+            EmailAuthenticationMode authenticationMode, string userName, string password, bool useSSL)
         {
             this.toAddress = toAddress;
             this.fromAddress = fromAddress;
@@ -116,6 +183,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
             this.subjectLineEnder = subjectLineEnder;
             this.smtpServer = smtpServer;
             this.smtpPort = smtpPort;
+            this.authenticationMode = authenticationMode;
+            this.userName = userName;
+            this.password = password;
+            this.useSSL = useSSL;
         }
 
         /// <summary>
@@ -125,7 +196,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         public override void Write(string message)
         {
             EmailMessage mailMessage =
-                new EmailMessage(toAddress, fromAddress, subjectLineStarter, subjectLineEnder, smtpServer, smtpPort, message, this.Formatter);
+                new EmailMessage(toAddress, fromAddress, subjectLineStarter, subjectLineEnder, smtpServer, smtpPort, message, this.Formatter, authenticationMode, userName, password, useSSL);
             mailMessage.Send();
         }
 
@@ -152,7 +223,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
             {
                 if (data is LogEntry)
                 {
-                    EmailMessage message = new EmailMessage(toAddress, fromAddress, subjectLineStarter, subjectLineEnder, smtpServer, smtpPort, data as LogEntry, this.Formatter);
+                    EmailMessage message = new EmailMessage(toAddress, fromAddress, subjectLineStarter, subjectLineEnder, smtpServer, smtpPort, data as LogEntry, this.Formatter, authenticationMode, userName, password, useSSL);
                     message.Send();
                 }
                 else if (data is string)

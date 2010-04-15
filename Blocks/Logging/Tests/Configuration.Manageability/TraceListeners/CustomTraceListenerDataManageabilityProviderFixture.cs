@@ -27,7 +27,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
     {
         CustomTraceListenerDataManageabilityProvider provider;
         MockRegistryKey machineKey;
+        MockRegistryKey machineOptionsKey;
         MockRegistryKey userKey;
+        MockRegistryKey userOptionsKey;
         CustomTraceListenerData configurationObject;
 
         [TestInitialize]
@@ -35,7 +37,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         {
             provider = new CustomTraceListenerDataManageabilityProvider();
             machineKey = new MockRegistryKey(true);
+            machineOptionsKey = new MockRegistryKey(false);
             userKey = new MockRegistryKey(true);
+            userOptionsKey = new MockRegistryKey(false);
             configurationObject = new CustomTraceListenerData();
         }
 
@@ -86,15 +90,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             configurationObject.Type = typeof(Object);
             configurationObject.Formatter = "formatter";
             configurationObject.InitData = "init data";
-            configurationObject.TraceOutputOptions = TraceOptions.None;
+            configurationObject.TraceOutputOptions = TraceOptions.Callstack;
             configurationObject.Filter = SourceLevels.Error;
 
             machineKey.AddStringValue(CustomTraceListenerDataManageabilityProvider.ProviderTypePropertyName, typeof(Object).AssemblyQualifiedName);
             machineKey.AddStringValue(CustomTraceListenerDataManageabilityProvider.AttributesPropertyName, "");
             machineKey.AddStringValue(CustomTraceListenerDataManageabilityProvider.FormatterPropertyName, "overriden formatter");
             machineKey.AddStringValue(CustomTraceListenerDataManageabilityProvider.InitDataPropertyName, "overriden init data");
-            machineKey.AddStringValue(CustomTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, "ProcessId, ThreadId");
             machineKey.AddStringValue(CustomTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
+            machineKey.AddSubKey(MsmqTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, machineOptionsKey);
+            machineOptionsKey.AddIntValue(TraceOptions.ProcessId.ToString(), 1);
+            machineOptionsKey.AddIntValue(TraceOptions.ThreadId.ToString(), 1);
 
             provider.OverrideWithGroupPolicies(configurationObject, true, machineKey, null);
 
@@ -111,15 +117,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             configurationObject.Type = typeof(Object);
             configurationObject.Formatter = "formatter";
             configurationObject.InitData = "init data";
-            configurationObject.TraceOutputOptions = TraceOptions.None;
+            configurationObject.TraceOutputOptions = TraceOptions.Callstack;
             configurationObject.Filter = SourceLevels.Error;
 
             userKey.AddStringValue(CustomTraceListenerDataManageabilityProvider.ProviderTypePropertyName, typeof(Object).AssemblyQualifiedName);
             userKey.AddStringValue(CustomTraceListenerDataManageabilityProvider.AttributesPropertyName, "");
             userKey.AddStringValue(CustomTraceListenerDataManageabilityProvider.FormatterPropertyName, "overriden formatter");
             userKey.AddStringValue(CustomTraceListenerDataManageabilityProvider.InitDataPropertyName, "overriden init data");
-            userKey.AddStringValue(CustomTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, "ProcessId, ThreadId");
             userKey.AddStringValue(CustomTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
+            userKey.AddSubKey(MsmqTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, userOptionsKey);
+            userOptionsKey.AddIntValue(TraceOptions.ProcessId.ToString(), 1);
+            userOptionsKey.AddIntValue(TraceOptions.ThreadId.ToString(), 1);
 
             provider.OverrideWithGroupPolicies(configurationObject, true, null, userKey);
 
@@ -136,20 +144,22 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             configurationObject.Type = typeof(Object);
             configurationObject.Formatter = "formatter";
             configurationObject.InitData = "init data";
-            configurationObject.TraceOutputOptions = TraceOptions.None;
+            configurationObject.TraceOutputOptions = TraceOptions.Callstack;
             configurationObject.Filter = SourceLevels.Error;
 
             machineKey.AddStringValue(CustomTraceListenerDataManageabilityProvider.FormatterPropertyName, "overriden formatter");
             machineKey.AddStringValue(CustomTraceListenerDataManageabilityProvider.InitDataPropertyName, "overriden init data");
-            machineKey.AddStringValue(CustomTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, "ProcessId, ThreadId");
             machineKey.AddStringValue(CustomTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
+            machineKey.AddSubKey(MsmqTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, machineOptionsKey);
+            machineOptionsKey.AddIntValue(TraceOptions.ProcessId.ToString(), 1);
+            machineOptionsKey.AddIntValue(TraceOptions.ThreadId.ToString(), 1);
 
             provider.OverrideWithGroupPolicies(configurationObject, false, machineKey, userKey);
 
             Assert.AreSame(typeof(Object), configurationObject.Type);
             Assert.AreEqual("formatter", configurationObject.Formatter);
             Assert.AreEqual("init data", configurationObject.InitData);
-            Assert.AreEqual(TraceOptions.None, configurationObject.TraceOutputOptions);
+            Assert.AreEqual(TraceOptions.Callstack, configurationObject.TraceOutputOptions);
             Assert.AreEqual(SourceLevels.Error, configurationObject.Filter);
         }
 
@@ -162,9 +172,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             machineKey.AddStringValue(CustomTraceListenerDataManageabilityProvider.ProviderTypePropertyName, typeof(Object).AssemblyQualifiedName);
             machineKey.AddStringValue(CustomTraceListenerDataManageabilityProvider.AttributesPropertyName, "");
             machineKey.AddStringValue(CustomTraceListenerDataManageabilityProvider.InitDataPropertyName, "overriden init data");
-            machineKey.AddStringValue(CustomTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, "ProcessId, ThreadId");
             machineKey.AddStringValue(CustomTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
             machineKey.AddStringValue(CustomTraceListenerDataManageabilityProvider.FormatterPropertyName, AdmContentBuilder.NoneListItem);
+            machineKey.AddSubKey(MsmqTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, machineOptionsKey);
+            machineOptionsKey.AddIntValue(TraceOptions.ProcessId.ToString(), 1);
+            machineOptionsKey.AddIntValue(TraceOptions.ThreadId.ToString(), 1);
 
             provider.OverrideWithGroupPolicies(configurationObject, true, machineKey, userKey);
 
@@ -220,10 +232,40 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
                             partsEnumerator.Current.ValueName);
 
             Assert.IsTrue(partsEnumerator.MoveNext());
-            Assert.AreSame(typeof(AdmDropDownListPart), partsEnumerator.Current.GetType());
+            Assert.AreSame(typeof(AdmTextPart), partsEnumerator.Current.GetType());
             Assert.IsNull(partsEnumerator.Current.KeyName);
-            Assert.AreEqual(CustomTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName,
-                            partsEnumerator.Current.ValueName);
+            Assert.IsNull(partsEnumerator.Current.ValueName);
+
+            // trace output options checkboxes
+            Assert.IsTrue(partsEnumerator.MoveNext());
+            Assert.AreSame(typeof(AdmCheckboxPart), partsEnumerator.Current.GetType());
+            Assert.IsNotNull(partsEnumerator.Current.KeyName);
+            Assert.AreEqual("LogicalOperationStack", partsEnumerator.Current.ValueName);
+
+            Assert.IsTrue(partsEnumerator.MoveNext());
+            Assert.AreSame(typeof(AdmCheckboxPart), partsEnumerator.Current.GetType());
+            Assert.IsNotNull(partsEnumerator.Current.KeyName);
+            Assert.AreEqual("DateTime", partsEnumerator.Current.ValueName);
+
+            Assert.IsTrue(partsEnumerator.MoveNext());
+            Assert.AreSame(typeof(AdmCheckboxPart), partsEnumerator.Current.GetType());
+            Assert.IsNotNull(partsEnumerator.Current.KeyName);
+            Assert.AreEqual("Timestamp", partsEnumerator.Current.ValueName);
+
+            Assert.IsTrue(partsEnumerator.MoveNext());
+            Assert.AreSame(typeof(AdmCheckboxPart), partsEnumerator.Current.GetType());
+            Assert.IsNotNull(partsEnumerator.Current.KeyName);
+            Assert.AreEqual("ProcessId", partsEnumerator.Current.ValueName);
+
+            Assert.IsTrue(partsEnumerator.MoveNext());
+            Assert.AreSame(typeof(AdmCheckboxPart), partsEnumerator.Current.GetType());
+            Assert.IsNotNull(partsEnumerator.Current.KeyName);
+            Assert.AreEqual("ThreadId", partsEnumerator.Current.ValueName);
+
+            Assert.IsTrue(partsEnumerator.MoveNext());
+            Assert.AreSame(typeof(AdmCheckboxPart), partsEnumerator.Current.GetType());
+            Assert.IsNotNull(partsEnumerator.Current.KeyName);
+            Assert.AreEqual("Callstack", partsEnumerator.Current.ValueName);
 
             Assert.IsTrue(partsEnumerator.MoveNext());
             Assert.AreSame(typeof(AdmDropDownListPart), partsEnumerator.Current.GetType());

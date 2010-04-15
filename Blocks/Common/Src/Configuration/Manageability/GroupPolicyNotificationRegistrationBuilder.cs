@@ -12,7 +12,7 @@
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability
 {
     /// <summary>
-    /// Represents a builder for group policy notification registration.
+    /// Represents a builder for Group Policy notification registration.
     /// </summary>
     public class GroupPolicyNotificationRegistrationBuilder
     {

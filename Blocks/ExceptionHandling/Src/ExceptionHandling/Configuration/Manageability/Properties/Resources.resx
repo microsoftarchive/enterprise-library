@@ -138,6 +138,12 @@
   <data name="ReplaceHandlerExceptionMessagePartName" xml:space="preserve">
     <value>Exception message</value>
   </data>
+  <data name="ReplaceHandlerExceptionMessageResourceNamePartName" xml:space="preserve">
+    <value>Exception message resource name</value>
+  </data>
+  <data name="ReplaceHandlerExceptionMessageResourceTypePartName" xml:space="preserve">
+    <value>Exception message resource type</value>
+  </data>
   <data name="ReplaceHandlerExceptionTypePartName" xml:space="preserve">
     <value>Exception type</value>
   </data>
@@ -149,6 +155,12 @@
   </data>
   <data name="WrapHandlerExceptionMessagePartName" xml:space="preserve">
     <value>Exception message</value>
+  </data>
+  <data name="WrapHandlerExceptionMessageResourceNamePartName" xml:space="preserve">
+    <value>Exception message resource name</value>
+  </data>
+  <data name="WrapHandlerExceptionMessageResourceTypePartName" xml:space="preserve">
+    <value>Exception message resource type</value>
   </data>
   <data name="WrapHandlerExceptionTypePartName" xml:space="preserve">
     <value>Exception type</value>

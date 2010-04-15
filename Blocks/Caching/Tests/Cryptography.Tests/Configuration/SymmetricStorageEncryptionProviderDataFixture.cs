@@ -34,6 +34,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Cryptography.Tests
         }
 
         [TestMethod]
+        [DeploymentItem("test.exe.config")]
         public void CanDeserializeSerializedConfiguration()
         {
             CacheManagerSettings settings = new CacheManagerSettings();

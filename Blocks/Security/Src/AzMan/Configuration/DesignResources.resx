@@ -118,43 +118,48 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AzManAuthorizationProviderDataApplicationDescription" xml:space="preserve">
-    <value>983 - An optional name for the AzMan application.</value>
+    <value>An optional name for the AzMan application.</value>
   </data>
   <data name="AzManAuthorizationProviderDataApplicationDisplayName" xml:space="preserve">
     <value>Application</value>
   </data>
   <data name="AzManAuthorizationProviderDataAuditIdentifierPrefixDescription" xml:space="preserve">
-    <value>985 - A prefix for the audit identifier. The form is prefixusername:operation.</value>
+    <value>A prefix for the audit identifier. The form is prefix:username:operation.</value>
   </data>
   <data name="AzManAuthorizationProviderDataAuditIdentifierPrefixDisplayName" xml:space="preserve">
     <value>Audit Identifier Prefix</value>
   </data>
   <data name="AzManAuthorizationProviderDataDescription" xml:space="preserve">
-    <value>981 - Windows Authorization Manager (AzMan) is an authorization provider that can authorize against Active Directory, an XML file, or a database; or by using custom rules that you define and are stored as XML in the application configuration file. </value>
+    <value>Windows Authorization Manager (AzMan) is an authorization provider that can authorize against Active Directory, an XML file, or a database; 
+or by using custom rules that you define and are stored as XML in the application configuration file. </value>
   </data>
   <data name="AzManAuthorizationProviderDataDisplayName" xml:space="preserve">
     <value>AzMan Authorization Provider</value>
   </data>
   <data name="AzManAuthorizationProviderDataNameDescription" xml:space="preserve">
-    <value>987 - The name of the AzMan Authorization Provider.</value>
+    <value>The name of the AzMan Authorization Provider.</value>
   </data>
   <data name="AzManAuthorizationProviderDataNameDisplayName" xml:space="preserve">
     <value>Name</value>
   </data>
   <data name="AzManAuthorizationProviderDataScopeDescription" xml:space="preserve">
-    <value>989 - An optional name for the AzMan application scope. Scopes permit the use of different authorization settings for different parts of an application. </value>
+    <value>An optional name for the AzMan application scope. 
+Scopes permit the use of different authorization settings for different parts of an application. </value>
   </data>
   <data name="AzManAuthorizationProviderDataScopeDisplayName" xml:space="preserve">
     <value>Application Scope</value>
   </data>
   <data name="AzManAuthorizationProviderDataStoreLocationDescription" xml:space="preserve">
-    <value>991 - The location of the authorization store configured in Windows Authorization Manager (AzMan). This can be either an XML file, a database, or a part of Active Directory. The default location for an XML file is msxml://c:/myAuthStore.xml. The default for Active Directory is msldap://myserver/CN=MyStore,OU=AzMan,DC=MyDomain,DC=Com.</value>
+    <value>The location of the authorization store configured in Windows Authorization Manager (AzMan). 
+This can be  an XML file, a database, or a part of Active Directory. 
+The default location for an XML file is msxml://c:/myAuthStore.xml. 
+The default for Active Directory is msldap://myserver/CN=MyStore,OU=AzMan,DC=MyDomain,DC=Com.</value>
   </data>
   <data name="AzManAuthorizationProviderDataStoreLocationDisplayName" xml:space="preserve">
     <value>Store Location</value>
   </data>
   <data name="AzManAuthorizationProviderDataTypeNameDescription" xml:space="preserve">
-    <value>993 - The fully qualified type name of the AzMan Authorization Provider.</value>
+    <value>The fully qualified type name of the AzMan Authorization Provider.</value>
   </data>
   <data name="AzManAuthorizationProviderDataTypeNameDisplayName" xml:space="preserve">
     <value>Type</value>

@@ -18,6 +18,8 @@ using Microsoft.Practices.EnterpriseLibrary.Validation.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Validation.TestSupport.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Globalization;
+using System;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
 {
@@ -54,6 +56,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             RangeValidatorData rwValidatorData = new RangeValidatorData("validator1");
             rwSettings.Validators.Add(rwValidatorData);
             rwValidatorData.Negated = true;
+            rwValidatorData.Culture = CultureInfo.GetCultureInfo("nl-NL");
             rwValidatorData.LowerBound = "12";
             rwValidatorData.LowerBoundType = RangeBoundaryType.Exclusive;
             rwValidatorData.UpperBound = "24";
@@ -77,7 +80,40 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
                 Assert.AreEqual(RangeBoundaryType.Exclusive, ((RangeValidatorData)roSettings.Validators.Get(0)).LowerBoundType);
                 Assert.AreEqual("24", ((RangeValidatorData)roSettings.Validators.Get(0)).UpperBound);
                 Assert.AreEqual(RangeBoundaryType.Inclusive, ((RangeValidatorData)roSettings.Validators.Get(0)).UpperBoundType);
+                Assert.AreEqual(CultureInfo.GetCultureInfo("nl-NL"), rwValidatorData.Culture);
             }
+        }
+
+        [TestMethod]
+        public void CanCreateValidatorWithSpecificCulture()
+        {
+            MockRangeValidatorData validatorData = new MockRangeValidatorData();
+            
+            validatorData.Culture = CultureInfo.GetCultureInfo("nl-NL");
+            validatorData.LowerBound = "12,4";
+            validatorData.LowerBoundType = RangeBoundaryType.Inclusive;
+            validatorData.UpperBound = "24,4";
+            validatorData.UpperBoundType = RangeBoundaryType.Inclusive;
+
+            var validator = validatorData.CreateValidator(typeof(double));
+            Assert.IsFalse(validator.Validate(12.3d).IsValid);
+            Assert.IsTrue(validator.Validate(13.3d).IsValid);
+        }
+
+        [TestMethod]
+        public void CanCreateValidatorWithoutCulture()
+        {
+            MockRangeValidatorData validatorData = new MockRangeValidatorData();
+
+            validatorData.Culture = null;
+            validatorData.LowerBound = (12.4d).ToString(CultureInfo.CurrentCulture);
+            validatorData.LowerBoundType = RangeBoundaryType.Inclusive;
+            validatorData.UpperBound = (22.4d).ToString(CultureInfo.CurrentCulture);
+            validatorData.UpperBoundType = RangeBoundaryType.Inclusive;
+
+            var validator = validatorData.CreateValidator(typeof(double));
+            Assert.IsFalse(validator.Validate(12.3d).IsValid);
+            Assert.IsTrue(validator.Validate(13.3d).IsValid);
         }
 
         [TestMethod]
@@ -123,6 +159,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             Assert.AreEqual(RangeBoundaryType.Exclusive, ((RangeValidator)validator).LowerBoundType);
             Assert.AreEqual("24", ((RangeValidator)validator).UpperBound);
             Assert.AreEqual(RangeBoundaryType.Inclusive, ((RangeValidator)validator).UpperBoundType);
+        }
+
+
+        private class MockRangeValidatorData : RangeValidatorData
+        {
+            public Validator CreateValidator(Type targetType)
+            {
+                return base.DoCreateValidator(targetType);
+            }
         }
     }
 }

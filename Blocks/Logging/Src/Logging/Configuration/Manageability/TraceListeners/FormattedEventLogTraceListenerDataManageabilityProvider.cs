@@ -21,7 +21,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
 {
     /// <summary>
     /// Provides an implementation for <see cref="FormattedEventLogTraceListenerData"/> that
-    /// splits policy overrides processing and WMI objects generation, performing appropriate logging of 
+    /// processes policy overrides, performing appropriate logging of 
     /// policy processing errors.
     /// </summary>
     public class FormattedEventLogTraceListenerDataManageabilityProvider
@@ -83,7 +83,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
                                            255,
                                            false);
 
-            AddTraceOptionsPart(contentBuilder, configurationObject.TraceOutputOptions);
+            AddTraceOptionsPart(contentBuilder, elementPolicyKeyName, configurationObject.TraceOutputOptions);
 
             AddFilterPart(contentBuilder, configurationObject.Filter);
 
@@ -107,7 +107,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             String logOverride = policyKey.GetStringValue(LogPropertyName);
             String machineNameOverride = policyKey.GetStringValue(MachineNamePropertyName);
             String sourceOverride = policyKey.GetStringValue(SourcePropertyName);
-            TraceOptions? traceOutputOptionsOverride = policyKey.GetEnumValue<TraceOptions>(TraceOutputOptionsPropertyName);
+            TraceOptions? traceOutputOptionsOverride =
+                GetFlagsEnumOverride<TraceOptions>(policyKey, TraceOutputOptionsPropertyName);
             SourceLevels? filterOverride = policyKey.GetEnumValue<SourceLevels>(FilterPropertyName);
 
             configurationObject.Formatter = formatterOverride;

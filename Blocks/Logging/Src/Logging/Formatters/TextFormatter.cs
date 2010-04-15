@@ -334,15 +334,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Formatters
                 PropertyInfo property = logType.GetProperty(parameter);
                 if (property == null)
                 {
-                    return String.Format(Resources.Culture, Resources.ReflectedPropertyTokenNotFound, parameter);
+                    return String.Format(CultureInfo.CurrentCulture, Resources.ReflectedPropertyTokenNotFound, parameter);
                 }
                 if (!property.CanRead)
                 {
-                    return String.Format(Resources.Culture, Resources.ReflectedPropertyTokenNotReadable, parameter);
+                    return String.Format(CultureInfo.CurrentCulture, Resources.ReflectedPropertyTokenNotReadable, parameter);
                 }
                 if (property.GetIndexParameters().Length > 0)
                 {
-                    return String.Format(Resources.Culture, Resources.ReflectedPropertyTokenIndexer, parameter);
+                    return String.Format(CultureInfo.CurrentCulture, Resources.ReflectedPropertyTokenIndexer, parameter);
                 }
 
                 try
@@ -352,7 +352,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Formatters
                 }
                 catch
                 {
-                    return String.Format(Resources.Culture, Resources.ReflectedPropertyTokenException, parameter);
+                    return String.Format(CultureInfo.CurrentCulture, Resources.ReflectedPropertyTokenException, parameter);
                 }
             };
         }

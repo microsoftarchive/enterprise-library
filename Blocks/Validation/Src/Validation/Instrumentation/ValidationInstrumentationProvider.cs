@@ -11,11 +11,11 @@
 
 using System;
 using System.Configuration;
+using System.Diagnostics;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Properties;
-using System.Diagnostics;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Instrumentation
 {
@@ -40,7 +40,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Instrumentation
             return new ValidationInstrumentationProvider(
                         instrumentationSection.PerformanceCountersEnabled,
                         instrumentationSection.EventLoggingEnabled,
-                        instrumentationSection.WmiEnabled,
                         instrumentationSection.ApplicationInstanceName
                         );
         }
@@ -79,13 +78,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Instrumentation
         /// </summary>
         /// <param name="performanceCountersEnabled"><code>true</code> if performance counters should be updated.</param>
         /// <param name="eventLoggingEnabled"><code>true</code> if event log entries should be written.</param>
-        /// <param name="wmiEnabled"><code>true</code> if WMI events should be fired.</param>
         /// <param name="applicationInstanceName">The application instance name.</param>
         public ValidationInstrumentationProvider(bool performanceCountersEnabled,
                                               bool eventLoggingEnabled,
-                                              bool wmiEnabled,
                                               string applicationInstanceName)
-            : this(performanceCountersEnabled, eventLoggingEnabled, wmiEnabled, new AppDomainNameFormatter(applicationInstanceName))
+            : this(performanceCountersEnabled, eventLoggingEnabled, new AppDomainNameFormatter(applicationInstanceName))
         { }
 
         /// <summary>
@@ -93,13 +90,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Instrumentation
         /// </summary>
         /// <param name="performanceCountersEnabled"><code>true</code> if performance counters should be updated.</param>
         /// <param name="eventLoggingEnabled"><code>true</code> if event log entries should be written.</param>
-        /// <param name="wmiEnabled"><code>true</code> if WMI events should be fired.</param>
         /// <param name="nameFormatter">Creates unique name for each <see cref="PerformanceCounter"/> instance.</param>
         public ValidationInstrumentationProvider(bool performanceCountersEnabled,
                                               bool eventLoggingEnabled,
-                                              bool wmiEnabled,
                                               IPerformanceCounterNameFormatter nameFormatter)
-            : base(performanceCountersEnabled, eventLoggingEnabled, wmiEnabled, nameFormatter)
+            : base(performanceCountersEnabled, eventLoggingEnabled, nameFormatter)
         {
             this.eventLogEntryFormatter = new EventLogEntryFormatter(Resources.BlockName);
         }
@@ -125,6 +120,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Instrumentation
         ///<param name="typeBeingValidated"></param>
         public void NotifyValidationSucceeded(Type typeBeingValidated)
         {
+            if (typeBeingValidated == null) throw new ArgumentNullException("typeBeingValidated");
+
             if (PerformanceCountersEnabled)
             {
                 //increment counter specific to this type/ruleSet
@@ -138,10 +135,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Instrumentation
                 validationSucceededPerSecond.Increment();
                 percentageValidationSuccesses.Increment();
             }
-            if (WmiEnabled)
-            {
-                FireManagementInstrumentation(new ValidationSucceededEvent(typeBeingValidated.FullName));
-            }
         }
 
         ///<summary>
@@ -150,6 +143,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Instrumentation
         ///<param name="validationResult"></param>
         public void NotifyValidationFailed(Type typeBeingValidated, ValidationResults validationResult)
         {
+            if (typeBeingValidated == null) throw new ArgumentNullException("typeBeingValidated");
+
             if (PerformanceCountersEnabled)
             {
                 //increment counter specific to this type/ruleSet
@@ -161,11 +156,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Instrumentation
                 validationFailures.Increment();
                 validationFailuresPerSecond.Increment();
             }
-
-            if (WmiEnabled)
-            {
-                FireManagementInstrumentation(new ValidationFailedEvent(typeBeingValidated.FullName));
-            }
         }
 
         ///<summary>
@@ -173,11 +163,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Instrumentation
         ///<param name="configurationException"></param>
         public void NotifyConfigurationFailure(ConfigurationErrorsException configurationException)
         {
-            if (WmiEnabled)
-            {
-                FireManagementInstrumentation(new ValidationConfigurationFailureEvent(configurationException.Message));
-            }
-
             if (EventLoggingEnabled)
             {
                 string entryText = eventLogEntryFormatter.GetEntryText(Resources.ConfigurationErrorMessage, configurationException);
@@ -190,6 +175,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Instrumentation
         ///<param name="typeBeingValidated"></param>
         public void NotifyConfigurationCalled(Type typeBeingValidated)
         {
+            if (typeBeingValidated == null) throw new ArgumentNullException("typeBeingValidated");
+
             if (PerformanceCountersEnabled)
             {
                 //increment counter specific to this type/ruleSet
@@ -213,12 +200,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Instrumentation
         ///<param name="exception"></param>
         public void NotifyValidationException(Type typeBeingValidated, string errorMessage, Exception exception)
         {
-            if (WmiEnabled)
-            {
-                FireManagementInstrumentation(new ValidationExceptionEvent(typeBeingValidated.FullName,
-                                                                           exception.ToString()));
-            }
-
             NotifyConfigurationCalled(typeBeingValidated);
         }
     }

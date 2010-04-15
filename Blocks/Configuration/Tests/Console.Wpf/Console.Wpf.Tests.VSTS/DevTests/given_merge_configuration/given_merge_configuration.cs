@@ -21,13 +21,14 @@ using System.IO;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Configuration;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_merge_configuration
 {
 
     public abstract class given_configuration_merge : ArrangeActAssert
     {
-        protected EnvironmentMergeSection MergeSection;
+        protected EnvironmentalOverridesSection MergeSection;
         protected string TargetFile;
 
         protected override void Arrange()
@@ -40,7 +41,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_merge_configuration
                             ExeConfigFilename = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "merge_environment.dconfig")
                         }, ConfigurationUserLevel.None);
 
-            MergeSection = (EnvironmentMergeSection)configuration.GetSection(EnvironmentMergeSection.EnvironmentMergeData);
+            MergeSection = (EnvironmentalOverridesSection)configuration.GetSection(EnvironmentalOverridesSection.EnvironmentallyOverriddenProperties);
         }
 
         protected override void Teardown()
@@ -57,8 +58,8 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_merge_configuration
     {
         protected override void Act()
         {
-            ConfigurationMerger configurationMerger = new ConfigurationMerger();
-            configurationMerger.MergeConfiguration(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "merge_main.config"), MergeSection, TargetFile);
+            ConfigurationMerger configurationMerger = new ConfigurationMerger(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "merge_main.config"), MergeSection);
+            configurationMerger.MergeConfiguration(TargetFile);
         }
 
 
@@ -80,6 +81,17 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_merge_configuration
             Assert.AreEqual(1, cacheManager.NumberToRemoveWhenScavenging);
             Assert.AreEqual(1, cacheManager.ExpirationPollFrequencyInSeconds);
         }
+
+        [TestMethod]
+        public void then_attributes_with_omitted_values_are_overridden()
+        {
+            FileConfigurationSource source = new FileConfigurationSource(TargetFile);
+            InstrumentationConfigurationSection instrumentationSettings = (InstrumentationConfigurationSection)source.GetSection(InstrumentationConfigurationSection.SectionName);
+
+            Assert.AreEqual("Overriden Application", instrumentationSettings.ApplicationInstanceName);
+            Assert.IsTrue(instrumentationSettings.EventLoggingEnabled);
+            Assert.IsTrue(instrumentationSettings.PerformanceCountersEnabled);
+        }
     }
 
     [TestClass]
@@ -96,8 +108,8 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_merge_configuration
             File.Create(TargetFile).Dispose();
             File.SetLastWriteTime(TargetFile, lastWriteTime);
 
-            ConfigurationMerger configurationMerger = new ConfigurationMerger();
-            configurationMerger.MergeConfiguration(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "merge_main.config"), MergeSection, TargetFile);
+            ConfigurationMerger configurationMerger = new ConfigurationMerger(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "merge_main.config"), MergeSection);
+            configurationMerger.MergeConfiguration(TargetFile);
         }
 
 
@@ -120,8 +132,8 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_merge_configuration
             sourceFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "merge_main.config");
             File.SetAttributes(sourceFile, FileAttributes.ReadOnly);
 
-            ConfigurationMerger configurationMerger = new ConfigurationMerger();
-            configurationMerger.MergeConfiguration(sourceFile, MergeSection, TargetFile);
+            ConfigurationMerger configurationMerger = new ConfigurationMerger(sourceFile, MergeSection);
+            configurationMerger.MergeConfiguration(TargetFile);
         }
 
         [TestMethod]
@@ -151,8 +163,8 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_merge_configuration
 
             try
             {
-                ConfigurationMerger configurationMerger = new ConfigurationMerger();
-                configurationMerger.MergeConfiguration(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "merge_main.config"), MergeSection, TargetFile);
+                ConfigurationMerger configurationMerger = new ConfigurationMerger(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "merge_main.config"), MergeSection);
+                configurationMerger.MergeConfiguration(TargetFile);
             }
             catch (IOException)
             {

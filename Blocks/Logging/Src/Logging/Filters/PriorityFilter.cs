@@ -55,6 +55,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Filters
         /// <returns>Returns true if the log entry passes through the category filter.</returns>
         public override bool Filter(LogEntry log)
         {
+            if(log == null) throw new ArgumentNullException("log");
 			return ShouldLog(log.Priority);
         }
 

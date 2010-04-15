@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Properties;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Instrumentation;
+using System.Globalization;
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
 {
@@ -29,7 +30,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
         private IExceptionHandlingInstrumentationProvider instrumentationProvider;
 
         /// <summary>
-		/// Instantiates a new instance of the 
+		/// Initializes a new instance of the 
 		/// <see cref="ExceptionPolicyEntry"/> class.
         /// </summary>
         /// <param name="exceptionType">Type of exception this policy refers to.</param>
@@ -41,7 +42,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
         }
 
         /// <summary>
-        /// Instantiates a new instance of the <see cref="ExceptionPolicyEntry"/> class.
+        /// Initializes a new instance of the <see cref="ExceptionPolicyEntry"/> class.
         /// </summary>
         /// <param name="exceptionType">Type of exception this policy refers to.</param>
         /// <param name="postHandlingAction">What to do after the exception is handled.</param>
@@ -138,10 +139,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
                 instrumentationProvider.FireExceptionHandlingErrorOccurred(
                     ExceptionUtility.FormatExceptionHandlingExceptionMessage(
                         policyName,
-                        new ExceptionHandlingException(string.Format(Resources.Culture, Resources.UnableToHandleException, lastHandlerName), handlingException),
+                        new ExceptionHandlingException(string.Format(CultureInfo.CurrentCulture, Resources.UnableToHandleException, lastHandlerName), handlingException),
                         ex,
                         originalException));
-                throw new ExceptionHandlingException(string.Format(Resources.Culture, Resources.UnableToHandleException, lastHandlerName));
+                throw new ExceptionHandlingException(string.Format(CultureInfo.CurrentCulture, Resources.UnableToHandleException, lastHandlerName));
             }
 
             return ex;

@@ -136,8 +136,33 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 
                 return this;
             }
-        }
 
+            public ILoggingConfigurationSendToEmailTraceListener UseSSL(bool useSSL)
+            {
+                emailTraceListener.UseSSL = useSSL;
+                return this;
+            }
+
+            public ILoggingConfigurationSendToEmailTraceListener Unauthenticated()
+            {
+                emailTraceListener.AuthenticationMode = EmailAuthenticationMode.None;
+                return this;
+            }
+
+            public ILoggingConfigurationSendToEmailTraceListener WithWindowsCredentials()
+            {
+                emailTraceListener.AuthenticationMode = EmailAuthenticationMode.WindowsCredentials;
+                return this;
+            }
+
+            public ILoggingConfigurationSendToEmailTraceListener WithUserNameAndPassword(string userName, string password)
+            {
+                emailTraceListener.AuthenticationMode = EmailAuthenticationMode.UserNameAndPassword;
+                emailTraceListener.UserName = userName;
+                emailTraceListener.Password = password;
+
+                return this;
+            }
+        }
     }
-       
 }

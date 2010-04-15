@@ -49,8 +49,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
         }
 
         /// <summary>
-        /// 
+        /// Gets or sets whether the Open File Dialog should only allow existing files to be selected.
         /// </summary>
+        /// <value>
+        /// <see langword="true"/> if the Open File Dialog is used to open existing files. Otherwise <see langword="false"/>.
+        /// </value>
         public bool CheckFileExists
         {
             get;

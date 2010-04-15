@@ -30,6 +30,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
 		/// <param name="instrumentationProvider">The instrumentation provider.</param>
 		public static void InvokeRefreshAction(CacheItem removedCacheItem, CacheItemRemovedReason removalReason, ICachingInstrumentationProvider instrumentationProvider)
         {
+            if (removedCacheItem == null) throw new ArgumentNullException("removedCacheItem");
+            if (instrumentationProvider == null) throw new ArgumentNullException("instrumentationProvider");
+
             if (removedCacheItem.RefreshAction == null)
             {
                 return;

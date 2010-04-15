@@ -110,6 +110,21 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
         }
 
         [TestMethod]
+        public void ThenMapWithNullFuncThrows()
+        {
+            var map = MapBuilder<Customer>.MapNoProperties().Map(x => x.CustomerName);
+
+            try
+            {
+                map.WithFunc(null);
+                Assert.Fail("should have thrown");
+            }
+            catch (ArgumentNullException)
+            {
+            }
+        }
+
+        [TestMethod]
         public void ThenMapToColumnCreatesPropertyMappingWithColumnName()
         {
             IMapBuilderContext<Customer> context = MapBuilder<Customer>.MapNoProperties()
@@ -129,7 +144,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
             IMapBuilderContext<Customer> context = MapBuilder<Customer>.MapAllProperties()
                 .DoNotMap(x => x.CustomerName);
 
-            var mappings = 
+            var mappings =
                 ((IMapBuilderContextTest<Customer>)context).GetPropertyMappings().Where(pm => pm.Property == CustomerNameProperty);
             Assert.AreEqual(0, mappings.Count());
         }

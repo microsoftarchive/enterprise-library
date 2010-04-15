@@ -19,6 +19,7 @@ using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography;
 using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent;
 using Microsoft.Practices.EnterpriseLibrary.Common.Properties;
+using System.Globalization;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 {
@@ -76,7 +77,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
                 if (algorithmType == null) throw new ArgumentNullException("algorithmType");
 
                 if (!typeof(HashAlgorithm).IsAssignableFrom(algorithmType))
-                    throw new ArgumentException(string.Format(Resources.Culture,
+                    throw new ArgumentException(string.Format(CultureInfo.CurrentCulture,
                         Resources.ExceptionTypeMustDeriveFromType, typeof(HashAlgorithm)), "algorithmType");
 
                 providerData.AlgorithmType = algorithmType;

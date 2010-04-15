@@ -21,6 +21,8 @@ using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Validation;
 
 namespace Console.Wpf.Tests.VSTS.Mocks
 {
+    [ElementValidationAttribute(typeof(ElementErrorProducingValidator))]
+    [NamePropertyAttribute("Name")]
     public class ElementForValidation : ConfigurationSection
     {
         private const string typeValidatedCollection = "typeValidatedCollection ";
@@ -28,6 +30,7 @@ namespace Console.Wpf.Tests.VSTS.Mocks
         private const string requiredReferencingElement = "requiredReferencingElement";
         private const string referencedItemsCollection = "referencedItemsCollection";
         private const string defaultTestElement = "defaultTestElement";
+        private const string defaultTestElementRequired = "defaultTestElementRequired";
         private const string testElements = "testElements";
         private const string propertyWithMultipleValidationTypes = "propertyWithMultipleValidationTypes";
         private const string intProperty = "intProperty";
@@ -35,6 +38,14 @@ namespace Console.Wpf.Tests.VSTS.Mocks
         private const string propertyWithConfigurationRequirements = "propertyWithConfigurationRequirements";
         private const string propertyWithValidationError = "propertyWithValidationError";
         private const string propertyWithNoValidators = "propertyWithNoValidators";
+        private const string propertyName = "propertyName";
+
+        [ConfigurationProperty(propertyName)]
+        public string Name
+        {
+            get { return (string)this[propertyName]; }
+            set { this[propertyName] = value; }
+        }
 
         [ConfigurationProperty(propertyWithNoValidators)]
         public string PropertyWithNoValidators
@@ -64,7 +75,6 @@ namespace Console.Wpf.Tests.VSTS.Mocks
         {
             get { return (string)this[propertyWithConfigurationValidators]; }
             set { this[propertyWithConfigurationValidators] = value; }
-
         }
 
         [ConfigurationProperty(propertyWithMultipleValidationTypes, DefaultValue = "AValidValue")]
@@ -98,12 +108,21 @@ namespace Console.Wpf.Tests.VSTS.Mocks
             set { this[referencedItemsCollection] = value;}   
         }
 
-        [ConfigurationProperty(defaultTestElement)]
+        [ConfigurationProperty(defaultTestElement)] 
         [Reference(typeof(ElementForValidation), typeof(TestNamedElement))]
         public string DefaultTestElement
         {
             get { return (string) this[defaultTestElement];}
             set { this[defaultTestElement] = value;}
+        }
+
+        [ConfigurationProperty(defaultTestElementRequired, IsRequired = true)]
+        /*review: this was needed becuase test 'when_validating_property_with_element_validation.then_element_validation_results_do_not_appear_on_property' needs it*/
+        [Reference(typeof(ElementForValidation), typeof(TestNamedElement))]
+        public string DefaultTestElementRequired
+        {
+            get { return (string)this[defaultTestElementRequired]; }
+            set { this[defaultTestElementRequired] = value; }
         }
 
         [ConfigurationProperty(requiredReferencingElement, IsRequired = true)]
@@ -125,7 +144,8 @@ namespace Console.Wpf.Tests.VSTS.Mocks
         [ConfigurationProperty(typeValidatedCollection)]
         [ConfigurationCollection(typeof(TestNamedElement))]
         [Editor(typeof(FrameworkElement), typeof(FrameworkElement))]
-        [Validation(typeof(CollectionCountOneValidator))]
+        [ElementValidation(typeof(CollectionCountOneValidator))]
+        [Validation(typeof(ErrorProducingValidator))]
         public NamedElementCollection<TestNamedElement> ValidatedCollection
         {
             get { return (NamedElementCollection<TestNamedElement>)this[referencedItemsCollection]; }
@@ -193,4 +213,5 @@ namespace Console.Wpf.Tests.VSTS.Mocks
             set { this[requiredValueProperty] = value;}
         }
     }
+
 }

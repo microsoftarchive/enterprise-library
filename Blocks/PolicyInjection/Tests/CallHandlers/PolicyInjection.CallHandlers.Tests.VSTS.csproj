@@ -65,31 +65,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="APTCAFixture.cs" />
-    <Compile Include="ArgumentValidationExceptionFixture.cs" />
-    <Compile Include="AttributeDrivenPolicy\AuthorizationCallHandlerAttributeFixture.cs" />
-    <Compile Include="AttributeDrivenPolicy\ExceptionCallHandlerAttributeFixture.cs" />
-    <Compile Include="AttributeDrivenPolicy\LogCallHandlerAttributeFixture.cs" />
-    <Compile Include="AttributeDrivenPolicy\PerformanceCounterCallHandlerAttributeFixture.cs" />
-    <Compile Include="AttributeDrivenPolicy\ValidationCallHandlerAttributeFixture.cs" />
     <Compile Include="AuthorizationCallHandlerFixture.cs" />
-    <Compile Include="CachingCallHandlerFixture.cs" />
-    <Compile Include="Configuration\AuthorizationCallHandlerDataFixture.cs" />
-    <Compile Include="Configuration\CachingCallHandlerDataFixture.cs" />
-    <Compile Include="Configuration\CallHandlerDataFixtureBase.cs" />
+    <Compile Include="Configuration\AuthorizationCallHandlerDataSerializationFixture.cs" />
     <Compile Include="Configuration\ExceptionCallHandlerDataFixture.cs" />
-    <Compile Include="Configuration\LogHandlerDataFixture.cs" />
-    <Compile Include="Configuration\PerformanceCounterCallHandlerDataFixture.cs" />
-    <Compile Include="Configuration\ValidationCallHandlerFixture.cs" />
+    <Compile Include="Configuration\LogHandlerDataSerializationFixture.cs" />
+    <Compile Include="Configuration\ValidationCallHandlerSerializationFixture.cs" />
     <Compile Include="ExceptionCallHandlerFixture.cs" />
-    <Compile Include="Installer\PerformanceCountersInstallerFixture.cs" />
+    <Compile Include="LogCallHandlerAttributeFixture.cs" />
     <Compile Include="LogCallHandlerFixture.cs" />
-    <Compile Include="Logging\CategoryFormatterFixture.cs" />
-    <Compile Include="Logging\TraceLogEntryFixture.cs" />
-    <Compile Include="PerfCounterForCallHandlerTestsInstaller.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="PerformanceCounterCallHandlerFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -121,10 +104,6 @@
     <ProjectReference Include="..\..\..\Logging\Src\Logging\Logging.csproj">
       <Project>{6AC97717-899D-4F72-BC5B-2C37959CD4FF}</Project>
       <Name>Logging</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Src\CallHandlers\PolicyInjection.CallHandlers.csproj">
-      <Project>{88316009-DEDF-434C-A6A8-BE79D8A1B502}</Project>
-      <Name>PolicyInjection.CallHandlers</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Src\PolicyInjection\PolicyInjection.csproj">
       <Project>{3E6129C8-18E4-410D-89FC-0DBBE6009FC5}</Project>

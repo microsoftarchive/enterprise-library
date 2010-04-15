@@ -10,12 +10,11 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
+using System.Collections.Specialized;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Configuration.Design.HostAdapterV5;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
 using Microsoft.Practices.Unity;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Commands
@@ -27,27 +26,30 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.C
     public class AddApplicationBlockCommand : CommandModel
     {
         string sectionName;
-        ConfigurationSourceModel configurationModel;
         Type configurationSectionType;
-        IApplicationModel applicationModel;
+        private IApplicationModel applicationModel;
+        private ConfigurationSourceModel configurationModel;
 
         /// <summary>
-        /// Intializes a new instance of the <see cref="AddApplicationBlockCommand"/> class.
+        /// Initializes a new instance of the <see cref="AddApplicationBlockCommand"/> class.
         /// </summary>
-        /// <remarks>
-        /// TODO: This class is intended to be intialized by the XXXX 
-        /// </remarks>
         /// <param name="configurationModel">The <see cref="ConfigurationSourceModel"/> instance that represents the configuration source that is currently edited.</param>
         /// <param name="commandAttribute">The <see cref="AddApplicationBlockCommandAttribute"/> that specifes metadata for this <see cref="AddApplicationBlockCommand"/> to be initialized with.</param>
-        public AddApplicationBlockCommand(ConfigurationSourceModel configurationModel, AddApplicationBlockCommandAttribute commandAttribute)
-            : base(commandAttribute)
+        /// <param name="uiService"></param>
+        public AddApplicationBlockCommand(ConfigurationSourceModel configurationModel, AddApplicationBlockCommandAttribute commandAttribute, IUIServiceWpf uiService)
+            : base(commandAttribute, uiService)
         {
             this.configurationModel = configurationModel;
-            this.configurationModel.Sections.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(Sections_CollectionChanged);
+            INotifyCollectionChanged collectionChanged = configurationModel.Sections;
+            collectionChanged.CollectionChanged += Sections_CollectionChanged;
             this.sectionName = commandAttribute.SectionName;
             this.configurationSectionType = commandAttribute.ConfigurationSectionType;
         }
 
+        ///<summary>
+        /// Initialization method for additional dependencies not specified by the constructor.
+        ///</summary>
+        ///<param name="applicationModel">The design-time application model.</param>
         [InjectionMethod]
         public void AddApplicationBlockCommandInitialize(IApplicationModel applicationModel)
         {
@@ -68,32 +70,56 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.C
         }
 
         /// <summary>
-        /// When overriden in a derived class, returns the intial configuration schema that should be added to the <see cref="ConfigurationSourceModel"/>.
+        /// When overridden in a derived class, returns the intial configuration schema that should be added to the <see cref="ConfigurationSourceModel"/>.
         /// </summary>
         protected virtual ConfigurationSection CreateConfigurationSection()
         {
             return (ConfigurationSection)Activator.CreateInstance(configurationSectionType);
         }
 
-        public override bool CanExecute(object parameter)
+        /// <summary>
+        /// Protected method for determinging if command can execute.
+        /// </summary>
+        /// <returns>
+        /// true if this command can be executed; otherwise, false.
+        /// </returns>
+        /// <param name="parameter">Data used by the command.  If the command does not require data to be passed, this object can be set to null.
+        ///                 </param>
+        protected override bool InnerCanExecute(object parameter)
         {
             return !configurationModel.HasSection(sectionName);
         }
 
-        protected SectionViewModel AddedSection
-        {
-            get;
-            set;
-        }
+        /// <summary>
+        /// The section added during <see cref="InnerExecute"/>
+        /// </summary>
+        protected SectionViewModel AddedSection { get; private set; }
 
-        public override void Execute(object parameter)
+
+        /// <summary>
+        /// Creates and adds a new section to the <see cref="ConfigurationSourceModel"/>.
+        /// </summary>
+        /// <param name="parameter"></param>
+        /// <remarks>
+        /// After the section has been created <see cref="CreateConfigurationSection"/>, the <see cref="SectionViewModel"/> 
+        /// may be modified during the <see cref="AfterSectionAdded"/> template method.
+        /// </remarks>
+        protected override void InnerExecute(object parameter)
         {
             AddedSection = configurationModel.AddSection(sectionName, CreateConfigurationSection());
-            AddedSection.IsExpanded = true;
-            AddedSection.IsSelected = true;
+            AfterSectionAdded();
 
             applicationModel.SetDirty();
             OnCanExecuteChanged();
+        }
+
+        /// <summary>
+        /// Provides the opportunity to modify the section immediately after it's been added to the <see cref="ConfigurationSourceModel"/>.
+        /// </summary>
+        protected virtual void AfterSectionAdded()
+        {
+            AddedSection.IsExpanded = true;
+            AddedSection.IsSelected = true;
         }
     }
 }

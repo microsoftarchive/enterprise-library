@@ -97,10 +97,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
 			get { return Resources.OrCompositeValidatorDefaultMessageTemplate; }
 		}
 
-		#region test only properties
-
         /// <summary>
-        /// 
+        /// Child validators that are being Or'red together.
         /// </summary>
         public IEnumerable<Validator> Validators
 		{
@@ -109,7 +107,5 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
 				return this.validators;
 			}
 		}
-
-		#endregion
 	}
 }

@@ -84,8 +84,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Instrumentation
         {
             GenericValidatorWrapper<object> validator = new GenericValidatorWrapper<object>(new MockValidator(false),
                                                                                             new ValidationInstrumentationProvider
-                                                                                                (true, false, false,
-                                                                                                 formatter));
+                                                                                                (true, false, formatter));
             validator.Validate(this);
             Assert.AreEqual(1L, validationCallsCounter.RawValue);
         }
@@ -93,7 +92,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Instrumentation
         [TestMethod]
         public void CallingValidateIncrementsValidationCalledCounterPerSecond()
         {
-            ValidationInstrumentationProvider instrumentationProvider = new ValidationInstrumentationProvider(true, false, false, formatter);
+            ValidationInstrumentationProvider instrumentationProvider = new ValidationInstrumentationProvider(true, false, formatter);
             GenericValidatorWrapper<object> validator = new GenericValidatorWrapper<object>(new MockValidator(false), instrumentationProvider);
 
             validator.Validate(this);
@@ -103,9 +102,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Instrumentation
         [TestMethod]
         public void FailedValidationIncrementsFailedValidationCounterPerSecond()
         {
-            ValidationInstrumentationProvider instrumentationProvider = new ValidationInstrumentationProvider(true, false, false, formatter);
+            ValidationInstrumentationProvider instrumentationProvider = new ValidationInstrumentationProvider(true, false, formatter);
             GenericValidatorWrapper<object> validator = new GenericValidatorWrapper<object>(new MockValidator(true), instrumentationProvider);
-            
+
             validator.Validate(this);
             Assert.AreEqual(1L, validationFailuresPerSecond.RawValue);
         }
@@ -113,9 +112,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Instrumentation
         [TestMethod]
         public void FailedValidationIncrementsFailedValidationCounter()
         {
-            ValidationInstrumentationProvider instrumentationProvider = new ValidationInstrumentationProvider(true, false, false, formatter);
+            ValidationInstrumentationProvider instrumentationProvider = new ValidationInstrumentationProvider(true, false, formatter);
             GenericValidatorWrapper<object> validator = new GenericValidatorWrapper<object>(new MockValidator(true), instrumentationProvider);
-            
+
             validator.Validate(this);
             Assert.AreEqual(1L, validationFailures.RawValue);
         }
@@ -123,9 +122,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Instrumentation
         [TestMethod]
         public void SuccessfulValidationIncrementsValidationSuccessCounter()
         {
-            ValidationInstrumentationProvider instrumentationProvider = new ValidationInstrumentationProvider(true, false, false, formatter);
+            ValidationInstrumentationProvider instrumentationProvider = new ValidationInstrumentationProvider(true, false, formatter);
             GenericValidatorWrapper<object> validator = new GenericValidatorWrapper<object>(new MockValidator(false), instrumentationProvider);
-            
+
             validator.Validate(this);
             Assert.AreEqual(1L, validationSucceededCounter.RawValue);
         }
@@ -133,7 +132,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Instrumentation
         [TestMethod]
         public void SuccessfulValidationIncrementsValidationSuccessCounterPerSecond()
         {
-            ValidationInstrumentationProvider instrumentationProvider = new ValidationInstrumentationProvider(true, false, false, formatter);
+            ValidationInstrumentationProvider instrumentationProvider = new ValidationInstrumentationProvider(true, false, formatter);
             GenericValidatorWrapper<object> validator = new GenericValidatorWrapper<object>(new MockValidator(false), instrumentationProvider);
 
             validator.Validate(this);
@@ -143,11 +142,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Instrumentation
         [TestMethod]
         public void PercentageSuccessIsUpdated()
         {
-            ValidationInstrumentationProvider instrumentationProvider = new ValidationInstrumentationProvider(true, false, false, formatter);
+            ValidationInstrumentationProvider instrumentationProvider = new ValidationInstrumentationProvider(true, false, formatter);
             GenericValidatorWrapper<object> ValidValidator = new GenericValidatorWrapper<object>(new MockValidator(false), instrumentationProvider);
             GenericValidatorWrapper<object> InValidValidator = new GenericValidatorWrapper<object>(new MockValidator(true), instrumentationProvider);
 
-            
+
             ValidValidator.Validate(this);
             ValidValidator.Validate(this);
             ValidValidator.Validate(this);

@@ -12,6 +12,7 @@
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlServerCe;
+using Microsoft.Practices.EnterpriseLibrary.Data;
 using Microsoft.Practices.EnterpriseLibrary.Data.SqlCe;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -46,7 +47,7 @@ namespace Data.SqlCe.Tests.VSTS
         {
             TestConnectionString testConnection = new TestConnectionString();
             SqlCeDatabase db = new SqlCeDatabase(testConnection.ConnectionString);
-            using (DbConnection connection = SqlCeConnectionPool.CreateConnection(db))
+            using (DatabaseConnectionWrapper connection = SqlCeConnectionPool.CreateConnection(db))
             {
                 Assert.IsNotNull(connection);
                 Assert.AreEqual(1, TestableSqlCeConnectionPool.PoolSize);
@@ -58,10 +59,10 @@ namespace Data.SqlCe.Tests.VSTS
         {
             TestConnectionString testConnection = new TestConnectionString();
             SqlCeDatabase db = new SqlCeDatabase(testConnection.ConnectionString);
-            using (DbConnection connection = SqlCeConnectionPool.CreateConnection(db))
+            using (DatabaseConnectionWrapper connection = SqlCeConnectionPool.CreateConnection(db))
             {
-                DbConnection keepAlive = TestableSqlCeConnectionPool.GetConnection(0);
-                Assert.AreEqual(ConnectionState.Open, keepAlive.State);
+                DatabaseConnectionWrapper keepAlive = TestableSqlCeConnectionPool.GetConnection(0);
+                Assert.AreEqual(ConnectionState.Open, keepAlive.Connection.State);
             }
         }
 
@@ -70,7 +71,7 @@ namespace Data.SqlCe.Tests.VSTS
         {
             TestConnectionString testConnection = new TestConnectionString();
             SqlCeDatabase db = new SqlCeDatabase(testConnection.ConnectionString);
-            using (DbConnection connection = SqlCeConnectionPool.CreateConnection(db)) {}
+            using (DatabaseConnectionWrapper connection = SqlCeConnectionPool.CreateConnection(db)) {}
 
             Assert.AreEqual(1, TestableSqlCeConnectionPool.PoolSize);
             SqlCeConnectionPool.CloseSharedConnections();
@@ -82,10 +83,10 @@ namespace Data.SqlCe.Tests.VSTS
         {
             TestConnectionString testConnection = new TestConnectionString();
             SqlCeDatabase db = new SqlCeDatabase(testConnection.ConnectionString);
-            using (DbConnection connection = SqlCeConnectionPool.CreateConnection(db)) {}
+            using (DatabaseConnectionWrapper connection = SqlCeConnectionPool.CreateConnection(db)) {}
 
-            DbConnection keepAlive = TestableSqlCeConnectionPool.GetConnection(0);
-            Assert.AreEqual(ConnectionState.Open, keepAlive.State);
+            DatabaseConnectionWrapper keepAlive = TestableSqlCeConnectionPool.GetConnection(0);
+            Assert.AreEqual(ConnectionState.Open, keepAlive.Connection.State);
         }
 
         [TestMethod]
@@ -93,9 +94,9 @@ namespace Data.SqlCe.Tests.VSTS
         {
             TestConnectionString testConnection = new TestConnectionString();
             SqlCeDatabase db = new SqlCeDatabase(testConnection.ConnectionString);
-            using (DbConnection connection = SqlCeConnectionPool.CreateConnection(db))
+            using (DatabaseConnectionWrapper connection = SqlCeConnectionPool.CreateConnection(db))
             {
-                DbConnection keepAlive = TestableSqlCeConnectionPool.GetConnection(0);
+                DatabaseConnectionWrapper keepAlive = TestableSqlCeConnectionPool.GetConnection(0);
                 Assert.AreNotSame(connection, keepAlive);
             }
         }
@@ -105,14 +106,30 @@ namespace Data.SqlCe.Tests.VSTS
         {
             TestConnectionString testConnection = new TestConnectionString();
             SqlCeDatabase db = new SqlCeDatabase(testConnection.ConnectionString);
-            using (DbConnection connection1 = SqlCeConnectionPool.CreateConnection(db))
+            using (DatabaseConnectionWrapper connection1 = SqlCeConnectionPool.CreateConnection(db))
             {
-                using (DbConnection connection2 = SqlCeConnectionPool.CreateConnection(db))
+                using (DatabaseConnectionWrapper connection2 = SqlCeConnectionPool.CreateConnection(db))
                 {
                     Assert.AreNotSame(connection1, connection2);
                     Assert.AreEqual(1, TestableSqlCeConnectionPool.PoolSize);
                 }
             }
+        }
+
+        [TestMethod]
+        public void GetConnectionWithPoolingReturnsSameConnection()
+        {
+            TestConnectionString testConnection = new TestConnectionString();
+            SqlCeDatabase db = new SqlCeDatabase(testConnection.ConnectionString);
+            using (DatabaseConnectionWrapper connection1 = SqlCeConnectionPool.CreateConnection(db, true))
+            {
+                using (DatabaseConnectionWrapper connection2 = SqlCeConnectionPool.CreateConnection(db, true))
+                {
+                    Assert.AreSame(connection1, connection2);
+                    Assert.AreEqual(1, TestableSqlCeConnectionPool.PoolSize);
+                }
+            }
+            
         }
 
         [TestMethod]
@@ -125,9 +142,9 @@ namespace Data.SqlCe.Tests.VSTS
             SqlCeDatabase db1 = new SqlCeDatabase(file1.ConnectionString);
             SqlCeDatabase db2 = new SqlCeDatabase(file2.ConnectionString);
 
-            using (DbConnection connection1 = SqlCeConnectionPool.CreateConnection(db1))
+            using (DatabaseConnectionWrapper connection1 = SqlCeConnectionPool.CreateConnection(db1))
             {
-                using (DbConnection connection2 = SqlCeConnectionPool.CreateConnection(db2)) {}
+                using (DatabaseConnectionWrapper connection2 = SqlCeConnectionPool.CreateConnection(db2)) {}
             }
             Assert.AreEqual(2, TestableSqlCeConnectionPool.PoolSize);
 
@@ -154,7 +171,7 @@ namespace Data.SqlCe.Tests.VSTS
             SqlCeDatabase db = new SqlCeDatabase("Data Source='junk.sdf'");
             try
             {
-                DbConnection connection = SqlCeConnectionPool.CreateConnection(db);
+                DatabaseConnectionWrapper connection = SqlCeConnectionPool.CreateConnection(db);
             }
             catch (SqlCeException) {}
             Assert.AreEqual(0, TestableSqlCeConnectionPool.PoolSize);
@@ -166,7 +183,7 @@ namespace Data.SqlCe.Tests.VSTS
             TestConnectionString testConnection = new TestConnectionString();
             SqlCeDatabase db = new SqlCeDatabase(testConnection.ConnectionString);
 
-            using (DbConnection connection = SqlCeConnectionPool.CreateConnection(db)) {}
+            using (DatabaseConnectionWrapper connection = SqlCeConnectionPool.CreateConnection(db)) {}
             Assert.AreEqual(1, TestableSqlCeConnectionPool.PoolSize);
             SqlCeConnectionPool.CloseSharedConnection(db);
             Assert.AreEqual(0, TestableSqlCeConnectionPool.PoolSize);
@@ -178,7 +195,7 @@ namespace Data.SqlCe.Tests.VSTS
             TestConnectionString file = new TestConnectionString();
 
             SqlCeDatabase database = new SqlCeDatabase(file.ConnectionString);
-            using (DbConnection connection = SqlCeConnectionPool.CreateConnection(database)) {}
+            using (DatabaseConnectionWrapper connection = SqlCeConnectionPool.CreateConnection(database)) {}
 
             Assert.AreEqual(1, TestableSqlCeConnectionPool.PoolSize);
             database.CloseSharedConnection();
@@ -192,10 +209,10 @@ namespace Data.SqlCe.Tests.VSTS
                 get { return connections.Count; }
             }
 
-            public static DbConnection GetConnection(int index)
+            public static DatabaseConnectionWrapper GetConnection(int index)
             {
                 int i = 0;
-                foreach (DbConnection connection in connections.Values)
+                foreach (DatabaseConnectionWrapper connection in connections.Values)
                 {
                     if (i == index)
                         return connection;

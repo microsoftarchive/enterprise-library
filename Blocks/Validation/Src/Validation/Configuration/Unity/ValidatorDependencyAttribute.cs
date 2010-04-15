@@ -24,6 +24,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.Unity
     /// An attribute used when injecting dependencies that are <see cref="Validator{T}"/>
     /// that allows you to specify the ruleset and an optional <see cref="ValidationSpecificationSource"/>.
     /// </summary>
+    [AttributeUsage(AttributeTargets.Property|AttributeTargets.Parameter)]
     public sealed class ValidatorDependencyAttribute : DependencyResolutionAttribute
     {
         /// <summary>
@@ -70,11 +71,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.Unity
         /// </returns>
         public override IDependencyResolverPolicy CreateResolver(Type typeToResolve)
         {
+            if (typeToResolve == null) throw new ArgumentNullException("typeToResolve");
+
             if(!typeToResolve.IsGenericType ||
                 typeToResolve.GetGenericTypeDefinition() != typeof(Validator<>))
             {
                 throw new InvalidOperationException(
-                    string.Format(CultureInfo.CurrentUICulture,
+                    string.Format(CultureInfo.CurrentCulture,
                                   Resources.IllegalUseOfValidationDependencyAttribute,
                                   typeToResolve.Name));
             }

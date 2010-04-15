@@ -90,6 +90,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security
         protected SyntaxException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
+            if (info == null) throw new ArgumentNullException("info");
+
             this.index = info.GetInt32(IndexKey);
         }
 
@@ -119,6 +121,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security
         [SecurityPermission(SecurityAction.Demand, SerializationFormatter=true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
+            if (info == null) throw new ArgumentNullException("info");
+
             base.GetObjectData(info, context);
             info.AddValue(IndexKey, this.index);
         }

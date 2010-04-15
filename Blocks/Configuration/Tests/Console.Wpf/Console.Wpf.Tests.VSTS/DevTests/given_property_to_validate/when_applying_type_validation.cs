@@ -29,20 +29,20 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_a_validation_service
 
         protected override void Act()
         {
-            Assert.IsFalse(property.ValidationErrors.Any());
+            Assert.IsFalse(property.ValidationResults.Any());
             property.Value = invalidTypeName;
         }
 
         [TestMethod]
         public void then_error_returned()
         {
-            Assert.IsTrue(property.ValidationErrors.Any(e => e.Message.Contains(invalidTypeName)));
+            Assert.IsTrue(property.ValidationResults.Any(e => e.Message.Contains(invalidTypeName)));
         }
 
         [TestMethod]
         public void then_error_is_warning()
         {
-            var error = property.ValidationErrors.Single(e => e.Message.Contains(invalidTypeName));
+            var error = property.ValidationResults.Single(e => e.Message.Contains(invalidTypeName));
             Assert.IsTrue(error.IsWarning);
         }
     }
@@ -57,14 +57,14 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_a_validation_service
 
         protected override void Act()
         {
-            Assert.IsFalse(property.ValidationErrors.Any());
+            Assert.IsFalse(property.ValidationResults.Any());
             property.Value = typeof(when_validating_valid_type_property).AssemblyQualifiedName;
         }
 
         [TestMethod]
         public void then_no_errors_produced()
         {
-            Assert.IsFalse(property.ValidationErrors.Any());
+            Assert.IsFalse(property.ValidationResults.Any());
         }
     }
 }

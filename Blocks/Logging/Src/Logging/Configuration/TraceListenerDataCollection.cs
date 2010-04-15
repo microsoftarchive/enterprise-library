@@ -15,6 +15,7 @@ using System.Xml;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using System.Globalization;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 {
@@ -49,7 +50,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 						{
 							throw new ConfigurationErrorsException(
 								string.Format(
-									Resources.Culture,
+                                    CultureInfo.CurrentCulture,
 									Resources.ExceptionTraceListenerConfigurationElementTypeNotFound,
 									reader.ReadOuterXml()));
 						}
@@ -62,7 +63,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 				{
 					throw new ConfigurationErrorsException(
 						string.Format(
-							Resources.Culture,
+                            CultureInfo.CurrentCulture,
 							Resources.ExceptionTraceListenerConfigurationElementMissingTypeAttribute,
 							reader.ReadOuterXml()));
 				}

@@ -649,7 +649,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
             using (var reader = database.EndExecuteXmlReader(result))
             {
                 Assert.AreNotEqual(ConnectionState.Closed, this.lastConnectionStateChange);
-                while (reader.Read()) ;
+                while (reader.Read())
+                {
+                }
             }
             Assert.AreEqual(ConnectionState.Closed, this.lastConnectionStateChange);
         }
@@ -769,11 +771,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
             asyncResult = database.BeginExecuteReader(transaction, CommandType.Text, "SELECT 'hello there'", null, null);
         }
 
+        private void DisposeReader()
+        {
+            database.EndExecuteReader(asyncResult).Dispose();
+        }
+
         [TestMethod]
         public void ThenConnectionIsNotClosedAfterReaderIsClosed()
         {
-            var reader = database.EndExecuteReader(asyncResult);
-            reader.Dispose();
+            DisposeReader();
 
             Assert.AreEqual(ConnectionState.Open, transaction.Connection.State);
         }
@@ -782,13 +788,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
         public void ThenNoNewConnectionIsCreated()
         {
             Assert.AreEqual(0, numberOfConnectionsCreated);
+            DisposeReader();
         }
 
         [TestMethod]
         public void ThenCommandExecutedEventWasFiredOnEndExecute()
         {
             Assert.AreEqual(0, commandExecutedEvents.Count);
-            database.EndExecuteReader(asyncResult).Dispose();
+            DisposeReader();
             Assert.AreEqual(1, commandExecutedEvents.Count);
         }
     }
@@ -958,6 +965,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
             asyncResult = database.BeginExecuteReader(transaction, "Ten Most Expensive Products", null, null);
         }
 
+        private void DisposeReader()
+        {
+            database.EndExecuteReader(asyncResult).Dispose();
+        }
+
         [TestMethod]
         public void ThenEndExecuteReaderReturnsDataReader()
         {
@@ -971,9 +983,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
         [TestMethod]
         public void ThenConnectionStaysOpen()
         {
-            IDataReader reader = database.EndExecuteReader(asyncResult);
-
-            reader.Dispose();
+            DisposeReader();
 
             Assert.AreEqual(ConnectionState.Open, transaction.Connection.State);
         }
@@ -982,6 +992,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
         public void ThenNoNewConnectionIsCreated()
         {
             Assert.AreEqual(0, numberOfConnectionsCreated);
+            DisposeReader();
         }
     }
 
@@ -1111,6 +1122,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
         public void ThenNoNewConnectionIsCreated()
         {
             Assert.AreEqual(0, numberOfConnectionsCreated);
+            database.EndExecuteScalar(asyncResult);
         }
 
         [TestMethod]
@@ -1307,6 +1319,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql.Tests
         public void ThenNoNewConnectionIsCreated()
         {
             Assert.AreEqual(0, numberOfConnectionsCreated);
+            database.EndExecuteScalar(asyncResult);
         }
     }
 

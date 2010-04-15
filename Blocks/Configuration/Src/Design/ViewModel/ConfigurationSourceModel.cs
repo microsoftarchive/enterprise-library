@@ -12,80 +12,185 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel.Design;
 using System.Configuration;
-using System.Linq;
-using System.Text;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.Unity;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design;
 using System.Globalization;
+using System.Linq;
+using System.Windows;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Configuration.Design.HostAdapterV5;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Properties;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Validation;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
+using Microsoft.Practices.Unity;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
 {
+    /// <summary>
+    /// The <see cref="ConfigurationSourceModel"/> represents a single <see cref="IConfigurationSource"/> that is
+    /// presented in the design-time.
+    /// </summary>
     public class ConfigurationSourceModel
     {
+        private readonly IUnityContainer builder;
+        private readonly SaveOperation saveOperation;
+        private readonly ElementLookup lookup;
+        private readonly ObservableCollection<SectionViewModel> sections;
+        private readonly ReadOnlyObservableCollection<SectionViewModel> readOnlySectionView;
         private readonly IUIServiceWpf uiService;
         private readonly ConfigurationSourceDependency viewModelDependency;
-        private readonly ConfigurationSectionLocator sectionLocator;
-        private readonly IUnityContainer builder;
-        private readonly ObservableCollection<SectionViewModel> sections;
-        private readonly ObservableCollection<EnvironmentalOverridesViewModel> environments;
-        private readonly ElementLookup lookup;
 
-        public ConfigurationSourceModel(ElementLookup lookup, ConfigurationSourceDependency viewModelDependency, ConfigurationSectionLocator sectionLocator, IUnityContainer builder, IUIServiceWpf uiService)
+        /// <summary>
+        /// Initializes a new <see cref="ConfigurationSourceModel"/>.
+        /// </summary>
+        /// <param name="lookup">The <see cref="ElementLookup"/> service used for locating elements.</param>
+        /// <param name="viewModelDependency">The <see cref="ConfigurationSourceDependency"/> for notifying others of changes in this configuration source.</param>
+        /// <param name="builder">The container for building new objects.</param>
+        /// <param name="uiService">The user-interface service for presenting dialogs and windows to the user.</param>
+        /// <param name="saveOperation">Save operation integration with a host environment.</param>
+        public ConfigurationSourceModel(ElementLookup lookup, ConfigurationSourceDependency viewModelDependency, IUnityContainer builder, IUIServiceWpf uiService, SaveOperation saveOperation)
         {
             this.uiService = uiService;
-            this.sectionLocator = sectionLocator;
             this.builder = builder;
             this.viewModelDependency = viewModelDependency;
             this.lookup = lookup;
-            this.environments = new ObservableCollection<EnvironmentalOverridesViewModel>();
-
+            this.saveOperation = saveOperation;
             sections = new ObservableCollection<SectionViewModel>();
+            readOnlySectionView = new ReadOnlyObservableCollection<SectionViewModel>(sections);
         }
 
-        public ObservableCollection<SectionViewModel> Sections
+        /// <summary>
+        /// Gets the collection of <see cref="SectionViewModel"/> elements contained by this <see cref="ConfigurationSourceModel"/>.
+        /// </summary>
+        public ReadOnlyObservableCollection<SectionViewModel> Sections
         {
-            get { return sections; }
+            get
+            {
+                return readOnlySectionView;
+            }
         }
 
-        public void Load(IDesignConfigurationSource configSource)
+        /// <summary>
+        /// Loads a <see cref="ConfigurationSourceModel"/> from the <see cref="IDesignConfigurationSource"/>.
+        /// </summary>
+        /// <param name="configSource">The <see cref="IDesignConfigurationSource"/> to load this <see cref="ConfigurationSourceModel"/> from.</param>
+        /// <returns>
+        /// Returns <see langword="true"/> if the load was successful.
+        /// Returns <see langword="false"/>, if any exceptions occurredduring the load.
+        /// </returns>
+        /// <remarks>
+        /// Any exceptions that occur during the load are logged to the <see cref="ConfigurationLogWriter"/> and also
+        /// displayed to the user via the <see cref="IUIServiceWpf"/>.
+        /// </remarks>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+        public bool Load(IDesignConfigurationSource configSource)
         {
             Clear();
             Initialize();
 
-            var locator = builder.Resolve<ConfigurationSectionLocator>();
+            IDesignConfigurationSource sectionConfigurationSource = null;
+            try
+            {
+                sectionConfigurationSource = GetSectionSource(configSource);
+            }
+            catch (Exception ex)
+            {
+                ConfigurationLogWriter.LogException(ex);
+                uiService.ShowMessageWpf(string.Format(CultureInfo.CurrentCulture, Resources.ErrorLoadingConfigSourceFile, ex.Message),
+                                            Resources.ErrorTitle,
+                                         MessageBoxButton.OK);
+                return false;
+            }
 
+            if (sectionConfigurationSource != null)
+            {
+                try
+                {
+                    AddSection(ConfigurationSourceSection.SectionName,
+                               configSource.GetLocalSection(ConfigurationSourceSection.SectionName),
+                               new InitializeContext(configSource));
+
+                    LoadSectionsFromSource(sectionConfigurationSource);
+                }
+                catch
+                {
+                    var disposable = sectionConfigurationSource as IDisposable;
+                    if (disposable != null)
+                    {
+                        disposable.Dispose();
+                    }
+
+                    throw;
+                }
+            }
+            else
+            {
+                LoadSectionsFromSource(configSource);
+            }
+
+
+            Validate();
+
+            return true;
+        }
+
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+        private void LoadSectionsFromSource(IDesignConfigurationSource sectionConfigurationSource)
+        {
+            var locator = builder.Resolve<ConfigurationSectionLocator>();
             foreach (var sectionName in locator.ConfigurationSectionNames)
             {
                 try
                 {
-                    ConfigurationSection section = configSource.GetLocalSection(sectionName);
+                    var section = sectionConfigurationSource.GetLocalSection(sectionName);
                     if (section != null)
                     {
-                        var sectionViewModel = SectionViewModel.CreateSection(builder, sectionName, section);
-                        
-                        InitializeSection(sectionViewModel, new InitializeContext(configSource));
-                        sections.Add(sectionViewModel);
+                        AddSection(sectionName, section, new InitializeContext(sectionConfigurationSource));
                     }
                 }
                 catch (Exception e)
                 {
-                    uiService.ShowError(e, string.Format("Error Loading Section {0}", sectionName));
+                    uiService.ShowError(e, string.Format(CultureInfo.CurrentCulture, Resources.ErrorCouldNotLoadSection, sectionName));
                 }
             }
+        }
 
-            Validate();
+        private static IDesignConfigurationSource GetSectionSource(IDesignConfigurationSource mainConfigurationSource)
+        {
+            var configSourceSection =
+                mainConfigurationSource.GetLocalSection(ConfigurationSourceSection.SectionName) as ConfigurationSourceSection;
+
+            return GetSelectedConfigSource(configSourceSection, mainConfigurationSource);
+        }
+
+        private IDesignConfigurationSource GetSectionSourceFromModel(IDesignConfigurationSource mainConfigurationSource)
+        {
+            var configurationSourceSection = Sections
+                .Where(s => typeof(ConfigurationSourceSection).IsAssignableFrom(s.ConfigurationType))
+                .OfType<ConfigurationSourceSectionViewModel>()
+                .Select(m => m.ConfigurationElement)
+                .Cast<ConfigurationSourceSection>()
+                .FirstOrDefault();
+
+            return GetSelectedConfigSource(configurationSourceSection, mainConfigurationSource);
+        }
+
+        private static IDesignConfigurationSource GetSelectedConfigSource(ConfigurationSourceSection configSourceSection, IDesignConfigurationSource mainConfigurationSource)
+        {
+            if (configSourceSection == null) return null;
+
+            var selectedSource =
+                configSourceSection.Sources.Where(s => s.Name == configSourceSection.SelectedSource).
+                    FirstOrDefault();
+
+            return (selectedSource == null ? null : selectedSource.CreateDesignSource(mainConfigurationSource));
         }
 
         private void Validate()
         {
-            foreach(var section in Sections)
+            foreach (var section in Sections)
             {
                 section.Validate();
             }
@@ -93,149 +198,240 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
 
         private void Initialize()
         {
-            //review: this seems tangled
-            var elementLookup = builder.Resolve<ElementLookup>();
-            elementLookup.AddCustomElement(builder.Resolve<CustomAttributesPropertyExtender>());
+            lookup.AddCustomElement(builder.Resolve<CustomAttributesPropertyExtender>());
         }
 
-        private void InitializeSection(SectionViewModel section, InitializeContext context)
+        /// <summary>
+        /// Saves the <see cref="ConfigurationSourceModel"/> to a <see cref="IDesignConfigurationSource"/>.
+        /// </summary>
+        /// <param name="configurationSource">The <see cref="IDesignConfigurationSource"/> to save to.</param>
+        /// <returns>Returns <see langword="true"/> if the save was successful.
+        /// Returns <see langword="false"/> if errors occurredduring the save.
+        /// </returns>
+        /// <remarks>
+        /// Errors that occur during save will be displayed logged using <see cref="ConfigurationLogWriter"/> and displayed 
+        /// to the user through the <see cref="IUIServiceWpf"/> service.
+        /// </remarks>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+        public bool Save(IDesignConfigurationSource configurationSource)
         {
-            //first init section
-            INeedInitialization sectionInitialize = section as INeedInitialization;
-            if (sectionInitialize != null)
+            saveOperation.BeginPerformSaveOperation();
+            try
             {
-                sectionInitialize.Initialize(context);
+                var sectionsToSave = Sections.Where(x => null == x as EnvironmentSourceViewModel);
+
+                var sectionSaveSource = GetSectionSourceFromModel(configurationSource);
+                if (sectionSaveSource != null)
+                {
+                    try
+                    {
+                        try
+                        {
+                            SaveConfigurationSource(configurationSource);
+                        }
+                        catch (Exception e)
+                        {
+                            ConfigurationLogWriter.LogException(e);
+                            uiService.ShowError(e, Resources.ErrorSavingConfigurationSourceOnMainFile);
+                            return false;
+                        }
+                        try
+                        {
+                            SaveSections(
+                                sectionsToSave.Where(
+                                    x => !typeof(ConfigurationSourceSection).IsAssignableFrom(x.ConfigurationType)),
+                                sectionSaveSource);
+                        }
+                        catch (Exception e)
+                        {
+                            ConfigurationLogWriter.LogException(e);
+                            uiService.ShowError(e, Resources.ErrorSavingConfigurationSectionsOnSelectedSource);
+                            return false;
+                        }
+                        return true;
+                    }
+                    finally
+                    {
+                        var disposable = sectionSaveSource as IDisposable;
+                        if (disposable != null) disposable.Dispose();
+                    }
+                }
+
+                try
+                {
+                    SaveSections(sectionsToSave, configurationSource);
+                }
+                catch (Exception e)
+                {
+                    ConfigurationLogWriter.LogException(e);
+                    uiService.ShowError(e, Resources.ErrorSavingConfigurationSectionsOnMainFile);
+                    return false;
+                }
             }
-
-            //then init properties
-            var sectionPropertiesThatNeedInitialization = section.Properties.OfType<INeedInitialization>();
-            var propertiesOfContainedElementsThatNeedInitialization = section.DescendentElements().SelectMany(x => x.Properties).OfType<INeedInitialization>();
-
-            foreach (var propertyThatNeedsInitialization in 
-                    sectionPropertiesThatNeedInitialization.Union(
-                        propertiesOfContainedElementsThatNeedInitialization))
+            finally
             {
-                propertyThatNeedsInitialization.Initialize(context);
+                saveOperation.EndPerformSaveOperation();
             }
+            return true;
         }
 
-        public void Save(IDesignConfigurationSource configurationSource)
+        private void SaveConfigurationSource(IDesignConfigurationSource configurationSource)
+        {
+            var configurationSourceSectionModel = Sections
+                .Where(s => typeof(ConfigurationSourceSection).IsAssignableFrom(s.ConfigurationType))
+                .OfType<ConfigurationSourceSectionViewModel>()
+                .Cast<ConfigurationSourceSectionViewModel>()
+                .First();
+
+            ClearConfigurationSections(configurationSource);
+            configurationSourceSectionModel.Save(configurationSource);
+        }
+
+        private void ClearConfigurationSections(IDesignConfigurationSource source)
         {
             var locator = builder.Resolve<ConfigurationSectionLocator>();
-            foreach (string sectionName in locator.ConfigurationSectionNames)
+            foreach (var sectionName in locator.ClearableConfigurationSectionNames)
             {
-                configurationSource.RemoveLocalSection(sectionName);
-            }
-            foreach (var section in Sections.Where( x=>null == x as EnvironmentalOverridesViewModel))
-            {
-                section.Save(configurationSource);
+                source.RemoveLocalSection(sectionName);
             }
         }
 
-        public void SaveEnvironmentDeltaFiles()
+        private void SaveSections(IEnumerable<SectionViewModel> sectionsToSave, IDesignConfigurationSource source)
         {
-            foreach (EnvironmentalOverridesViewModel envrionment in Environments)
+            ClearConfigurationSections(source);
+
+            foreach (var section in sectionsToSave)
             {
-                envrionment.SaveDelta();
+                section.Save(source);
             }
         }
 
+        /// <summary>
+        /// Clears the existing configuration source and readies it to begin a new configuration.
+        /// </summary>
         public void New()
         {
             Clear();
             Initialize();
         }
 
-        public void LoadEnvironment(EnvironmentMergeSection environment, string environmentDeltaFile)
-        {
-            EnvironmentalOverridesViewModel environmentSection = (EnvironmentalOverridesViewModel)SectionViewModel.CreateSection(builder, EnvironmentMergeSection.EnvironmentMergeData, environment);
-            environmentSection.EnvironmentDeltaFile = environmentDeltaFile;
-
-            environments.Add(environmentSection);
-            sections.Add(environmentSection);
-
-            InitializeSection(environmentSection, new InitializeContext(null));
-        }
-
-        public void NewEnvironment()
-        {
-            string environmentName = FindUniqueNewName("Environment");
-            LoadEnvironment(new EnvironmentMergeSection() { EnvironmentName = environmentName }, string.Empty);
-        }
-
-        private string FindUniqueNewName(string baseName)
-        {
-            int number = 1;
-            while (true)
-            {
-                string proposedName = string.Format(CultureInfo.CurrentUICulture,
-                                                    Resources.NewCollectionElementNameFormat,
-                                                    baseName,
-                                                    number == 1 ? string.Empty : number.ToString()).Trim();
-
-                if (this.Environments.Any(x => x.NameProperty != null && x.NameProperty.BindableProperty.BindableValue == proposedName))
-                    number++;
-                else
-                    return proposedName;
-            }
-        }
-
-        public void RemoveEnvironment(EnvironmentalOverridesViewModel environnment)
-        {
-            environments.Remove(environnment);
-            lookup.RemoveSection(environnment);
-            sections.Remove(environnment);
-        }
-
         private void Clear()
         {
-            sections.Clear();
-            environments.Clear();
+            foreach (var section in sections)
+            {
+                lookup.RemoveSection(section);
+            }
 
             viewModelDependency.OnCleared();
+
+            foreach(var section in sections)
+            {
+                section.Dispose();
+            }
+            sections.Clear();
         }
 
-        public IEnumerable<EnvironmentalOverridesViewModel> Environments
-        {
-            get { return environments; }
-        }
-
+        /// <summary>
+        /// Determines if this <see cref="ConfigurationSourceModel"/> has a section by a given name.
+        /// </summary>
+        /// <param name="sectionName">The section name to seek.</param>
+        /// <returns>
+        /// Returns <see langword="true"/> if a section with a <see cref="SectionViewModel.SectionName"/> matching <paramref name="sectionName"/> exists.
+        /// Otherwise, returns <see langword="false"/>
+        /// </returns>
         public bool HasSection(string sectionName)
         {
-            return Sections.Where(x=>x.SectionName == sectionName).Any();
+            return Sections.Where(x => x.SectionName == sectionName).Any();
         }
 
+        /// <summary>
+        /// Adds a <see cref="ConfigurationSection"/> to the <see cref="ConfigurationSourceModel"/>.
+        /// </summary>
+        /// <param name="sectionName">The section name to use when adding.</param>
+        /// <param name="section">The <see cref="ConfigurationSection"/> to add.</param>
+        /// <returns>The <see cref="SectionViewModel"/> for the added section.</returns>
         public SectionViewModel AddSection(string sectionName, ConfigurationSection section)
         {
+            return AddSection(sectionName, section, new InitializeContext(null));
+        }
+
+        private SectionViewModel AddSection(string sectionName, ConfigurationSection section,
+                                            InitializeContext initializeContext)
+        {
             var sectionViewModel = SectionViewModel.CreateSection(builder, sectionName, section);
-
-            InitializeSection(sectionViewModel, new InitializeContext(null));
-
+            SectionInitializer.InitializeSection(sectionViewModel, initializeContext);
+            lookup.AddSection(sectionViewModel);
             sections.Add(sectionViewModel);
 
             return sectionViewModel;
         }
 
+        /// <summary>
+        /// Removes a section with the given name.
+        /// </summary>
+        /// <param name="sectionName">The name of the section to remove.</param>
+        /// <remarks>
+        /// If the section does not exist, then it does nothing.
+        /// </remarks>
         public void RemoveSection(string sectionName)
         {
-            SectionViewModel section = Sections.Where(x=>x.SectionName == sectionName).FirstOrDefault();
+            var section = Sections.Where(x => x.SectionName == sectionName).FirstOrDefault();
             if (section != null)
             {
                 lookup.RemoveSection(section);
                 sections.Remove(section);
+                section.Dispose();
             }
-            
         }
 
+        /// <summary>
+        /// Returns a value indicating the <see cref="ConfigurationSourceModel"/> is valid for saving.
+        /// </summary>
+        /// <returns>
+        /// Returns <see langword="true"/> when the sections and elements have no validation results that are <see cref="ValidationResult.IsError"/>.
+        /// Otherwise, returns <see langword="false"/>.
+        /// </returns>
         public bool IsValidForSave()
         {
             Validate();
-            var errors = sections.SelectMany(
+            var allElements = sections.SelectMany(
                 s => s.DescendentElements()
-                         .Union(new ElementViewModel[] {s}))
+                         .Union(new ElementViewModel[] {s}));
+
+            var errors = allElements
                 .SelectMany(e => e.Properties)
-                .SelectMany(p => p.ValidationErrors);
+                .SelectMany(p => p.ValidationResults)
+                .Union(allElements.SelectMany(v => v.ValidationResults));
+
             return !errors.Any(e => e.IsError);
+        }
+    }
+
+    class SectionInitializer
+    {
+        public static void InitializeSection(SectionViewModel section, InitializeContext context)
+        {
+            //first init section
+            section.Initialize(context);
+
+            // then initialize elements
+            var elements = section.DescendentElements().OfType<ElementViewModel>();
+            foreach (var element in elements)
+            {
+                element.Initialize(context);
+            }
+
+            //then init properties
+            var sectionPropertiesThatNeedInitialization = section.Properties;
+            var propertiesOfContainedElementsThatNeedInitialization =
+                section.DescendentElements().SelectMany(x => x.Properties);
+
+            foreach (var propertyThatNeedsInitialization in
+                sectionPropertiesThatNeedInitialization.Concat(
+                    propertiesOfContainedElementsThatNeedInitialization))
+            {
+                propertyThatNeedsInitialization.Initialize(context);
+            }
         }
     }
 }

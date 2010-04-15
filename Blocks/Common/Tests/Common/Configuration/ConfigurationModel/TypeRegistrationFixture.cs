@@ -553,7 +553,149 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
         {
             Assert.AreEqual(TypeRegistrationLifetime.Singleton, registration.Lifetime);
         }
-	
+
+    }
+
+    [TestClass]
+    public class GivenALambdaExpressionWithTopLevelCastForNoArgsConstructorCall
+    {
+        private TypeRegistration registration;
+
+        [TestInitialize]
+        public void Setup()
+        {
+            registration = new TypeRegistration<IFoo>(() => (IFoo)(new Foo()));
+        }
+
+        [TestMethod]
+        public void ThenRegistrationIsForRightType()
+        {
+            Assert.AreEqual(typeof(Foo), registration.ImplementationType);
+            Assert.AreEqual(typeof(IFoo), registration.ServiceType);
+        }
+
+        [TestMethod]
+        public void ThenRegistrationHasConstructorCall()
+        {
+            Assert.AreEqual(0, registration.ConstructorParameters.Count());
+        }
+    }
+
+    [TestClass]
+    public class GivenALambdaExpressionWithTopLevelCastForSinglArgsConstructorCall
+    {
+        private TypeRegistration registration;
+
+        [TestInitialize]
+        public void Setup()
+        {
+            registration = new TypeRegistration<IFoo>(() => (IFoo)(new Foo("some")));
+        }
+
+        [TestMethod]
+        public void ThenRegistrationIsForRightType()
+        {
+            Assert.AreEqual(typeof(Foo), registration.ImplementationType);
+            Assert.AreEqual(typeof(IFoo), registration.ServiceType);
+        }
+
+        [TestMethod]
+        public void ThenRegistrationHasSingleArgumentConstructorCall()
+        {
+            Assert.AreEqual(1, registration.ConstructorParameters.Count());
+        }
+
+        [TestMethod]
+        public void ThenConstructorArgumentIsOfTheRightKind()
+        {
+            var param = (ConstantParameterValue)registration.ConstructorParameters.ElementAt(0);
+            Assert.AreEqual(typeof(string), param.Type);
+            Assert.AreEqual("some", param.Value);
+        }
+    }
+
+    [TestClass]
+    public class GivenLambdaExpressionWithTopLevelCastForReferenceArgConstructorCall
+    {
+        private TypeRegistration registration;
+
+        [TestInitialize]
+        public void Setup()
+        {
+            registration =
+                new TypeRegistration<IFoo>(
+                    () => (IFoo)(new Foo("one", Container.Resolved<IBar>("two"), Container.Resolved<IBar>("three"))));
+        }
+
+        [TestMethod]
+        public void ThenRegistrationIsForRightType()
+        {
+            Assert.AreEqual(typeof(Foo), registration.ImplementationType);
+            Assert.AreEqual(typeof(IFoo), registration.ServiceType);
+        }
+
+        [TestMethod]
+        public void ThenRegistrationHasThreeArgumentConstructorCall()
+        {
+            Assert.AreEqual(3, registration.ConstructorParameters.Count());
+        }
+
+        [TestMethod]
+        public void ThenConstructorArgumentsAreOfTheRightKind()
+        {
+            var param1 = (ConstantParameterValue)registration.ConstructorParameters.ElementAt(0);
+            Assert.AreEqual("one", param1.Value);
+
+            var param2 = (ContainerResolvedParameter)registration.ConstructorParameters.ElementAt(1);
+            Assert.AreEqual("two", param2.Name);
+            Assert.AreEqual(typeof(IBar), param2.Type);
+
+            var param3 = (ContainerResolvedParameter)registration.ConstructorParameters.ElementAt(2);
+            Assert.AreEqual("three", param3.Name);
+            Assert.AreEqual(typeof(IBar), param3.Type);
+        }
+    }
+
+    [TestClass]
+    public class GivenLambdaExpressionWithTopLevelCastForPropertyInitialization
+    {
+        private TypeRegistration registration;
+
+        [TestInitialize]
+        public void Setup()
+        {
+            registration = new TypeRegistration<IFoo>(() => (IFoo)(new Foo { MyProperty = Container.Resolved<IBar>("some") }));
+        }
+
+        [TestMethod]
+        public void ThenRegistrationIsForRightType()
+        {
+            Assert.AreEqual(typeof(Foo), registration.ImplementationType);
+            Assert.AreEqual(typeof(IFoo), registration.ServiceType);
+        }
+
+        [TestMethod]
+        public void ThenRegistrationHasNoArgumentConstructorCall()
+        {
+            Assert.AreEqual(0, registration.ConstructorParameters.Count());
+        }
+
+        [TestMethod]
+        public void ThenRegistrationInitializesSingleProperty()
+        {
+            Assert.AreEqual(1, registration.InjectedProperties.Count());
+        }
+
+        [TestMethod]
+        public void ThenInitializesRightProperty()
+        {
+            var injectedProperty = registration.InjectedProperties.ElementAt(0);
+
+            Assert.AreEqual("MyProperty", injectedProperty.PropertyName);
+            var value = (ContainerResolvedParameter)injectedProperty.PropertyValue;
+            Assert.AreEqual(typeof(IBar), value.Type);
+            Assert.AreEqual("some", value.Name);
+        }
     }
 
     [TestClass]
@@ -590,6 +732,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
 
         }
 
+        public Foo(string ignored) { }
+
         public Foo(string constantString, IBar bar, IBar bar2)
         {
         }
@@ -599,6 +743,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
 
         }
 
+        public IBar MyProperty { get; set; }
     }
 
     internal interface IBar

@@ -13,6 +13,7 @@ using System;
 using System.Configuration;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Text.RegularExpressions;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 {
@@ -44,7 +45,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 		public CustomProviderDataHelper(T helpedCustomProviderData)
 		{
 			propertiesCollection = new ConfigurationPropertyCollection();
-            foreach (ConfigurationProperty propertyInfo in helpedCustomProviderData.Properties)
+            foreach (ConfigurationProperty propertyInfo in helpedCustomProviderData.MetadataProperties)
             {
                 propertiesCollection.Add(propertyInfo);
             }
@@ -152,7 +153,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 		/// <returns><b>true</b> if the property is known in advance, <b>false</b> otherwise.</returns>
 		protected internal virtual bool IsKnownPropertyName(string propertyName)
 		{
-            return ((NameTypeConfigurationElement)helpedCustomProviderData).Properties.Contains(propertyName);
+            return ((NameTypeConfigurationElement)helpedCustomProviderData).MetadataProperties.Contains(propertyName);
 		}
 
 		private void AddAttributesFromConfigurationProperties()
@@ -193,6 +194,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 			bool isModified = false;
 			foreach (string key in attributes)
 			{
+                if (string.IsNullOrEmpty(key) || CheckForValidKey(key)) continue;
+
 				string valueInCollection = attributes[key];
 				string valueInBag = GetPropertyValue(key);
 
@@ -204,6 +207,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 			}
 			return isModified;
 		}
+
+        private bool CheckForValidKey(string key)
+        {
+            return !AttributeKeyValidator.IsValid(key);
+        }
 
 		private void CreateRemoveList(List<string> removeList)
 		{
@@ -268,4 +276,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 			return isModified;
 		}
 	}
+
+    internal static class AttributeKeyValidator
+    {
+        private static Regex expression;
+        static AttributeKeyValidator()
+        {
+            string pattern = @"^[a-zA-Z_]\w*$";
+            expression = new Regex(pattern);
+        }
+
+        public static bool IsValid(string key)
+        {
+            return expression.Match(key).Success;
+        }
+    }
 }

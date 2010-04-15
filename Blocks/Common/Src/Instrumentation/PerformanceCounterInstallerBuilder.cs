@@ -16,6 +16,7 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Resources;
 using Microsoft.Practices.EnterpriseLibrary.Common.Properties;
+using System.Globalization;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation
 {
@@ -60,7 +61,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation
                         {
                             throw new InvalidOperationException(
                                 string.Format(
-                                    Resources.Culture,
+                                    CultureInfo.CurrentCulture,
                                     Resources.ExceptionPerformanceCounterRedefined,
                                     counter.CounterName,
                                     installer.CategoryName,
@@ -101,6 +102,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation
         public static string GetCategoryHelp(PerformanceCountersDefinitionAttribute attribute,
                                              Assembly originalAssembly)
         {
+            if (attribute == null) throw new ArgumentNullException("attribute");
+
             return GetResourceString(attribute.CategoryHelp, originalAssembly);
         }
 

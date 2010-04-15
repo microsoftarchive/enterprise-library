@@ -1,0 +1,266 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{CF2CBDAD-4D43-45EA-9D40-4CD9CC7EE744}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ApplicationIcon></ApplicationIcon>
+    <AssemblyKeyContainerName></AssemblyKeyContainerName>
+    <AssemblyName>Microsoft.Practices.EnterpriseLibrary.Security</AssemblyName>
+    <AssemblyOriginatorKeyFile></AssemblyOriginatorKeyFile>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Microsoft.Practices.EnterpriseLibrary.Security</RootNamespace>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <StartupObject></StartupObject>
+    <FileUpgradeFlags></FileUpgradeFlags>
+    <UpgradeBackupLocation></UpgradeBackupLocation>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>..\..\..\bin\Debug\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile></ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE;WMINET10</DefineConstants>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>618</NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>..\..\..\bin\Release\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile></ConfigurationOverrideFile>
+    <DefineConstants>TRACE;WMINET10</DefineConstants>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>618</NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Lib\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Lib\Microsoft.Practices.Unity.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity.Interception, Version=2.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Lib\Microsoft.Practices.Unity.Interception.dll</HintPath>
+    </Reference>
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Configuration.Install" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <ProjectReference Include="..\..\..\Common\Src\Common.csproj">
+      <Name>Common</Name>
+      <Project>{A09297C8-2C40-470B-8856-D856676DDFFA}</Project>
+      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\..\GlobalAssemblyInfo.cs">
+      <Link>GlobalAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\GlobalAssemblyInfo.2010.cs">
+      <Link>GlobalAssemblyInfo.2010.cs</Link>
+    </Compile>
+    <Compile Include="AndOperator.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="AnonymousExpression.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="AnyExpression.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="AuthorizationRuleProvider.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="BooleanExpression.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Configuration\AuthorizationCallHandlerData.cs" />
+    <Compile Include="Configuration\CustomAuthorizationProviderData.cs" />
+    <Compile Include="Configuration\CustomSecurityCacheProviderData.cs" />
+    <Compile Include="Configuration\DesignResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DesignResources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Fluent\AuthorizeUsingRuleProviderExtension.cs" />
+    <Compile Include="Configuration\Fluent\AuthorizeUsingCustomExtension.cs" />
+    <Compile Include="Configuration\Fluent\CacheSecurityInCustomStoreExtension.cs" />
+    <Compile Include="Configuration\Fluent\ConfigureSecuritySettingsExtension.cs" />
+    <Compile Include="Configuration\Fluent\IAuthorizeUsingCustomProvider.cs" />
+    <Compile Include="Configuration\Fluent\IAuthorizeUsingRuleProvider.cs" />
+    <Compile Include="Configuration\Fluent\ICacheSecurityInCustomStore.cs" />
+    <Compile Include="Configuration\Fluent\IConfigureSecuritySettings.cs" />
+    <Compile Include="Configuration\Fluent\SecuritySettingsExtension.cs" />
+    <Compile Include="Configuration\Manageability\AuthorizationRuleProviderDataManageabilityProvider.cs" />
+    <Compile Include="Configuration\Manageability\CustomAuthorizationProviderDataManageabilityProvider.cs" />
+    <Compile Include="Configuration\Manageability\CustomSecurityCacheProviderDataManageabilityProvider.cs" />
+    <Compile Include="Configuration\Manageability\Properties\AssemblyInfo.cs" />
+    <Compile Include="Configuration\Manageability\Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Manageability\SecuritySettingsManageabilityProvider.cs" />
+    <Compile Include="Configuration\SecurityDesignTime.cs" />
+    <Compile Include="Configuration\Unity\SecurityBlockExtension.cs" />
+    <Compile Include="Instrumentation\IAuthorizationProviderInstrumentationProvider.cs" />
+    <Compile Include="Instrumentation\ISecurityCacheProviderInstrumentationProvider.cs" />
+    <Compile Include="Instrumentation\NullAuthorizationProviderInstrumentationProvider.cs" />
+    <Compile Include="Instrumentation\NullSecurityCacheProviderInstrumentationProvider.cs" />
+    <Compile Include="Instrumentation\DefaultSecurityEventLogger.cs" />
+    <Compile Include="Instrumentation\SecurityCacheProviderInstrumentationProvider.cs" />
+    <Compile Include="IAuthorizationRule.cs" />
+    <Compile Include="IdentityExpression.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="LexicalAnalyzer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="NotOperator.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="OrOperator.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Parser.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PolicyInjection\AuthorizationCallHandler.cs" />
+    <Compile Include="PolicyInjection\AuthorizationCallHandlerAttribute.cs" />
+    <Compile Include="ProjectInstaller.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ProjectInstaller.Designer.cs">
+      <DependentUpon>ProjectInstaller.cs</DependentUpon>
+    </Compile>
+    <Compile Include="RoleExpression.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Instrumentation\AuthorizationProviderInstrumentationProvider.cs" />
+    <Compile Include="SecurityEntityType.cs" />
+    <Compile Include="SyntaxException.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TokenType.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="UserNotFoundException.cs" />
+    <Compile Include="WordExpression.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="AuthorizationFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="AuthorizationProvider.cs" />
+    <Compile Include="AuthorizationProviderFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Configuration\AuthorizationProviderData.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Configuration\AuthorizationRuleData.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Configuration\AuthorizationRuleProviderData.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Configuration\SecurityCacheProviderData.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Configuration\SecuritySettings.cs" />
+    <Compile Include="GuidToken.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IAuthorizationProvider.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ISecurityCacheProvider.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IToken.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SecurityCacheFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SecurityCacheProvider.cs" />
+    <Compile Include="SecurityCacheProviderFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <!--Compile Include="SR.cs">
+      <DependentUpon>SR.strings</DependentUpon>
+      <SubType>Code</SubType>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <None Include="SR.strings">
+      <Generator>StringResourceTool</Generator>
+      <LastGenOutput>SR.cs</LastGenOutput>
+    </None>
+    <EmbeddedResource Include="SR.resx">
+      <DependentUpon>SR.strings</DependentUpon>
+    </EmbeddedResource -->
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="Configuration\DesignResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>DesignResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Configuration\Manageability\Properties\Resources.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent></PreBuildEvent>
+    <PostBuildEvent></PostBuildEvent>
+  </PropertyGroup>
+</Project>

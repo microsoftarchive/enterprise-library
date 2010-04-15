@@ -1,0 +1,265 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{E725A5B4-A379-492F-89E3-3D8021376C3F}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ApplicationIcon></ApplicationIcon>
+    <AssemblyKeyContainerName></AssemblyKeyContainerName>
+    <AssemblyName>Microsoft.Practices.EnterpriseLibrary.Caching</AssemblyName>
+    <AssemblyOriginatorKeyFile></AssemblyOriginatorKeyFile>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Microsoft.Practices.EnterpriseLibrary.Caching</RootNamespace>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <StartupObject></StartupObject>
+    <FileUpgradeFlags></FileUpgradeFlags>
+    <UpgradeBackupLocation></UpgradeBackupLocation>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>..\..\..\bin\Debug\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile></ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE;WMINET10</DefineConstants>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>618</NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>..\..\..\bin\Release\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile></ConfigurationOverrideFile>
+    <DefineConstants>TRACE;WMINET10</DefineConstants>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>618</NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Lib\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Lib\Microsoft.Practices.Unity.dll</HintPath>
+    </Reference>
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Configuration.Install" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\..\GlobalAssemblyInfo.cs">
+      <Link>GlobalAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\GlobalAssemblyInfo.2010.cs">
+      <Link>GlobalAssemblyInfo.2010.cs</Link>
+    </Compile>
+    <Compile Include="BackgroundScheduler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="BackingStoreImplementations\BaseBackingStore.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="BackingStoreImplementations\IsolatedStorageBackingStore.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="BackingStoreImplementations\IsolatedStorageCacheItem.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="BackingStoreImplementations\IsolatedStorageCacheItemField.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="BackingStoreImplementations\IStorageEncryptionProvider.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="BackingStoreImplementations\NullBackingStore.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Cache.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CacheCapacityScavengingPolicy.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CacheFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CacheItem.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CacheItemPriority.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CacheItemRemovedReason.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CacheManager.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CacheManagerFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Configuration\CacheManagerData.cs" />
+    <Compile Include="Configuration\CacheManagerDataBase.cs" />
+    <Compile Include="Configuration\CacheManagerSettings.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Configuration\CacheStorageData.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Configuration\CachingDesignTime.cs" />
+    <Compile Include="Configuration\CustomCacheStorageData.cs" />
+    <Compile Include="Configuration\CustomCacheManagerData.cs" />
+    <Compile Include="Configuration\DesignResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DesignResources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Fluent\CacheManagerExtension.cs" />
+    <Compile Include="Configuration\Fluent\CacheManagerSettingsExtension.cs" />
+    <Compile Include="Configuration\Fluent\CachingConfigurationSourceBuilderExtensions.cs" />
+    <Compile Include="Configuration\Fluent\CacheStorageExtension.cs" />
+    <Compile Include="Configuration\Fluent\IBackingStoreEncryptItemsUsing.cs" />
+    <Compile Include="Configuration\Fluent\ICachingConfiguration.cs" />
+    <Compile Include="Configuration\Fluent\ICachingConfigurationCacheManager.cs" />
+    <Compile Include="Configuration\Fluent\ICachingConfigurationCacheManagerOptions.cs" />
+    <Compile Include="Configuration\Fluent\ICachingConfigurationCustomCacheManager.cs" />
+    <Compile Include="Configuration\Fluent\IStoreInCustomStore.cs" />
+    <Compile Include="Configuration\Fluent\IStoreInIsolatedStorage.cs" />
+    <Compile Include="Configuration\Fluent\StoreInCustomStoreExtension.cs" />
+    <Compile Include="Configuration\Fluent\StoreInIsolatedStorageExtension.cs" />
+    <Compile Include="Configuration\Fluent\ForCacheManagerNamedExtension.cs" />
+    <Compile Include="Configuration\Fluent\ForCustomCacheManagerNamedExtension.cs" />
+    <Compile Include="Configuration\IsolatedStorageCacheStorageData.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Configuration\Manageability\CacheManagerSettingsManageabilityProvider.cs" />
+    <Compile Include="Configuration\Manageability\CacheStorageDataManageabilityProvider.cs" />
+    <Compile Include="Configuration\Manageability\CustomCacheManagerDataManageabilityProvider.cs" />
+    <Compile Include="Configuration\Manageability\CustomCacheStorageDataManageabilityProvider.cs" />
+    <Compile Include="Configuration\Manageability\IsolatedStorageCacheStorageDataManageabilityProvider.cs" />
+    <Compile Include="Configuration\Manageability\Properties\AssemblyInfo.cs" />
+    <Compile Include="Configuration\Manageability\Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\StorageEncryptionProviderData.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Configuration\Unity\CachingBlockExtension.cs" />
+    <Compile Include="ExpirationPollTimer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Expirations\AbsoluteTime.cs" />
+    <Compile Include="Expirations\ExtendedFormat.cs" />
+    <Compile Include="Expirations\ExtendedFormatTime.cs" />
+    <Compile Include="Expirations\FileDependency.cs" />
+    <Compile Include="Expirations\NeverExpired.cs" />
+    <Compile Include="Expirations\SlidingTime.cs" />
+    <Compile Include="ExpirationTask.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IBackingStore.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ICacheItemExpiration.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ICacheItemRefreshAction.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ICacheManager.cs" />
+    <Compile Include="ICacheOperations.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ICacheScavenger.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Instrumentation\CachingInstrumentationInstaller.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Instrumentation\CachingInstrumentationInstaller.Designer.cs">
+      <DependentUpon>CachingInstrumentationInstaller.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Instrumentation\DefaultCachingEventLogger.cs" />
+    <Compile Include="Instrumentation\ICachingInstrumentationProvider.cs" />
+    <Compile Include="Instrumentation\CachingInstrumentationProvider.cs" />
+    <Compile Include="PriorityDateComparer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RefreshActionInvoker.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ScavengerTask.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SerializationUtility.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="Configuration\DesignResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>DesignResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Configuration\Manageability\Properties\Resources.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\Src\Common.csproj">
+      <Project>{A09297C8-2C40-470B-8856-D856676DDFFA}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent></PreBuildEvent>
+    <PostBuildEvent></PostBuildEvent>
+  </PropertyGroup>
+</Project>

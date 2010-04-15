@@ -1,0 +1,16 @@
+﻿<Window
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" x:Class="Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors.TextEditDialog"
+    Title="Edit Text Value" Height="92" Width="297"
+    WindowStartupLocation="CenterOwner"
+    WindowStyle="SingleBorderWindow"
+    ShowInTaskbar="False" mc:Ignorable="d" d:DesignHeight="92" ResizeMode="CanResizeWithGrip">
+    <DockPanel>
+        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" Width="Auto" HorizontalAlignment="Right" Margin="0,0,10,0">
+            <Button Content="OK" IsDefault="True" MinWidth="25" Margin="3" Width="50" Click="Button_Click"/>
+            <Button Content="Cancel" IsCancel="True" MinWidth="25" Margin="3" Width="50" />
+        </StackPanel>
+        <TextBox DockPanel.Dock="Top" HorizontalAlignment="Stretch" Height="Auto" Text="{Binding Value}" />
+    </DockPanel>
+</Window>

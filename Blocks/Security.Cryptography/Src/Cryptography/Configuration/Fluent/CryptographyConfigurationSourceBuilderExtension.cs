@@ -30,7 +30,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         /// </summary>
         /// <param name="configurationSourceBuilder">The builder interface to extend.</param>
         /// <returns>A fluent interface to further configure the cryptography configuration section.</returns>
-        public static IConfigureCryptography ConfigureCryptograpy(this IConfigurationSourceBuilder configurationSourceBuilder)
+        public static IConfigureCryptography ConfigureCryptography(this IConfigurationSourceBuilder configurationSourceBuilder)
         {
             return new ConfigureCryptographyBuilder(configurationSourceBuilder);
         }

@@ -309,10 +309,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
             get { return Resources.RelativeDateTimeNegatedDefaultMessageTemplate; }
         }
 
-        #region test only properties
-
         /// <summary>
-        /// 
+        /// Lower bound for range comparison.
         /// </summary>
         public int LowerBound
         {
@@ -320,7 +318,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         }
 
         /// <summary>
-        /// 
+        /// Time units for lower bound.
         /// </summary>
         public DateTimeUnit LowerUnit
         {
@@ -328,7 +326,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         }
 
         /// <summary>
-        /// 
+        /// Is lower bound included, excluded, or ignored?
         /// </summary>
         public RangeBoundaryType LowerBoundType
         {
@@ -336,7 +334,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         }
 
         /// <summary>
-        /// 
+        /// Upper bound for range comparison.
         /// </summary>
         public int UpperBound
         {
@@ -344,7 +342,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         }
 
         /// <summary>
-        /// 
+        /// Time units for upper bound.
         /// </summary>
         public DateTimeUnit UpperUnit
         {
@@ -352,14 +350,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         }
 
         /// <summary>
-        /// 
+        /// Is upper bound included, excluded, or ignored?
         /// </summary>
         public RangeBoundaryType UpperBoundType
         {
             get { return this.upperBoundType; }
         }
-
-        #endregion
     }
 }
 

@@ -50,6 +50,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerMo
         ///<exception cref="ArgumentException">Is thrown if the <paramref name="typeToBuild"/> does not provide a proper constructor.</exception>
         public static NewExpression BuildNewExpression(Type typeToBuild, NameValueCollection attributes)
         {
+            if (typeToBuild == null) throw new ArgumentNullException("typeToBuild");
+
             NameValueCollection collectionArgument = attributes ?? new NameValueCollection();
             ConstructorInfo constructor = typeToBuild.GetConstructor(new[] { typeof(NameValueCollection) });
             if (constructor == null)

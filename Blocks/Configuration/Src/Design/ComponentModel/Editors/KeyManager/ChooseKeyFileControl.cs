@@ -17,6 +17,7 @@ using System.Data;
 using System.Text;
 using System.Windows.Forms;
 using System.IO;
+using System.Globalization;
 
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration.Design
@@ -50,7 +51,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         /// <summary>
         /// Gets or sets the filepath which is used to store the cryptographic key.
         /// </summary>
-        public string Filepath
+        public string FilePath
         {
             get { return txtKeyFileLocation.Text; }
             set { txtKeyFileLocation.Text = value; }
@@ -58,22 +59,23 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
 
         bool IWizardValidationTarget.ValidateControl()
         {
-            if (string.IsNullOrEmpty(Filepath))
+            if (string.IsNullOrEmpty(FilePath))
             {
-                MessageBox.Show(KeyManagerResources.FileShouldNotBeEmpty, KeyManagerResources.CryptoKeyWizardErrorTitle, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show(KeyManagerResources.FileShouldNotBeEmpty, KeyManagerResources.CryptoKeyWizardErrorTitle, MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
                 return false;
             }
 
-			if(ValidateFileName(Filepath) == false)
+			if(ValidateFileName(FilePath) == false)
 			{
-                MessageBox.Show(String.Format(KeyManagerResources.KeyFileBadNameError, Filepath), KeyManagerResources.CryptoKeyWizardErrorTitle, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show(String.Format(CultureInfo.CurrentCulture, KeyManagerResources.KeyFileBadNameError, FilePath), KeyManagerResources.CryptoKeyWizardErrorTitle, MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
 				return false;
 			}
 
             return true;
         }
 
-		bool ValidateFileName(string filePath)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+        static bool ValidateFileName(string filePath)
 		{
 			try
 			{

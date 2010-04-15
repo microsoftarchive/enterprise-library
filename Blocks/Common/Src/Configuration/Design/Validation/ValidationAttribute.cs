@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Practices.EnterpriseLibrary.Common.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design.Validation
 {
@@ -30,9 +31,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design.Vali
         ///<summary>
         /// Creates an instance of ValidationAttribute with the validator type specified by <see cref="string"/>.
         ///</summary>
-        ///<param name="validatorType"></param>
         public ValidationAttribute(string validatorType)
         {
+            if (string.IsNullOrEmpty(validatorType)) throw new ArgumentException(Resources.ExceptionStringNullOrEmpty, "validatorType");
+
             this.validatorType = validatorType;
         }
 
@@ -40,9 +42,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design.Vali
         ///<summary>
         /// Creates an instance of the ValidationAttribute with the validator type specified by <see cref="Type"/>
         ///</summary>
-        ///<param name="validatorType"></param>
-        public ValidationAttribute(Type validatorType) 
-            : this(validatorType.AssemblyQualifiedName)
+        public ValidationAttribute(Type validatorType)
+            : this(validatorType != null ? validatorType.AssemblyQualifiedName : null)
         {
         }
 
@@ -63,6 +64,85 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design.Vali
         {
             var validatorType = ValidatorType;
             return Activator.CreateInstance(validatorType);
+        }
+
+        /// <summary>
+        /// When implemented in a derived class, gets a unique identifier for this <see cref="T:System.Attribute"/>.
+        /// </summary>
+        /// <returns>
+        /// An <see cref="T:System.Object"/> that is a unique identifier for the attribute.
+        /// </returns>
+        /// <filterpriority>2</filterpriority>
+        public override object TypeId
+        {
+            get
+            {
+                return this.validatorType;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Indicates an element level validator.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Property, AllowMultiple = true)]
+    public class ElementValidationAttribute : Attribute
+    {
+        private readonly string validatorTypeName;
+
+        ///<summary>
+        /// Creates an instance of ElementValidationAttribute with the validator type specified by <see cref="string"/>.
+        ///</summary>
+        ///<param name="validatorTypeName"></param>
+        public ElementValidationAttribute(string validatorTypeName)
+        {
+            if (String.IsNullOrEmpty(validatorTypeName)) throw new ArgumentException(Resources.ExceptionStringNullOrEmpty, "validatorTypeName");
+
+            this.validatorTypeName = validatorTypeName;
+        }
+
+
+        ///<summary>
+        /// Creates an instance of the ElementValidationAttribute with the validator type specified by <see cref="Type"/>
+        ///</summary>
+        ///<param name="validatorType"></param>
+        public ElementValidationAttribute(Type validatorType)
+            : this(validatorType == null ? null : validatorType.AssemblyQualifiedName)
+        {
+        }
+
+        ///<summary>
+        /// Retrieves the validator <see cref="Type"/>.
+        ///</summary>
+        public Type ValidatorType
+        {
+            get { return Type.GetType(validatorTypeName, true, true); }
+        }
+
+        ///<summary>
+        /// Creates a validator objects.   This is expected to return a Validator type from
+        /// the Microsoft.Practices.EnterpriseLibrary.Configuration.Design namespace.  
+        ///</summary>
+        ///<returns></returns>
+        public object CreateValidator()
+        {
+            var validatorType = ValidatorType;
+            return Activator.CreateInstance(validatorType);
+        }
+
+        /// <summary>
+        /// When implemented in a derived class, gets a unique identifier for this <see cref="T:System.Attribute"/>.
+        /// </summary>
+        /// <returns>
+        /// An <see cref="T:System.Object"/> that is a unique identifier for the attribute.
+        /// </returns>
+        /// <filterpriority>2</filterpriority>
+        public override object TypeId
+        {
+            get
+            {
+                return this.validatorTypeName;
+            }
         }
     }
 }

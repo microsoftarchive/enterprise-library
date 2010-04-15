@@ -20,5 +20,12 @@
             vab:Validate.BindingForProperty="Text"
             vab:Validate.UsingSource="Attributes"
             />
+        <TextBox
+            x:Name="TextBoxWithTwoWayBinding"
+            Text="{Binding TwoWayValidatedStringProperty, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+            vab:Validate.BindingForProperty="Text"
+            vab:Validate.UsingSource="DataAnnotations"
+            vab:Validate.ValidatesOnTargetUpdated="true"
+            />
     </Grid>
 </UserControl>

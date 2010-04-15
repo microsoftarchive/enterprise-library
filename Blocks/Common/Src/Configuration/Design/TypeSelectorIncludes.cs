@@ -10,9 +10,6 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
 {
@@ -41,6 +38,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
         /// <summary>
         /// Inclue non public types in the filter.
         /// </summary>
-        NonpublicTypes = 0x08
+        NonpublicTypes = 0x08,
+        /// <summary>
+        /// Include all types in the filter.
+        /// </summary>
+        All = 0x0F
     }
 }

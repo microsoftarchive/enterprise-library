@@ -119,7 +119,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
 
             return hashProviderRegistrations
                 .Concat(symmetricCryptoProviderRegistrations)
-                .Concat(cryptoManagerRegistrations);
+                .Concat(cryptoManagerRegistrations)
+                .Select(r => MarkPublicRegistration<IHashProvider>(r))
+                .Select(r => MarkPublicRegistration<ISymmetricCryptoProvider>(r));
         }
 
         /// <summary>
@@ -133,6 +135,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         public IEnumerable<TypeRegistration> GetUpdatedRegistrations(IConfigurationSource configurationSource)
         {
             return GetRegistrations(configurationSource);
+        }
+
+        private static TypeRegistration MarkPublicRegistration<TService>(TypeRegistration registration)
+        {
+            if(registration.ServiceType == typeof(TService))
+            {
+                registration.IsPublicName = true;
+            }
+            return registration;
         }
 
         private IEnumerable<TypeRegistration> SetDefaultHashProviderRegistration(IEnumerable<TypeRegistration> hashProviderRegisrations)
@@ -176,7 +187,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
             yield return new TypeRegistration<IDefaultCryptographyInstrumentationProvider>(
                 () => new DefaultCryptographyEventLogger(instrumentationSection.PerformanceCountersEnabled,
                                                          instrumentationSection.EventLoggingEnabled,
-                                                         instrumentationSection.WmiEnabled,
                                                          instrumentationSection.ApplicationInstanceName))
                              {
                                  Lifetime = TypeRegistrationLifetime.Transient,
@@ -191,7 +201,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
                     Container.ResolvedEnumerable<ISymmetricCryptoProvider>(algorithmProviderNames),
                     Container.Resolved<IDefaultCryptographyInstrumentationProvider>()))
                 {
-                    IsDefault = true
+                    IsDefault = true,
+                    IsPublicName = true
                 };
         }
     }

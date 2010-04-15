@@ -1,0 +1,11 @@
+﻿<!--=================================================================
+Copyright (C) Microsoft Corporation.  All rights reserved.
+==================================================================-->
+
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/Microsoft.Practices.EnterpriseLibrary.Configuration.DesignTime;component/Controls/Toolkit/Calendar/Themes/Royale.NormalColor.xaml" />
+        <ResourceDictionary Source="/Microsoft.Practices.EnterpriseLibrary.Configuration.DesignTime;component/Controls/Toolkit/DatePicker/Themes/Royale.NormalColor.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+</ResourceDictionary>

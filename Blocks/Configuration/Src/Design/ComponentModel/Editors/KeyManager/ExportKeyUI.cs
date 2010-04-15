@@ -41,20 +41,21 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
             Text = KeyManagerResources.ExportKeyDialogTitle;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
         private void btnOk_Click(object sender, EventArgs e)
         {
             if (exportKeyControl1.ValidateControl())
             {
                 try
                 {
-                    using (Stream fileOut = File.OpenWrite(exportKeyControl1.Filename))
+                    using (Stream fileOut = File.OpenWrite(exportKeyControl1.FileName))
                     {
                         KeyManager.ArchiveKey(fileOut, key, exportKeyControl1.Password);
                     }
                 }
                 catch (Exception)
                 {
-                    MessageBox.Show(KeyManagerResources.ErrorExportingKey, KeyManagerResources.ExportDialogErrorTitle, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    MessageBox.Show(KeyManagerResources.ErrorExportingKey, KeyManagerResources.ExportDialogErrorTitle, MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
                 }
             }
 			else

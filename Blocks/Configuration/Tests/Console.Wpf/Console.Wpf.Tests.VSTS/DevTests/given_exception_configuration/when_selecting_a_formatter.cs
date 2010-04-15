@@ -31,7 +31,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_exception_configuration
         private LogFormatterValidator validator;
         private IEnumerable<Property> properties;
         private Property typeNameProperty;
-        private List<ValidationError> errors;
+        private List<ValidationResult> errors;
 
         protected override void Arrange()
         {
@@ -39,7 +39,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_exception_configuration
 
             validator = new LogFormatterValidator();
 
-            errors = new List<ValidationError>();
+            errors = new List<ValidationResult>();
 
             IConfigurationSource source = new DictionaryConfigurationSource();
             ConfigurationSourceBuilder sourceBuiler = new ConfigurationSourceBuilder();

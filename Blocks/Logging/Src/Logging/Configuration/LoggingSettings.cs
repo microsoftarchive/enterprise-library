@@ -9,17 +9,18 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration;
 using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Filters;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
-using Container=Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel.Container;
+using Container = Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel.Container;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 {
@@ -88,13 +89,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// <returns>The logging section.</returns>
         public static LoggingSettings GetLoggingSettings(IConfigurationSource configurationSource)
         {
+            if(configurationSource == null) throw new ArgumentNullException("configurationSource");
             return (LoggingSettings)configurationSource.GetSection(SectionName);
         }
 
         /// <summary>
         /// Enable or disable trace logging.
         /// </summary>
-        [ConfigurationProperty(tracingEnabledProperty, DefaultValue=true)]
+        [ConfigurationProperty(tracingEnabledProperty, DefaultValue = true)]
         [ResourceDescription(typeof(DesignResources), "LoggingSettingsTracingEnabledDescription")]
         [ResourceDisplayName(typeof(DesignResources), "LoggingSettingsTracingEnabledDisplayName")]
         public bool TracingEnabled
@@ -234,7 +236,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// Gets or sets the indication that a warning should be logged when a category is not found while 
         /// dispatching a log entry.
         /// </summary>
-        [ConfigurationProperty(logWarningsWhenNoCategoriesMatchProperty, DefaultValue=true)]
+        [ConfigurationProperty(logWarningsWhenNoCategoriesMatchProperty, DefaultValue = true)]
         [ResourceDescription(typeof(DesignResources), "LoggingSettingsLogWarningWhenNoCategoriesMatchDescription")]
         [ResourceDisplayName(typeof(DesignResources), "LoggingSettingsLogWarningWhenNoCategoriesMatchDisplayName")]
         public bool LogWarningWhenNoCategoriesMatch
@@ -332,7 +334,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
                        Container.Resolved<ILoggingUpdateCoordinator>()))
                {
                    Lifetime = TypeRegistrationLifetime.Singleton,
-                   IsDefault = true
+                   IsDefault = true,
+                   IsPublicName = true
                };
         }
 
@@ -358,7 +361,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
                     new LoggingInstrumentationProvider(
                         instrumentationSection.PerformanceCountersEnabled,
                         instrumentationSection.EventLoggingEnabled,
-                        instrumentationSection.WmiEnabled,
                         instrumentationSection.ApplicationInstanceName))
                 {
                     Lifetime = TypeRegistrationLifetime.Singleton,
@@ -409,7 +411,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
                     new TracerInstrumentationProvider(
                         instrumentationSection.PerformanceCountersEnabled,
                         instrumentationSection.EventLoggingEnabled,
-                        instrumentationSection.WmiEnabled,
                         instrumentationSection.ApplicationInstanceName))
                 {
                     Lifetime = TypeRegistrationLifetime.Transient,
@@ -422,9 +423,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
             var instrumentationSettings = InstrumentationConfigurationSection.GetSection(configurationSource);
             return
                 new TypeRegistration<DefaultLoggingEventLogger>(() =>
-                    new DefaultLoggingEventLogger(
-                        instrumentationSettings.EventLoggingEnabled,
-                        instrumentationSettings.WmiEnabled))
+                    new DefaultLoggingEventLogger(instrumentationSettings.EventLoggingEnabled))
                 {
                     Lifetime = TypeRegistrationLifetime.Transient,
                     IsDefault = true

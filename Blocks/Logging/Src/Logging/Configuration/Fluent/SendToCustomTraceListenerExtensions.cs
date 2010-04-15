@@ -21,6 +21,7 @@ using System.Collections.Specialized;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent;
 using Microsoft.Practices.EnterpriseLibrary.Common.Properties;
+using System.Globalization;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 {
@@ -66,7 +67,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         /// <typeparam name="TCustomListenerType">The concrete type of <see cref="CustomTraceListener"/> that should be added to the configuration.</typeparam>
         /// <param name="context">Fluent interface extension point.</param>
         /// <param name="listenerName">The name of the <see cref="CustomTraceListener"/>.</param>
-        /// <param name="attributes">Attributes that should be passed to <paramref name="customTraceListenerType"/> when creating an instance.</param>
+        /// <param name="attributes">Attributes that should be passed to <typeparamref name="TCustomListenerType"/> when creating an instance.</param>
         /// <returns>Fluent interface that can be used to further configure the created <see cref="CustomTraceListenerData"/>. </returns>
         /// <seealso cref="CustomTraceListenerData"/>
         public static ILoggingConfigurationSendToCustomTraceListener Custom<TCustomListenerType>(this ILoggingConfigurationSendTo context, string listenerName, NameValueCollection attributes)
@@ -92,7 +93,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
             if (attributes == null) throw new ArgumentNullException("attributes");
             
             if (!typeof(CustomTraceListener).IsAssignableFrom(customTraceListenerType))
-                throw new ArgumentException(string.Format(Resources.Culture,
+                throw new ArgumentException(string.Format(CultureInfo.CurrentCulture,
                     Resources.ExceptionTypeMustDeriveFromType, typeof(CustomTraceListener)), "customTraceListenerType");
 
             return new SendToCustomTraceListenerBuilder(context, listenerName, customTraceListenerType, attributes);

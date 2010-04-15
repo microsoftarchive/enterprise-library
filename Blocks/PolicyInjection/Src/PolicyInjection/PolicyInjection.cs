@@ -62,7 +62,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection
         /// the default policy configuration.
         /// </summary>
         /// <param name="typeToCreate">Type of object to create.</param>
-        /// <param name="args">Arguments to pass to the <typeparamref name="TObject"/> constructor.</param>
+        /// <param name="args">Arguments to pass to the <paramref name="typeToCreate"/> constructor.</param>
         /// <returns>The intercepted object (or possibly a raw instance if no policies apply).</returns>
         public static object Create(Type typeToCreate, params object[] args)
         {
@@ -79,7 +79,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection
         /// </summary>
         /// <param name="typeToCreate">Concrete object type to create.</param>
         /// <param name="typeToReturn">Type of reference to return. Must be an interface the object implements.</param>
-        /// <param name="args">Arguments to pass to the <typeparamref name="typeToCreate"/> constructor.</param>
+        /// <param name="args">Arguments to pass to the <paramref name="typeToCreate"/> constructor.</param>
         /// <returns>The intercepted object (or possibly a raw instance if no policies apply).</returns>
         public static object Create(Type typeToCreate, Type typeToReturn, params object[] args)
         {

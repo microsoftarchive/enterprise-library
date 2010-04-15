@@ -118,49 +118,49 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="OracleConnectionDataDescription" xml:space="preserve">
-    <value>225 - A connection to an Oracle database that includes additional information such as the package to use.</value>
+    <value>A connection to an Oracle database that includes additional information such as the package to use.</value>
   </data>
   <data name="OracleConnectionDataDisplayName" xml:space="preserve">
     <value>Oracle Connection</value>
   </data>
   <data name="OracleConnectionDataNameDescription" xml:space="preserve">
-    <value>227 - The name of the Oracle Connection.</value>
+    <value>The name of the Oracle Connection.</value>
   </data>
   <data name="OracleConnectionDataNameDisplayName" xml:space="preserve">
     <value>Name</value>
   </data>
   <data name="OracleConnectionDataPackagesDescription" xml:space="preserve">
-    <value>229 - The Oracle connection packages that define information specific to Oracle databases and this connection.</value>
+    <value>The Oracle connection packages that define information specific to Oracle databases and this connection.</value>
   </data>
   <data name="OracleConnectionDataPackagesDisplayName" xml:space="preserve">
     <value>Packages</value>
   </data>
   <data name="OracleConnectionSettingsDescription" xml:space="preserve">
-    <value>231 - Settings specific to Oracle connections, such as information on Oracle packages.</value>
+    <value>Settings specific to Oracle connections, such as information on Oracle packages.</value>
   </data>
   <data name="OracleConnectionSettingsDisplayName" xml:space="preserve">
     <value>Oracle Connection Settings</value>
   </data>
   <data name="OracleConnectionSettingsOracleConnectionsDataDescription" xml:space="preserve">
-    <value>233 - Connections to Oracle databases.</value>
+    <value>Connections to Oracle databases.</value>
   </data>
   <data name="OracleConnectionSettingsOracleConnectionsDataDisplayName" xml:space="preserve">
     <value>Oracle Connections</value>
   </data>
   <data name="OraclePackageDataDescription" xml:space="preserve">
-    <value>235 - The Oracle package to use when calling stored procedures in this Oracle database.</value>
+    <value>The Oracle package to use when calling stored procedures in this Oracle database.</value>
   </data>
   <data name="OraclePackageDataDisplayName" xml:space="preserve">
     <value>Package</value>
   </data>
   <data name="OraclePackageDataNameDescription" xml:space="preserve">
-    <value>237 - The name of the Oracle Package.</value>
+    <value>The name of the Oracle Package.</value>
   </data>
   <data name="OraclePackageDataNameDisplayName" xml:space="preserve">
     <value>Name</value>
   </data>
   <data name="OraclePackageDataPrefixDescription" xml:space="preserve">
-    <value>239 - The prefix of the stored procedures in the specified Oracle package.</value>
+    <value>The prefix of the stored procedures in the specified Oracle package.</value>
   </data>
   <data name="OraclePackageDataPrefixDisplayName" xml:space="preserve">
     <value>Prefix</value>

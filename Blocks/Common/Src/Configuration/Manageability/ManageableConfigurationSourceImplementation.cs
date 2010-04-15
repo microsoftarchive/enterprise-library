@@ -16,7 +16,7 @@ using System.Configuration;
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability
 {
     /// <summary>
-    /// Represents a manageable configuration source (like group policy).
+    /// Represents a manageable configuration source (like Group Policy).
     /// </summary>
     public class ManageableConfigurationSourceImplementation : IDisposable
     {
@@ -35,7 +35,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
         /// <param name="configurationFilePath">The path to the configuration file.</param>
         /// <param name="refresh">true to refresh configuration; otherwise, false.</param>
         /// <param name="manageabilityProviders">The providers used for managment.</param>
-        /// <param name="readGroupPolicies">true to read group policy; otherwise, false.</param>
+        /// <param name="readGroupPolicies">true to read Group Policy; otherwise, false.</param>
         /// <param name="applicationName">The name of the application.</param>
         public ManageableConfigurationSourceImplementation(string configurationFilePath,
                                                            bool refresh,
@@ -149,17 +149,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
 
         void InitializeConfiguration()
         {
-            currentConfigurationAccessor
-                = new ConfigurationInstanceConfigurationAccessor(
-                    ConfigurationManager.OpenMappedExeConfiguration(fileMap, ConfigurationUserLevel.None));
-
-            manageabilityHelper.UpdateConfigurationManageability(currentConfigurationAccessor);
-            foreach (String managedSectionName in currentConfigurationAccessor.GetRequestedSectionNames())
+            lock (this.configurationUpdateLock)
             {
-                ConfigurationSection configurationSection = currentConfigurationAccessor.GetSection(managedSectionName);
-                if (configurationSection != null)
+                currentConfigurationAccessor
+                    = new ConfigurationInstanceConfigurationAccessor(
+                        ConfigurationManager.OpenMappedExeConfiguration(fileMap, ConfigurationUserLevel.None));
+
+                manageabilityHelper.UpdateConfigurationManageability(currentConfigurationAccessor);
+                foreach (String managedSectionName in currentConfigurationAccessor.GetRequestedSectionNames())
                 {
-                    watcherCoordinator.SetWatcherForConfigSource(configurationSection.SectionInformation.ConfigSource);
+                    ConfigurationSection configurationSection = currentConfigurationAccessor.GetSection(managedSectionName);
+                    if (configurationSection != null)
+                    {
+                        watcherCoordinator.SetWatcherForConfigSource(configurationSection.SectionInformation.ConfigSource);
+                    }
                 }
             }
         }

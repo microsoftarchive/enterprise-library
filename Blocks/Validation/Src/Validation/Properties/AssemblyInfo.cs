@@ -9,12 +9,9 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System.Security.Permissions;
 using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.ConstrainedExecution;
-using System.Management.Instrumentation;
 using System.Security;
+using System.Security.Permissions;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration;
 
@@ -22,16 +19,14 @@ using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration;
 
 [assembly: AssemblyTitle("Enterprise Library Validation Application Block")]
 [assembly: AssemblyDescription("Enterprise Library Validation Application Block")]
-[assembly: AssemblyVersion("4.1.0.0")]
-
-[assembly: Instrumented(@"root\EnterpriseLibrary")]
+[assembly: AssemblyVersion("5.0.414.0")]
 
 [assembly: AllowPartiallyTrustedCallers]
 [assembly: SecurityTransparent]
 
 [assembly: HandlesSection(ValidationSettings.SectionName)]
 [assembly: AddApplicationBlockCommand(
-                ValidationSettings.SectionName, 
+                ValidationSettings.SectionName,
                 typeof(ValidationSettings),
                 TitleResourceType = typeof(DesignResources),
                 TitleResourceName = "AddValidationSettings")]

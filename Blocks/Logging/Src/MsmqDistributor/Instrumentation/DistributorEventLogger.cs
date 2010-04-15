@@ -14,11 +14,12 @@ using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Security;
 using Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Properties;
+using System.Globalization;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Instrumentation
 {
 	/// <summary>
-	/// Event logger for distributor windows service.
+    /// Event logger for distributor Windows service.
 	/// This class writes event log entries 
 	/// </summary>
 	public class DistributorEventLogger
@@ -50,7 +51,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Instrume
 	    }
 
 	    /// <summary>
-	    /// Name of the windows service.
+        /// Name of the Windows service.
 	    /// </summary>
 	    public string EventSource 
 	    {
@@ -74,7 +75,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Instrume
 		/// </summary>
 		public void LogServiceStarted()
 		{
-			LogServiceLifecycleEvent(string.Format(Resources.Culture, Resources.ServiceStartComplete, this.EventSource), true);
+            LogServiceLifecycleEvent(string.Format(CultureInfo.CurrentCulture, Resources.ServiceStartComplete, this.EventSource), true);
 		}
 
 		/// <summary>
@@ -83,7 +84,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Instrume
 		/// </summary>
 		public void LogServiceResumed()
 		{
-			LogServiceLifecycleEvent(string.Format(Resources.Culture, Resources.ServiceResumeComplete, this.EventSource), true);
+            LogServiceLifecycleEvent(string.Format(CultureInfo.CurrentCulture, Resources.ServiceResumeComplete, this.EventSource), true);
 		}
 
 		/// <summary>
@@ -92,7 +93,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Instrume
 		/// </summary>
 		public void LogServiceStopped()
 		{
-			LogServiceLifecycleEvent(string.Format(Resources.Culture, Resources.ServiceStopComplete, this.EventSource), false);
+            LogServiceLifecycleEvent(string.Format(CultureInfo.CurrentCulture, Resources.ServiceStopComplete, this.EventSource), false);
 		}
 
 		/// <summary>
@@ -101,7 +102,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Instrume
 		/// </summary>
 		public void LogServicePaused()
 		{
-			LogServiceLifecycleEvent(string.Format(Resources.Culture, Resources.ServicePausedSuccess, this.EventSource), false);
+            LogServiceLifecycleEvent(string.Format(CultureInfo.CurrentCulture, Resources.ServicePausedSuccess, this.EventSource), false);
 		}
 
 		/// <summary>
@@ -114,13 +115,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Instrume
 		public void LogServiceFailure(string message, Exception exception, TraceEventType eventType)
 		{
 			this.AddMessage(DistributorEventLogger.Header, message);
-
-			try
-			{
-				System.Management.Instrumentation.Instrumentation.Fire(new DistributorServiceFailureEvent(this.GetMessage(exception), exception));
-			}
-			catch
-			{ }
 			this.WriteToLog(exception, eventType);
 		}
 
@@ -156,13 +150,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Instrume
 		private void LogServiceLifecycleEvent(string message, bool started)
 		{
 			this.AddMessage(DistributorEventLogger.Header, message);
-
-			try
-			{
-				System.Management.Instrumentation.Instrumentation.Fire(new DistributorServiceLifecycleEvent(this.GetMessage(null), started));
-			}
-			catch
-			{ }
 			this.WriteToLog(null, TraceEventType.Information);
 		}
 	}

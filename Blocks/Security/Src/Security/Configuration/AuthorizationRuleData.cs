@@ -9,11 +9,10 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using System.ComponentModel;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
-using Microsoft.Practices.EnterpriseLibrary.Security.Properties;
-using System.ComponentModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration
 {
@@ -42,7 +41,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration
         /// </summary>
         /// <param name="name">The name of the rule</param>
         /// <param name="expression">The expression to evaluate.</param>
-        public AuthorizationRuleData(string name, string expression) : base(name)
+        public AuthorizationRuleData(string name, string expression)
+            : base(name)
         {
             this.Expression = expression;
         }
@@ -51,21 +51,21 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration
         /// Gets or sets the expression associated with
         /// this rule.
         /// </summary>
-		[ConfigurationProperty(expressionProperty, IsRequired= false)]
+        [ConfigurationProperty(expressionProperty, IsRequired = true)]
         [ResourceDescription(typeof(DesignResources), "AuthorizationRuleDataExpressionDescription")]
         [ResourceDisplayName(typeof(DesignResources), "AuthorizationRuleDataExpressionDisplayName")]
         [Editor(SecurityDesignTime.EditorTypeNames.SecurityExpressionEditor, CommonDesignTime.EditorTypes.UITypeEditor)]
-		public string Expression
-		{
-			get
-			{
-				return (string)this[expressionProperty];
-			}
-			set
-			{
-				this[expressionProperty] = value;
-			}
-		}
+        public string Expression
+        {
+            get
+            {
+                return (string)this[expressionProperty];
+            }
+            set
+            {
+                this[expressionProperty] = value;
+            }
+        }
 
     }
 }

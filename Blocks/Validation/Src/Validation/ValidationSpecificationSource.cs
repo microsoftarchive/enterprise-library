@@ -19,7 +19,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
     /// Specifies the required source for validation information when invoking <see cref="Validator"/> creation methods.
     /// </summary>
     /// <seealso cref="ValidationFactory.CreateValidator{T}(string, IConfigurationSource)"/>
-    [Flags]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1714:FlagsEnumsShouldHavePluralNames"), Flags]
     public enum ValidationSpecificationSource
     {
         /// <summary>

@@ -118,13 +118,13 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="EnvironmentMergeSectionDescription" xml:space="preserve">
-    <value>195 - Represents a configuration section that contains the difference (or delta) between two deployable configuration files.</value>
+    <value>Represents a configuration section that contains the difference (or delta) between two deployable configuration files.</value>
   </data>
   <data name="EnvironmentMergeSectionDisplayName" xml:space="preserve">
     <value>Environment Merge Section</value>
   </data>
   <data name="EnvironmentMergeSectionEnvironmentDeltaFileDescription" xml:space="preserve">
-    <value>197 - The path to the deployable configuration that can be generated from this configuration.</value>
+    <value>The path to the deployable configuration that can be generated from this configuration.</value>
   </data>
   <data name="EnvironmentMergeSectionEnvironmentDeltaFileDisplayName" xml:space="preserve">
     <value>Environment Configuration File</value>
@@ -133,45 +133,48 @@
     <value>Configuration files (*.config)|*.config|All Files (*.*)|*.*</value>
   </data>
   <data name="EnvironmentMergeSectionEnvironmentNameDescription" xml:space="preserve">
-    <value>199 - The name of the environment.</value>
+    <value>The name of the environment.</value>
   </data>
   <data name="EnvironmentMergeSectionEnvironmentNameDisplayName" xml:space="preserve">
     <value>Environment Name</value>
   </data>
   <data name="EnvironmentMergeSectionMergeElementsDescription" xml:space="preserve">
-    <value>201 - A collection of elements that will be merged to create the final configuration.</value>
+    <value>A collection of elements that will be merged to create the final configuration.</value>
   </data>
   <data name="EnvironmentMergeSectionMergeElementsDisplayName" xml:space="preserve">
     <value>Merge Elements</value>
   </data>
   <data name="EnvironmentNodeMergeElementCollectionDescription" xml:space="preserve">
-    <value>211 - A collection of Environment Node Merge elements.</value>
+    <value>A collection of Environment Node Merge elements.</value>
   </data>
   <data name="EnvironmentNodeMergeElementCollectionDisplayName" xml:space="preserve">
     <value>Environment Node Merge Element Collection</value>
   </data>
   <data name="EnvironmentNodeMergeElementConfigurationNodePathDescription" xml:space="preserve">
-    <value>205 - The path to the configuration node to which the overridden settings apply.</value>
+    <value>The path to the configuration node to which the overridden settings apply.</value>
   </data>
   <data name="EnvironmentNodeMergeElementConfigurationNodePathDisplayName" xml:space="preserve">
     <value>Configuration Node Path</value>
   </data>
   <data name="EnvironmentNodeMergeElementDescription" xml:space="preserve">
-    <value>203 - The overridden configuration settings for one specific configuration node.</value>
+    <value>The overridden configuration settings for one specific configuration node.</value>
   </data>
   <data name="EnvironmentNodeMergeElementDisplayName" xml:space="preserve">
     <value>Environment Node Merge Element</value>
   </data>
   <data name="EnvironmentNodeMergeElementOverriddenPropertiesDescription" xml:space="preserve">
-    <value>207 - A collection of overridden settings, indexed by the name of the setting that should apply at designtime.</value>
+    <value>A collection of overridden settings, indexed by the name of the setting that should apply at design time.</value>
   </data>
   <data name="EnvironmentNodeMergeElementOverriddenPropertiesDisplayName" xml:space="preserve">
     <value>Overridden Properties</value>
   </data>
   <data name="EnvironmentNodeMergeElementOverridePropertiesDescription" xml:space="preserve">
-    <value>209 - Determines if the settings in this configuration element will override the main configurations settings at design time.</value>
+    <value>Determines if the settings in this configuration element will override the main configurations settings at design time.</value>
   </data>
   <data name="EnvironmentNodeMergeElementOverridePropertiesDisplayName" xml:space="preserve">
     <value>Override Properties</value>
+  </data>
+  <data name="OverridesDeltaFileDisplayName" xml:space="preserve">
+    <value>Environment Delta File</value>
   </data>
 </root>

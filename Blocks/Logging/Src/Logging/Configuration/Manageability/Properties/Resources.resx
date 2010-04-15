@@ -291,4 +291,10 @@
   <data name="LoggingSettingsRevertImpersonationPartName" xml:space="preserve">
     <value>Revert impersonation</value>
   </data>
+  <data name="RollingFlatFileTraceListenerMaxArchivedFilesPartName" xml:space="preserve">
+    <value>Max archived files</value>
+  </data>
+  <data name="TraceSourceAutoFlushPartName" xml:space="preserve">
+    <value>Auto flush</value>
+  </data>
 </root>

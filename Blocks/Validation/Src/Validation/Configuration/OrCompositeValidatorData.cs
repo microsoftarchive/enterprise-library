@@ -55,44 +55,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
         }
 
         /// <summary>
-        /// Overridden in order to hide from the configuration designtime.
-        /// </summary>
-        [Browsable(false)]
-        public override string MessageTemplate
-        {
-            get{ return base.MessageTemplate; }
-            set{ base.MessageTemplate = value; }
-        }
-
-        /// <summary>
-        /// Overridden in order to hide from the configuration designtime.
-        /// </summary>
-        [Browsable(false)]
-        public override string MessageTemplateResourceName
-        {
-            get { return base.MessageTemplateResourceName; }
-            set { base.MessageTemplateResourceName = value; }
-        }
-        /// <summary>
-        /// Overridden in order to hide from the configuration designtime.
-        /// </summary>
-        [Browsable(false)]
-        public override string MessageTemplateResourceTypeName
-        {
-            get { return base.MessageTemplateResourceTypeName; }
-            set { base.MessageTemplateResourceTypeName = value; }
-        }
-        /// <summary>
-        /// Overridden in order to hide from the configuration designtime.
-        /// </summary>
-        [Browsable(false)]
-        public override string Tag
-        {
-            get { return base.Tag; }
-            set { base.Tag = value; }
-        }
-
-        /// <summary>
         /// Creates the <see cref="OrCompositeValidator"/> described by the configuration object.
         /// </summary>
         /// <param name="targetType">The type of object that will be validated by the validator.</param>

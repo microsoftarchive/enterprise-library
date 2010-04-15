@@ -30,73 +30,73 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
     [ResourceDisplayName(typeof(DesignResources), "CacheManagerSettingsDisplayName")]
     public class CacheManagerSettings : SerializableConfigurationSection, ITypeRegistrationsProvider
     {
-		/// <summary>
-		/// Configuration key for cache manager settings.
-		/// </summary>
-		public const string SectionName = "cachingConfiguration";
+        /// <summary>
+        /// Configuration key for cache manager settings.
+        /// </summary>
+        public const string SectionName = "cachingConfiguration";
 
         private const string defaultCacheManagerProperty = "defaultCacheManager";
-		private const string cacheManagersProperty = "cacheManagers";
-		private const string backingStoresProperty = "backingStores";
-		private const string encryptionProvidersProperty = "encryptionProviders";    
+        private const string cacheManagersProperty = "cacheManagers";
+        private const string backingStoresProperty = "backingStores";
+        private const string encryptionProvidersProperty = "encryptionProviders";
 
         /// <summary>
         /// Defines the default manager instance to use when no other manager is specified
         /// </summary>
         [Reference(typeof(NameTypeConfigurationElementCollection<CacheManagerDataBase, CustomCacheManagerData>), typeof(CacheManagerDataBase))]
-		[ConfigurationProperty(defaultCacheManagerProperty, IsRequired= true)]
+        [ConfigurationProperty(defaultCacheManagerProperty, IsRequired = true)]
         [ResourceDescription(typeof(DesignResources), "CacheManagerSettingsDefaultCacheManagerDescription")]
         [ResourceDisplayName(typeof(DesignResources), "CacheManagerSettingsDefaultCacheManagerDisplayName")]
         public string DefaultCacheManager
         {
-			get { return (string)base[defaultCacheManagerProperty]; }
-			set { base[defaultCacheManagerProperty] = value; }
+            get { return (string)base[defaultCacheManagerProperty]; }
+            set { base[defaultCacheManagerProperty] = value; }
         }
 
         /// <summary>
-		/// Gets the collection of defined <see cref="CacheManager"/> objects.
+        /// Gets the collection of defined <see cref="CacheManager"/> objects.
         /// </summary>
-		/// <value>
-		/// The collection of defined <see cref="CacheManager"/> objects.
-		/// </value>
-        [ConfigurationProperty(cacheManagersProperty, IsRequired= true)]
+        /// <value>
+        /// The collection of defined <see cref="CacheManager"/> objects.
+        /// </value>
+        [ConfigurationProperty(cacheManagersProperty, IsRequired = true)]
         [ConfigurationCollection(typeof(CacheManagerDataBase))]
         [ResourceDescription(typeof(DesignResources), "CacheManagerSettingsCacheManagersDescription")]
         [ResourceDisplayName(typeof(DesignResources), "CacheManagerSettingsCacheManagersDisplayName")]
-		public NameTypeConfigurationElementCollection<CacheManagerDataBase, CustomCacheManagerData> CacheManagers
-		{
-			get { return (NameTypeConfigurationElementCollection<CacheManagerDataBase, CustomCacheManagerData>)base[cacheManagersProperty]; }
-		}
+        public NameTypeConfigurationElementCollection<CacheManagerDataBase, CustomCacheManagerData> CacheManagers
+        {
+            get { return (NameTypeConfigurationElementCollection<CacheManagerDataBase, CustomCacheManagerData>)base[cacheManagersProperty]; }
+        }
 
-		/// <summary>
-		/// Gets the collection of defined <see cref="IBackingStore"/> objects.
-		/// </summary>
-		/// <value>
-		/// The collection of defined <see cref="IBackingStore"/> objects.
-		/// </value>
-		[ConfigurationProperty(backingStoresProperty, IsRequired= false)]
+        /// <summary>
+        /// Gets the collection of defined <see cref="IBackingStore"/> objects.
+        /// </summary>
+        /// <value>
+        /// The collection of defined <see cref="IBackingStore"/> objects.
+        /// </value>
+        [ConfigurationProperty(backingStoresProperty, IsRequired = false)]
         [ConfigurationCollection(typeof(CacheStorageData))]
         [ResourceDescription(typeof(DesignResources), "CacheManagerSettingsBackingStoresDescription")]
         [ResourceDisplayName(typeof(DesignResources), "CacheManagerSettingsBackingStoresDisplayName")]
-		public NameTypeConfigurationElementCollection<CacheStorageData, CustomCacheStorageData> BackingStores
-		{
+        public NameTypeConfigurationElementCollection<CacheStorageData, CustomCacheStorageData> BackingStores
+        {
             get { return (NameTypeConfigurationElementCollection<CacheStorageData, CustomCacheStorageData>)base[backingStoresProperty]; }
-		}
+        }
 
-		/// <summary>
-		/// Gets the collection of defined <see cref="IStorageEncryptionProvider"/> objects.
-		/// </summary>
-		/// <value>
-		/// The collection of defined <see cref="IStorageEncryptionProvider"/> objects.
-		/// </value>
+        /// <summary>
+        /// Gets the collection of defined <see cref="IStorageEncryptionProvider"/> objects.
+        /// </summary>
+        /// <value>
+        /// The collection of defined <see cref="IStorageEncryptionProvider"/> objects.
+        /// </value>
         [ConfigurationProperty(encryptionProvidersProperty, IsRequired = false)]
         [ConfigurationCollection(typeof(StorageEncryptionProviderData))]
         [ResourceDescription(typeof(DesignResources), "CacheManagerSettingsEncryptionProvidersDescription")]
         [ResourceDisplayName(typeof(DesignResources), "CacheManagerSettingsEncryptionProvidersDisplayName")]
         public NameTypeConfigurationElementCollection<StorageEncryptionProviderData, StorageEncryptionProviderData> EncryptionProviders
-		{
+        {
             get { return (NameTypeConfigurationElementCollection<StorageEncryptionProviderData, StorageEncryptionProviderData>)base[encryptionProvidersProperty]; }
-		}
+        }
 
         /// <summary>
         /// 
@@ -152,8 +152,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
                        {
                            new TypeRegistration<DefaultCachingEventLogger>(
                                () =>
-                               new DefaultCachingEventLogger(instrumentationSection.EventLoggingEnabled,
-                                                             instrumentationSection.WmiEnabled))
+                               new DefaultCachingEventLogger(instrumentationSection.EventLoggingEnabled))
                                                              {
                                                                  IsDefault = true
                                                              }

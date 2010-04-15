@@ -15,34 +15,40 @@ using System.Collections.Generic;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Validation
 {
-
+    /// <summary>
+    /// A baseclass for Validators used in the configuration designer.
+    /// </summary>
     public abstract class Validator
     {
         /// <summary>
-        /// <para>Initialize a new instance of the <see cref="Validator"/> class.</para>
+        /// <para>Initializes a new instance of the <see cref="Validator"/> class.</para>
         /// </summary>
         protected Validator()
         {
         }
 
         /// <summary>
-        /// Validate the given <paramref name="instance"/>.
+        /// When implemented in a derived class, validates <paramref name="value"/> as part of the <paramref name="instance"/>.
         /// </summary>
-        /// <param name="instance">
-        /// The instance to validate.
-        /// </param>
+        /// <param name="instance">The instance to validate.</param>
         /// <param name="value">Value to validate</param>
-        /// <param name="errors">
-        /// The collection to add any errors that occur during the validation.
-        /// </param>		
-        protected abstract void ValidateCore(object instance, string value, IList<ValidationError> errors);
+        /// <param name="results">The collection to wich any results that occur during the validation can be added.</param>		
+        protected abstract void ValidateCore(object instance, string value, IList<ValidationResult> results);
 
-        public void Validate(object instance, string value, IList<ValidationError> errors)
+        /// <summary>
+        /// Validates <paramref name="value"/> as part of the <paramref name="instance"/>.
+        /// </summary>
+        /// <param name="instance">The instance to validate.</param>
+        /// <param name="value">Value to validate.</param>
+        /// <param name="results">The collection to wich any results that occur during the validation can be added.</param>		
+        public void Validate(object instance, string value, IList<ValidationResult> results)
         {
             if (null == instance) throw new ArgumentNullException("instance");
-            if (null == errors) throw new ArgumentNullException("errors");
+            if (null == results) throw new ArgumentNullException("results");
 
-            ValidateCore(instance, value, errors);
+            ValidateCore(instance, value, results);
         }
     }
+
+    
 }

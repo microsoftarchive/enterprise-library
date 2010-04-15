@@ -25,6 +25,12 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics
 {
+
+#pragma warning disable 1591
+    /// <summary>
+    /// This class supports block-specific configuration design-time and is not
+    /// intended to be used directly from your code.
+    /// </summary>
     public class KeyedHashAlgorithmProviderDataViewModel : CollectionElementViewModel
     {
         public KeyedHashAlgorithmProviderDataViewModel(ElementCollectionViewModel containingCollection, ConfigurationElement thisElement)
@@ -47,7 +53,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
             private ProtectedKey key;
 
             public ProtectedKeySettingsProperty(IServiceProvider serviceProvider, KeyedHashAlgorithmProviderData configuration)
-                : base(serviceProvider, "Key", new EditorAttribute(typeof(KeyManagerEditor), typeof(UITypeEditor)))
+                : base(serviceProvider, "Key", 
+                new EditorAttribute(typeof(KeyManagerEditor), typeof(UITypeEditor)),
+                new EditorWithReadOnlyTextAttribute(true))
             {
                 this.configuration = configuration;
             }
@@ -64,16 +72,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
                 set
                 {
                     ProtectedKeySettings keySettings = (ProtectedKeySettings)value;
-                    configuration.ProtectedKeyFilename = keySettings.Filename;
+                    configuration.ProtectedKeyFilename = keySettings.FileName;
                     configuration.ProtectedKeyProtectionScope = keySettings.Scope;
 
                     key = keySettings.ProtectedKey;
                 }
-            }
-
-            protected override object CreateBindable()
-            {
-                return new PopupEditorBindableProperty(this) { TextReadOnly = true};
             }
 
             public ProtectedKeySettings KeySettings
@@ -86,10 +89,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
                 get { return new KeyedHashAlgorithmKeyCreator(configuration.AlgorithmType); }
             }
 
-            public override IEnumerable<Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Validation.Validator> GetValidators()
+            protected override IEnumerable<Validator> GetDefaultPropertyValidators()
             {
                 return Enumerable.Empty<Validator>();
             }
         }
     }
+
+#pragma warning restore 1591
 }

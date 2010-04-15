@@ -22,6 +22,7 @@ using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Properties;
 using Microsoft.Practices.ServiceLocation;
 using Microsoft.Practices.Unity.Utility;
+using System.Globalization;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging
 {
@@ -622,9 +623,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
             {
                 NameValueCollection additionalInfo = new NameValueCollection();
                 additionalInfo.Add(ExceptionFormatter.Header,
-                                   string.Format(Resources.Culture, Resources.FilterEvaluationFailed, logFilter.Name));
+                                   string.Format(CultureInfo.CurrentCulture, Resources.FilterEvaluationFailed, logFilter.Name));
                 additionalInfo.Add(Resources.FilterEvaluationFailed2,
-                                   string.Format(Resources.Culture, Resources.FilterEvaluationFailed3, log));
+                                   string.Format(CultureInfo.CurrentCulture, Resources.FilterEvaluationFailed3, log));
                 ExceptionFormatter formatter =
                     new ExceptionFormatter(additionalInfo, Resources.DistributorEventLoggerDefaultApplicationName);
 
@@ -649,9 +650,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
             {
                 NameValueCollection additionalInfo = new NameValueCollection();
                 additionalInfo.Add(ExceptionFormatter.Header,
-                                   string.Format(Resources.Culture, Resources.TraceSourceFailed, traceSource.Name));
+                                   string.Format(CultureInfo.CurrentCulture, Resources.TraceSourceFailed, traceSource.Name));
                 additionalInfo.Add(Resources.TraceSourceFailed2,
-                                   string.Format(Resources.Culture, Resources.TraceSourceFailed3, log));
+                                   string.Format(CultureInfo.CurrentCulture, Resources.TraceSourceFailed3, log));
                 ExceptionFormatter formatter =
                     new ExceptionFormatter(additionalInfo, Resources.DistributorEventLoggerDefaultApplicationName);
 
@@ -675,7 +676,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
             {
                 LogEntry reportingLogEntry = new LogEntry();
                 reportingLogEntry.Severity = TraceEventType.Error;
-                reportingLogEntry.Message = string.Format(Resources.Culture, Resources.MissingCategories, TextFormatter.FormatCategoriesCollection(missingCategories), logEntry);
+                reportingLogEntry.Message = string.Format(CultureInfo.CurrentCulture, Resources.MissingCategories, TextFormatter.FormatCategoriesCollection(missingCategories), logEntry);
                 reportingLogEntry.EventId = LogWriterFailureEventID;
 
                 structureHolder.ErrorsTraceSource.TraceData(reportingLogEntry.Severity, reportingLogEntry.EventId, reportingLogEntry);
@@ -694,7 +695,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
                 NameValueCollection additionalInfo = new NameValueCollection();
                 additionalInfo.Add(ExceptionFormatter.Header, Resources.ProcessMessageFailed);
                 additionalInfo.Add(Resources.ProcessMessageFailed2,
-                                   string.Format(Resources.Culture, Resources.ProcessMessageFailed3, log));
+                                   string.Format(CultureInfo.CurrentCulture, Resources.ProcessMessageFailed3, log));
                 ExceptionFormatter formatter =
                     new ExceptionFormatter(additionalInfo, Resources.DistributorEventLoggerDefaultApplicationName);
 
@@ -732,6 +733,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// <param name="log">Log entry object to write.</param>
         public override void Write(LogEntry log)
         {
+            if(log == null) throw new ArgumentNullException("log");
             var traceEventCache = new TraceEventCache();
 
             var ignoredActivityId = log.ActivityId;

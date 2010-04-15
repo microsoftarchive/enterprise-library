@@ -113,7 +113,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
         /// </summary>
         protected override void WriteDescription()
         {
-            WriteSingleElement("Description", string.Format(Resources.Culture, Resources.ExceptionWasCaught, base.Exception.GetType().FullName));
+            WriteSingleElement("Description", string.Format(CultureInfo.CurrentCulture, Resources.ExceptionWasCaught, base.Exception.GetType().FullName));
         }
 
         /// <summary>

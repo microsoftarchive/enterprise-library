@@ -35,7 +35,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration.Unit
         [TestInitialize]
         public void SetUp()
         {
-            instrumentationSettings = new InstrumentationConfigurationSection(true, true, false);
+            instrumentationSettings = new InstrumentationConfigurationSection(true, true);
             loggingSettings = new LoggingSettings();
             configurationSource = new DictionaryConfigurationSource();
             configurationSource.Add(LoggingSettings.SectionName, loggingSettings);

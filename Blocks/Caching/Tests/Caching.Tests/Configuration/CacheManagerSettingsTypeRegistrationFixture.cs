@@ -89,6 +89,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests.Configuration
             Assert.IsNotNull(cacheManagerRegistration);
             Assert.IsTrue(cacheManagerRegistration.IsDefault);
         }
+        
+        [TestMethod]
+        public void ThenCacheManagerRegistrationIsPublicName()
+        {
+            TypeRegistration cacheManagerRegistration =
+                registrations.Where(r => r.ServiceType == typeof (ICacheManager)).First();
+            Assert.IsTrue(cacheManagerRegistration.IsPublicName);
+        }
 
         [TestMethod]
         public void ThenReturnsRegistrationForNullBackingStore()
@@ -178,6 +186,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests.Configuration
             Assert.AreEqual(typeof(IsolatedStorageBackingStore), backingStoreRegistration.ImplementationType);
         }
 
+        [TestMethod]
+        public void ThenBackingStoreRegistrationIsNotPublicName()
+        {
+            TypeRegistration backingStoreRegistration = registrations.Where(r => r.ServiceType == typeof(IBackingStore)).First();
+
+            Assert.IsFalse(backingStoreRegistration.IsPublicName);
+        }
 
     }
 

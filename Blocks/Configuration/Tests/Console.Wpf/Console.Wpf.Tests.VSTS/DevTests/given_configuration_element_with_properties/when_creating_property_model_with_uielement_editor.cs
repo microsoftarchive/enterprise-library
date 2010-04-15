@@ -60,33 +60,33 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_configuration_element_with_prope
             property = sectionModel.CreateElementProperty(sectionModel, new PropertyDescriptorReturnEditor(originalPropertyDescriptor));
         }
 
-
-
         [TestMethod]
         public void then_editor_specified_in_editor_attributes_sets_has_editor()
         {
-            Assert.IsNotNull(property.CreateCustomVisual());
+            Assert.IsInstanceOfType(property.BindableProperty, typeof(FrameworkEditorBindableProperty));
 
-            Assert.AreNotSame(editorInstance, property.CreateCustomVisual());
-            editorInstance = property.CreateCustomVisual();
+            FrameworkEditorBindableProperty frameworkEditorBindable = (FrameworkEditorBindableProperty)property.BindableProperty;
+            Assert.AreNotSame(editorInstance, frameworkEditorBindable.CreateEditorInstance());
+            editorInstance = frameworkEditorBindable.CreateEditorInstance();
         }
 
         [TestMethod]
         public void then_editor_is_returned_as_ui_element()
         {
-            Assert.IsNotNull(property.CreateCustomVisual());
-            Assert.IsInstanceOfType(property.CreateCustomVisual(), typeof(System.Windows.Controls.Button));
-
-            Assert.AreNotSame(editorInstance, property.CreateCustomVisual());
-            editorInstance = property.CreateCustomVisual();
+            FrameworkEditorBindableProperty frameworkEditorBindable = (FrameworkEditorBindableProperty)property.BindableProperty;
+            
+            Assert.IsNotNull(frameworkEditorBindable.CreateEditorInstance());
+            Assert.AreNotSame(editorInstance, frameworkEditorBindable.CreateEditorInstance());
+            editorInstance = frameworkEditorBindable.CreateEditorInstance();
         }
 
 
         [TestMethod]
         public void then_editor_data_context_is_BindableProperty()
         {
-            Assert.IsNotNull(property.CreateCustomVisual());
-            Assert.IsInstanceOfType(property.CreateCustomVisual().DataContext, typeof(BindableProperty));
+            FrameworkEditorBindableProperty frameworkEditorBindable = (FrameworkEditorBindableProperty)property.BindableProperty;
+
+            Assert.IsInstanceOfType(frameworkEditorBindable.CreateEditorInstance().DataContext, typeof(BindableProperty));
         }
 
         private class PropertyDescriptorReturnEditor : PropertyDescriptor

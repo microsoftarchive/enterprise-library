@@ -47,7 +47,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests.Conf
 
         protected override void Act()
         {
-            ConfigureCryptography = base.ConfigurationSourceBuilder.ConfigureCryptograpy();
+            ConfigureCryptography = base.ConfigurationSourceBuilder.ConfigureCryptography();
         }
 
         [TestMethod]
@@ -66,7 +66,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests.Conf
         {
             base.Arrange();
 
-            ConfigureCryptography = ConfigurationSourceBuilder.ConfigureCryptograpy();
+            ConfigureCryptography = ConfigurationSourceBuilder.ConfigureCryptography();
         }
 
 

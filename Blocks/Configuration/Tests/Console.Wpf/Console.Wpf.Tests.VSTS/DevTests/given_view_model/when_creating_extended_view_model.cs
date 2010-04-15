@@ -79,11 +79,6 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model
             Assert.IsTrue(viewModel.DescendentElements().OfType<ElementViewModelEx2>().Any());
         }
 
-        [TestMethod]
-        public void then_view_model_custom_UIElement_type_is_specified()
-        {
-            var element = viewModel.DescendentElements().OfType<ElementViewModelEx>().First();
-            Assert.AreEqual(typeof(UIElement), element.CustomVisualType);
-        }
+     
     }
 }

@@ -14,24 +14,43 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Configuration;
+using System.Globalization;
+using System.Collections;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics
 {
+#pragma warning disable 1591
+
+    /// <summary>
+    /// This class supports block-specific configuration design-time and is not
+    /// intended to be used directly from your code.
+    /// </summary>
     public class ValidatedTypeReferenceViewModel : CollectionElementViewModel
     {
         public ValidatedTypeReferenceViewModel(ElementCollectionViewModel containingCollection, ConfigurationElement thisElement)
-            :base(containingCollection, thisElement)
+            : base(containingCollection, thisElement)
         {
+        }
+
+        public override string Name
+        {
+            get
+            {
+                var baseName = (string) base.Property("Name").Value;
+
+                return TypeNameParserHelper.ParseTypeName(baseName);
+            }
         }
 
         protected override object CreateBindable()
         {
-            return new HierarchicalViewModel(
+            return new HierarchicalLayout(
                 this,
-                this.ChildElement("Rulesets").ChildElements)
-                {
-                    ColumnName = "Column0"
-                };
+                this.ChildElement("Rulesets").ChildElements,
+                0);
         }
+
+        
     }
+#pragma warning restore 1591
 }

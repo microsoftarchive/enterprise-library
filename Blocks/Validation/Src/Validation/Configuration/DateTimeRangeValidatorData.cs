@@ -13,6 +13,7 @@ using System;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 using System.ComponentModel;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design.Validation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 {
@@ -40,6 +41,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
         /// Overridden in order to add Editor Attribute.
         /// </summary>
         [EditorAttribute(CommonDesignTime.EditorTypes.DatePickerEditor, CommonDesignTime.EditorTypes.FrameworkElement)]
+        [Validation(ValidationDesignTime.Validators.RangeBoundValidator)]
         public override DateTime LowerBound
         {
             get { return base.LowerBound; }
@@ -50,6 +52,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
         /// Overridden in order to add Editor Attribute.
         /// </summary>
         [EditorAttribute(CommonDesignTime.EditorTypes.DatePickerEditor, CommonDesignTime.EditorTypes.FrameworkElement)]
+        [Validation(ValidationDesignTime.Validators.RangeBoundValidator)]
         public override DateTime UpperBound
         {
             get { return base.UpperBound; }

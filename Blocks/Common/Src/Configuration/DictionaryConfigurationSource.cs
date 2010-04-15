@@ -68,7 +68,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         /// <remarks>
         /// If a configuration section with the specified name already exists it will be replaced.
         /// </remarks>
-        /// <param name="name">The name by which the <paramref name="configurationSection"/> should be added.</param>
+        /// <param name="name">The name by which the <paramref name="section"/> should be added.</param>
         /// <param name="section">The configuration section to add.</param>
         public void Add(string name, ConfigurationSection section)
         {

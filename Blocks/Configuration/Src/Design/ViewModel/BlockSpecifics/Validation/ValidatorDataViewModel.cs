@@ -15,9 +15,16 @@ using System.Linq;
 using System.Text;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration;
+using System.Globalization;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics
 {
+#pragma warning disable 1591
+
+    /// <summary>
+    /// This class supports block-specific configuration design-time and is not
+    /// intended to be used directly from your code.
+    /// </summary>
     public class ValidatorDataViewModel: CollectionElementViewModel
     {
         public ValidatorDataViewModel(ElementCollectionViewModel containingCollection, ConfigurationElement thisElement)
@@ -27,14 +34,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
 
         protected override object CreateBindable()
         {
-            return new HierarchicalViewModel(
+            int columnIndex = this.AncestorElements().Where(x=>typeof(ValidatorData).IsAssignableFrom( x.ConfigurationType)).Count() + 3;
+
+            return new HierarchicalLayout(
                 this,
-                ChildElement("Validators") != null ?
-                    ChildElement("Validators").ChildElements :
-                    Enumerable.Empty<ElementViewModel>())
-                {
-                    ColumnName = string.Format("Column{0}", this.AncesterElements().Where(x=>typeof(ValidatorData).IsAssignableFrom( x.ConfigurationType)).Count() + 3)
-                };
+                ChildElement("Validators") != null ? ChildElement("Validators").ChildElements : Enumerable.Empty<ElementViewModel>(),
+                columnIndex);
         }
     }
+#pragma warning restore 1591
 }

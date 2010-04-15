@@ -20,7 +20,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.Expirations.Tests
 {
     [TestClass]
-    public class FileDependencyFixture
+    public partial class FileDependencyFixture
     {
         [TestInitialize]
         public void InitializeTestFile()
@@ -92,50 +92,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Expirations.Tests
         public void SecurityPermissionsDoNotCauseExceptionIfFileNotPresent()
         {
             new FileDependency("shouldNeverExist");
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(SecurityException))]
-        public void NoPermissionToReadFileWhenCreated()
-        {
-            FileIOPermission denyPermission =
-                new FileIOPermission(FileIOPermissionAccess.Read, Path.GetFullPath("TestFile"));
-
-            PermissionSet permissions = new PermissionSet(PermissionState.None);
-            permissions.AddPermission(denyPermission);
-            permissions.Deny();
-
-            try
-            {
-                new FileDependency("TestFile");
-            }
-            finally
-            {
-                CodeAccessPermission.RevertDeny();
-            }
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(SecurityException))]
-        public void NoPermissionToReadWhenCheckingExpiration()
-        {
-            FileDependency dependency = new FileDependency("TestFile");
-
-            FileIOPermission denyPermission =
-                new FileIOPermission(FileIOPermissionAccess.Read, Path.GetFullPath("TestFile"));
-
-            PermissionSet permissions = new PermissionSet(PermissionState.None);
-            permissions.AddPermission(denyPermission);
-            permissions.Deny();
-
-            try
-            {
-                dependency.HasExpired();
-            }
-            finally
-            {
-                CodeAccessPermission.RevertDeny();
-            }
         }
     }
 }

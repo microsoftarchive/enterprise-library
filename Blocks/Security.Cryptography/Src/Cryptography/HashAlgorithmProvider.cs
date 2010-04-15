@@ -148,6 +148,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography
 		/// <returns>The extracted salt.</returns>
 		protected byte[] ExtractSalt(byte[] hashedtext)
 		{
+		    if (hashedtext == null) throw new ArgumentNullException("hashedtext");
+
 			if (!saltEnabled)
 			{
 				return null;

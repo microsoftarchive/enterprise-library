@@ -147,7 +147,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         [TestMethod]
         public void TraceSourceDefaultLevelIsOverridenFromMachineKey()
         {
-            TraceSourceData sourceData = new TraceSourceData("source1", SourceLevels.Critical);
+            TraceSourceData sourceData = new TraceSourceData("source1", SourceLevels.Critical, true);
             section.TraceSources.Add(sourceData);
 
             MockRegistryKey machineTraceSourcesKey = new MockRegistryKey(false);
@@ -155,10 +155,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             MockRegistryKey machineSource1Key = new MockRegistryKey(false);
             machineTraceSourcesKey.AddSubKey("source1", machineSource1Key);
             machineSource1Key.AddStringValue(LoggingSettingsManageabilityProvider.SourceDefaultLevelPropertyName, SourceLevels.Error.ToString());
+            machineSource1Key.AddBooleanValue(LoggingSettingsManageabilityProvider.SourceAutoFlushPropertyName, false);
 
             provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual(SourceLevels.Error, sourceData.DefaultLevel);
+            Assert.AreEqual(false, sourceData.AutoFlush);
 
             Assert.IsTrue(MockRegistryKey.CheckAllClosed(machineTraceSourcesKey, machineSource1Key));
         }
@@ -166,7 +168,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         [TestMethod]
         public void TraceSourceDefaultLevelIsOverridenFromUserKey()
         {
-            TraceSourceData sourceData = new TraceSourceData("source1", SourceLevels.Critical);
+            TraceSourceData sourceData = new TraceSourceData("source1", SourceLevels.Critical, true);
             section.TraceSources.Add(sourceData);
 
             MockRegistryKey userTraceSourcesKey = new MockRegistryKey(false);
@@ -174,10 +176,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             MockRegistryKey userSource1Key = new MockRegistryKey(false);
             userTraceSourcesKey.AddSubKey("source1", userSource1Key);
             userSource1Key.AddStringValue(LoggingSettingsManageabilityProvider.SourceDefaultLevelPropertyName, SourceLevels.Error.ToString());
+            userSource1Key.AddBooleanValue(LoggingSettingsManageabilityProvider.SourceAutoFlushPropertyName, false);
 
             provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual(SourceLevels.Error, sourceData.DefaultLevel);
+            Assert.AreEqual(false, sourceData.AutoFlush);
 
             Assert.IsTrue(MockRegistryKey.CheckAllClosed(userTraceSourcesKey, userSource1Key));
         }
@@ -187,7 +191,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         [TestMethod]
         public void TraceSourceTraceListenersAreEmptiedIfMachineKeyIsPresentForSourceButKeyForListenersIsNot()
         {
-            TraceSourceData sourceData = new TraceSourceData("source1", SourceLevels.Critical);
+            TraceSourceData sourceData = new TraceSourceData("source1", SourceLevels.Critical, true);
             section.TraceSources.Add(sourceData);
             sourceData.TraceListeners.Add(new TraceListenerReferenceData("listener1"));
             sourceData.TraceListeners.Add(new TraceListenerReferenceData("listener2"));
@@ -197,6 +201,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             MockRegistryKey machineSource1Key = new MockRegistryKey(false);
             machineTraceSourcesKey.AddSubKey("source1", machineSource1Key);
             machineSource1Key.AddEnumValue<SourceLevels>(LoggingSettingsManageabilityProvider.SourceDefaultLevelPropertyName, SourceLevels.ActivityTracing);
+            machineSource1Key.AddBooleanValue(LoggingSettingsManageabilityProvider.SourceAutoFlushPropertyName, false);
 
             provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
@@ -208,7 +213,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         [TestMethod]
         public void TraceSourceTraceListenersAreEmptiedIfListenerKeyIsEmptyInMachineKey()
         {
-            TraceSourceData sourceData = new TraceSourceData("source1", SourceLevels.Critical);
+            TraceSourceData sourceData = new TraceSourceData("source1", SourceLevels.Critical, true);
             section.TraceSources.Add(sourceData);
             sourceData.TraceListeners.Add(new TraceListenerReferenceData("listener1"));
             sourceData.TraceListeners.Add(new TraceListenerReferenceData("listener2"));
@@ -220,6 +225,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             machineSource1Key.AddEnumValue<SourceLevels>(LoggingSettingsManageabilityProvider.SourceDefaultLevelPropertyName, SourceLevels.ActivityTracing);
             MockRegistryKey machineSource1ListenersKey = new MockRegistryKey(false);
             machineSource1Key.AddSubKey(LoggingSettingsManageabilityProvider.SourceTraceListenersPropertyName, machineSource1ListenersKey);
+            machineSource1Key.AddBooleanValue(LoggingSettingsManageabilityProvider.SourceAutoFlushPropertyName, false);
 
             provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
@@ -231,7 +237,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         [TestMethod]
         public void TraceSourceTraceListenersAreOverridenIfListenerKeyIsPresentInMachineKey()
         {
-            TraceSourceData sourceData = new TraceSourceData("source1", SourceLevels.Critical);
+            TraceSourceData sourceData = new TraceSourceData("source1", SourceLevels.Critical, true);
             section.TraceSources.Add(sourceData);
             sourceData.TraceListeners.Add(new TraceListenerReferenceData("listener1"));
             sourceData.TraceListeners.Add(new TraceListenerReferenceData("listener2"));
@@ -241,6 +247,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             MockRegistryKey machineSource1Key = new MockRegistryKey(false);
             machineTraceSourcesKey.AddSubKey("source1", machineSource1Key);
             machineSource1Key.AddEnumValue<SourceLevels>(LoggingSettingsManageabilityProvider.SourceDefaultLevelPropertyName, SourceLevels.ActivityTracing);
+            machineSource1Key.AddBooleanValue(LoggingSettingsManageabilityProvider.SourceAutoFlushPropertyName, false);
             MockRegistryKey machineSource1ListenersKey = new MockRegistryKey(false);
             machineSource1Key.AddSubKey(LoggingSettingsManageabilityProvider.SourceTraceListenersPropertyName, machineSource1ListenersKey);
             machineSource1ListenersKey.AddBooleanValue("listener3", true);
@@ -262,7 +269,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         [TestMethod]
         public void TraceSourceTraceListenersAreEmptiedIfUserKeyIsPresentForSourceButKeyForListenersIsNot()
         {
-            TraceSourceData sourceData = new TraceSourceData("source1", SourceLevels.Critical);
+            TraceSourceData sourceData = new TraceSourceData("source1", SourceLevels.Critical, true);
             section.TraceSources.Add(sourceData);
             sourceData.TraceListeners.Add(new TraceListenerReferenceData("listener1"));
             sourceData.TraceListeners.Add(new TraceListenerReferenceData("listener2"));
@@ -272,6 +279,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             MockRegistryKey userSource1Key = new MockRegistryKey(false);
             userTraceSourcesKey.AddSubKey("source1", userSource1Key);
             userSource1Key.AddEnumValue<SourceLevels>(LoggingSettingsManageabilityProvider.SourceDefaultLevelPropertyName, SourceLevels.ActivityTracing);
+            userSource1Key.AddBooleanValue(LoggingSettingsManageabilityProvider.SourceAutoFlushPropertyName, false);
 
             provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
@@ -283,7 +291,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         [TestMethod]
         public void TraceSourceTraceListenersAreEmptiedIfListenerKeyIsEmptyInUserKey()
         {
-            TraceSourceData sourceData = new TraceSourceData("source1", SourceLevels.Critical);
+            TraceSourceData sourceData = new TraceSourceData("source1", SourceLevels.Critical, true);
             section.TraceSources.Add(sourceData);
             sourceData.TraceListeners.Add(new TraceListenerReferenceData("listener1"));
             sourceData.TraceListeners.Add(new TraceListenerReferenceData("listener2"));
@@ -294,6 +302,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             userTraceSourcesKey.AddSubKey("source1", userSource1Key);
             MockRegistryKey userSource1ListenersKey = new MockRegistryKey(false);
             userSource1Key.AddEnumValue<SourceLevels>(LoggingSettingsManageabilityProvider.SourceDefaultLevelPropertyName, SourceLevels.ActivityTracing);
+            userSource1Key.AddBooleanValue(LoggingSettingsManageabilityProvider.SourceAutoFlushPropertyName, false);
             userSource1Key.AddSubKey(LoggingSettingsManageabilityProvider.SourceTraceListenersPropertyName, userSource1ListenersKey);
 
             provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
@@ -306,7 +315,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         [TestMethod]
         public void TraceSourceTraceListenersAreOverridenIfListenerKeyIsPresentInUserKey()
         {
-            TraceSourceData sourceData = new TraceSourceData("source1", SourceLevels.Critical);
+            TraceSourceData sourceData = new TraceSourceData("source1", SourceLevels.Critical, true);
             section.TraceSources.Add(sourceData);
             sourceData.TraceListeners.Add(new TraceListenerReferenceData("listener1"));
             sourceData.TraceListeners.Add(new TraceListenerReferenceData("listener2"));
@@ -316,6 +325,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             MockRegistryKey userSource1Key = new MockRegistryKey(false);
             userTraceSourcesKey.AddSubKey("source1", userSource1Key);
             userSource1Key.AddEnumValue<SourceLevels>(LoggingSettingsManageabilityProvider.SourceDefaultLevelPropertyName, SourceLevels.ActivityTracing);
+            userSource1Key.AddBooleanValue(LoggingSettingsManageabilityProvider.SourceAutoFlushPropertyName, false);
             MockRegistryKey userSource1ListenersKey = new MockRegistryKey(false);
             userSource1Key.AddSubKey(LoggingSettingsManageabilityProvider.SourceTraceListenersPropertyName, userSource1ListenersKey);
             userSource1ListenersKey.AddBooleanValue("listener3", true);
@@ -335,7 +345,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         [TestMethod]
         public void MachineKeyOverridesTakePrecedenceOverUserKeyOverrides()
         {
-            TraceSourceData sourceData = new TraceSourceData("source1", SourceLevels.Critical);
+            TraceSourceData sourceData = new TraceSourceData("source1", SourceLevels.Critical, true);
             section.TraceSources.Add(sourceData);
             sourceData.TraceListeners.Add(new TraceListenerReferenceData("listener1"));
             sourceData.TraceListeners.Add(new TraceListenerReferenceData("listener2"));
@@ -345,6 +355,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             MockRegistryKey machineSource1Key = new MockRegistryKey(false);
             machineTraceSourcesKey.AddSubKey("source1", machineSource1Key);
             machineSource1Key.AddEnumValue<SourceLevels>(LoggingSettingsManageabilityProvider.SourceDefaultLevelPropertyName, SourceLevels.ActivityTracing);
+            machineSource1Key.AddBooleanValue(LoggingSettingsManageabilityProvider.SourceAutoFlushPropertyName, false);
             MockRegistryKey machineSource1ListenersKey = new MockRegistryKey(false);
             machineSource1Key.AddSubKey(LoggingSettingsManageabilityProvider.SourceTraceListenersPropertyName, machineSource1ListenersKey);
             machineSource1ListenersKey.AddBooleanValue("listener3", true);
@@ -355,6 +366,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             MockRegistryKey userSource1Key = new MockRegistryKey(false);
             userTraceSourcesKey.AddSubKey("source1", userSource1Key);
             userSource1Key.AddEnumValue<SourceLevels>(LoggingSettingsManageabilityProvider.SourceDefaultLevelPropertyName, SourceLevels.ActivityTracing);
+            userSource1Key.AddBooleanValue(LoggingSettingsManageabilityProvider.SourceAutoFlushPropertyName, false);
             MockRegistryKey userSource1ListenersKey = new MockRegistryKey(false);
             userSource1Key.AddSubKey(LoggingSettingsManageabilityProvider.SourceTraceListenersPropertyName, userSource1ListenersKey);
             userSource1ListenersKey.AddBooleanValue("listener6", true);
@@ -377,7 +389,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         [TestMethod]
         public void MachineKeySourceOverrideWithoutListenersSubKeyTakesPrecedenceOverUserKeyOverrides()
         {
-            TraceSourceData sourceData = new TraceSourceData("source1", SourceLevels.Critical);
+            TraceSourceData sourceData = new TraceSourceData("source1", SourceLevels.Critical, true);
             section.TraceSources.Add(sourceData);
             sourceData.TraceListeners.Add(new TraceListenerReferenceData("listener1"));
             sourceData.TraceListeners.Add(new TraceListenerReferenceData("listener2"));
@@ -387,11 +399,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             MockRegistryKey machineSource1Key = new MockRegistryKey(false);
             machineTraceSourcesKey.AddSubKey("source1", machineSource1Key);
             machineSource1Key.AddEnumValue<SourceLevels>(LoggingSettingsManageabilityProvider.SourceDefaultLevelPropertyName, SourceLevels.ActivityTracing);
+            machineSource1Key.AddBooleanValue(LoggingSettingsManageabilityProvider.SourceAutoFlushPropertyName, false);
             MockRegistryKey userTraceSourcesKey = new MockRegistryKey(false);
             userKey.AddSubKey(LoggingSettingsManageabilityProvider.CategorySourcesKeyName, userTraceSourcesKey);
             MockRegistryKey userSource1Key = new MockRegistryKey(false);
             userTraceSourcesKey.AddSubKey("source1", userSource1Key);
             userSource1Key.AddEnumValue<SourceLevels>(LoggingSettingsManageabilityProvider.SourceDefaultLevelPropertyName, SourceLevels.ActivityTracing);
+            userSource1Key.AddBooleanValue(LoggingSettingsManageabilityProvider.SourceAutoFlushPropertyName, false);
             MockRegistryKey userSource1ListenersKey = new MockRegistryKey(false);
             userSource1Key.AddSubKey(LoggingSettingsManageabilityProvider.SourceTraceListenersPropertyName, userSource1ListenersKey);
             userSource1ListenersKey.AddBooleanValue("listener6", true);
@@ -414,24 +428,33 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             section.SpecialTraceSources.AllEventsTraceSource.DefaultLevel = SourceLevels.Critical;
             section.SpecialTraceSources.ErrorsTraceSource.DefaultLevel = SourceLevels.Critical;
             section.SpecialTraceSources.NotProcessedTraceSource.DefaultLevel = SourceLevels.Critical;
+            section.SpecialTraceSources.AllEventsTraceSource.AutoFlush = true;
+            section.SpecialTraceSources.ErrorsTraceSource.AutoFlush = true;
+            section.SpecialTraceSources.NotProcessedTraceSource.AutoFlush = true;
 
             MockRegistryKey machineSpecialSourcesKey = new MockRegistryKey(false);
             machineKey.AddSubKey(LoggingSettingsManageabilityProvider.SpecialSourcesKeyName, machineSpecialSourcesKey);
             MockRegistryKey machineAllEventsSourceKey = new MockRegistryKey(false);
             machineSpecialSourcesKey.AddSubKey(LoggingSettingsManageabilityProvider.SpecialSourcesAllEventsKeyName, machineAllEventsSourceKey);
             machineAllEventsSourceKey.AddStringValue(LoggingSettingsManageabilityProvider.SourceDefaultLevelPropertyName, SourceLevels.Error.ToString());
+            machineAllEventsSourceKey.AddBooleanValue(LoggingSettingsManageabilityProvider.SourceAutoFlushPropertyName, false);
             MockRegistryKey machineErrorsSourceKey = new MockRegistryKey(false);
             machineSpecialSourcesKey.AddSubKey(LoggingSettingsManageabilityProvider.SpecialSourcesErrorsKeyName, machineErrorsSourceKey);
             machineErrorsSourceKey.AddStringValue(LoggingSettingsManageabilityProvider.SourceDefaultLevelPropertyName, SourceLevels.Information.ToString());
+            machineErrorsSourceKey.AddBooleanValue(LoggingSettingsManageabilityProvider.SourceAutoFlushPropertyName, false);
             MockRegistryKey machineNotProcessedSourceKey = new MockRegistryKey(false);
             machineSpecialSourcesKey.AddSubKey(LoggingSettingsManageabilityProvider.SpecialSourcesNotProcessedKeyName, machineNotProcessedSourceKey);
             machineNotProcessedSourceKey.AddStringValue(LoggingSettingsManageabilityProvider.SourceDefaultLevelPropertyName, SourceLevels.Warning.ToString());
+            machineNotProcessedSourceKey.AddBooleanValue(LoggingSettingsManageabilityProvider.SourceAutoFlushPropertyName, false);
 
             provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual(SourceLevels.Error, section.SpecialTraceSources.AllEventsTraceSource.DefaultLevel);
             Assert.AreEqual(SourceLevels.Information, section.SpecialTraceSources.ErrorsTraceSource.DefaultLevel);
             Assert.AreEqual(SourceLevels.Warning, section.SpecialTraceSources.NotProcessedTraceSource.DefaultLevel);
+            Assert.AreEqual(false, section.SpecialTraceSources.AllEventsTraceSource.AutoFlush);
+            Assert.AreEqual(false, section.SpecialTraceSources.ErrorsTraceSource.AutoFlush);
+            Assert.AreEqual(false, section.SpecialTraceSources.NotProcessedTraceSource.AutoFlush);
 
             Assert.IsTrue(MockRegistryKey.CheckAllClosed(machineSpecialSourcesKey,
                                                          machineAllEventsSourceKey, machineErrorsSourceKey, machineNotProcessedSourceKey));
@@ -443,26 +466,36 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             section.SpecialTraceSources.AllEventsTraceSource.DefaultLevel = SourceLevels.Critical;
             section.SpecialTraceSources.ErrorsTraceSource.DefaultLevel = SourceLevels.Critical;
             section.SpecialTraceSources.NotProcessedTraceSource.DefaultLevel = SourceLevels.Critical;
+            section.SpecialTraceSources.AllEventsTraceSource.AutoFlush = true;
+            section.SpecialTraceSources.ErrorsTraceSource.AutoFlush = true;
+            section.SpecialTraceSources.NotProcessedTraceSource.AutoFlush = true;
 
             MockRegistryKey machineSpecialSourcesKey = new MockRegistryKey(false);
             machineKey.AddSubKey(LoggingSettingsManageabilityProvider.SpecialSourcesKeyName, machineSpecialSourcesKey);
             MockRegistryKey machineAllEventsSourceKey = new MockRegistryKey(false);
             machineSpecialSourcesKey.AddSubKey(LoggingSettingsManageabilityProvider.SpecialSourcesAllEventsKeyName, machineAllEventsSourceKey);
             machineAllEventsSourceKey.AddStringValue(LoggingSettingsManageabilityProvider.SourceDefaultLevelPropertyName, SourceLevels.Error.ToString());
+            machineAllEventsSourceKey.AddBooleanValue(LoggingSettingsManageabilityProvider.SourceAutoFlushPropertyName, false);
             MockRegistryKey userSpecialSourcesKey = new MockRegistryKey(false);
             userKey.AddSubKey(LoggingSettingsManageabilityProvider.SpecialSourcesKeyName, userSpecialSourcesKey);
             MockRegistryKey userAllEventsSourceKey = new MockRegistryKey(false);
             userSpecialSourcesKey.AddSubKey(LoggingSettingsManageabilityProvider.SpecialSourcesAllEventsKeyName, userAllEventsSourceKey);
             userAllEventsSourceKey.AddStringValue(LoggingSettingsManageabilityProvider.SourceDefaultLevelPropertyName, SourceLevels.Information.ToString());
+            userAllEventsSourceKey.AddBooleanValue(LoggingSettingsManageabilityProvider.SourceAutoFlushPropertyName, false);
             MockRegistryKey userErrorsSourceKey = new MockRegistryKey(false);
             userSpecialSourcesKey.AddSubKey(LoggingSettingsManageabilityProvider.SpecialSourcesErrorsKeyName, userErrorsSourceKey);
             userErrorsSourceKey.AddStringValue(LoggingSettingsManageabilityProvider.SourceDefaultLevelPropertyName, SourceLevels.Information.ToString());
+            userErrorsSourceKey.AddBooleanValue(LoggingSettingsManageabilityProvider.SourceAutoFlushPropertyName, false);
 
             provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual(SourceLevels.Error, section.SpecialTraceSources.AllEventsTraceSource.DefaultLevel);
             Assert.AreEqual(SourceLevels.Information, section.SpecialTraceSources.ErrorsTraceSource.DefaultLevel);
             Assert.AreEqual(SourceLevels.Critical, section.SpecialTraceSources.NotProcessedTraceSource.DefaultLevel);
+
+            Assert.AreEqual(false, section.SpecialTraceSources.AllEventsTraceSource.AutoFlush);
+            Assert.AreEqual(false, section.SpecialTraceSources.ErrorsTraceSource.AutoFlush);
+            Assert.AreEqual(true, section.SpecialTraceSources.NotProcessedTraceSource.AutoFlush);
 
             Assert.IsTrue(
                 MockRegistryKey.CheckAllClosed(machineSpecialSourcesKey, machineAllEventsSourceKey,
@@ -475,24 +508,33 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             section.SpecialTraceSources.AllEventsTraceSource.DefaultLevel = SourceLevels.Critical;
             section.SpecialTraceSources.ErrorsTraceSource.DefaultLevel = SourceLevels.Critical;
             section.SpecialTraceSources.NotProcessedTraceSource.DefaultLevel = SourceLevels.Critical;
+            section.SpecialTraceSources.AllEventsTraceSource.AutoFlush = true;
+            section.SpecialTraceSources.ErrorsTraceSource.AutoFlush = true;
+            section.SpecialTraceSources.NotProcessedTraceSource.AutoFlush = true;
 
             MockRegistryKey userSpecialSourcesKey = new MockRegistryKey(false);
             userKey.AddSubKey(LoggingSettingsManageabilityProvider.SpecialSourcesKeyName, userSpecialSourcesKey);
             MockRegistryKey userAllEventsSourceKey = new MockRegistryKey(false);
             userSpecialSourcesKey.AddSubKey(LoggingSettingsManageabilityProvider.SpecialSourcesAllEventsKeyName, userAllEventsSourceKey);
             userAllEventsSourceKey.AddStringValue(LoggingSettingsManageabilityProvider.SourceDefaultLevelPropertyName, SourceLevels.Error.ToString());
+            userAllEventsSourceKey.AddBooleanValue(LoggingSettingsManageabilityProvider.SourceAutoFlushPropertyName, false);
             MockRegistryKey userErrorsSourceKey = new MockRegistryKey(false);
             userSpecialSourcesKey.AddSubKey(LoggingSettingsManageabilityProvider.SpecialSourcesErrorsKeyName, userErrorsSourceKey);
             userErrorsSourceKey.AddStringValue(LoggingSettingsManageabilityProvider.SourceDefaultLevelPropertyName, SourceLevels.Information.ToString());
+            userErrorsSourceKey.AddBooleanValue(LoggingSettingsManageabilityProvider.SourceAutoFlushPropertyName, false);
             MockRegistryKey userNotProcessedSourceKey = new MockRegistryKey(false);
             userSpecialSourcesKey.AddSubKey(LoggingSettingsManageabilityProvider.SpecialSourcesNotProcessedKeyName, userNotProcessedSourceKey);
             userNotProcessedSourceKey.AddStringValue(LoggingSettingsManageabilityProvider.SourceDefaultLevelPropertyName, SourceLevels.Warning.ToString());
+            userNotProcessedSourceKey.AddBooleanValue(LoggingSettingsManageabilityProvider.SourceAutoFlushPropertyName, false);
 
             provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual(SourceLevels.Error, section.SpecialTraceSources.AllEventsTraceSource.DefaultLevel);
             Assert.AreEqual(SourceLevels.Information, section.SpecialTraceSources.ErrorsTraceSource.DefaultLevel);
             Assert.AreEqual(SourceLevels.Warning, section.SpecialTraceSources.NotProcessedTraceSource.DefaultLevel);
+            Assert.AreEqual(false, section.SpecialTraceSources.AllEventsTraceSource.AutoFlush);
+            Assert.AreEqual(false, section.SpecialTraceSources.ErrorsTraceSource.AutoFlush);
+            Assert.AreEqual(false, section.SpecialTraceSources.NotProcessedTraceSource.AutoFlush);
 
             Assert.IsTrue(MockRegistryKey.CheckAllClosed(userSpecialSourcesKey,
                                                          userAllEventsSourceKey, userErrorsSourceKey, userNotProcessedSourceKey));
@@ -996,8 +1038,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         {
             DictionaryConfigurationSource configurationSource = new DictionaryConfigurationSource();
             configurationSource.Add(LoggingSettings.SectionName, section);
-            section.TraceSources.Add(new TraceSourceData("source1", SourceLevels.Error));
-            section.TraceSources.Add(new TraceSourceData("source2", SourceLevels.Error));
+            section.TraceSources.Add(new TraceSourceData("source1", SourceLevels.Error, true));
+            section.TraceSources.Add(new TraceSourceData("source2", SourceLevels.Error, true));
             section.TraceListeners.Add(new FlatFileTraceListenerData("listener1", "file", ""));
 
             Dictionary<Type, ConfigurationElementManageabilityProvider> subProviders
@@ -1019,6 +1061,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             Assert.IsTrue(sourcePartsEnumerator.MoveNext());
             Assert.AreSame(typeof(AdmDropDownListPart), sourcePartsEnumerator.Current.GetType());
             Assert.AreEqual(LoggingSettingsManageabilityProvider.SourceDefaultLevelPropertyName,
+                            sourcePartsEnumerator.Current.ValueName);
+            Assert.IsTrue(sourcePartsEnumerator.MoveNext());
+            Assert.AreSame(typeof(AdmCheckboxPart), sourcePartsEnumerator.Current.GetType());
+            Assert.AreEqual(LoggingSettingsManageabilityProvider.SourceAutoFlushPropertyName,
                             sourcePartsEnumerator.Current.ValueName);
             Assert.IsTrue(sourcePartsEnumerator.MoveNext());
             Assert.AreSame(typeof(AdmTextPart), sourcePartsEnumerator.Current.GetType());
@@ -1059,6 +1105,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             Assert.IsTrue(sourcePartsEnumerator.MoveNext());
             Assert.AreSame(typeof(AdmDropDownListPart), sourcePartsEnumerator.Current.GetType());
             Assert.AreEqual(LoggingSettingsManageabilityProvider.SourceDefaultLevelPropertyName,
+                            sourcePartsEnumerator.Current.ValueName);
+            Assert.IsTrue(sourcePartsEnumerator.MoveNext());
+            Assert.AreSame(typeof(AdmCheckboxPart), sourcePartsEnumerator.Current.GetType());
+            Assert.AreEqual(LoggingSettingsManageabilityProvider.SourceAutoFlushPropertyName,
                             sourcePartsEnumerator.Current.ValueName);
             Assert.IsTrue(sourcePartsEnumerator.MoveNext());
             Assert.AreSame(typeof(AdmTextPart), sourcePartsEnumerator.Current.GetType());

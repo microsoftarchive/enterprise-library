@@ -72,6 +72,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation
 		/// <returns>True if the attributes on the given <paramref name="instrumentedType"></paramref> matches <paramref name="attributeType"></paramref></returns>
 		protected bool ConfirmAttributeExists(Type instrumentedType, Type attributeType)
 		{
+            if (instrumentedType == null) throw new ArgumentNullException("instrumentedType");
+
 			object[] attributesFound = instrumentedType.GetCustomAttributes(attributeType, false);
 			return attributesFound.Length == 0 ? false : true;
 		}

@@ -15,6 +15,7 @@ using System.Globalization;
 using System.Linq;
 using System.Configuration;
 using System.ComponentModel;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Extensions;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Utility;
@@ -22,9 +23,13 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Properties;
 using Microsoft.Practices.Unity;
 using System.Diagnostics;
+using System.Collections.ObjectModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
 {
+    /// <summary>
+    /// The <see cref="ElementCollectionViewModel"/> is a model for a <see cref="ConfigurationElementCollection"/>.
+    /// </summary>
     public class ElementCollectionViewModel : ElementViewModel
     {
         readonly ConfigurationElementCollection thisElementCollection;
@@ -37,7 +42,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         
         DiscoverDerivedConfigurationTypesService configurationTypesService;
 
-        [InjectionConstructor]
+        /// <summary>
+        /// Initializes a new instance of <see cref="ElementCollectionViewModel"/>
+        /// </summary>
+        /// <param name="parentElementModel">The parent <see cref="ElementViewModel"/>.</param>
+        /// <param name="declaringProperty">The <see cref="PropertyDescriptor"/> of the <see cref="ConfigurationElement"/> property containing this collection.</param>
         public ElementCollectionViewModel(ElementViewModel parentElementModel, PropertyDescriptor declaringProperty)
             : base(parentElementModel, declaringProperty)
         {
@@ -58,12 +67,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             Debug.Assert(configurationCollectionAttribute != null);
         }
 
+        /// <summary>
+        /// Provides dependencies for <see cref="ElementCollectionViewModel"/> not provided via the constructor.
+        /// </summary>
+        /// <param name="configurationTypesService">The service for disovering derived configuration types.</param>
         [InjectionMethod]
         public void ElementCollectionViewModelServiceDependencies(DiscoverDerivedConfigurationTypesService configurationTypesService)
         {
             this.configurationTypesService = configurationTypesService;
         }
 
+        /// <summary>
+        /// Creates or collections all the commands related to this <see cref="ElementViewModel"/>.
+        /// </summary>
+        /// <returns></returns>
         protected override IEnumerable<CommandModel> GetAllCommands()
         {
             var baseCommands = base.CreateCustomCommands()
@@ -72,6 +89,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             return baseCommands.Union(new CommandModel[]{ContainingSection.CreateElementCollectionAddCommands(Attributes, this)});
         }
 
+        /// <summary>
+        /// The configuration element <see cref="Type"/>s contained by this collection.
+        /// </summary>
         public Type CollectionElementType
         {
             get
@@ -80,13 +100,24 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             }
         }
 
+        /// <summary>
+        /// Gets or sets a value indicating if this collection contains polymorphic items.
+        /// </summary>
+        /// <value>
+        /// Returns <see langword="true"/> if the collection maintains polymorphic items.
+        /// Otherwise, returns <see langword="false"/>.
+        /// </value>
         public bool IsPolymorphicCollection
         {
             get; 
-            private set;
+            protected set;
         }
 
-        public virtual Type[] PolymorphicCollectionElementTypes
+
+        /// <summary>
+        /// Returns the set of polymorphic collection element types this collection can hold.
+        /// </summary>
+        public virtual IEnumerable<Type> PolymorphicCollectionElementTypes
         {
             get
             {
@@ -96,15 +127,31 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
                     if (customPolyporpicCollectionElementType != null) availablePolymorphicTypes = availablePolymorphicTypes.Union(new[] { customPolyporpicCollectionElementType });
 
                     polymorphicCollectionElementTypes = availablePolymorphicTypes
-                            .Select( x=> new { ElementType = x, Browsable = TypeDescriptor.GetAttributes(x).OfType<BrowsableAttribute>().FirstOrDefault() })
-                            .Where( x=>x.Browsable == null || x.Browsable.Browsable)
-                            .Select( x=>x.ElementType)
-                            .ToArray();
+                        .FilterSelectSafe( x=> new { ElementType = x, Browsable = TypeDescriptor.GetAttributes(x).OfType<BrowsableAttribute>().FirstOrDefault() })
+                        .Where( x=>x.Browsable == null || x.Browsable.Browsable)
+                        .Select( x=>x.ElementType)
+                        .ToArray();
                 }
                 return polymorphicCollectionElementTypes;
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating that this Element's <see cref="ElementViewModel.Path"/> is reliable 
+        /// </summary>
+        public override bool IsElementPathReliableXPath
+        {
+            get
+            {
+                if (ParentElement != null && !ParentElement.IsElementPathReliableXPath) return false;
+
+                return true;
+            }
+        }
+
+        /// <summary>
+        /// Gets a string that can be appended to the parent's <see cref="ElementViewModel.Path"/> to compose a <see cref="ElementViewModel.Path"/> used to uniquely identify this <see cref="ElementViewModel"/>. <br/>
+        /// </summary>
         protected override string GetLocalPathPart()
         {
             if (configurationPropertyAttribute.IsDefaultCollection) return "";
@@ -112,38 +159,71 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             return configurationPropertyAttribute.Name;
         }
 
+        /// <summary>
+        /// Determines if a <see cref="CollectionElementViewModel"/> is the first element in the collection.
+        /// </summary>
+        /// <param name="element"></param>
+        /// <returns>
+        /// Returns <see langword="true"/> if the <paramref name="element"/> is the first element in the collection.
+        /// Otherwise, returns <see langword="false"/>.
+        /// </returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
         public bool IsFirst(CollectionElementViewModel element)
         {
             if (!ChildElements.Any()) return false;
 
-            return ChildElements.First().Path == element.Path;
+            return ChildElements.First().ElementId == element.ElementId;
         }
 
+        /// <summary>
+        /// Determines if a <see cref="CollectionElementViewModel"/> is the last element in the collection.
+        /// </summary>
+        /// <param name="element"></param>
+        /// <returns>
+        /// Returns <see langword="true"/> if the <paramref name="element"/> is the last element in the collection.
+        /// Otherwise, returns <see langword="false"/>.
+        /// </returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
         public bool IsLast(CollectionElementViewModel element)
         {
             if (!ChildElements.Any()) return false;
 
-            return ChildElements.Last().Path == element.Path;
+            return ChildElements.Last().ElementId == element.ElementId;
         }
 
+
+        /// <summary>
+        /// Gets all the <see cref="ElementViewModel"/> instances that are directly contained in this <see cref="ElementViewModel"/> instance.
+        /// </summary>
+        /// <returns>
+        /// </returns>
         protected override IEnumerable<ElementViewModel> GetAllChildElements()
         {
             var leaf = base.GetAllChildElements();
 
             var contained = thisElementCollection
-                                .OfType<ConfigurationElement>()
-                                .Select(x => new { Browasble = TypeDescriptor.GetAttributes(x).OfType<BrowsableAttribute>().FirstOrDefault(), Instance = x })
-                                .Where(x => x.Browasble == null || x.Browasble.Browsable)
-                                .Select(x => ContainingSection.CreateCollectionElement(this, x.Instance))
-                                .Cast<ElementViewModel>();
+                .OfType<ConfigurationElement>()
+                .Select(x => new { Browasble = TypeDescriptor.GetAttributes(x).OfType<BrowsableAttribute>().FirstOrDefault(), Instance = x })
+                .Where(x => x.Browasble == null || x.Browasble.Browsable)
+                .Select(x => ContainingSection.CreateCollectionElement(this, x.Instance))
+                .Cast<ElementViewModel>();
 
             return leaf.Union(contained);
         }
         
+        /// <summary>
+        /// Adds a new item of type <paramref name="elementType"/> to the collection.
+        /// </summary>
+        /// <param name="elementType">The <see cref="Type"/> of element to add.  It should be of, or derive from, the type indicated in <see cref="CollectionElementType"/>.</param>
+        /// <returns>An <see cref="ElementViewModel"/> for the added type.</returns>
         public virtual ElementViewModel AddNewCollectionElement(Type elementType)
         {
+            EnsureHasChildElements();
+
             var element = mergeableConfigurationCollection.CreateNewElement(elementType);
             var childElementModel = ContainingSection.CreateCollectionElement(this, element);
+
+            
 
             if (childElementModel.NameProperty != null)
             {
@@ -153,8 +233,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             // add the new element to the configuration.
             mergeableConfigurationCollection.ResetCollection(
                 thisElementCollection.OfType<ConfigurationElement>()
-                .Concat(new [] { element })
-                .ToArray());
+                    .Concat(new [] { element })
+                    .ToArray());
 
 
             foreach (var property in childElementModel.Properties)
@@ -162,15 +242,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
                 DesigntimeDefaultAttribute defaultDesigntimeValue = property.Attributes.OfType<DesigntimeDefaultAttribute>().FirstOrDefault();
                 if (defaultDesigntimeValue != null)
                 {
-                    property.Value = property.ConvertFromBindableValue(defaultDesigntimeValue.DefaultValue);
+                    property.Value = property.ConvertFromBindableValueInvariant(defaultDesigntimeValue.BindableDefaultValue);
                 }
             }
 
+            childElementModel.Initialize(new InitializeContext());
             InitializeElementProperties(childElementModel);
 
             // add the new element to the view model.
-            ChildElements.Add(childElementModel);
-
+            AddChildToView(childElementModel);
 
             Validate();
 
@@ -190,33 +270,34 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
 
         private static void InitializeElementProperties(ElementViewModel childElementModel)
         {
-            var propertiesForInitialization = childElementModel.Properties.OfType<INeedInitialization>();
-            foreach(var propInitializer in propertiesForInitialization)
+            var properties = childElementModel.Properties;
+            foreach(var propInitializer in properties)
             {
                 propInitializer.Initialize(new InitializeContext());
             }
         }
 
-        //todo: should we have a Delete() on ElementViewModel too? then override on CollectionElement.
-        // from here just call element.Delete();
+        /// <summary>
+        /// Deletes an element from the collection.
+        /// </summary>
+        /// <param name="element">The element to delete.</param>
         public void Delete(CollectionElementViewModel element)
         {
             //remove the element from configuration collection.
             var list =
-                thisElementCollection.OfType<ConfigurationElement>().Where(x => x != element.ConfigurationElement /*todo: should compare on key-values, not on reference*/).
+                thisElementCollection.OfType<ConfigurationElement>().Where(x => x != element.ConfigurationElement).
                     ToArray();
             mergeableConfigurationCollection.ResetCollection(list);
 
             //remove the element from the view.
-            ChildElements.Remove(element);
+            RemoveChildFromView(element);
 
             Validate();
 
-            //notify deleted.
             element.OnDeleted();
         }
 
-        #region calculate name methods todo: Externalize
+        #region calculate name methods
         
         private string CalculateNameFromType(Type elementType)
         {
@@ -230,17 +311,25 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             return FindUniqueNewName(baseName);
         }
 
+        /// <summary>
+        /// Calculates a unique name based on the items in the collection.
+        /// </summary>
+        /// <param name="baseName">The base name to use in calculating the inique name.</param>
+        /// <returns>A name that no other element in the collection matches.</returns>
+        /// <remarks>
+        /// The unique name is calculated by appending increasing integers values greater than 1 until a unique name is discovered.
+        /// </remarks>
         public string FindUniqueNewName(string baseName)
         {
             int number = 1;
             while(true)
             {
-                string proposedName = string.Format(CultureInfo.CurrentUICulture,
+                string proposedName = string.Format(CultureInfo.CurrentCulture,
                                                     Resources.NewCollectionElementNameFormat,
                                                     baseName,
-                                                    number == 1 ? string.Empty : number.ToString()).Trim();
+                                                    number == 1 ? string.Empty : number.ToString(CultureInfo.CurrentCulture)).Trim();
 
-                if (this.ChildElements.Any(x => x.NameProperty != null && x.NameProperty.BindableProperty.BindableValue == proposedName))
+                if (this.ChildElements.Any(x => x.NameProperty != null && (proposedName == x.NameProperty.Value as string)))
                     number++;
                 else
                     return proposedName;
@@ -249,6 +338,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
 
         #endregion
 
+        ///<summary>
+        /// Validates this <see cref="ElementViewModel"/> and its <see cref="ElementViewModel.Properties"/>.
+        ///</summary>
         public override void Validate()
         {
             base.Validate();
@@ -257,11 +349,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
 
         #region Move Up & Down
 
+        /// <summary>
+        /// Moves a <see cref="CollectionElementViewModel"/> in this collection one position earlier in the <see cref="ElementViewModel.ChildElements"/> sequence.
+        /// </summary>
+        /// <param name="elementViewModel">The <see cref="CollectionElementViewModel"/> in this collection to move.</param>
         public void MoveUp(CollectionElementViewModel elementViewModel)
         {
-           MoveElement(elementViewModel, -1);
+            MoveElement(elementViewModel, -1);
         }
 
+        /// <summary>
+        /// Moves a <see cref="CollectionElementViewModel"/> in this collection one position later in the <see cref="ElementViewModel.ChildElements"/> sequence.
+        /// </summary>
+        /// <param name="elementViewModel">The <see cref="CollectionElementViewModel"/> in this collection to move.</param>
         public void MoveDown(CollectionElementViewModel elementViewModel)
         {
             MoveElement(elementViewModel, 1);         
@@ -276,10 +376,26 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             mergeableConfigurationCollection.ResetCollection(list);
 
             //move the element in the view.
-            MoveConfigurationItem(ChildElements, element, moveDistance);
+            MoveConfigurationItem((ObservableCollection<ElementViewModel>)ChildElements, element, moveDistance);
         }
 
-        private void MoveConfigurationItem<T>(IList<T> elements, T element, int relativeMoveIndex) where T : class
+        private static void MoveConfigurationItem<T>(System.Collections.ObjectModel.ObservableCollection<T> elements, T element, int relativeMoveIndex) where T : class
+        {
+            for (int i = 0; i < elements.Count(); i++)
+            {
+                if (elements[i] != element) continue;
+                var newIndex = i + relativeMoveIndex;
+                if (newIndex >= 0 && newIndex < elements.Count())
+                {
+                    var tmp = elements[newIndex];
+                    elements[newIndex] = element;
+                    elements[i] = tmp;
+                    return;
+                }
+            }
+        }
+
+        private static void MoveConfigurationItem<T>(IList<T> elements, T element, int relativeMoveIndex) where T : class
         {
             for(int i = 0; i < elements.Count(); i++)
             {

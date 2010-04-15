@@ -1,0 +1,46 @@
+﻿//===============================================================================
+// Microsoft patterns & practices Enterprise Library
+// Core
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+
+// This file is used by Code Analysis to maintain SuppressMessage 
+// attributes that are applied to this project. 
+// Project-level suppressions either have no target or are given 
+// a specific target and scoped to a namespace, type, member, etc. 
+//
+// To add a suppression to this file, right-click the message in the 
+// Error List, point to "Suppress Message(s)", and click 
+// "In Project Suppression File". 
+// You do not need to add suppressions to this file manually. 
+
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields", Scope = "member", Target = "Microsoft.Practices.EnterpriseLibrary.Configuration.Console.Hosting.ConfigurationEditorUI.#AddApplicationBlockMenu")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields", Scope = "member", Target = "Microsoft.Practices.EnterpriseLibrary.Configuration.Console.Hosting.ConfigurationEditorUI.#EnvironmentsMenu")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1030:UseEventsWhereAppropriate", Scope = "member", Target = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls.Toolkit.VisualStateManager.#RaiseCurrentStateChanged(Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls.Toolkit.VisualStateGroup,Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls.Toolkit.VisualState,Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls.Toolkit.VisualState,System.Windows.Controls.Control)")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1030:UseEventsWhereAppropriate", Scope = "member", Target = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls.Toolkit.VisualStateManager.#RaiseCurrentStateChanging(Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls.Toolkit.VisualStateGroup,Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls.Toolkit.VisualState,Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls.Toolkit.VisualState,System.Windows.Controls.Control)")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily", Scope = "member", Target = "Microsoft.Practices.EnterpriseLibrary.Configuration.Console.Hosting.ConfigurationEditorUI.#System.Windows.Markup.IComponentConnector.Connect(System.Int32,System.Object)")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields", Scope = "member", Target = "Microsoft.Practices.EnterpriseLibrary.Configuration.Console.Hosting.ConfigurationEditorUI.#Toolbar")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields", Scope = "member", Target = "Microsoft.Practices.EnterpriseLibrary.Configuration.Console.Hosting.ConfigurationEditorUI.#WizardMenu")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1703:ResourceStringsShouldBeSpelledCorrectly", MessageId = "dconfig", Scope = "resource", Target = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Properties.Resources.resources")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1703:ResourceStringsShouldBeSpelledCorrectly", MessageId = "dconfig", Scope = "resource", Target = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.EnvironmentalOverrides.DesignResources.resources")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "o", Scope = "member", Target = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls.Toolkit.Windows.Controls.VisualStateBehavior.#UpdateStateHandler(System.Object,System.EventArgs)")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily", Scope = "member", Target = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls.Toolkit.Windows.Controls.DateTimeHelper.#GetDateFormat(System.Globalization.CultureInfo)")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "monthControl", Scope = "member", Target = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls.Toolkit.Windows.Controls.Calendar.#OnDisplayModePropertyChanged(System.Windows.DependencyObject,System.Windows.DependencyPropertyChangedEventArgs)")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "resources", Scope = "member", Target = "Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration.Design.ChooseDataProtectionScopeControl.#InitializeComponent()")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Scope = "member", Target = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls.Toolkit.VisualStateManager.#RaiseCurrentStateChanged(Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls.Toolkit.VisualStateGroup,Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls.Toolkit.VisualState,Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls.Toolkit.VisualState,System.Windows.Controls.Control)")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Scope = "member", Target = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls.Toolkit.VisualStateManager.#RaiseCurrentStateChanging(Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls.Toolkit.VisualStateGroup,Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls.Toolkit.VisualState,Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls.Toolkit.VisualState,System.Windows.Controls.Control)")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields", Scope = "member", Target = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls.Toolkit.Windows.Controls.Primitives.CalendarItem.#_disabledVisual")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields", Scope = "member", Target = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Hosting.SectionView.#Environments")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields", Scope = "member", Target = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Hosting.SectionView.#itemsControl")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields", Scope = "member", Target = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Hosting.SectionView.#scrollViewer")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields", Scope = "member", Target = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Hosting.SectionView.#TextBlock")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields", Scope = "member", Target = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors.TypeBrowser.#Browser")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields", Scope = "member", Target = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors.TypeBrowser.#Cancel")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields", Scope = "member", Target = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors.TypeBrowser.#TypeName")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields", Scope = "member", Target = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors.TypeBrowser.#TypesTree")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2109:ReviewVisibleEventHandlers", Scope = "member", Target = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls.Toolkit.Windows.Controls.VisualStateBehavior.#UpdateStateHandler(System.Object,System.EventArgs)")]

@@ -31,6 +31,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
             TraceListener listener,
             NameValueCollection attributes)
         {
+            if(listener == null) throw new ArgumentNullException("listener");
+            if(attributes == null) throw new ArgumentNullException("attributes");
+
             this.innerTraceListener = listener;
 
             foreach (string key in attributes)

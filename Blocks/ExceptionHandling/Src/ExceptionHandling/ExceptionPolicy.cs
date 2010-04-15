@@ -39,7 +39,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
         /// <code>
         /// try
         ///	{
-        ///		Foo();
+        ///		DoWork();
         ///	}
         ///	catch (Exception e)
         ///	{
@@ -77,7 +77,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
         /// <code>
         /// try
         ///	{
-        ///		Foo();
+        ///		DoWork();
         ///	}
         ///	catch (Exception e)
         ///	{

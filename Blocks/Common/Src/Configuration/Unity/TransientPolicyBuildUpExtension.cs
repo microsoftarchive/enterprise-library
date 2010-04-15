@@ -57,7 +57,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Unity
 
             object result;
             var buildContext = new BuilderContext(Context.Strategies.MakeStrategyChain(),
-                Context.Lifetime, transientPolicies, new NamedTypeBuildKey(t, name),
+                Context.Lifetime, Context.Policies, transientPolicies, new NamedTypeBuildKey(t, name),
                 existing);
             try
             {

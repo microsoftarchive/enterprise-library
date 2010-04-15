@@ -55,6 +55,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security
         /// an anonymous identity, otherwise <strong>false</strong>.</returns>
         public override bool Evaluate(IIdentity identity)
         {
+            if (identity == null) throw new ArgumentNullException("identity");
+
             return !identity.IsAuthenticated;
         }        
     }

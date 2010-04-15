@@ -26,7 +26,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
     /// the creation of the ADM template categories and policies required to edit Group Policy Objects for the block.
     /// </summary>
     /// <remarks>
-    /// This class performs the actual Group Policy update and Wmi object generation for the <see cref="CryptographySettings"/>
+    /// This class performs the actual Group Policy update for the <see cref="CryptographySettings"/>
     /// configuration section. Processing for <see cref="HashProviderData"/> and <see cref="SymmetricProviderData"/> 
     /// instances is delegated to <see cref="ConfigurationElementManageabilityProvider"/> objects registered to the 
     /// configuration object data types.

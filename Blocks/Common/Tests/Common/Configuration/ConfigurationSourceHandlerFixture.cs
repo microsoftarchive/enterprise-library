@@ -64,7 +64,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
                 base.EnsurePropagatingSectionChangeEvents(sourceName, sectionName);
             }
 
-            public void DoRefresh()
+            public void DoPublicRefresh()
             {
                 base.Refresh();
             }
@@ -76,12 +76,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
 
 
             public int RefreshCount;
-            protected override void Refresh()
+            protected override void DoRefresh()
             {
-                base.Refresh();
-                RefreshCount++;
+                base.DoRefresh();
+                ++RefreshCount;
             }
-
         }
     }
 
@@ -179,7 +178,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
                 sourceChangedEvent = args;
             };
 
-            base.ConfigurationSourceHandler.DoRefresh();
+            base.ConfigurationSourceHandler.DoPublicRefresh();
 
         }
 
@@ -213,7 +212,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
                 sourceChangedEvent = args;
             };
 
-            base.ConfigurationSourceHandler.DoRefresh();
+            base.ConfigurationSourceHandler.DoPublicRefresh();
 
         }
 
@@ -304,7 +303,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
 
             Source.Remove(ConfigurationSourceSection.SectionName);
             Source.Add(ConfigurationSourceSection.SectionName, new ConfigurationSourceSection { });
-            ConfigurationSourceHandler.DoRefresh();
+            ConfigurationSourceHandler.DoPublicRefresh();
         }
 
         [TestMethod]

@@ -65,7 +65,7 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="APTCAFixture.cs" />
+    <Compile Include="APTCAFixture.2008.cs" />
     <Compile Include="BackgroundSchedulerFixture.cs" />
     <Compile Include="BackingStoreImplementations\CustomBackingStoreFixture.cs" />
     <Compile Include="BackingStoreImplementations\IsolatedBackingStoreWithEncryptionFixture.cs" />
@@ -96,6 +96,7 @@
     <Compile Include="CustomCacheManagerFixture.cs" />
     <Compile Include="ExpirationPollTimerFixture.cs" />
     <Compile Include="Expirations\AbsoluteTimeFixture.cs" />
+    <Compile Include="Expirations\FileDependencyFixture.2008.cs" />
     <Compile Include="Expirations\ExtendedFormatFixture.cs" />
     <Compile Include="Expirations\FileDependencyFixture.cs" />
     <Compile Include="Expirations\SlidingTimeFixture.cs" />
@@ -103,7 +104,6 @@
     <Compile Include="Expirations\ExtendedFormatTimeFixture.cs" />
     <Compile Include="Instrumentation\CachingEventLogFixture.cs" />
     <Compile Include="Instrumentation\CachingPerformanceCountersFixture.cs" />
-    <Compile Include="Instrumentation\CachingWmiFixture.cs" />
     <Compile Include="Instrumentation\DefaultCachingEventLoggerFixture.cs" />
     <Compile Include="IsolatedStoragePersistentCacheFactoryFixture.cs" />
     <Compile Include="PriorityDateComparerFixture.cs" />

@@ -124,7 +124,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
 			// 
 			// chooseProtectionScopeControl
 			// 
-			this.chooseProtectionScopeControl.Filepath = "";
+			this.chooseProtectionScopeControl.FilePath = "";
 			this.chooseProtectionScopeControl.Location = new System.Drawing.Point(13, 13);
 			this.chooseProtectionScopeControl.Name = "chooseProtectionScopeControl";
 			this.chooseProtectionScopeControl.Size = new System.Drawing.Size(351, 178);
@@ -172,7 +172,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
 			// openExistingKeyFileControl
 			// 
 			this.openExistingKeyFileControl.AutoValidate = System.Windows.Forms.AutoValidate.Disable;
-			this.openExistingKeyFileControl.Filepath = "";
+			this.openExistingKeyFileControl.FilePath = "";
 			this.openExistingKeyFileControl.Location = new System.Drawing.Point(0, 0);
 			this.openExistingKeyFileControl.Name = "openExistingKeyFileControl";
 			this.openExistingKeyFileControl.Size = new System.Drawing.Size(351, 178);

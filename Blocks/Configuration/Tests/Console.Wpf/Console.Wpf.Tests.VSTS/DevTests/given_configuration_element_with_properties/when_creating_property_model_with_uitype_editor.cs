@@ -87,7 +87,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_configuration_element_with_prope
         public void then_editor_specified_in_editor_attributes_sets_has_editor()
         {
             var Prop3 = properties.Where(x => x.PropertyName == "Prop3").FirstOrDefault();
-            Assert.AreEqual(EditorBehavior.ModalPopup, Prop3.EditorBehavior);
+            Assert.IsInstanceOfType(Prop3.BindableProperty, typeof(PopupEditorBindableProperty));
 
         }
 
@@ -98,13 +98,6 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_configuration_element_with_prope
             ((PopupEditorBindableProperty)Prop3.BindableProperty).LaunchEditor.Execute(null);
         }
 
-
-        [TestMethod]
-        public void then_editor_is_popup()
-        {
-            var Prop3 = properties.Where(x => x.PropertyName == "Prop3").FirstOrDefault();
-            Assert.AreEqual(EditorBehavior.ModalPopup, Prop3.EditorBehavior);
-        }
 
         [TestMethod]
         public void then_show_ui_type_editor_sets_value()

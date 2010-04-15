@@ -18,6 +18,7 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configuration
 {
     [TestClass]
+    [DeploymentItem("test.exe.config")]
     public class AssemblyNameMatchingRuleDataFixture : MatchingRuleDataFixtureBase
     {
         [TestInitialize]

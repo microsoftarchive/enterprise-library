@@ -18,6 +18,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using Microsoft.Practices.EnterpriseLibrary.Common;
 using Microsoft.Practices.EnterpriseLibrary.Data.Properties;
+using Microsoft.Practices.Unity.Utility;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Data
 {
@@ -195,6 +196,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
 
                 public IMapBuilderContext<TResult> WithFunc(Func<IDataRecord, TMember> f)
                 {
+                    Guard.ArgumentNotNull(f, "f");
                     builderContext.mappings[property] = new FuncMapping(property, row => f(row));
 
                     return builderContext;
@@ -217,7 +219,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
         IMapBuilderContext<TResult> MapByName(PropertyInfo property);
 
         /// <summary>
-        /// Adds a property mapping to the context for <paramref name="property"/> that specifies this property will be mapped to a column with a matching name.
+        /// Adds a property mapping to the context for <paramref name="propertySelector"/> that specifies this property will be mapped to a column with a matching name.
         /// </summary>
         /// <param name="propertySelector">A lambda function that returns the property that should be mapped.</param>
         /// <returns>The fluent interface that can be used further specify mappings.</returns>
@@ -231,14 +233,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
         IMapBuilderContext<TResult> DoNotMap(PropertyInfo property);
 
         /// <summary>
-        /// Adds a property mapping to the context for <paramref name="property"/> that specifies this property will be ignored while mapping.
+        /// Adds a property mapping to the context for <paramref name="propertySelector"/> that specifies this property will be ignored while mapping.
         /// </summary>
         /// <param name="propertySelector">A lambda function that returns the property that should be mapped.</param>
         /// <returns>The fluent interface that can be used further specify mappings.</returns>
         IMapBuilderContext<TResult> DoNotMap<TMember>(Expression<Func<TResult, TMember>> propertySelector);
 
         /// <summary>
-        /// Adds a property mapping to the context for <paramref name="property"/>.
+        /// Adds a property mapping to the context for <paramref name="propertySelector"/>.
         /// </summary>
         /// <param name="propertySelector">A lambda function that returns the property that should be mapped.</param>
         /// <returns>The fluent interface that can be used to specify how to map this property.</returns>

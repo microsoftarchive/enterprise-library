@@ -74,7 +74,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests
 
 		private static InstrumentationConfigurationSection GenerateInstrumentationSettings()
 		{
-            InstrumentationConfigurationSection settings = new InstrumentationConfigurationSection(true, true, true, "fooApplicationName");
+            InstrumentationConfigurationSection settings = new InstrumentationConfigurationSection(true, true, "fooApplicationName");
 
 			return settings;
 		}

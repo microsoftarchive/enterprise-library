@@ -22,6 +22,7 @@ using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Filters;
 using Microsoft.Practices.EnterpriseLibrary.Common.Properties;
+using System.Globalization;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 {
@@ -95,7 +96,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
                 throw new ArgumentNullException("attributes");
 
             if (!typeof(ILogFilter).IsAssignableFrom(customFilterType))
-                throw new ArgumentException(string.Format(Resources.Culture,
+                throw new ArgumentException(string.Format(CultureInfo.CurrentCulture,
                     Resources.ExceptionTypeMustImplementInterface, typeof(ILogFilter)), "customFilterType");
 
             var builder = new FilterCustomBuilder(context, customFilterName, customFilterType, attributes);

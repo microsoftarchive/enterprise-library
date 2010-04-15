@@ -144,6 +144,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Authorization failed.
+        /// </summary>
+        internal static string AuthorizationFailed {
+            get {
+                return ResourceManager.GetString("AuthorizationFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Authorization.
         /// </summary>
         internal static string AuthorizationProvidersDisplayName {

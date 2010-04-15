@@ -10,15 +10,12 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Configuration;
 using System.Xml;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Configuration.Design.HostAdapterV5;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
-using Microsoft.Practices.Unity;
 
 namespace Console.Wpf.Tests.VSTS.Mocks
 {
@@ -113,8 +110,8 @@ namespace Console.Wpf.Tests.VSTS.Mocks
 
     public class CustomCommand : CommandModel
     {
-        public CustomCommand(MyCustomCommandAttribute commandAttribute)
-            : base(commandAttribute)
+        public CustomCommand(MyCustomCommandAttribute commandAttribute, IUIServiceWpf uiService)
+            : base(commandAttribute, uiService)
         {
 
         }

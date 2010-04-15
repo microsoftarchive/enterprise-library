@@ -20,7 +20,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
 {
     /// <summary>
     /// Provides an implementation for <see cref="FlatFileTraceListenerData"/> that
-    /// splits policy overrides processing and WMI objects generation, performing appropriate logging of 
+    /// processes policy overrides, performing appropriate logging of 
     /// policy processing errors.
     /// </summary>
     public class FlatFileTraceListenerDataManageabilityProvider
@@ -82,7 +82,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
                 512,
                 false);
 
-            AddTraceOptionsPart(contentBuilder, configurationObject.TraceOutputOptions);
+            AddTraceOptionsPart(contentBuilder, elementPolicyKeyName, configurationObject.TraceOutputOptions);
 
             AddFilterPart(contentBuilder, configurationObject.Filter);
 
@@ -105,7 +105,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             String footerOverride = policyKey.GetStringValue(FooterPropertyName);
             String formatterOverride = GetFormatterPolicyOverride(policyKey);
             String headerOverride = policyKey.GetStringValue(HeaderPropertyName);
-            TraceOptions? traceOutputOptionsOverride = policyKey.GetEnumValue<TraceOptions>(TraceOutputOptionsPropertyName);
+            TraceOptions? traceOutputOptionsOverride =
+                GetFlagsEnumOverride<TraceOptions>(policyKey, TraceOutputOptionsPropertyName);
             SourceLevels? filterOverride = policyKey.GetEnumValue<SourceLevels>(FilterPropertyName);
 
             configurationObject.FileName = fileNameOverride;

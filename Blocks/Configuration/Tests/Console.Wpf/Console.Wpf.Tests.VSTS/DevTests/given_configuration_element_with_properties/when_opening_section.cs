@@ -24,6 +24,7 @@ using Console.Wpf.Tests.VSTS.DevTests;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.Unity;
 using Moq;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.TestSupport;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_configuration_element_with_properties
 {

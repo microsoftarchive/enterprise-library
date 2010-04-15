@@ -33,12 +33,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         {
             if (algorithmType == null)
             {
-                throw new ArgumentNullException("symmetricAlgorithm");
+                throw new ArgumentNullException("algorithmType");
             }
 
             if (!typeof(SymmetricAlgorithm).IsAssignableFrom(algorithmType))
             {
-                throw new ArgumentException(KeyManagerResources.TypeShouldDeriveFromSymmetricAlgorithm, "symmetricAlgorithm");
+                throw new ArgumentException(KeyManagerResources.TypeShouldDeriveFromSymmetricAlgorithm, "algorithmType");
             }
 
             this.algorithm = CreateAlgorithm(algorithmType);
@@ -100,7 +100,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         }
 
         [ReflectionPermission(SecurityAction.Demand)]
-        private SymmetricAlgorithm CreateAlgorithm(Type symmetricAlgorithm)
+        private static SymmetricAlgorithm CreateAlgorithm(Type symmetricAlgorithm)
         {
             return (SymmetricAlgorithm) Activator.CreateInstance(symmetricAlgorithm);
         }

@@ -81,12 +81,24 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.SqlCe
 		/// <seealso cref="DbConnection"/>        
 		public override DbConnection CreateConnection()
 		{
-			DbConnection connection = SqlCeConnectionPool.CreateConnection(this);
-			connection.ConnectionString = ConnectionString;
-			return connection;
+            using(DatabaseConnectionWrapper wrapper = SqlCeConnectionPool.CreateConnection(this))
+            {
+                wrapper.AddRef();
+                wrapper.Connection.ConnectionString = ConnectionString;
+                return wrapper.Connection;
+            }
 		}
 
-		/// <summary>
+	    /// <summary>
+	    /// Gets a "wrapped" connection for use outside a transaction.
+	    /// </summary>
+	    /// <returns>The wrapped connection.</returns>
+	    protected override DatabaseConnectionWrapper GetWrappedConnection()
+	    {
+	        return SqlCeConnectionPool.CreateConnection(this, true);
+	    }
+
+	    /// <summary>
 		///		Don't need an implementation for Sql Server CE.
 		/// </summary>
 		/// <param name="discoveryCommand"></param>
@@ -289,7 +301,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.SqlCe
 		/// <returns>The number of rows affected</returns>
 		public virtual int ExecuteNonQuerySql(string sqlCommand, out int lastAddedId, params DbParameter[] parameters)
 		{
-			using (ConnectionWrapper wrapper = GetOpenConnection())
+			using (DatabaseConnectionWrapper wrapper = GetOpenConnection())
 			{
 				using (DbCommand command = GetSqlStringCommand(sqlCommand))
 				{
@@ -324,10 +336,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.SqlCe
 		///		this reader.
 		/// </summary>
 		/// <remarks>
-		///		Unlike other Execute... methods that take a <see cref="DbCommand"/> instance, this method
-		///		does not set the command behavior to close the connection when you close the reader.
-		///		That means you'll need to close the connection yourself, by calling the
-		///		command.Connection.Close() method after you're finished using the reader.
+		///		The <see cref="SqlCeResultSet"/> returned from this method will close the connection on dispose.
 		/// </remarks>
 		/// <param name="command">
 		///		The command that contains the SQL to execute. It should be a SELECT statement.
@@ -337,18 +346,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.SqlCe
 		/// <returns>The reader in the form of a <see cref="SqlCeResultSet"/></returns>
 		public virtual SqlCeResultSet ExecuteResultSet(DbCommand command, ResultSetOptions options, params DbParameter[] parameters)
 		{
-			ConnectionWrapper wrapper = GetOpenConnection(false);
-
-			try
+			using(DatabaseConnectionWrapper wrapper = GetOpenConnection())
 			{
 				AddParameters(command, parameters);
 				PrepareCommand(command, wrapper.Connection);
-				return DoExecuteResultSet((SqlCeCommand)command, options);
-			}
-			catch
-			{
-				wrapper.Connection.Close();			// Close the connection since we asked the wrapper not to, and we're done with it
-				throw;
+				return new SqlCeResultSetWrapper(wrapper, DoExecuteResultSet((SqlCeCommand)command, options));
 			}
 		}
 
@@ -358,10 +360,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.SqlCe
 		///		this reader.
 		/// </summary>
 		/// <remarks>
-		///		Unlike other Execute... methods that take a <see cref="DbCommand"/> instance, this method
-		///		does not set the command behavior to close the connection when you close the reader.
-		///		That means you'll need to close the connection yourself, by calling the
-		///		command.Connection.Close() method after you're finished using the reader.
+		///		The <see cref="SqlCeResultSet"/> returned from this method will close the connection on dispose.
 		/// </remarks>
 		/// <param name="command">The command that contains the SQL to execute. It should be a SELECT statement.</param>
 		/// <param name="parameters">An option set of <see cref="DbParameter"/> parameters</param>
@@ -372,14 +371,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.SqlCe
 		}
 
 		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="command"></param>
-		/// <param name="transaction"></param>
-		/// <param name="options"></param>
-		/// <param name="parameters"></param>
-		/// <returns></returns>
-		public virtual SqlCeResultSet ExecuteResultSet(DbCommand command, DbTransaction transaction, ResultSetOptions options, params DbParameter[] parameters)
+        ///		Sql Server CE provides a new type of data reader, the <see cref="SqlCeResultSet"/>, that provides
+        ///		new abilities and better performance over a standard reader. This method provides access to
+        ///		this reader.
+        /// </summary>
+        ///		Unlike other Execute... methods that take a <see cref="DbCommand"/> instance, this method
+        ///		does not set the command behavior to close the connection when you close the reader.
+        ///		That means you'll need to close the connection yourself, by calling the
+        ///		command.Connection.Close() method after you're finished using the reader.
+        /// <param name="command">The command that contains the SQL to execute. It should be a SELECT statement.</param>
+		/// <param name="transaction">Transaction to execute the command under.</param>
+        /// <param name="options">Controls how the <see cref="SqlCeResultSet"/> behaves</param>
+        /// <param name="parameters">An option set of <see cref="DbParameter"/> parameters</param>
+        /// <returns>The reader in the form of a <see cref="SqlCeResultSet"/></returns>
+        public virtual SqlCeResultSet ExecuteResultSet(DbCommand command, DbTransaction transaction, ResultSetOptions options, params DbParameter[] parameters)
 		{
 			AddParameters(command, parameters);
 			PrepareCommand(command, transaction);
@@ -387,12 +392,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.SqlCe
 		}
 
 		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="command"></param>
-		/// <param name="transaction"></param>
-		/// <param name="parameters"></param>
-		/// <returns></returns>
+        ///		Sql Server CE provides a new type of data reader, the <see cref="SqlCeResultSet"/>, that provides
+        ///		new abilities and better performance over a standard reader. This method provides access to
+        ///		this reader.
+        /// </summary>
+        ///		Unlike other Execute... methods that take a <see cref="DbCommand"/> instance, this method
+        ///		does not set the command behavior to close the connection when you close the reader.
+        ///		That means you'll need to close the connection yourself, by calling the
+        ///		command.Connection.Close() method after you're finished using the reader.
+        /// <param name="command">The command that contains the SQL to execute. It should be a SELECT statement.</param>
+		/// <param name="transaction">Transaction to execute the command under.</param>
+        /// <param name="parameters">An option set of <see cref="DbParameter"/> parameters</param>
+        /// <returns>The reader in the form of a <see cref="SqlCeResultSet"/></returns>
 		public virtual SqlCeResultSet ExecuteResultSet(DbCommand command, DbTransaction transaction, params DbParameter[] parameters)
 		{
 			return ExecuteResultSet(command, transaction, ResultSetOptions.None, parameters);

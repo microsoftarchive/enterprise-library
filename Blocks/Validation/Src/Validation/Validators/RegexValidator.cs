@@ -305,11 +305,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
             get { return Resources.RegexValidatorNegatedDefaultMessageTemplate; }
         }
 
-
-        #region test only properties
-
         /// <summary>
-        /// 
+        /// Regular expression pattern used.
         /// </summary>
         public string Pattern
         {
@@ -317,7 +314,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         }
 
         /// <summary>
-        /// 
+        /// Any regex options specified.
         /// </summary>
         public RegexOptions? Options
         {
@@ -325,7 +322,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         }
 
         /// <summary>
-        /// 
+        /// Resource name used to load regex pattern.
         /// </summary>
         public string PatternResourceName
         {
@@ -333,13 +330,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         }
 
         /// <summary>
-        /// 
+        /// Resource type used to look up regex pattern.
         /// </summary>
         public Type PatternResourceType
         {
             get { return patternResourceType; }
         }
-
-        #endregion
     }
 }

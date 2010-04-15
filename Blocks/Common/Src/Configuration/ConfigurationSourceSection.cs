@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design.Validation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 {
@@ -26,6 +27,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
     [ViewModel(ConfigurationSourcesDesignTime.ViewModelTypeNames.ConfigurationSourceSectionViewModel)]
     [ResourceDescription(typeof(DesignResources), "ConfigurationSourceSectionDescription")]
     [ResourceDisplayName(typeof(DesignResources), "ConfigurationSourceSectionDisplayName")]
+    [EnvironmentalOverrides(false)]
     public class ConfigurationSourceSection : SerializableConfigurationSection
     {
         private const string selectedSourceProperty = "selectedSource";
@@ -53,7 +55,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         [ConfigurationProperty(selectedSourceProperty, IsRequired=true)]
         [ResourceDescription(typeof(DesignResources), "ConfigurationSourceSectionSelectedSourceDescription")]
         [ResourceDisplayName(typeof(DesignResources), "ConfigurationSourceSectionSelectedSourceDisplayName")]
-        [Reference(typeof(NameTypeConfigurationElementCollection<ConfigurationSourceElement, ConfigurationSourceElement>), typeof(ConfigurationSourceElement))]
+        [Reference(typeof(CustomConfigurationElementCollection<ConfigurationSourceElement, ConfigurationSourceElement>), typeof(ConfigurationSourceElement))]
+        [Validation(CommonDesignTime.ValidationTypeNames.SelectedSourceValidator)]
         public string SelectedSource
         {
             get
@@ -66,11 +69,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 			}
         }
 
-        /// <summary/>
+        /// <summary>
+        /// Gets or sets the name for the parent configuration source.
+        /// </summary>
         [ConfigurationProperty(parentSourceProperty)]
         [ResourceDescription(typeof(DesignResources), "ConfigurationSourceSectionParentSourceDescription")]
         [ResourceDisplayName(typeof(DesignResources), "ConfigurationSourceSectionParentSourceDisplayName")]
-        [Reference(typeof(NameTypeConfigurationElementCollection<ConfigurationSourceElement, ConfigurationSourceElement>), typeof(ConfigurationSourceElement))]
+        [Reference(typeof(CustomConfigurationElementCollection<ConfigurationSourceElement, ConfigurationSourceElement>), typeof(ConfigurationSourceElement))]
         public string ParentSource
         {
             get
@@ -90,16 +95,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         [ConfigurationCollection(typeof(ConfigurationSourceElement))]
         [ResourceDescription(typeof(DesignResources), "ConfigurationSourceSectionSourcesDescription")]
         [ResourceDisplayName(typeof(DesignResources), "ConfigurationSourceSectionSourcesDisplayName")]
-        public NameTypeConfigurationElementCollection<ConfigurationSourceElement, ConfigurationSourceElement> Sources
+        public CustomConfigurationElementCollection<ConfigurationSourceElement, ConfigurationSourceElement> Sources
         {
             get
             {
-                return (NameTypeConfigurationElementCollection<ConfigurationSourceElement, ConfigurationSourceElement>)this[sourcesProperty];
+                return (CustomConfigurationElementCollection<ConfigurationSourceElement, ConfigurationSourceElement>)this[sourcesProperty];
             }           
 
         }
 
-        /// <summary/>
+        /// <summary>
+        /// Gets the collection of redirected sections.
+        /// </summary>
         [ConfigurationProperty(redirectSectionsProperty)]
         [ResourceDescription(typeof(DesignResources), "ConfigurationSourceSectionRedirectedSectionsDescription")]
         [ResourceDisplayName(typeof(DesignResources), "ConfigurationSourceSectionRedirectedSectionsDisplayName")]

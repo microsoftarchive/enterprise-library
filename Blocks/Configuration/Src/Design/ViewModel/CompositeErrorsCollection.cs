@@ -20,19 +20,19 @@ using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Validation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
 {
-    internal class CompositeErrorsCollection : IEnumerable, IEnumerable<ValidationError>, INotifyCollectionChanged
+    internal class CompositeValidationResultsCollection : IEnumerable, IEnumerable<ValidationResult>, INotifyCollectionChanged
     {
         private readonly CompositeCollection validationErrorCompositeCollection = new CompositeCollection();
-        private readonly Dictionary<IEnumerable<ValidationError>, CollectionContainer> validationErrorsCollectionContainers = 
-            new Dictionary<IEnumerable<ValidationError>, CollectionContainer>();
+        private readonly Dictionary<IEnumerable<ValidationResult>, CollectionContainer> validationErrorsCollectionContainers = 
+            new Dictionary<IEnumerable<ValidationResult>, CollectionContainer>();
 
         private readonly ICollectionView view;
-        private readonly ViewWatchingEnumerable<ValidationError> viewWatchingEnumerable;
+        private readonly ViewWatchingEnumerable<ValidationResult> viewWatchingEnumerable;
             
-        public CompositeErrorsCollection()
+        public CompositeValidationResultsCollection()
         {
             this.view = CreateView(); 
-            viewWatchingEnumerable = new ViewWatchingEnumerable<ValidationError>(view);
+            viewWatchingEnumerable = new ViewWatchingEnumerable<ValidationResult>(view);
         }
 
         public bool NotifyEnabled
@@ -53,7 +53,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             validationErrorsCollectionContainers.Clear();
         }
 
-        public void Add(IEnumerable<ValidationError> collection)
+        public void Add(IEnumerable<ValidationResult> collection)
         {
             if (validationErrorsCollectionContainers.ContainsKey(collection)) return;
 
@@ -62,7 +62,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             validationErrorCompositeCollection.Add(container);
         }
 
-        public void Remove(IEnumerable<ValidationError> collection)
+        public void Remove(IEnumerable<ValidationResult> collection)
         {
             if (!validationErrorsCollectionContainers.ContainsKey(collection)) return;
 
@@ -76,7 +76,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             return ((ICollectionViewFactory)validationErrorCompositeCollection).CreateView();
         }
 
-        public IEnumerator<ValidationError> GetEnumerator()
+        public IEnumerator<ValidationResult> GetEnumerator()
         {
             return viewWatchingEnumerable.GetEnumerator();
         }
@@ -140,8 +140,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
                 return GetEnumerator();
             }
 
-            private class CastingEnumerator<T> : IEnumerator<T>
+            private class CastingEnumerator<TItem> : IEnumerator<TItem>
             {
+                [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
                 private readonly IEnumerator _enumerator;
 
                 public CastingEnumerator(IEnumerator enumerator)
@@ -149,13 +150,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
                     _enumerator = enumerator;
                 }
 
-                public void Dispose()
+                protected virtual void Dispose(bool disposing)
                 {
                     var disposable = _enumerator as IDisposable;
                     if (disposable != null)
                     {
                         disposable.Dispose();
-                    }
+                    }    
+                }
+
+                public void Dispose()
+                {
+                    Dispose(true);
+                    GC.SuppressFinalize(this);
                 }
 
                 public bool MoveNext()
@@ -168,9 +175,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
                     _enumerator.Reset();
                 }
 
-                public T Current
+                public TItem Current
                 {
-                    get { return (T)_enumerator.Current; }
+                    get { return (TItem)_enumerator.Current; }
                 }
 
                 object IEnumerator.Current

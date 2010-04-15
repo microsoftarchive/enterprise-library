@@ -73,7 +73,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         }
 
         [TestMethod]
-        public void TheRegistrationForLogWriterIsDefaultAndSingleton()
+        public void TheRegistrationForLogWriterIsDefaultAndSingletonAndPublicName()
         {
             TypeRegistration registration = registrations.First(tr => tr.ServiceType == typeof(LogWriter));
 
@@ -81,6 +81,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
                 .AssertForServiceType(typeof(LogWriter))
                 .IsDefault()
                 .IsSingleton()
+                .IsPublicName()
                 .ForImplementationType(typeof(LogWriterImpl));
         }
 
@@ -117,6 +118,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
             registration
                 .AssertForServiceType(typeof(TraceManager))
                 .IsDefault()
+                .IsNotPublicName()
                 .ForImplementationType(typeof(TraceManager));
         }
 
@@ -146,6 +148,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
             registration
                 .AssertForServiceType(typeof(LogWriterStructureHolder))
                 .IsDefault()
+                .IsNotPublicName()
                 .ForImplementationType(typeof(LogWriterStructureHolder));
         }
 
@@ -186,6 +189,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
             registration
                 .AssertForServiceType(typeof(ILoggingUpdateCoordinator))
                 .IsDefault()
+                .IsNotPublicName()
                 .ForImplementationType(typeof(LoggingUpdateCoordinator));
         }
 

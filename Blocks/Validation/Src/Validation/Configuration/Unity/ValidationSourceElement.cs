@@ -20,10 +20,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.Unity
     /// <summary>
     /// A configuration element that can be used in a Unity configuration
     /// section when specifying a parameter value. This one lets you
-    /// specify the validation source (attributes, config, etc.) to be
+    /// specify the validation source (attributes, config, and so forth) to be
     /// used when creating the validators.
     /// </summary>
-    public class ValidationSourceElement : InjectionParameterValueElement
+    public class ValidationSourceElement : ParameterValueElement
     {
         /// <summary>
         /// Ruleset to use when creating validator.
@@ -47,16 +47,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.Unity
         }
 
         /// <summary>
-        /// Return an instance of <see cref="InjectionParameterValue"/> based
-        /// on the contents of this configuration element.
+        /// Generate an <see cref="InjectionParameterValue"/> object
+        /// that will be used to configure the container for a type registration.
         /// </summary>
-        /// <param name="targetType">Type of the containing parameter.</param>
-        /// <returns>The created InjectionParameterValue, ready to pass to the container config API.</returns>
-        public override InjectionParameterValue CreateParameterValue(Type targetType)
+        /// <param name="container">Container that is being configured. Supplied in order
+        /// to let custom implementations retrieve services; do not configure the container
+        /// directly in this method.</param>
+        /// <param name="parameterType">Type of the target parameter that will recieve this value.</param>
+        /// <returns>The created <see cref="InjectionParameterValue"/>.</returns>
+        public override InjectionParameterValue GetInjectionParameterValue(IUnityContainer container, Type parameterType)
         {
-            GuardTypeIsValidator(targetType);
-            var typeToValidate = GetTypeToValidate(targetType);
-
+            GuardTypeIsValidator(parameterType);
+            Type typeToValidate = GetTypeToValidate(parameterType);
             return new ValidatorParameter(typeToValidate, RuleSet, ValidationSource);
         }
 

@@ -104,6 +104,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// <param name="action">The <see cref="Action"/> to execute.</param>
         public void ExecuteReadOperation(Action action)
         {
+            if (action == null) throw new ArgumentNullException("action");
+
             this.accessLock.EnterReadLock();
             try
             {
@@ -121,6 +123,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// <param name="action">The <see cref="Action"/> to execute.</param>
         public void ExecuteWriteOperation(Action action)
         {
+            if(action == null) throw new ArgumentNullException("action");
+
             this.accessLock.EnterWriteLock();
             try
             {

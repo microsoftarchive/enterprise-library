@@ -60,7 +60,7 @@ namespace Console.Wpf.Tests.VSTS.Mocks
         }
     }
 
-    [ViewModel(typeof(ElementViewModelEx), typeof(UIElement))]
+    [ViewModel(typeof(ElementViewModelEx))]
     public class ElementWithExtendedViewModel : ConfigurationElement, ICustomProviderData
     {
         public string Name

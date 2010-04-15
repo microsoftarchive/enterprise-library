@@ -10,25 +10,28 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration.Design;
+using System.Security.Cryptography;
 using System.Windows.Forms;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
-using System.Security.Cryptography;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Configuration.Design.HostAdapterV5;
 using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics
 {
+
+#pragma warning disable 1591
+    /// <summary>
+    /// This class supports block-specific configuration design-time and is not
+    /// intended to be used directly from your code.
+    /// </summary>
     public class HashAlgorithmProviderAddCommand : TypePickingCollectionElementAddCommand
     {
         ProtectedKeySettings keySettings;
 
-        public HashAlgorithmProviderAddCommand(TypePickingCommandAttribute commandAttribute, ConfigurationElementType configurationElementType, ElementCollectionViewModel elementCollectionModel)
-            : base(commandAttribute, configurationElementType, elementCollectionModel)
-        {
-        }
+        public HashAlgorithmProviderAddCommand(IUIServiceWpf uiService, IAssemblyDiscoveryService discoveryService, TypePickingCommandAttribute commandAttribute, ConfigurationElementType configurationElementType, ElementCollectionViewModel elementCollectionModel)
+            : base(uiService, discoveryService, commandAttribute, configurationElementType, elementCollectionModel)
+        { }
 
         protected override bool AfterSelectType(Type selectedType)
         {
@@ -58,4 +61,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
             }
         }
     }
+
+#pragma warning restore 1591
 }

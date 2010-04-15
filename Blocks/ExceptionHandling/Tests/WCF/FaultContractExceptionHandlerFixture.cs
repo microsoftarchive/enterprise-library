@@ -15,6 +15,7 @@ using System.Collections.Specialized;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Practices.EnterpriseLibrary.Common.Utility;
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.Tests
 {
@@ -206,10 +207,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.Tests
                 .ForImplementationType(typeof(FaultContractExceptionHandler));
 
             NameValueCollection attributes;
+            IStringResolver resolver;
+
             registration
                 .AssertConstructor()
+                .WithValueConstructorParameter(out resolver)
                 .WithValueConstructorParameter(typeof(object))
-                .WithValueConstructorParameter("message")
                 .WithValueConstructorParameter(out attributes)
                 .VerifyConstructorParameters();
 

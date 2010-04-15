@@ -29,6 +29,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Unity
         /// <returns><paramref name="container"/></returns>
         public static IUnityContainer AddExtensionIfNotPresent(this IUnityContainer container, UnityContainerExtension extension)
         {
+            if (container == null) throw new ArgumentNullException("container");
+            if (extension == null) throw new ArgumentNullException("extension");
+
             Type extensionType = extension.GetType();
             if(container.Configure(extensionType) == null)
             {

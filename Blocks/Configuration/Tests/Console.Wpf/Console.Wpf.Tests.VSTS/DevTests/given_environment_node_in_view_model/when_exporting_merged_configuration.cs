@@ -10,20 +10,19 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Text;
-using Console.Wpf.Tests.VSTS.DevTests.Contexts;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics;
-using Moq;
 using System.Windows;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Configuration.Design.HostAdapterV5;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
 using Microsoft.Practices.Unity;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Win32;
-using System.IO;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Console;
+using Moq;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_environment_node_in_view_model
 {
@@ -47,6 +46,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_environment_node_in_view_model
             IApplicationModel applicationModel = Container.Resolve<IApplicationModel>();
             applicationModel.SetDirty();
 
+            UIServiceMock.Setup(x => x.ShowWindow(It.IsAny<Window>()));
             UIServiceMock
                 .Setup(x => x.ShowMessageWpf(It.IsAny<string>(), It.IsAny<string>(), System.Windows.MessageBoxButton.OKCancel))
                 .Returns(MessageBoxResult.OK)
@@ -71,16 +71,20 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_environment_node_in_view_model
     }
 
     [TestClass]
-    public class when_exporting_merged_configuration_on_clean_configuration_model: given_environmental_overrides_and_ehab
+    public class when_exporting_merged_configuration_on_clean_configuration_model : given_environmental_overrides_and_ehab
     {
         protected override void Arrange()
         {
             base.Arrange();
 
+            ((EnvironmentSourceViewModel)EnvironmentViewModel).EnvironmentDeltaFile = string.Empty;
+            ((EnvironmentSourceViewModel)EnvironmentViewModel).EnvironmentConfigurationFile = string.Empty;
+
             ApplicationViewModel appModel = (ApplicationViewModel)Container.Resolve<IApplicationModel>();
-            appModel.ConfigurationFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "test.config");
-            appModel.IsDirty = false ;
-            
+            appModel.ConfigurationFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "empty.config");
+            appModel.IsDirty = false;
+
+            UIServiceMock.Setup(x => x.ShowWindow(It.IsAny<Window>()));
             UIServiceMock.Setup(x => x.ShowFileDialog(It.IsAny<SaveFileDialog>()))
                          .Returns(new FileDialogResult { DialogResult = true, FileName = "mergedconfig.config" })
                          .Verifiable();
@@ -101,13 +105,14 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_environment_node_in_view_model
         [TestMethod]
         public void then_output_file_is_assigned_to_environment_merge_node()
         {
-            Assert.AreEqual("mergedconfig.config", (string)EnvironmentViewModel.Property("EnvironmentConfigurationFile").Value);
+            string configurationFile = (string)EnvironmentViewModel.Property("EnvironmentConfigurationFile").Value;
+            Assert.IsTrue(configurationFile.EndsWith("mergedconfig.config"));
         }
 
         [TestMethod]
         public void then_merged_configuration_file_is_saved_to_target()
         {
-            string outputPath = Path.Combine( AppDomain.CurrentDomain.BaseDirectory, "mergedconfig.config");
+            string outputPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "mergedconfig.config");
             Assert.IsTrue(File.Exists(outputPath));
         }
 
@@ -117,4 +122,40 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_environment_node_in_view_model
         }
     }
 
+
+    [TestClass]
+    public class when_exporting_merged_configuration_on_configuration_model_with_file_configuration_source : given_environmental_overrides_and_ehab
+    {
+        SaveMergedEnvironmentConfigurationCommand exportMergedEnvironmentCommand;
+
+        protected override void Arrange()
+        {
+            base.Arrange();
+
+            ConfigurationSourceModel sourceModel = Container.Resolve<ConfigurationSourceModel>();
+
+            sourceModel.AddSection(ConfigurationSourceSection.SectionName, new ConfigurationSourceSection()
+            {
+                SelectedSource = "file source",
+                Sources = {{ new FileConfigurationSourceElement("file source", ".\\config") }}
+            });
+
+            exportMergedEnvironmentCommand = base.EnvironmentViewModel.Commands.OfType<SaveMergedEnvironmentConfigurationCommand>().First();
+
+            base.UIServiceMock.Setup(x => x.ShowMessageWpf(It.IsRegex("File Configuration Source"), It.IsAny<string>(), MessageBoxButton.OK))
+                .Returns(MessageBoxResult.OK)
+                .Verifiable();
+        }
+
+        protected override void Act()
+        {
+            exportMergedEnvironmentCommand.Execute(null);
+        }
+
+        [TestMethod]
+        public void then_message_was_shown()
+        {
+            base.UIServiceMock.Verify();
+        }
+    }
 }

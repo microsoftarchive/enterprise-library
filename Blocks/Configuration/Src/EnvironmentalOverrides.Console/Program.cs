@@ -51,18 +51,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverr
 
             try
             {
-                ConfigurationMergeTool mergeTool = new ConfigurationMergeTool(mainConfigurationFile, configurationMergeFile);
-                mergeTool.MergeAndSaveConfiguration(mergedConfigurationFile);
+                ConfigurationMerger mergeTool = new ConfigurationMerger(mainConfigurationFile, configurationMergeFile);
+                mergeTool.MergeConfiguration(mergedConfigurationFile);
 
-                if (mergeTool.MergeSucceeded)
-                {
-                    string message = String.Format(Resources.MergeSucceeded, mergeTool.MergedConfigurationFile);
-                    System.Console.WriteLine(message);
-                }
-                else
-                {
-                    System.Console.WriteLine(Resources.MergeFailed);
-                }
+                string message = String.Format(Resources.MergeSucceeded, mergeTool.MergedConfigurationFile);
+                System.Console.WriteLine(message);
+                
             }
             catch (Exception e)
             {

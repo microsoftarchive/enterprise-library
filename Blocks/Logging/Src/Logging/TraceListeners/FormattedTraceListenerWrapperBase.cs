@@ -25,7 +25,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         /// <summary>
         /// Initializes a <see cref="FormattedTraceListenerWrapperBase"/>.
         /// </summary>
-        protected FormattedTraceListenerWrapperBase() //!~! remove?
+        protected FormattedTraceListenerWrapperBase()
         {
         }
 

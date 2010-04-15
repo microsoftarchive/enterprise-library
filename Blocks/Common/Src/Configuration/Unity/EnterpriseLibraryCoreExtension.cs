@@ -29,7 +29,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Unity
 		/// <summary>
 		/// Initializes a new instance of the <see cref="EnterpriseLibraryCoreExtension"/> class with the
 		/// default <see cref="IConfigurationSource"/>.
-		/// </summary>
+		/// </summary>		
+		[InjectionConstructor]
 		public EnterpriseLibraryCoreExtension()
 			: this(ConfigurationSourceFactory.Create())
 		{ }

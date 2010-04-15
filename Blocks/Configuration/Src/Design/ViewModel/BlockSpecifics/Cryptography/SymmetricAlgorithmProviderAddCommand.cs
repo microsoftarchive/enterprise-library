@@ -10,23 +10,26 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration.Design;
 using System.Windows.Forms;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Configuration.Design.HostAdapterV5;
+using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics
 {
+
+#pragma warning disable 1591
+    /// <summary>
+    /// This class supports block-specific configuration design-time and is not
+    /// intended to be used directly from your code.
+    /// </summary>
     public class SymmetricAlgorithmProviderAddCommand : TypePickingCollectionElementAddCommand
     {
         ProtectedKeySettings keySettings;
 
-        public SymmetricAlgorithmProviderAddCommand(TypePickingCommandAttribute commandAttribute, ConfigurationElementType configurationElementType, ElementCollectionViewModel elementCollectionModel)
-            : base(commandAttribute, configurationElementType, elementCollectionModel)
-        {
-        }
+        public SymmetricAlgorithmProviderAddCommand(IUIServiceWpf uiService, IAssemblyDiscoveryService discoveryService, TypePickingCommandAttribute commandAttribute, ConfigurationElementType configurationElementType, ElementCollectionViewModel elementCollectionModel)
+            : base(uiService, discoveryService, commandAttribute, configurationElementType, elementCollectionModel)
+        { }
 
         protected override bool AfterSelectType(Type selectedType)
         {
@@ -44,4 +47,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
             createdElement.Property("Key").Value = keySettings;
         }
     }
+
+#pragma warning restore 1591
 }

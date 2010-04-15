@@ -13,4 +13,4 @@ using System.Reflection;
 
 [assembly: AssemblyTitle("Enterprise Library Caching Cryptography Provider Configuration Manageability Tests")]
 [assembly: AssemblyDescription("Enterprise Library Caching Cryptography Provider Configuration Manageability Tests")]
-[assembly: AssemblyVersion("4.1.0.0")]
+[assembly: AssemblyVersion("5.0.414.0")]

@@ -10,10 +10,10 @@
 //===============================================================================
 
 using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Globalization;
-
-
+using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability.Adm;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability.Properties;
 
@@ -21,7 +21,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
 {
     /// <summary>
     /// Provides a default implementation for <see cref="ConfigurationElementManageabilityProvider"/> that
-    /// splits policy overrides processing and WMI objects generation, performing appropriate logging of 
+    /// processes policy overrides, performing appropriate logging of 
     /// policy processing errors.
     /// </summary>
     /// <typeparam name="T">The managed configuration element type. Must inherit from <see cref="NamedConfigurationElement"/>.
@@ -48,7 +48,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
         /// <param name="parentKey">The key path for which the generated instructions' keys must be subKeys of.</param>
         /// <remarks>
         /// Class <see cref="ConfigurationElementManageabilityProviderBase{T}"/> provides a default implementation for this method that
-        /// calls the strongly typed 
+        /// calls the strongly-typed 
         /// <see cref="ConfigurationElementManageabilityProviderBase{T}.AddAdministrativeTemplateDirectives(AdmContentBuilder, T, IConfigurationSource, String)"/>
         /// method.
         /// </remarks>
@@ -128,6 +128,46 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
         }
 
         /// <summary>
+        /// Adds a new drop down list part to the current policy with items representing an enumeration's values.
+        /// </summary>
+        /// <typeparam name="TEnum">The enumeration type.</typeparam>
+        /// <param name="contentBuilder">The content builder.</param>
+        /// <param name="keyName">The registry key for the part, to override its policy's key.</param>
+        /// <param name="defaultValue">The default value for the new part.</param>
+        /// <exception cref="InvalidOperationException">when there is no current policy.</exception>
+        protected static void AddCheckboxPartsForFlagsEnumeration<TEnum>(AdmContentBuilder contentBuilder, String keyName, TEnum defaultValue)
+            where TEnum : struct
+        {
+            var values = Enum.GetValues(typeof(TEnum)).OfType<TEnum>().Select(v => (ulong)Convert.ToUInt64(v)).ToArray();
+            var names = Enum.GetNames(typeof(TEnum));
+            var selectedValues = new List<int>();
+
+            var value = (ulong)Convert.ToUInt64(defaultValue);
+            var index = values.Length - 1;
+
+            while (index >= 0)
+            {
+                var currentValue = values[index];
+
+                if (index == 0 && currentValue == 0)
+                    break;
+
+                if ((value & currentValue) == currentValue)
+                {
+                    value -= currentValue;
+                    selectedValues.Add(index);
+                }
+
+                index--;
+            }
+
+            for (int i = (values[0] == 0 ? 1 : 0); i < names.Length; i++)
+            {
+                contentBuilder.AddCheckboxPart(names[i], keyName, names[i], selectedValues.Contains(i), true, false);
+            }
+        }
+
+        /// <summary>
         /// Overrides the <paramref name="configurationObject"/>'s properties with the Group Policy values from the 
         /// registry, if any.
         /// </summary>
@@ -198,5 +238,30 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
         /// before making modifications to the <paramref name="configurationObject"/> so any error retrieving
         /// the override values will cancel policy processing.</remarks>
         protected abstract void OverrideWithGroupPolicies(T configurationObject, IRegistryKey policyKey);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="TEnum"></typeparam>
+        /// <param name="policyKey"></param>
+        /// <param name="propertyName"></param>
+        /// <returns></returns>
+        protected TEnum? GetFlagsEnumOverride<TEnum>(IRegistryKey policyKey, string propertyName)
+            where TEnum : struct
+        {
+            string[] allValueNames = new string[0];
+
+            using (var propertyKey = policyKey.OpenSubKey(propertyName))
+            {
+                if (propertyKey != null)
+                {
+                    allValueNames = propertyKey.GetValueNames();
+                }
+            }
+
+            var convertedValues = allValueNames.Select(vn => Convert.ToUInt64(Enum.Parse(typeof(TEnum), vn)));
+            var mergedValues = convertedValues.Aggregate<ulong, ulong>(0, (acc, v) => acc | v);
+            return (TEnum)Enum.ToObject(typeof(TEnum), mergedValues);
+        }
     }
 }

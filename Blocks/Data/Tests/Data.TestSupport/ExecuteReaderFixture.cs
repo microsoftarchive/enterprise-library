@@ -46,7 +46,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.TestSupport
                     using (IDataReader reader = db.ExecuteReader(insertCommand, transaction.Transaction))
                     {
                         Assert.AreEqual(1, reader.RecordsAffected);
-                        reader.Close();
                     }
                 }
 
@@ -57,6 +56,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.TestSupport
         public void CanExecuteReaderFromDbCommand()
         {
             IDataReader reader = db.ExecuteReader(queryCommand);
+            DbConnection connection = queryCommand.Connection;
             string accumulator = "";
             while (reader.Read())
             {
@@ -65,7 +65,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.TestSupport
             reader.Close();
 
             Assert.AreEqual("EasternWesternNorthernSouthern", accumulator);
-            Assert.AreEqual(ConnectionState.Closed, queryCommand.Connection.State);
+            Assert.AreEqual(ConnectionState.Closed, connection.State);
         }
 
         public void CanExecuteReaderWithCommandText()

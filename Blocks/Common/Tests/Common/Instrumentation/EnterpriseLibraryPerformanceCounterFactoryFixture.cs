@@ -11,6 +11,7 @@
 
 using System.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Tests
 {
@@ -27,6 +28,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Tests
         public void SetUp()
         {
             factory = new EnterpriseLibraryPerformanceCounterFactory();
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void CrearingPerformanceCounterThroughFactoryWithNullInstanceNamesThrowsArgumentNullException()
+        {
+            EnterpriseLibraryPerformanceCounter counter = factory.CreateCounter(categoryName, counterName, (string[])null);
         }
 
         [TestMethod]
@@ -80,5 +88,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Tests
 
             Assert.IsFalse(ReferenceEquals(first.Counters[0], second.Counters[0]));
         }
+
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void CrearingPerformanceCounterWithNullInstanceNamesThrowsArgumentNullException()
+        {
+            new EnterpriseLibraryPerformanceCounter(categoryName, counterName, (string[])null);
+        }
+
     }
 }

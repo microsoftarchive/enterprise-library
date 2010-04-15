@@ -133,7 +133,7 @@
     <value>InitializeComponent - begin</value>
   </data>
   <data name="InitializeComponentStarted" xml:space="preserve">
-    <value>The windows service initialization sequence has started.</value>
+    <value>The Windows service initialization sequence has started.</value>
   </data>
   <data name="ErrorLoadingDistributorConfiguration" xml:space="preserve">
     <value>Error loading Logging Distributor configuration file.</value>
@@ -142,7 +142,7 @@
     <value>InitializeComponent - end</value>
   </data>
   <data name="InitializeComponentCompleted" xml:space="preserve">
-    <value>The windows service initialization sequence is complete. No errors have occurred.</value>
+    <value>The Windows service initialization sequence is complete. No errors have occurred.</value>
   </data>
   <data name="ErrorInitializingService" xml:space="preserve">
     <value>Error initializing the service. See EventLog for error details.</value>
@@ -329,7 +329,7 @@ Message: {0}</value>
     <value>exception</value>
   </data>
   <data name="ExceptionCouldNotDeserializeMessageFromQueue" xml:space="preserve">
-    <value>Unable to deserialize message with id {0} from queue {1}. Please make sure only LogEntries are traced and a BinaryFormatter is used to format the message. To resolve this error, please remove the message from the queue and start the Service again. The service will be stopped.</value>
+    <value>Unable to deserialize message with id {0} from queue {1}. Please make sure only LogEntries are traced and a BinaryFormatter is used to format the message. The offending message has been removed from the queue.</value>
   </data>
   <data name="ExceptionCouldNotFindConfigurationSection" xml:space="preserve">
     <value>The {0} section could not be found in the service's configuration file.</value>

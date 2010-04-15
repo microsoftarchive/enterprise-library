@@ -181,7 +181,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
     [TestClass]
     public class WhenExecutingSqlStringAccessor : SqlStringAccessorContext
     {
-        private IDataAccessor<Product> accessor;
+        private DataAccessor<Product> accessor;
 
         protected override void Arrange()
         {
@@ -241,7 +241,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
     [TestClass]
     public class WhenExecutingSqlStringAccessorAsynchronously : SqlStringAccessorContext
     {
-        private IDataAccessor<Product> accessor;
+        private DataAccessor<Product> accessor;
         private IAsyncResult asyncResult;
 
         protected override void Arrange()
@@ -324,7 +324,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
     [TestClass]
     public class WhenParameterizedSqlStringAccessorIsCreated : SqlStringAccessorContext
     {
-        private IDataAccessor<Product> accessor;
+        private DataAccessor<Product> accessor;
 
         protected override void Arrange()
         {
@@ -344,7 +344,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
     [TestClass]
     public class WhenParameterizedSqlStringAccessorIsCreatedWithParameterMapper : SqlStringAccessorContext
     {
-        private IDataAccessor<Product> accessor;
+        private DataAccessor<Product> accessor;
         private SqlParameterMapper parameterMapper;
 
         protected override void Arrange()
@@ -393,7 +393,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
         private const string cleanupQuery = "Delete from products where ProductName='Test'";
         private const string insertQuery = "INSERT INTO [Northwind].[dbo].[Products]([ProductName],[SupplierID],[CategoryID],[QuantityPerUnit],[UnitPrice],[UnitsInStock],[UnitsOnOrder],[ReorderLevel],[Discontinued]) VALUES('Test',null,null,null,null,null,null,null,53)";
 
-        private IDataAccessor<ProductSupplier> accessor;
+        private DataAccessor<ProductSupplier> accessor;
 
         public class ProductSupplier
         {

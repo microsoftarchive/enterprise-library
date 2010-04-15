@@ -27,6 +27,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
         public ConfigurationElementManageabilityProvider CreateConfigurationElementManageabilityProvider(
             ConfigurationElementManageabilityProviderData manageabilityProviderData)
         {
+            if (manageabilityProviderData == null) throw new ArgumentNullException("manageabilityProviderData");
+
             return (ConfigurationElementManageabilityProvider)Activator.CreateInstance(manageabilityProviderData.Type);
         }
 
@@ -38,6 +40,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
         public ConfigurationSectionManageabilityProvider CreateConfigurationSectionManageabilityProvider(
             ConfigurationSectionManageabilityProviderData manageabilityProviderData)
         {
+            if (manageabilityProviderData == null) throw new ArgumentNullException("manageabilityProviderData");
+
             IDictionary<Type, ConfigurationElementManageabilityProvider> subProviders
                 = new Dictionary<Type, ConfigurationElementManageabilityProvider>();
 

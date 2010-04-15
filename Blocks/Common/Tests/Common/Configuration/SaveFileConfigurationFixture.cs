@@ -60,7 +60,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
             InstrumentationConfigurationSection section = GetSection(configFile);
 
             Assert.IsTrue(section.PerformanceCountersEnabled);
-            Assert.IsTrue(section.WmiEnabled);
             Assert.IsTrue(section.EventLoggingEnabled);
         }
 
@@ -122,7 +121,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
 
         InstrumentationConfigurationSection CreateInstrumentationSection()
         {
-            return new InstrumentationConfigurationSection(true, true, true, "fooApplicationName");
+            return new InstrumentationConfigurationSection(true, true, "fooApplicationName");
         }
     }
 }

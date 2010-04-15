@@ -14,6 +14,8 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Text;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using System.ComponentModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 {
@@ -40,11 +42,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         ///<returns>A new, cloned <see cref="ConfigurationSection"/>.</returns>
         public ConfigurationSection Clone(ConfigurationSection section)
         {
+            if (section == null) throw new ArgumentNullException("section");
+
             var clonedSection = (ConfigurationSection)Activator.CreateInstance(section.GetType());
             return (ConfigurationSection)CloneElement(section, clonedSection);
         }
 
-        private static ConfigurationElement CloneElement(ConfigurationElement sourceElement, ConfigurationElement targetElement)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sourceElement"></param>
+        /// <param name="targetElement"></param>
+        /// <returns></returns>
+        public static ConfigurationElement CloneElement(ConfigurationElement sourceElement, ConfigurationElement targetElement)
         {
             if (sourceElement is ICustomProviderData)
             {
@@ -70,6 +80,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
                 }
                 PropertyInformation targetProperty = targetElement.ElementInformation.Properties[property.Name];
 
+                if (typeof(ConfigurationElement).IsAssignableFrom(property.Type) && typeof(ICloneableConfigurationElement).IsAssignableFrom(property.Type))
+                {
+                    targetProperty.Value = ((ICloneableConfigurationElement)property.Value).CreateFullClone();
+                }
+                if (typeof(ConfigurationElement).IsAssignableFrom(property.Type) && TypeDescriptor.GetAttributes(property.Type).OfType<CloneableConfigurationElementTypeAttribute>().Any())
+                {
+                    CloneableConfigurationElementTypeAttribute cloneableConfigurationElementTypeAttribute = TypeDescriptor.GetAttributes(property.Type).OfType<CloneableConfigurationElementTypeAttribute>().First();
+                    ICloneableConfigurationElement cloneable = (ICloneableConfigurationElement)Activator.CreateInstance(cloneableConfigurationElementTypeAttribute.CloneableConfigurationElementType, property.Value);
+
+                    targetProperty.Value = cloneable.CreateFullClone();
+                }
                 if (typeof(ConfigurationElementCollection).IsAssignableFrom(property.Type))
                 {
                     ConfigurationElementCollection sourceCollection = (ConfigurationElementCollection)property.Value;
@@ -125,6 +146,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         {
             ConfigurationElement targetElement;
             Type sourceType = sourceElement.GetType();
+
+            if (sourceElement is ICloneableConfigurationElement)
+            {
+                return ((ICloneableConfigurationElement)sourceElement).CreateFullClone();
+            }
+            if (TypeDescriptor.GetAttributes(sourceElement).OfType<CloneableConfigurationElementTypeAttribute>().Any())
+            {
+                CloneableConfigurationElementTypeAttribute cloneableConfigurationElementTypeAttribute = TypeDescriptor.GetAttributes(sourceElement).OfType<CloneableConfigurationElementTypeAttribute>().First();
+                ICloneableConfigurationElement cloneable = (ICloneableConfigurationElement)Activator.CreateInstance(cloneableConfigurationElementTypeAttribute.CloneableConfigurationElementType, sourceElement);
+
+                return cloneable.CreateFullClone();
+            }
 
             targetElement = mergeableSource.CreateNewElement(sourceType);
             

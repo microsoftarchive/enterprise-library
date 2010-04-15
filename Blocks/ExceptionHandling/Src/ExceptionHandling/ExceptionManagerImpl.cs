@@ -82,7 +82,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
         /// <code>
         /// try
         ///	{
-        ///		Foo();
+        ///		DoWork();
         ///	}
         ///	catch (Exception e)
         ///	{
@@ -130,7 +130,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
         /// <code>
         /// try
         ///	{
-        ///		Foo();
+        ///		DoWork();
         ///	}
         ///	catch (Exception e)
         ///	{
@@ -171,7 +171,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
         /// <example>
         /// The following code shows the usage of this method.
         /// <code>
-        ///		exceptionManager.Process(() => { Foo(); }, "policy");
+        ///		exceptionManager.Process(() => { DoWork(); }, "policy");
         /// </code>
         /// </example>
         /// <seealso cref="ExceptionManagerImpl.HandleException(Exception, string)"/>

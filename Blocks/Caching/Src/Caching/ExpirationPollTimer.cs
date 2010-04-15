@@ -29,10 +29,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
         /// <param name="expirationPollFrequencyInMilliSeconds"></param>
         public ExpirationPollTimer(int expirationPollFrequencyInMilliSeconds)
         {
-            if (expirationPollFrequencyInMilliSeconds == 0)
+            if (expirationPollFrequencyInMilliSeconds <= 0)
             {
-                throw new ArgumentException(); //todo: message
+                throw new ArgumentException(Resources.InvalidExpirationPollFrequencyInMilliSeconds, "expirationPollFrequencyInMilliSeconds");
             }
+
             this.expirationPollFrequencyInMilliSeconds = expirationPollFrequencyInMilliSeconds;
         }
 

@@ -153,8 +153,8 @@
   <data name="CacheNotInitializedException" xml:space="preserve">
     <value>Add called without setting BackgroundScheduler.</value>
   </data>
-  <data name="InvalidExpirationPollCycleTime" xml:space="preserve">
-    <value>Expiration poll cycle time must be at least 1 second.</value>
+  <data name="InvalidExpirationPollFrequencyInMilliSeconds" xml:space="preserve">
+    <value>Expiration poll frequency time must be at least 1 millisecond.</value>
   </data>
   <data name="InvalidPollingStopOperation" xml:space="preserve">
     <value>Cannot stop polling before it is started.</value>

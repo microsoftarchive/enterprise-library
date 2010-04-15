@@ -13,12 +13,13 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability.Properties;
+using System.Globalization;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability
 {
     /// <summary>
     /// Manages the singleton <see cref="ManageableConfigurationSourceImplementation"/> instance for a given 
-    /// file name, application name and group policy enablement combination.
+    /// file name, application name and Group Policy enablement combination.
     /// </summary>
     public class ManageableConfigurationSourceSingletonHelper : IDisposable
     {
@@ -63,7 +64,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
         /// </summary>
         /// <param name="configurationFilePath">The path to a configuration file.</param>
         /// <param name="manageabilityProviders">The list of managment providers.</param>
-        /// <param name="readGroupPolicies">true to read group policies; otherwise, false.</param>
+        /// <param name="readGroupPolicies">true to read Group Policies; otherwise, false.</param>
         /// <param name="applicationName">The name of the application.</param>
         /// <returns>A <see cref="ManageableConfigurationSourceImplementation"/> object.</returns>
         public ManageableConfigurationSourceImplementation GetInstance(String configurationFilePath,
@@ -78,7 +79,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
 
             if (!File.Exists(rootedConfigurationFilePath))
                 throw new FileNotFoundException(
-                    String.Format(Resources.Culture, Resources.ExceptionConfigurationLoadFileNotFound, rootedConfigurationFilePath));
+                    String.Format(CultureInfo.CurrentCulture, Resources.ExceptionConfigurationLoadFileNotFound, rootedConfigurationFilePath));
 
             ImplementationKey key = new ImplementationKey(rootedConfigurationFilePath, applicationName, readGroupPolicies);
             ManageableConfigurationSourceImplementation instance;

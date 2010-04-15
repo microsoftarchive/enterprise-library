@@ -11,41 +11,44 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.ComponentModel;
 using System.Configuration;
+using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
 using Microsoft.Practices.EnterpriseLibrary.Data.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Data.Oracle.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
 using Microsoft.Practices.Unity;
-using System.ComponentModel;
-using System.Windows;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors;
-using System.Collections.Specialized;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls;
+using Microsoft.Practices.Unity.Utility;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics
 {
 
-
-
+#pragma warning disable 1591
+    /// <summary>
+    /// This class supports block-specific configuration design-time and is not
+    /// intended to be used directly from your code.
+    /// </summary>
     public class DataSectionViewModel : SectionViewModel
     {
         SubordinateSectionViewModel dataSettingsViewModel;
         SubordinateSectionViewModel oracleSettingsViewModel;
         IUnityContainer builder;
+        private readonly ElementLookup elementLookup;
 
         public DataSectionViewModel(IUnityContainer builder, string sectionName, ConfigurationSection section)
             : base(builder, sectionName, section)
         {
             this.builder = builder;
+            elementLookup = builder.Resolve<ElementLookup>();
         }
 
-
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Validated with Guard class")]
         public override void Initialize(InitializeContext context)
         {
+            Guard.ArgumentNotNull(context, "context");
+
             if (context.WasLoadedFromSource)
             {
                 InitializeSubordinateSectionViewModels(
@@ -82,8 +85,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
 
         private void InitializeSubordinateSectionViewModels(DatabaseSettings databaseSettings, OracleConnectionSettings oracleSettings)
         {
-            var elementLookup = builder.Resolve<ElementLookup>();
-
             if (databaseSettings == null) databaseSettings = new DatabaseSettings();
             dataSettingsViewModel = CreateSubordinateModel(DatabaseSettings.SectionName, databaseSettings);
             elementLookup.AddSection(dataSettingsViewModel);
@@ -95,35 +96,69 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
 
         private SubordinateSectionViewModel CreateSubordinateModel(string sectionName, ConfigurationSection section)
         {
-            return CreateViewModelInstance<SubordinateSectionViewModel>(
-                builder,
-                Enumerable.Empty<Attribute>(),
-                new DependencyOverride<SectionViewModel>(this),
-                new DependencyOverride<string>(sectionName),
-                new DependencyOverride<ConfigurationSection>(section)
-                );
+            var model = CreateViewModelInstance<SubordinateSectionViewModel>(
+                            builder,
+                            Enumerable.Empty<Attribute>(),
+                            new DependencyOverride<SectionViewModel>(this),
+                            new DependencyOverride<string>(sectionName),
+                            new DependencyOverride<ConfigurationSection>(section)
+                            );
+
+            model.Initialize(new InitializeContext());
+
+            return model;
         }
 
         public override void Delete()
         {
-            base.Delete();
+            elementLookup.RemoveSection(dataSettingsViewModel);
+            elementLookup.RemoveSection(oracleSettingsViewModel);
 
             oracleSettingsViewModel.Delete();
             dataSettingsViewModel.Delete();
+
+            base.Delete();
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+
+                if (oracleSettingsViewModel != null)
+                {
+                    oracleSettingsViewModel.Dispose();
+                    oracleSettingsViewModel = null;
+                }
+
+                if (dataSettingsViewModel != null)
+                {
+                    dataSettingsViewModel.Dispose();
+                    dataSettingsViewModel = null;
+                }
+            }
+
+            base.Dispose(disposing);
         }
 
         protected override IEnumerable<Property> GetAllProperties()
         {
-            return dataSettingsViewModel.GetProperties();
+            var dataAccessSettingProperties = this.dataSettingsViewModel.Properties;
+            yield return dataAccessSettingProperties.OfType<ProtectionProviderProperty>().Single();
+            yield return dataAccessSettingProperties.OfType<RequirePermissionProperty>().Single();
+
+            var defaultDatabaseProperty = TypeDescriptor.GetProperties(typeof(DatabaseSettings)).Cast<PropertyDescriptor>().Where(x => x.Name == "DefaultDatabase").Single();
+            yield return CreateProperty<ConnectionStringSettingsDefaultDatabaseElementProperty>(
+                new DependencyOverride<ElementViewModel>(dataSettingsViewModel),
+                new DependencyOverride<PropertyDescriptor>(defaultDatabaseProperty));
         }
 
-       
         protected override object CreateBindable()
         {
-            return new HorizontalListViewModel(
-                       new HeaderedListViewModel(this.DescendentElements().Where(x=>x.ConfigurationType == typeof(ConnectionStringSettingsCollection)).First()),
-                       new HeaderedListViewModel(this.oracleSettingsViewModel.DescendentElements().Where(x => x.ConfigurationType == typeof(NamedElementCollection<OracleConnectionData>)).First()),
-                       new HeaderedListViewModel(this.dataSettingsViewModel.DescendentElements().Where(x=>x.ConfigurationType == typeof(NamedElementCollection<DbProviderMapping>)).First())
+            return new HorizontalListLayout(
+                       new HeaderedListLayout(this.DescendentElements().Where(x => x.ConfigurationType == typeof(ConnectionStringSettingsCollection)).First()),
+                       new HeaderedListLayout(this.oracleSettingsViewModel.DescendentElements().Where(x => x.ConfigurationType == typeof(NamedElementCollection<OracleConnectionData>)).First()),
+                       new HeaderedListLayout(this.dataSettingsViewModel.DescendentElements().Where(x => x.ConfigurationType == typeof(NamedElementCollection<DbProviderMapping>)).First())
                 );
         }
 
@@ -139,23 +174,32 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
         private static bool OracleSettingsAreEmpty(OracleConnectionSettings oracleConnectionSettings)
         {
             if (oracleConnectionSettings.OracleConnectionsData.Count > 0) return false;
-            
+
             return true;
         }
 
         private class SubordinateSectionViewModel : SectionViewModel
         {
-            SectionViewModel containerModel;
-            public SubordinateSectionViewModel(SectionViewModel containerModel, IUnityContainer builder, string sectionName, ConfigurationSection section)
+            SectionViewModel containingSection;
+
+            public SubordinateSectionViewModel(SectionViewModel containingSection, IUnityContainer builder, string sectionName, ConfigurationSection section)
                 : base(builder, sectionName, section)
             {
-                this.containerModel = containerModel;
+                this.containingSection = containingSection;
             }
 
             public IEnumerable<Property> GetProperties()
             {
                 return base.GetAllProperties();
             }
+
+            public override void ExpandSection()
+            {
+                base.ExpandSection();
+                containingSection.ExpandSection();
+            }
         }
     }
+
+#pragma warning restore 1591
 }

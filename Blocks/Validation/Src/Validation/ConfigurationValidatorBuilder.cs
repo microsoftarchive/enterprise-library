@@ -124,6 +124,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         /// <returns></returns>
         public Validator CreateValidator(Type type, ValidatedTypeReference typeReference, string ruleset)
         {
+            if (typeReference == null) throw new ArgumentNullException("typeReference");
+
             if (string.IsNullOrEmpty(ruleset))
             {
                 ruleset = typeReference.DefaultRuleset;
@@ -145,6 +147,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         /// <returns></returns>
         public Validator CreateValidatorForProperty(Type type, ValidatedPropertyReference propertyReference)
         {
+            if (propertyReference == null) throw new ArgumentNullException("propertyReference");
+
             if (propertyReference.Validators.Count == 0)
                 return null;
 
@@ -172,6 +176,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         /// </summary>
         public Validator CreateValidatorForType(Type type, ValidationRulesetData ruleData)
         {
+            if (ruleData == null) throw new ArgumentNullException("ruleData");
+
             if (ruleData.Validators.Count == 0)
                 return null;
 
@@ -185,6 +191,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         /// </summary>
         public Validator CreateValidatorForField(Type type, ValidatedFieldReference fieldReference)
         {
+            if (fieldReference == null) throw new ArgumentNullException("fieldReference");
+
             if (fieldReference.Validators.Count == 0)
                 return null;
 
@@ -202,6 +210,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         /// </summary>
         public Validator CreateValidatorForMethod(Type type, ValidatedMethodReference methodReference)
         {
+            if (methodReference == null) throw new ArgumentNullException("methodReference");
+
             if (methodReference.Validators.Count == 0)
                 return null;
 

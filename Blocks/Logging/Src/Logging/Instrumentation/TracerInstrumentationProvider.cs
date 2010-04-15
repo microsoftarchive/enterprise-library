@@ -9,12 +9,8 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation;
 using System.Diagnostics;
+using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation
 {
@@ -31,31 +27,30 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation
         /// </summary>
         public const string TotalTraceOperationsStartedCounterName = "Total Trace Operations Started";
 
-		[PerformanceCounter("Trace Operations Started/sec", "TraceOperationStartedHelpResource", PerformanceCounterType.RateOfCountsPerSecond32)]
-		private TracerPerformanceCounter traceOperationStarted;
+        [PerformanceCounter("Trace Operations Started/sec", "TraceOperationStartedHelpResource", PerformanceCounterType.RateOfCountsPerSecond32)]
+        private TracerPerformanceCounter traceOperationStarted;
 
         [PerformanceCounter(TotalTraceOperationsStartedCounterName, "TotalTraceOperationsStartedHelpResource", PerformanceCounterType.RateOfCountsPerSecond32)]
         private TracerPerformanceCounter totalTraceOperationsStartedCounter;
 
-		[PerformanceCounter("Avg. Trace Execution Time", "AverageTraceExecutionTimeHelpResource", PerformanceCounterType.AverageCount64,
-			BaseCounterName = "Avg. Trace Execution Time Base", BaseCounterHelp = "AverageTraceExecutionTimeBaseHelpResource", BaseCounterType = PerformanceCounterType.AverageBase)]
-		private TracerPerformanceCounter averageTraceExecutionTime;
-		private TracerPerformanceCounter averageTraceExecutionTimeBase;
+        [PerformanceCounter("Avg. Trace Execution Time", "AverageTraceExecutionTimeHelpResource", PerformanceCounterType.AverageCount64,
+            BaseCounterName = "Avg. Trace Execution Time Base", BaseCounterHelp = "AverageTraceExecutionTimeBaseHelpResource", BaseCounterType = PerformanceCounterType.AverageBase)]
+        private TracerPerformanceCounter averageTraceExecutionTime;
+        private TracerPerformanceCounter averageTraceExecutionTimeBase;
 
         /// <summary>
         /// Made public for test
         /// </summary>
-		public const string counterCategoryName = "Enterprise Library Logging Counters";
+        public const string counterCategoryName = "Enterprise Library Logging Counters";
 
-	    ///<summary>
+        ///<summary>
         /// Initializes a new instance of the <see cref="TracerInstrumentationProvider"/> class.
         ///</summary>
         ///<param name="performanceCountersEnabled"></param>
         ///<param name="eventLoggingEnabled"></param>
-        ///<param name="wmiEnabled"></param>
         ///<param name="applicationName"></param>
-        public TracerInstrumentationProvider(bool performanceCountersEnabled, bool eventLoggingEnabled, bool wmiEnabled, string applicationName)
-            : base(performanceCountersEnabled, eventLoggingEnabled, wmiEnabled, new AppDomainNameFormatter(applicationName))
+        public TracerInstrumentationProvider(bool performanceCountersEnabled, bool eventLoggingEnabled, string applicationName)
+            : base(performanceCountersEnabled, eventLoggingEnabled, new AppDomainNameFormatter(applicationName))
         {
         }
 

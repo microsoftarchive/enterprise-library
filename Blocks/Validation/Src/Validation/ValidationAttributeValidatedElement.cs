@@ -34,7 +34,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         /// </summary>
         /// <param name="propertyInfo">The property to represent.</param>
         public ValidationAttributeValidatedElement(PropertyInfo propertyInfo)
-            : this(propertyInfo, propertyInfo.PropertyType)
+            : this(propertyInfo, GetPropertyType(propertyInfo))
         { }
 
         /// <summary>
@@ -42,7 +42,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         /// </summary>
         /// <param name="fieldInfo">The field to represent.</param>
         public ValidationAttributeValidatedElement(FieldInfo fieldInfo)
-            : this(fieldInfo, fieldInfo.FieldType)
+            : this(fieldInfo, GetFieldType(fieldInfo))
         { }
 
         /// <summary>
@@ -55,6 +55,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         {
             this.memberInfo = memberInfo;
             this.targetType = targetType;
+        }
+
+        private static Type GetPropertyType(PropertyInfo propertyInfo)
+        {
+            if (propertyInfo == null) throw new ArgumentNullException("propertyInfo");
+            return propertyInfo.PropertyType;
+        }
+
+        private static Type GetFieldType(FieldInfo fieldInfo)
+        {
+            if (fieldInfo == null) throw new ArgumentNullException("fieldInfo");
+            return fieldInfo.FieldType;
         }
 
         IEnumerable<IValidatorDescriptor> IValidatedElement.GetValidatorDescriptors()

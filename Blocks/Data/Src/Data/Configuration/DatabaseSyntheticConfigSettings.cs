@@ -31,7 +31,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration
     /// Provides a configuration-like view over the Data Access Application Block sections
     /// </summary>
     /// <remarks>
-    /// As the DataAccessBlock relies on a number of configuraiton sections (such as connectionStrings), this
+    /// As the DataAccessBlock relies on a number of configuration sections (such as connectionStrings), this
     /// config settings provides an abstraction over all these to simplify creating <see cref="TypeRegistration"/> entries.
     /// </remarks>
     public class DatabaseSyntheticConfigSettings : ITypeRegistrationsProvider
@@ -277,7 +277,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration
                     instanceName,
                     instrumentationSection.PerformanceCountersEnabled,
                     instrumentationSection.EventLoggingEnabled,
-                    instrumentationSection.WmiEnabled,
                     instrumentationSection.ApplicationInstanceName))
                 {
                     Name = instanceName
@@ -288,9 +287,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration
         {
             var instrumentationConfigurationSection = InstrumentationConfigurationSection.GetSection(configurationSource);
             return new TypeRegistration<DefaultDataEventLogger>(
-                () => new DefaultDataEventLogger(
-                    instrumentationConfigurationSection.EventLoggingEnabled,
-                    instrumentationConfigurationSection.WmiEnabled))
+                () => new DefaultDataEventLogger(instrumentationConfigurationSection.EventLoggingEnabled))
                 {
                     IsDefault = true
                 };
@@ -307,7 +304,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration
 
             this.configurationSource = configurationSource;
 
-            return this.DoGetRegistrations().ToList();
+            return DoGetRegistrations().Select(r => MarkAsPublicName<Database>(r)).ToList();
+        }
+
+        private static TypeRegistration MarkAsPublicName<TService>(TypeRegistration registration)
+        {
+            if(registration.ServiceType == typeof(TService))
+            {
+                registration.IsPublicName = true;
+            }
+            return registration;
         }
 
         private IEnumerable<TypeRegistration> DoGetRegistrations()

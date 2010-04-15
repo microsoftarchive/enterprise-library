@@ -23,7 +23,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
     /// Summary description for SystemConfigurationSourceFixture
     /// </summary>
     [TestClass]
-    public class SystemConfigurationSourceFixture2
+    public partial class SystemConfigurationSourceFixture2
     {
         const string nonExistingSection = "dummy.nonexisting";
         const string localSection = "dummy.local";
@@ -79,21 +79,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
             object section = source.GetSection(localSection);
 
             Assert.IsNotNull(section);
-        }
-
-        [TestMethod]
-        public void CanGetExistingSectionInAppConfigEvenIfTheAppDomainDoesNotHaveFileIOPermission()
-        {
-            try
-            {
-                new FileIOPermission(PermissionState.Unrestricted).Deny();
-
-                CanGetExistingSectionInAppConfig();
-            }
-            finally
-            {
-                CodeAccessPermission.RevertDeny();
-            }
         }
 
         [TestMethod]

@@ -17,6 +17,7 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using System.ComponentModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design.Validation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration
 {
@@ -91,7 +92,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
 
         /// <summary>
         /// Gets or sets custom configuration attributes.
-        /// </summary>        		
+        /// </summary>
+        [Validation(CryptographyDesignTime.ValidatorTypes.NameValueCollectionValidator)]
         public NameValueCollection Attributes
         {
             get { return helper.Attributes; }

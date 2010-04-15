@@ -16,6 +16,7 @@ using System.Timers;
 using Microsoft.Practices.EnterpriseLibrary.Logging;
 using Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Properties;
+using System.Globalization;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor
 {
@@ -61,7 +62,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor
             catch (Exception e)
             {
                 string errorMessage = string.Format(
-                    Resources.Culture,
+                    CultureInfo.CurrentCulture,
                     Resources.ServiceControllerStopException, 
                     this.distributorService.ApplicationName);
  				this.eventLogger.LogServiceFailure(
@@ -87,7 +88,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor
                 }
                 catch (Exception err)
                 {
-                    string errorMessage = string.Format(Resources.Culture, Resources.ServiceUnableToShutdown, this.distributorService.ApplicationName);
+                    string errorMessage = string.Format(CultureInfo.CurrentCulture, Resources.ServiceUnableToShutdown, this.distributorService.ApplicationName);
 					this.eventLogger.LogServiceFailure(
 						errorMessage,
 						err,
@@ -107,7 +108,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor
             else
             {
 				this.eventLogger.LogServiceFailure(
-					string.Format(Resources.Culture, Resources.ServiceControllerStopException, this.distributorService.ApplicationName),
+                    string.Format(CultureInfo.CurrentCulture, Resources.ServiceControllerStopException, this.distributorService.ApplicationName),
 					null,
 					TraceEventType.Error);
 			}

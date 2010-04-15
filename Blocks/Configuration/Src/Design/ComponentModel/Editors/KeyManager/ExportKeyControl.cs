@@ -47,7 +47,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         {
             if (!IsFileReadOnly(txtExportFileLocation.Text)) return true;
 
-            DialogResult result = MessageBox.Show(string.Format(KeyManagerResources.Culture, KeyManagerResources.OverwriteExportFileMessage, txtExportFileLocation.Text), KeyManagerResources.OverwriteExportFileCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            DialogResult result = MessageBox.Show(string.Format(CultureInfo.CurrentCulture, KeyManagerResources.OverwriteExportFileMessage, txtExportFileLocation.Text), KeyManagerResources.OverwriteExportFileCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
 
             if (DialogResult.No == result) return false;
             ChangeFileAttributesToWritable(txtExportFileLocation.Text);
@@ -74,7 +74,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
             if (!result)
             {
                 MessageBox.Show(KeyManagerResources.ExportDirectoryInvalid, KeyManagerResources.ExportDialogErrorTitle,
-                                MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                                MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
             }
 
             return result;
@@ -88,15 +88,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
             if (!result)
             {
                 MessageBox.Show(KeyManagerResources.ExportPasswordsDoNotMatch, KeyManagerResources.ExportDialogErrorTitle,
-                                MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                                MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
 				result = false;
             }
             else
             {
                 if (txtPassword1.Text.Length < MinPasswordLength)
                 {
-                    MessageBox.Show(string.Format(KeyManagerResources.Culture, KeyManagerResources.ExportPasswordMinLength, MinPasswordLength.ToString(CultureInfo.CurrentCulture)),
-                                    KeyManagerResources.ExportDialogErrorTitle, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    MessageBox.Show(string.Format(CultureInfo.CurrentCulture, KeyManagerResources.ExportPasswordMinLength, MinPasswordLength.ToString(CultureInfo.CurrentCulture)),
+                                    KeyManagerResources.ExportDialogErrorTitle, MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
                     result = false;
                 }
             }
@@ -149,7 +149,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         /// <summary>
         /// Gets or sets the file path to which the key should be exported.
         /// </summary>
-        public string Filename
+        public string FileName
         {
             get { return txtExportFileLocation.Text; }
             set { txtExportFileLocation.Text = value; }

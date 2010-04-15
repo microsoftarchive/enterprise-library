@@ -9,11 +9,9 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System.Management.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.Manageability;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Configuration.Manageability;
 
-[assembly : Instrumented(@"root\EnterpriseLibrary")]
-[assembly : ConfigurationElementManageabilityProvider(typeof(LoggingExceptionHandlerDataManageabilityProvider), typeof(LoggingExceptionHandlerData), typeof(ExceptionHandlingSettingsManageabilityProvider))]
+[assembly: ConfigurationElementManageabilityProvider(typeof(LoggingExceptionHandlerDataManageabilityProvider), typeof(LoggingExceptionHandlerData), typeof(ExceptionHandlingSettingsManageabilityProvider))]

@@ -66,17 +66,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 		/// the fully qualified name of the <see cref="Type"/> the element is the configuration for.
 		/// </value>
 		[ConfigurationProperty(typeProperty, IsRequired = true)]
-        [Browsable(false)]
+        [Browsable(true)]
+        [DesignTimeReadOnly(true)]
         [ResourceDescription(typeof(DesignResources), "NameTypeConfigurationElementTypeNameDescription")]
         [ResourceDisplayName(typeof(DesignResources), "NameTypeConfigurationElementTypeNameDisplayName")]
         [Validation(CommonDesignTime.ValidationTypeNames.TypeValidator)]
+        [ViewModel(CommonDesignTime.ViewModelTypeNames.TypeNameProperty)]
 		public virtual string TypeName
 		{
 			get { return (string)this[typeProperty]; }
 			set { this[typeProperty] = value; }
 		}
 
-		internal new ConfigurationPropertyCollection Properties
+		internal ConfigurationPropertyCollection MetadataProperties
 		{
 			get { return base.Properties; }
 		}

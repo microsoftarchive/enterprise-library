@@ -31,7 +31,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
 		/// <summary>
 		/// <para>Initializes a new instance of the <see cref="TypeConversionValidatorAttribute"/>.</para>
 		/// </summary>
-		/// <param name="targetType">The supplied type to used to determine if the string can be converted to it.</param>
+		/// <param name="targetType">The supplied type used to determine if the string can be converted to it.</param>
 		public TypeConversionValidatorAttribute(Type targetType)
 		{
 			ValidatorArgumentsValidatorHelper.ValidateTypeConversionValidator(targetType);

@@ -37,14 +37,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Instrumentation.Tests
             formattedInstanceName = nameFormatter.CreateName(instanceName);
             totalConnectionOpenedCounter = new EnterpriseLibraryPerformanceCounter(
                 NewDataInstrumentationProvider.CounterCategoryName,
-                NewDataInstrumentationProvider.TotalConnectionOpenedCounter, 
+                NewDataInstrumentationProvider.TotalConnectionOpenedCounter,
                 formattedInstanceName);
             totalConnectionFailedCounter = new EnterpriseLibraryPerformanceCounter(
                 NewDataInstrumentationProvider.CounterCategoryName,
                 NewDataInstrumentationProvider.TotalConnectionFailedCounter,
                 formattedInstanceName);
             totalCommandsExecutedCounter = new EnterpriseLibraryPerformanceCounter(
-                NewDataInstrumentationProvider.CounterCategoryName, 
+                NewDataInstrumentationProvider.CounterCategoryName,
                 NewDataInstrumentationProvider.TotalCommandsExecutedCounter,
                 formattedInstanceName);
             totalCommandsFailedCounter = new EnterpriseLibraryPerformanceCounter(
@@ -52,7 +52,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Instrumentation.Tests
                 NewDataInstrumentationProvider.TotalCommandsFailedCounter,
                 formattedInstanceName);
 
-            provider = new NewDataInstrumentationProvider(instanceName, true, true, true, nameFormatter);
+            provider = new NewDataInstrumentationProvider(instanceName, true, true, nameFormatter);
 
             ClearExistingCounts();
         }
@@ -64,7 +64,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Instrumentation.Tests
 
             Assert.AreEqual(1, totalConnectionOpenedCounter.Value);
         }
-        
+
         [TestMethod]
         public void InstanceConnectionOpenedCounterIncremented()
         {
@@ -139,11 +139,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Instrumentation.Tests
             var connectionOpenedCounter = new EnterpriseLibraryPerformanceCounter(
                 NewDataInstrumentationProvider.CounterCategoryName,
                 NewDataInstrumentationProvider.TotalConnectionOpenedCounter,
-                formatter.CreateName(firstInstanceName), 
+                formatter.CreateName(firstInstanceName),
                 formatter.CreateName(secondInstanceName));
 
-            var firstProvider = new NewDataInstrumentationProvider(firstInstanceName, true, true, true, formatter);
-            var secondProvider = new NewDataInstrumentationProvider(secondInstanceName, true, true, true, formatter);
+            var firstProvider = new NewDataInstrumentationProvider(firstInstanceName, true, true, formatter);
+            var secondProvider = new NewDataInstrumentationProvider(secondInstanceName, true, true, formatter);
 
             firstProvider.FireConnectionOpenedEvent();
 
@@ -162,6 +162,21 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Instrumentation.Tests
             totalConnectionFailedCounter.Clear();
             totalCommandsExecutedCounter.Clear();
             totalCommandsFailedCounter.Clear();
+        }
+    }
+
+    public class FixedPrefixNameFormatter : IPerformanceCounterNameFormatter
+    {
+        string prefix;
+
+        public FixedPrefixNameFormatter(string prefix)
+        {
+            this.prefix = prefix;
+        }
+
+        public string CreateName(string nameSuffix)
+        {
+            return prefix + nameSuffix;
         }
     }
 }

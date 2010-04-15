@@ -81,6 +81,7 @@
     <Compile Include="EventLogTracker.cs" />
     <Compile Include="Instrumentation\WmiEventWatcher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ResourceHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Src\Common.csproj">

@@ -336,7 +336,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
     [TestClass]
     public class WhenExecutingSprocAccessor : SprocAccessorContext
     {
-        private IDataAccessor<Product> accessor;
+        private DataAccessor<Product> accessor;
 
         protected override void Arrange()
         {
@@ -404,7 +404,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
     [TestClass]
     public class WhenExecutingSprocAccessorAsynchronously : SprocAccessorContext
     {
-        private IDataAccessor<Product> accessor;
+        private DataAccessor<Product> accessor;
         private IAsyncResult asyncResult;
 
         protected override void Arrange()
@@ -487,7 +487,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
     [TestClass]
     public class WhenParameterizedSprocAccessorIsCreated : SprocAccessorContext
     {
-        private IDataAccessor<ProductSales> accessor;
+        private DataAccessor<ProductSales> accessor;
 
         protected override void Arrange()
         {
@@ -515,7 +515,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
     [TestClass]
     public class WhenSprocAccessorIsCreatedPassingCustomRowMapper : SprocAccessorContext
     {
-        private IDataAccessor<Product> accessor;
+        private DataAccessor<Product> accessor;
         private CustomMapper mapper;
 
         protected override void Arrange()
@@ -548,7 +548,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
     [TestClass]
     public class WhenSprocAccessorIsCreatedPassingCustomResultSetMapper : SprocAccessorContext
     {
-        private IDataAccessor<Product> accessor;
+        private DataAccessor<Product> accessor;
         private CustomMapper mapper;
 
         protected override void Arrange()
@@ -581,7 +581,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
     [TestClass]
     public class WhenSprocAccessorIsCreatedPassingParameterMapper : SprocAccessorContext
     {
-        private IDataAccessor<ProductSales> accessor;
+        private DataAccessor<ProductSales> accessor;
         private SqlParameterMapper parameterMapper;
 
         protected override void Arrange()

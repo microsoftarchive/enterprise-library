@@ -10,15 +10,16 @@
 //===============================================================================
 
 using System;
+using System.Collections.Generic;
 using System.Windows.Input;
 
-namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
+namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Commands
 {
-    /* move to nested protected internal of CommandViewModel later? */
     internal class DelegateCommand : ICommand
     {
         private Action<object> command;
         private readonly Func<object, bool> canExecute;
+        private List<WeakReference> _canExecuteChangedHandlers;
 
         public DelegateCommand(Action<object> command)
             : this(command, (o) => true)
@@ -36,12 +37,27 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             return canExecute(parameter);
         }
 
-        public event EventHandler CanExecuteChanged;
+        public event EventHandler CanExecuteChanged
+        {
+            add
+            {
+                WeakEventHandlerManager.AddWeakReferenceHandler(ref _canExecuteChangedHandlers, value, 2);
+            }
+            remove
+            {
+                WeakEventHandlerManager.RemoveWeakReferenceHandler(_canExecuteChangedHandlers, value);
+            }
+        }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "e")]
         protected void OnCanExecuteChanged(EventArgs e)
         {
-            EventHandler changed = CanExecuteChanged;
-            if (changed != null) changed(this, e);
+            WeakEventHandlerManager.CallWeakReferenceHandlers(this, _canExecuteChangedHandlers);
+        }
+
+        public void RaiseCanExecuteChanged()
+        {
+            OnCanExecuteChanged(EventArgs.Empty);
         }
 
         public virtual void Execute(object parameter)

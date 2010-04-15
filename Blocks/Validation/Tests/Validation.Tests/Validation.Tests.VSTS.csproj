@@ -36,13 +36,17 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Lib\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Practices.Unity, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.Practices.Unity, Version=2.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Lib\Microsoft.Practices.Unity.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Practices.Unity.Configuration, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.Practices.Unity.Configuration, Version=2.0.414.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Lib\Microsoft.Practices.Unity.Configuration.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity.Interception, Version=2.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Lib\Microsoft.Practices.Unity.Interception.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>True</SpecificVersion>
@@ -64,11 +68,15 @@
     <Compile Include="..\..\..\GlobalAssemblyInfo.cs">
       <Link>GlobalAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="APTCAFixture.cs" />
+    <None Include="..\..\..\GlobalAssemblyInfo.2010.cs">
+      <Link>GlobalAssemblyInfo.2010.cs</Link>
+    </None>
+    <Compile Include="APTCAFixture.2008.cs" />
     <Compile Include="CompositeValidatorBuilderFixture.cs" />
     <Compile Include="ConfigurationValidatedElementFixture.cs" />
     <Compile Include="ConfigurationValidatedTypeFixture.cs" />
     <Compile Include="ConfigurationValidatorBuilderFixture.cs" />
+    <Compile Include="Configuration\ConfigurationCultureInfoConverterFixture.cs" />
     <Compile Include="Configuration\ConfigurationSectionSerializationFixture.cs" />
     <Compile Include="Configuration\AndCompositeValidatorDataFixture.cs" />
     <Compile Include="Configuration\ContainsCharactersValidatorDataFixture.cs" />
@@ -78,6 +86,7 @@
     <Compile Include="Configuration\EnumConversionValidatorDataFixture.cs" />
     <Compile Include="Configuration\RelativeDateTimeValidatorDataFixture.cs" />
     <Compile Include="Configuration\TypeConversionValidatorDataFixture.cs" />
+    <Compile Include="Configuration\ValidationCallHandlerFixture.cs" />
     <Compile Include="Configuration\ValidationTypeRegistrationProviderFixture.cs" />
     <Compile Include="Configuration\ValueValidatorDataFixture.cs" />
     <Compile Include="Configuration\ObjectCollectionValidatorDataFixture.cs" />
@@ -94,6 +103,8 @@
     <Compile Include="Instrumentation\IntegrationFixture.cs" />
     <Compile Include="Instrumentation\PerformanceCounterFixture.cs" />
     <Compile Include="Integration\ValidationIntegrationHelperFixture.cs" />
+    <Compile Include="PolicyInjection\ArgumentValidationExceptionFixture.cs" />
+    <Compile Include="PolicyInjection\ValidationCallHandlerAttributeFixture.cs" />
     <Compile Include="ValidationAttributeValidatedTypeFixture.cs" />
     <Compile Include="ValidationAttributeValidatorBuilderFixture.cs" />
     <Compile Include="ValidationAttributeValidatorFactoryFixture.cs" />
@@ -123,6 +134,7 @@
     <Compile Include="Validators\MethodReturnValueValidatorFixture.cs" />
     <Compile Include="Validators\FieldValueValidatorFixture.cs" />
     <Compile Include="Validators\DateTimeRangeValidatorFixture.cs" />
+    <Compile Include="Validators\NullIgnoringValidatorWrapperFixture.cs" />
     <Compile Include="Validators\PropertyComparisonValidatorAttributeFixture.cs" />
     <Compile Include="Validators\PropertyValueValidatorFixture.cs" />
     <Compile Include="Validators\RangeValidatorAttributeFixture.cs" />
@@ -157,6 +169,7 @@
     <Compile Include="Validators\StringLengthValidatorFixture.cs" />
     <Compile Include="Validators\TypeConversionValidatorAttributeFixture.cs" />
     <Compile Include="Validators\TypeConversionValidatorFixture.cs" />
+    <Compile Include="Validators\UserBuiltValidatorsFixture.cs" />
     <Compile Include="Validators\ValidationAttributeValidatorFixture.cs" />
     <Compile Include="Validators\ValidatorFixture.cs" />
     <Compile Include="Validators\ValueAccessComparisonValidatorFixture.cs" />

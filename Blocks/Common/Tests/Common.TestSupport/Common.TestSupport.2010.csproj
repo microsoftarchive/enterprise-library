@@ -1,0 +1,94 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{C6DE0220-E31B-486B-AB57-107636AEB927}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Microsoft.Practices.EnterpriseLibrary.Common.TestSupport</RootNamespace>
+    <AssemblyName>Microsoft.Practices.EnterpriseLibrary.Common.TestSupport</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <StartupObject></StartupObject>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <NoWarn>618</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugSymbols>false</DebugSymbols>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoWarn>618</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Lib\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Barrier.cs" />
+    <Compile Include="Configuration\ConfigurationFileHelper.cs" />
+    <Compile Include="Configuration\ConfigurationSourceBuilderFixture.cs" />
+    <Compile Include="Configuration\ConfigurationSourceUpdatable.cs" />
+    <Compile Include="Configuration\ConfigurationTestHelper.cs" />
+    <Compile Include="Configuration\ContainerModel\ContainerSwitcher.cs" />
+    <Compile Include="Configuration\ContainerModel\TypeRegistrationExtension.cs" />
+    <Compile Include="Configuration\Manageability\KeyValuePairParsingTestHelper.cs" />
+    <Compile Include="Configuration\Manageability\Mocks\MockAdmContent.cs" />
+    <Compile Include="Configuration\Manageability\Mocks\MockAdmContentBuilder.cs" />
+    <Compile Include="Configuration\Manageability\Mocks\MockConfigurationElementManageabilityProvider.cs" />
+    <Compile Include="Configuration\Manageability\Mocks\MockConfigurationSectionManageabilityProvider.cs" />
+    <Compile Include="Configuration\Manageability\Mocks\MockConfigurationSectionManageabilityProviderAlt.cs" />
+    <Compile Include="Configuration\Manageability\Mocks\MockConfigurationSectionManageabilityProviderBase.cs" />
+    <Compile Include="Configuration\Manageability\Mocks\MockRegistryAccessor.cs" />
+    <Compile Include="Configuration\Manageability\Mocks\MockRegistryKey.cs" />
+    <Compile Include="Configuration\Manageability\Mocks\TestConfigurationSection.cs" />
+    <Compile Include="Configuration\MockCustomProviderBase.cs" />
+    <Compile Include="Configuration\SectionBuilder.cs" />
+    <Compile Include="ContextBase\ArrangeActAssert.cs" />
+    <Compile Include="CrossThreadTestRunner.cs" />
+    <Compile Include="EventLogExtensions.cs" />
+    <Compile Include="EventLogTracker.cs" />
+    <Compile Include="Instrumentation\WmiEventWatcher.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ResourceHelper.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Src\Common.csproj">
+      <Project>{A09297C8-2C40-470B-8856-D856676DDFFA}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

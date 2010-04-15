@@ -15,6 +15,7 @@ using System.Security.Principal;
 using System.Windows.Forms;
 using Microsoft.Practices.EnterpriseLibrary.Security;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors.RuleEditor;
+using System.Globalization;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration.Design
 {
@@ -837,7 +838,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration.Design
 				}
 
                 MessageBox.Show(
-                    string.Format(Resources.Culture, Resources.ParseFailedMessage, ex.Message),
+                    string.Format(CultureInfo.CurrentCulture, Resources.ParseFailedMessage, ex.Message),
                     Resources.ParseFailedCaption,
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error,

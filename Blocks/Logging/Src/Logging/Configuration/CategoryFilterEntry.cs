@@ -39,8 +39,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
     	{
     	}
 
-        /// <summary/>
+        /// <summary>
+        /// Gets or sets the name of the element.
+        /// </summary>
+        /// <value>
+        /// The name of the element.
+        /// </value>
+        /// <remarks>
+        /// Overriden in order to annotate with designtime attribute.
+        /// </remarks>
         [Reference(typeof(NamedElementCollection<TraceSourceData>), typeof(TraceSourceData))]
+        [ViewModel(CommonDesignTime.ViewModelTypeNames.CollectionEditorContainedElementReferenceProperty)]
         public override string Name
         {
             get

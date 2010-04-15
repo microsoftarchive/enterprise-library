@@ -9,11 +9,9 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System.Management.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability;
 using Microsoft.Practices.EnterpriseLibrary.Security.Cache.CachingStore.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Security.Cache.CachingStore.Configuration.Manageability;
 using Microsoft.Practices.EnterpriseLibrary.Security.Configuration.Manageability;
 
-[assembly : Instrumented(@"root\EnterpriseLibrary")]
-[assembly : ConfigurationElementManageabilityProvider(typeof(CachingStoreProviderDataManageabilityProvider), typeof(CachingStoreProviderData), typeof(SecuritySettingsManageabilityProvider))]
+[assembly: ConfigurationElementManageabilityProvider(typeof(CachingStoreProviderDataManageabilityProvider), typeof(CachingStoreProviderData), typeof(SecuritySettingsManageabilityProvider))]

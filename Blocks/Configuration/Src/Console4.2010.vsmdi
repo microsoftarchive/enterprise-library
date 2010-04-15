@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestLists xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <TestList name="Lists of Tests" id="8c43106b-9dc1-4907-a29f-aa66a61bf5b6">
+    <RunConfiguration id="c4b2eba1-978a-4f15-b1d7-2c1bd402b46a" name="Local Test Run" storage="localtestrun.2010.testrunconfig" type="Microsoft.VisualStudio.TestTools.Common.TestRunConfiguration, Microsoft.VisualStudio.QualityTools.Common,   PublicKeyToken=b03f5f7f11d50a3a" />
+  </TestList>
+  <TestList name="Tests Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d">
+    <TestLinks>
+      <TestLink id="11857348-dbc4-608a-ec88-eb7ccc9a1968" name="ChangeInExternalConfigSourceIsDetected" storage="..\..\common\tests\common\bin\debug\microsoft.practices.enterpriselibrary.common.tests.dll" enabled="false" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel,   PublicKeyToken=b03f5f7f11d50a3a" />
+      <TestLink id="21b78422-1cee-87ae-f7ca-32a700083c22" name="ReadsLatestVersionOnFirstRequest" storage="..\..\common\tests\common\bin\debug\microsoft.practices.enterpriselibrary.common.tests.dll" enabled="false" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel,   PublicKeyToken=b03f5f7f11d50a3a" />
+      <TestLink id="4f0d3152-4599-d307-55f0-e42db287f56e" name="Then_GetMergedSectionThrows_ArgumentException" storage="..\..\common\tests\common\bin\debug\microsoft.practices.enterpriselibrary.common.tests.dll" enabled="false" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel,   PublicKeyToken=b03f5f7f11d50a3a" />
+      <TestLink id="62087d64-5a39-3b4c-45d0-40e36f11d673" name="then_change_scope_changed" storage="..\tests\console.wpf\console.wpf.tests.vsts\bin\debug\console.wpf.tests.vsts.dll" enabled="false" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel,   PublicKeyToken=b03f5f7f11d50a3a" />
+    </TestLinks>
+  </TestList>
+</TestLists>

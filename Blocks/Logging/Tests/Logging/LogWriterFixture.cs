@@ -48,8 +48,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
         public void SetUp()
         {
             nameFormatter = new AppDomainNameFormatter(applicationInstanceName);
-            instrumentationProvider = new LoggingInstrumentationProvider(instanceName, true, true, true, applicationInstanceName);
-            tracerInstrumentationProvider = new TracerInstrumentationProvider(true, false, false, string.Empty);
+            instrumentationProvider = new LoggingInstrumentationProvider(instanceName, true, true, applicationInstanceName);
+            tracerInstrumentationProvider = new TracerInstrumentationProvider(true, false, string.Empty);
             formattedInstanceName = nameFormatter.CreateName(instanceName);
             totalLoggingEventsRaised = new EnterpriseLibraryPerformanceCounter(counterCategoryName, TotalLoggingEventsRaised, formattedInstanceName);
             totalTraceListenerEntriesWritten = new EnterpriseLibraryPerformanceCounter(counterCategoryName, TotalTraceListenerEntriesWritten, formattedInstanceName);
@@ -212,32 +212,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
         }
 
         [TestMethod]
-        public void WmiFiredWhenDeliveryToErrorSourceFails()
-        {
-            TraceListener badTraceListener = new BadTraceListener(new Exception("test exception"));
-            LogSource badSource = new LogSource("badSource");
-            badSource.Listeners.Add(badTraceListener);
-
-            Dictionary<string, LogSource> logSources = new Dictionary<string, LogSource>();
-            logSources.Add("foo", badSource);
-
-            LogWriter writer = new LogWriterImpl(new List<ILogFilter>(), logSources, badSource, "foo", new LoggingInstrumentationProvider(false, false, true, "applicationInstanceName"));
-
-            using (WmiEventWatcher eventListener = new WmiEventWatcher(1))
-            {
-                writer.Write(CommonUtil.GetDefaultLogEntry());
-
-                eventListener.WaitForEvents();
-
-                Assert.AreEqual(1, eventListener.EventsReceived.Count);
-                Assert.AreEqual("LoggingFailureLoggingErrorEvent", eventListener.EventsReceived[0].ClassPath.ClassName);
-                string exceptionMessage = (string)eventListener.EventsReceived[0].GetPropertyValue("ExceptionMessage");
-                Assert.IsTrue(-1 != exceptionMessage.IndexOf("test exception"));
-                Assert.IsNotNull(eventListener.EventsReceived[0].GetPropertyValue("ErrorMessage"));
-            }
-        }
-
-        [TestMethod]
         public void EventLogWrittenWhenDeliveryToErrorSourceFails()
         {
             TraceListener badTraceListener = new BadTraceListener(new Exception("test exception"));
@@ -247,7 +221,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
             Dictionary<string, LogSource> logSources = new Dictionary<string, LogSource>();
             logSources.Add("foo", badSource);
 
-            ILoggingInstrumentationProvider instrumentationProvider = new LoggingInstrumentationProvider(false, true, false, "applicationInstanceName");
+            ILoggingInstrumentationProvider instrumentationProvider = new LoggingInstrumentationProvider(false, true, "applicationInstanceName");
             LogWriter writer = new LogWriterImpl(new List<ILogFilter>(), logSources, badSource, "foo", instrumentationProvider);
 
             writer.Write(CommonUtil.GetDefaultLogEntry());
@@ -337,7 +311,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
 
             public void RegisterLoggingUpdateHandler(ILoggingUpdateHandler loggingUpdateHandler)
             {
-                
+
             }
 
             public void UnregisterLoggingUpdateHandler(ILoggingUpdateHandler loggingUpdateHandler)

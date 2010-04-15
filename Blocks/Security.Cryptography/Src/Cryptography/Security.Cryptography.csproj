@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
@@ -6,13 +7,10 @@
     <ProjectGuid>{6A4E6A8A-A39F-4643-BA9B-87AED00BB03E}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ApplicationIcon>
-    </ApplicationIcon>
-    <AssemblyKeyContainerName>
-    </AssemblyKeyContainerName>
+    <ApplicationIcon></ApplicationIcon>
+    <AssemblyKeyContainerName></AssemblyKeyContainerName>
     <AssemblyName>Microsoft.Practices.EnterpriseLibrary.Security.Cryptography</AssemblyName>
-    <AssemblyOriginatorKeyFile>
-    </AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile></AssemblyOriginatorKeyFile>
     <DefaultClientScript>JScript</DefaultClientScript>
     <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
     <DefaultTargetSchema>IE50</DefaultTargetSchema>
@@ -20,12 +18,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Microsoft.Practices.EnterpriseLibrary.Security.Cryptography</RootNamespace>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
-    <StartupObject>
-    </StartupObject>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
-    <UpgradeBackupLocation>
-    </UpgradeBackupLocation><OldToolsVersion>2.0</OldToolsVersion>
+    <StartupObject></StartupObject>
+    <FileUpgradeFlags></FileUpgradeFlags>
+    <UpgradeBackupLocation></UpgradeBackupLocation><OldToolsVersion>2.0</OldToolsVersion>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -33,15 +28,13 @@
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <BaseAddress>285212672</BaseAddress>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
-    <ConfigurationOverrideFile>
-    </ConfigurationOverrideFile>
+    <ConfigurationOverrideFile></ConfigurationOverrideFile>
     <DefineConstants>DEBUG;TRACE;WMINET10</DefineConstants>
     <DocumentationFile>..\..\..\bin\Debug\Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.xml</DocumentationFile>
     <DebugSymbols>true</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
     <NoStdLib>false</NoStdLib>
-    <NoWarn>
-    </NoWarn>
+    <NoWarn></NoWarn>
     <Optimize>false</Optimize>
     <RegisterForComInterop>false</RegisterForComInterop>
     <RemoveIntegerChecks>false</RemoveIntegerChecks>
@@ -57,15 +50,13 @@
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <BaseAddress>285212672</BaseAddress>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
-    <ConfigurationOverrideFile>
-    </ConfigurationOverrideFile>
+    <ConfigurationOverrideFile></ConfigurationOverrideFile>
     <DefineConstants>TRACE;WMINET10</DefineConstants>
     <DocumentationFile>..\..\..\bin\Release\Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.xml</DocumentationFile>
     <DebugSymbols>true</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
     <NoStdLib>false</NoStdLib>
-    <NoWarn>
-    </NoWarn>
+    <NoWarn></NoWarn>
     <Optimize>true</Optimize>
     <RegisterForComInterop>false</RegisterForComInterop>
     <RemoveIntegerChecks>false</RemoveIntegerChecks>
@@ -92,7 +83,6 @@
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Data" />
-    <Reference Include="System.Management" />
     <Reference Include="System.Security" />
     <Reference Include="System.Xml" />
     <ProjectReference Include="..\..\..\Common\Src\Common.csproj">
@@ -105,6 +95,9 @@
     <Compile Include="..\..\..\GlobalAssemblyInfo.cs">
       <Link>GlobalAssemblyInfo.cs</Link>
     </Compile>
+    <None Include="..\..\..\GlobalAssemblyInfo.2010.cs">
+      <Link>GlobalAssemblyInfo.2010.cs</Link>
+    </None>
     <Compile Include="Configuration\CryptographyDesignTime.cs" />
     <Compile Include="Configuration\CryptographySettings.cs">
       <SubType>Code</SubType>
@@ -169,18 +162,13 @@
     <Compile Include="DpapiCryptographer.cs" />
     <Compile Include="HashCryptographer.cs" />
     <Compile Include="IKeyGenerator.cs" />
-    <Compile Include="Instrumentation\CryptographyConfigurationFailureEvent.cs" />
-    <Compile Include="Instrumentation\CryptographyEvent.cs" />
     <Compile Include="Instrumentation\DefaultCryptographyEventLogger.cs" />
-    <Compile Include="Instrumentation\HashOperationFailedEvent.cs" />
     <Compile Include="Instrumentation\IDefaultCryptographyInstrumentationProvider.cs" />
     <Compile Include="Instrumentation\IHashAlgorithmInstrumentationProvider.cs" />
     <Compile Include="Instrumentation\ISymmetricAlgorithmInstrumentationProvider.cs" />
     <Compile Include="Instrumentation\NullDefaultCryptographyInstrumentationProvider.cs" />
     <Compile Include="Instrumentation\NullHashAlgorithmInstrumentationProvider.cs" />
     <Compile Include="Instrumentation\NullSymmetricAlgorithmInstrumentationProvider.cs" />
-    <Compile Include="Instrumentation\SymmetricOperationFailedEvent.cs" />
-    <Compile Include="Instrumentation\HashMismatchDetectedEvent.cs" />
     <Compile Include="Instrumentation\SymmetricAlgorithmInstrumentationProvider.cs" />
     <Compile Include="Cryptographer.cs">
       <SubType>Code</SubType>
@@ -251,9 +239,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>
-    </PreBuildEvent>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PreBuildEvent></PreBuildEvent>
+    <PostBuildEvent></PostBuildEvent>
   </PropertyGroup>
 </Project>

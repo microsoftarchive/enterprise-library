@@ -82,7 +82,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 1009 - The name of the Hash Provider to use when code does specify the name of a configured Hash Provider..
+        ///   Looks up a localized string similar to The name of the Hash Provider to use when code does specify the name of a configured Hash Provider..
         /// </summary>
         internal static string CryptographySettingsDefaultHashProviderNameDescription {
             get {
@@ -100,7 +100,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 1011 - The name of the Symmetric Cryptography Provider to use when code does specify the name of a configured Symmetric Cryptography Provider..
+        ///   Looks up a localized string similar to The name of the Symmetric Cryptography Provider to use when code does specify 
+        ///the name of a configured Symmetric Cryptography Provider..
         /// </summary>
         internal static string CryptographySettingsDefaultSymmetricCryptoProviderNameDescription {
             get {
@@ -118,7 +119,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 1007 - Configuration settings for the Cryptography Application Block..
+        ///   Looks up a localized string similar to Configuration settings for the Cryptography Application Block..
         /// </summary>
         internal static string CryptographySettingsDescription {
             get {
@@ -136,7 +137,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 1013 - The list of configured Hash Providers for the Cryptography Application Block..
+        ///   Looks up a localized string similar to The list of configured Hash Providers for the Cryptography Application Block..
         /// </summary>
         internal static string CryptographySettingsHashProvidersDescription {
             get {
@@ -154,7 +155,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 1015 - The list of configured Symmetric Cryptography Providers for the Cryptography Application Block..
+        ///   Looks up a localized string similar to The list of configured Symmetric Cryptography Providers for the Cryptography Application Block..
         /// </summary>
         internal static string CryptographySettingsSymmetricCryptoProvidersDescription {
             get {
@@ -181,7 +182,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 1017 - A Hash Provider implementated as a custom class, and added to Enterprise Library..
+        ///   Looks up a localized string similar to A Hash Provider implemented as a custom class, and added to Enterprise Library..
         /// </summary>
         internal static string CustomHashProviderDataDescription {
             get {
@@ -199,7 +200,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 1019 - The name of the Custom Hash Provider..
+        ///   Looks up a localized string similar to The name of the Custom Hash Provider..
         /// </summary>
         internal static string CustomHashProviderDataNameDescription {
             get {
@@ -217,7 +218,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 1021 - The fully qualified type name of the Custom Hash Provider..
+        ///   Looks up a localized string similar to The fully qualified type name of the Custom Hash Provider..
         /// </summary>
         internal static string CustomHashProviderDataTypeNameDescription {
             get {
@@ -244,7 +245,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 1025 - The fully qualified type name of of a class that derives from SymmetricAlgorithm and implements the cryptography algorithm for this provider..
+        ///   Looks up a localized string similar to The fully qualified type name of a class that derives from SymmetricAlgorithm and implements 
+        ///the cryptography algorithm for this provider..
         /// </summary>
         internal static string CustomSymmetricCryptoProviderDataAlgorithmTypeNameDescription {
             get {
@@ -262,7 +264,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 1023 - A Symmetric Cryptography Provider implementated as a custom class, and added to Enterprise Library..
+        ///   Looks up a localized string similar to A Symmetric Cryptography Provider implemented as a custom class, and added to Enterprise Library..
         /// </summary>
         internal static string CustomSymmetricCryptoProviderDataDescription {
             get {
@@ -280,7 +282,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 1027 - The name of the Custom Symmetric Crypto Provider..
+        ///   Looks up a localized string similar to The name of the Custom Symmetric Crypto Provider..
         /// </summary>
         internal static string CustomSymmetricCryptoProviderDataNameDescription {
             get {
@@ -298,7 +300,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 1029 - The absolute path and the file name of the file that contains the encrypted key. This value is not required for DPAPI symmetric providers..
+        ///   Looks up a localized string similar to The absolute path and the file name of the file that contains the encrypted key. 
+        ///This value is not required for DPAPI symmetric providers..
         /// </summary>
         internal static string CustomSymmetricCryptoProviderDataProtectedKeyFilenameDescription {
             get {
@@ -316,7 +319,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 1031 - Specifies whether the machine store or the user store is used for storing secrets. Possible values are CurrentUser and LocalMachine. This value is not required for DPAPI symmetric providers..
+        ///   Looks up a localized string similar to Specifies whether the machine store or the user store is used for storing secrets. 
+        ///Possible values are CurrentUser and LocalMachine. This value is not required for DPAPI symmetric providers..
         /// </summary>
         internal static string CustomSymmetricCryptoProviderDataProtectedKeyProtectionScopeDescription {
             get {
@@ -334,7 +338,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 1033 - The fully qualified type name of the Custom Symmetric Crypto Provider..
+        ///   Looks up a localized string similar to The fully qualified type name of the Custom Symmetric Crypto Provider..
         /// </summary>
         internal static string CustomSymmetricCryptoProviderDataTypeNameDescription {
             get {
@@ -352,7 +356,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 1035 - A Symmetric Cryptography Provider that uses Data Protection API to encrypt and decrypt secrets..
+        ///   Looks up a localized string similar to A Symmetric Cryptography Provider that uses Data Protection API to encrypt and decrypt secrets..
         /// </summary>
         internal static string DpapiSymmetricCryptoProviderDataDescription {
             get {
@@ -370,7 +374,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 1037 - The name of the DPAPI Symmetric Crypto Provider..
+        ///   Looks up a localized string similar to The name of the DPAPI Symmetric Crypto Provider..
         /// </summary>
         internal static string DpapiSymmetricCryptoProviderDataNameDescription {
             get {
@@ -388,7 +392,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 1039 - The scope for which the the key is valid. CurrentUser means that the provider will use the current user&apos;s profile to generate the key, and only that user can decrypt secrets. LocalMachine means that any code running on the machine has access to the protected key, and can decrypt any secret encrypted in LocalMachine mode..
+        ///   Looks up a localized string similar to The scope for which the key is valid. 
+        ///CurrentUser means that the provider will use the current user&apos;s profile to generate the key, and only that user can decrypt secrets.
+        ///LocalMachine means that any code running on the machine has access to the protected key, and can decrypt any secret encrypted in LocalMachine mode..
         /// </summary>
         internal static string DpapiSymmetricCryptoProviderDataScopeDescription {
             get {
@@ -406,7 +412,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 1041 - The fully qualified type name of the DPAPI Symmetric Crypto Provider.
+        ///   Looks up a localized string similar to The fully qualified type name of the DPAPI Symmetric Crypto Provider.
         /// </summary>
         internal static string DpapiSymmetricCryptoProviderDataTypeNameDescription {
             get {
@@ -424,7 +430,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 1045 - The fully qualified type name of of a class that derives fromHashAlgorithm and implements the hashing algorithm for this provider..
+        ///   Looks up a localized string similar to Export Key ....
+        /// </summary>
+        internal static string ExportCyrptographyKeyCommandTitle {
+            get {
+                return ResourceManager.GetString("ExportCyrptographyKeyCommandTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The fully qualified type name of a class that derives from HashAlgorithm and implements the hashing algorithm for this provider..
         /// </summary>
         internal static string HashAlgorithmProviderDataAlgorithmTypeNameDescription {
             get {
@@ -442,7 +457,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 1043 - A hash algorithm provider that uses .NET hash algorithms that do not require a generated key..
+        ///   Looks up a localized string similar to A hash algorithm provider that uses .NET hash algorithms that do not require a generated key..
         /// </summary>
         internal static string HashAlgorithmProviderDataDescription {
             get {
@@ -460,7 +475,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 1047 - The name of the Hash Algorithm Provider..
+        ///   Looks up a localized string similar to The name of the Hash Algorithm Provider..
         /// </summary>
         internal static string HashAlgorithmProviderDataNameDescription {
             get {
@@ -478,7 +493,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 1049 - Determines if a random string (a salt value) is generated and pre-pended to the plaintext before hashing. Using salt helps to guard against dictionary attacks, which take longer because every entry in the dictionary must be hashed with every possible salt value..
+        ///   Looks up a localized string similar to Determines if a random string (a salt value) is generated and pre-pended to the plaintext before hashing. 
+        ///Using salt helps to guard against dictionary attacks, which take longer because every entry in the dictionary 
+        ///must be hashed with every possible salt value..
         /// </summary>
         internal static string HashAlgorithmProviderDataSaltEnabledDescription {
             get {
@@ -496,7 +513,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 1051 - The fully qualified type name of the Hash Algorithm Provider..
+        ///   Looks up a localized string similar to The fully qualified type name of the Hash Algorithm Provider..
         /// </summary>
         internal static string HashAlgorithmProviderDataTypeNameDescription {
             get {
@@ -514,7 +531,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 1053 - A base class for all hash providers..
+        ///   Looks up a localized string similar to A base class for all hash providers..
         /// </summary>
         internal static string HashProviderDataDescription {
             get {
@@ -532,7 +549,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 1055 - The name of the Hash Provider..
+        ///   Looks up a localized string similar to The name of the Hash Provider..
         /// </summary>
         internal static string HashProviderDataNameDescription {
             get {
@@ -550,7 +567,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 1057 - The fully qualified type name of the Hash Provider..
+        ///   Looks up a localized string similar to The fully qualified type name of the Hash Provider..
         /// </summary>
         internal static string HashProviderDataTypeNameDescription {
             get {
@@ -568,7 +585,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 1061 - The fully qualified type name of of a class that derives from HashAlgorithm and implements the hashing algorithm for this provider..
+        ///   Looks up a localized string similar to The fully qualified type name of a class that derives from HashAlgorithm and implements the hashing algorithm for this provider..
         /// </summary>
         internal static string KeyedHashAlgorithmProviderDataAlgorithmTypeNameDescription {
             get {
@@ -586,7 +603,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 1059 - A hash algorithm provider that uses .NET hash algorithms that require a generated key..
+        ///   Looks up a localized string similar to A hash algorithm provider that uses .NET hash algorithms that require a generated key..
         /// </summary>
         internal static string KeyedHashAlgorithmProviderDataDescription {
             get {
@@ -604,7 +621,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 1063 - The name of the Keyed Hash Algorithm Provider..
+        ///   Looks up a localized string similar to The name of the Keyed Hash Algorithm Provider..
         /// </summary>
         internal static string KeyedHashAlgorithmProviderDataNameDescription {
             get {
@@ -622,7 +639,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 1065 - The absolute path and the file name of the file that contains the encrypted key. This value is required for keyed hash algorithms..
+        ///   Looks up a localized string similar to The absolute path and the file name of the file that contains the encrypted key. 
+        ///This value is required for keyed hash algorithms..
         /// </summary>
         internal static string KeyedHashAlgorithmProviderDataProtectedKeyFilenameDescription {
             get {
@@ -640,7 +658,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 1067 - Specifies whether the machine store or the user store is used for storing secrets. Possible values are CurrentUser and LocalMachine. This value is required for keyed hash algorithms..
+        ///   Looks up a localized string similar to Specifies whether the machine store or the user store is used for storing secrets. 
+        ///Possible values are CurrentUser and LocalMachine. This value is required for keyed hash algorithms..
         /// </summary>
         internal static string KeyedHashAlgorithmProviderDataProtectedKeyProtectionScopeDescription {
             get {
@@ -658,7 +677,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 1069 - Determines if a random string (a salt value) is generated and pre-pended to the plaintext before hashing. Using salt helps to guard against dictionary attacks, which take longer because every entry in the dictionary must be hashed with every possible salt value..
+        ///   Looks up a localized string similar to Determines if a random string (a salt value) is generated and pre-pended to the plaintext before hashing. 
+        ///Using salt helps to guard against dictionary attacks, which take longer because every entry in the dictionary 
+        ///must be hashed with every possible salt value..
         /// </summary>
         internal static string KeyedHashAlgorithmProviderDataSaltEnabledDescription {
             get {
@@ -676,7 +697,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 1071 - The fully qualified type name of the Keyed Hash Algorithm Provider..
+        ///   Looks up a localized string similar to The fully qualified type name of the Keyed Hash Algorithm Provider..
         /// </summary>
         internal static string KeyedHashAlgorithmProviderDataTypeNameDescription {
             get {
@@ -694,7 +715,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 1075 - The fully qualified type name of of a class that derives from SymmetricAlgorithm and implements the cryptography algorithm for this provider..
+        ///   Looks up a localized string similar to The fully qualified type name of a class that derives from SymmetricAlgorithm and implements the cryptography algorithm for this provider..
         /// </summary>
         internal static string SymmetricAlgorithmProviderDataAlgorithmTypeNameDescription {
             get {
@@ -712,7 +733,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 1073 - A symmetric cryptography algorithm provider that uses .NET symmetric algorithms..
+        ///   Looks up a localized string similar to A symmetric cryptography algorithm provider that uses .NET symmetric algorithms..
         /// </summary>
         internal static string SymmetricAlgorithmProviderDataDescription {
             get {
@@ -730,7 +751,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 1077 - The name of the Symmetric Algorithm Provider..
+        ///   Looks up a localized string similar to The name of the Symmetric Algorithm Provider..
         /// </summary>
         internal static string SymmetricAlgorithmProviderDataNameDescription {
             get {
@@ -748,7 +769,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 1079 - The absolute path and the file name of the file that contains the encrypted key. This value is not required for DPAPI symmetric providers..
+        ///   Looks up a localized string similar to The absolute path and the file name of the file that contains the encrypted key. 
+        ///This value is not required for DPAPI symmetric providers..
         /// </summary>
         internal static string SymmetricAlgorithmProviderDataProtectedKeyFilenameDescription {
             get {
@@ -766,7 +788,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 1081 - Specifies whether the machine store or the user store is used for storing secrets. Possible values are CurrentUser and LocalMachine. This value is not required for DPAPI symmetric providers..
+        ///   Looks up a localized string similar to Specifies whether the machine store or the user store is used for storing secrets. 
+        ///Possible values are CurrentUser and LocalMachine. 
+        ///This value is not required for DPAPI symmetric providers..
         /// </summary>
         internal static string SymmetricAlgorithmProviderDataProtectedKeyProtectionScopeDescription {
             get {
@@ -784,7 +808,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 1083 - The fully qualified type name of the Symmetric Algorithm Provider..
+        ///   Looks up a localized string similar to The fully qualified type name of the Symmetric Algorithm Provider..
         /// </summary>
         internal static string SymmetricAlgorithmProviderDataTypeNameDescription {
             get {
@@ -802,7 +826,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 1085 - A base class for all symmetric cryptography providers..
+        ///   Looks up a localized string similar to A base class for all symmetric cryptography providers..
         /// </summary>
         internal static string SymmetricProviderDataDescription {
             get {
@@ -820,7 +844,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 1087 - The name of the Symmetric Provider..
+        ///   Looks up a localized string similar to The name of the Symmetric Provider..
         /// </summary>
         internal static string SymmetricProviderDataNameDescription {
             get {
@@ -838,7 +862,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 1089 - The fully qualified type name of the Symmetric Provider..
+        ///   Looks up a localized string similar to The fully qualified type name of the Symmetric Provider..
         /// </summary>
         internal static string SymmetricProviderDataTypeNameDescription {
             get {

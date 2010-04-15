@@ -26,7 +26,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
 	/// </summary>
 	/// <remarks>
 	/// Due to the way the Caching class is implemented, implementations of this class will always be called in 
-	/// a thread-safe way. There is no need to make these classes thread-safe on its own.
+	/// a thread-safe way. There is no need to make derived classes thread-safe.
 	/// </remarks>
 	public interface IBackingStore : IDisposable
 	{

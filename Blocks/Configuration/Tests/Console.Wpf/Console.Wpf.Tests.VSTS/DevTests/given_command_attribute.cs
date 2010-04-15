@@ -9,14 +9,12 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Configuration.Design.HostAdapterV5;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 
 namespace Console.Wpf.Tests.VSTS.DevTests
 {
@@ -25,12 +23,15 @@ namespace Console.Wpf.Tests.VSTS.DevTests
     {
         private CommandAttribute attrib;
         private TestableCommandModel command;
+        private Mock<IUIServiceWpf> uiServiceMock;
 
         protected override void Arrange()
         {
             base.Arrange();
 
-            attrib = new CommandAttribute(typeof (TestableCommandModel))
+            uiServiceMock = new Mock<IUIServiceWpf>();
+
+            attrib = new CommandAttribute(typeof(TestableCommandModel))
                              {
                                  CommandPlacement = CommandPlacement.FileMenu,
                                  Title = "TestTitle",
@@ -40,7 +41,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests
 
         protected override void Act()
         {
-            command = new TestableCommandModel(attrib);
+            command = new TestableCommandModel(attrib, uiServiceMock.Object);
         }
 
         [TestMethod]
@@ -63,10 +64,13 @@ namespace Console.Wpf.Tests.VSTS.DevTests
 
         public class TestableCommandModel : CommandModel
         {
-            public TestableCommandModel(CommandAttribute attribute) : base(attribute)
+            public TestableCommandModel(CommandAttribute attribute, IUIServiceWpf uiService)
+                : base(attribute, uiService)
             {
-                
+
             }
         }
     }
+
+
 }

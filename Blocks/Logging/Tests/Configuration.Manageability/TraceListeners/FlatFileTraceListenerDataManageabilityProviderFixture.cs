@@ -27,7 +27,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
     {
         FlatFileTraceListenerDataManageabilityProvider provider;
         MockRegistryKey machineKey;
+        MockRegistryKey machineOptionsKey;
         MockRegistryKey userKey;
+        MockRegistryKey userOptionsKey;
         FlatFileTraceListenerData configurationObject;
 
         [TestInitialize]
@@ -35,7 +37,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         {
             provider = new FlatFileTraceListenerDataManageabilityProvider();
             machineKey = new MockRegistryKey(true);
+            machineOptionsKey = new MockRegistryKey(false);
             userKey = new MockRegistryKey(true);
+            userOptionsKey = new MockRegistryKey(false);
             configurationObject = new FlatFileTraceListenerData();
         }
 
@@ -101,8 +105,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             machineKey.AddStringValue(FlatFileTraceListenerDataManageabilityProvider.FooterPropertyName, "overriden footer");
             machineKey.AddStringValue(FlatFileTraceListenerDataManageabilityProvider.FormatterPropertyName, "overriden formatter");
             machineKey.AddStringValue(FlatFileTraceListenerDataManageabilityProvider.HeaderPropertyName, "overriden header");
-            machineKey.AddStringValue(FlatFileTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, "ProcessId, ThreadId");
             machineKey.AddStringValue(FlatFileTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
+            machineKey.AddSubKey(FlatFileTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, machineOptionsKey);
+            machineOptionsKey.AddIntValue(TraceOptions.ProcessId.ToString(), 1);
+            machineOptionsKey.AddIntValue(TraceOptions.ThreadId.ToString(), 1);
 
             provider.OverrideWithGroupPolicies(configurationObject, true, machineKey, null);
 
@@ -128,8 +134,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             userKey.AddStringValue(FlatFileTraceListenerDataManageabilityProvider.FooterPropertyName, "overriden footer");
             userKey.AddStringValue(FlatFileTraceListenerDataManageabilityProvider.FormatterPropertyName, "overriden formatter");
             userKey.AddStringValue(FlatFileTraceListenerDataManageabilityProvider.HeaderPropertyName, "overriden header");
-            userKey.AddStringValue(FlatFileTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, "ProcessId, ThreadId");
             userKey.AddStringValue(FlatFileTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
+            userKey.AddSubKey(FlatFileTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, userOptionsKey);
+            userOptionsKey.AddIntValue(TraceOptions.ProcessId.ToString(), 1);
+            userOptionsKey.AddIntValue(TraceOptions.ThreadId.ToString(), 1);
 
             provider.OverrideWithGroupPolicies(configurationObject, true, null, userKey);
 
@@ -155,8 +163,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             machineKey.AddStringValue(FlatFileTraceListenerDataManageabilityProvider.FooterPropertyName, "overriden footer");
             machineKey.AddStringValue(FlatFileTraceListenerDataManageabilityProvider.FormatterPropertyName, "overriden formatter");
             machineKey.AddStringValue(FlatFileTraceListenerDataManageabilityProvider.HeaderPropertyName, "overriden header");
-            machineKey.AddStringValue(FlatFileTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, "ProcessId, ThreadId");
             machineKey.AddStringValue(FlatFileTraceListenerDataManageabilityProvider.FilterPropertyName, "Critical");
+            machineKey.AddSubKey(FlatFileTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, machineOptionsKey);
+            machineOptionsKey.AddIntValue(TraceOptions.ProcessId.ToString(), 1);
+            machineOptionsKey.AddIntValue(TraceOptions.ThreadId.ToString(), 1);
 
             provider.OverrideWithGroupPolicies(configurationObject, false, machineKey, null);
 
@@ -224,10 +234,40 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
                             partsEnumerator.Current.ValueName);
 
             Assert.IsTrue(partsEnumerator.MoveNext());
-            Assert.AreSame(typeof(AdmDropDownListPart), partsEnumerator.Current.GetType());
+            Assert.AreSame(typeof(AdmTextPart), partsEnumerator.Current.GetType());
             Assert.IsNull(partsEnumerator.Current.KeyName);
-            Assert.AreEqual(FlatFileTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName,
-                            partsEnumerator.Current.ValueName);
+            Assert.IsNull(partsEnumerator.Current.ValueName);
+
+            // trace output options checkboxes
+            Assert.IsTrue(partsEnumerator.MoveNext());
+            Assert.AreSame(typeof(AdmCheckboxPart), partsEnumerator.Current.GetType());
+            Assert.IsNotNull(partsEnumerator.Current.KeyName);
+            Assert.AreEqual("LogicalOperationStack", partsEnumerator.Current.ValueName);
+
+            Assert.IsTrue(partsEnumerator.MoveNext());
+            Assert.AreSame(typeof(AdmCheckboxPart), partsEnumerator.Current.GetType());
+            Assert.IsNotNull(partsEnumerator.Current.KeyName);
+            Assert.AreEqual("DateTime", partsEnumerator.Current.ValueName);
+
+            Assert.IsTrue(partsEnumerator.MoveNext());
+            Assert.AreSame(typeof(AdmCheckboxPart), partsEnumerator.Current.GetType());
+            Assert.IsNotNull(partsEnumerator.Current.KeyName);
+            Assert.AreEqual("Timestamp", partsEnumerator.Current.ValueName);
+
+            Assert.IsTrue(partsEnumerator.MoveNext());
+            Assert.AreSame(typeof(AdmCheckboxPart), partsEnumerator.Current.GetType());
+            Assert.IsNotNull(partsEnumerator.Current.KeyName);
+            Assert.AreEqual("ProcessId", partsEnumerator.Current.ValueName);
+
+            Assert.IsTrue(partsEnumerator.MoveNext());
+            Assert.AreSame(typeof(AdmCheckboxPart), partsEnumerator.Current.GetType());
+            Assert.IsNotNull(partsEnumerator.Current.KeyName);
+            Assert.AreEqual("ThreadId", partsEnumerator.Current.ValueName);
+
+            Assert.IsTrue(partsEnumerator.MoveNext());
+            Assert.AreSame(typeof(AdmCheckboxPart), partsEnumerator.Current.GetType());
+            Assert.IsNotNull(partsEnumerator.Current.KeyName);
+            Assert.AreEqual("Callstack", partsEnumerator.Current.ValueName);
 
             Assert.IsTrue(partsEnumerator.MoveNext());
             Assert.AreSame(typeof(AdmDropDownListPart), partsEnumerator.Current.GetType());

@@ -44,7 +44,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Instrumentation
             public string[] savedInstanceNames;
 
             public TestInstrumentationListener(string instanceName)
-                : base(instanceName, true, true, true, new NoPrefixNameFormatter()) {}
+                : base(instanceName, true, true, new NoPrefixNameFormatter()) { }
 
             protected override void CreatePerformanceCounters(string[] instanceNames)
             {
@@ -57,7 +57,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Instrumentation
             public string[] savedInstanceNames;
 
             public NoNameInstrumentationListener()
-                : base(true, true, true, new NoPrefixNameFormatter()) {}
+                : base(true, true, new NoPrefixNameFormatter()) { }
 
             protected override void CreatePerformanceCounters(string[] instanceNames)
             {
@@ -70,7 +70,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Instrumentation
             public string[] savedInstanceNames;
 
             public NoDefaultNameInstrumentationListener(string instanceName)
-                : base(new string[] { instanceName }, true, true, true, new NoPrefixNameFormatter()) {}
+                : base(new string[] { instanceName }, true, true, new NoPrefixNameFormatter()) { }
 
             protected override void CreatePerformanceCounters(string[] instanceNames)
             {

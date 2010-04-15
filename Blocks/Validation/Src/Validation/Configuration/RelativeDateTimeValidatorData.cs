@@ -13,6 +13,7 @@ using System;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design.Validation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 {
@@ -27,7 +28,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 		/// <para>Initializes a new instance of the <see cref="RelativeDateTimeValidatorData"/> class.</para>
 		/// </summary>
 		public RelativeDateTimeValidatorData()
-		{ }
+		{
+		    this.Type = typeof (RelativeDateTimeValidator);
+		}
 
 		/// <summary>
 		/// <para>Initializes a new instance of the <see cref="RelativeDateTimeValidatorData"/> class with a name.</para>
@@ -49,6 +52,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 			get { return (DateTimeUnit)this[LowerUnitPropertyName]; }
 			set { this[LowerUnitPropertyName] = value; }
 		}
+
 
 		private const string UpperUnitPropertyName = "upperUnit";
 		/// <summary>

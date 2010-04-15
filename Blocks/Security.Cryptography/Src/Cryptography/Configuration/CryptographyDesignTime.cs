@@ -16,42 +16,33 @@ using System.Text;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration
 {
-    /// <summary/>
-    public static class CryptographyDesignTime
+    internal static class CryptographyDesignTime
     {
-        ///<summary>
-        /// ViewModel type names for Cryptography Application Block.
-        ///</summary>
         public static class ViewModelTypeNames
         {
-            ///<summary>
-            ///</summary>
             public const string CryptographySectionViewModel =
-                "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.CryptographySectionViewModel, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
+                "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.CryptographySectionViewModel, Microsoft.Practices.EnterpriseLibrary.Configuration.DesignTime";
 
-            ///<summary>
-            ///</summary>
             public const string KeyedHashAlgorithmProviderDataViewModel =
-                "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.KeyedHashAlgorithmProviderDataViewModel, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
+                "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.KeyedHashAlgorithmProviderDataViewModel, Microsoft.Practices.EnterpriseLibrary.Configuration.DesignTime";
 
-            ///<summary>
-            ///</summary>
             public const string SymmetricAlgorithmProviderDataViewModel =
-                "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.SymmetricAlgorithmProviderDataViewModel, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
+                "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.SymmetricAlgorithmProviderDataViewModel, Microsoft.Practices.EnterpriseLibrary.Configuration.DesignTime";
 
         }
 
-        /// <summary/>
         public static class CommandTypeNames
         {
-            /// <summary/>
-            public const string AddKeyedHashProviderCommand = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.KeyedHashAlgorithmProviderAddCommand, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
+            public const string AddHashProviderCommand = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.HashAlgorithmProviderAddCommand, Microsoft.Practices.EnterpriseLibrary.Configuration.DesignTime";
 
-            /// <summary/>
-            public const string AddHashProviderCommand = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.HashAlgorithmProviderAddCommand, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
+            public const string AddSymmetricAlgorithmProviderCommand = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.SymmetricAlgorithmProviderAddCommand, Microsoft.Practices.EnterpriseLibrary.Configuration.DesignTime";
+            
+            public const string ExportKeyCommand = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.Cryptography.ExportKeyCommand, Microsoft.Practices.EnterpriseLibrary.Configuration.DesignTime";
+        }
 
-            /// <summary/>
-            public const string AddSymmetricAlgorithmProviderCommand = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.SymmetricAlgorithmProviderAddCommand, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
+        public static class ValidatorTypes
+        {
+            public const string NameValueCollectionValidator = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Validation.NameValueCollectionValidator, Microsoft.Practices.EnterpriseLibrary.Configuration.DesignTime";
         }
     }
 }

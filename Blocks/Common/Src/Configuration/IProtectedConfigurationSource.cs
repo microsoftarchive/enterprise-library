@@ -17,12 +17,10 @@ using System.Configuration;
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 {
     /// <summary>
-    /// TODO: Add Comment
     /// </summary>
     public interface IProtectedConfigurationSource
     {
         /// <summary>
-        /// TODO: Add Comment
         /// </summary>
         /// <param name="sectionName"></param>
         /// <param name="configurationSection"></param>

@@ -1,0 +1,300 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{6AC97717-899D-4F72-BC5B-2C37959CD4FF}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Microsoft.Practices.EnterpriseLibrary.Logging</RootNamespace>
+    <AssemblyName>Microsoft.Practices.EnterpriseLibrary.Logging</AssemblyName>
+    <FileUpgradeFlags></FileUpgradeFlags>
+    <UpgradeBackupLocation></UpgradeBackupLocation>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\..\bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;WMINET10</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <NoWarn>618</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\..\bin\Release\</OutputPath>
+    <DefineConstants>TRACE;WMINET10</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DebugSymbols>true</DebugSymbols>
+    <NoWarn>618</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Lib\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Lib\Microsoft.Practices.Unity.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity.Interception, Version=2.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Lib\Microsoft.Practices.Unity.Interception.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Configuration.Install" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Messaging" />
+    <Reference Include="System.Runtime.Serialization.Formatters.Soap" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\..\GlobalAssemblyInfo.cs">
+      <Link>GlobalAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="Attributes.cs" />
+    <Compile Include="CategoryFilterMode.cs" />
+    <Compile Include="Configuration\BinaryLogFormatterData.cs" />
+    <Compile Include="Configuration\CategoryFilterData.cs" />
+    <Compile Include="Configuration\CategoryFilterEntry.cs" />
+    <Compile Include="Configuration\BasicCustomTraceListenerData.cs" />
+    <Compile Include="Configuration\CustomFormatterData.cs" />
+    <Compile Include="Configuration\CustomLogFilterData.cs" />
+    <Compile Include="Configuration\CustomTraceListenerData.cs" />
+    <Compile Include="Configuration\CustomTraceListenerDataHelper.cs" />
+    <Compile Include="Configuration\Manageability\Filters\CategoryFilterDataManageabilityProvider.cs" />
+    <Compile Include="Configuration\Manageability\Filters\CustomLogFilterDataManageabilityProvider.cs" />
+    <Compile Include="Configuration\Manageability\Filters\LogEnabledFilterDataManageabilityProvider.cs" />
+    <Compile Include="Configuration\Manageability\Filters\PriorityFilterDataManageabilityProvider.cs" />
+    <Compile Include="Configuration\Manageability\Formatters\BinaryLogFormatterDataManageabilityProvider.cs" />
+    <Compile Include="Configuration\Manageability\Formatters\CustomFormatterDataManageabilityProvider.cs" />
+    <Compile Include="Configuration\Manageability\Formatters\TextFormatterDataManageabilityProvider.cs" />
+    <Compile Include="Configuration\Manageability\LoggingSettingsManageabilityProvider.cs" />
+    <Compile Include="Configuration\Manageability\Properties\AssemblyInfo.cs" />
+    <Compile Include="Configuration\Manageability\Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Manageability\TraceListeners\BasicCustomTraceListenerDataManageabilityProvider.cs" />
+    <Compile Include="Configuration\Manageability\TraceListeners\XmlTraceListenerDataManageabilityProvider.cs" />
+    <Compile Include="Configuration\Manageability\TraceListeners\RollingFlatFileTraceListenerDataManageabilityProvider.cs" />
+    <Compile Include="Configuration\Manageability\TraceListeners\CustomTraceListenerDataManageabilityProvider.cs" />
+    <Compile Include="Configuration\Manageability\TraceListeners\EmailTraceListenerDataManageabilityProvider.cs" />
+    <Compile Include="Configuration\Manageability\TraceListeners\FlatFileTraceListenerDataManageabilityProvider.cs" />
+    <Compile Include="Configuration\Manageability\TraceListeners\FormattedEventLogTraceListenerDataManageabilityProvider.cs" />
+    <Compile Include="Configuration\Manageability\TraceListeners\MsmqTraceListenerDataManageabilityProvider.cs" />
+    <Compile Include="Configuration\Manageability\TraceListeners\SystemDiagnosticsTraceListenerDataManageabilityProvider.cs" />
+    <Compile Include="Configuration\Manageability\TraceListeners\TraceListenerDataManageabilityProvider.cs" />
+    <Compile Include="Configuration\Manageability\TraceListeners\WmiTraceListenerDataManageabilityProvider.cs" />
+    <Compile Include="Configuration\RollingTraceListenerData.cs" />
+    <Compile Include="Configuration\SystemDiagnosticsTraceListenerData.cs" />
+    <Compile Include="Configuration\BasicCustomTraceListenerDataHelper.cs" />
+    <Compile Include="Configuration\EmailMessage.cs" />
+    <Compile Include="Configuration\EmailTraceListenerData.cs" />
+    <Compile Include="Configuration\LogEnabledFilterData.cs" />
+    <Compile Include="Configuration\MsmqTraceListenerData.cs" />
+    <Compile Include="Configuration\FlatFileTraceListenerData.cs" />
+    <Compile Include="Configuration\LogFilterData.cs" />
+    <Compile Include="Configuration\LoggingSettings.cs" />
+    <Compile Include="Configuration\PriorityFilterData.cs" />
+    <Compile Include="Configuration\SpecialTraceSourcesData.cs" />
+    <Compile Include="Configuration\Unity\LoggingBlockExtension.cs" />
+    <Compile Include="Configuration\WmiTraceListenerData.cs" />
+    <Compile Include="Configuration\XmlTraceListenerData.cs" />
+    <Compile Include="ContextItems.cs" />
+    <Compile Include="Configuration\FormattedEventLogTraceListenerData.cs" />
+    <Compile Include="Configuration\TraceListenerData.cs" />
+    <Compile Include="Configuration\TraceListenerDataCollection.cs" />
+    <Compile Include="Configuration\TraceListenerReferenceData.cs" />
+    <Compile Include="Configuration\TraceSourceData.cs" />
+    <Compile Include="ExceptionFormatter.cs" />
+    <Compile Include="ExtraInformation\ComPlusInformationProvider.cs" />
+    <Compile Include="ExtraInformation\DebugInformationProvider.cs" />
+    <Compile Include="ExtraInformation\Helpers\ContextUtils.cs" />
+    <Compile Include="ExtraInformation\Helpers\DebugUtils.cs" />
+    <Compile Include="ExtraInformation\Helpers\IContextUtils.cs" />
+    <Compile Include="ExtraInformation\Helpers\IDebugUtils.cs" />
+    <Compile Include="ExtraInformation\IExtraInformationProvider.cs" />
+    <Compile Include="ExtraInformation\ManagedSecurityContextInformationProvider.cs" />
+    <Compile Include="ExtraInformation\UnmanagedSecurityContextInformationProvider.cs" />
+    <Compile Include="Filters\ILogFilterErrorHandler.cs" />
+    <Compile Include="Filters\LogEnabledFilter.cs" />
+    <Compile Include="Filters\LogFilter.cs" />
+    <Compile Include="Formatters\BinaryLogFormatter.cs" />
+    <Compile Include="Formatters\XmlLogFormatter.cs" />
+    <Compile Include="Instrumentation\DefaultLoggingEventLogger.cs" />
+    <Compile Include="Instrumentation\TracerPerformanceCounter.cs" />
+    <Compile Include="LoggingException.cs" />
+    <Compile Include="LogWriterStructureHolder.cs" />
+    <Compile Include="LogWriterFactory.cs" />
+    <Compile Include="ProjectInstaller.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ProjectInstaller.Designer.cs">
+      <DependentUpon>ProjectInstaller.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TraceListenerFilter.cs" />
+    <Compile Include="TraceListeners\CustomTraceListener.cs" />
+    <Compile Include="TraceListeners\EmailTraceListener.cs" />
+    <Compile Include="TraceListeners\EntLibLoggingProxyTraceListener.cs" />
+    <Compile Include="TraceListeners\EnvironmentHelper.cs" />
+    <Compile Include="TraceListeners\FlatFileTraceListener.cs" />
+    <Compile Include="Instrumentation\LoggingInstrumentationProvider.cs" />
+    <Compile Include="TraceListeners\RollFileExistsBehavior.cs" />
+    <Compile Include="TraceListeners\RollingFlatFileTraceListener.cs" />
+    <Compile Include="TraceListeners\RollInterval.cs" />
+    <Compile Include="TraceListeners\WmiTraceListener.cs" />
+    <Compile Include="TraceListeners\IMsmqSendInterface.cs" />
+    <Compile Include="TraceListeners\IMsmqSendInterfaceFactory.cs" />
+    <Compile Include="TraceListeners\MsmqSendInterface.cs" />
+    <Compile Include="TraceListeners\MsmqSendInterfaceFactory.cs" />
+    <Compile Include="TraceListeners\MsmqTraceListener.cs" />
+    <Compile Include="TraceListeners\XmlTraceListener.cs" />
+    <Compile Include="TraceManager.cs" />
+    <Compile Include="Tracer.cs" />
+    <Compile Include="Filters\CategoryFilter.cs" />
+    <Compile Include="Filters\ILogFilter.cs" />
+    <Compile Include="Filters\LogFilterHelper.cs" />
+    <Compile Include="Filters\PriorityFilter.cs" />
+    <Compile Include="Logger.cs" />
+    <Compile Include="LogWriter.cs" />
+    <Compile Include="TraceListeners\FormattedTraceListenerWrapperBase.cs" />
+    <Compile Include="TraceListeners\FormattedTraceListenerBase.cs" />
+    <Compile Include="TraceListeners\FormattedEventLogTraceListener.cs" />
+    <Compile Include="TraceListeners\FormattedTextWriterTraceListener.cs" />
+    <Compile Include="Configuration\FormatterData.cs" />
+    <Compile Include="Configuration\TextFormatterData.cs" />
+    <Compile Include="Formatters\ILogFormatter.cs" />
+    <Compile Include="Formatters\LogFormatter.cs" />
+    <Compile Include="Formatters\TextFormatter.cs" />
+    <Compile Include="Formatters\TokenFunction.cs" />
+    <Compile Include="LogEntry.cs" />
+    <Compile Include="NativeMethods.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="LogSource.cs" />
+    <Compile Include="XmlLogEntry.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Configuration\DesignResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>DesignResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Configuration\Manageability\Properties\Resources.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\Src\Common.csproj">
+      <Project>{A09297C8-2C40-470B-8856-D856676DDFFA}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\..\GlobalAssemblyInfo.2010.cs">
+      <Link>GlobalAssemblyInfo.2010.cs</Link>
+    </Compile>
+    <Compile Include="Configuration\LogCallHandlerCategoryEntry.cs" />
+    <Compile Include="Configuration\LogCallHandlerData.cs" />
+    <Compile Include="PolicyInjection\CategoryFormatter.cs" />
+    <Compile Include="PolicyInjection\LogCallHandler.cs" />
+    <Compile Include="PolicyInjection\LogCallHandlerAttribute.cs" />
+    <Compile Include="PolicyInjection\TraceLogEntry.cs" />
+    <Compile Include="Configuration\DesignResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DesignResources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\Fluent\BinaryFormatterBuilder.cs" />
+    <Compile Include="Configuration\Fluent\BinaryFormatterBuilderExtensions.cs" />
+    <Compile Include="Configuration\Fluent\CategoryFilterBuilderExtensions.cs" />
+    <Compile Include="Configuration\Fluent\CustomFormatterBuilder.cs" />
+    <Compile Include="Configuration\Fluent\IFormatterBuilder.cs" />
+    <Compile Include="Configuration\Fluent\ILoggingConfigurationExtension.cs" />
+    <Compile Include="Configuration\Fluent\ILoggingConfigurationFilterOnCategory.cs" />
+    <Compile Include="Configuration\Fluent\ILoggingConfigurationCategoryOptions.cs" />
+    <Compile Include="Configuration\Fluent\ILoggingConfigurationCategoryStart.cs" />
+    <Compile Include="Configuration\Fluent\ILoggingConfigurationCustomCategoryOptions.cs" />
+    <Compile Include="Configuration\Fluent\ILoggingConfigurationCustomCategoryStart.cs" />
+    <Compile Include="Configuration\Fluent\CustomFilterBuilderExtensions.cs" />
+    <Compile Include="Configuration\Fluent\ILoggingConfigurationFilterLogEnabled.cs" />
+    <Compile Include="Configuration\Fluent\ILoggingConfigurationFilterOnPriority.cs" />
+    <Compile Include="Configuration\Fluent\ILoggingConfigurationOptions.cs" />
+    <Compile Include="Configuration\Fluent\ILoggingConfigurationSendToCustomTraceListener.cs" />
+    <Compile Include="Configuration\Fluent\ILoggingConfigurationSendToEmailTraceListener.cs" />
+    <Compile Include="Configuration\Fluent\ILoggingConfigurationSendToEventLogTraceListener.cs" />
+    <Compile Include="Configuration\Fluent\ILoggingConfigurationSendToFlatFileTraceListener.cs" />
+    <Compile Include="Configuration\Fluent\ILoggingConfigurationSendToMsmqTraceListener.cs" />
+    <Compile Include="Configuration\Fluent\ILoggingConfigurationSendToRollingFileTraceListener.cs" />
+    <Compile Include="Configuration\Fluent\ILoggingConfigurationSendToSystemDiagnosticsTraceListener.cs" />
+    <Compile Include="Configuration\Fluent\ILoggingConfigurationSendToWmiTraceListener.cs" />
+    <Compile Include="Configuration\Fluent\ILoggingConfigurationSendToXmlTraceListener.cs" />
+    <Compile Include="Configuration\Fluent\ILoggingConfigurationSpecialSources.cs" />
+    <Compile Include="Configuration\Fluent\ITextFormatterBuilder.cs" />
+    <Compile Include="Configuration\Fluent\PriorityFilterBuilderExtensions.cs" />
+    <Compile Include="Configuration\Fluent\LogEnabledFilterBuilderExtensions.cs" />
+    <Compile Include="Configuration\Fluent\CustomFormatterBuilderExtensions.cs" />
+    <Compile Include="Configuration\Fluent\FormatterBuilder.cs" />
+    <Compile Include="Configuration\Fluent\ILoggingConfigurationCategoryContd.cs" />
+    <Compile Include="Configuration\Fluent\ILoggingConfigurationSendToExtention.cs" />
+    <Compile Include="Configuration\Fluent\ILoggingConfigurationContd.cs" />
+    <Compile Include="Configuration\Fluent\ILoggingConfigurationSendTo.cs" />
+    <Compile Include="Configuration\Fluent\SendToCustomTraceListenerExtensions.cs" />
+    <Compile Include="Configuration\Fluent\SendToEmailTraceListenerExtension.cs" />
+    <Compile Include="Configuration\Fluent\SendToEventLogTraceListenerExtension.cs" />
+    <Compile Include="Configuration\Fluent\SendToFlatFileTraceListenerExtension.cs" />
+    <Compile Include="Configuration\Fluent\SendToMsmqTraceListenerExtension.cs" />
+    <Compile Include="Configuration\Fluent\SendToRollingFileTraceListenerExtensions.cs" />
+    <Compile Include="Configuration\Fluent\SendToSystemDiagnosticsTraceListenerExtension.cs" />
+    <Compile Include="Configuration\Fluent\SendToWmiTraceListenerExtension.cs" />
+    <Compile Include="Configuration\Fluent\SendToXmlTraceListenerExtension.cs" />
+    <Compile Include="Configuration\Fluent\ILoggingConfigurationStart.cs" />
+    <Compile Include="Configuration\Fluent\SentToTraceListenerExtension.cs" />
+    <Compile Include="Configuration\Fluent\LoggingConfigurationSourceBuilderExtensions.cs" />
+    <Compile Include="Configuration\Fluent\TextFormatterBuilder.cs" />
+    <Compile Include="Configuration\Fluent\TextFormatterBuilderExtensions.cs" />
+    <Compile Include="Configuration\Fluent\LoggingConfigurationExtension.cs" />
+    <Compile Include="Configuration\LoggingDesignTime.cs" />
+    <Compile Include="ILoggingUpdateCoordinator.cs" />
+    <Compile Include="LoggingUpdateCoordinator.cs" />
+    <Compile Include="LogWriterImpl.cs" />
+    <Compile Include="TraceListeners\AttributeSettingTraceListenerWrapper.cs" />
+    <Compile Include="Formatters\GenericTextFormatter.cs" />
+    <Compile Include="Instrumentation\ILoggingInstrumentationProvider.cs" />
+    <Compile Include="Instrumentation\ITracerInstrumentationProvider.cs" />
+    <Compile Include="Instrumentation\NullLoggingInstrumentationProvider.cs" />
+    <Compile Include="Instrumentation\NullTracerInstrumentationProvider.cs" />
+    <Compile Include="Instrumentation\TracerInstrumentationProvider.cs" />
+    <Compile Include="TraceListeners\EmailAuthenticationMode.cs" />
+    <Compile Include="TraceListeners\ReconfigurableTraceListenerWrapper.cs" />
+    <Compile Include="TraceListeners\RollingFlatFilePurger.cs" />
+    <Compile Include="TraceListeners\TraceListenerWrapper.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+</Project>

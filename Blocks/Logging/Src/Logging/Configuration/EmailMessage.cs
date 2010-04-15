@@ -10,10 +10,12 @@
 //===============================================================================
 
 using System;
+using System.Net;
 using System.Net.Mail;
 using System.Text;
 
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
+using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 {
@@ -61,6 +63,37 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 			this.formatter = formatter;
 		}
 
+        /// <summary>
+        /// Initializes a <see cref="EmailMessage"/> with the raw data to create and email, the logentry, and the formatter 
+        /// </summary>
+        /// <param name="toAddress">A semicolon delimited string the represents to whom the email should be sent.</param>
+        /// <param name="fromAddress">Represents from whom the email is sent.</param>
+        /// <param name="subjectLineStarter">Starting text for the subject line.</param>
+        /// <param name="subjectLineEnder">Ending text for the subject line.</param>
+        /// <param name="smtpServer">The name of the SMTP server.</param>
+        /// <param name="smtpPort">The port on the SMTP server to use for sending the email.</param>
+        /// <param name="logEntry">The LogEntry <see cref="LogEntry"/> to send via email.</param>
+        /// <param name="formatter">The Formatter <see cref="ILogFormatter"/> which determines how the 
+        /// email message should be formatted</param>
+        /// <param name="authenticationMode">Authenticate mode to use when connecting to SMTP server.</param>
+        /// <param name="userName">User name to send to SMTP server if using username/password authentication.</param>
+        /// <param name="password">Password to send to SMTP server if using username/password authentication.</param>
+        /// <param name="useSSL">Use SSL to connect to STMP server - if true, yes, if false, no.</param>
+        public EmailMessage(string toAddress, string fromAddress, string subjectLineStarter, string subjectLineEnder, string smtpServer, int smtpPort, LogEntry logEntry, ILogFormatter formatter,
+            EmailAuthenticationMode authenticationMode, string userName, string password, bool useSSL)
+        {
+            this.configurationData = new EmailTraceListenerData(toAddress, fromAddress, subjectLineStarter,
+                                                                subjectLineEnder, smtpServer, smtpPort, string.Empty)
+                                         {
+                                             AuthenticationMode = authenticationMode,
+                                             UserName = userName,
+                                             Password = password,
+                                             UseSSL = useSSL
+                                         };
+            this.logEntry = logEntry;
+            this.formatter = formatter;
+        }
+
 		/// <summary>
 		/// Initializes a <see cref="EmailMessage"/> with the raw data to create and email, a message, and the formatter 
 		/// </summary>
@@ -81,24 +114,46 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 			this.formatter = formatter;
 		}
 
-		/// <summary>
-		/// Determines whether the string is <see langword="null"/> or empty
-		/// </summary>
-		/// <param name="subjectLineMarker">string to evaluate</param>
-		/// <returns>Boolean value that returns true if the string is <see langword="null"/> or empty</returns>
-		private bool IsEmpty(string subjectLineMarker)
-		{
-			return subjectLineMarker == null || subjectLineMarker.Length == 0;
-		}
+        /// <summary>
+        /// Initializes a <see cref="EmailMessage"/> with the raw data to create and email, a message, and the formatter 
+        /// </summary>
+        /// <param name="toAddress">A semicolon delimited string the represents to whom the email should be sent.</param>
+        /// <param name="fromAddress">Represents from whom the email is sent.</param>
+        /// <param name="subjectLineStarter">Starting text for the subject line.</param>
+        /// <param name="subjectLineEnder">Ending text for the subject line.</param>
+        /// <param name="smtpServer">The name of the SMTP server.</param>
+        /// <param name="smtpPort">The port on the SMTP server to use for sending the email.</param>
+        /// <param name="message">Represents the message to send via email.</param>
+        /// <param name="formatter">The Formatter <see cref="ILogFormatter"/> which determines how the 
+        /// email message should be formatted</param>
+        /// <param name="authenticationMode">Authenticate mode to use when connecting to SMTP server.</param>
+        /// <param name="userName">User name to send to SMTP server if using username/password authentication.</param>
+        /// <param name="password">Password to send to SMTP server if using username/password authentication.</param>
+        /// <param name="useSSL">Use SSL to connect to STMP server - if true, yes, if false, no.</param>
+        public EmailMessage(string toAddress, string fromAddress, string subjectLineStarter, string subjectLineEnder, string smtpServer, int smtpPort, string message, ILogFormatter formatter,
+            EmailAuthenticationMode authenticationMode, string userName, string password, bool useSSL)
+        {
+            this.configurationData = new EmailTraceListenerData(toAddress, fromAddress, subjectLineStarter,
+                                                                subjectLineEnder, smtpServer, smtpPort, string.Empty)
+                                         {
+                                             AuthenticationMode = authenticationMode,
+                                             UserName = userName,
+                                             Password = password,
+                                             UseSSL = useSSL
+                                         };
+            this.logEntry = new LogEntry();
+            logEntry.Message = message;
+            this.formatter = formatter;
+        }
 
 		/// <summary>
 		/// Creates the prefix for the subject line
 		/// </summary>
 		/// <param name="subjectLineField">string to add as the subject line prefix (plus whitespace) if it is not empty.</param>
 		/// <returns>modified string to use as subject line prefix</returns>
-		private string GenerateSubjectPrefix(string subjectLineField)
+		private static string GenerateSubjectPrefix(string subjectLineField)
 		{
-			return IsEmpty(subjectLineField)
+			return string.IsNullOrEmpty(subjectLineField)
 				? ""
 				: subjectLineField + " ";
 		}
@@ -108,9 +163,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 		/// </summary>
 		/// <param name="subjectLineField">string to add as the subject line suffix (plus whitespace) if it is not empty.</param>
 		/// <returns>modified string to use as subject line suffix</returns>
-		private string GenerateSubjectSuffix(string subjectLineField)
+		private static string GenerateSubjectSuffix(string subjectLineField)
 		{
-			return IsEmpty(subjectLineField)
+			return string.IsNullOrEmpty(subjectLineField)
 				? ""
 				: " " + subjectLineField;
 		}
@@ -160,7 +215,23 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 		public virtual void SendMessage(MailMessage message)
 		{
 			SmtpClient smtpClient = new SmtpClient(configurationData.SmtpServer, configurationData.SmtpPort);
+            SetCredentials(smtpClient);
+		    smtpClient.EnableSsl = configurationData.UseSSL;
 			smtpClient.Send(message);
 		}
+
+        private void SetCredentials(SmtpClient smtpClient)
+        {
+            switch (configurationData.AuthenticationMode)
+            {
+                case EmailAuthenticationMode.WindowsCredentials:
+                    smtpClient.UseDefaultCredentials = true;
+                    break;
+
+                case EmailAuthenticationMode.UserNameAndPassword:
+                    smtpClient.Credentials = new NetworkCredential(configurationData.UserName, configurationData.Password);
+                    break;
+            }
+        }
 	}
 }

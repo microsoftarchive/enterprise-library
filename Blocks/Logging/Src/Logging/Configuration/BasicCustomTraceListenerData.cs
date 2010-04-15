@@ -19,6 +19,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design.Validation;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
@@ -105,7 +106,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 
         /// <summary>
         /// Gets the custom configuration attributes.
-        /// </summary>        		
+        /// </summary>
+        [Validation(LoggingDesignTime.ValidatorTypes.NameValueCollectionValidator)]
         public NameValueCollection Attributes
         {
             get { return helper.Attributes; }

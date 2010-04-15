@@ -14,6 +14,7 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Unity;
 using Microsoft.Practices.Unity;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Security.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Tests.Configuration.Unity
 {
@@ -70,5 +71,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Tests.Configuration.Uni
 			Assert.IsNotNull(createdObject);
 			Assert.IsInstanceOfType(createdObject, typeof(MockSecurityCacheProvider));
 		}
+
+        [TestMethod]
+        public void CanCreateDefaultSecurityEventLogger()
+        {
+            DefaultSecurityEventLogger createdObject = EnterpriseLibraryContainer.Current.GetInstance<DefaultSecurityEventLogger>();
+
+            Assert.IsNotNull(createdObject);
+        }
 	}
 }

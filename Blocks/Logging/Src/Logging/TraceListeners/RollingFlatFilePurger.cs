@@ -214,6 +214,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         /// <returns>The sequence part of the file name.</returns>
         public static string GetSequence(string fileName)
         {
+            if(fileName == null) throw new ArgumentNullException(fileName, "fileName");
+
             int extensionDotIndex = fileName.LastIndexOf('.');
             if (extensionDotIndex <= 0)
             {

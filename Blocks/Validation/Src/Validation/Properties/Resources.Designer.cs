@@ -450,6 +450,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Value to validate is null but expected an instance of the non-reference type {0}..
+        /// </summary>
+        public static string ExceptionValidatingNullOnValueType {
+            get {
+                return ResourceManager.GetString("ExceptionValidatingNullOnValueType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A validation attribute of type {0} cannot be used to validate values..
         /// </summary>
         public static string ExceptionValidationAttributeNotSupported {
@@ -491,6 +500,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Properties {
         public static string InvalidValidationSpecificationSource {
             get {
                 return ResourceManager.GetString("InvalidValidationSpecificationSource", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to InvariantCulture cannot be used to deserialize configuration..
+        /// </summary>
+        public static string InvariantCultureCannotBeUsedToDeserializeConfiguration {
+            get {
+                return ResourceManager.GetString("InvariantCultureCannotBeUsedToDeserializeConfiguration", resourceCulture);
             }
         }
         
@@ -680,6 +698,42 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Properties {
         public static string ValidationAttributeFailed {
             get {
                 return ResourceManager.GetString("ValidationAttributeFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Parameter validation failed.
+        /// </summary>
+        public static string ValidationFailedMessage {
+            get {
+                return ResourceManager.GetString("ValidationFailedMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Validation results:.
+        /// </summary>
+        public static string ValidationResultsHeader {
+            get {
+                return ResourceManager.GetString("ValidationResultsHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to     Result: {0} Message: {1}.
+        /// </summary>
+        public static string ValidationResultTemplate {
+            get {
+                return ResourceManager.GetString("ValidationResultTemplate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to     Result: {0} Key: {2} Message: {1}.
+        /// </summary>
+        public static string ValidationResultWithKeyTemplate {
+            get {
+                return ResourceManager.GetString("ValidationResultWithKeyTemplate", resourceCulture);
             }
         }
         

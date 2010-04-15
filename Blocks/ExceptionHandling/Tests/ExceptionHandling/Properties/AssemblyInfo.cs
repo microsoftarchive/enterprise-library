@@ -14,5 +14,5 @@ using System.Reflection;
 
 [assembly: AssemblyTitle("Enterprise Library Exception Handling Application Block Tests")]
 [assembly: AssemblyDescription("Enterprise Library Exception Handling Application Block Tests")]
-[assembly: AssemblyVersion("4.1.0.0")]
+[assembly: AssemblyVersion("5.0.414.0")]
 [assembly: CLSCompliant(false)]

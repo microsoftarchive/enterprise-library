@@ -19,7 +19,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
 {
     /// <summary>
     /// Provides an implementation for <see cref="WmiTraceListenerData"/> that
-    /// splits policy overrides processing and WMI objects generation, performing appropriate logging of 
+    /// processes policy overrides, performing appropriate logging of 
     /// policy processing errors.
     /// </summary>
     public class WmiTraceListenerDataManageabilityProvider
@@ -48,7 +48,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
                                                                       IConfigurationSource configurationSource,
                                                                       String elementPolicyKeyName)
         {
-            AddTraceOptionsPart(contentBuilder, configurationObject.TraceOutputOptions);
+            AddTraceOptionsPart(contentBuilder, elementPolicyKeyName, configurationObject.TraceOutputOptions);
 
             AddFilterPart(contentBuilder, configurationObject.Filter);
         }
@@ -66,7 +66,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         protected override void OverrideWithGroupPolicies(WmiTraceListenerData configurationObject,
                                                           IRegistryKey policyKey)
         {
-            TraceOptions? traceOutputOptionsOverride = policyKey.GetEnumValue<TraceOptions>(TraceOutputOptionsPropertyName);
+            TraceOptions? traceOutputOptionsOverride =
+                GetFlagsEnumOverride<TraceOptions>(policyKey, TraceOutputOptionsPropertyName);
             SourceLevels? filterOverride = policyKey.GetEnumValue<SourceLevels>(FilterPropertyName);
 
             configurationObject.TraceOutputOptions = traceOutputOptionsOverride.Value;

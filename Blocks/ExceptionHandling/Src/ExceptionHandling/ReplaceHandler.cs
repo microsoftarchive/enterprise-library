@@ -14,6 +14,7 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Utility;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Properties;
+using System.Globalization;
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
 {
@@ -46,7 +47,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
             if (replaceExceptionType == null) throw new ArgumentNullException("replaceExceptionType");
             if (!typeof(Exception).IsAssignableFrom(replaceExceptionType))
             {
-                throw new ArgumentException(string.Format(Resources.Culture, Resources.ExceptionTypeNotException, replaceExceptionType.Name), "replaceExceptionType");
+                throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, Resources.ExceptionTypeNotException, replaceExceptionType.Name), "replaceExceptionType");
             }
 
             this.exceptionMessageResolver = exceptionMessageResolver;

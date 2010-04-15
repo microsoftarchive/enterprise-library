@@ -6,148 +6,12 @@
 					xmlns:Controls="clr-namespace:Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls">
 
     <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="/Microsoft.Practices.EnterpriseLibrary.Configuration.Design;component/Resources/Brushes.xaml" />
-        <ResourceDictionary Source="/Microsoft.Practices.EnterpriseLibrary.Configuration.Design;component/Resources/Converters.xaml" />
+        <ResourceDictionary Source="/Microsoft.Practices.EnterpriseLibrary.Configuration.DesignTime;component/Resources/Brushes.xaml" />
+        <ResourceDictionary Source="/Microsoft.Practices.EnterpriseLibrary.Configuration.DesignTime;component/Resources/Converters.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
     <SolidColorBrush x:Key="DisabledUpDownArrowFill" Color="#FF676767" />
-    
-    <ControlTemplate x:Key="ReorderUpButton"
-					 TargetType="{x:Type Button}">
-        <Grid HorizontalAlignment="Left"
-			  VerticalAlignment="Top" 
-			  Width="18" 
-			  Height="8"
-			  Background="Transparent">
-            <Path HorizontalAlignment="Center"
-				  x:Name="Arrow"
-				  VerticalAlignment="Center"
-				  Fill="{TemplateBinding Foreground}"
-				  Data="M 0 0 L 4 4 L 8 0 Z"
-				  RenderTransformOrigin="0.5,0.5"
-				  Stretch="Fill"
-				  Width="10"
-				  Height="8">
-                <Path.RenderTransform>
-                    <TransformGroup>
-                        <ScaleTransform />
-                        <SkewTransform />
-                        <RotateTransform Angle="-180" />
-                        <TranslateTransform />
-                    </TransformGroup>
-                </Path.RenderTransform>
-            </Path>
-        </Grid>
-        <ControlTemplate.Triggers>
-            <Trigger Property="IsFocused"
-					 Value="True">
-                <Setter Property="RenderTransform"
-						TargetName="Arrow">
-                    <Setter.Value>
-                        <TransformGroup>
-                            <ScaleTransform ScaleX="1.5"
-											ScaleY="1.5" />
-                            <SkewTransform />
-                            <RotateTransform Angle="-180" />
-                            <TranslateTransform />
-                        </TransformGroup>
-                    </Setter.Value>
-                </Setter>
-            </Trigger>
-            <Trigger Property="IsMouseOver"
-					 Value="true">
-                <Setter Property="RenderTransform"
-						TargetName="Arrow">
-                    <Setter.Value>
-                        <TransformGroup>
-                            <ScaleTransform ScaleX="1.5"
-											ScaleY="1.5" />
-                            <SkewTransform />
-                            <RotateTransform Angle="-180" />
-                            <TranslateTransform />
-                        </TransformGroup>
-                    </Setter.Value>
-                </Setter>
-            </Trigger>
-            <Trigger Property="IsPressed"
-					 Value="true" />
 
-            <Trigger Property="IsEnabled"
-					 Value="False">
-                <Setter Property="Fill"
-						TargetName="Arrow"
-						Value="{DynamicResource DisabledUpDownArrowFill}" />
-            </Trigger>
-        </ControlTemplate.Triggers>
-    </ControlTemplate>
-    <ControlTemplate x:Key="ReorderDownButton"
-					 TargetType="{x:Type Button}">
-        <Grid HorizontalAlignment="Left"
-			  VerticalAlignment="Top" 
-			  Width="18" 
-			  Height="8"
-			  Background="Transparent">
-            <Path HorizontalAlignment="Center"
-				  x:Name="Arrow"
-				  VerticalAlignment="Center"
-				  Fill="{TemplateBinding Foreground}"
-				  Data="M 0 0 L 4 4 L 8 0 Z"
-				  RenderTransformOrigin="0.5,0.5"
-				  Stretch="Fill"
-				  Width="12"
-				  Height="8">
-                <Path.RenderTransform>
-                    <TransformGroup>
-                        <ScaleTransform />
-                        <SkewTransform />
-                        <RotateTransform Angle="0" />
-                        <TranslateTransform />
-                    </TransformGroup>
-                </Path.RenderTransform>
-            </Path>
-        </Grid>
-        <ControlTemplate.Triggers>
-            <Trigger Property="IsFocused"
-					 Value="True">
-                <Setter Property="RenderTransform"
-						TargetName="Arrow">
-                    <Setter.Value>
-                        <TransformGroup>
-                            <ScaleTransform ScaleX="1.5"
-											ScaleY="1.5" />
-                            <SkewTransform />
-                            <RotateTransform Angle="0" />
-                            <TranslateTransform />
-                        </TransformGroup>
-                    </Setter.Value>
-                </Setter>
-            </Trigger>
-            <Trigger Property="IsMouseOver"
-					 Value="true">
-                <Setter Property="RenderTransform"
-						TargetName="Arrow">
-                    <Setter.Value>
-                        <TransformGroup>
-                            <ScaleTransform ScaleX="1.5"
-											ScaleY="1.5" />
-                            <SkewTransform />
-                            <RotateTransform Angle="0" />
-                            <TranslateTransform />
-                        </TransformGroup>
-                    </Setter.Value>
-                </Setter>
-            </Trigger>
-            <Trigger Property="IsPressed"
-					 Value="true" />
-
-            <Trigger Property="IsEnabled"
-					 Value="False">
-                <Setter Property="Fill"
-						TargetName="Arrow"
-						Value="{DynamicResource DisabledUpDownArrowFill}" />
-            </Trigger>
-        </ControlTemplate.Triggers>
-    </ControlTemplate>
     <ControlTemplate x:Key="ExpanderToggleButton"
 					 TargetType="{x:Type ToggleButton}">
         <Grid>
@@ -310,6 +174,7 @@
                                     Focusable="False"
 									Background="{DynamicResource NormalBrush}"
 									IsChecked="{Binding IsExpanded, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                    Visibility="{Binding Bindable, Mode=OneWay, Converter={StaticResource NullToHiddenConverter}}"
 									OverridesDefaultStyle="True" />
                                 <ContentPresenter Grid.Column="1"
 									Margin="4"
@@ -324,7 +189,7 @@
                                         VerticalAlignment="Center"
                                         Margin="1,0,1,0"
                                         IsChecked="{Binding PropertiesShown, Mode=TwoWay}"
-									    Visibility="{Binding Properties, Converter={StaticResource EnumerableToVisibilityConverter}}" />
+									    Visibility="{Binding Properties, Converter={StaticResource PropertiesToVisibilityConverter}, FallbackValue=Hidden}" />
                                 </StackPanel>
                             </Grid>
                         </Border>
@@ -344,7 +209,10 @@
                             <ItemsControl Focusable="False" ItemsSource="{Binding Properties}" Grid.IsSharedSizeScope="True">
                                 <ItemsControl.Template>
                                     <ControlTemplate>
-                                        <Grid HorizontalAlignment="Stretch">
+                                        <Grid HorizontalAlignment="Stretch"
+                                              Controls:GridSplitterKeyAccelerator.TargetColumn="1"
+                                              Controls:GridSplitterKeyAccelerator.DecrementKeyGesture="Alt+Left"
+                                              Controls:GridSplitterKeyAccelerator.IncrementKeyGesture="Alt+Right">                                              
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="12" />
                                                 <ColumnDefinition Width="75" SharedSizeGroup="PropLabel"/>
@@ -457,6 +325,7 @@
 					 Value="False"/>
         </ControlTemplate.Triggers>
     </ControlTemplate>
+    
     <Style x:Key="ExpanderRightHeaderStyle" TargetType="{x:Type ToggleButton}">
         <Setter Property="Template">
             <Setter.Value>

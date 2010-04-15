@@ -66,7 +66,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Design.For
             get { return string.Join("\n", templateTextBox.Lines); }
             set
             {
-                templateTextBox.Lines = value.Split('\n');
+                templateTextBox.Lines = (value ?? "").Split('\n');
                 templateTextBox.Select(templateTextBox.Text.Length, 0);
             }
         }
@@ -178,7 +178,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Design.For
 
             sb.Insert(templateTextBox.SelectionStart, tokenDropdown.SelectedValue);
 
-            int parentIdx = tokenDropdown.SelectedValue.ToString().IndexOf("()");
+            int parentIdx = tokenDropdown.SelectedValue.ToString().IndexOf("()", StringComparison.OrdinalIgnoreCase);
             int selectionStart = 0;
 
             selectionStart = templateTextBox.SelectionStart + tokenDropdown.SelectedValue.ToString().Length;

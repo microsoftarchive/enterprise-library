@@ -38,7 +38,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests.Configur
             configurationSource.Add(ExceptionHandlingSettings.SectionName, settings);
             configurationSource.Add(
                 InstrumentationConfigurationSection.SectionName,
-                new InstrumentationConfigurationSection(false, false, true));
+                new InstrumentationConfigurationSection(false, false));
         }
 
         [TestMethod]
@@ -263,32 +263,33 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests.Configur
         }
 
         [TestMethod]
+        [Ignore]    // TODO use a different instrumentation mechanism to test
         public void ExceptionManagerGetsInstrumented()
         {
-            using(var container = new UnityContainer().AddExtension(new EnterpriseLibraryCoreExtension(configurationSource)))
-            {
-                ExceptionManager manager = container.Resolve<ExceptionManager>();
-                Assert.IsNotNull(manager);
+            //using(var container = new UnityContainer().AddExtension(new EnterpriseLibraryCoreExtension(configurationSource)))
+            //{
+            //    ExceptionManager manager = container.Resolve<ExceptionManager>();
+            //    Assert.IsNotNull(manager);
 
-                Exception exceptionToThrow = new Exception("some message");
+            //    Exception exceptionToThrow = new Exception("some message");
 
-                using (WmiEventWatcher eventListener = new WmiEventWatcher(1))
-                {
-                    try
-                    {
-                        manager.HandleException(new Exception(), "non-existing policy");
-                    }
-                    catch (ExceptionHandlingException)
-                    {
-                        eventListener.WaitForEvents();
-                        Assert.AreEqual(1, eventListener.EventsReceived.Count);
-                        Assert.AreEqual(typeof(ExceptionHandlingFailureEvent).Name,
-                                        eventListener.EventsReceived[0].ClassPath.ClassName);
-                        Assert.AreEqual("non-existing policy", eventListener.EventsReceived[0].GetPropertyValue("InstanceName"));
-                    }
-                }
+            //    using (WmiEventWatcher eventListener = new WmiEventWatcher(1))
+            //    {
+            //        try
+            //        {
+            //            manager.HandleException(new Exception(), "non-existing policy");
+            //        }
+            //        catch (ExceptionHandlingException)
+            //        {
+            //            eventListener.WaitForEvents();
+            //            Assert.AreEqual(1, eventListener.EventsReceived.Count);
+            //            Assert.AreEqual(typeof(ExceptionHandlingFailureEvent).Name,
+            //                            eventListener.EventsReceived[0].ClassPath.ClassName);
+            //            Assert.AreEqual("non-existing policy", eventListener.EventsReceived[0].GetPropertyValue("InstanceName"));
+            //        }
+            //    }
                 
-            }
+            //}
         }
 
 

@@ -58,7 +58,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
 		{
 			get
 			{
-				string lowConnString = connectionString.ToLower(CultureInfo.CurrentCulture);
+                string lowConnString = connectionString.ToLowerInvariant();
 				int uidPos;
 				int uidMPos;
 
@@ -76,7 +76,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
 			}
 			set
 			{
-				string lowConnString = connectionString.ToLower(CultureInfo.CurrentCulture);
+                string lowConnString = connectionString.ToLowerInvariant();
 				int uidPos;
 				int uidMPos;
 				GetTokenPositions(userIdTokens, out uidPos, out uidMPos);
@@ -106,7 +106,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
 			get
 			{
 
-				string lowConnString = connectionString.ToLower(CultureInfo.CurrentCulture);
+				string lowConnString = connectionString.ToLowerInvariant();
 				int pwdPos;
 				int pwdMPos;
 				GetTokenPositions(passwordTokens, out pwdPos, out pwdMPos);
@@ -124,7 +124,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
 			}
 			set
 			{
-				string lowConnString = connectionString.ToLower(CultureInfo.CurrentCulture);
+                string lowConnString = connectionString.ToLowerInvariant();
 				int pwdPos;
 				int pwdMPos;
 				GetTokenPositions(passwordTokens, out pwdPos, out pwdMPos);
@@ -180,7 +180,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
 			string[] tokens = tokenString.Split(',');
 			int currentPos = -1;
 			int previousPos = -1;
-			string lowConnString = connectionString.ToLower(CultureInfo.CurrentCulture);
+            string lowConnString = connectionString.ToLowerInvariant();
 
 			//initialze output parameter
 			tokenPos = -1;
@@ -201,10 +201,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
 		{
 			StringBuilder connStringNoCredentials = new StringBuilder();
 
-			string[] tokens = connectionStringToModify.ToLower(CultureInfo.CurrentCulture).Split(CONNSTRING_DELIM);
+            string[] tokens = connectionStringToModify.ToLowerInvariant().Split(CONNSTRING_DELIM);
 
 			string thingsToRemove = userIdTokens + "," + passwordTokens;
-			string[] avoidTokens = thingsToRemove.ToLower(CultureInfo.CurrentCulture).Split(',');
+            string[] avoidTokens = thingsToRemove.ToLowerInvariant().Split(',');
 
 			foreach (string section in tokens)
 			{

@@ -1,0 +1,33 @@
+﻿<configuration>
+  <configSections>
+    <section name="environmentallyOverriddenProperties" type="Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides.Configuration.EnvironmentalOverridesSection, Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null" />
+  </configSections>
+  <environmentallyOverriddenProperties environmentName="Environment" environmentConfigurationFile="environmentoutput.config">
+    <designtimeLogicalPropertyGroups>
+      <override logicalParentElementPath="/configuration/cachingConfiguration/cacheManagers/add[@name='Cache Manager']">
+        <overriddenProperties>
+          <property containingConfigurationSectionName="cachingConfiguration" 
+                    containingSectionXPath="/configuration/cachingConfiguration" 
+                    containingElementXPath="/configuration/cachingConfiguration/cacheManagers/add[@name='Cache Manager']" 
+                    attribute="backingStoreName" 
+                    overridenValue="NullBackingStore" />
+          <property containingConfigurationSectionName="cachingConfiguration"
+                    containingSectionXPath="/configuration/cachingConfiguration"
+                    containingElementXPath="/configuration/cachingConfiguration/cacheManagers/add[@name='Cache Manager']"
+                    attribute="expirationPollFrequencyInSeconds"
+                    overridenValue="1" />
+          <property containingConfigurationSectionName="cachingConfiguration"
+                    containingSectionXPath="/configuration/cachingConfiguration"
+                    containingElementXPath="/configuration/cachingConfiguration/cacheManagers/add[@name='Cache Manager']"
+                    attribute="maximumElementsInCacheBeforeScavenging"
+                    overridenValue="1" />
+          <property containingConfigurationSectionName="cachingConfiguration"
+                    containingSectionXPath="/configuration/cachingConfiguration"
+                    containingElementXPath="/configuration/cachingConfiguration/cacheManagers/add[@name='Cache Manager']" 
+                    attribute="numberToRemoveWhenScavenging" 
+                    overridenValue="1" />
+        </overriddenProperties>
+      </override>
+    </designtimeLogicalPropertyGroups>
+  </environmentallyOverriddenProperties>
+</configuration>

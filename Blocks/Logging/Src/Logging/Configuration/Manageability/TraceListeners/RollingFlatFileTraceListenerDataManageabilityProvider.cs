@@ -21,7 +21,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
 {
     /// <summary>
     /// Provides an implementation for <see cref="RollingFlatFileTraceListenerData"/> that
-    /// splits policy overrides processing and WMI objects generation, performing appropriate logging of 
+    /// processes policy overrides, performing appropriate logging of 
     /// policy processing errors.
     /// </summary>
     public class RollingFlatFileTraceListenerDataManageabilityProvider
@@ -61,6 +61,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         /// The name of the time stamp property.
         /// </summary>
         public const String TimeStampPatternPropertyName = "timeStampPattern";
+
+        /// <summary>
+        /// The name of the maxArchivedFiles property.
+        /// </summary>
+        public const string MaxArchivedFilesPropertyName = "maxArchivedFiles";
 
         /// <summary>
         /// Initialize a new instance of the <see cref="RollingFlatFileTraceListenerDataManageabilityProvider"/> class.
@@ -121,7 +126,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
                                            512,
                                            true);
 
-            AddTraceOptionsPart(contentBuilder, configurationObject.TraceOutputOptions);
+            contentBuilder.AddNumericPart(Resources.RollingFlatFileTraceListenerMaxArchivedFilesPartName,
+                                          MaxArchivedFilesPropertyName,
+                                          configurationObject.MaxArchivedFiles);
+
+            AddTraceOptionsPart(contentBuilder, elementPolicyKeyName, configurationObject.TraceOutputOptions);
 
             AddFilterPart(contentBuilder, configurationObject.Filter);
 
@@ -147,10 +156,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             RollInterval? rollIntervalOverride = policyKey.GetEnumValue<RollInterval>(RollIntervalPropertyName);
             int? rollSizeKBOverride = policyKey.GetIntValue(RollSizeKBPropertyName);
             string timeStampPatternOverride = policyKey.GetStringValue(TimeStampPatternPropertyName);
-            TraceOptions? traceOutputOptionsOverride = policyKey.GetEnumValue<TraceOptions>(TraceOutputOptionsPropertyName);
+            TraceOptions? traceOutputOptionsOverride =
+                GetFlagsEnumOverride<TraceOptions>(policyKey, TraceOutputOptionsPropertyName);
             SourceLevels? filterOverride = policyKey.GetEnumValue<SourceLevels>(FilterPropertyName);
             string headerOverride = policyKey.GetStringValue(HeaderPropertyName);
             string footerOverride = policyKey.GetStringValue(FooterPropertyName);
+            int? maxArchivedFilesOverride = policyKey.GetIntValue(MaxArchivedFilesPropertyName);
 
             configurationObject.FileName = fileNameOverride;
             configurationObject.Header = headerOverride;
@@ -162,6 +173,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             configurationObject.TimeStampPattern = timeStampPatternOverride;
             configurationObject.TraceOutputOptions = traceOutputOptionsOverride.Value;
             configurationObject.Filter = filterOverride.Value;
+            configurationObject.MaxArchivedFiles = maxArchivedFilesOverride.Value;
         }
     }
 }

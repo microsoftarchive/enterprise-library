@@ -148,28 +148,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
         }
 
         [TestMethod]
-        public void WmiEventFiredWhenCreatingUndefinedPolicy()
-        {
-            using (WmiEventWatcher eventListener = new WmiEventWatcher(1))
-            {
-                try
-                {
-                    ExceptionPolicy.HandleException(new Exception(), "ThisIsAnUnknownKey");
-                }
-                catch (ActivationException)
-                {
-                    eventListener.WaitForEvents();
-                    Assert.AreEqual(1, eventListener.EventsReceived.Count);
-                    Assert.AreEqual("ExceptionHandlingConfigurationFailureEvent", eventListener.EventsReceived[0].ClassPath.ClassName);
-                    Assert.AreEqual("ThisIsAnUnknownKey", eventListener.EventsReceived[0].GetPropertyValue("PolicyName"));
-                    string exceptionMessage = (string)eventListener.EventsReceived[0].GetPropertyValue("ExceptionMessage");
-
-                    Assert.IsFalse(-1 == exceptionMessage.IndexOf("ThisIsAnUnknownKey"));
-                }
-            }
-        }
-
-        [TestMethod]
         public void EventLogWrittenWhenCreatingUndefinedPolicy()
         {
             using (var tracker = new EventLogTracker("Application"))

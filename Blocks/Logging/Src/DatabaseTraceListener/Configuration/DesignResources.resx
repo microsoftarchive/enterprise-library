@@ -118,61 +118,67 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="FormattedDatabaseTraceListenerDataAddCategoryStoredProcNameDescription" xml:space="preserve">
-    <value>643 - The name of the stored procedure in the database that creates a new Category in the tables. The default is 'AddCategory' and is created by the scripts you can run to create the logging database.</value>
+    <value>The name of the stored procedure in the database that creates a new Category in the tables. 
+The default is 'AddCategory' and is created by the scripts you can run to create the logging database.</value>
   </data>
   <data name="FormattedDatabaseTraceListenerDataAddCategoryStoredProcNameDisplayName" xml:space="preserve">
     <value>Add Category Procedure</value>
   </data>
   <data name="FormattedDatabaseTraceListenerDataDatabaseInstanceNameDescription" xml:space="preserve">
-    <value>645 - The name of the Database Instance to use for logging messages, as configured in the Data Access Applicaton Block.</value>
+    <value>The name of the Database Instance to use for logging messages, as configured in the Data Access Application Block.</value>
   </data>
   <data name="FormattedDatabaseTraceListenerDataDatabaseInstanceNameDisplayName" xml:space="preserve">
     <value>Database Instance</value>
   </data>
   <data name="FormattedDatabaseTraceListenerDataDescription" xml:space="preserve">
-    <value>641 - A logging target listener that sends log messages to a specified database using a database instance configured in the Data Access Application Block.</value>
+    <value>A logging target listener that sends log messages to a specified database using a database instance configured in the Data Access Application Block.</value>
   </data>
   <data name="FormattedDatabaseTraceListenerDataDisplayName" xml:space="preserve">
     <value>Database Trace Listener</value>
   </data>
   <data name="FormattedDatabaseTraceListenerDataFilterDescription" xml:space="preserve">
-    <value>647 - The minimum severity of messages that will be sent to the logging target. Valid values are All (the default), Off, Critical, Error, Warning, Information, Verbose, and Activity Tracing. The behavior is for messages with the selected severity and all higher severities to be included. For example, the Warning setting will allow warning, error, and critical mesages tobe written to the logging target.</value>
+    <value>The minimum severity of messages that will be sent to the logging target. 
+Valid values are All (the default), Off, Critical, Error, Warning, Information, Verbose, and Activity Tracing. 
+The behavior is for messages with the selected severity and all higher severities to be included. 
+For example, the Warning setting will allow warning, error, and critical messages to be written to the logging target.</value>
   </data>
   <data name="FormattedDatabaseTraceListenerDataFilterDisplayName" xml:space="preserve">
     <value>Severity Filter</value>
   </data>
   <data name="FormattedDatabaseTraceListenerDataFormatterDescription" xml:space="preserve">
-    <value>649 - The name of the Log Message Formatter to use to format log messages written to the database.</value>
+    <value>The name of the Log Message Formatter to use to format log messages written to the database.</value>
   </data>
   <data name="FormattedDatabaseTraceListenerDataFormatterDisplayName" xml:space="preserve">
     <value>Formatter</value>
   </data>
   <data name="FormattedDatabaseTraceListenerDataListenerDataTypeNameDescription" xml:space="preserve">
-    <value>651 - The fully qualified type name of the Listener.</value>
+    <value>The fully qualified type name of the Listener.</value>
   </data>
   <data name="FormattedDatabaseTraceListenerDataListenerDataTypeNameDisplayName" xml:space="preserve">
     <value>Listener Data Type</value>
   </data>
   <data name="FormattedDatabaseTraceListenerDataNameDescription" xml:space="preserve">
-    <value>653 - The name of the Database Trace Listener.</value>
+    <value>The name of the Database Trace Listener.</value>
   </data>
   <data name="FormattedDatabaseTraceListenerDataNameDisplayName" xml:space="preserve">
     <value>Name</value>
   </data>
   <data name="FormattedDatabaseTraceListenerDataTraceOutputOptionsDescription" xml:space="preserve">
-    <value>655 - Listeners that do not output to a Text Formatter use this property to determine which options, or elements, should be included in the trace output. Possible values are: CallStack, DateTime, LogicalOperationStack, None, ProcessId, ThreadId, and Timestamp. The default is None. This property is optional.</value>
+    <value>Listeners that do not output to a Text Formatter use this property to determine which options, or elements, should be included in the trace output. 
+Possible values are: CallStack, DateTime, LogicalOperationStack, None, ProcessId, ThreadId, and Timestamp. The default is None. This property is optional.</value>
   </data>
   <data name="FormattedDatabaseTraceListenerDataTraceOutputOptionsDisplayName" xml:space="preserve">
     <value>Trace Output Options</value>
   </data>
   <data name="FormattedDatabaseTraceListenerDataTypeNameDescription" xml:space="preserve">
-    <value>657 - The fully qualified type name of the Database Trace Listener.</value>
+    <value>The fully qualified type name of the Database Trace Listener.</value>
   </data>
   <data name="FormattedDatabaseTraceListenerDataTypeNameDisplayName" xml:space="preserve">
     <value>Type</value>
   </data>
   <data name="FormattedDatabaseTraceListenerDataWriteLogStoredProcNameDescription" xml:space="preserve">
-    <value>659 - The name of the stored procedure in the database that writes log messages into the tables. The default is 'WriteLog', and is created by the scripts you can run to create the logging database.</value>
+    <value>The name of the stored procedure in the database that writes log messages into the tables. 
+The default is 'WriteLog', and is created by the scripts you can run to create the logging database.</value>
   </data>
   <data name="FormattedDatabaseTraceListenerDataWriteLogStoredProcNameDisplayName" xml:space="preserve">
     <value>Write To Log Procedure</value>

@@ -10,7 +10,6 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation;
@@ -39,7 +38,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation.Tests
         public void CacheFailureWithInstrumentationDisabledDoesNotWriteToEventLog()
         {
             ICachingInstrumentationProvider provider
-                = new CachingInstrumentationProvider(instanceName, false, false, false, formatter);
+                = new CachingInstrumentationProvider(instanceName, false, false, formatter);
             Exception exception = new Exception(exceptionMessage);
 
             using (var eventLog = new EventLogTracker(GetEventLog()))
@@ -54,7 +53,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation.Tests
         public void CacheFailureWithInstrumentationEnabledDoesWriteToEventLog()
         {
             ICachingInstrumentationProvider provider
-                = new CachingInstrumentationProvider(instanceName, false, true, false, formatter);
+                = new CachingInstrumentationProvider(instanceName, false, true, formatter);
             Exception exception = new Exception(exceptionMessage);
 
             using (var eventLog = new EventLogTracker(GetEventLog()))
@@ -73,7 +72,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation.Tests
         public void CacheCallbackFailureWithInstrumentationDisabledDoesNotWriteToEventLog()
         {
             ICachingInstrumentationProvider provider
-                = new CachingInstrumentationProvider(instanceName, false, false, false, formatter);
+                = new CachingInstrumentationProvider(instanceName, false, false, formatter);
             Exception exception = new Exception(exceptionMessage);
 
             using (var eventLog = new EventLogTracker(GetEventLog()))
@@ -92,7 +91,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation.Tests
         public void CacheCallbackFailureWithInstrumentationEnabledDoesWriteToEventLog()
         {
             ICachingInstrumentationProvider provider
-                = new CachingInstrumentationProvider(instanceName, false, true, false, formatter);
+                = new CachingInstrumentationProvider(instanceName, false, true, formatter);
             Exception exception = new Exception(exceptionMessage);
 
             using (var eventLog = new EventLogTracker(GetEventLog()))

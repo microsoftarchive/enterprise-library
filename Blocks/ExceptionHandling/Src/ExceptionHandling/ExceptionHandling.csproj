@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -7,13 +8,10 @@
     <ProjectGuid>{2DB0AD6D-BF59-4EBB-9F99-49ABD8539FD2}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ApplicationIcon>
-    </ApplicationIcon>
-    <AssemblyKeyContainerName>
-    </AssemblyKeyContainerName>
+    <ApplicationIcon></ApplicationIcon>
+    <AssemblyKeyContainerName></AssemblyKeyContainerName>
     <AssemblyName>Microsoft.Practices.EnterpriseLibrary.ExceptionHandling</AssemblyName>
-    <AssemblyOriginatorKeyFile>
-    </AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile></AssemblyOriginatorKeyFile>
     <DefaultClientScript>JScript</DefaultClientScript>
     <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
     <DefaultTargetSchema>IE50</DefaultTargetSchema>
@@ -21,12 +19,9 @@
     <OutputType>Library</OutputType>
     <RootNamespace>Microsoft.Practices.EnterpriseLibrary.ExceptionHandling</RootNamespace>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
-    <StartupObject>
-    </StartupObject>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
-    <UpgradeBackupLocation>
-    </UpgradeBackupLocation><OldToolsVersion>2.0</OldToolsVersion>
+    <StartupObject></StartupObject>
+    <FileUpgradeFlags></FileUpgradeFlags>
+    <UpgradeBackupLocation></UpgradeBackupLocation><OldToolsVersion>2.0</OldToolsVersion>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -34,15 +29,13 @@
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <BaseAddress>285212672</BaseAddress>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
-    <ConfigurationOverrideFile>
-    </ConfigurationOverrideFile>
+    <ConfigurationOverrideFile></ConfigurationOverrideFile>
     <DefineConstants>DEBUG;TRACE;WMINET10</DefineConstants>
     <DocumentationFile>..\..\..\bin\Debug\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.xml</DocumentationFile>
     <DebugSymbols>true</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
     <NoStdLib>false</NoStdLib>
-    <NoWarn>
-    </NoWarn>
+    <NoWarn></NoWarn>
     <Optimize>false</Optimize>
     <RegisterForComInterop>false</RegisterForComInterop>
     <RemoveIntegerChecks>false</RemoveIntegerChecks>
@@ -57,15 +50,13 @@
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <BaseAddress>285212672</BaseAddress>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
-    <ConfigurationOverrideFile>
-    </ConfigurationOverrideFile>
+    <ConfigurationOverrideFile></ConfigurationOverrideFile>
     <DefineConstants>TRACE;WMINET10</DefineConstants>
     <DocumentationFile>..\..\..\bin\Release\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.xml</DocumentationFile>
     <DebugSymbols>true</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
     <NoStdLib>false</NoStdLib>
-    <NoWarn>
-    </NoWarn>
+    <NoWarn></NoWarn>
     <Optimize>true</Optimize>
     <RegisterForComInterop>false</RegisterForComInterop>
     <RemoveIntegerChecks>false</RemoveIntegerChecks>
@@ -83,6 +74,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Lib\Microsoft.Practices.Unity.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Practices.Unity.Interception, Version=2.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Lib\Microsoft.Practices.Unity.Interception.dll</HintPath>
+    </Reference>
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
@@ -92,7 +87,6 @@
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Data" />
-    <Reference Include="System.Management" />
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
@@ -100,11 +94,15 @@
       <Link>GlobalAssemblyInfo.cs</Link>
       <SubType>Code</SubType>
     </Compile>
+    <None Include="..\..\..\GlobalAssemblyInfo.2010.cs">
+      <Link>GlobalAssemblyInfo.2010.cs</Link>
+    </None>
     <Compile Include="Configuration\DesignResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>DesignResources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Configuration\ExceptionCallHandlerData.cs" />
     <Compile Include="Configuration\ExceptionHandlingDesignTime.cs" />
     <Compile Include="Configuration\Fluent\ConfigurationSourceBuilderExtensions.cs" />
     <Compile Include="Configuration\CustomHandlerData.cs" />
@@ -166,7 +164,6 @@
     <Compile Include="ExceptionManagerImpl.cs" />
     <Compile Include="ExceptionPolicyFactory.cs" />
     <Compile Include="Instrumentation\DefaultExceptionHandlingEventLogger.cs" />
-    <Compile Include="Instrumentation\ExceptionHandlingConfigurationFailureEvent.cs" />
     <Compile Include="ExceptionPolicy.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -180,13 +177,13 @@
     <Compile Include="IExceptionHandler.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Instrumentation\ExceptionHandlingEvent.cs" />
-    <Compile Include="Instrumentation\ExceptionHandlingFailureEvent.cs" />
     <Compile Include="Instrumentation\IDefaultExceptionHandlingInstrumentationProvider.cs" />
     <Compile Include="Instrumentation\IExceptionHandlingInstrumentationProvider.cs" />
     <Compile Include="Instrumentation\ExceptionHandlingInstrumentationProvider.cs" />
     <Compile Include="Instrumentation\NullDefaultExceptionHandlingInstrumentationProvider.cs" />
     <Compile Include="Instrumentation\NullExceptionHandlingInstrumentationProvider.cs" />
+    <Compile Include="PolicyInjection\ExceptionCallHandler.cs" />
+    <Compile Include="PolicyInjection\ExceptionCallHandlerAttribute.cs" />
     <Compile Include="PostHandlingAction.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -234,9 +231,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>
-    </PreBuildEvent>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PreBuildEvent></PreBuildEvent>
+    <PostBuildEvent></PostBuildEvent>
   </PropertyGroup>
 </Project>

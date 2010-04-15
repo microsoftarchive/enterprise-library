@@ -243,8 +243,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
         /// if there is no such registry key.</param>
         /// <returns><see langword="true"/> if the policy settings do not disable the configuration section, otherwise
         /// <see langword="false"/>.</returns>
-        /// <exception cref="ArgumentException">when the type of <paramref name="configurationObject"/> is not 
-        /// the type <typeparamref name="T"/>.</exception>
         public abstract bool OverrideWithGroupPolicies(
             ConfigurationSection configurationObject,
             bool readGroupPolicies,
@@ -257,7 +255,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
         /// <typeparam name="T">The base type for the configuration elements collection.</typeparam>
         /// <param name="element">The configuration element.</param>
         /// <param name="subProvider">The <see cref="ConfigurationElementManageabilityProvider"/> used to override the element's
-        /// properties and create the wmi objects.</param>
+        /// properties.</param>
         /// <param name="readGroupPolicies"><see langword="true"/> if Group Policy overrides must be applied; otherwise, 
         /// <see langword="false"/>.</param>
         /// <param name="machineKey">The <see cref="IRegistryKey"/> which holds the Group Policy overrides for the 
@@ -377,6 +375,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
         /// <param name="keys">The registry keys to close.</param>
         protected static void ReleaseRegistryKeys(params IRegistryKey[] keys)
         {
+            if (keys == null) throw new ArgumentNullException("keys");
+
             foreach (IRegistryKey key in keys)
             {
                 if (key != null)

@@ -21,7 +21,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
 {
     [TestClass]
-    public class ExceptionFormatterFixture
+    public partial class ExceptionFormatterFixture
     {
         const string fileNotFoundMessage = "The file can't be found";
         const string theFile = "theFile";
@@ -86,38 +86,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
             Assert.AreEqual(formatter.properties[propertyString], mockPropertyString);
             // The message should be null because the reflection formatter should ignore this property
             Assert.AreEqual(null, formatter.properties[message]);
-        }
-
-        [TestMethod]
-        public void ReflectionFormatterReadSecurityExceptionPropertiesWithoutPermissionTest()
-        {
-            SecurityPermission denyPermission
-                = new SecurityPermission(SecurityPermissionFlag.ControlPolicy | SecurityPermissionFlag.ControlEvidence);
-            PermissionSet permissions = new PermissionSet(PermissionState.None);
-            permissions.AddPermission(denyPermission);
-            permissions.Deny();
-
-            StringBuilder sb = new StringBuilder();
-            StringWriter writer = new StringWriter(sb);
-
-            SecurityException exception = null;
-            try
-            {
-                DemandException(denyPermission);
-            }
-            catch (SecurityException e)
-            {
-                exception = e;
-            }
-
-            MockTextExceptionFormatter formatter = new MockTextExceptionFormatter(writer, exception, Guid.Empty);
-            formatter.Format();
-
-            CodeAccessPermission.RevertDeny();
-
-            formatter = new MockTextExceptionFormatter(writer, exception, Guid.Empty);
-            formatter.Format();
-            Assert.AreEqual(exception.Demanded.ToString(), formatter.properties["Demanded"]);
         }
 
         static void DemandException(SecurityPermission denyPermission)

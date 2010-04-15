@@ -9,21 +9,24 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Commands;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Configuration.Design.HostAdapterV5;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Properties;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Commands;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics
 {
+
+#pragma warning disable 1591
+    /// <summary>
+    /// This class supports block-specific configuration design-time and is not
+    /// intended to be used directly from your code.
+    /// </summary>
     public class AddCachingBlockCommand : AddApplicationBlockCommand
     {
-        public AddCachingBlockCommand(ConfigurationSourceModel configurationSourceModel, AddApplicationBlockCommandAttribute attribute)
-            : base(configurationSourceModel, attribute)
+        public AddCachingBlockCommand(ConfigurationSourceModel configurationSourceModel, AddApplicationBlockCommandAttribute attribute, IUIServiceWpf uiService)
+            : base(configurationSourceModel, attribute, uiService)
         {
         }
 
@@ -31,12 +34,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
         {
             return new CacheManagerSettings
             {
-                DefaultCacheManager = "Cache Manager",
+                DefaultCacheManager = Resources.AddCachingBlockCommandDefaultCacheManagerName,
                 CacheManagers = 
                 {{
                      new CacheManagerData
                      {
-                         Name = "Cache Manager",
+                         Name = Resources.AddCachingBlockCommandDefaultCacheManagerName,
                          CacheStorage = CacheManagerSectionViewModel.DefaultNullBackingStore
                      }
                 }},
@@ -44,4 +47,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
             };
         }
     }
+
+#pragma warning restore 1591
 }

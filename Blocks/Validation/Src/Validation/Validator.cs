@@ -91,6 +91,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         /// <param name="key">The key that identifies how the result relates to the target.</param>
         protected void LogValidationResult(ValidationResults validationResults, string message, object target, string key)
         {
+            if (validationResults == null) throw new ArgumentNullException("validationResults");
+
             validationResults.AddResult(new ValidationResult(message, target, key, this.Tag, this));
         }
 
@@ -105,6 +107,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         protected void LogValidationResult(ValidationResults validationResults, string message, object target, string key,
             IEnumerable<ValidationResult> nestedValidationResults)
         {
+            if (validationResults == null) throw new ArgumentNullException("validationResults");
+
             validationResults.AddResult(new ValidationResult(message, target, key, this.Tag, this, nestedValidationResults));
         }
 

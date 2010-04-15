@@ -33,8 +33,6 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_a_validation_service
     [TestClass]
     public class when_validating_a_property_with_no_validators : SectionWithValidatablePropertiesContext
     {
-        private IEnumerable<ValidationError> results;
-
         protected override string ArrangePropertyName()
         {
             return "PropertyWithNoValidators";
@@ -42,13 +40,13 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_a_validation_service
 
         protected override void Act()
         {
-            results = property.ValidateWithResults(property.BindableProperty.BindableValue);
+            property.Validate(property.BindableProperty.BindableValue);
         }
 
         [TestMethod]
         public void then_property_is_valid()
         {
-            Assert.IsFalse(results.Any());
+            Assert.IsFalse(property.ValidationResults.Any());
         }
     }
 
@@ -74,25 +72,25 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_a_validation_service
         [TestMethod]
         public void then_all_validation_result_returns_correct_error_message()
         {
-            Assert.AreEqual("Test Validation Error", property.ValidationErrors.Single().Message);
+            Assert.AreEqual("Test Validation Error", property.ValidationResults.Single().Message);
         }
 
         [TestMethod]
         public void then_property_name_returned_in_results()
         {
-            Assert.AreEqual(property.DisplayName, property.ValidationErrors.Single().PropertyName);
+            Assert.AreEqual(property.DisplayName, property.ValidationResults.Single().PropertyName);
         }
 
         [TestMethod]
         public void then_result_level_defaults_to_error()
         {
-            Assert.IsFalse(property.ValidationErrors.First().IsWarning);
+            Assert.IsFalse(property.ValidationResults.First().IsWarning);
         }
 
         [TestMethod]
         public void then_element_path_matches()
         {
-            Assert.AreEqual(property.DeclaringElement.Path, property.ValidationErrors.First().ElementPath);
+            Assert.AreEqual(property.DeclaringElement.ElementId, property.ValidationResults.First().ElementId);
         }
     }
 
@@ -113,7 +111,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_a_validation_service
         public void then_required_field_fires()
         {
             Assert.IsTrue(
-                property.ValidationErrors.Where(
+                property.ValidationResults.Where(
                     r => r.Message == string.Format("The field {0} is missing a required value.", property.DisplayName))
                     .Any());
         }
@@ -136,7 +134,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_a_validation_service
         public void then_revalidating_produces_same_results()
         {
             Assert.IsTrue(
-                property.ValidationErrors.Where(r => r.Message == string.Format("The string must be at least 5 characters long.")).Any());
+                property.ValidationResults.Where(r => r.Message == string.Format("The string must be at least 5 characters long.")).Any());
         }
     }
 
@@ -167,15 +165,13 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_a_validation_service
         [TestMethod]
         public void then_should_return_no_errors()
         {
-            Assert.IsFalse(property.ValidationErrors.Any());
+            Assert.IsFalse(property.ValidationResults.Any());
         }
     }
 
     [TestClass]
     public class when_converter_fails_will_appear_in_validation_results : SectionWithValidatablePropertiesContext
     {
-        private Exception capturedException;
-
         protected override string ArrangePropertyName()
         {
             return "IntProperty";
@@ -189,7 +185,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_a_validation_service
         [TestMethod]
         public void then_conversion_failure_appears_in_error_result()
         {
-            Assert.IsTrue(property.ValidationErrors.Where(r => r.Message == "NonInteger is not a valid value for Int32.").Any());
+            Assert.IsTrue(property.ValidationResults.Where(r => r.Message == "NonInteger is not a valid value for Int32.").Any());
         }
 
     }
@@ -225,7 +221,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_a_validation_service
         [TestMethod]
         public void then_results_indicate_key_clash()
         {
-            Assert.IsTrue(addedElement.Property("OtherKeyValue").ValidationErrors.Any(r => r.PropertyName == "OtherKeyValue" && r.Message == "Duplicate key value."));
+            Assert.IsTrue(addedElement.Property("OtherKeyValue").ValidationResults.Any(r => r.PropertyName == "OtherKeyValue" && r.Message == "Duplicate key value."));
         }
 
         [TestMethod]
@@ -233,6 +229,14 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_a_validation_service
         {
             var addedProperty = addedElement.Property("OtherKeyValue");
             Assert.IsFalse(addedProperty.Value.ToString() == addedProperty.BindableProperty.BindableValue);
+        }
+
+        [TestMethod]
+        public void then_validating_other_key_participant_doesnt_result_in_validation_error()
+        {
+            var anotherProperty = addedElement.Property("KeyValue");
+            anotherProperty.Validate();
+            Assert.IsFalse(addedElement.Property("KeyValue").ValidationResults.Any(r => r.PropertyName == "KeyValue" && r.Message == "Duplicate key value."));
         }
     }
 
@@ -259,7 +263,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_a_validation_service
         [TestMethod]
         public void then_property_error_collection_cleared()
         {
-            Assert.IsFalse(property.ValidationErrors.Any());
+            Assert.IsFalse(property.ValidationResults.Any());
         }
     }
 
@@ -279,20 +283,20 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_a_validation_service
         [TestMethod]
         public void then_produces_validation_error()
         {
-            Assert.IsTrue(property.ValidationErrors.Any());
+            Assert.IsTrue(property.ValidationResults.Any());
         }
 
         [TestMethod]
         public void then_error_message_matches()
         {
-           var message = property.ValidationErrors.Single(m => m.PropertyName == property.PropertyName).Message;
+           var message = property.ValidationResults.Single(m => m.PropertyName == property.PropertyName).Message;
            Assert.IsTrue(message.StartsWith("Referenced item is not available"));
         }
 
         [TestMethod]
         public void then_severity_is_warning()
         {
-            Assert.IsTrue(property.ValidationErrors.Single(m => m.PropertyName == property.PropertyName).IsWarning);
+            Assert.IsTrue(property.ValidationResults.Single(m => m.PropertyName == property.PropertyName).IsWarning);
         }
     }
 
@@ -312,7 +316,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_a_validation_service
         [TestMethod]
         public void then_should_not_produce_validation_error()
         {
-            Assert.IsFalse(property.ValidationErrors.Any()); 
+            Assert.IsFalse(property.ValidationResults.Any()); 
         }
     }
 
@@ -334,7 +338,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_a_validation_service
             testElement.Property("Name").BindableProperty.BindableValue = "ValidTestElement";
 
             property.BindableProperty.BindableValue = "Invalid Test Element Nmae";
-            Assert.IsTrue(property.ValidationErrors.Any());
+            Assert.IsTrue(property.ValidationResults.Any());
         }
 
         protected override void Act()
@@ -345,7 +349,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_a_validation_service
         [TestMethod]
         public void then_validation_errors_removed()
         {
-            Assert.IsFalse(property.ValidationErrors.Any());
+            Assert.IsFalse(property.ValidationResults.Any());
         }
     }
 
@@ -370,7 +374,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_a_validation_service
 
             property.BindableProperty.BindableValue = "Soon To Be Valid Element";
 
-            Assert.IsTrue(property.ValidationErrors.Any());
+            Assert.IsTrue(property.ValidationResults.Any());
         }
 
         protected override void Act()
@@ -381,7 +385,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_a_validation_service
         [TestMethod]
         public void then_validation_errors_removed()
         {
-            Assert.IsFalse(property.ValidationErrors.Any());
+            Assert.IsFalse(property.ValidationResults.Any());
         }
     }
 
@@ -392,7 +396,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_a_validation_service
 
         protected override string ArrangePropertyName()
         {
-            return "DefaultTestElement";
+            return "DefaultTestElementRequired";
         }
 
         protected override void Arrange()
@@ -405,7 +409,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_a_validation_service
             referencedElement.Property("Name").BindableProperty.BindableValue = "ValidTestElement";
 
             property.BindableProperty.BindableValue = "ValidTestElement";
-            Assert.IsFalse(property.ValidationErrors.Any());
+            Assert.IsFalse(property.ValidationResults.Any());
         }
 
         protected override void Act()
@@ -416,7 +420,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_a_validation_service
         [TestMethod]
         public void then_reference_validation_errors_appear()
         {
-            Assert.IsTrue(property.ValidationErrors.Any());
+            Assert.IsTrue(property.ValidationResults.Any());
         }
     }
 
@@ -450,7 +454,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_a_validation_service
         [TestMethod]
         public void then_referenced_element_does_not_contain_child_errors()
         {
-            Assert.IsFalse(property.ValidationErrors.Any());
+            Assert.IsFalse(property.ValidationResults.Any());
         }
     }
 
@@ -470,12 +474,12 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_a_validation_service
         [TestMethod]
         public void then_required_reference_validation_error_provided()
         {
-            Assert.IsTrue(property.ValidationErrors.Any());
+            Assert.IsTrue(property.ValidationResults.Any());
         }
     }
 
     [TestClass]
-    public class when_added_collection_element_item : SectionWithValidatablePropertiesContext
+    public class when_validating_property_with_element_validation : SectionWithValidatablePropertiesContext
     {
         private ElementCollectionViewModel collection;
 
@@ -489,18 +493,41 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_a_validation_service
             collection = Section.GetDescendentsOfType<NamedElementCollection<TestNamedElement>>()
                 .Where(e => e.Name == property.DisplayName).OfType<ElementCollectionViewModel>().First();
 
-            collection.AddNewCollectionElement(typeof (TestNamedElement));
+            collection.AddNewCollectionElement(typeof(TestNamedElement));
         }
 
         [TestMethod]
-        public void then_collection_validation_properties_reported()
+        public void then_element_validation_results_do_not_appear_on_property()
         {
-            Assert.IsTrue(property.ValidationErrors.Any(e => e.Message == "CollectionHasOneItem"));
+            Assert.IsFalse(property.ValidationResults.Any(e => e.Message == CollectionCountOneValidator.Message));
         }
     }
 
     [TestClass]
-    public class when_collection_element_removed : SectionWithValidatablePropertiesContext
+    public class when_validating_element_with_property_validation : SectionWithValidatablePropertiesContext
+    {
+        private ElementCollectionViewModel collection;
+
+        protected override string ArrangePropertyName()
+        {
+            return "ValidatedCollection";
+        }
+
+        protected override void Act()
+        {
+            collection = Section.GetDescendentsOfType<NamedElementCollection<TestNamedElement>>()
+                .Where(e => e.Name == property.DisplayName).OfType<ElementCollectionViewModel>().First();
+        }
+
+        [TestMethod]
+        public void then_property_validation_error_shows_in_results()
+        {
+            Assert.IsTrue(property.ValidationResults.Any(e => e.Message == ErrorProducingValidator.ErrorMessage));
+        }
+    }
+
+    [TestClass]
+    public class when_collection_element_removed_and_revalidated : SectionWithValidatablePropertiesContext
     {
         private ElementCollectionViewModel collection;
 
@@ -515,14 +542,15 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_a_validation_service
                 .Where(e => e.Name == property.DisplayName).OfType<ElementCollectionViewModel>().First();
 
             var newItem = collection.AddNewCollectionElement(typeof(TestNamedElement));
-            Assert.IsTrue(property.ValidationErrors.Any(e => e.Message == "CollectionHasOneItem"));
+            Assert.IsTrue(collection.ValidationResults.Any(e => e.Message == CollectionCountOneValidator.Message));
             newItem.Delete();
+            collection.Validate();
         }
 
         [TestMethod]
         public void then_collection_property_validation_fired()
         {
-            Assert.IsFalse(property.ValidationErrors.Any(e => e.Message == "CollectionHasOneItem"));
+            Assert.IsFalse(collection.ValidationResults.Any(e => e.Message == CollectionCountOneValidator.Message));
         }
     }
 }

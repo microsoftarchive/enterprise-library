@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Commands;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Console.Wpf.Tests.VSTS.DevTests.Contexts;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
@@ -42,6 +43,12 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_section_view_model
         public void then_section_commands_contain_toggle_expanded_command()
         {
             Assert.IsTrue(sectionCommands.OfType<ToggleExpandedCommand>().Any());
+        }
+
+        [TestMethod]
+        public void then_delete_command_is_section_delete_command()
+        {
+            Assert.IsInstanceOfType(sectionViewModel.DeleteCommand, typeof(DefaultSectionDeleteCommandModel));
         }
     }
 }

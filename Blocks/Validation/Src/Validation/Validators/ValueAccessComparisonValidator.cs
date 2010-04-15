@@ -201,10 +201,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
             get { return Resources.ValueAccessComparisonValidatorNegatedDefaultMessageTemplate; }
         }
 
-        #region test only properties
-
         /// <summary>
-        /// 
+        /// Object used to access target value.
         /// </summary>
         public ValueAccess ValueAccess
         {
@@ -212,13 +210,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         }
 
         /// <summary>
-        /// 
+        /// How are the values compared?
         /// </summary>
         public ComparisonOperator ComparisonOperator
         {
             get { return comparisonOperator; }
         }
-
-        #endregion
     }
 }

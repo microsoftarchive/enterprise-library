@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Console.Wpf.Tests.VSTS.DevTests.Contexts;
+using Console.Wpf.Tests.VSTS.TestSupport;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Commands;
 using Microsoft.Practices.Unity;
@@ -30,9 +31,9 @@ namespace Console.Wpf.Tests.VSTS.DevTests
     [TestClass]
     public class when_executing_add_block_command : given_empty_configuration_model
     {
-        bool commandCanExecuteCalled;
         AddApplicationBlockCommand addBlockCommand;
         ConfigurationSourceModel configurationModel;
+        private CanExecuteChangedListener executeChagnedListener;
 
         protected override void Arrange()
         {
@@ -41,16 +42,17 @@ namespace Console.Wpf.Tests.VSTS.DevTests
             configurationModel = Container.Resolve<ConfigurationSourceModel>();
             AddApplicationBlockCommandAttribute attribute = new AddApplicationBlockCommandAttribute("appSettings", typeof(AppSettingsSection));
             addBlockCommand = Container.Resolve<AddApplicationBlockCommand>(
-                                new DependencyOverride<ConfigurationSourceModel>(configurationModel), 
+                                new DependencyOverride<ConfigurationSourceModel>(configurationModel),
                                 new DependencyOverride<AddApplicationBlockCommandAttribute>(attribute));
-            addBlockCommand.CanExecuteChanged += (sender, args) => { commandCanExecuteCalled = true; };
+
+            executeChagnedListener = new CanExecuteChangedListener();
+            executeChagnedListener.Add(addBlockCommand);
         }
 
         protected override void Act()
         {
             addBlockCommand.Execute(null);
         }
-
 
         [TestMethod]
         public void then_block_is_added_to_configuration_model()
@@ -73,7 +75,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests
         [TestMethod]
         public void then_can_execute_changed_was_called()
         {
-            Assert.IsTrue(commandCanExecuteCalled);
+            Assert.IsTrue(executeChagnedListener.CanExecuteChangedFired(addBlockCommand));
         }
 
         [TestMethod]

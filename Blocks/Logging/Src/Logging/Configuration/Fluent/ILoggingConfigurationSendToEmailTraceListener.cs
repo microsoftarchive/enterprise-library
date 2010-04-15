@@ -127,5 +127,31 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent
         /// <seealso cref="TraceOptions"/>
         ILoggingConfigurationSendToEmailTraceListener WithTraceOptions(TraceOptions traceOptions);
 
+        /// <summary>
+        /// Specifies if the <see cref="EmailTraceListener"/> should use SSL when connecting to the mail server.
+        /// </summary>
+        /// <param name="useSSL">true to use SSL to connect, false to use unsecured connection.</param>
+        /// <returns>Fluent interface that can be used to further configure the created <see cref="EmailTraceListenerData"/>. </returns>
+        ILoggingConfigurationSendToEmailTraceListener UseSSL(bool useSSL);
+
+        /// <summary>
+        /// Do not authenticate when logging into the mail server.
+        /// </summary>
+        /// <returns>Fluent interface that can be used to further configure the created <see cref="EmailTraceListenerData"/>. </returns>
+        ILoggingConfigurationSendToEmailTraceListener Unauthenticated();
+
+        /// <summary>
+        /// Send the current process Windows credentials when logging into the mail server.
+        /// </summary>
+        /// <returns>Fluent interface that can be used to further configure the created <see cref="EmailTraceListenerData"/>. </returns>
+        ILoggingConfigurationSendToEmailTraceListener WithWindowsCredentials();
+
+        /// <summary>
+        /// Authenticate against the mail server with this user name and password.
+        /// </summary>
+        /// <param name="userName">User name to send to mail server.</param>
+        /// <param name="password">Password to send to mail server.</param>
+        /// <returns>Fluent interface that can be used to further configure the created <see cref="EmailTraceListenerData"/>. </returns>
+        ILoggingConfigurationSendToEmailTraceListener WithUserNameAndPassword(string userName, string password);
     }
 }

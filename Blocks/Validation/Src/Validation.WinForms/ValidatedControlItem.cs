@@ -40,6 +40,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WinForms
         public ValidatedControlItem(ValidationProvider validationProvider,
                                     Control control)
         {
+            if (control == null) throw new ArgumentNullException("control");
+
             this.validationProvider = validationProvider;
             this.control = control;
             this.control.Validating += OnValidating;

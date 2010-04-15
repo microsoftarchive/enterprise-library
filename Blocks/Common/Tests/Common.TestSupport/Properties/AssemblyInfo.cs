@@ -16,7 +16,7 @@ using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration.Man
 
 [assembly: AssemblyTitle("Enterprise Library Shared Tests Support")]
 [assembly: AssemblyDescription("Enterprise Library Shared Tests Support")]
-[assembly: AssemblyVersion("4.1.0.0")]
+[assembly: AssemblyVersion("5.0.414.0")]
 
 [assembly: ConfigurationSectionManageabilityProvider("section1", typeof(MockConfigurationSectionManageabilityProvider))]
 [assembly: ConfigurationElementManageabilityProvider(typeof(MockConfigurationSectionManageabilityProviderAlt), typeof(string), typeof(MockConfigurationSectionManageabilityProvider))]

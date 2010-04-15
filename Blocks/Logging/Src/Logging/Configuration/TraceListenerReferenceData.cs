@@ -41,10 +41,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 	    /// </summary>
 	    /// <value>
 	    /// The name of the element.
-	    /// </value>
+        /// </value>
+        /// <remarks>
+        /// Overriden in order to annotate with designtime attribute.
+        /// </remarks>
 	    [Reference(typeof(TraceListenerDataCollection), typeof(TraceListenerData))]
-        [ViewModel(LoggingDesignTime.ViewModelTypeNames.TraceListenerReferenceNameProperty)]        
         [EnvironmentalOverrides(true)]
+        [ViewModel(CommonDesignTime.ViewModelTypeNames.CollectionEditorContainedElementReferenceProperty)]
         public override string Name
         {
             get

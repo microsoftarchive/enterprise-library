@@ -198,8 +198,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerMo
         private void AddValidationExtension()
         {
             // We load this by name so we don't have a hard dependency from common -> validation
-            const string extensionTypeName = "Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.Unity.ValidationBlockExtension, Microsoft.Practices.EnterpriseLibrary.Validation";
-            Type extensionType = Type.GetType(extensionTypeName);
+            const string partialExtensionTypeName = "Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.Unity.ValidationBlockExtension, Microsoft.Practices.EnterpriseLibrary.Validation";
+            const string fullExtensionTypeName =
+                "Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.Unity.ValidationBlockExtension, Microsoft.Practices.EnterpriseLibrary.Validation, Culture=neutral, Version=5.0.414.0, PublicKeyToken=31bf3856ad364e35";
+            Type extensionType = Type.GetType(partialExtensionTypeName) ?? Type.GetType(fullExtensionTypeName);
             if (extensionType != null && container.Configure(extensionType) == null)
             {
                 var vabExtension = (UnityContainerExtension)Activator.CreateInstance(extensionType);
@@ -258,14 +260,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerMo
                 IBuildKeyMappingPolicy mappingPolicy = Context.Policies.Get<IBuildKeyMappingPolicy>(key);
                 if (mappingPolicy != null)
                 {
-                    object mappedKeyObject = mappingPolicy.Map(key);
-                    if (mappedKeyObject is NamedTypeBuildKey)
+                    NamedTypeBuildKey mappedKey = mappingPolicy.Map(key, null);
+                    if (string.Equals(mappedKey.Name, name))
                     {
-                        NamedTypeBuildKey mappedKey = (NamedTypeBuildKey)mappedKeyObject;
-                        if (string.Equals(mappedKey.Name, name))
-                        {
-                            Context.Policies.Clear<IBuildKeyMappingPolicy>(key);
-                        }
+                        Context.Policies.Clear<IBuildKeyMappingPolicy>(key);
                     }
                 }
             }

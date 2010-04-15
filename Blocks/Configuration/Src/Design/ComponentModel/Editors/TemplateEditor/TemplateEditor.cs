@@ -13,6 +13,7 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing.Design;
+using System.Security.Permissions;
 using System.Windows.Forms;
 using System.Windows.Forms.Design;
 
@@ -21,6 +22,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Design.For
     /// <summary>
     /// Editor for formatter templates.
     /// </summary>
+    [PermissionSet(SecurityAction.Demand, Name="FullTrust")]        
     public class TemplateEditor : UITypeEditor
     {
         /// <summary>

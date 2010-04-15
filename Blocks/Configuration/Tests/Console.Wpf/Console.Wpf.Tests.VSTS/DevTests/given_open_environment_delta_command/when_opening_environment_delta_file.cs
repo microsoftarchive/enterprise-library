@@ -10,18 +10,16 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Console.Wpf.Tests.VSTS.DevTests.Contexts;
-using Microsoft.Practices.Unity;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics;
-using Moq;
-using Microsoft.Win32;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
 using System.IO;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
+using System.Linq;
+using Console.Wpf.Tests.VSTS.DevTests.Contexts;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Configuration.Design.HostAdapterV5;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics;
+using Microsoft.Practices.Unity;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Win32;
+using Moq;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_open_environment_delta_command
 {
@@ -48,17 +46,25 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_open_environment_delta_command
         [TestMethod]
         public void then_environment_is_loaded_in_source_model()
         {
-            var configurationSource = Container.Resolve<ConfigurationSourceModel>();
-            Assert.IsTrue(configurationSource.Environments.OfType<EnvironmentalOverridesViewModel>().Any(x => x.EnvironmentName == "Environment"));
+            var applicationViewModel = Container.Resolve<ApplicationViewModel>();
+            Assert.IsTrue(applicationViewModel.Environments.OfType<EnvironmentSourceViewModel>().Any(x => x.EnvironmentName == "Environment"));
         }
 
         [TestMethod]
         public void then_environment_file_is_set_to_source_file()
         {
-            var configurationSource = Container.Resolve<ConfigurationSourceModel>();
-            var environmentSection = configurationSource.Environments.OfType<EnvironmentalOverridesViewModel>().Single(x => x.EnvironmentName == "Environment");
+            var applicationViewModel = Container.Resolve<ApplicationViewModel>();
+            var environmentSection = applicationViewModel.Environments.OfType<EnvironmentSourceViewModel>().Single(x => x.EnvironmentName == "Environment");
 
             Assert.AreEqual(environmentDeltaFilePath, environmentSection.EnvironmentDeltaFile);
+        }
+        [TestMethod]
+        public void then_last_saved_environment_file_is_set_to_source_file()
+        {
+            var applicationViewModel = Container.Resolve<ApplicationViewModel>();
+            var environmentSection = applicationViewModel.Environments.OfType<EnvironmentSourceViewModel>().Single(x => x.EnvironmentName == "Environment");
+
+            Assert.AreEqual(environmentDeltaFilePath, environmentSection.LastEnvironmentDeltaSavedFilePath);
         }
     }
 }

@@ -32,7 +32,8 @@ namespace Console.Wpf.Tests.VSTS.Controls.TypeBrowser
                             typeof(TestAssembly1.Namespace1.Class1).Assembly,
                             typeof(TestAssembly2.Namespace1.Class1).Assembly})};
 
-            var model = new TypeBrowserViewModel(groups);
+            var model = new TypeBrowserViewModel(null);
+            model.UpdateAssemblyGroups(groups);
 
             Assert.IsNull(model.TypeName);
             Assert.IsNull(model.ConcreteType);
@@ -160,7 +161,8 @@ namespace Console.Wpf.Tests.VSTS.Controls.TypeBrowser
                             typeof(TestAssembly1.Namespace1.Class1).Assembly,
                             typeof(TestAssembly2.Namespace1.Class1).Assembly})};
 
-            var model = new TypeBrowserViewModel(groups);
+            var model = new TypeBrowserViewModel(null);
+            model.UpdateAssemblyGroups(groups);
 
             var modifiedProperties = new List<string>();
             model.PropertyChanged += (s, a) =>
@@ -187,7 +189,8 @@ namespace Console.Wpf.Tests.VSTS.Controls.TypeBrowser
                             typeof(TestAssembly1.Namespace1.Class1).Assembly,
                             typeof(TestAssembly2.Namespace1.Class1).Assembly})};
 
-            var model = new TypeBrowserViewModel(groups);
+            var model = new TypeBrowserViewModel(null);
+            model.UpdateAssemblyGroups(groups);
 
             model.AssemblyGroups[0].Assemblies[0].Namespaces[0].Types[0].IsSelected = true;
 
@@ -220,7 +223,8 @@ namespace Console.Wpf.Tests.VSTS.Controls.TypeBrowser
                             typeof(TestAssembly1.Namespace1.Class1).Assembly,
                             typeof(TestAssembly2.Namespace1.Class1).Assembly})};
 
-            var model = new TypeBrowserViewModel(groups);
+            var model = new TypeBrowserViewModel(null);
+            model.UpdateAssemblyGroups(groups);
 
             var modifiedProperties = new List<string>();
             model.PropertyChanged += (s, a) =>
@@ -358,7 +362,8 @@ namespace Console.Wpf.Tests.VSTS.Controls.TypeBrowser
                             typeof(TestAssembly1.Namespace1.Class1).Assembly,
                             typeof(TestAssembly2.Namespace1.Class1).Assembly})};
 
-            var model = new TypeBrowserViewModel(groups);
+            var model = new TypeBrowserViewModel(null);
+            model.UpdateAssemblyGroups(groups);
 
             var modifiedProperties = new List<string>();
             model.PropertyChanged += (s, a) =>

@@ -1,0 +1,141 @@
+﻿<Window
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    mc:Ignorable="d" xmlns:Microsoft_Windows_Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero" xmlns:Hosting="clr-namespace:Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Hosting" 
+    x:Class="Microsoft.Practices.EnterpriseLibrary.Configuration.Design.WizardView"
+    Height="395" Width="513" 
+    Title="{Binding Title}" 
+    Background="{DynamicResource WizardBackgroundBrush2}"
+    WindowStartupLocation="CenterOwner"
+    ShowInTaskbar="False"
+    Hosting:ConfigurationResources.MergedDictionaries ="ExtendedDictionary">
+    <Window.Resources>
+        <SolidColorBrush x:Key="ListBorder" Color="#828790"/>
+        <SolidColorBrush x:Key="ListItemSelectedBackground" Color="#FFF4DCBF" />
+        <SolidColorBrush x:Key="ListItemSelectedForeground" Color="#FF392F24" />
+
+        <Color x:Key="WizardBackgroundBrush">#FFDDE7F5</Color>
+        <Style x:Key="StepListStyle" TargetType="{x:Type ListBox}">
+            <Setter Property="Background">
+                <Setter.Value>
+                    <SolidColorBrush Color="{DynamicResource WizardBackgroundBrush}"/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="BorderBrush" Value="{StaticResource ListBorder}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+            <Setter Property="ScrollViewer.CanContentScroll" Value="true"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ListBox}">
+                        <Border x:Name="Bd" SnapsToDevicePixels="true" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Padding="1">
+                            <ScrollViewer Padding="{TemplateBinding Padding}" Focusable="false">
+                                <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                            </ScrollViewer>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Background" TargetName="Bd" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"/>
+                            </Trigger>
+                            <Trigger Property="IsGrouping" Value="true">
+                                <Setter Property="ScrollViewer.CanContentScroll" Value="false"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="LineDividerStyle" TargetType="{x:Type Path}">
+            <Setter Property="Fill" Value="White" />
+            <Setter Property="Stretch" Value="Fill" />
+            <Setter Property="Stroke" Value="#FF5F707C" />
+            <Setter Property="StrokeThickness" Value="1" />
+        </Style>
+        <Style x:Key="WizardButtonStyle" TargetType="{x:Type Button}">
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="1"/>
+            <Setter Property="MinWidth" Value="75"/>
+            <Setter Property="MinHeight" Value="25"/>
+            <Setter Property="Margin" Value="5,0,0,0"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style x:Key="WizardStepItemStyle" TargetType="{x:Type ListBoxItem}">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="HorizontalContentAlignment" Value="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
+            <Setter Property="VerticalContentAlignment" Value="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
+            <Setter Property="Padding" Value="2,0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                        <Border x:Name="Bd" SnapsToDevicePixels="true" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsSelected" Value="true">
+                                <Setter Property="Background" TargetName="Bd" Value="{StaticResource ListItemSelectedBackground}"/>
+                                <Setter Property="Foreground" Value="{StaticResource ListItemSelectedForeground}"/>
+                                <Setter Property="CornerRadius" TargetName="Bd" Value="5"/>
+                                <Setter Property="BorderBrush" TargetName="Bd" Value="Black"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <ImageBrush x:Key="WizardBackgroundBrush2" ImageSource="/Microsoft.Practices.EnterpriseLibrary.Configuration.DesignTime;Component/Images/WizardBackground.png" Stretch="UniformToFill"/>
+    </Window.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" MinWidth="116" />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" MinHeight="54.667"/>
+            <RowDefinition />
+            <RowDefinition Height="Auto" MinHeight="43" />
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Title}" Margin="-52,0,5,0" VerticalAlignment="Center" FontFamily="Segoe UI Semibold" FontSize="18.667" />
+        <ListBox Grid.Column="0" Grid.Row="1" BorderThickness="0" ItemsSource="{Binding Steps}" SelectedItem="{Binding CurrentStep, Mode=OneWay}" VerticalAlignment="Stretch" Margin="3,6,3,3" Style="{DynamicResource StepListStyle}" Grid.ColumnSpan="1" ItemContainerStyle="{DynamicResource WizardStepItemStyle}" Focusable="False" IsHitTestVisible="False" Padding="5,0" Background="{x:Null}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Title}" />
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <Path Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" Data="M84,0L84,314"  Style="{DynamicResource LineDividerStyle}" Margin="0,-1,0,0"/>
+        <Path Grid.ColumnSpan="2" VerticalAlignment="Bottom" Data="M0,314 L420,314" Style="{DynamicResource LineDividerStyle}" Grid.Row="1" Margin="-1,0" Stretch="Fill"/>
+        <Path Grid.ColumnSpan="2" VerticalAlignment="Bottom" Data="M0,314 L420,314" Style="{DynamicResource LineDividerStyle}" Grid.Row="0" Margin="-1,0" Stretch="Fill"/>
+
+        <DockPanel Grid.Column="1" Grid.Row="1" LastChildFill="True">
+            <TextBlock Text="{Binding CurrentStep.Instruction}" Margin="0,3,0,6" DockPanel.Dock="Top"  HorizontalAlignment="Stretch" 
+                       TextWrapping="Wrap"></TextBlock>
+            <ContentControl Content="{Binding CurrentStep}" VerticalAlignment="Stretch" Margin="6,3" DockPanel.Dock="Bottom"/>
+        </DockPanel>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,5,0" Grid.Column="1" >
+            <Button Content="_Prev" Command="{Binding PreviousCommand}" Style="{DynamicResource WizardButtonStyle}" AutomationProperties.AutomationId="WizardPrevious"/>
+            <Button Content="_Next" Command="{Binding NextCommand}" Style="{DynamicResource WizardButtonStyle}" AutomationProperties.AutomationId="WizardNext" />
+            <Button Content="_Finish" Command="{Binding FinishCommand}" Style="{DynamicResource WizardButtonStyle}" AutomationProperties.AutomationId="WizardFinish">
+                <Button.Triggers></Button.Triggers>
+            </Button>
+            <Button Content="Cancel"  IsCancel="True" Style="{DynamicResource WizardButtonStyle}" AutomationProperties.AutomationId="WizardCancel" />
+        </StackPanel>
+        <Image Margin="2.5,1.75,0,4.917" Source="/Microsoft.Practices.EnterpriseLibrary.Configuration.DesignTime;Component/Images/entlib_new_icon_48x48.ico" Stretch="Fill" HorizontalAlignment="Left" Width="48">
+            <Image.Effect>
+                <DropShadowEffect Color="#FF504232"/>
+            </Image.Effect>
+        </Image>
+    </Grid>
+</Window>

@@ -16,7 +16,10 @@ using System.Windows.Media;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls
 {
-	public static class VisualTreeWalker
+    /// <summary>
+    /// Utility class for walking the visual tree and locating visual elements relative to a reference visual element.
+    /// </summary>
+    internal static class VisualTreeWalker
     {
         public static T FindChild<T>(Func<T, bool> predicate, DependencyObject reference) where T : FrameworkElement
         {
@@ -35,52 +38,53 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls
             }
             return null;
         }
-		public static FrameworkElement FindChild(string name, DependencyObject reference)
-		{
-			return FindChild<FrameworkElement>(name, reference);
-		}
 
-		public static T FindChild<T>(string name, DependencyObject reference) where T : FrameworkElement
-		{
-			if (string.IsNullOrEmpty(name))
-			{
-				throw new ArgumentNullException("name");
-			}
+        public static FrameworkElement FindChild(string name, DependencyObject reference)
+        {
+            return FindChild<FrameworkElement>(name, reference);
+        }
 
-			if (reference == null)
-			{
-				throw new ArgumentNullException("reference");
-			}
-			return FindNameInternal<T>(name, reference);
-		}
+        public static T FindChild<T>(string name, DependencyObject reference) where T : FrameworkElement
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                throw new ArgumentNullException("name");
+            }
 
-		private static T FindNameInternal<T>(string name, DependencyObject reference) where T : FrameworkElement
-		{
-			foreach (DependencyObject obj in GetChildren(reference))
-			{
-				T element = obj as T;
-				if (element != null && element.Name == name)
-				{
-					return element;
-				}
-				element = FindNameInternal<T>(name, obj);
-				if (element != null)
-				{
-					return element;
-				}
-			}
-			return null;
-		}
+            if (reference == null)
+            {
+                throw new ArgumentNullException("reference");
+            }
+            return FindNameInternal<T>(name, reference);
+        }
+
+        private static T FindNameInternal<T>(string name, DependencyObject reference) where T : FrameworkElement
+        {
+            foreach (DependencyObject obj in GetChildren(reference))
+            {
+                T element = obj as T;
+                if (element != null && element.Name == name)
+                {
+                    return element;
+                }
+                element = FindNameInternal<T>(name, obj);
+                if (element != null)
+                {
+                    return element;
+                }
+            }
+            return null;
+        }
 
 
-		private static IEnumerable<DependencyObject> GetChildren(DependencyObject reference)
-		{
-			int childCount = VisualTreeHelper.GetChildrenCount(reference);
-			for (int i = 0; i < childCount; i++)
-			{
-				yield return VisualTreeHelper.GetChild(reference, i);
-			}
-		}
+        private static IEnumerable<DependencyObject> GetChildren(DependencyObject reference)
+        {
+            int childCount = VisualTreeHelper.GetChildrenCount(reference);
+            for (int i = 0; i < childCount; i++)
+            {
+                yield return VisualTreeHelper.GetChild(reference, i);
+            }
+        }
 
         public static T TryFindParent<T>(this DependencyObject context)
             where T : DependencyObject
@@ -115,8 +119,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls
                 if (parent != null) return parent;
             }
 
-
             return VisualTreeHelper.GetParent(context);
         }
-	}
+    }
 }

@@ -50,7 +50,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         /// <returns><see langword="true"/> if the specified value is valid; otherwise, <see langword="false"/>.</returns>
         public override bool IsValid(object value)
         {
-            return !string.IsNullOrEmpty(this.Ruleset) || this.DoCreateValidator(null, null, null, null).Validate(value).IsValid;
+            bool hasRuleset = !string.IsNullOrEmpty(this.Ruleset);
+            return hasRuleset || TestIsValid(value);
         }
 
         /// <summary>
@@ -61,6 +62,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         public override string FormatErrorMessage(string name)
         {
             return this.CreateValidator(null, null, null, null).GetMessage(null, name);
+        }
+
+        private bool TestIsValid(object value)
+        {
+            var validator = DoCreateValidator(null, null, null, null);
+            var result = validator.Validate(value);
+            return result.IsValid;
         }
     }
 }

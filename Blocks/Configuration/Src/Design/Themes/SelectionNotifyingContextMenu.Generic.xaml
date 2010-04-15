@@ -5,8 +5,8 @@
 	xmlns:Controls="clr-namespace:Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls">
 
     <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="/Microsoft.Practices.EnterpriseLibrary.Configuration.Design;component/Resources/Converters.xaml" />
-        <ResourceDictionary Source="/Microsoft.Practices.EnterpriseLibrary.Configuration.Design;component/Resources/Brushes.xaml" />
+        <ResourceDictionary Source="/Microsoft.Practices.EnterpriseLibrary.Configuration.DesignTime;component/Resources/Converters.xaml" />
+        <ResourceDictionary Source="/Microsoft.Practices.EnterpriseLibrary.Configuration.DesignTime;component/Resources/Brushes.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
     <LinearGradientBrush x:Key="MenuItemSelectionFill" EndPoint="0,1" StartPoint="0,0">

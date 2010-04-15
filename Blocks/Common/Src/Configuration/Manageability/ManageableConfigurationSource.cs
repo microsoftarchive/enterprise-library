@@ -19,15 +19,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
 {
     /// <summary>
     /// Represents a configuration source that retrieves configuration information from an arbitrary file, overrides 
-    /// the configuration information with values from the registry's group policy keys, and publishes WMI objects
-    /// that represent the configuration information.
+    /// the configuration information with values from the registry's Group Policy keys.
     /// </summary>
     /// <remarks>
     /// This configuration source uses a <see cref="System.Configuration.Configuration"/> object to deserialize configuration, so 
     /// the configuration file must be a valid .NET Framework configuration file.
     /// Multiple instances of <see cref="ManageableConfigurationSource"/> can be created with a given configuration; however 
-    /// instances with the same configuration will share the same configuration objects, and WMI objects will be published 
-    /// only once regardless of how many instances there are.
+    /// instances with the same configuration will share the same configuration objects.
     /// </remarks>
     /// <seealso cref="FileConfigurationSource"/>
     [ConfigurationElementType(typeof(ManageableConfigurationSourceElement))]
@@ -44,8 +42,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
         /// provide manageability for each configuration section.</param>
         /// <param name="readGroupPolicies"><see langword="true"/> if Group Policy overrides must be applied; otherwise, 
         /// <see langword="false"/>.</param>
-        /// <param name="applicationName">The name of the running application. This name is used to look for policy overrides
-        /// and to identify the published WMI objects.</param>
+        /// <param name="applicationName">The name of the running application. This name is used to look for policy overrides.</param>
         public ManageableConfigurationSource(
             string configurationFilePath,
             IDictionary<string, ConfigurationSectionManageabilityProvider> manageabilityProviders,
@@ -65,7 +62,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
         }
 
         /// <summary>
-        /// Gets the implementation for configuraiton source.
+        /// Gets the implementation for configuration source.
         /// </summary>
         public ManageableConfigurationSourceImplementation Implementation
         {
@@ -94,7 +91,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
         /// <summary>
         /// Adds a handler to be called when changes to section <code>sectionName</code> are detected.
         /// This call should always be followed by a <see cref="RemoveSectionChangeHandler"/>. Failure to remove change
-        /// handlers will result in .Net resource leaks.
+        /// handlers will result in .NET resource leaks.
         /// </summary>
         /// <param name="sectionName">The name of the section to watch for.</param>
         /// <param name="handler">The handler.</param>
@@ -190,7 +187,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
         /// <summary>
         /// Remove a handler to be called when changes to section <code>sectionName</code> are detected.
         /// This class should always follow a call to <see cref="AddSectionChangeHandler"/>. Failure
-        /// to call these methods in pairs will result in .Net resource leaks.
+        /// to call these methods in pairs will result in .NET resource leaks.
         /// </summary>
         /// <param name="sectionName">The name of the section to watch for.</param>
         /// <param name="handler">The handler.</param>

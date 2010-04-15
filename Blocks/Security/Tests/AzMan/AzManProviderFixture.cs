@@ -184,52 +184,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.AzMan.Tests
         }
 
         [TestMethod]
-        public void AuthorizationFailedFires2WmiEvents()
-        {
-            AuthorizationProviderInstrumentationProvider instrumentationProvider = new AuthorizationProviderInstrumentationProvider("foo", false, false, true, "fooApplicationInstanceName");
-            AzManAuthorizationProvider instrumentedAzman = new AzManAuthorizationProvider(data.StoreLocation, data.Application, data.AuditIdentifierPrefix, data.Scope, instrumentationProvider);
-            
-            using (WmiEventWatcher eventWatcher = new WmiEventWatcher(2))
-            {
-                bool res = instrumentedAzman.Authorize(cryptographyProviderCollection, unauthorizedTask);
-
-                eventWatcher.WaitForEvents();
-
-                Assert.AreEqual(2, eventWatcher.EventsReceived.Count);
-
-                Assert.AreEqual("AuthorizationCheckPerformedEvent", eventWatcher.EventsReceived[0].ClassPath.ClassName);
-                Assert.AreEqual("foo", eventWatcher.EventsReceived[0].Properties["InstanceName"].Value);
-                Assert.AreEqual(cryptographyProviderCollection.Identity.Name, eventWatcher.EventsReceived[0].Properties["UserName"].Value);
-                Assert.AreEqual(unauthorizedTask, eventWatcher.EventsReceived[0].Properties["TaskName"].Value);
-
-                Assert.AreEqual("AuthorizationCheckFailedEvent", eventWatcher.EventsReceived[1].ClassPath.ClassName);
-                Assert.AreEqual("foo", eventWatcher.EventsReceived[1].Properties["InstanceName"].Value);
-                Assert.AreEqual(cryptographyProviderCollection.Identity.Name, eventWatcher.EventsReceived[1].Properties["UserName"].Value);
-                Assert.AreEqual(unauthorizedTask, eventWatcher.EventsReceived[1].Properties["TaskName"].Value);
-            }
-        }
-
-        [TestMethod]
-        public void AuthorizeFiresWmiEvent()
-        {
-            AuthorizationProviderInstrumentationProvider instrumentationProvider = new AuthorizationProviderInstrumentationProvider("foo", false, false, true, "fooApplicationInstanceName");
-            AzManAuthorizationProvider instrumentedAzman = new AzManAuthorizationProvider(data.StoreLocation, data.Application, data.AuditIdentifierPrefix, data.Scope, instrumentationProvider);
-            
-            using (WmiEventWatcher eventWatcher = new WmiEventWatcher(1))
-            {
-                bool res = instrumentedAzman.Authorize(cryptographyProviderCollection, authorizedTask);
-
-                eventWatcher.WaitForEvents();
-                Thread.Sleep(500);
-
-                Assert.AreEqual(1, eventWatcher.EventsReceived.Count);
-                Assert.AreEqual("foo", eventWatcher.EventsReceived[0].Properties["InstanceName"].Value);
-                Assert.AreEqual(cryptographyProviderCollection.Identity.Name, eventWatcher.EventsReceived[0].Properties["UserName"].Value);
-                Assert.AreEqual(authorizedTask, eventWatcher.EventsReceived[0].Properties["TaskName"].Value);
-            }
-        }
-
-        [TestMethod]
         public void PerformsReplacementsInStoreLocation()
         {
             // uses a new AppDomain to avoid issues with AppDomain.BaseDirectory and the mstest runner in VS 2008

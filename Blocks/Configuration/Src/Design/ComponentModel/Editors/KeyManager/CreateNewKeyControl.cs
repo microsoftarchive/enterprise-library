@@ -29,7 +29,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
     {
 
         private Regex hexRegex = new Regex("^[0-9a-fA-F]+$", RegexOptions.Compiled | RegexOptions.Singleline);
-        private string lastValidationMessage = String.Empty;
         private IKeyCreator keyCreator;
 
         /// <summary>
@@ -46,6 +45,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         /// <summary>
         /// Sets the <see cref="IKeyCreator"/> that should be used to generate a new random key.
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1044:PropertiesShouldNotBeWriteOnly")]
         public IKeyCreator KeyCreator
         {
             set { keyCreator = value; }
@@ -57,6 +57,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         /// <value>
         /// <para>The key for the algorithm</para>
         /// </value>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public byte[] Key
         {
             get { return GetKeyBox(); }
@@ -113,17 +114,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         {
             if (string.IsNullOrEmpty(keyBox.Text))
             {
-                MessageBox.Show(KeyManagerResources.KeyShouldNotBeEmpty, KeyManagerResources.CryptoKeyWizardErrorTitle, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show(KeyManagerResources.KeyShouldNotBeEmpty, KeyManagerResources.CryptoKeyWizardErrorTitle, MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
                 return false;
             }
             if (keyBox.Text.Length % 2 != 0 || !this.hexRegex.IsMatch(keyBox.Text))
             {
-                MessageBox.Show(KeyManagerResources.KeyManagerUIInvalidKeyCharactersErrorMessage, KeyManagerResources.CryptoKeyWizardErrorTitle, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show(KeyManagerResources.KeyManagerUIInvalidKeyCharactersErrorMessage, KeyManagerResources.CryptoKeyWizardErrorTitle, MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
                 return false;
             }
             else if (!this.keyCreator.KeyIsValid(GetKeyBox()))
             {
-                MessageBox.Show(KeyManagerResources.KeyManagerUIInvalidKeyLengthErrorMessage, KeyManagerResources.CryptoKeyWizardErrorTitle, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show(KeyManagerResources.KeyManagerUIInvalidKeyLengthErrorMessage, KeyManagerResources.CryptoKeyWizardErrorTitle, MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
                 return false;
             }
 

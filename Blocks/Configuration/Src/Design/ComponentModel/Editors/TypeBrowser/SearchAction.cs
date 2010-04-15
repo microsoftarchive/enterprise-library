@@ -17,14 +17,25 @@ using System.Windows.Threading;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors
 {
+    /// <summary>
+    /// Finds and updates nodes containing classes that match the supplied string.
+    /// </summary>
     public class SearchAction
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SearchAction"/> class.
+        /// </summary>
+        /// <param name="searchText">The text to search.</param>
+        /// <param name="nodes">The tree of nodes representing the assemblies, namespaces and classes to match.</param>
         public SearchAction(string searchText, IEnumerable<AssemblyGroupNode> nodes)
         {
             this.searchText = searchText;
             this.nodes = nodes;
         }
 
+        /// <summary>
+        /// Event raised whent the search has completed.
+        /// </summary>
         public event EventHandler<SearchActionEventArgs> Completed;
 
         private readonly string searchText;
@@ -38,6 +49,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
             t.FullName.StartsWith(s, StringComparison.OrdinalIgnoreCase)
             || t.FullName.IndexOf(s, StringComparison.OrdinalIgnoreCase) != -1;
 
+        /// <summary>
+        /// Aborts the execution of the search.
+        /// </summary>
+        /// <returns><see langword="true"/>.</returns>
         public bool Abort()
         {
             if (this.dispatcherOperation != null)
@@ -47,6 +62,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
             return true;
         }
 
+        /// <summary>
+        /// Schedules the execution of the search action.
+        /// </summary>
         public void Run()
         {
             this.dispatcherOperation = Dispatcher.CurrentDispatcher.BeginInvoke(new Func<TypeNode>(this.OnRun));
@@ -75,7 +93,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
                 {
                     Visibility assemblyNodeVisibility = Visibility.Collapsed;
                     bool matchingTypesInAssembly = false;
-                    if (noText)
+                    if (noText && assemblyNode.Namespaces.Any())
                     {
                         assemblyNodeVisibility = Visibility.Visible;
                     }
@@ -161,13 +179,24 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
         }
     }
 
+    /// <summary>
+    /// Event args indicating the completion of a search action.
+    /// </summary>
     public class SearchActionEventArgs : EventArgs
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SearchActionEventArgs"/> with a selected node.
+        /// </summary>
+        /// <param name="result">The node that should be selected by default as the result of the search 
+        /// action, or <see langword="null"/> if there is no such node.</param>
         public SearchActionEventArgs(TypeNode result)
         {
             this.Result = result;
         }
 
+        /// <summary>
+        /// Gets the node that should be selected by default as the result of the search action.
+        /// </summary>
         public TypeNode Result { get; private set; }
     }
 }

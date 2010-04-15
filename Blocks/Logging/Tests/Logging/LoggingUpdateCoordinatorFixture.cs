@@ -12,14 +12,14 @@
 using System;
 using System.Threading;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel.Unity;
-using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
 using Microsoft.Practices.ServiceLocation;
 using Microsoft.Practices.Unity;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+
+using Barrier = Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Barrier;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
 {

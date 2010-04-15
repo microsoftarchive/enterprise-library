@@ -12,9 +12,9 @@
 using System;
 using System.ComponentModel;
 using System.Drawing;
+using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using Microsoft.Practices.EnterpriseLibrary.Security;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors.RuleEditor;
 
 
@@ -81,6 +81,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration.Design
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public UnderlineStyle SelectionUnderlineStyle
         {
+            [method: System.Security.Permissions.SecurityPermission(System.Security.Permissions.SecurityAction.Demand, UnmanagedCode = true)]
             get
             {
                 NativeMethods.CHARFORMAT2 fmt = new NativeMethods.CHARFORMAT2();
@@ -98,6 +99,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration.Design
                     return (UnderlineStyle)style;
                 }
             }
+            [method: System.Security.Permissions.SecurityPermission(System.Security.Permissions.SecurityAction.Demand, UnmanagedCode = true)]
             set
             {
                 // Ensure we don't alter the color 
@@ -114,7 +116,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration.Design
                 fmt.cbSize = Marshal.SizeOf(fmt);
                 fmt.dwMask = UnderlineType;
                 fmt.bUnderlineType = (byte)((byte)value | (byte)color);
-				NativeMethods.SendMessage(new HandleRef(this, Handle), SetCharFormat, new IntPtr(SelectionCharacterFormatting), ref fmt);
+                NativeMethods.SendMessage(new HandleRef(this, Handle), SetCharFormat, new IntPtr(SelectionCharacterFormatting), ref fmt);
             }
         }
 
@@ -127,13 +129,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration.Design
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public UnderlineColor SelectionUnderlineColor
         {
+            [method: System.Security.Permissions.SecurityPermission(System.Security.Permissions.SecurityAction.Demand, UnmanagedCode = true)]
             get
             {
                 NativeMethods.CHARFORMAT2 fmt = new NativeMethods.CHARFORMAT2();
                 fmt.cbSize = Marshal.SizeOf(fmt);
 
                 // Get the underline color 
-				NativeMethods.SendMessage(new HandleRef(this, Handle), GetCharFormat, new IntPtr(SelectionCharacterFormatting), ref fmt);
+                NativeMethods.SendMessage(new HandleRef(this, Handle), GetCharFormat, new IntPtr(SelectionCharacterFormatting), ref fmt);
                 if ((fmt.dwMask & UnderlineType) == 0)
                 {
                     return UnderlineColor.None;
@@ -144,6 +147,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration.Design
                     return (UnderlineColor)style;
                 }
             }
+            [method: System.Security.Permissions.SecurityPermission(System.Security.Permissions.SecurityAction.Demand, UnmanagedCode = true)]
             set
             {
                 // If the an underline color of "None" is specified, remove underline effect 
@@ -167,7 +171,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration.Design
                     fmt.cbSize = Marshal.SizeOf(fmt);
                     fmt.dwMask = UnderlineType;
                     fmt.bUnderlineType = (byte)((byte)style | (byte)value);
-					NativeMethods.SendMessage(new HandleRef(this, Handle), SetCharFormat, new IntPtr(SelectionCharacterFormatting), ref fmt);
+                    NativeMethods.SendMessage(new HandleRef(this, Handle), SetCharFormat, new IntPtr(SelectionCharacterFormatting), ref fmt);
                 }
             }
         }
@@ -195,10 +199,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration.Design
         }
 
         /// <devDoc>
-        /// Initialzes Parser to improve first time text input performance.
+        /// Initializes Parser to improve first time text input performance.
         /// </devDoc>
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
-		internal void InitParser()
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+        internal void InitParser()
         {
             try
             {
@@ -268,7 +272,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration.Design
             catch (SyntaxException ex)
             {
                 parsed = false;
-                parseStatus = string.Format(Resources.Culture, Resources.ParseFailedMessage, ex.Message);
+                parseStatus = string.Format(CultureInfo.CurrentCulture, Resources.ParseFailedMessage, ex.Message);
                 int position = ex.Index;
                 if (position < this.Text.Length - 1)
                 {

@@ -12,6 +12,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.Linq;
 using System.Text.RegularExpressions;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability.Properties;
 
@@ -55,7 +57,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
         /// Initialize a new instance of the <see cref="AdmContentBuilder"/> class.
         /// </summary>
         public AdmContentBuilder()
-            : this(new AdmContent()) {}
+            : this(new AdmContent()) { }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AdmContentBuilder"/> class.
@@ -460,7 +462,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
                 if (minValue != null && defaultValue < minValue)
                 {
                     throw new ArgumentException(
-                        String.Format(Resources.Culture,
+                        String.Format(CultureInfo.CurrentCulture,
                                       Resources.ExceptionAdmDefaultValueBelowMinValue,
                                       partName,
                                       currentPolicy.Name,
@@ -471,7 +473,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
                 if (maxValue != null && defaultValue > maxValue)
                 {
                     throw new ArgumentException(
-                        String.Format(Resources.Culture,
+                        String.Format(CultureInfo.CurrentCulture,
                                       Resources.ExceptionAdmDefaultValueAboveMaxValue,
                                       partName,
                                       currentPolicy.Name,
@@ -492,13 +494,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
             }
             if (!identifierRe.IsMatch(defaultValue))
             {
-                throw new ArgumentException(String.Format(Resources.Culture, Resources.ExceptionAdmInvalidDefaultValue, defaultValue),
+                throw new ArgumentException(String.Format(CultureInfo.CurrentCulture, Resources.ExceptionAdmInvalidDefaultValue, defaultValue),
                                             "defaultValue");
             }
             if (defaultValue.Length > (maxlen != 0 ? maxlen : 1024))
             {
                 throw new ArgumentException(
-                    String.Format(Resources.Culture,
+                    String.Format(CultureInfo.CurrentCulture,
                                   Resources.ExceptionAdmDefaultValueLongerThanMaxlen,
                                   partName,
                                   currentPolicy.Name,
@@ -531,7 +533,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
             if (!keyMatch.Success)
             {
                 throw new ArgumentException(
-                    String.Format(Resources.Culture,
+                    String.Format(CultureInfo.CurrentCulture,
                                   Resources.ExceptionAdmInvalidCharactersInRegistryKey,
                                   policyKey),
                     "policyKey");
@@ -545,7 +547,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
                     if (key.Length > 255)
                     {
                         throw new ArgumentException(
-                            String.Format(Resources.Culture,
+                            String.Format(CultureInfo.CurrentCulture,
                                           Resources.ExceptionAdmRegistryKeyPathSegmentTooLong,
                                           key),
                             "policyKey");
@@ -560,7 +562,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
             if (maxlen < 0 || maxlen > 1024)
             {
                 throw new ArgumentException(
-                    String.Format(Resources.Culture,
+                    String.Format(CultureInfo.CurrentCulture,
                                   Resources.ExceptionAdmInvalidMaxlen,
                                   partName,
                                   currentPolicy.Name,
@@ -576,7 +578,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
             if (minValue != null && (minValue < MinNumericConstraint || minValue > MaxNumericConstraint))
             {
                 throw new ArgumentException(
-                    String.Format(Resources.Culture,
+                    String.Format(CultureInfo.CurrentCulture,
                                   Resources.ExceptionAdmNumericConstraintOutsideRange,
                                   partName,
                                   currentPolicy.Name,
@@ -586,7 +588,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
             if (maxValue != null && (maxValue < MinNumericConstraint || maxValue > MaxNumericConstraint))
             {
                 throw new ArgumentException(
-                    String.Format(Resources.Culture,
+                    String.Format(CultureInfo.CurrentCulture,
                                   Resources.ExceptionAdmNumericConstraintOutsideRange,
                                   partName,
                                   currentPolicy.Name,
@@ -596,7 +598,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
             if (minValue != null && maxValue != null && minValue.Value > maxValue.Value)
             {
                 throw new ArgumentException(
-                    String.Format(Resources.Culture,
+                    String.Format(CultureInfo.CurrentCulture,
                                   Resources.ExceptionAdmMinValueLargerThanMaxValue,
                                   partName,
                                   currentPolicy.Name,
@@ -615,7 +617,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
             }
             if (name.Length == 0 || !identifierRe.IsMatch(name))
             {
-                throw new ArgumentException(String.Format(Resources.Culture,
+                throw new ArgumentException(String.Format(CultureInfo.CurrentCulture,
                                                           Resources.ExceptionAdmInvalidName,
                                                           name),
                                             parameterName);
@@ -664,7 +666,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
                 if (!identifierRe.IsMatch(suggestion))
                 {
                     throw new ArgumentException(
-                        String.Format(Resources.Culture,
+                        String.Format(CultureInfo.CurrentCulture,
                                       Resources.ExceptionAdmInvalidSuggestion,
                                       suggestion),
                         "suggestions");
@@ -678,7 +680,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
             if (valueName.Length > 255)
             {
                 throw new ArgumentException(
-                    String.Format(Resources.Culture,
+                    String.Format(CultureInfo.CurrentCulture,
                                   Resources.ExceptionAdmRegistryValueNameTooLong,
                                   valueName),
                     "valueName");

@@ -41,8 +41,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         /// using the supplied ruleset.</para>
         /// </summary>
         /// <param name="validatorFactory">Factory to use when building nested validators.</param>
-        /// <exception cref="ArgumentNullException">when <paramref name="targetType"/> is <see langword="null"/>.</exception>
-        /// <exception cref="ArgumentNullException">when <paramref name="targetRuleset"/> is <see langword="null"/>.</exception>
         /// <exception cref="ArgumentNullException">when <paramref name="validatorFactory"/> is <see langword="null"/>.</exception>
         public ObjectValidator(ValidatorFactory validatorFactory)
             : this(validatorFactory, string.Empty)
@@ -184,10 +182,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
             get { return null; }
         }
 
-        #region test only properties
-
         /// <summary>
-        /// 
+        /// Target type being validated.
         /// </summary>
         public Type TargetType
         {
@@ -195,13 +191,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         }
 
         /// <summary>
-        /// 
+        /// Rule set to use when creating target validators.
         /// </summary>
         public string TargetRuleset
         {
             get { return this.targetRuleset; }
         }
-
-        #endregion
     }
 }

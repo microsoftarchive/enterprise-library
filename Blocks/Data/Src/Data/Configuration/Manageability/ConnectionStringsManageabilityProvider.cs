@@ -21,9 +21,9 @@ using Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Manageability.Pro
 namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Manageability
 {
     /// <summary>
-    /// Provides an implementation for <see cref="ConnectionStringsSection"/> that splits
-    /// policy override processing and WMI object generation for the section, performing appropriate logging of
-    /// policy processing errors, from policy override processing and WMI object generation for configuration objects
+    /// Provides an implementation for <see cref="ConnectionStringsSection"/> that performs
+    /// policy override processing for the section, performing appropriate logging of
+    /// policy processing errors, from policy override processing for configuration objects
     /// contained by the section.
     /// </summary>
     public class ConnectionStringsManageabilityProvider

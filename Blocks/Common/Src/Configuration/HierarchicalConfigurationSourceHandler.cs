@@ -16,6 +16,7 @@ using System.Text;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Properties;
 using System.Collections.Specialized;
+using System.Globalization;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 {
@@ -77,16 +78,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         /// <summary>
         /// Performs re-intialization logic for this <see cref="HierarchicalConfigurationSourceHandler"/>.
         /// </summary>
-        protected override void Refresh()
-        {
-            base.Refresh();
 
+        protected override void DoRefresh()
+        {
+            base.DoRefresh();
             if (parentSourceName != CustomParentSourceName)
             {
                 parentSourceName = GetParentConfigurationSourceName(localSource);
             }
         }
-
 
         /// <summary>
         /// Checks whether the result of a call to <see cref="IConfigurationSource.GetSection(string)"/> should be merged.<br/>
@@ -158,7 +158,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
             {
                 if (parentSection.GetType() != localSection.GetType())
                 {
-                    string message = String.Format(Resources.Culture,
+                    string message = String.Format(CultureInfo.CurrentCulture,
                         Resources.ExceptionIncompaitbleMergeElementType,
                         localSection.GetType(),
                         parentSection.GetType());
@@ -189,7 +189,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
             {
                 if (parentElement.GetType() != localElement.GetType())
                 {
-                    string message = String.Format(Resources.Culture,
+                    string message = String.Format(CultureInfo.CurrentCulture,
                         Resources.ExceptionIncompaitbleMergeElementType,
                         localElement.GetType(),
                         parentElement.GetType());

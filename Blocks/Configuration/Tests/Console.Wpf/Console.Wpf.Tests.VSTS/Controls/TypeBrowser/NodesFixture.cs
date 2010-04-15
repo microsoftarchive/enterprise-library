@@ -23,7 +23,6 @@ namespace Console.Wpf.Tests.VSTS.Controls.TypeBrowser
         [TestInitialize]
         public void SetUp()
         {
-            this.createdNamespaceNodes = false;
         }
 
         [TestMethod]
@@ -61,16 +60,6 @@ namespace Console.Wpf.Tests.VSTS.Controls.TypeBrowser
             Assert.AreEqual(Visibility.Visible, node.Visibility);
             Assert.IsFalse(node.IsExpanded);
             Assert.IsFalse(node.IsSelected);
-        }
-
-        [TestMethod]
-        public void AssemblyNodeNamespacesAreCreatedOnDemand()
-        {
-            var node = new AssemblyNode(typeof(TestAssembly1.Namespace1.Class1).Assembly, this, null);
-
-            Assert.IsFalse(this.createdNamespaceNodes);
-            var ignored = node.Namespaces;
-            Assert.IsTrue(this.createdNamespaceNodes);
         }
 
         [TestMethod]
@@ -116,8 +105,6 @@ namespace Console.Wpf.Tests.VSTS.Controls.TypeBrowser
             Assert.IsFalse(node.IsSelected);
         }
 
-        private bool createdNamespaceNodes;
-
         public TypeNode CreateTypeNode(Type type)
         {
             return new TypeNode(type);
@@ -125,7 +112,6 @@ namespace Console.Wpf.Tests.VSTS.Controls.TypeBrowser
 
         public NamespaceNode CreateNamespaceNode(string name)
         {
-            this.createdNamespaceNodes = true;
             return new NamespaceNode(name);
         }
 

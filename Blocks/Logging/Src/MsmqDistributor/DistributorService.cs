@@ -17,6 +17,7 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Instrumentation;
+using System.Globalization;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor
 {
@@ -67,7 +68,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor
 		/// <summary/>
 		/// <exclude/>
 		/// <devdoc>
-		/// Gets or sets the name of the windows service.
+        /// Gets or sets the name of the Windows service.
 		/// </devdoc>
 		public string ApplicationName
 		{
@@ -106,7 +107,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor
 			try
 			{
 				// Use the default settings for log name and application name.
-				// This is done to ensure the windows service starts correctly.
+                // This is done to ensure the Windows service starts correctly.
 				this.ApplicationName = DefaultApplicationName;
 
 				this.eventLogger = new DistributorEventLogger();
@@ -119,7 +120,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor
 				if (distributorSettings == null)
 				{
 					throw new ConfigurationErrorsException(string.Format(
-							Resources.Culture,
+                            CultureInfo.CurrentCulture,
 							Resources.ExceptionCouldNotFindConfigurationSection,
 							MsmqDistributorSettings.SectionName));
 				}
@@ -136,7 +137,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor
 			catch (LoggingException loggingException)
 			{
 				this.eventLogger.LogServiceFailure(
-					string.Format(Resources.Culture, Resources.ServiceStartError, this.ApplicationName),
+                    string.Format(CultureInfo.CurrentCulture, Resources.ServiceStartError, this.ApplicationName),
 					loggingException,
 					TraceEventType.Error);
 
@@ -145,7 +146,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor
 			catch (Exception ex)
 			{
 				this.eventLogger.LogServiceFailure(
-					string.Format(Resources.Culture, Resources.ServiceStartError, this.ApplicationName),
+                    string.Format(CultureInfo.CurrentCulture, Resources.ServiceStartError, this.ApplicationName),
 					ex,
 					TraceEventType.Error);
 
@@ -167,7 +168,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor
 		/// <summary/>
 		/// <exclude/>
 		/// <devdoc>
-		/// The windows service start event.
+        /// The Windows service start event.
 		/// </devdoc>
 		protected override void OnStart(string[] args)
 		{
@@ -191,7 +192,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor
 			catch (Exception e)
 			{
 				this.eventLogger.LogServiceFailure(
-					string.Format(Resources.Culture, Resources.ServiceStartError, this.ApplicationName),
+                    string.Format(CultureInfo.CurrentCulture, Resources.ServiceStartError, this.ApplicationName),
 					e,
 					TraceEventType.Error);
 
@@ -202,7 +203,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor
 		/// <summary/>
 		/// <exclude/>
 		/// <devdoc>
-		/// The windows service stop event.
+        /// The Windows service stop event.
 		/// </devdoc>
 		protected override void OnStop()
 		{
@@ -213,7 +214,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor
 			catch (Exception e)
 			{
 				this.eventLogger.LogServiceFailure(
-					string.Format(Resources.Culture, Resources.ServiceStopError, this.ApplicationName),
+                    string.Format(CultureInfo.CurrentCulture, Resources.ServiceStopError, this.ApplicationName),
 					e,
 					TraceEventType.Error);
 
@@ -227,7 +228,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor
 		/// <summary/>
 		/// <exclude/>
 		/// <devdoc>
-		/// The windows service pause event.
+        /// The Windows service pause event.
 		/// </devdoc>
 		protected override void OnPause()
 		{
@@ -240,7 +241,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor
 				else
 				{
 					this.eventLogger.LogServiceFailure(
-						string.Format(Resources.Culture, Resources.ServicePauseWarning, this.ApplicationName),
+                        string.Format(CultureInfo.CurrentCulture, Resources.ServicePauseWarning, this.ApplicationName),
 						null,
 						TraceEventType.Warning);
 				}
@@ -248,7 +249,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor
 			catch (Exception e)
 			{
 				this.eventLogger.LogServiceFailure(
-					string.Format(Resources.Culture, Resources.ServicePauseError, this.ApplicationName),
+                    string.Format(CultureInfo.CurrentCulture, Resources.ServicePauseError, this.ApplicationName),
 					e,
 					TraceEventType.Error);
 
@@ -259,7 +260,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor
 		/// <summary/>
 		/// <exclude/>
 		/// <devdoc>
-		/// The windows service resume event.
+        /// The Windows service resume event.
 		/// </devdoc>
 		protected override void OnContinue()
 		{
@@ -271,7 +272,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor
 			catch (Exception e)
 			{
 				this.eventLogger.LogServiceFailure(
-					string.Format(Resources.Culture, Resources.ServiceResumeError, this.ApplicationName),
+                    string.Format(CultureInfo.CurrentCulture, Resources.ServiceResumeError, this.ApplicationName),
 					e,
 					TraceEventType.Error);
 
@@ -307,7 +308,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor
 			else
 			{
 				this.eventLogger.LogServiceFailure(
-					string.Format(Resources.Culture, Resources.ServiceStopWarning, this.ApplicationName),
+                    string.Format(CultureInfo.CurrentCulture, Resources.ServiceStopWarning, this.ApplicationName),
 					null,
 					TraceEventType.Warning);
 			}

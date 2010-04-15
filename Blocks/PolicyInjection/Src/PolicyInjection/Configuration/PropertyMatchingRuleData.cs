@@ -74,7 +74,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         [ConfigurationCollection(typeof(PropertyMatchData))]
         [ResourceDescription(typeof(DesignResources), "PropertyMatchingRuleDataMatchesDescription")]
         [ResourceDisplayName(typeof(DesignResources), "PropertyMatchingRuleDataMatchesDisplayName")]
-        [Editor("Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors.ElementCollectionEditor, Microsoft.Practices.EnterpriseLibrary.Configuration.Design", CommonDesignTime.EditorTypes.FrameworkElement)]
+        [Editor(CommonDesignTime.EditorTypes.CollectionEditor, CommonDesignTime.EditorTypes.FrameworkElement)]
         [Validation(PolicyInjectionDesignTime.Validators.MatchCollectionPopulatedValidationType)]
         public MatchDataCollection<PropertyMatchData> Matches
         {
@@ -162,6 +162,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         [ConfigurationProperty(OptionPropertyName, DefaultValue = PropertyMatchingOption.GetOrSet, IsRequired = false)]
         [ResourceDescription(typeof(DesignResources), "PropertyMatchDataMatchOptionDescription")]
         [ResourceDisplayName(typeof(DesignResources), "PropertyMatchDataMatchOptionDisplayName")]
+        [ViewModel(CommonDesignTime.ViewModelTypeNames.CollectionEditorContainedElementProperty)]
         public PropertyMatchingOption MatchOption
         {
             get { return (PropertyMatchingOption)base[OptionPropertyName]; }

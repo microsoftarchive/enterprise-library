@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -88,7 +89,6 @@
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Data" />
-    <Reference Include="System.Management" />
     <Reference Include="System.XML" />
     <ProjectReference Include="..\..\..\Common\Src\Common.csproj">
       <Project>{A09297C8-2C40-470B-8856-D856676DDFFA}</Project>
@@ -110,12 +110,16 @@
       <Link>GlobalAssemblyInfo.cs</Link>
       <SubType>Code</SubType>
     </Compile>
+    <None Include="..\..\..\GlobalAssemblyInfo.2010.cs">
+      <Link>GlobalAssemblyInfo.2010.cs</Link>
+    </None>
     <Compile Include="Configuration\ConfigurationSourceBuilderExtensions.cs" />
     <Compile Include="Configuration\DesignResources.Designer.cs">
       <DependentUpon>DesignResources.resx</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
+    <Compile Include="Configuration\ExceptionHandlingLoggingDesigntime.cs" />
     <Compile Include="Configuration\IExceptionConfigurationLoggingProvider.cs" />
     <Compile Include="Configuration\LoggingExceptionHandlerData.cs">
       <SubType>Code</SubType>

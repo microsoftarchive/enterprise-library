@@ -19,7 +19,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration.Manageabil
 {
     /// <summary>
     /// Provides a default implementation for <see cref="CustomCacheManagerData"/> that
-    /// splits policy overrides processing and WMI objects generation, performing appropriate logging of 
+    /// processes policy overrides, performing appropriate logging of 
     /// policy processing errors.
     /// </summary>
     public class CustomCacheManagerDataManageabilityProvider

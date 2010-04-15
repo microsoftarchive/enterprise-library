@@ -9,18 +9,14 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration.Install;
 using System.Diagnostics;
-using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Tests;
-using System.Management.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Tests
 {
     [RunInstaller(true)]
-    public partial class PerfCounterInstaller : DefaultManagementProjectInstaller
+    public partial class PerfCounterInstaller : Installer
     {
         public PerfCounterInstaller()
         {
@@ -35,11 +31,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Tests
             installer.CategoryHelp = "J Random Text";
             installer.CategoryType = PerformanceCounterCategoryType.MultiInstance;
 
-			CounterCreationData firstCounterData = new CounterCreationData(EnterpriseLibraryPerformanceCounterFixture.counterName, "Test Counter", PerformanceCounterType.NumberOfItems32);
-			CounterCreationData secondCounterData = new CounterCreationData("SecondTestCounter", "Second Test Counter", PerformanceCounterType.NumberOfItems32);
+            CounterCreationData firstCounterData = new CounterCreationData(EnterpriseLibraryPerformanceCounterFixture.counterName, "Test Counter", PerformanceCounterType.NumberOfItems32);
+            CounterCreationData secondCounterData = new CounterCreationData("SecondTestCounter", "Second Test Counter", PerformanceCounterType.NumberOfItems32);
 
             installer.Counters.Add(firstCounterData);
-			installer.Counters.Add(secondCounterData);
+            installer.Counters.Add(secondCounterData);
 
             Installers.Add(installer);
         }

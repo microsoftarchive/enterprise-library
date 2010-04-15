@@ -13,12 +13,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics;
 using System.IO;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Console;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_environment_node_in_view_model
@@ -38,7 +38,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_environment_node_in_view_model
             ApplicationViewModel applicationModel = (ApplicationViewModel)Container.Resolve<IApplicationModel>();
             applicationModel.ConfigurationFilePath = targetMainFile;
 
-            ((EnvironmentalOverridesViewModel)base.EnvironmentViewModel).EnvironmentDeltaFile = targetDeltaFile;
+            ((EnvironmentSourceViewModel)base.EnvironmentViewModel).EnvironmentDeltaFile = targetDeltaFile;
         }
 
         protected override void Act()

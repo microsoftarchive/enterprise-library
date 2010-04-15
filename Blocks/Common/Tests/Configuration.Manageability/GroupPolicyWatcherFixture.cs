@@ -53,7 +53,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
             }
         }
 
-        // might give false negatives if a real group policy update event is handled
+        // might give false negatives if a real Group Policy update event is handled
         [TestMethod]
         public void NoEventsAreFiredIfGPNotificationsAreNotReceived()
         {
@@ -70,7 +70,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
             }
         }
 
-        // might give false negatives if a real group policy update event is handled
+        // might give false negatives if a real Group Policy update event is handled
         [TestMethod]
         public void EventIsFiredIfMachineGPNotificationIsReceived()
         {
@@ -90,7 +90,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
             }
         }
 
-        // might give false negatives if a real group policy update event is handled
+        // might give false negatives if a real Group Policy update event is handled
         [TestMethod]
         public void EventIsFiredIfUserGPNotificationIsReceived()
         {

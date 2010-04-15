@@ -118,10 +118,10 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="InitializeComponentCompleted" xml:space="preserve">
-    <value>The windows service initialization sequence is complete. No errors have occurred.</value>
+    <value>The Windows service initialization sequence is complete. No errors have occurred.</value>
   </data>
   <data name="InitializeComponentStarted" xml:space="preserve">
-    <value>The windows service initialization sequence has started.</value>
+    <value>The Windows service initialization sequence has started.</value>
   </data>
   <data name="MsmqAccessDenied" xml:space="preserve">
     <value>Access denied to the DistributorMSMQ queue '{0}'. Identity trying to access the queue : {1}.   See 'Exception Information Details' below for more information.</value>

@@ -48,6 +48,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Oracle.Configuration
 		/// if not present in the configuration source.</returns>
 		public static OracleConnectionSettings GetSettings(IConfigurationSource configurationSource)
 		{
+		    if (configurationSource == null) throw new ArgumentNullException("configurationSource");
+
 			return configurationSource.GetSection(SectionName) as OracleConnectionSettings;
 		}
 

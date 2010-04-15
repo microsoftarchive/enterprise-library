@@ -58,10 +58,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
             return HierarchicalSourceHandler.CheckGetSection(SectionName, localSection) as DummySectionWithCollections;
         }
 
-        #region test support classes
-
-        #endregion
-
     }
 
     public abstract class Given_HierarhicalConfigurationSourceHandlerAndConfigurationElementCollection : Given_HierarchicalConfigurationSourceHandler
@@ -866,6 +862,31 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
             {
                 //TODO: pick right exception, and assert on data
             }
+        }
+    }
+
+    [TestClass]
+    public class When_MissingConfiguredParent : ArrangeActAssert
+    {
+        private HierarchicalConfigurationSourceHandler hierarchicalConfigurationSourceHandler;
+        private ConfigurationSourceSection sourceSection;
+
+        protected override void Arrange()
+        {
+            base.Arrange();
+
+            sourceSection = new ConfigurationSourceSection() {ParentSource = "MissingParentSource"};
+            var localSource = new TestConfigurationSource();
+            localSource.Add(ConfigurationSourceSection.SectionName, sourceSection);
+            hierarchicalConfigurationSourceHandler = new HierarchicalConfigurationSourceHandler(localSource);
+            localSource.SetHierarchyHandler(hierarchicalConfigurationSourceHandler);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ConfigurationSourceErrorsException))]
+        public void Then_ThrowsWhenSectionRequested()
+        {
+            hierarchicalConfigurationSourceHandler.CheckGetSection("SomeNonExistentSection", sourceSection);
         }
     }
 }

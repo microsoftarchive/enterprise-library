@@ -7,11 +7,11 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/Microsoft.Practices.EnterpriseLibrary.Configuration.Design;component/Resources/ViewModelDataTemplates.xaml" />
+                <ResourceDictionary Source="/Microsoft.Practices.EnterpriseLibrary.Configuration.DesignTime;component/Resources/ViewModelDataTemplates.xaml" />
                     
                 <ResourceDictionary>
                     <DataTemplate DataType="{x:Type ViewModel:Property}">
-                        <ContentControl Focusable="False" Content="{Binding Bindable}" ToolTip="{Binding Description}" />
+                        <ContentControl Focusable="False" Content="{Binding BindableProperty}" ToolTip="{Binding Description}" />
                     </DataTemplate>
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>

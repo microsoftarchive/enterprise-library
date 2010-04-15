@@ -73,7 +73,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation
 		/// <summary>
 		/// Gets and sets the base <see cref="PerformanceCounter"></see> type. This is an optional 
 		/// property used when the counter being defined requires a base counter to operate, such as for 
-		/// averages, etc.
+		/// averages.
 		/// </summary>
 		public PerformanceCounterType BaseCounterType
 		{
@@ -87,7 +87,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation
 		/// but is the resource name used to look up the internationalized help text at install-time.
 		/// This is an optional 
 		/// property used when the counter being defined requires a base counter to operate, such as for 
-		/// averages, etc.
+		/// averages.
 		/// </summary>
 		public string BaseCounterHelp
 		{
@@ -98,7 +98,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation
 		/// <summary>
 		/// Gets and sets the base <see cref="PerformanceCounter"></see> name. This is an optional 
 		/// property used when the counter being defined requires a base counter to operate, such as for 
-		/// averages, etc.
+		/// averages.
 		/// </summary>
 		public string BaseCounterName
 		{

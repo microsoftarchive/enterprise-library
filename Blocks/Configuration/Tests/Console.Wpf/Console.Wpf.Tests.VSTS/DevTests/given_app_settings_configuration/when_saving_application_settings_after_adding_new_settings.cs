@@ -18,6 +18,7 @@ using Console.Wpf.Tests.VSTS.TestSupport;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
 using Console.Wpf.Tests.VSTS.Mocks;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.TestSupport;
 
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_app_settings_configuration

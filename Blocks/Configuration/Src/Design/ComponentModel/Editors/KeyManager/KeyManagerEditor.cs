@@ -18,6 +18,10 @@ using System.Windows.Forms.Design;
 using System.IO;
 using System.Security.Cryptography;
 using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography;
+using System.Globalization;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Configuration.Design.HostAdapterV5;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Properties;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration.Design
 {
@@ -42,6 +46,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         /// <returns>
         /// The new value of the object. If the value of the object hasn't changed, this should return the same object it was passed.
         /// </returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
         public override object EditValue(ITypeDescriptorContext context, IServiceProvider provider, object value)
         {
             Debug.Assert(provider != null, "No service provider; we cannot edit the value");
@@ -60,24 +65,40 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
                         throw new ArgumentException(KeyManagerResources.KeyManagerEditorRequiresKeyInfoProperty);
                     }
 
-					ICryptographicKeyProperty cryptographicKeyContainer = context as ICryptographicKeyProperty;
+                    var bindableProperty = EditorUtility.GetBindableProperty(context);
+                    ICryptographicKeyProperty cryptographicKeyContainer = bindableProperty.Property as ICryptographicKeyProperty;
+                    CryptographicKeyWizard dialog = new CryptographicKeyWizard(CryptographicKeyWizardStep.CreateNewKey, cryptographicKeyContainer.KeyCreator);
 
-					try
-					{
-						ImportProtectedKey(cryptographicKeyContainer);
-					}
-					catch (IOException ioe)
-					{
-                        MessageBox.Show(String.Format(KeyManagerResources.OpenExistingKeyFileFailureErrorMessage, keySettings.Filename, ioe.Message), KeyManagerResources.OpenExistingKeyFileFailureTitle, MessageBoxButtons.OK, MessageBoxIcon.Error);
-						return value;
-					}
+                    try
+                    {
+                        var uiService = (IUIServiceWpf)provider.GetService(typeof(IUIServiceWpf));
+                        KeyManagerUtilities.ImportProtectedKey(uiService, keySettings);
+                        dialog.KeySettings = keySettings;
+                    }
+                    catch (FileNotFoundException)
+                    {
+                        //this is handled by the KeyManager utilites;
+                        return value;
+                    }
+                    catch (IOException ioe)
+                    {
+                        MessageBox.Show(String.Format(CultureInfo.CurrentCulture, KeyManagerResources.OpenExistingKeyFileFailureErrorMessage, keySettings.FileName, ioe.Message), KeyManagerResources.OpenExistingKeyFileFailureTitle, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+                        return value;
+                    }
+                    catch (Exception e)
+                    {
+                        IUIServiceWpf uiService = (IUIServiceWpf)provider.GetService(typeof(IUIServiceWpf));
+                        string unableToLoadKeyMessage = string.Format(CultureInfo.CurrentCulture, KeyManagerResources.LoadExistingKeyFileFailureErrorMessage, keySettings.FileName, e.Message);
+                        var unableToLoadKeyDialogResult = uiService.ShowMessageWpf(unableToLoadKeyMessage, KeyManagerResources.OpenExistingKeyFileFailureTitle, System.Windows.MessageBoxButton.YesNo);
+                        if (unableToLoadKeyDialogResult == System.Windows.MessageBoxResult.No)
+                        {
+                            return value;
+                        }
+                    }
 					
-					CryptographicKeyWizard dialog = new CryptographicKeyWizard(CryptographicKeyWizardStep.CreateNewKey, cryptographicKeyContainer.KeyCreator);
-                    dialog.KeySettings = keySettings;
+                    DialogResult editorDialogResult = service.ShowDialog(dialog);
 
-                    DialogResult dialogResult = service.ShowDialog(dialog);
-
-                    if (dialogResult == DialogResult.Cancel)
+                    if (editorDialogResult == DialogResult.Cancel)
                     {
                         return keySettings;
                     }
@@ -99,17 +120,5 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         {
             return UITypeEditorEditStyle.Modal;
         }
-
-		private static void ImportProtectedKey(ICryptographicKeyProperty keyContainer)
-		{
-			string protectedKeyFilename = keyContainer.KeySettings.Filename;
-			DataProtectionScope protectedKeyScope = keyContainer.KeySettings.Scope;
-
-			using (Stream keyFileContents = File.OpenRead(protectedKeyFilename))
-			{
-				keyContainer.KeySettings.ProtectedKey = KeyManager.Read(keyFileContents, protectedKeyScope);
-				keyContainer.KeySettings.Scope = protectedKeyScope;
-			}
-		}
     }
 }

@@ -290,6 +290,53 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         }
     }
 
+    [TestClass]
+    public class When_SettingUseSSLForEmailTraceListener : Given_EmailListenerInConfigurationSourceBuilder
+    {
+        protected override void Act()
+        {
+            EmailTraceListenerBuilder.UseSSL(true);
+        }
+
+        [TestMethod]
+        public void ThenConfigurationHasSSLSet()
+        {
+            Assert.IsTrue(GetEmailTraceListenerData().UseSSL);
+        }
+    }
+
+    [TestClass]
+    public class When_SettingWindowsAuthForEmailTraceListener : Given_EmailListenerInConfigurationSourceBuilder
+    {
+        protected override void Act()
+        {
+            EmailTraceListenerBuilder.WithWindowsCredentials();
+        }
+
+        [TestMethod]
+        public void ThenConfigurationHasWindowsCredentialsSet()
+        {
+            Assert.AreEqual(EmailAuthenticationMode.WindowsCredentials, GetEmailTraceListenerData().AuthenticationMode);
+        }
+    }
+
+    [TestClass]
+    public class When_SettingUserNameAndPasswordForEmailTraceListener : Given_EmailListenerInConfigurationSourceBuilder
+    {
+        protected override void Act()
+        {
+            EmailTraceListenerBuilder.WithUserNameAndPassword("user", "secret");
+        }
+
+        [TestMethod]
+        public void ThenConfigurationHasCorrectModeUserNameAndPasswordSet()
+        {
+            Assert.AreEqual(EmailAuthenticationMode.UserNameAndPassword, GetEmailTraceListenerData().AuthenticationMode);
+            Assert.AreEqual("user", GetEmailTraceListenerData().UserName);
+            Assert.AreEqual("secret", GetEmailTraceListenerData().Password);
+        }
+    }
+
 
     
 }

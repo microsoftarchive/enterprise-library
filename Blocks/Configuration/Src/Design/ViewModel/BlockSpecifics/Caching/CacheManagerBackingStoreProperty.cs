@@ -22,6 +22,12 @@ using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Validation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics
 {
+
+#pragma warning disable 1591
+    /// <summary>
+    /// This class supports block-specific configuration design-time and is not
+    /// intended to be used directly from your code.
+    /// </summary>
     public class CacheManagerBackingStoreProperty : ElementReferenceProperty
     {
         BackingStoreReferenceConverter backingStoreReferenceConverter;
@@ -41,12 +47,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
             }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1061:DoNotHideBaseClassMethods", Justification = "False positive from build server.")]
         public override IEnumerable<object> SuggestedValues
         {
             get
             {
                 return base.SuggestedValues.Union(new[] {string.Empty}).OrderBy(x => x);
             }
+        }
+
+        protected override string GetEmptyValue()
+        {
+            cacheManagerViewModel = (CacheManagerSectionViewModel)ContainingSection;
+            return cacheManagerViewModel.NullBackingStoreName;
         }
 
         public override void Initialize(InitializeContext context)
@@ -76,7 +89,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
                 this.nullBackingStoreName = nullBackingStoreName;
             }
 
-            protected override void ValidateCore(object instance, string value, IList<ValidationError> errors)
+            protected override void ValidateCore(object instance, string value, IList<ValidationResult> results)
             {
                 var property = instance as Property;
                 if (property == null) return;
@@ -84,8 +97,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
                 var convertedValue = property.ConvertFromBindableValue(value);
                 if (convertedValue.ToString() == nullBackingStoreName) return;
 
-                base.ValidateCore(instance, value, errors);
+                base.ValidateCore(instance, value, results);
             }
         }
     }
+
+#pragma warning restore 1591
 }

@@ -39,7 +39,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests
             get
             {
                 return new HashProviderHelper(
-                    instrumentationProvider => new HashAlgorithmProvider(typeof(SHA1Managed), false, instrumentationProvider), 
+                    instrumentationProvider => new HashAlgorithmProvider(typeof(SHA1Managed), false, instrumentationProvider),
                     instrumentationProvider => new HashAlgorithmProvider(typeof(SHA1Managed), true, instrumentationProvider));
             }
         }
@@ -48,7 +48,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests
         public void SetUp()
         {
             nameFormatter = new AppDomainNameFormatter(applicationInstanceName);
-            instrumentationProvider = new HashAlgorithmInstrumentationProvider(instanceName, true, true, true, nameFormatter);
+            instrumentationProvider = new HashAlgorithmInstrumentationProvider(instanceName, true, true, nameFormatter);
             formattedInstanceName = nameFormatter.CreateName(instanceName);
             totalHashComparisonPerformedPerformanceCounter = new EnterpriseLibraryPerformanceCounter(HashAlgorithmInstrumentationProvider.counterCategoryName, HashAlgorithmInstrumentationProvider.TotalHashComparisonPerformedPerformanceCounterName, formattedInstanceName);
             totalHashMismatchesPerformedPerformanceCounter = new EnterpriseLibraryPerformanceCounter(HashAlgorithmInstrumentationProvider.counterCategoryName, HashAlgorithmInstrumentationProvider.TotalHashMismatchesPerformedPerformanceCounterName, formattedInstanceName);
@@ -208,7 +208,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests
         public void HashFailureThrowsWithInstrumentationEnabled()
         {
             HashAlgorithmProvider hashProvider = new HashAlgorithmProvider(typeof(SHA1Managed), false, new NullHashAlgorithmInstrumentationProvider());
-            
+
             hashProvider.CreateHash(null);
         }
 

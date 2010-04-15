@@ -18,6 +18,7 @@ using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 using System.Collections.Generic;
 using System.ComponentModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design.Validation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 {
@@ -86,7 +87,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 
         /// <summary>
         /// Gets or sets custom configuration attributes.
-        /// </summary>        		
+        /// </summary>
+        [Validation(LoggingDesignTime.ValidatorTypes.NameValueCollectionValidator)]
         public NameValueCollection Attributes
         {
             get { return helper.Attributes; }

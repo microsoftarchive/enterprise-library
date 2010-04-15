@@ -23,7 +23,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
     public class ProtectedKeySettings
     {
         private ProtectedKey protectedKey;
-        private string filename;
+        private string fileName;
         private DataProtectionScope scope;
 
         /// <summary>
@@ -34,23 +34,23 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         }
 
         /// <summary>
-        /// Initialize a new instance of the <see cref="ProtectedKeySettings"/> class, given a <paramref name="filename"/> and <see cref="DataProtectionScope"/>.
+        /// Initialize a new instance of the <see cref="ProtectedKeySettings"/> class, given a <paramref name="fileName"/> and <see cref="DataProtectionScope"/>.
         /// </summary>
-        /// <param name="filename">The file path to the protected keyfile.</param>
+        /// <param name="fileName">The file path to the protected keyfile.</param>
         /// <param name="scope">The <see cref="DataProtectionScope"/> used to protect the keyfile.</param>
-        public ProtectedKeySettings(string filename, DataProtectionScope scope)
+        public ProtectedKeySettings(string fileName, DataProtectionScope scope)
         {
-            this.filename = filename;
+            this.fileName = fileName;
             this.scope = scope;
         }
 
         /// <summary>
         /// Gets or sets the file path to the protected keyfile.
         /// </summary>
-        public string Filename
+        public string FileName
         {
-            get { return filename; }
-            set { filename = value; }
+            get { return fileName; }
+            set { fileName = value; }
         }
 
         /// <summary>

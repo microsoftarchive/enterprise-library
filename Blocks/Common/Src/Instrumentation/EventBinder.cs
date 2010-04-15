@@ -43,6 +43,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation
     	/// <param name="listenerMethod">Method to be added as event handler for <paramref name="listenerMethod"></paramref>.</param>
         public virtual void Bind(EventInfo sourceEvent, MethodInfo listenerMethod)
         {
+            if (sourceEvent == null) throw new ArgumentNullException("sourceEvent");
+
             Delegate methodToBindTo =
                 Delegate.CreateDelegate(sourceEvent.EventHandlerType, listener, listenerMethod);
             sourceEvent.AddEventHandler(source, methodToBindTo);            

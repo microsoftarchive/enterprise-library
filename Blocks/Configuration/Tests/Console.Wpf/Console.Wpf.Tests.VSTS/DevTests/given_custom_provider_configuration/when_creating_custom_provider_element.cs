@@ -24,6 +24,8 @@ using Console.Wpf.Tests.VSTS.DevTests.Contexts;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors;
+using System.Collections.Specialized;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_custom_provider_configuration
 {
@@ -34,6 +36,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_custom_provider_configuration
         ConfigurationSectionWithCustomProvider section;
 
         Property attributesProperty;
+        ElementViewModel customProviderElement;
 
         protected override void Arrange()
         {
@@ -41,14 +44,14 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_custom_provider_configuration
             section = new ConfigurationSectionWithCustomProvider();
 
             var elementLookup = Container.Resolve<ElementLookup>();
-            elementLookup.AddCustomElement(new CustomAttributesPropertyExtender(Container.Resolve<IServiceProvider>()));
+            elementLookup.AddCustomElement(new CustomAttributesPropertyExtender());
         }
 
         protected override void Act()
         {
             viewModel = SectionViewModel.CreateSection(Container, "mockSection", section);
-            var providerElement = viewModel.DescendentElements(x => x.ConfigurationType == typeof(CustomProviderConfigurationElement)).First();
-            attributesProperty = providerElement.Property("Attributes");
+            customProviderElement = viewModel.DescendentElements(x => x.ConfigurationType == typeof(CustomProviderConfigurationElement)).First();
+            attributesProperty = customProviderElement.Property("Attributes");
         }
 
         [TestMethod]
@@ -58,15 +61,24 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_custom_provider_configuration
         }
 
         [TestMethod]
-        public void then_attributes_property_has_custom_visual()
-        {
-            Assert.IsInstanceOfType(attributesProperty.Visual, typeof(CustomAttributesEditor));
-        }
-
-        [TestMethod]
         public void then_property_is_not_envrionment_overridable()
         {
             Assert.IsFalse(attributesProperty.Attributes.OfType<EnvironmentalOverridesAttribute>().First().CanOverride);
+        }
+
+        [TestMethod]
+        public void then_attributes_can_be_set()
+        {
+            var values = new NameValueCollection();
+            values.Add("a", "1");
+            values.Add("b", "2");
+
+            attributesProperty.Value = values;
+
+            var attributesInConfiguration = ((ICustomProviderData)customProviderElement.ConfigurationElement).Attributes;
+            Assert.AreEqual(2, attributesInConfiguration.Count);
+            Assert.AreEqual("1", attributesInConfiguration["a"]);
+            Assert.AreEqual("2", attributesInConfiguration["b"]);
         }
     }
 }

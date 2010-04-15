@@ -168,6 +168,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         [ConfigurationProperty(kindPropertyName, IsRequired = false, DefaultValue = ParameterKind.InputOrOutput)]
         [ResourceDescription(typeof(DesignResources), "ParameterTypeMatchDataParameterKindDescription")]
         [ResourceDisplayName(typeof(DesignResources), "ParameterTypeMatchDataParameterKindDisplayName")]
+        [ViewModel(CommonDesignTime.ViewModelTypeNames.CollectionEditorContainedElementProperty)]
         public ParameterKind ParameterKind
         {
             get { return (ParameterKind)base[kindPropertyName]; }

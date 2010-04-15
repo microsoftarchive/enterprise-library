@@ -118,25 +118,25 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="SymmetricStorageEncryptionProviderDataDescription" xml:space="preserve">
-    <value>65 - Encrypts the data in the bacing store (but not in memory) using a Symmetric Cryptography Provider defined in the Cryptography Application Block.</value>
+    <value>Encrypts the data in the backing store (but not in memory) using a Symmetric Cryptography Provider defined in the Cryptography Application Block.</value>
   </data>
   <data name="SymmetricStorageEncryptionProviderDataDisplayName" xml:space="preserve">
     <value>Symmetric Crypto Provider</value>
   </data>
   <data name="SymmetricStorageEncryptionProviderDataNameDescription" xml:space="preserve">
-    <value>67 - The name of the Symmetric Cryptography Provider.</value>
+    <value>The name of the Symmetric Cryptography Provider.</value>
   </data>
   <data name="SymmetricStorageEncryptionProviderDataNameDisplayName" xml:space="preserve">
     <value>Name</value>
   </data>
   <data name="SymmetricStorageEncryptionProviderDataSymmetricInstanceDescription" xml:space="preserve">
-    <value>69 - The name of the Symmetric Cryptography Provider to use, as configured in the settings for the Cryptography Application Block.</value>
+    <value>The name of the Symmetric Cryptography Provider to use, as configured in the settings for the Cryptography Application Block.</value>
   </data>
   <data name="SymmetricStorageEncryptionProviderDataSymmetricInstanceDisplayName" xml:space="preserve">
     <value>Symmetric Crypto Provider</value>
   </data>
   <data name="SymmetricStorageEncryptionProviderDataTypeNameDescription" xml:space="preserve">
-    <value>71 - The fully qualified type name of the Symmetric Cryptography Provider.</value>
+    <value>The fully qualified type name of the Symmetric Cryptography Provider.</value>
   </data>
   <data name="SymmetricStorageEncryptionProviderDataTypeNameDisplayName" xml:space="preserve">
     <value>Type Name</value>

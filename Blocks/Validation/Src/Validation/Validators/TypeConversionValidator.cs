@@ -29,7 +29,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         /// <summary>
         /// <para>Initializes a new instance of the <see cref="TypeConversionValidator"/>.</para>
         /// </summary>
-        /// <param name="targetType">The supplied type to used to determine if the string can be converted to it.</param>
+        /// <param name="targetType">The supplied type used to determine if the string can be converted to it.</param>
         public TypeConversionValidator(Type targetType)
             : this(targetType, false)
         { }
@@ -38,7 +38,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         /// <para>Initializes a new instance of the <see cref="TypeConversionValidator"/>.</para>
         /// </summary>
         /// <param name="negated">True if the validator must negate the result of the validation.</param>
-        /// <param name="targetType">The supplied type to used to determine if the string can be converted to it.</param>
+        /// <param name="targetType">The supplied type used to determine if the string can be converted to it.</param>
         public TypeConversionValidator(Type targetType, bool negated)
             : this(targetType, null, negated)
         { }
@@ -47,7 +47,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         /// <para>Initializes a new instance of the <see cref="TypeConversionValidator"/>.</para>
         /// </summary>
         /// <param name="messageTemplate">The message template to use when logging results.</param>
-        /// <param name="targetType">The supplied type to used to determine if the string can be converted to it.</param>
+        /// <param name="targetType">The supplied type used to determine if the string can be converted to it.</param>
         public TypeConversionValidator(Type targetType, string messageTemplate)
             : this(targetType, messageTemplate, false)
         { }
@@ -57,7 +57,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         /// </summary>
         /// <param name="negated">True if the validator must negate the result of the validation.</param>
         /// <param name="messageTemplate">The message template to use when logging results.</param>
-        /// <param name="targetType">The supplied type to used to determine if the string can be converted to it.</param>
+        /// <param name="targetType">The supplied type used to determine if the string can be converted to it.</param>
         public TypeConversionValidator(Type targetType, string messageTemplate, bool negated)
             : base(messageTemplate, null, negated)
         {
@@ -152,17 +152,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
             get { return Resources.TypeConversionNegatedDefaultMessageTemplate; }
         }
 
-        #region test only properties
-
         /// <summary>
-        /// 
+        /// Target type for conversion.
         /// </summary>
         public Type TargetType
         {
             get { return this.targetType; }
         }
-
-        #endregion
     }
 }
 

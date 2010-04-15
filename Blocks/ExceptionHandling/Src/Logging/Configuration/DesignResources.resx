@@ -118,61 +118,63 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="LoggingExceptionHandlerDataDescription" xml:space="preserve">
-    <value>301 - Logs details of the exception sent to the block by using the Logging Application Block. Adding this Exception Handler automatically adds the Logging Application Block with the default settings.</value>
+    <value>Logs details of the exception sent to the block by using the Logging Application Block. 
+Adding this Exception Handler automatically adds the Logging Application Block with the default settings.</value>
   </data>
   <data name="LoggingExceptionHandlerDataDisplayName" xml:space="preserve">
     <value>Logging Exception Handler</value>
   </data>
   <data name="LoggingExceptionHandlerDataEventIdDescription" xml:space="preserve">
-    <value>303 - The Event ID for the logged exception.</value>
+    <value>The Event ID for the logged exception.</value>
   </data>
   <data name="LoggingExceptionHandlerDataEventIdDisplayName" xml:space="preserve">
     <value>Event ID</value>
   </data>
   <data name="LoggingExceptionHandlerDataFormatterTypeNameDescription" xml:space="preserve">
-    <value>305 - The fully qualified type name of the Formatter to use when logging the exception.</value>
+    <value>The fully qualified type name of the Formatter to use when logging the exception.</value>
   </data>
   <data name="LoggingExceptionHandlerDataFormatterTypeNameDisplayName" xml:space="preserve">
     <value>Formatter Type</value>
   </data>
   <data name="LoggingExceptionHandlerDataLogCategoryDescription" xml:space="preserve">
-    <value>307 - The name of the Logging Category to use when logging exceptions, as configured in the settings of the Logging Application Block.</value>
+    <value>The name of the Logging Category to use when logging exceptions, as configured in the settings of the Logging Application Block.</value>
   </data>
   <data name="LoggingExceptionHandlerDataLogCategoryDisplayName" xml:space="preserve">
     <value>Logging Category</value>
   </data>
   <data name="LoggingExceptionHandlerDataNameDescription" xml:space="preserve">
-    <value>309 - The name of the Logging Exception Handler.</value>
+    <value>The name of the Logging Exception Handler.</value>
   </data>
   <data name="LoggingExceptionHandlerDataNameDisplayName" xml:space="preserve">
     <value>Name</value>
   </data>
   <data name="LoggingExceptionHandlerDataPriorityDescription" xml:space="preserve">
-    <value>311 - The priority of the logged exception message.  Messages with a priority below the minimum specified in a Priority Filter in the Logging Application Block are not logged.</value>
+    <value>The priority of the logged exception message. 
+Messages with a priority below the minimum specified in a Priority Filter in the Logging Application Block are not logged.</value>
   </data>
   <data name="LoggingExceptionHandlerDataPriorityDisplayName" xml:space="preserve">
     <value>Priority</value>
   </data>
   <data name="LoggingExceptionHandlerDataSeverityDescription" xml:space="preserve">
-    <value>313 - The severity value of the logged exception. </value>
+    <value>The severity value of the logged exception. </value>
   </data>
   <data name="LoggingExceptionHandlerDataSeverityDisplayName" xml:space="preserve">
     <value>Severity</value>
   </data>
   <data name="LoggingExceptionHandlerDataTitleDescription" xml:space="preserve">
-    <value>315 - The title for the logged exception. </value>
+    <value>The title for the logged exception. </value>
   </data>
   <data name="LoggingExceptionHandlerDataTitleDisplayName" xml:space="preserve">
     <value>Title</value>
   </data>
   <data name="LoggingExceptionHandlerDataTypeNameDescription" xml:space="preserve">
-    <value>317 - The fully qualified type name of the Logging Exception Handler.</value>
+    <value>The fully qualified type name of the Logging Exception Handler.</value>
   </data>
   <data name="LoggingExceptionHandlerDataTypeNameDisplayName" xml:space="preserve">
     <value>Type</value>
   </data>
   <data name="LoggingExceptionHandlerDataUseDefaultLoggerDescription" xml:space="preserve">
-    <value>319 - Obsolete. The Exception Handler will always use the default LogWriter to be used to write the exception message.</value>
+    <value>Obsolete. The Exception Handler will always use the default LogWriter to write the exception message.</value>
   </data>
   <data name="LoggingExceptionHandlerDataUseDefaultLoggerDisplayName" xml:space="preserve">
     <value>Use Default Logger</value>

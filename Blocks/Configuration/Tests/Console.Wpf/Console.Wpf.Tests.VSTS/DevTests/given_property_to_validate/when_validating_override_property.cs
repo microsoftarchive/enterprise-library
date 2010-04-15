@@ -19,6 +19,7 @@ using Console.Wpf.Tests.VSTS.DevTests.Contexts;
 using Console.Wpf.Tests.VSTS.Mocks;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides.Configuration;
@@ -27,6 +28,7 @@ using Moq;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
 using Microsoft.Practices.Unity;
 using ConfigurationSection = System.Configuration.ConfigurationSection;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.TestSupport;
 
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_a_validation_service
@@ -46,11 +48,12 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_a_validation_service
             var source = new DesignDictionaryConfigurationSource();
             source.Add("testSection", overridableSection);
 
-            var sourceModel = Container.Resolve<ConfigurationSourceModel>();
+            var applicationModel = Container.Resolve<ApplicationViewModel>();
+            var sourceModel = applicationModel.CurrentConfigurationSource;
             sourceModel.Load(source);
             
             BaseSection = sourceModel.Sections.Where(s => s.SectionName == "testSection").Single();
-            sourceModel.NewEnvironment();
+            applicationModel.NewEnvironment();
 
             OverridesProperty = BaseSection.Properties.Where(x => x.PropertyName.StartsWith("Overrides")).First();
             OverridesProperty.Value = true;
@@ -71,7 +74,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_a_validation_service
         {
             base.Arrange();
 
-            ((INotifyCollectionChanged)OverridesProperty.ValidationErrors).CollectionChanged +=
+            ((INotifyCollectionChanged)OverridesProperty.ValidationResults).CollectionChanged +=
                 (s, e) =>
                 {
                     overridesPropertyNotifiedChange = true;
@@ -95,32 +98,32 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_a_validation_service
         [TestMethod]
         public void then_override_property_has_validation_errors()
         {
-            Assert.IsTrue(overriddenSomeValueProperty.ValidationErrors.Any());
+            Assert.IsTrue(overriddenSomeValueProperty.ValidationResults.Any());
         }
 
         [TestMethod]
         public void then_base_property_has_no_validation_errors()
         {
-            Assert.IsFalse(BaseSection.Property("SomeProperty").ValidationErrors.Any());
+            Assert.IsFalse(BaseSection.Property("SomeProperty").ValidationResults.Any());
         }
 
         [TestMethod]
         public void then_overridden_property_reflects_base_element_name()
         {
             var basePropertyElementName = ((ElementProperty)BaseSection.Property("SomeProperty")).DeclaringElement.Name;
-            Assert.IsTrue(overriddenSomeValueProperty.ValidationErrors.All(e => e.ElementName == string.Format("{0}.{1}", basePropertyElementName, OverridesProperty.DisplayName)));
+            Assert.IsTrue(overriddenSomeValueProperty.ValidationResults.All(e => e.ElementName == string.Format("{0}.{1}", basePropertyElementName, OverridesProperty.DisplayName)));
         }
 
         [TestMethod]
         public void then_reference_validation_fails()
         {
-            Assert.IsTrue(overriddenReferenceProperty.ValidationErrors.Any());
+            Assert.IsTrue(overriddenReferenceProperty.ValidationResults.Any());
         }
 
         [TestMethod]
         public void then_overrides_property_reflects_childrens_errors()
         {
-            Assert.IsTrue(OverridesProperty.ValidationErrors.Any());
+            Assert.IsTrue(OverridesProperty.ValidationResults.Any());
         }
 
         [TestMethod]
@@ -143,7 +146,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_a_validation_service
                 OverridesProperty.ChildProperties.Where(p => p.PropertyName == "SomeProperty").Single();
             
             overriddenSomeValueProperty.Value = "";
-            Assert.IsTrue(OverridesProperty.ChildProperties.SelectMany(p => p.ValidationErrors).Any());
+            Assert.IsTrue(OverridesProperty.ChildProperties.SelectMany(p => p.ValidationResults).Any());
         }
 
         protected override void Act()
@@ -154,7 +157,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_a_validation_service
         [TestMethod]
         public void then_validation_errors_removed()
         {
-            Assert.IsFalse(OverridesProperty.ChildProperties.SelectMany(p => p.ValidationErrors).Any());
+            Assert.IsFalse(OverridesProperty.ChildProperties.SelectMany(p => p.ValidationResults).Any());
         }
     }
 

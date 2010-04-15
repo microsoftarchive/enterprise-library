@@ -207,10 +207,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
             get { return null; }
         }
 
-        #region test only properties
-
         /// <summary>
-        /// 
+        /// Type of target being validated.
         /// </summary>
         public Type TargetType
         {
@@ -218,13 +216,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         }
 
         /// <summary>
-        /// 
+        /// Ruleset to use when creating target validators.
         /// </summary>
         public string TargetRuleset
         {
             get { return this.targetRuleset; }
         }
-
-        #endregion
     }
 }

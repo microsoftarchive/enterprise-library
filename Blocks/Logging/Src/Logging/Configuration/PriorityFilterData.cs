@@ -23,6 +23,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
     /// </summary>    
     [ResourceDescription(typeof(DesignResources), "PriorityFilterDataDescription")]
     [ResourceDisplayName(typeof(DesignResources), "PriorityFilterDataDisplayName")]
+    [ElementValidation(LoggingDesignTime.ValidatorTypes.LogPriorityMinMaxValidatorType)]
     public class PriorityFilterData : LogFilterData
     {
         private const string minimumPriorityProperty = "minimumPriority";
@@ -63,7 +64,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         [ConfigurationProperty(minimumPriorityProperty)]
         [ResourceDescription(typeof(DesignResources), "PriorityFilterDataMinimumPriorityDescription")]
         [ResourceDisplayName(typeof(DesignResources), "PriorityFilterDataMinimumPriorityDisplayName")]
-        [Validation(LoggingDesignTime.ValidatorTypes.LogPriorityMinMaxValidatorType)]
         public int MinimumPriority
         {
             get
@@ -83,7 +83,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         [ConfigurationProperty(maximumPriorityProperty, DefaultValue = int.MaxValue)]
         [ResourceDescription(typeof(DesignResources), "PriorityFilterDataMaximumPriorityDescription")]
         [ResourceDisplayName(typeof(DesignResources), "PriorityFilterDataMaximumPriorityDisplayName")]
-        [Validation(LoggingDesignTime.ValidatorTypes.LogPriorityMinMaxValidatorType)]
         public int MaximumPriority
         {
             get

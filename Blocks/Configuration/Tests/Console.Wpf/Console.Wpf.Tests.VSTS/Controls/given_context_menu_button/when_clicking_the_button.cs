@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows;
 using System.Windows.Controls;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
@@ -20,6 +21,14 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Console.Wpf.Tests.VSTS.Controls.given_context_menu_button
 {
+    class TestableContextMenuButton : ContextMenuButton
+    {
+        public void DoClick()
+        {
+            base.OnClick();
+        }
+    }
+
     public abstract class TestableContextMenuContext : ArrangeActAssert
     {
         private TestableContextMenuButton menuButton;
@@ -42,14 +51,6 @@ namespace Console.Wpf.Tests.VSTS.Controls.given_context_menu_button
         public void InvokeClick()
         {
             menuButton.DoClick();
-        }
-
-        private class TestableContextMenuButton : ContextMenuButton
-        {
-            public void DoClick()
-            {
-                base.OnClick();
-            }
         }
     }
 
@@ -88,5 +89,34 @@ namespace Console.Wpf.Tests.VSTS.Controls.given_context_menu_button
             InvokeClick();
         }
 
+    }
+
+    [TestClass]
+    public class when_clicking_button_and_targeting_element : ArrangeActAssert
+    {
+        private TestableContextMenuButton menuButton;
+        private FrameworkElement targetElement;
+
+        protected override void Arrange()
+        {
+            base.Arrange();
+
+            menuButton = new TestableContextMenuButton();
+            targetElement = new FrameworkElement();
+            targetElement.ContextMenu = new ContextMenu();
+
+            menuButton.TargetElement = targetElement;
+        }
+
+        protected override void Act()
+        {
+            menuButton.DoClick();
+        }
+
+        [TestMethod]
+        public void then_target_element_context_menu_opens()
+        {
+            Assert.IsTrue(targetElement.ContextMenu.IsOpen);
+        }
     }
 }

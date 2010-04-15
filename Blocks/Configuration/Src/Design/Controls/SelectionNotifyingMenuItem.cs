@@ -21,8 +21,15 @@ using System.Windows.Data;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls
 {
+    /// <summary>
+    /// The <see cref="SelectionNotifyingMenuItem"/> tracks child <see cref="SelectionNotifyingMenuItem"/>s
+    /// and provides notification to its parent if it becomes selected.
+    /// <br/>
+    /// This is used by the design-time infrastructure and is not intended to be used directly from your code.
+    /// </summary>
     public class SelectionNotifyingMenuItem : MenuItem
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields")]
         internal static DependencyProperty IsSelectedProperty =
             Selector.IsSelectedProperty.AddOwner(
                 typeof(SelectionNotifyingMenuItem),
@@ -30,6 +37,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls
                                               FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
                                               new PropertyChangedCallback(SelectionNotifyingMenuItem.OnIsSelectedChanged)));
 
+        ///<summary>
+        /// The currently selected <see cref="MenuItem"/>.
+        ///</summary>
         public static readonly DependencyProperty CurrentSelectionProperty =
             DependencyProperty.Register("CurrentSelection", typeof(MenuItem), typeof(SelectionNotifyingMenuItem), new UIPropertyMetadata(null));
 
@@ -43,6 +53,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls
              new RoutedPropertyChangedEventHandler<bool>(OnIsSelectedChanged));
         }
 
+        ///<summary>
+        /// Initializes a new instance of <see cref="SelectionNotifyingMenuItem"/>.
+        ///</summary>
         public SelectionNotifyingMenuItem()
         {
             Binding inputGestureBinding = new Binding("KeyGesture");
@@ -81,11 +94,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls
                                                                      SelectionNotifyingContextMenu.IsSelectedChangedEvent));
         }
 
+        /// <summary>
+        /// Creates or identifies the element used to display a specified item.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="SelectionNotifyingMenuItem"/>.
+        /// </returns>
         protected override DependencyObject GetContainerForItemOverride()
         {
             return new SelectionNotifyingMenuItem();
         }
 
+        ///<summary>
+        /// Gets the currently selected child <see cref="MenuItem"/>.
+        ///</summary>
         public MenuItem CurrentSelection
         {
             get { return (MenuItem)GetValue(CurrentSelectionProperty); }

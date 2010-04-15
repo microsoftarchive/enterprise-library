@@ -20,6 +20,7 @@ using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Servi
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Validation;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.TestSupport;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_configuration_source_model
 {

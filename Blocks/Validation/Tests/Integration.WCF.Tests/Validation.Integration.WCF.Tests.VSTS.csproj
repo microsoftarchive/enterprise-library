@@ -48,7 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="APTCAFixture.cs" />
+    <Compile Include="APTCAFixture.2008.cs" />
     <Compile Include="Hosting\TestServiceHost.cs" />
     <Compile Include="ParameterInspectorFixture.cs" />
     <Compile Include="Properties\Settings.Designer.cs">

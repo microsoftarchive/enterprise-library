@@ -5,17 +5,16 @@
                     xmlns:ViewModel="clr-namespace:Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel"
 					xmlns:Controls="clr-namespace:Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls"
                     xmlns:Converters="clr-namespace:Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Converters"
-					mc:Ignorable="d" xmlns:Microsoft_Windows_Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero" xmlns:ComponentModel="clr-namespace:System.ComponentModel;assembly=WindowsBase">
+					mc:Ignorable="d" xmlns:Microsoft_Windows_Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero" xmlns:ComponentModel="clr-namespace:System.ComponentModel;assembly=WindowsBase" xmlns:BlockSpecifics="clr-namespace:Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics" xmlns:System="clr-namespace:System;assembly=mscorlib">
 
     <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="/Microsoft.Practices.EnterpriseLibrary.Configuration.Design;component/Resources/Converters.xaml" />
-        <ResourceDictionary Source="/Microsoft.Practices.EnterpriseLibrary.Configuration.Design;component/Resources/Brushes.xaml" />
-        <ResourceDictionary Source="/Microsoft.Practices.EnterpriseLibrary.Configuration.Design;component/Resources/ExpanderDictionary.xaml" />
+        <ResourceDictionary Source="/Microsoft.Practices.EnterpriseLibrary.Configuration.DesignTime;component/Resources/Converters.xaml" />
+        <ResourceDictionary Source="/Microsoft.Practices.EnterpriseLibrary.Configuration.DesignTime;component/Resources/Brushes.xaml" />
+        <ResourceDictionary Source="/Microsoft.Practices.EnterpriseLibrary.Configuration.DesignTime;component/Resources/ExpanderDictionary.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
-    <ControlTemplate x:Key="NoAdornerErrorTemplate">
-        <AdornedElementPlaceholder />
-    </ControlTemplate>
+    <System:Double x:Key="SharedColumnMinWidth">100</System:Double>
+    <GridLength x:Key="SharedColumnWidth">250</GridLength>
 
     <Style x:Key="ContextAdderButtonMenuStyle" TargetType="{x:Type Controls:ContextMenuButton}">
         <Setter Property="Template">
@@ -46,18 +45,18 @@
     <Style x:Key="ContextMenuStyle">
         <Style.Resources>
             <!-- This is here as setting MenuItem.AutomatinProperties.AutomationId does not work -->
-            <Style TargetType="{x:Type MenuItem}">
+            <Style TargetType="{x:Type Controls:SelectionNotifyingMenuItem}">
                 <Setter Property="AutomationProperties.AutomationId" Value="{Binding Title}"  />
             </Style>
-            
-            <HierarchicalDataTemplate DataType="{x:Type ViewModel:DefaultElementCollectionAddCommand}" ItemsSource="{Binding ChildCommands}">
-                <Label Content="{Binding Title}" />
+
+            <HierarchicalDataTemplate DataType="{x:Type ViewModel:CommandModel}" ItemsSource="{Binding ChildCommands}">
+                <Label ToolTip="{Binding Title}" >
+                    <Label.Content>
+                        <AccessText Text="{Binding Title}" TextTrimming="CharacterEllipsis"  MaxWidth="450" />
+                    </Label.Content>
+                </Label>
             </HierarchicalDataTemplate>
 
-            <DataTemplate DataType="{x:Type ViewModel:CommandModel}">
-                <Label Content="{Binding Title}" />
-                <!--Controls:SelectionNotifyingMenuItem Header="{Binding Title}" Command="{Binding}" /-->
-            </DataTemplate>
         </Style.Resources>
     </Style>
 
@@ -78,44 +77,57 @@
             </Trigger>
         </Style.Triggers>
     </Style>
-    
+
+    <Controls:SelectionNotifyingContextMenu x:Key="SelectionNotifyingContextMenu" 
+                                            ItemsSource="{Binding Commands}" 
+                                            Style="{StaticResource ContextMenuStyle}" />
+
+    <Style x:Key="ElementContainerWithContextMenu"  
+           TargetType="{x:Type Controls:ElementModelContainer}" 
+           BasedOn="{StaticResource {x:Type Controls:ElementModelContainer}}">
+        <Setter Property="ContextMenu" Value="{StaticResource SelectionNotifyingContextMenu}" />
+    </Style>
+
+
     <DataTemplate DataType="{x:Type ViewModel:ElementViewModel}">
-        <Controls:ElementModelContainer DataContext="{Binding}">
-            <Controls:ElementModelContainer.ContextMenu>
-                <Controls:SelectionNotifyingContextMenu ItemsSource="{Binding Commands}" Style="{StaticResource ContextMenuStyle}" /> 
-            </Controls:ElementModelContainer.ContextMenu>
-        </Controls:ElementModelContainer>
+        <Controls:ElementModelContainer DataContext="{Binding}" Style="{StaticResource ElementContainerWithContextMenu}" />
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type ViewModel:ElementListViewModel}">
+    <DataTemplate DataType="{x:Type ViewModel:ElementListLayout}">
         <ItemsControl Focusable="False"  ItemsSource="{Binding Elements}" >
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Focusable="False">
-                        <ContentControl Focusable="False" Content="{Binding Visual}" />
+                        <ContentControl Focusable="False" Content="{Binding Bindable}" />
                     </StackPanel>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type ViewModel:ListViewModel}">
+    <DataTemplate DataType="{x:Type ViewModel:ListLayout}">
         <ItemsControl ItemsSource="{Binding Elements}"  Focusable="False">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Focusable="False">
-                        <ContentControl Focusable="False" Content="{Binding Visual}" />
+                        <ContentControl Focusable="False" Content="{Binding Bindable}" />
                     </StackPanel>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type ViewModel:HorizontalListViewModel}">
-        <Grid x:Name="Grid" VerticalAlignment="Stretch" Focusable="False">
+    <DataTemplate DataType="{x:Type ViewModel:HorizontalListLayout}">
+        <Grid x:Name="Grid" 
+                VerticalAlignment="Stretch" 
+                Focusable="False"
+                Visibility="{Binding CanResize, Converter={StaticResource BooleanToVisibilityConverter}}"
+                Controls:GridSplitterKeyAccelerator.TargetColumn="0"
+                Controls:GridSplitterKeyAccelerator.DecrementKeyGesture="Alt+Ctrl+Left"
+                Controls:GridSplitterKeyAccelerator.IncrementKeyGesture="Alt+Ctrl+Right">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition MinWidth="275" Width="275" SharedSizeGroup="{Binding ColumnName}" />
-                <!--ColumnDefinition Width="3" /-->
+                <ColumnDefinition MinWidth="{StaticResource SharedColumnMinWidth}" Width="{StaticResource SharedColumnWidth}" SharedSizeGroup="{Binding ColumnName}" />
+                <ColumnDefinition Width="Auto" SharedSizeGroup="SplitterSizeGroup"  />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
@@ -132,7 +144,7 @@
 
             <GridSplitter   Focusable="False"
                             x:Name="Splitter"
-                            Grid.Column="0" 
+                            Grid.Column="1" 
                             Grid.Row="0"
                             Grid.RowSpan="2"
                             BorderBrush="Black" 
@@ -141,9 +153,12 @@
                             Width="3"
                             Background="Transparent" 
                             ResizeDirection="Columns" 
-                            ShowsPreview="True" />
-            
-            <ContentControl Focusable="False" VerticalAlignment="Stretch" Grid.RowSpan="2" Grid.Column="1" Content="{Binding}">
+                            ResizeBehavior="PreviousAndCurrent"
+                            ShowsPreview="True"
+                            Visibility="{Binding CanResize, Converter={StaticResource BooleanToVisibilityConverter}}"
+                            />
+
+            <ContentControl Focusable="False" VerticalAlignment="Stretch" Grid.RowSpan="2" Grid.Column="2" Content="{Binding}">
                 <ContentControl.ContentTemplate>
                     <DataTemplate>
                         <ContentControl VerticalAlignment="Stretch"
@@ -154,7 +169,7 @@
                         <DataTemplate.Triggers>
                             <DataTrigger Binding="{Binding HasNext}" Value="true">
                                 <Setter TargetName="Next" Property="Content" Value="{Binding Next}" />
-                                <Setter TargetName="Next" Property="Visibility" Value="{Binding Visible}" />
+                                <Setter TargetName="Next" Property="Visibility" Value="{Binding CanResize, Converter={StaticResource BooleanToVisibilityConverter}}" />
                             </DataTrigger>
                         </DataTemplate.Triggers>
                     </DataTemplate>
@@ -163,48 +178,50 @@
 
             <StackPanel
                     Grid.Column="0"
-                    Grid.ColumnSpan="2"
+                    Grid.ColumnSpan="3"
                     Grid.Row="1">
                 <ContentControl Focusable="False" Content="{Binding Contained}" />
             </StackPanel>
-
-
-
         </Grid>
         <DataTemplate.Triggers>
-            <DataTrigger Binding="{Binding Root}" Value="False">
+            <DataTrigger Binding="{Binding OwnsResizing}" Value="False">
                 <Setter TargetName="Splitter" Property="Visibility" Value="Collapsed" />
             </DataTrigger>
         </DataTemplate.Triggers>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type ViewModel:TwoVerticalVisualsViewModel}">
+    <DataTemplate DataType="{x:Type ViewModel:TwoVerticalsLayout}">
         <StackPanel>
             <ContentControl Focusable="False"  Content="{Binding First}" />
             <ContentControl Focusable="False" Content="{Binding Second}" />
         </StackPanel>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type ViewModel:TwoColumnsViewModel}">
-        <Grid>
+    <DataTemplate DataType="{x:Type ViewModel:TwoColumnsLayout}">
+        <Grid Controls:GridSplitterKeyAccelerator.TargetColumn="0"
+              Controls:GridSplitterKeyAccelerator.DecrementKeyGesture="Alt+Ctrl+Left"
+              Controls:GridSplitterKeyAccelerator.IncrementKeyGesture="Alt+Ctrl+Right"
+            >
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="275" SharedSizeGroup="{Binding ColumnName}" />
+                <ColumnDefinition Width="Auto" SharedSizeGroup="{Binding ColumnName}" />
+                <ColumnDefinition Width="Auto" SharedSizeGroup="SplitterSizeGroup" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
             <ContentControl Focusable="False" Grid.Column="0" Content="{Binding Left}" />
 
-            <ContentControl Focusable="False" Grid.Column="1" Content="{Binding Right}" />
+            <ContentControl Focusable="False" Grid.Column="2" Content="{Binding Right}" />
 
         </Grid>
     </DataTemplate>
 
-    <DataTemplate DataType="{x:Type ViewModel:HeaderViewModel}">
+    <DataTemplate DataType="{x:Type ViewModel:HeaderLayout}">
         <Grid Focusable="False"
               ScrollViewer.VerticalScrollBarVisibility="Disabled" 
               Margin="12, 0, 12, 6">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" SharedSizeGroup="SplitterSizeGroup"/>
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
@@ -215,7 +232,7 @@
                        FontWeight="Bold" />
 
             <Controls:ContextMenuButton x:Name="AddButton" 
-                            Grid.Column="1" 
+                            Grid.Column="2" 
                             VerticalAlignment="Top" 
                             HorizontalAlignment="Right" 
                             Margin="0,0,0,0"
@@ -224,12 +241,11 @@
                             AutomationProperties.AutomationId ="{Binding Title}"
                             >
                 <Controls:ContextMenuButton.ContextMenu>
-                    <Controls:SelectionNotifyingContextMenu ItemsSource="{Binding Commands}" Style="{StaticResource ContextMenuStyle}"  />
+                    <Controls:SelectionNotifyingContextMenu Placement="Right" ItemsSource="{Binding Commands}" Style="{StaticResource ContextMenuStyle}"  />
                 </Controls:ContextMenuButton.ContextMenu>
             </Controls:ContextMenuButton>
         </Grid>
     </DataTemplate>
-
 
     <DataTemplate DataType="{x:Type ViewModel:SuggestedValuesBindableProperty}">
         <Grid HorizontalAlignment="Stretch">
@@ -240,7 +256,7 @@
 						Visibility="Collapsed" />
             <ComboBox ItemsSource="{Binding BindableSuggestedValues}"
 							  Text="{Binding BindableValue, ValidatesOnDataErrors=true}"
-                              Validation.ErrorTemplate="{StaticResource NoAdornerErrorTemplate}"
+                              Validation.ErrorTemplate="{x:Null}"
 							  x:Name="propertyDropdown"
                               Style="{StaticResource BindablePropertyStyle}"
 							  Grid.Column="0"
@@ -259,9 +275,6 @@
         </DataTemplate.Triggers>
     </DataTemplate>
 
- 
-
-
     <DataTemplate DataType="{x:Type ViewModel:BindableProperty}">
         <Grid HorizontalAlignment="Stretch">
             <Border BorderBrush="Red"
@@ -270,10 +283,10 @@
 						x:Name="ErrorAdorner"
 						Visibility="Collapsed" />
             <TextBox
-                        Validation.ErrorTemplate="{StaticResource NoAdornerErrorTemplate}" 		 
+                        Validation.ErrorTemplate="{x:Null}" 		 
                         x:Name="valueTextBox"
                         Style="{StaticResource BindablePropertyStyle}"
-                        IsReadOnly="{Binding TextReadOnly}"
+                        IsReadOnly="{Binding ReadOnly}"
                         AutomationProperties.Name="{Binding DisplayName}"
                         Text="{Binding BindableValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=true}" />
         </Grid>
@@ -287,6 +300,10 @@
                 <Setter TargetName="valueTextBox" Property="IsEnabled" Value="false" />
             </DataTrigger>
         </DataTemplate.Triggers>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type ViewModel:FrameworkEditorBindableProperty}">
+        <ContentControl Content="{Binding Editor}" />
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type ViewModel:PopupEditorBindableProperty}">
@@ -309,7 +326,7 @@
 							x:Name="ErrorAdorner"
 							Visibility="Collapsed" />
                 <TextBox IsEnabled="{Binding ReadOnly, Converter={StaticResource BooleanInverseConverter}}"
-							Validation.ErrorTemplate="{StaticResource NoAdornerErrorTemplate}"
+							Validation.ErrorTemplate="{x:Null}"
                             Style="{StaticResource BindablePropertyStyle}"
 							x:Name="valueTextBox"
                             IsReadOnly="{Binding TextReadOnly}"
@@ -317,7 +334,7 @@
                             Text="{Binding BindableValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=true}"
                          />
             </Grid>
-          
+
         </DockPanel>
         <DataTemplate.Triggers>
             <Trigger Property="Validation.HasError"
@@ -326,7 +343,7 @@
                 <Setter Property="Visibility"
 						Value="Visible"
 						TargetName="ErrorAdorner" />
-            </Trigger>          
+            </Trigger>
         </DataTemplate.Triggers>
     </DataTemplate>
 
@@ -345,7 +362,7 @@
 					   HorizontalAlignment="Left" 
                        VerticalAlignment="Top" />
 
-            <ContentControl Focusable="False" Grid.Column="1" Content="{Binding Visual}" />
+            <ContentControl Focusable="False" Grid.Column="1" Content="{Binding BindableProperty}" />
 
         </Grid>
         <DataTemplate.Triggers>
@@ -368,9 +385,7 @@
                 <RowDefinition />
             </Grid.RowDefinitions>
 
-            <ContentControl Focusable="False" Grid.Column="1" Content="{Binding}" ContentTemplate="{StaticResource ActualProperty}">
-
-            </ContentControl>
+            <ContentControl Focusable="False" Grid.Column="1" Content="{Binding}" ContentTemplate="{StaticResource ActualProperty}" />
 
         </Grid>
         <DataTemplate.Triggers>
@@ -381,7 +396,6 @@
             </DataTrigger>
         </DataTemplate.Triggers>
     </DataTemplate>
-
 
     <DataTemplate DataType="{x:Type ViewModel:Property}">
         <Grid>
@@ -396,6 +410,7 @@
             <ToggleButton Template="{DynamicResource ExpanderToggleButton}"
                           Visibility="{Binding HasChildProperties, Converter={StaticResource BooleanToVisibilityConverter}}"
                           x:Name="ShowChildProperties"
+                          IsChecked="{Binding PropertiesShown}"
                           Height="6"
                           Width="12"
                           Margin="0, -6, 0, 0"
@@ -430,7 +445,7 @@
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type ViewModel:SectionViewModel}">
-        <Controls:SectionModelContainer DataContext="{Binding}" >
+        <Controls:SectionModelContainer DataContext="{Binding}">
             <Controls:SectionModelContainer.ContextMenu>
                 <Controls:SelectionNotifyingContextMenu ItemsSource="{Binding Commands}" Style="{StaticResource ContextMenuStyle}" />
             </Controls:SectionModelContainer.ContextMenu>
@@ -490,6 +505,25 @@
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="CommandMenuItemStyle" TargetType="{x:Type MenuItem}">
+        <Setter Property="IsEnabled" Value="{Binding ItemsSource, RelativeSource={RelativeSource Self}, Converter={StaticResource EnumerableToBooleanConverter}}" />
+        <Setter Property="ItemContainerStyle">
+            <Setter.Value>
+                <Style TargetType="{x:Type MenuItem}">
+                    <Setter Property="AutomationProperties.AutomationId" Value="{Binding Title}" />
+                </Style>
+            </Setter.Value>
+        </Setter>
+
+        <Setter Property="ItemTemplate">
+            <Setter.Value>
+                <DataTemplate>
+                    <Label Content="{Binding Title}" />
+                </DataTemplate>
             </Setter.Value>
         </Setter>
     </Style>

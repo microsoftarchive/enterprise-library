@@ -9,24 +9,35 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System.Collections.Generic;
-using System.Reflection;
-using System.IO;
 using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.Unity;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services
 {
+    /// <summary>
+    /// Service class used to get the assemblies that are used as part of the configuration designtime.
+    /// </summary>
+    /// <remarks>
+    /// In order to get an instance of this class, declare it as a constructor argument on the consuming component or use the <see cref="IUnityContainer"/> to obtain an instance from code.
+    /// </remarks>
     public class AssemblyLocator
-    {
-        readonly string basePath;
-
+    {    
+        /// <summary>
+        /// This constructor supports the configuration design-time and is not intended to be used directly from your code.
+        /// </summary>
         protected AssemblyLocator()
         {
         }
 
+        /// <summary>
+        /// This constructor supports the configuration design-time and is not intended to be used directly from your code.
+        /// </summary>
         public AssemblyLocator(string basePath)
         {
-            this.basePath = basePath;
             this.assemblies = new List<Assembly>();
 
             LoadAssembliesFromDirectory(basePath);
@@ -34,6 +45,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.S
 
         private List<Assembly> assemblies;
 
+        /// <summary>
+        /// Gets the list of assemblies that are used as part of the configuration designtime.
+        /// </summary>
+        /// <value>
+        /// The list of assemblies that are used as part of the configuration designtime.
+        /// </value>
         public virtual IEnumerable<Assembly> Assemblies
         {
             get { return assemblies; }

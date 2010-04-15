@@ -10,7 +10,7 @@
 //===============================================================================
 
 using System.ComponentModel;
-using System.Management.Instrumentation;
+using System.Configuration.Install;
 using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation
@@ -18,17 +18,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation
     /// <summary>
     /// Let the system know that the InstallUtil.exe tool will be run against this assembly
     /// </summary>
-	[RunInstaller(true)]
-	public partial class CachingInstrumentationInstaller : DefaultManagementProjectInstaller
-	{
+    [RunInstaller(true)]
+    public partial class CachingInstrumentationInstaller : Installer
+    {
         /// <summary>
         /// Represents the installer for the instrumentation events. Not intended for direct use.
         /// </summary>
-		public CachingInstrumentationInstaller()
-		{
-			InitializeComponent();
-			Installers.Add(new ReflectionInstaller<PerformanceCounterInstallerBuilder>());
-			Installers.Add(new ReflectionInstaller<EventLogInstallerBuilder>());
-		}
-	}
+        public CachingInstrumentationInstaller()
+        {
+            InitializeComponent();
+            Installers.Add(new ReflectionInstaller<PerformanceCounterInstallerBuilder>());
+            Installers.Add(new ReflectionInstaller<EventLogInstallerBuilder>());
+        }
+    }
 }

@@ -209,10 +209,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
             get { return Resources.StringLengthValidatorNegatedDefaultMessageTemplate; }
         }
 
-        #region test only properties
-
         /// <summary>
-        /// 
+        /// Lower bound for string length.
         /// </summary>
         public int LowerBound
         {
@@ -220,7 +218,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         }
 
         /// <summary>
-        /// 
+        /// Upper bound for string length.
         /// </summary>
         public int UpperBound
         {
@@ -228,7 +226,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         }
 
         /// <summary>
-        /// 
+        /// Is lower bound included, excluded, or ignored?
         /// </summary>
         public RangeBoundaryType LowerBoundType
         {
@@ -236,13 +234,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         }
 
         /// <summary>
-        /// 
+        /// Is upper bound included, excluded, or ignored?
         /// </summary>
         public RangeBoundaryType UpperBoundType
         {
             get { return this.rangeChecker.UpperBoundType; }
         }
-
-        #endregion
     }
 }

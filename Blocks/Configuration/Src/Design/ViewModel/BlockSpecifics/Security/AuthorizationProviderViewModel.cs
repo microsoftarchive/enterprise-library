@@ -17,6 +17,11 @@ using System.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics
 {
+#pragma warning disable 1591
+    /// <summary>
+    /// This class supports block-specific configuration design-time and is not
+    /// intended to be used directly from your code.
+    /// </summary>
     public class AuthorizationProviderDataViewModel: CollectionElementViewModel
     {
         public AuthorizationProviderDataViewModel(ElementCollectionViewModel containingCollection, ConfigurationElement thisElement)
@@ -26,10 +31,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
 
         protected override object CreateBindable()
         {
-            return new TwoColumnsViewModel(this, null)
-                {
-                    ColumnName = "Column0"
-                };
+            return new HorizontalColumnBindingLayout(this, 0);
         }
     }
+#pragma warning restore 1591
 }

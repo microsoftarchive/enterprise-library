@@ -23,9 +23,9 @@ using Microsoft.Practices.EnterpriseLibrary.Data.Sql;
 namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Manageability
 {
     /// <summary>
-    /// Provides an implementation for <see cref="DatabaseSettings"/> that splits
-    /// policy override processing and WMI object generation for the section, performing appropriate logging of
-    /// policy processing errors, from policy override processing and WMI object generation for configuration objects
+    /// Provides an implementation for <see cref="DatabaseSettings"/> that performs
+    /// policy override processing for the section, performing appropriate logging of
+    /// policy processing errors, from policy override processing for configuration objects
     /// contained by the section.
     /// </summary>
     public class DatabaseSettingsManageabilityProvider

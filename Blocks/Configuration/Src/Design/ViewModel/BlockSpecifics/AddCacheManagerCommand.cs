@@ -9,28 +9,37 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Configuration.Design.HostAdapterV5;
+using Microsoft.Practices.Unity.Utility;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics
 {
+#pragma warning disable 1591
+
+    /// <summary>
+    /// This class supports block-specific configuration design-time and is not
+    /// intended to be used directly from your code.
+    /// </summary>
     public class AddCacheManagerCommand : DefaultCollectionElementAddCommand
     {
         CacheManagerSectionViewModel cachingSection;
-        public AddCacheManagerCommand(ElementCollectionViewModel collection)
-            :base(new ConfigurationElementType(typeof(CacheManagerData)), collection)
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Validated with Guard class")]
+        public AddCacheManagerCommand(ElementCollectionViewModel collection, IUIServiceWpf uiService)
+            : base(new ConfigurationElementType(typeof(CacheManagerData)), collection, uiService)
         {
+            Guard.ArgumentNotNull(collection, "collection");
+
             this.cachingSection = collection.ContainingSection as CacheManagerSectionViewModel;
         }
 
-        public override void Execute(object parameter)
+        protected override void InnerExecute(object parameter)
         {
-            base.Execute(parameter);
+            base.InnerExecute(parameter);
 
             AddedElementViewModel.Property("CacheStorage").Value = cachingSection.NullBackingStoreName;
         }
     }
+#pragma warning restore 1591
 }

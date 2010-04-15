@@ -10,7 +10,6 @@
 //===============================================================================
 
 using System.Collections.Generic;
-using Microsoft.Practices.EnterpriseLibrary.Validation.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation
@@ -75,9 +74,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
             Validator valueValidator;
             if (this.validatedElement.IgnoreNulls)
             {
-                valueValidator = new OrCompositeValidator(new NotNullValidator(true), validator);
-                valueValidator.MessageTemplate = this.validatedElement.IgnoreNullsMessageTemplate ?? Resources.IgnoreNullsDefaultMessageTemplate;
-                valueValidator.Tag = this.validatedElement.IgnoreNullsTag;
+                valueValidator = new NullIgnoringValidatorWrapper(validator);
             }
             else
             {

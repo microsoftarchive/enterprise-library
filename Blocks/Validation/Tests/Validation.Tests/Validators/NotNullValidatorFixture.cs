@@ -11,6 +11,8 @@
 
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Validation.TestSupport;
 using Microsoft.Practices.EnterpriseLibrary.Validation.TestSupport.TestClasses;
@@ -168,6 +170,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
             Assert.AreEqual(validator.Tag, match.Groups["param2"].Value);
         }
 
+        [TestMethod]
         public void SuppliesAppropriateParametersToDefaultMessage()
         {
             NotNullValidator validator = new NotNullValidator();
@@ -187,6 +190,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
             Assert.IsFalse(match.Groups["param2"].Success);
         }
 
+        [TestMethod]
         public void SuppliesAppropriateParametersToDefaultNegatedMessage()
         {
             NotNullValidator validator = new NotNullValidator(true);
@@ -204,6 +208,74 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
             Assert.IsFalse(match.Groups["param0"].Success);
             Assert.IsFalse(match.Groups["param1"].Success);
             Assert.IsFalse(match.Groups["param2"].Success);
+        }
+
+        class TargetAddress
+        {
+            [NotNullValidator] public string City;
+
+            // Unused field warning - used for reflection checks only
+#pragma warning disable 649
+            public string Street;
+#pragma warning restore 649
+        }
+
+        [TestMethod]
+        public void NotNullValidatorWorksInIsolation_Bug4295()
+        {
+            var target = new TargetAddress();
+            target.City = null;
+
+            ValidationResults results = Validation.Validate(target);
+            Assert.IsFalse(results.IsValid);
+        }
+
+        [TestMethod]
+        public void NotNullValidatorWorksInIsolationFromConfig_Bug4295()
+        {
+            IConfigurationSource configSource = GetNotNullValidationConfig();
+
+            var target = new TargetAddress()
+            {
+                City = null
+            };
+
+            Validator addressValidator = ValidationFactory.CreateValidatorFromConfiguration(typeof (TargetAddress),
+                "default", configSource);
+
+            ValidationResults results = addressValidator.Validate(target);
+
+            Assert.IsFalse(results.IsValid);
+        }
+
+        private static IConfigurationSource GetNotNullValidationConfig()
+        {
+            var validatorData = new NotNullValidatorData()
+            {
+                Name = "Not Null",
+                MessageTemplate = "City cannot be null"
+            };
+
+            var fieldRef = new ValidatedFieldReference()
+            {
+                Name = "City"
+            };
+
+            fieldRef.Validators.Add(validatorData);
+
+            var rulesetData = new ValidationRulesetData("default");
+            rulesetData.Fields.Add(fieldRef);
+
+            var typeData = new ValidatedTypeReference(typeof (TargetAddress));
+            typeData.Rulesets.Add(rulesetData);
+            typeData.DefaultRuleset = rulesetData.Name;
+
+            var section = new ValidationSettings();
+            section.Types.Add(typeData);
+
+            var configSource = new DictionaryConfigurationSource();
+            configSource.Add(BlockSectionNames.Validation, section);
+            return configSource;
         }
     }
 }

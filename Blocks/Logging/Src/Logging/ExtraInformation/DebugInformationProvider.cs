@@ -15,6 +15,7 @@ using System.Diagnostics;
 using System.Security;
 using Microsoft.Practices.EnterpriseLibrary.Logging.ExtraInformation.Helpers;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Properties;
+using System.Globalization;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.ExtraInformation
 {
@@ -54,11 +55,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.ExtraInformation
             }
             catch (SecurityException)
             {
-                value = String.Format(Resources.Culture, Resources.ExtendedPropertyError, Resources.DebugInfo_StackTraceSecurityException);
+                value = String.Format(CultureInfo.CurrentCulture, Resources.ExtendedPropertyError, Resources.DebugInfo_StackTraceSecurityException);
             }
             catch
             {
-                value = String.Format(Resources.Culture, Resources.ExtendedPropertyError, Resources.DebugInfo_StackTraceException);
+                value = String.Format(CultureInfo.CurrentCulture, Resources.ExtendedPropertyError, Resources.DebugInfo_StackTraceException);
             }
 
             dict.Add(Resources.DebugInfo_StackTrace, value);

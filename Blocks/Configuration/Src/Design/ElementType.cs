@@ -16,14 +16,28 @@ using System.Text;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design
 {
+    /// <summary>
+    /// A wrapper class for <see cref="Type"/> to allow for dependency injection.
+    /// </summary>
     public class ConfigurationElementType
     {
-        Type elementType;
+        readonly Type elementType;
+
+        /// <summary>
+        /// Initializes a new instance of <see cref="ConfigurationElementType"/>.
+        /// </summary>
+        /// <param name="elementType">The <see cref="Type"/> that should be injected.</param>
         public ConfigurationElementType(Type elementType)
         {
             this.elementType = elementType;
         }
 
+        /// <summary>
+        /// Gets the <see cref="Type"/> instance that was injected.
+        /// </summary>
+        /// <value>
+        /// The <see cref="Type"/> instance that was injected.
+        /// </value>
         public Type ElementType
         {
             get { return elementType; }

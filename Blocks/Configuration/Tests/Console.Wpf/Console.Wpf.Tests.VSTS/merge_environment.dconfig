@@ -1,17 +1,23 @@
 <configuration><configSections>
-        <section name="EnvironmentMergeData" type="Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides.Configuration.EnvironmentMergeSection, Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null" />
+        <section name="environmentallyOverriddenProperties" type="Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides.Configuration.EnvironmentalOverridesSection, Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null" />
     </configSections>
-    <EnvironmentMergeData environmentName="Environment">
-        <mergeElements>
-            <override nodePath="/configuration/cachingConfiguration/cacheManagers/add[@name='Cache Manager']"
-                overrideProperties="true">
-                <overridddenProperties>
-                    <add key="backingStoreName" value="NullBackingStore" />
-                    <add key="expirationPollFrequencyInSeconds" value="1" />
-                    <add key="maximumElementsInCacheBeforeScavenging" value="1" />
-                    <add key="numberToRemoveWhenScavenging" value="1" />
-                </overridddenProperties>
+  <environmentallyOverriddenProperties environmentName="Environment">
+    <designtimeLogicalPropertyGroups>
+            <override logicalParentElementPath="/configuration/cachingConfiguration/cacheManagers/add[@name='Cache Manager']">
+                <overriddenProperties>
+                  <property containingConfigurationSectionName="cachingConfiguration" containingSectionXPath="/configuration/cachingConfiguration" containingElementXPath="/configuration/cachingConfiguration/cacheManagers/add[@name='Cache Manager']" attribute="backingStoreName" overridenValue="NullBackingStore" />
+                  <property containingConfigurationSectionName="cachingConfiguration" containingSectionXPath="/configuration/cachingConfiguration" containingElementXPath="/configuration/cachingConfiguration/cacheManagers/add[@name='Cache Manager']" attribute="expirationPollFrequencyInSeconds" overridenValue="1" />
+                  <property containingConfigurationSectionName="cachingConfiguration" containingSectionXPath="/configuration/cachingConfiguration" containingElementXPath="/configuration/cachingConfiguration/cacheManagers/add[@name='Cache Manager']" attribute="maximumElementsInCacheBeforeScavenging" overridenValue="1" />
+                  <property containingConfigurationSectionName="cachingConfiguration" containingSectionXPath="/configuration/cachingConfiguration" containingElementXPath="/configuration/cachingConfiguration/cacheManagers/add[@name='Cache Manager']" attribute="numberToRemoveWhenScavenging" overridenValue="1" />
+                </overriddenProperties>
             </override>
-        </mergeElements>
-    </EnvironmentMergeData>
+          <override logicalParentElementPath="/configuration/instrumentationConfiguration">
+            <overriddenProperties>
+              <property containingConfigurationSectionName="instrumentationConfiguration" containingSectionXPath="/configuration/instrumentationConfiguration" containingElementXPath="/configuration/instrumentationConfiguration" attribute="applicationInstanceName" overridenValue="Overriden Application" />
+              <property containingConfigurationSectionName="instrumentationConfiguration" containingSectionXPath="/configuration/instrumentationConfiguration" containingElementXPath="/configuration/instrumentationConfiguration" attribute="eventLoggingEnabled" overridenValue="True" />
+              <property containingConfigurationSectionName="instrumentationConfiguration" containingSectionXPath="/configuration/instrumentationConfiguration" containingElementXPath="/configuration/instrumentationConfiguration" attribute="performanceCountersEnabled" overridenValue="True" />
+            </overriddenProperties>
+          </override>
+        </designtimeLogicalPropertyGroups>
+    </environmentallyOverriddenProperties>
 </configuration>

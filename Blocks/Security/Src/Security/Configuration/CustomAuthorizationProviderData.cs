@@ -20,6 +20,8 @@ using System.Linq.Expressions;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using System.Collections.Generic;
 using Microsoft.Practices.EnterpriseLibrary.Security.Properties;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design.Validation;
+using System.Globalization;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration
 {
@@ -90,7 +92,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration
 
 		/// <summary>
 		/// Gets or sets custom configuration attributes.
-		/// </summary>        		
+		/// </summary>
+        [Validation(SecurityDesignTime.ValidatorTypes.NameValueCollectionValidator)]
 		public NameValueCollection Attributes
 		{
 			get { return helper.Attributes; }
@@ -208,7 +211,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration
 
             if (!typeof(IAuthorizationProvider).IsAssignableFrom(this.Type))
             {
-                throw new ConfigurationErrorsException(string.Format(Resources.Culture, Resources.ExceptionTypeForCustomAuthProviderMustDeriveFrom, Name, this.Type.FullName)); 
+                throw new ConfigurationErrorsException(string.Format(CultureInfo.CurrentCulture, Resources.ExceptionTypeForCustomAuthProviderMustDeriveFrom, Name, this.Type.FullName)); 
             }
 
             yield return new TypeRegistration(

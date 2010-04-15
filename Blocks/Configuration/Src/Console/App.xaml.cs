@@ -9,14 +9,47 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using System.Globalization;
 using System.Windows;
+using System.Windows.Threading;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Console
 {
     /// <summary> 
     /// Interaction logic for App.xaml
     /// </summary>
+    // demand for FullTrust required by the splash window invoked in the generated code.
+    [System.Security.Permissions.PermissionSet(System.Security.Permissions.SecurityAction.Demand, Unrestricted = true)]
     public partial class App : Application
     {
+        private static int ExitWithFailureCode = 1;
+
+        public App()
+        {
+
+        }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2109:ReviewVisibleEventHandlers", MessageId = "0#")]
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            this.DispatcherUnhandledException += UnhandledException;
+            if (e.Args.Length > 0)
+            {
+                StartingFileName = e.Args[0];
+            }
+        }
+
+        private void UnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
+        {
+            ConfigurationLogWriter.LogException(e.Exception);
+            MessageBox.Show(string.Format(CultureInfo.CurrentCulture, Console.Properties.Resources.UnhandledExceptionMessageFormat, e.Exception.Message),
+                            Console.Properties.Resources.UnhandledExceptionMessageTitle, MessageBoxButton.OK,
+                            MessageBoxImage.Error);
+
+            this.Shutdown(ExitWithFailureCode);
+        }
+
+        public static string StartingFileName { get; private set; }
     }
 }

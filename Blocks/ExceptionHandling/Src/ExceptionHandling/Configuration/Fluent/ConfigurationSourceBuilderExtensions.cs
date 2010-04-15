@@ -14,6 +14,7 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 using Microsoft.Practices.EnterpriseLibrary.Common.Properties;
+using System.Globalization;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 {
@@ -68,7 +69,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
                     throw new ArgumentNullException("exceptionType");
 
                 if (!typeof(Exception).IsAssignableFrom(exceptionType))
-                    throw new ArgumentException(string.Format(Resources.Culture,
+                    throw new ArgumentException(string.Format(CultureInfo.CurrentCulture,
                         Resources.ExceptionTypeMustDeriveFromType, typeof(Exception)), "exceptionType");
 
                 currentExceptionTypeData = new ExceptionTypeData();

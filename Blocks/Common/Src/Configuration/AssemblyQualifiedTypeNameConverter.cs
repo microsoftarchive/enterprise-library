@@ -13,6 +13,7 @@ using System;
 using System.ComponentModel;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Properties;
+using System.Globalization;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 {
@@ -36,7 +37,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
                 Type typeValue = value as Type;
                 if (typeValue == null)
                 {
-                    throw new ArgumentException(string.Format(Resources.Culture, Resources.ExceptionCanNotConvertType, typeof(Type).Name));
+                    throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, Resources.ExceptionCanNotConvertType, typeof(Type).Name));
                 }
 
                 if (typeValue != null) return (typeValue).AssemblyQualifiedName;
@@ -59,7 +60,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
                 Type result = Type.GetType(stringValue, false);
                 if (result == null)
                 {
-                    throw new ArgumentException(string.Format(Resources.Culture, Resources.ExceptionInvalidType, stringValue));
+                    throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, Resources.ExceptionInvalidType, stringValue));
                 }
 
                 return result;

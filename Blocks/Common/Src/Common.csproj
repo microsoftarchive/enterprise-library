@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -84,7 +85,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Lib\Microsoft.Practices.Unity.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Practices.Unity.Interception, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.Practices.Unity.Interception, Version=2.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Lib\Microsoft.Practices.Unity.Interception.dll</HintPath>
     </Reference>
@@ -97,7 +98,6 @@
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Data" />
-    <Reference Include="System.Management" />
     <Reference Include="System.Security" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -138,6 +138,10 @@
     <Compile Include="..\..\GlobalAssemblyInfo.cs">
       <Link>GlobalAssemblyInfo.cs</Link>
     </Compile>
+    <None Include="..\..\GlobalAssemblyInfo.2010.cs">
+      <Link>GlobalAssemblyInfo.2010.cs</Link>
+    </None>
+    <Compile Include="Configuration\CallHandlerData.cs" />
     <Compile Include="Configuration\ConfigurationSectionCloner.cs" />
     <Compile Include="Configuration\ConfigurationSourceHandler.cs" />
     <Compile Include="Configuration\CompositeConfigurationSourceHandler.cs" />
@@ -152,6 +156,8 @@
     <Compile Include="Configuration\ContainerModel\IContainerReconfiguringEventSource.cs" />
     <Compile Include="Configuration\ContainerModel\NullContainerReconfiguringEventSource.cs" />
     <Compile Include="Configuration\ContainerModel\ParameterValueVisitor.cs" />
+    <Compile Include="Configuration\CustomCallHandlerData.cs" />
+    <Compile Include="Configuration\CustomConfigurationElementCollection.cs" />
     <Compile Include="Configuration\DesignResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -161,12 +167,18 @@
     <Compile Include="Configuration\Design\AddSateliteProviderCommandAttribute.cs" />
     <Compile Include="Configuration\Design\AppSettingsDesignTime.cs" />
     <Compile Include="Configuration\Design\BaseTypeAttribute.cs" />
-    <Compile Include="Configuration\Design\ConfigurationDefaultAttribute.cs" />
+    <Compile Include="Configuration\Design\CloneableConfigurationElementTypeAttribute.cs" />
+    <Compile Include="Configuration\Design\DesigntimeDefaultAttribute.cs" />
     <Compile Include="Configuration\Design\ConfigurationSourcesDesignTime.cs" />
+    <Compile Include="Configuration\Design\DesignConfigurationSource.cs" />
+    <Compile Include="Configuration\Design\IDesignConfigurationSource.cs" />
+    <Compile Include="Configuration\Design\MergeableConfigurationCollectionTypeAttribute.cs" />
     <Compile Include="Configuration\Design\NamePropertyAttribute.cs" />
     <Compile Include="Configuration\Design\OmitCustomAttributesPropertyAttribute.cs" />
     <Compile Include="Configuration\Design\PromoteCommandsAttribute.cs" />
-    <Compile Include="Configuration\Design\TypePickingCollectionElementAddCommandAttribute.cs" />
+    <Compile Include="Configuration\Design\EditorWithReadOnlyTextAttribute.cs" />
+    <Compile Include="Configuration\Design\RegisterAsMetadataTypeAttribute.cs" />
+    <Compile Include="Configuration\Design\TypePickingCommandAttribute.cs" />
     <Compile Include="Configuration\Design\CommandAttribute.cs" />
     <Compile Include="Configuration\Design\DesignTimeReadOnly.cs" />
     <Compile Include="Configuration\Design\EnvironmentalOverridesAttribute.cs" />
@@ -180,10 +192,13 @@
     <Compile Include="Configuration\Design\TypeSelectorIncludes.cs" />
     <Compile Include="Configuration\Design\Validation\ValidationAttribute.cs" />
     <Compile Include="Configuration\Design\ViewModelAttribute.cs" />
+    <Compile Include="Configuration\Design\WizardCommandAttribute.cs" />
+    <Compile Include="Configuration\EnumConverterWithExclusiveSuggestedValues.cs" />
     <Compile Include="Configuration\Fluent\IConfigureTypeRegistrations.cs" />
     <Compile Include="Configuration\Fluent\TypeRegistrationProviderConfigurationSourceBuilderExtension.cs" />
     <Compile Include="Configuration\ConfigurationSourceErrorsException.cs" />
     <Compile Include="Configuration\HierarchicalConfigurationSourceHandler.cs" />
+    <Compile Include="Configuration\ICloneableConfigurationElement.cs" />
     <Compile Include="Configuration\IConfigurationSourceTest.cs" />
     <Compile Include="Configuration\IMergeableConfigurationElementCollection.cs" />
     <Compile Include="Configuration\MergeableConfigurationCollectionFactory.cs" />
@@ -218,7 +233,6 @@
     <Compile Include="Configuration\ContainerModel\TypeRegistrationsProvider.cs" />
     <Compile Include="Configuration\ContainerModel\Unity\UnityContainerConfigurator.cs" />
     <Compile Include="Configuration\ContainerModel\ConstantParameterValue.cs" />
-    <Compile Include="Configuration\ContainerModel\Unity\UnityServiceLocator.cs" />
     <Compile Include="Configuration\CustomProviderDataHelper.cs" />
     <Compile Include="Configuration\DictionaryConfigurationSource.cs" />
     <Compile Include="Configuration\FileConfigurationSource.cs" />
@@ -326,7 +340,6 @@
     <Compile Include="Instrumentation\EventLogEntryFormatter.cs" />
     <Compile Include="Instrumentation\EventLogInstallerBuilder.cs" />
     <Compile Include="Instrumentation\IEventLogEntryFormatter.cs" />
-    <Compile Include="Instrumentation\IExplicitInstrumentationBinder.cs" />
     <Compile Include="Instrumentation\InstrumentationListener.cs" />
     <Compile Include="Instrumentation\PerformanceCounterInstallerBuilder.cs" />
     <Compile Include="Instrumentation\PerformanceCounterInstanceName.cs" />
@@ -334,7 +347,8 @@
     <Compile Include="Instrumentation\ReflectionInstaller.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Instrumentation\BaseWmiEvent.cs" />
+    <Compile Include="MethodInvocationFormatter.cs" />
+    <Compile Include="ReplacementFormatter.cs" />
     <Compile Include="ResourceStringLoader.cs" />
     <Compile Include="Utility\ConstantStringResolver.cs" />
     <Compile Include="Utility\DelegateStringResolver.cs" />

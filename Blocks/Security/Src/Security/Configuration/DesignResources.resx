@@ -120,62 +120,104 @@
   <data name="AddSecuritySettings" xml:space="preserve">
     <value>Add Security Settings</value>
   </data>
+  <data name="AuthorizationCallHandlerDataAuthorizationProviderDescription" xml:space="preserve">
+    <value>The name of the authorization provider instance to use. 
+This must map to a configured Authorization Provider instance in the Security Application Block.</value>
+  </data>
+  <data name="AuthorizationCallHandlerDataAuthorizationProviderDisplayName" xml:space="preserve">
+    <value>Authorization Provider</value>
+  </data>
+  <data name="AuthorizationCallHandlerDataDescription" xml:space="preserve">
+    <value>A Call Handler that checks if the current user (the security principal for the current thread) has the 
+requisite permission to access the selected object method or property. 
+This handler uses the Security Application Block to check permissions.</value>
+  </data>
+  <data name="AuthorizationCallHandlerDataDisplayName" xml:space="preserve">
+    <value>Authorization Call Handler</value>
+  </data>
+  <data name="AuthorizationCallHandlerDataNameDescription" xml:space="preserve">
+    <value>The name of the Authorization Call Handler.</value>
+  </data>
+  <data name="AuthorizationCallHandlerDataNameDisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="AuthorizationCallHandlerDataOperationNameDescription" xml:space="preserve">
+    <value>The name of the authorization operation, which may include the tokens {method}, {type}, 
+{namespace}, {assembly}, and {appdomain}.</value>
+  </data>
+  <data name="AuthorizationCallHandlerDataOperationNameDisplayName" xml:space="preserve">
+    <value>Operation Name</value>
+  </data>
+  <data name="AuthorizationCallHandlerDataOrderDescription" xml:space="preserve">
+    <value>The position of the handler within the policy handler chain, starting from 1. 
+The default value is zero, which means that there is no explicit order specified for the handler 
+in relation to other handlers in the same handler chain.</value>
+  </data>
+  <data name="AuthorizationCallHandlerDataOrderDisplayName" xml:space="preserve">
+    <value>Order</value>
+  </data>
+  <data name="AuthorizationCallHandlerDataTypeNameDescription" xml:space="preserve">
+    <value>The fully qualified type name of the Authorization Call Handler.</value>
+  </data>
+  <data name="AuthorizationCallHandlerDataTypeNameDisplayName" xml:space="preserve">
+    <value>Type</value>
+  </data>
   <data name="AuthorizationProviderDataDescription" xml:space="preserve">
-    <value>933 - A base class for all authorization providers.</value>
+    <value>A base class for all authorization providers.</value>
   </data>
   <data name="AuthorizationProviderDataDisplayName" xml:space="preserve">
     <value>Authorization Provider</value>
   </data>
   <data name="AuthorizationProviderDataNameDescription" xml:space="preserve">
-    <value>935 - The name of the Authorization Provider.</value>
+    <value>The name of the Authorization Provider.</value>
   </data>
   <data name="AuthorizationProviderDataNameDisplayName" xml:space="preserve">
     <value>Name</value>
   </data>
   <data name="AuthorizationProviderDataTypeNameDescription" xml:space="preserve">
-    <value>937 - The fully qualified type name of the Authorization Provider.</value>
+    <value>The fully qualified type name of the Authorization Provider.</value>
   </data>
   <data name="AuthorizationProviderDataTypeNameDisplayName" xml:space="preserve">
     <value>Type</value>
   </data>
   <data name="AuthorizationRuleDataDescription" xml:space="preserve">
-    <value>939 - A rule that can be evaliated to determine authorization for an operation.</value>
+    <value>A rule that can be evaluated to determine authorization for an operation.</value>
   </data>
   <data name="AuthorizationRuleDataDisplayName" xml:space="preserve">
     <value>Authorization Rule</value>
   </data>
   <data name="AuthorizationRuleDataExpressionDescription" xml:space="preserve">
-    <value>941 - The authorization rule. This is a string that is a Boolean predicate expression (evaluating it can return True or False).</value>
+    <value>The authorization rule. This is a string that is a Boolean predicate expression (evaluating it can return True or False).</value>
   </data>
   <data name="AuthorizationRuleDataExpressionDisplayName" xml:space="preserve">
     <value>Rule Expression</value>
   </data>
   <data name="AuthorizationRuleDataNameDescription" xml:space="preserve">
-    <value>943 - The name of the Authorization Rule.</value>
+    <value>The name of the Authorization Rule.</value>
   </data>
   <data name="AuthorizationRuleDataNameDisplayName" xml:space="preserve">
     <value>Name</value>
   </data>
   <data name="AuthorizationRuleProviderDataDescription" xml:space="preserve">
-    <value>945 - A class that can evalulate rules to determine authorization for a process to execute an operation.</value>
+    <value>A class that can evaluate rules to determine authorization for a process to execute an operation.</value>
   </data>
   <data name="AuthorizationRuleProviderDataDisplayName" xml:space="preserve">
     <value>Authorization Rule Provider</value>
   </data>
   <data name="AuthorizationRuleProviderDataNameDescription" xml:space="preserve">
-    <value>947 - The name of the Authorization Rule Provider.</value>
+    <value>The name of the Authorization Rule Provider.</value>
   </data>
   <data name="AuthorizationRuleProviderDataNameDisplayName" xml:space="preserve">
     <value>Name</value>
   </data>
   <data name="AuthorizationRuleProviderDataRulesDescription" xml:space="preserve">
-    <value>949 - The list of authorization rules associated with this provider.</value>
+    <value>The list of authorization rules associated with this provider.</value>
   </data>
   <data name="AuthorizationRuleProviderDataRulesDisplayName" xml:space="preserve">
     <value>Rules</value>
   </data>
   <data name="AuthorizationRuleProviderDataTypeNameDescription" xml:space="preserve">
-    <value>951 - The fully qualified type name of the Authorization Rule Provider.</value>
+    <value>The fully qualified type name of the Authorization Rule Provider.</value>
   </data>
   <data name="AuthorizationRuleProviderDataTypeNameDisplayName" xml:space="preserve">
     <value>Type</value>
@@ -184,19 +226,19 @@
     <value>Custom Authorization Provider (using type picker)</value>
   </data>
   <data name="CustomAuthorizationProviderDataDescription" xml:space="preserve">
-    <value>953 - A custom implementation of an Authorization Provider, added to Enterprise Library.</value>
+    <value>A custom implementation of an Authorization Provider, added to Enterprise Library.</value>
   </data>
   <data name="CustomAuthorizationProviderDataDisplayName" xml:space="preserve">
     <value>Custom Authorization Provider</value>
   </data>
   <data name="CustomAuthorizationProviderDataNameDescription" xml:space="preserve">
-    <value>955 - The name of the Custom Authorization Provider.</value>
+    <value>The name of the Custom Authorization Provider.</value>
   </data>
   <data name="CustomAuthorizationProviderDataNameDisplayName" xml:space="preserve">
     <value>Name</value>
   </data>
   <data name="CustomAuthorizationProviderDataTypeNameDescription" xml:space="preserve">
-    <value>957 - The fully qualified type name of the Custom Authorization Provider.</value>
+    <value>The fully qualified type name of the Custom Authorization Provider.</value>
   </data>
   <data name="CustomAuthorizationProviderDataTypeNameDisplayName" xml:space="preserve">
     <value>Type</value>
@@ -205,67 +247,67 @@
     <value>Custom Security Cache Provider (using type picker)</value>
   </data>
   <data name="CustomSecurityCacheProviderDataDescription" xml:space="preserve">
-    <value>959 - A custom implementation of a Security Cache Provider, added to Enterprise Library.</value>
+    <value>A custom implementation of a Security Cache Provider, added to Enterprise Library.</value>
   </data>
   <data name="CustomSecurityCacheProviderDataDisplayName" xml:space="preserve">
     <value>Custom Security Cache Provider</value>
   </data>
   <data name="CustomSecurityCacheProviderDataNameDescription" xml:space="preserve">
-    <value>961 - The name of the Custom Security Cache Provider.</value>
+    <value>The name of the Custom Security Cache Provider.</value>
   </data>
   <data name="CustomSecurityCacheProviderDataNameDisplayName" xml:space="preserve">
     <value>Name</value>
   </data>
   <data name="CustomSecurityCacheProviderDataTypeNameDescription" xml:space="preserve">
-    <value>963 - The fully qualified type name of the Custom Security Cache Provider.</value>
+    <value>The fully qualified type name of the Custom Security Cache Provider.</value>
   </data>
   <data name="CustomSecurityCacheProviderDataTypeNameDisplayName" xml:space="preserve">
     <value>Type</value>
   </data>
   <data name="SecurityCacheProviderDataDescription" xml:space="preserve">
-    <value>965 - Base class for all Security Cache Providers.</value>
+    <value>Base class for all Security Cache Providers.</value>
   </data>
   <data name="SecurityCacheProviderDataDisplayName" xml:space="preserve">
     <value>Security Cache Provider</value>
   </data>
   <data name="SecurityCacheProviderDataNameDescription" xml:space="preserve">
-    <value>967 - The name of the Security Cache Provider.</value>
+    <value>The name of the Security Cache Provider.</value>
   </data>
   <data name="SecurityCacheProviderDataNameDisplayName" xml:space="preserve">
     <value>Name</value>
   </data>
   <data name="SecurityCacheProviderDataTypeNameDescription" xml:space="preserve">
-    <value>969 - The fully qualified type name of the Security Cache Provider.</value>
+    <value>The fully qualified type name of the Security Cache Provider.</value>
   </data>
   <data name="SecurityCacheProviderDataTypeNameDisplayName" xml:space="preserve">
     <value>Type</value>
   </data>
   <data name="SecuritySettingsAuthorizationProvidersDescription" xml:space="preserve">
-    <value>973 - The list of Authorization Providers configured for the block.</value>
+    <value>The list of Authorization Providers configured for the block.</value>
   </data>
   <data name="SecuritySettingsAuthorizationProvidersDisplayName" xml:space="preserve">
     <value>Authorization Providers</value>
   </data>
   <data name="SecuritySettingsDefaultAuthorizationProviderNameDescription" xml:space="preserve">
-    <value>975 - The name of the Authorization Provider to use if code does not specify a name.</value>
+    <value>The name of the Authorization Provider to use if code does not specify a name.</value>
   </data>
   <data name="SecuritySettingsDefaultAuthorizationProviderNameDisplayName" xml:space="preserve">
     <value>Default Authorization Provider</value>
   </data>
   <data name="SecuritySettingsDefaultSecurityCacheProviderNameDescription" xml:space="preserve">
-    <value>977 - The name of the Security Cache to use if code does not specify a name.</value>
+    <value>The name of the Security Cache to use if code does not specify a name.</value>
   </data>
   <data name="SecuritySettingsDefaultSecurityCacheProviderNameDisplayName" xml:space="preserve">
     <value>Default Security Cache Provider</value>
   </data>
   <data name="SecuritySettingsDescription" xml:space="preserve">
-    <value>971 - Configuration settings for the Security Application Block</value>
+    <value>Configuration settings for the Security Application Block</value>
   </data>
   <data name="SecuritySettingsDisplayName" xml:space="preserve">
     <value>Security Settings</value>
   </data>
   <data name="SecuritySettingsSecurityCacheProvidersDescription" xml:space="preserve">
-    <value>979 - The list of Security Cache Providers configured for the block.</value>
+    <value>The list of Security Cache Providers configured for the block.</value>
   </data>
   <data name="SecuritySettingsSecurityCacheProvidersDisplayName" xml:space="preserve">
     <value>Security Caches</value>

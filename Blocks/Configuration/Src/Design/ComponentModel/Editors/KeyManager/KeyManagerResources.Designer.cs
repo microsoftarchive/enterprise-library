@@ -210,7 +210,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to An error occurred importing the key. Please make sure the filepath and ProtectionScope are corrent..
+        ///   Looks up a localized string similar to An error occurred importing the key. Please make sure the file path and ProtectionScope are current..
         /// </summary>
         internal static string ErrorImportingKey {
             get {
@@ -372,7 +372,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The filename should not be empty.
+        ///   Looks up a localized string similar to The file name should not be empty.
         /// </summary>
         internal static string FileShouldNotBeEmpty {
             get {
@@ -651,6 +651,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unable to load key from file {0}.
+        ///
+        ///Exception message is: &apos;{1}&apos;.
+        ///
+        ///Would you like to proceed and generate a new key?.
+        /// </summary>
+        internal static string LoadExistingKeyFileFailureErrorMessage {
+            get {
+                return ResourceManager.GetString("LoadExistingKeyFileFailureErrorMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Key file is password protected and no password was provided..
         /// </summary>
         internal static string MissingPassword {
@@ -660,7 +673,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unable to open Key because the key file, {0}, cannot be found. If your configuration has not been saved, save it now. If it has been saved and the key file still cannot be found, you can either put the correct key file in that location, or you can delete and recreate this node with a new key file. Exception message is: &apos;{1}&apos;..
+        ///   Looks up a localized string similar to Unable to open Key key file: {0}.
+        ///
+        ///Exception message is: &apos;{1}&apos;..
         /// </summary>
         internal static string OpenExistingKeyFileFailureErrorMessage {
             get {
@@ -723,7 +738,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Choose keyfile.
+        ///   Looks up a localized string similar to Choose key file.
         /// </summary>
         internal static string SaveExistingKeyFileTitle {
             get {

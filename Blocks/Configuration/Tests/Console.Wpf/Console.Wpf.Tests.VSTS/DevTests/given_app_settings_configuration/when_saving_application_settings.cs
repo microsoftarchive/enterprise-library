@@ -16,6 +16,7 @@ using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Console.Wpf.Tests.VSTS.Mocks;
 using System.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.TestSupport;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_app_settings_configuration
 {

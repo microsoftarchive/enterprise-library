@@ -19,7 +19,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
 {
     /// <summary>
     /// Provides an implementation for <see cref="TextFormatterData"/> that
-    /// splits policy overrides processing and WMI objects generation, performing appropriate logging of 
+    /// processes policy overrides, performing appropriate logging of 
     /// policy processing errors.
     /// </summary>
     public class TextFormatterDataManageabilityProvider
@@ -103,6 +103,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         ///<returns>The escaped string.</returns>
         public static string EscapeString(string text)
         {
+            if(text == null) throw new ArgumentNullException("text");
             string result = text.Replace("\\", @"\\");
             result = result.Replace("\n", @"\n");
             result = result.Replace("\r", @"\r");
@@ -117,6 +118,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         ///<returns>The un escaped string.</returns>
         public static string UnescapeString(string text)
         {
+            if(text == null) throw new ArgumentNullException("text");
+
             string result = text.Replace(@"\r", "\r");
             result = result.Replace(@"\n", "\n");
             result = result.Replace(@"\\", "\\");

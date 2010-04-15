@@ -40,13 +40,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Sql
             CreateStoredProcedures();
 
             baseFixture = new TransactionScopeFixture(db);
-            baseFixture.Clenaup();
+            baseFixture.Cleanup();
         }
 
         [TestCleanup]
-        public void Clenaup()
+        public void Cleanup()
         {
-            baseFixture.Clenaup();
+            baseFixture.Cleanup();
             DeleteStoredProcedures();
         }
 

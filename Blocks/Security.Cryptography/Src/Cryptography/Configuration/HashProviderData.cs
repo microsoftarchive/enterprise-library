@@ -75,7 +75,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
                     Name,
                     instrumentationSection.PerformanceCountersEnabled,
                     instrumentationSection.EventLoggingEnabled,
-                    instrumentationSection.WmiEnabled,
                     instrumentationSection.ApplicationInstanceName))
             {
                 Name = Name,

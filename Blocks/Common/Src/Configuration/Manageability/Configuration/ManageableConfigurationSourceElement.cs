@@ -13,7 +13,9 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration;
+using System.IO;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design.Validation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability.Configuration
 {
@@ -24,11 +26,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
     [ResourceDisplayName(typeof(DesignResources), "ManageableConfigurationSourceElementDisplayName")]
     [Browsable(true)]
     [Command(CommonDesignTime.CommandTypeNames.ExportAdmTemplateCommand)]
+    [ViewModel(CommonDesignTime.ViewModelTypeNames.ManageableConfigurationSourceViewModel)]
+    [EnvironmentalOverrides(false)]
     public class ManageableConfigurationSourceElement : ConfigurationSourceElement
     {
         private const String filePathPropertyName = "filePath";
         private const String applicationNamePropertyName = "applicationName";
-        private const String enableWmiPropertyName = "enableWmi";
         private const String enableGroupPoliciesPropertyName = "enableGroupPolicies";
         private const String manageabilityProvidersCollectionPropertyName = "manageabilityProviders";
 
@@ -84,7 +87,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
         [ResourceDescription(typeof(DesignResources), "ManageableConfigurationSourceElementFilePathDescription")]
         [ResourceDisplayName(typeof(DesignResources), "ManageableConfigurationSourceElementFilePathDisplayName")]
         [Editor(CommonDesignTime.EditorTypes.FilteredFilePath, CommonDesignTime.EditorTypes.UITypeEditor)]
-        [FilteredFileNameEditor(typeof(DesignResources), "ManageableConfigurationSourceElementFilePathFilter")]
+        [FilteredFileNameEditor(typeof(DesignResources), "ManageableConfigurationSourceElementFilePathFilter", CheckFileExists=false)]
+        [Validation(CommonDesignTime.ValidationTypeNames.PathExistsValidator)]
         public String FilePath
         {
             get { return (String)this[filePathPropertyName]; }
@@ -157,12 +161,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
         /// </summary>
         protected override bool OnDeserializeUnrecognizedAttribute(string name, string value)
         {
-            if (name == "enableWmi")
-            {
-                return true;
-            }
+            return string.Equals("enableWmi", name, StringComparison.Ordinal)
+                || base.OnDeserializeUnrecognizedAttribute(name, value);
+        }
 
-            return base.OnDeserializeUnrecognizedAttribute(name, value);
+        ///<summary>
+        /// Returns a new <see cref="IDesignConfigurationSource"/> configured based on this configuration element.
+        ///</summary>
+        ///<returns>Returns a new <see cref="IDesignConfigurationSource"/> or null if this source does not have design-time support.</returns>
+        public override IDesignConfigurationSource CreateDesignSource(IDesignConfigurationSource rootSource)
+        {
+            return DesignConfigurationSource.CreateDesignSource(rootSource, FilePath);
         }
     }
 }

@@ -50,6 +50,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation
 		/// <param name="instanceNames">Param array of instance names to be managed</param>
         public EnterpriseLibraryPerformanceCounter(string counterCategoryName, string counterName, params string[] instanceNames)
         {
+            if (instanceNames == null) throw new ArgumentNullException("instanceNames");
+
             this.instanceNames = instanceNames;
             this.counterName = counterName;
             this.counterCategoryName = counterCategoryName;
@@ -144,7 +146,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation
 		}
 
         /// <summary>
-        /// Instantiates a performance counter, giving it the specified <paramref name="instanceName"></paramref>.
+        /// Initializes a performance counter, giving it the specified <paramref name="instanceName"></paramref>.
         /// </summary>
         /// <param name="instanceName">Instance name to be given to the instantiated <see cref="PerformanceCounter"></see></param>.
 		/// <returns>Initialized <see cref="PerformanceCounter"></see></returns>.

@@ -4,161 +4,52 @@
         <name>Microsoft.Practices.Unity.Interception.Configuration</name>
     </assembly>
     <members>
-        <member name="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.AdditionalInterfaceElement">
+        <member name="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.AddInterfaceElement">
             <summary>
-            Configuration element for configuring additional interception interfaces.
+            Configuration element that lets you specify additional interfaces
+            to add when this type is intercepted.
             </summary>
         </member>
-        <member name="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptionMemberElement">
+        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.AddInterfaceElement.SerializeContent(System.Xml.XmlWriter)">
             <summary>
-            Base class for interception-related configuration elements.
+            Write the contents of this element to the given <see cref="T:System.Xml.XmlWriter"/>.
+            </summary>
+            <remarks>The caller of this method has already written the start element tag before
+            calling this method, so deriving classes only need to write the element content, not
+            the start or end tags.</remarks>
+            <param name="writer">Writer to send XML content to.</param>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.AddInterfaceElement.GetInjectionMembers(Microsoft.Practices.Unity.IUnityContainer,System.Type,System.Type,System.String)">
+            <summary>
+            Return the set of <see cref="T:Microsoft.Practices.Unity.InjectionMember"/>s that are needed
+            to configure the container according to this configuration element.
+            </summary>
+            <param name="container">Container that is being configured.</param>
+            <param name="fromType">Type that is being registered.</param>
+            <param name="toType">Type that <paramref name="fromType"/> is being mapped to.</param>
+            <param name="name">Name this registration is under.</param>
+            <returns>One or more <see cref="T:Microsoft.Practices.Unity.InjectionMember"/> objects that should be
+            applied to the container registration.</returns>
+        </member>
+        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.AddInterfaceElement.TypeName">
+            <summary>
+            Type of interface to add.
             </summary>
         </member>
-        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptionMemberElement.OnDeserializeUnrecognizedAttribute(System.String,System.String)">
+        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.AddInterfaceElement.Key">
             <summary>
-            Gets a value indicating whether an unknown attribute is encountered during deserialization.
-            </summary>
-            <param name="name">The name of the unrecognized attribute.</param>
-            <param name="value">The value of the unrecognized attribute.</param>
-            <returns><see langword="true"/> when an unknown attribute is encountered while deserializing; otherwise, 
-            <see langword="false"/>.</returns>
-        </member>
-        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptionMemberElement.CreateInstance``1(System.String)">
-            <summary>
-            Creates an instance of the type represented by <paramref name="typeName"/> through the default constructor.
-            </summary>
-            <typeparam name="TInterface">The base type the created instance is casted to.</typeparam>
-            <param name="typeName">The name or the alias for the type of the instance to create.</param>
-            <returns>A new instace of <paramref name="typeName"/>.</returns>
-        </member>
-        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptionMemberElement.GetResolvedType``1(System.String)">
-            <summary>
-            A helper method that will resolve the type given by name to an actual type object.
-            </summary>
-            <typeparam name="TInterface">Target interface for the type name. Resolved type must
-            be assignable to this type.</typeparam>
-            <param name="typeName">Type string to resolve.</param>
-            <returns>The resolved type.</returns>
-        </member>
-        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.AdditionalInterfaceElement.CreateInjectionMember">
-            <summary>
-            Returns the InjectionMember object represented by this configuration
-            element.
-            </summary>
-            <returns>The <see cref="T:Microsoft.Practices.Unity.InterceptionExtension.AdditionalInterface"/> object.</returns>
-        </member>
-        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.AdditionalInterfaceElement.TypeName">
-            <summary>
-            Gets or sets the string name of the type of the represented object.
+            Each element must have a unique key, which is generated by the subclasses.
             </summary>
         </member>
-        <member name="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptionBehaviorElement">
+        <member name="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.CallHandlerElement">
             <summary>
-            Configuration element for configuring interception behaviors.
+            Configuration element representing a call handler.
             </summary>
         </member>
-        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptionBehaviorElement.CreateInjectionMember">
+        <member name="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.PolicyChildElement">
             <summary>
-            Returns the InjectionMember object represented by this configuration
-            element.
-            </summary>
-            <remarks>
-            The nature of the returned <see cref="T:Microsoft.Practices.Unity.InterceptionExtension.InterceptionBehavior"/> depends on how  the 
-            element is configured: an interception behavior type, an interception behavior descriptor type
-            or a key to resolve a behavior from a unity container.
-            </remarks>
-            <returns>The <see cref="T:Microsoft.Practices.Unity.InterceptionExtension.InterceptionBehavior"/> object.</returns>
-        </member>
-        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptionBehaviorElement.DeserializeElement(System.Xml.XmlReader,System.Boolean)">
-            <summary>
-            Reads XML from the configuration file.
-            </summary>
-            <param name="reader">The <see cref="T:System.Xml.XmlReader"/> that reads from the configuration file.</param>
-            <param name="serializeCollectionKey"><see langword="true"/> to serialize only the collectionkey properties; 
-            otherwise, <see langword="false"/>.</param>
-        </member>
-        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptionBehaviorElement.BehaviorTypeName">
-            <summary>
-            Returns the string name of the type of the interception behavior represented by this element.
-            </summary>
-        </member>
-        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptionBehaviorElement.BehaviorName">
-            <summary>
-            Returns the name to use to resolve the interception behavior represented by this element.
-            </summary>
-        </member>
-        <member name="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptorConfigurationElementCollection">
-            <summary>
-            Collection of <see cref="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptorConfigurationElement"/> elements
-            from the configuration file.
-            </summary>
-            <seealso cref="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptorConfigurationElement"/>
-        </member>
-        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptorConfigurationElementCollection.CreateNewElement">
-            <summary>
-            When overridden in a derived class, creates a new <see cref="T:System.Configuration.ConfigurationElement"></see>.
-            </summary>
-            <returns>
-            A new <see cref="T:System.Configuration.ConfigurationElement"></see>.
-            </returns>
-        </member>
-        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptorConfigurationElementCollection.GetElementKey(System.Configuration.ConfigurationElement)">
-            <summary>
-            Gets the element key for a specified configuration element when overridden in a derived class.
-            </summary>
-            
-            <returns>
-            An <see cref="T:System.Object"></see> that acts as the key for the specified <see cref="T:System.Configuration.ConfigurationElement"></see>.
-            </returns>
-            
-            <param name="element">The <see cref="T:System.Configuration.ConfigurationElement"></see> to return the key for. </param>
-        </member>
-        <member name="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptorElement">
-            <summary>
-            Configuration element for configuring interceptors.
-            </summary>
-        </member>
-        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptorElement.CreateInjectionMember">
-            <summary>
-            Returns the InjectionMember object represented by this configuration
-            element.
-            </summary>
-            <returns>The <see cref="T:Microsoft.Practices.Unity.InterceptionExtension.AdditionalInterface"/> object.</returns>
-        </member>
-        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptorElement.TypeName">
-            <summary>
-            Returns the string name of the type of the represented object.
-            </summary>
-        </member>
-        <member name="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptorTargetConfigurationElementBase">
-            <summary>
-            Base class for elements in the &lt;transparentProxyInjection&gt; list for the
-            interception extension configuration.
-            </summary>
-            <seealso cref="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.KeyInterceptorTargetConfigurationElement"/>
-            <seealso cref="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.DefaultInterceptorTargetConfigurationElement"/>
-        </member>
-        <member name="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.DefaultInterceptorTargetConfigurationElement">
-            <summary>
-            A <see cref="T:System.Configuration.ConfigurationElement"/> class used to manage the contents
-            of a &lt;defaultInjector&gt; node in the configuration file for the interception extension's section.
-            </summary>
-        </member>
-        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.DefaultInterceptorTargetConfigurationElement.TypeName">
-            <summary>
-            Type to which the injector applies.
-            </summary>
-        </member>
-        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.DefaultInterceptorTargetConfigurationElement.Type">
-            <summary>
-            The actual <see cref="T:System.Type"/> object for the 
-            type this element is registering.
-            </summary>
-        </member>
-        <member name="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.RuleDrivenPolicyElementConfigurationElement">
-            <summary>
-            Implements shared structure and behavior for the configuration elements representing call handlers
-            and matching rules in the configuration file.
+            Base class for the two children of the Policy element:
+            MatchingRuleElement and CallHandlerElement.
             </summary>
             <remarks>
             <para>
@@ -173,245 +64,596 @@
             lifetime management and injection configuration.
             </para>
             <para>
-            This element is similar to the <see cref="T:Microsoft.Practices.Unity.Configuration.UnityTypeElement"/>, except that it does not provide 
-            an extension point for arbitrary configuration like the type element's &lt;typeConfig&gt; child.
+            This element is similar to the <see cref="T:Microsoft.Practices.Unity.Configuration.RegisterElement"/>, except that it does not provide 
+            an extension point for arbitrary configuration.
             </para>
             </remarks>
-            <seealso cref="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.CallHandlerConfigurationElement"/>
-            <seealso cref="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.MatchingRuleConfigurationElement"/>
-            <seealso cref="T:Microsoft.Practices.Unity.Configuration.UnityTypeElement"/>
         </member>
-        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.RuleDrivenPolicyElementConfigurationElement.DeserializeElement(System.Xml.XmlReader,System.Boolean)">
+        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.PolicyChildElement.DeserializeElement(System.Xml.XmlReader,System.Boolean)">
             <summary>
             Reads XML from the configuration file.
             </summary>
-            <param name="reader">The <see cref="T:System.Xml.XmlReader"/> that reads from the configuration file.</param>
-            <param name="serializeCollectionKey"><see langword="true"/> to serialize only the collectionkey properties; 
-            otherwise, <see langword="false"/>.</param>
+            <param name="reader">The <see cref="T:System.Xml.XmlReader"/> that reads from the configuration file.
+                            </param><param name="serializeCollectionKey">true to serialize only the collection key properties; otherwise, false.
+                            </param><exception cref="T:System.Configuration.ConfigurationErrorsException">The element to read is locked.
+                                - or -
+                                An attribute of the current node is not recognized.
+                                - or -
+                                The lock status of the current node cannot be determined.  
+                            </exception>
         </member>
-        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.RuleDrivenPolicyElementConfigurationElement.Name">
+        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.PolicyChildElement.SerializeContent(System.Xml.XmlWriter)">
             <summary>
-            Returns name of the element.
+            Write the contents of this element to the given <see cref="T:System.Xml.XmlWriter"/>.
+            </summary>
+            <remarks>The caller of this method has already written the start element tag before
+            calling this method, so deriving classes only need to write the element content, not
+            the start or end tags.</remarks>
+            <param name="writer">Writer to send XML content to.</param>
+        </member>
+        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.PolicyChildElement.Name">
+            <summary>
+            Name of this item
             </summary>
         </member>
-        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.RuleDrivenPolicyElementConfigurationElement.TypeName">
+        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.PolicyChildElement.TypeName">
             <summary>
-            The type for the represented element.
+            Type that implements this matching rule or call handler.
             </summary>
         </member>
-        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.RuleDrivenPolicyElementConfigurationElement.Injection">
+        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.PolicyChildElement.Injection">
             <summary>
-            Sets the injection configuration for the given type and name.
+            Injection members that control how this item is created.
             </summary>
         </member>
-        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.RuleDrivenPolicyElementConfigurationElement.Lifetime">
+        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.PolicyChildElement.Lifetime">
             <summary>
-            Sets the lifetime for the given type and name. Transient means 
-            to create a new instance every type and is the default.
-            Singleton means to return the same instance on every request.
+            Lifetime manager for this item.
             </summary>
         </member>
-        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.RuleDrivenPolicyElementConfigurationElement.Type">
+        <member name="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.CallHandlerElementCollection">
             <summary>
-            The actual <see cref="T:System.Type"/> object for the 
-            type this element is registering.
+            A collection of <see cref="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.CallHandlerElement"/>s for configuration.
             </summary>
         </member>
-        <member name="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.PolicyElementConfigurationElement">
-            <summary>
-            Base class for elements representing parts of a <see cref="T:Microsoft.Practices.Unity.InterceptionExtension.RuleDrivenPolicy"/> in a
-            &lt;policy&gt; node in the configuration file.
-            </summary>
-        </member>
-        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.PolicyElementConfigurationElement.InjectionMembers">
-            <summary>
-            This element is just a collection of <see cref="T:Microsoft.Practices.Unity.Configuration.InjectionMemberElement"/>s. This
-            property controls that collection.
-            </summary>
-        </member>
-        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.PolicyElementConfigurationElement.HasData">
-            <summary>
-            Indicates whether the configuration element has information.
-            </summary>
-            <value>
-            <see langword="true"/> if the configuration element has information, 
-            otherwise <see langword="false"/>.
-            </value>
-        </member>
-        <member name="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.MatchingRuleConfigurationElement">
-            <summary>
-            A <see cref="T:System.Configuration.ConfigurationElement"/> class used to manage the contents
-            of a &lt;matchingRule&gt; node in the configuration file for the interception extension's section.
-            </summary>
-            <remarks>
-            This node contains the information necessary to describe a <see cref="T:Microsoft.Practices.Unity.InterceptionExtension.IMatchingRule"/>
-            and can configure a <see cref="T:Microsoft.Practices.Unity.InterceptionExtension.RuleDrivenPolicy"/> to include the it.
-            </remarks>
-            <seealso cref="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.RuleDrivenPolicyElementConfigurationElement"/>
-        </member>
-        <member name="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.MatchingRuleConfigurationElementCollection">
-            <summary>
-            Collection of <see cref="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.MatchingRuleConfigurationElement"/> elements
-            from the configuration file.
-            </summary>
-        </member>
-        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.MatchingRuleConfigurationElementCollection.CreateNewElement">
-            <summary>
-            When overridden in a derived class, creates a new <see cref="T:System.Configuration.ConfigurationElement"></see>.
-            </summary>
-            
-            <returns>
-            A new <see cref="T:System.Configuration.ConfigurationElement"></see>.
-            </returns>
-            
-        </member>
-        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.MatchingRuleConfigurationElementCollection.GetElementKey(System.Configuration.ConfigurationElement)">
+        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.CallHandlerElementCollection.GetElementKey(System.Configuration.ConfigurationElement)">
             <summary>
             Gets the element key for a specified configuration element when overridden in a derived class.
             </summary>
-            
             <returns>
-            An <see cref="T:System.Object"></see> that acts as the key for the specified <see cref="T:System.Configuration.ConfigurationElement"></see>.
+            An <see cref="T:System.Object"/> that acts as the key for the specified <see cref="T:System.Configuration.ConfigurationElement"/>.
             </returns>
-            
-            <param name="element">The <see cref="T:System.Configuration.ConfigurationElement"></see> to return the key for. </param>
+            <param name="element">The <see cref="T:System.Configuration.ConfigurationElement"/> to return the key for. 
+                            </param>
         </member>
-        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.MatchingRuleConfigurationElementCollection.Item(System.String)">
+        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.CallHandlerElementCollection.OnDeserializeUnrecognizedElement(System.String,System.Xml.XmlReader)">
             <summary>
-            Resolve the given element by key.
+            Causes the configuration system to throw an exception.
             </summary>
-            <param name="key">Name of element to find.</param>
-            <returns>Element at the given key.</returns>
-        </member>
-        <member name="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.CallHandlerConfigurationElement">
-            <summary>
-            A <see cref="T:System.Configuration.ConfigurationElement"/> class used to manage the contents
-            of a &lt;callHandler&gt; node in the configuration file for the interception extension's section.
-            </summary>
-            <remarks>
-            This node contains the information necessary to describe a <see cref="T:Microsoft.Practices.Unity.InterceptionExtension.ICallHandler"/>
-            and can configure a <see cref="T:Microsoft.Practices.Unity.InterceptionExtension.RuleDrivenPolicy"/> to include the it.
-            </remarks>
-            <seealso cref="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.RuleDrivenPolicyElementConfigurationElement"/>
-        </member>
-        <member name="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.CallHandlerConfigurationElementCollection">
-            <summary>
-            Collection of <see cref="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.CallHandlerConfigurationElement"/> elements
-            from the configuration file.
-            </summary>
-        </member>
-        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.CallHandlerConfigurationElementCollection.CreateNewElement">
-            <summary>
-            When overridden in a derived class, creates a new <see cref="T:System.Configuration.ConfigurationElement"></see>.
-            </summary>
-            
             <returns>
-            A new <see cref="T:System.Configuration.ConfigurationElement"></see>.
+            true if the unrecognized element was deserialized successfully; otherwise, false. The default is false.
             </returns>
-            
+            <param name="elementName">The name of the unrecognized element. 
+                            </param><param name="reader">An input stream that reads XML from the configuration file. 
+                            </param><exception cref="T:System.Configuration.ConfigurationErrorsException">The element specified in <paramref name="elementName"/> is the &lt;clear&gt; element.
+                            </exception><exception cref="T:System.ArgumentException"><paramref name="elementName"/> starts with the reserved prefix "config" or "lock".
+                            </exception>
         </member>
-        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.CallHandlerConfigurationElementCollection.GetElementKey(System.Configuration.ConfigurationElement)">
+        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.CallHandlerElementCollection.Item(System.String)">
+            <summary>
+            Retrieve a call handler element from the collection by name.
+            </summary>
+            <param name="name">Name to look up.</param>
+            <returns>The rule, or null if not in the collection.</returns>
+        </member>
+        <member name="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.DefaultElement">
+            <summary>
+            The &lt;default&gt; element that appears inside an &lt;interceptor&gt; element.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptorRegistrationElement">
+            <summary>
+            Base class for the default and key elements that can occur
+            inside the &lt;interceptor&gt; element.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptorRegistrationElement.SerializeContent(System.Xml.XmlWriter)">
+            <summary>
+            Write the contents of this element to the given <see cref="T:System.Xml.XmlWriter"/>.
+            </summary>
+            <remarks>The caller of this method has already written the start element tag before
+            calling this method, so deriving classes only need to write the element content, not
+            the start or end tags.</remarks>
+            <param name="writer">Writer to send XML content to.</param>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptorRegistrationElement.RegisterInterceptor(Microsoft.Practices.Unity.IUnityContainer,Microsoft.Practices.Unity.InterceptionExtension.IInterceptor)">
+            <summary>
+            Actually register the interceptor against this type.
+            </summary>
+            <param name="container">Container to configure.</param>
+            <param name="interceptor">interceptor to register.</param>
+        </member>
+        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptorRegistrationElement.TypeName">
+            <summary>
+            Type name that this interceptor will be registered for.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptorRegistrationElement.ResolvedType">
+            <summary>
+            Return the type object that is resolved from the <see cref="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptorRegistrationElement.TypeName"/> property.
+            </summary>
+            <returns>The type object.</returns>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.DefaultElement.RegisterInterceptor(Microsoft.Practices.Unity.IUnityContainer,Microsoft.Practices.Unity.InterceptionExtension.IInterceptor)">
+            <summary>
+            Actually register the interceptor against this type.
+            </summary>
+            <param name="container">Container to configure.</param>
+            <param name="interceptor">interceptor to register.</param>
+        </member>
+        <member name="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptionBehaviorElement">
+            <summary>
+            Configuration elmement for specifying 
+            interception behaviors for a type.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptionBehaviorElement.DeserializeElement(System.Xml.XmlReader,System.Boolean)">
+            <summary>
+            Reads XML from the configuration file.
+            </summary>
+            <param name="reader">The <see cref="T:System.Xml.XmlReader"/> that reads from the configuration file.
+                            </param><param name="serializeCollectionKey">true to serialize only the collection key properties; otherwise, false.
+                            </param><exception cref="T:System.Configuration.ConfigurationErrorsException">The element to read is locked.
+                                - or -
+                                An attribute of the current node is not recognized.
+                                - or -
+                                The lock status of the current node cannot be determined.  
+                            </exception>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptionBehaviorElement.SerializeContent(System.Xml.XmlWriter)">
+            <summary>
+            Write the contents of this element to the given <see cref="T:System.Xml.XmlWriter"/>.
+            </summary>
+            <remarks>The caller of this method has already written the start element tag before
+            calling this method, so deriving classes only need to write the element content, not
+            the start or end tags.</remarks>
+            <param name="writer">Writer to send XML content to.</param>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptionBehaviorElement.GetInjectionMembers(Microsoft.Practices.Unity.IUnityContainer,System.Type,System.Type,System.String)">
+            <summary>
+            Return the set of <see cref="T:Microsoft.Practices.Unity.InjectionMember"/>s that are needed
+            to configure the container according to this configuration element.
+            </summary>
+            <param name="container">Container that is being configured.</param>
+            <param name="fromType">Type that is being registered.</param>
+            <param name="toType">Type that <paramref name="fromType"/> is being mapped to.</param>
+            <param name="name">Name this registration is under.</param>
+            <returns>One or more <see cref="T:Microsoft.Practices.Unity.InjectionMember"/> objects that should be
+            applied to the container registration.</returns>
+        </member>
+        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptionBehaviorElement.TypeName">
+            <summary>
+            Type of behavior to add.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptionBehaviorElement.Name">
+            <summary>
+            Name of behavior to resolve.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptionBehaviorElement.IsDefaultForType">
+            <summary>
+            Should this behavior be configured as a default behavior for this type, or
+            specifically for this type/name pair only?
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptionBehaviorElement.Key">
+            <summary>
+            Each element must have a unique key, which is generated by the subclasses.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptionConfigurationExtension">
+            <summary>
+            Section extension class used to add the elements needed to configure
+            Unity interception to the configuration schema.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptionConfigurationExtension.AddExtensions(Microsoft.Practices.Unity.Configuration.SectionExtensionContext)">
+            <summary>
+            Add the extensions to the section via the context.
+            </summary>
+            <param name="context">Context object that can be used to add elements and aliases.</param>
+        </member>
+        <member name="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptionElement">
+            <summary>
+            A configuration element that contains the top-level container configuration
+            information for interception - handler policies and global interceptor definitions.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptionElement.OnDeserializeUnrecognizedElement(System.String,System.Xml.XmlReader)">
+            <summary>
+            Gets a value indicating whether an unknown element is encountered during deserialization.
+            </summary>
+            <returns>
+            true when an unknown element is encountered while deserializing; otherwise, false.
+            </returns>
+            <param name="elementName">The name of the unknown subelement.
+                            </param><param name="reader">The <see cref="T:System.Xml.XmlReader"/> being used for deserialization.
+                            </param><exception cref="T:System.Configuration.ConfigurationErrorsException">The element identified by <paramref name="elementName"/> is locked.
+                                - or -
+                                One or more of the element's attributes is locked.
+                                - or -
+                            <paramref name="elementName"/> is unrecognized, or the element has an unrecognized attribute.
+                                - or -
+                                The element has a Boolean attribute with an invalid value.
+                                - or -
+                                An attempt was made to deserialize a property more than once.
+                                - or -
+                                An attempt was made to deserialize a property that is not a valid member of the element.
+                                - or -
+                                The element cannot contain a CDATA or text element.
+                            </exception>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptionElement.SerializeContent(System.Xml.XmlWriter)">
+            <summary>
+            Write the contents of this element to the given <see cref="T:System.Xml.XmlWriter"/>.
+            </summary>
+            <remarks>The caller of this method has already written the start element tag before
+            calling this method, so deriving classes only need to write the element content, not
+            the start or end tags.</remarks>
+            <param name="writer">Writer to send XML content to.</param>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptionElement.ConfigureContainer(Microsoft.Practices.Unity.IUnityContainer)">
+            <summary>
+            Apply this element's configuration to the given <paramref name="container"/>.
+            </summary>
+            <param name="container">Container to configure.</param>
+        </member>
+        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptionElement.Policies">
+            <summary>
+            Policies defined for this container.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptorElement">
+            <summary>
+            Configuration element that lets you configure
+            what interceptor to use for a type.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptorElement.#ctor">
+            <summary>
+            Initialize a new <see cref="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptorElement"/>.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptorElement.SerializeContent(System.Xml.XmlWriter)">
+            <summary>
+            Write the contents of this element to the given <see cref="T:System.Xml.XmlWriter"/>.
+            </summary>
+            <remarks>The caller of this method has already written the start element tag before
+            calling this method, so deriving classes only need to write the element content, not
+            the start or end tags.</remarks>
+            <param name="writer">Writer to send XML content to.</param>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptorElement.GetInjectionMembers(Microsoft.Practices.Unity.IUnityContainer,System.Type,System.Type,System.String)">
+            <summary>
+            Return the set of <see cref="T:Microsoft.Practices.Unity.InjectionMember"/>s that are needed
+            to configure the container according to this configuration element.
+            </summary>
+            <param name="container">Container that is being configured.</param>
+            <param name="fromType">Type that is being registered.</param>
+            <param name="toType">Type that <paramref name="fromType"/> is being mapped to.</param>
+            <param name="name">Name this registration is under.</param>
+            <returns>One or more <see cref="T:Microsoft.Practices.Unity.InjectionMember"/> objects that should be
+            applied to the container registration.</returns>
+        </member>
+        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptorElement.TypeName">
+            <summary>
+            Type name for the interceptor to apply.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptorElement.Name">
+            <summary>
+            Name to use when resolving interceptors from the container.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptorElement.IsDefaultForType">
+            <summary>
+            Should this interceptor be registered as the default for the contained
+            type, or only for this particular type/name pair?
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptorElement.Key">
+            <summary>
+            Each element must have a unique key, which is generated by the subclasses.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptorRegistrationElementCollection">
+            <summary>
+            A collection of <see cref="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptorRegistrationElement"/> objects as shown
+            in configuration.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptorRegistrationElementCollection.CreateNewElement">
+            <summary>
+            When overridden in a derived class, creates a new <see cref="T:System.Configuration.ConfigurationElement"/>.
+            </summary>
+            <returns>
+            A new <see cref="T:System.Configuration.ConfigurationElement"/>.
+            </returns>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptorRegistrationElementCollection.GetElementKey(System.Configuration.ConfigurationElement)">
             <summary>
             Gets the element key for a specified configuration element when overridden in a derived class.
             </summary>
-            
             <returns>
-            An <see cref="T:System.Object"></see> that acts as the key for the specified <see cref="T:System.Configuration.ConfigurationElement"></see>.
+            An <see cref="T:System.Object"/> that acts as the key for the specified <see cref="T:System.Configuration.ConfigurationElement"/>.
             </returns>
-            
-            <param name="element">The <see cref="T:System.Configuration.ConfigurationElement"></see> to return the key for. </param>
+            <param name="element">The <see cref="T:System.Configuration.ConfigurationElement"/> to return the key for. 
+                            </param>
         </member>
-        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.CallHandlerConfigurationElementCollection.Item(System.String)">
+        <member name="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptorsElement">
             <summary>
-            Resolve the given element by key.
-            </summary>
-            <param name="key">Name of element to find.</param>
-            <returns>Element at the given key.</returns>
-        </member>
-        <member name="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptionConfigurationElement">
-            <summary>
-            Configuration element for the <see cref="T:Microsoft.Practices.Unity.InterceptionExtension.Interception"/> container extension.
+            Configuration element that provides a top-level element for
+            configuration interceptors for types in a container.
             </summary>
         </member>
-        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptionConfigurationElement.Configure(Microsoft.Practices.Unity.IUnityContainer)">
+        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptorsElement.SerializeContent(System.Xml.XmlWriter)">
             <summary>
-            Configures policies and injectors using the <see cref="T:Microsoft.Practices.Unity.InterceptionExtension.Interception"/> container extension.
+            Write the contents of this element to the given <see cref="T:System.Xml.XmlWriter"/>.
             </summary>
-            <param name="container">The <see cref="T:Microsoft.Practices.Unity.IUnityContainer"/> to configure.</param>
+            <remarks>The caller of this method has already written the start element tag before
+            calling this method, so deriving classes only need to write the element content, not
+            the start or end tags.</remarks>
+            <param name="writer">Writer to send XML content to.</param>
         </member>
-        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptionConfigurationElement.Policies">
+        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptorsElement.ConfigureContainer(Microsoft.Practices.Unity.IUnityContainer)">
             <summary>
-            Collection of policies.
+            Apply this element's configuration to the given <paramref name="container"/>.
             </summary>
-            <remarks>
-            Defining policies in this section is equivalent to defining them in using the general purpose
-            injection configuration, only more convenient.
-            </remarks>
+            <param name="container">Container to configure.</param>
         </member>
-        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptionConfigurationElement.Interceptors">
+        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptorsElement.Interceptors">
             <summary>
-            Collection of configuration elements indicating types and keys for which transparent-proxy-based
-            interception should be performed.
-            </summary>
-        </member>
-        <member name="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptionPolicyConfigurationElementCollection">
-            <summary>
-            Collection of <see cref="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptionPolicyConfigurationElement"/> elements
-            from the configuration file.
+            The various child elements that are contained in this element.
             </summary>
         </member>
-        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptionPolicyConfigurationElementCollection.CreateNewElement">
+        <member name="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptorsInterceptorElement">
             <summary>
-            When overridden in a derived class, creates a new <see cref="T:System.Configuration.ConfigurationElement"></see>.
+            Configuration element that represents the configuration for
+            a specific interceptor, as presented in the config file inside
+            the &lt;interceptors&gt; element.
             </summary>
-            
+        </member>
+        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptorsInterceptorElement.SerializeContent(System.Xml.XmlWriter)">
+            <summary>
+            Write the contents of this element to the given <see cref="T:System.Xml.XmlWriter"/>.
+            </summary>
+            <remarks>The caller of this method has already written the start element tag before
+            calling this method, so deriving classes only need to write the element content, not
+            the start or end tags.</remarks>
+            <param name="writer">Writer to send XML content to.</param>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptorsInterceptorElement.OnDeserializeUnrecognizedElement(System.String,System.Xml.XmlReader)">
+            <summary>
+            Gets a value indicating whether an unknown element is encountered during deserialization.
+            </summary>
             <returns>
-            A new <see cref="T:System.Configuration.ConfigurationElement"></see>.
+            true when an unknown element is encountered while deserializing; otherwise, false.
             </returns>
-            
+            <param name="elementName">The name of the unknown subelement.
+                            </param><param name="reader">The <see cref="T:System.Xml.XmlReader"/> being used for deserialization.
+                            </param><exception cref="T:System.Configuration.ConfigurationErrorsException">The element identified by <paramref name="elementName"/> is locked.
+                                - or -
+                                One or more of the element's attributes is locked.
+                                - or -
+                            <paramref name="elementName"/> is unrecognized, or the element has an unrecognized attribute.
+                                - or -
+                                The element has a Boolean attribute with an invalid value.
+                                - or -
+                                An attempt was made to deserialize a property more than once.
+                                - or -
+                                An attempt was made to deserialize a property that is not a valid member of the element.
+                                - or -
+                                The element cannot contain a CDATA or text element.
+                            </exception>
         </member>
-        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptionPolicyConfigurationElementCollection.GetElementKey(System.Configuration.ConfigurationElement)">
+        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptorsInterceptorElement.TypeName">
+            <summary>
+            Type of interceptor to configure.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptorsInterceptorElement.Registrations">
+            <summary>
+            The types that this interceptor will be registered against.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptorsInterceptorElement.Value">
+            <summary>
+            Any value passed to the type converter.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptorsInterceptorElement.TypeConverterTypeName">
+            <summary>
+            Type converter to use to create the interceptor, if any.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptorsInterceptorElementCollection">
+            <summary>
+            A collection of <see cref="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptorsInterceptorElement"/> objects
+            as stored in configuration.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptorsInterceptorElementCollection.GetElementKey(System.Configuration.ConfigurationElement)">
             <summary>
             Gets the element key for a specified configuration element when overridden in a derived class.
             </summary>
-            
             <returns>
-            An <see cref="T:System.Object"></see> that acts as the key for the specified <see cref="T:System.Configuration.ConfigurationElement"></see>.
+            An <see cref="T:System.Object"/> that acts as the key for the specified <see cref="T:System.Configuration.ConfigurationElement"/>.
             </returns>
-            
-            <param name="element">The <see cref="T:System.Configuration.ConfigurationElement"></see> to return the key for. </param>
+            <param name="element">The <see cref="T:System.Configuration.ConfigurationElement"/> to return the key for. 
+                            </param>
         </member>
-        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptionPolicyConfigurationElementCollection.Item(System.String)">
+        <member name="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.KeyElement">
             <summary>
-            Resolve the given element by key.
-            </summary>
-            <param name="key">Name of element to find.</param>
-            <returns>Element at the given key.</returns>
-        </member>
-        <member name="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptionPolicyConfigurationElement">
-            <summary>
-            
+            The &lt;key&gt; element that occurs inside an &lt;interceptor&gt; element
             </summary>
         </member>
-        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptionPolicyConfigurationElement.Configure(Microsoft.Practices.Unity.IUnityContainer)">
+        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.KeyElement.SerializeContent(System.Xml.XmlWriter)">
             <summary>
-            
+            Write the contents of this element to the given <see cref="T:System.Xml.XmlWriter"/>.
             </summary>
-            <param name="container"></param>
+            <remarks>The caller of this method has already written the start element tag before
+            calling this method, so deriving classes only need to write the element content, not
+            the start or end tags.</remarks>
+            <param name="writer">Writer to send XML content to.</param>
         </member>
-        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptionPolicyConfigurationElement.Name">
+        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.KeyElement.RegisterInterceptor(Microsoft.Practices.Unity.IUnityContainer,Microsoft.Practices.Unity.InterceptionExtension.IInterceptor)">
             <summary>
-            Returns name of the element.
+            Actually register the interceptor against this type.
+            </summary>
+            <param name="container">Container to configure.</param>
+            <param name="interceptor">interceptor to register.</param>
+        </member>
+        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.KeyElement.Name">
+            <summary>
+            Name registration should be under. To register under the default, leave blank.
             </summary>
         </member>
-        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptionPolicyConfigurationElement.CallHandlers">
+        <member name="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.MatchingRuleElement">
             <summary>
-            
+            A configuration element representing a matching rule.
             </summary>
         </member>
-        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptionPolicyConfigurationElement.MatchingRules">
+        <member name="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.MatchingRuleElementCollection">
             <summary>
-            
+            A collection of <see cref="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.MatchingRuleElement"/>s for configuration.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.MatchingRuleElementCollection.GetElementKey(System.Configuration.ConfigurationElement)">
+            <summary>
+            Gets the element key for a specified configuration element when overridden in a derived class.
+            </summary>
+            <returns>
+            An <see cref="T:System.Object"/> that acts as the key for the specified <see cref="T:System.Configuration.ConfigurationElement"/>.
+            </returns>
+            <param name="element">The <see cref="T:System.Configuration.ConfigurationElement"/> to return the key for. 
+                            </param>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.MatchingRuleElementCollection.OnDeserializeUnrecognizedElement(System.String,System.Xml.XmlReader)">
+            <summary>
+            Causes the configuration system to throw an exception.
+            </summary>
+            <returns>
+            true if the unrecognized element was deserialized successfully; otherwise, false. The default is false.
+            </returns>
+            <param name="elementName">The name of the unrecognized element. 
+                            </param><param name="reader">An input stream that reads XML from the configuration file. 
+                            </param><exception cref="T:System.Configuration.ConfigurationErrorsException">The element specified in <paramref name="elementName"/> is the &lt;clear&gt; element.
+                            </exception><exception cref="T:System.ArgumentException"><paramref name="elementName"/> starts with the reserved prefix "config" or "lock".
+                            </exception>
+        </member>
+        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.MatchingRuleElementCollection.Item(System.String)">
+            <summary>
+            Retrieve a matching rule element from the collection by name.
+            </summary>
+            <param name="name">Name to look up.</param>
+            <returns>The rule, or null if not in the collection.</returns>
+        </member>
+        <member name="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.PolicyElement">
+            <summary>
+            Configuration element for building up an interception policy.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.PolicyElement.OnDeserializeUnrecognizedElement(System.String,System.Xml.XmlReader)">
+            <summary>
+            Gets a value indicating whether an unknown element is encountered during deserialization.
+            </summary>
+            <returns>
+            true when an unknown element is encountered while deserializing; otherwise, false.
+            </returns>
+            <param name="elementName">The name of the unknown subelement.
+                            </param><param name="reader">The <see cref="T:System.Xml.XmlReader"/> being used for deserialization.
+                            </param><exception cref="T:System.Configuration.ConfigurationErrorsException">The element identified by <paramref name="elementName"/> is locked.
+                                - or -
+                                One or more of the element's attributes is locked.
+                                - or -
+                            <paramref name="elementName"/> is unrecognized, or the element has an unrecognized attribute.
+                                - or -
+                                The element has a Boolean attribute with an invalid value.
+                                - or -
+                                An attempt was made to deserialize a property more than once.
+                                - or -
+                                An attempt was made to deserialize a property that is not a valid member of the element.
+                                - or -
+                                The element cannot contain a CDATA or text element.
+                            </exception>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.PolicyElement.SerializeContent(System.Xml.XmlWriter)">
+            <summary>
+            Write the contents of this element to the given <see cref="T:System.Xml.XmlWriter"/>.
+            </summary>
+            <remarks>The caller of this method has already written the start element tag before
+            calling this method, so deriving classes only need to write the element content, not
+            the start or end tags.</remarks>
+            <param name="writer">Writer to send XML content to.</param>
+        </member>
+        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.PolicyElement.Name">
+            <summary>
+            Name of this policy.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.PolicyElement.MatchingRules">
+            <summary>
+            Matching rules for this policy.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.PolicyElement.CallHandlers">
+            <summary>
+            Call handlers for this policy.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.PolicyElementCollection">
+            <summary>
+            A collection of <see cref="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.PolicyElement"/> in the configuration.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.PolicyElementCollection.GetElementKey(System.Configuration.ConfigurationElement)">
+            <summary>
+            Gets the element key for a specified configuration element when overridden in a derived class.
+            </summary>
+            <returns>
+            An <see cref="T:System.Object"/> that acts as the key for the specified <see cref="T:System.Configuration.ConfigurationElement"/>.
+            </returns>
+            <param name="element">The <see cref="T:System.Configuration.ConfigurationElement"/> to return the key for. 
+                            </param>
+        </member>
+        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.PolicyElementCollection.Item(System.String)">
+            <summary>
+            Indexer to retrieve policy element objects by name.
+            </summary>
+            <param name="policyName">Name of policy to get.</param>
+            <returns>The element.</returns>
+        </member>
+        <member name="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.PolicyInjectionElement">
+            <summary>
+            A shortcut element to enable the policy injection behavior.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.PolicyInjectionElement.GetInjectionMembers(Microsoft.Practices.Unity.IUnityContainer,System.Type,System.Type,System.String)">
+            <summary>
+            Return the set of <see cref="T:Microsoft.Practices.Unity.InjectionMember"/>s that are needed
+            to configure the container according to this configuration element.
+            </summary>
+            <param name="container">Container that is being configured.</param>
+            <param name="fromType">Type that is being registered.</param>
+            <param name="toType">Type that <paramref name="fromType"/> is being mapped to.</param>
+            <param name="name">Name this registration is under.</param>
+            <returns>One or more <see cref="T:Microsoft.Practices.Unity.InjectionMember"/> objects that should be
+            applied to the container registration.</returns>
+        </member>
+        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.PolicyInjectionElement.Key">
+            <summary>
+            Each element must have a unique key, which is generated by the subclasses.
             </summary>
         </member>
         <member name="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.Properties.Resources">
@@ -430,6 +672,11 @@
               resource lookups using this strongly typed resource class.
             </summary>
         </member>
+        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.Properties.Resources.CannotCreateInterceptorRegistrationElement">
+            <summary>
+              Looks up a localized string similar to The abstract type InterceptorRegistrationElement cannot be created. Please create a concrete instance..
+            </summary>
+        </member>
         <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.Properties.Resources.CannotHaveInjectionWithoutTypeName">
             <summary>
               Looks up a localized string similar to The &lt;injection/&gt; element is not allowed on element named &apos;{0}&apos; because it doesn&apos;t have a type attribute..
@@ -440,6 +687,11 @@
               Looks up a localized string similar to The &lt;lifetime/&gt; element is not allowed on element named &apos;{0}&apos; because it doesn&apos;t have a type attribute..
             </summary>
         </member>
+        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.Properties.Resources.CouldNotResolveType">
+            <summary>
+              Looks up a localized string similar to The type name or alias {0} could not be resolved. Please check your configuration file and verify this type name..
+            </summary>
+        </member>
         <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.Properties.Resources.ExceptionCannotCreateInstance">
             <summary>
               Looks up a localized string similar to Cannot create instance of type {0} with a default constructor..
@@ -447,93 +699,17 @@
         </member>
         <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.Properties.Resources.ExceptionResolvedTypeNotCompatible">
             <summary>
-              Looks up a localized string similar to The type name {0} resolved to type {1} is not compatible with the requested type {2}..
+              Looks up a localized string similar to The type name {0} resolved to type {1} is not compatible with the required type {2}..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.Properties.Resources.InvalidInterceptorType">
+            <summary>
+              Looks up a localized string similar to The type {0} could not be resolved to a valid type. Please double check your configuration..
             </summary>
         </member>
         <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.Properties.Resources.MustHaveAtLeastOneBehaviorAttribute">
             <summary>
-              Looks up a localized string similar to The interception behavior element must have at least one of the &apos;behaviorName&apos; or &apos;behaviorType&apos; attributes..
-            </summary>
-        </member>
-        <member name="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.KeyInterceptorTargetConfigurationElement">
-            <summary>
-            A <see cref="T:System.Configuration.ConfigurationElement"/> class used to manage the contents
-            of a &lt;injector&gt; node in the configuration file for the interception extension's section.
-            </summary>
-        </member>
-        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.KeyInterceptorTargetConfigurationElement.Name">
-            <summary>
-            Name part of the key to which the injector must be registered.
-            </summary>
-        </member>
-        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.KeyInterceptorTargetConfigurationElement.TypeName">
-            <summary>
-            Type part of the key to which the injector must be registered.
-            </summary>
-        </member>
-        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.KeyInterceptorTargetConfigurationElement.Type">
-            <summary>
-            The actual <see cref="T:System.Type"/> object for the 
-            type this element is registering.
-            </summary>
-        </member>
-        <member name="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptorTargetConfigurationElementCollection">
-            <summary>
-            Collection of <see cref="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptorTargetConfigurationElementBase"/> elements
-            from the configuration file.
-            </summary>
-            <seealso cref="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptorTargetConfigurationElementBase"/>
-            <seealso cref="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.KeyInterceptorTargetConfigurationElement"/>
-            <seealso cref="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.DefaultInterceptorTargetConfigurationElement"/>
-        </member>
-        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptorTargetConfigurationElementCollection.CreateNewElement">
-            <summary>
-            When overridden in a derived class, creates a new <see cref="T:System.Configuration.ConfigurationElement"></see>.
-            </summary>
-            <returns>
-            A new <see cref="T:System.Configuration.ConfigurationElement"></see>.
-            </returns>
-        </member>
-        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptorTargetConfigurationElementCollection.GetElementKey(System.Configuration.ConfigurationElement)">
-            <summary>
-            Gets the element key for a specified configuration element when overridden in a derived class.
-            </summary>
-            
-            <returns>
-            An <see cref="T:System.Object"></see> that acts as the key for the specified <see cref="T:System.Configuration.ConfigurationElement"></see>.
-            </returns>
-            
-            <param name="element">The <see cref="T:System.Configuration.ConfigurationElement"></see> to return the key for. </param>
-        </member>
-        <member name="M:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptorTargetConfigurationElementCollection.OnDeserializeUnrecognizedElement(System.String,System.Xml.XmlReader)">
-            <summary>
-             Figure out the concrete type to create given the type attribute on the given
-             xml reader. If not present, throws an exception.
-            </summary>
-            
-            <returns>
-            true if the unrecognized element was deserialized successfully; otherwise, false. The default is false.
-            </returns>
-            
-            <param name="reader">An input stream that reads XML from the configuration file. </param>
-            <param name="elementName">The name of the unrecognized element. </param>
-            <exception cref="T:System.ArgumentException">elementName starts with the reserved prefix "config" or "lock".</exception>
-            <exception cref="T:System.Configuration.ConfigurationErrorsException">The element specified in elementName is the &lt;clear&gt; element.</exception>
-        </member>
-        <member name="T:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptorConfigurationElement">
-            <summary>
-            Configuration element class describing an interceptor and the keys to which it applies.
-            </summary>
-        </member>
-        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptorConfigurationElement.Name">
-            <summary>
-            Name to use when registering this instance. Optional.
-            </summary>
-        </member>
-        <member name="P:Microsoft.Practices.Unity.InterceptionExtension.Configuration.InterceptorConfigurationElement.Targets">
-            <summary>
-            Collection of configuration elements indicating types and keys for which the represented 
-            interceptor should be configured.
+              Looks up a localized string similar to The interception behavior element must have at least one of the &apos;name&apos; or &apos;type&apos; attributes..
             </summary>
         </member>
     </members>

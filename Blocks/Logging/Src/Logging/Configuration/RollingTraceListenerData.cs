@@ -13,11 +13,11 @@ using System;
 using System.Configuration;
 using System.Diagnostics;
 using System.Linq.Expressions;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 {
@@ -124,9 +124,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// <summary>
         /// FileName
         /// </summary>
-        [ConfigurationProperty(FileNamePropertyName, DefaultValue="rolling.log")]
+        [ConfigurationProperty(FileNamePropertyName, DefaultValue = "rolling.log")]
         [ResourceDescription(typeof(DesignResources), "RollingFlatFileTraceListenerDataFileNameDescription")]
         [ResourceDisplayName(typeof(DesignResources), "RollingFlatFileTraceListenerDataFileNameDisplayName")]
+        [System.ComponentModel.Editor(CommonDesignTime.EditorTypes.FilteredFilePath, CommonDesignTime.EditorTypes.UITypeEditor)]
+        [FilteredFileNameEditor(typeof(DesignResources), "LogFileDialogFilter", CheckFileExists = false)]
         public string FileName
         {
             get { return (string)this[FileNamePropertyName]; }
@@ -209,7 +211,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// <summary>
         /// Time stamp
         /// </summary>
-        [ConfigurationProperty(TimeStampPatternPropertyName, DefaultValue="yyyy-MM-dd")]
+        [ConfigurationProperty(TimeStampPatternPropertyName, DefaultValue = "yyyy-MM-dd")]
         [ResourceDescription(typeof(DesignResources), "RollingFlatFileTraceListenerDataTimeStampPatternDescription")]
         [ResourceDisplayName(typeof(DesignResources), "RollingFlatFileTraceListenerDataTimeStampPatternDisplayName")]
         public string TimeStampPattern

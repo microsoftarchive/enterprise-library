@@ -39,6 +39,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Lib\Microsoft.Practices.Unity.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Practices.Unity.Interception, Version=2.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Lib\Microsoft.Practices.Unity.Interception.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>True</SpecificVersion>
       <Private>False</Private>
@@ -68,7 +72,7 @@
     <Compile Include="..\..\Src\Logging\NativeMethods.cs">
       <Link>NativeMethods.cs</Link>
     </Compile>
-    <Compile Include="APTCAFixture.cs" />
+    <Compile Include="APTCAFixture.2008.cs" />
     <Compile Include="Configuration\BinaryLogFormatterDataFixture.cs" />
     <Compile Include="Configuration\CustomFormatterDataFixture.cs" />
     <Compile Include="Configuration\CustomTraceListenerDataFixture.cs" />
@@ -94,6 +98,7 @@
     <Compile Include="Configuration\FormattedEventLogTraceListenerDataFixture.cs" />
     <Compile Include="Configuration\FlatFileTraceListenerDataFixture.cs" />
     <Compile Include="Configuration\LoggingSettingsTypeRegistrationFixture.cs" />
+    <Compile Include="Configuration\LogHandlerDataFixture.cs" />
     <Compile Include="Configuration\MsmqTraceListenerDataFixture.cs" />
     <Compile Include="Configuration\LogFilterDataFixture.cs" />
     <Compile Include="Configuration\EmailTraceListenerDataFixture.cs" />
@@ -110,6 +115,12 @@
     <Compile Include="Configuration\WmiTraceListenerDataFixture.cs" />
     <Compile Include="Configuration\XmlTraceListenerDataFixture.cs" />
     <Compile Include="ContextItemsFixture.cs" />
+    <Compile Include="PolicyInjection\CategoryFormatterFixture.cs" />
+    <Compile Include="PolicyInjection\LogCallHandlerAttributeFixture.cs" />
+    <Compile Include="PolicyInjection\LogCallHandlerFixture.cs" />
+    <Compile Include="PolicyInjection\TraceLogEntryFixture.cs" />
+    <Compile Include="TraceListeners\RollingFlatFileTraceListenerFixture.2008.cs" />
+    <Compile Include="TraceListeners\FlatFileTraceListenerFixture.2008.cs" />
     <Compile Include="TraceListeners\LoggingInstrumentationFixture.cs" />
     <Compile Include="TraceListeners\RollingFilePurgingTests.cs" />
     <Compile Include="LogEntrySerializationFixture.cs" />
@@ -168,7 +179,6 @@
     <Compile Include="TraceListeners\Configuration\CustomTraceListenerConfigurationFixture.cs" />
     <Compile Include="TraceListeners\Configuration\DelimitedListTraceListenerConfigurationFixture.cs" />
     <Compile Include="TraceListeners\Configuration\FormattedEmailTraceListenerConfigurationFixture.cs" />
-    <Compile Include="TraceListeners\Configuration\FormatterEmailTraceListenerConfigurationFixture.cs" />
     <Compile Include="TraceListeners\Configuration\MsmqTraceListenerConfigurationFixture.cs" />
     <Compile Include="TraceListeners\Configuration\FormattedFlatFileTraceListenerConfigurationFixture.cs" />
     <Compile Include="TraceListeners\Configuration\TextWriterTraceListenerConfigurationFixture.cs" />

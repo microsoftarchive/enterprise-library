@@ -25,12 +25,13 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_assembly_location
     public class WhenLocatingAssemblySections : ArrangeActAssert
     {
         private AssemblyAttributeSectionLocator locator;
+        
 
         protected override void Act()
         {
-
             var mockAssemblyLocator = new Mock<AssemblyLocator>();
             mockAssemblyLocator.Setup(x => x.Assemblies).Returns(new[] {this.GetType().Assembly});
+
             locator = new AssemblyAttributeSectionLocator(mockAssemblyLocator.Object);
         }
 
@@ -39,6 +40,18 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_assembly_location
         public void then_should_find_attributed_assemblies()
         {
             Assert.AreEqual(1, locator.ConfigurationSectionNames.Count(s => s == "testSection"));
+        }
+
+        [TestMethod]
+        public void then_should_not_return_clear_only_sections()
+        {
+            Assert.IsFalse(locator.ConfigurationSectionNames.Any(s => s == "clearOnlySection"));
+        }
+
+        [TestMethod]
+        public void then_should_return_all_sections()
+        {
+            Assert.AreEqual(2, locator.ClearableConfigurationSectionNames.Count());
         }
     }
 }

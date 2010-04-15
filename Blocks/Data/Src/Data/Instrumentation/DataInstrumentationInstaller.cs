@@ -10,7 +10,7 @@
 //===============================================================================
 
 using System.ComponentModel;
-using System.Management.Instrumentation;
+using System.Configuration.Install;
 using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Data.Instrumentation
@@ -19,7 +19,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Instrumentation
     /// Represents the installer for the instrumentation events. Not intended for direct use.
     /// </summary>
     [RunInstaller(true)]
-    public partial class DataInstrumentationInstaller : DefaultManagementProjectInstaller
+    public partial class DataInstrumentationInstaller : Installer
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="DataInstrumentationInstaller"/> class.

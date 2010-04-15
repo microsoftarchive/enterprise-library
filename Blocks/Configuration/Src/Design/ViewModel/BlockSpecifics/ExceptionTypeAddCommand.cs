@@ -10,29 +10,25 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration.Design;
-using System.Windows.Forms;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
-using System.Security.Cryptography;
-using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Configuration.Design.HostAdapterV5;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Properties;
+using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
+using System.Globalization;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics
 {
+#pragma warning disable 1591
+    /// <summary>
+    /// This class supports block-specific configuration design-time and is not
+    /// intended to be used directly from your code.
+    /// </summary>
     public class ExceptionTypeAddCommand : TypePickingCollectionElementAddCommand
     {
-        IUIServiceWpf uiService;
-
-        public ExceptionTypeAddCommand(IUIServiceWpf uiService, TypePickingCommandAttribute commandAttribute, ConfigurationElementType configurationElementType, ElementCollectionViewModel elementCollectionModel)
-            : base(commandAttribute, configurationElementType, elementCollectionModel)
-        {
-            this.uiService = uiService;
-        }
+        public ExceptionTypeAddCommand(TypePickingCommandAttribute commandAttribute, ConfigurationElementType configurationElementType, ElementCollectionViewModel elementCollectionModel, IUIServiceWpf uiService, IAssemblyDiscoveryService discoveryService)
+            : base(uiService, discoveryService, commandAttribute, configurationElementType, elementCollectionModel)
+        { }
 
         protected override bool AfterSelectType(Type selectedType)
         {
@@ -42,8 +38,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
 
             if (count > 0)
             {
-                uiService.ShowMessageWpf(
-                    string.Format(Resources.Culture, Resources.DuplicateExceptionTypeMessage, selectedType.Name),
+                this.UIService.ShowMessageWpf(
+                    string.Format(CultureInfo.CurrentCulture, Resources.DuplicateExceptionTypeMessage, selectedType.Name),
                     Resources.DuplicationExceptionTypeTitle,
                     System.Windows.MessageBoxButton.OK);
                 return false;
@@ -52,4 +48,5 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
             return true;
         }
     }
+#pragma warning restore 1591
 }

@@ -54,6 +54,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security
         /// <returns>True if the specified principal is in the role, otherwise false.</returns>
         public override bool Evaluate(IPrincipal principal)
         {
+            if (principal == null) throw new ArgumentNullException("principal");
+
             return principal.IsInRole(this.word);
         }
 
@@ -68,6 +70,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security
         /// <returns>True if the specified identity's name matches the value of the current expression, otherwise false.</returns>
         public virtual bool Evaluate(IIdentity identity)
         {
+            if (identity == null) throw new ArgumentNullException("identity");
+
             string actualName = identity.Name;
             int compare = String.Compare(
                 this.word,

@@ -34,11 +34,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
         public const String PerformanceCountersEnabledPropertyName = "performanceCountersEnabled";
 
         /// <summary>
-        /// The name of the property to determine if wmi is enabled is enabled.
-        /// </summary>
-        public const String WmiEnabledPropertyName = "wmiEnabled";
-
-        /// <summary>
         /// Initialize a new instance of the <see cref="InstrumentationConfigurationSectionManageabilityProvider"/> class.
         /// </summary>
         /// <param name="subProviders">The sub providers.</param>
@@ -85,10 +80,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
                 contentBuilder.AddCheckboxPart(Resources.InstrumentationSectionPerformanceCountersEnabledPartName,
                                                PerformanceCountersEnabledPropertyName,
                                                configurationSection.PerformanceCountersEnabled);
-
-                contentBuilder.AddCheckboxPart(Resources.InstrumentationSectionWmiEnabledPartName,
-                                               WmiEnabledPropertyName,
-                                               configurationSection.WmiEnabled);
             }
             contentBuilder.EndPolicy();
         }
@@ -125,11 +116,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
         {
             bool? eventLoggingEnabledOverride = policyKey.GetBoolValue(EventLoggingEnabledPropertyName);
             bool? performanceCountersEnabledOverride = policyKey.GetBoolValue(PerformanceCountersEnabledPropertyName);
-            bool? wmiEnabledOverride = policyKey.GetBoolValue(WmiEnabledPropertyName);
 
             configurationSection.EventLoggingEnabled = eventLoggingEnabledOverride.Value;
             configurationSection.PerformanceCountersEnabled = performanceCountersEnabledOverride.Value;
-            configurationSection.WmiEnabled = wmiEnabledOverride.Value;
         }
     }
 }

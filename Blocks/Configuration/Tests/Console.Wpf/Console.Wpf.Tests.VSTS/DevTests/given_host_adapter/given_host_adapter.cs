@@ -33,10 +33,10 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_host_adapter
         {
             base.Arrange();
 
-            HostAdapter = new SingleHierarchyConfigurationUIHostAdapter(new HostAdapterConfiguration(AppDomain.CurrentDomain.BaseDirectory));
+            HostAdapter = new SingleHierarchyConfigurationUIHostAdapter(new HostAdapterConfiguration(AppDomain.CurrentDomain.BaseDirectory), null);
             ConfigurationSourceModel sourceModel = (ConfigurationSourceModel)HostAdapter.GetService(typeof(ConfigurationSourceModel));
             
-            sourceModel.AddSection(CacheManagerSettings.SectionName, new CacheManagerSettings { CacheManagers = { { new CacheManagerData { Name = "Cache Manager" } } }, BackingStores = {{ new CustomCacheStorageData("name", "custom store type") }} });
+            sourceModel.AddSection(CacheManagerSettings.SectionName, new CacheManagerSettings {DefaultCacheManager = "Cache Manager",  CacheManagers = { { new CacheManagerData { Name = "Cache Manager" } } }, BackingStores = {{ new CustomCacheStorageData("name", "custom store type") }} });
 
             CachingViewModel = sourceModel.Sections.Single();
             CacheManager = CachingViewModel.GetDescendentsOfType<CacheManagerData>().First();

@@ -37,6 +37,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
 		/// <param name="instrumentationProvider">The instrumentation provider.</param>
 		public Cache(IBackingStore backingStore, ICachingInstrumentationProvider instrumentationProvider)
         {
+		    if (backingStore == null) throw new ArgumentNullException("backingStore");
+            if (instrumentationProvider == null) throw new ArgumentNullException("instrumentationProvider");
+
             this.backingStore = backingStore;
             this.instrumentationProvider = instrumentationProvider;
 

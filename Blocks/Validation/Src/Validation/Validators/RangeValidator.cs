@@ -10,14 +10,13 @@
 //===============================================================================
 
 using System;
-using Microsoft.Practices.EnterpriseLibrary.Validation.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
 {
 	/// <summary>
-	/// Performs validation on <typeparamref name="T"/>
+	/// Performs validation on <see cref="IComparable"/>
 	/// instances by comparing them to the specified boundaries. 
 	/// </summary>
 	/// <remarks>

@@ -17,6 +17,8 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using System.Collections.Generic;
 using System.ComponentModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design.Validation;
+using System.Globalization;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
 {
@@ -85,8 +87,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
 
 		/// <summary>
 		/// Gets or sets custom configuration attributes.
-		/// </summary>        		
-		public NameValueCollection Attributes
+		/// </summary>
+        [Validation(CachingDesignTime.ValidatorTypes.NameValueCollectionValidator)]
+        public NameValueCollection Attributes
 		{
 			get { return helper.Attributes; }
 		}
@@ -186,22 +189,25 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
 			return base.IsModified();
 		}
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public override IEnumerable<TypeRegistration> GetRegistrations(IConfigurationSource configurationSource)
+
+	    /// <summary>
+	    /// Get the set of <see cref="TypeRegistration"/> object needed to
+	    /// register the CacheManager represented by this config element.
+	    /// </summary>
+	    /// <returns>The sequence of <see cref="TypeRegistration"/> objects.</returns>
+	    public override IEnumerable<TypeRegistration> GetRegistrations(IConfigurationSource configurationSource)
         {
             if (!typeof(ICacheManager).IsAssignableFrom(this.Type))
             {
-                throw new ConfigurationErrorsException(string.Format(Caching.Properties.Resources.Culture, Caching.Properties.Resources.ExceptionTypeForCustomCacheManagerMustDeriveFrom, Name, this.Type.FullName));
+                throw new ConfigurationErrorsException(string.Format(CultureInfo.CurrentCulture, Caching.Properties.Resources.ExceptionTypeForCustomCacheManagerMustDeriveFrom, Name, this.Type.FullName));
             }
 
             TypeRegistration customCacheManagerRegistration = new TypeRegistration(
                 RegistrationExpressionBuilder.BuildExpression(this.Type, Attributes),
                 typeof(ICacheManager)) 
                 { 
-                    Name = this.Name
+                    Name = this.Name,
+                    IsPublicName = true
                 };
 
             return new TypeRegistration[]{customCacheManagerRegistration};

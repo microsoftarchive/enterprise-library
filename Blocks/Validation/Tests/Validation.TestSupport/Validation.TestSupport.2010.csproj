@@ -1,0 +1,131 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{3D3C0BEE-437E-487C-B9B3-46288AE933B9}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Microsoft.Practices.EnterpriseLibrary.Validation.TestSupport</RootNamespace>
+    <AssemblyName>Microsoft.Practices.EnterpriseLibrary.Validation.TestSupport</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoWarn>618</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoWarn>618</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.configuration, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\..\..\Windows\Microsoft.NET\Framework\v2.0.50727\System.configuration.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\..\GlobalAssemblyInfo.cs">
+      <Link>GlobalAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\GlobalAssemblyInfo.2010.cs">
+      <Link>GlobalAssemblyInfo.2010.cs</Link>
+    </Compile>
+    <Compile Include="Configuration\MockValidationSettings.cs" />
+    <Compile Include="Configuration\MockValidatorData.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestClasses\BaseTestDomainObject.cs" />
+    <Compile Include="TestClasses\BaseTestTypeWithValidatorAttributes.cs" />
+    <Compile Include="TestClasses\BaseTestTypeWithValidatorAttributesOnFields.cs" />
+    <Compile Include="TestClasses\BaseTestTypeWithValidatorAttributesOnMethods.cs" />
+    <Compile Include="TestClasses\BaseTestTypeWithValidatorAttributesOnProperties.cs" />
+    <Compile Include="TestClasses\BaseTypeWithSelfValidationAttributesOnMethods.cs" />
+    <Compile Include="TestClasses\CreditCardNumberValidator.cs" />
+    <Compile Include="TestClasses\CreditCardNumberValidatorAttribute.cs" />
+    <Compile Include="TestClasses\TestObjectWithMultipleSourceValidationAttributesOnProperties.cs" />
+    <Compile Include="TestClasses\DerivedTestDomainObject.cs" />
+    <Compile Include="TestClasses\DerivedTestTypeWithValidatorAttributes.cs" />
+    <Compile Include="TestClasses\DerivedTestTypeWithValidatorAttributesOnMembersAndType.cs" />
+    <Compile Include="TestClasses\DerivedTestTypeWithValidatorAttributesOnMethods.cs" />
+    <Compile Include="TestClasses\DerivedTestTypeWithValidatorAttributesOnNewFields.cs" />
+    <Compile Include="TestClasses\DerivedTestTypeWithValidatorAttributesOnNewMethods.cs" />
+    <Compile Include="TestClasses\DerivedTestTypeWithValidatorAttributesOnNewProperties.cs" />
+    <Compile Include="TestClasses\DerivedTestTypeWithValidatorAttributesOnProperties.cs" />
+    <Compile Include="TestClasses\DerivedTypeWithSelfValidationAttributesOnMethods.cs" />
+    <Compile Include="TestClasses\MockClassWithValidatorAttributesOnProperties.cs" />
+    <Compile Include="TestClasses\MockCustomValidator.cs" />
+    <Compile Include="TestClasses\MockDomainValidator.cs" />
+    <Compile Include="TestClasses\MockMemberAccessValidatorBuilderFactory.cs" />
+    <Compile Include="TestClasses\MockValidatedElement.cs" />
+    <Compile Include="TestClasses\MockValidationInstrumentationProvider.cs" />
+    <Compile Include="TestClasses\MockValidator.cs" />
+    <Compile Include="TestClasses\MockValidator.Generic.cs" />
+    <Compile Include="TestClasses\MockValidatorAttribute.cs" />
+    <Compile Include="TestClasses\MockValueAccess.cs" />
+    <Compile Include="TestClasses\TemplateStringTester.cs" />
+    <Compile Include="TestClasses\TestObjectWithFailingAttributesOnProperties.cs" />
+    <Compile Include="TestClasses\TestResources.Designer.cs">
+      <DependentUpon>TestResources.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="TestClasses\TestTypeWithoutSelfValidationAttributesOnMethods.cs" />
+    <Compile Include="TestClasses\TestTypeWithValidatorAttributesOnNonPublicFields.cs" />
+    <Compile Include="TestClasses\TestTypeWithValidatorAttributesOnNonPublicMethods.cs" />
+    <Compile Include="TestClasses\TestTypeWithValidatorAttributesOnNonPublicProperties.cs" />
+    <Compile Include="TestClasses\TestTypeWithValidatorAttributesOnSetterOnlyProperties.cs" />
+    <Compile Include="TestClasses\TestTypeWithValidatorAttributesOnVoidOrParameterizedMethods.cs" />
+    <Compile Include="TestClasses\TypeWithMultipleValidationAttributesAtTheTypeLevel.cs" />
+    <Compile Include="TestClasses\TypeWithoutValidationAttributesAtTheTypeLevel.cs" />
+    <Compile Include="TestClasses\TypeWithValidatorAttributesWithRuleNames.cs" />
+    <Compile Include="TestClasses\TypeWithValidatorSelfValidationAttributes.cs" />
+    <Compile Include="TestClasses\UserWithValidatedCreditCard.cs" />
+    <Compile Include="TestClasses\ValidationTestHelper.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\Src\Common.csproj">
+      <Project>{A09297C8-2C40-470B-8856-D856676DDFFA}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Src\Validation\Validation.csproj">
+      <Project>{E814A5DC-C15B-4BA4-AB7C-B7C9A34AC2FD}</Project>
+      <Name>Validation</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TestClasses\TestResources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>TestResources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

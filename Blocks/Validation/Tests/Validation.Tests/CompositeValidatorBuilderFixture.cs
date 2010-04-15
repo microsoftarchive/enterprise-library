@@ -110,7 +110,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         }
 
         [TestMethod]
-        public void IgnoreNullsAndAndCompositionCreatesOrValidatorWithIgnoreNullsMessageTemplateAndWrappedAndValidator()
+        public void IgnoreNullsAndAndCompositionCreatesIgnoreNullsWrapperAndWrappedAndValidator()
         {
             MockValidator<object> valueValidator1 = new MockValidator<object>(false);
             MockValidator<object> valueValidator2 = new MockValidator<object>(false);
@@ -123,58 +123,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
             Validator validator = builder.GetValidator();
 
             Assert.IsNotNull(validator);
-            Assert.AreSame(typeof(OrCompositeValidator), validator.GetType());
-            Assert.AreEqual("ignore nulls", validator.MessageTemplate);
-            Assert.AreEqual("ignore nulls tag", validator.Tag);
-            IEnumerator<Validator> validatorsEnumerator = ((OrCompositeValidator)validator).Validators.GetEnumerator();
-            Assert.IsTrue(validatorsEnumerator.MoveNext());
-            Assert.AreSame(typeof(NotNullValidator), validatorsEnumerator.Current.GetType());
-            Assert.IsTrue(((NotNullValidator)validatorsEnumerator.Current).Negated);
-            Assert.IsTrue(validatorsEnumerator.MoveNext());
-            Assert.AreSame(typeof(AndCompositeValidator), validatorsEnumerator.Current.GetType());
-            IEnumerator<Validator> valueValidatorsEnumerator = ((AndCompositeValidator)validatorsEnumerator.Current).Validators.GetEnumerator();
+            Assert.AreSame(typeof(NullIgnoringValidatorWrapper), validator.GetType());
+            Assert.AreSame(typeof(AndCompositeValidator), ((NullIgnoringValidatorWrapper)validator).WrappedValidator.GetType());
+            IEnumerator<Validator> valueValidatorsEnumerator = ((AndCompositeValidator)((NullIgnoringValidatorWrapper)validator).WrappedValidator).Validators.GetEnumerator();
             Assert.IsTrue(valueValidatorsEnumerator.MoveNext());
             Assert.AreSame(valueValidator1, valueValidatorsEnumerator.Current);
             Assert.IsTrue(valueValidatorsEnumerator.MoveNext());
             Assert.AreSame(valueValidator2, valueValidatorsEnumerator.Current);
             Assert.IsFalse(valueValidatorsEnumerator.MoveNext());
-            Assert.IsFalse(validatorsEnumerator.MoveNext());
         }
 
         [TestMethod]
-        public void IgnoreNullsWithNullMessageTemplateAndAndCompositionCreatesOrValidatorWithIgnoreNullsDefaultMessageTemplateAndWrappedAndValidator()
-        {
-            MockValidator<object> valueValidator1 = new MockValidator<object>(false);
-            MockValidator<object> valueValidator2 = new MockValidator<object>(false);
-            CompositeValidatorBuilder builder
-                = new CompositeValidatorBuilder(new MockValidatedElement(true, null, "ignore nulls tag",
-                                                                         CompositionType.And, null, null));
-
-            builder.AddValueValidator(valueValidator1);
-            builder.AddValueValidator(valueValidator2);
-            Validator validator = builder.GetValidator();
-
-            Assert.IsNotNull(validator);
-            Assert.AreSame(typeof(OrCompositeValidator), validator.GetType());
-            Assert.AreEqual(Resources.IgnoreNullsDefaultMessageTemplate, validator.MessageTemplate);
-            Assert.AreEqual("ignore nulls tag", validator.Tag);
-            IEnumerator<Validator> validatorsEnumerator = ((OrCompositeValidator)validator).Validators.GetEnumerator();
-            Assert.IsTrue(validatorsEnumerator.MoveNext());
-            Assert.AreSame(typeof(NotNullValidator), validatorsEnumerator.Current.GetType());
-            Assert.IsTrue(((NotNullValidator)validatorsEnumerator.Current).Negated);
-            Assert.IsTrue(validatorsEnumerator.MoveNext());
-            Assert.AreSame(typeof(AndCompositeValidator), validatorsEnumerator.Current.GetType());
-            IEnumerator<Validator> valueValidatorsEnumerator = ((AndCompositeValidator)validatorsEnumerator.Current).Validators.GetEnumerator();
-            Assert.IsTrue(valueValidatorsEnumerator.MoveNext());
-            Assert.AreSame(valueValidator1, valueValidatorsEnumerator.Current);
-            Assert.IsTrue(valueValidatorsEnumerator.MoveNext());
-            Assert.AreSame(valueValidator2, valueValidatorsEnumerator.Current);
-            Assert.IsFalse(valueValidatorsEnumerator.MoveNext());
-            Assert.IsFalse(validatorsEnumerator.MoveNext());
-        }
-
-        [TestMethod]
-        public void IgnoreNullsAndOrCompositionCreatesOrValidatorWithIgnoreNullsMessageTemplateAndWrappedOrValidatorWithSuppliedMessageTemplate()
+        public void IgnoreNullsAndOrCompositionCreatesIgnoreNullsWrapperAndWrappedOrValidatorWithSuppliedMessageTemplate()
         {
             MockValidator<object> valueValidator1 = new MockValidator<object>(false);
             MockValidator<object> valueValidator2 = new MockValidator<object>(false);
@@ -187,24 +147,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
             Validator validator = builder.GetValidator();
 
             Assert.IsNotNull(validator);
-            Assert.AreSame(typeof(OrCompositeValidator), validator.GetType());
-            Assert.AreEqual("ignore nulls", validator.MessageTemplate);
-            Assert.AreEqual(null, validator.Tag);
-            IEnumerator<Validator> validatorsEnumerator = ((OrCompositeValidator)validator).Validators.GetEnumerator();
-            Assert.IsTrue(validatorsEnumerator.MoveNext());
-            Assert.AreSame(typeof(NotNullValidator), validatorsEnumerator.Current.GetType());
-            Assert.IsTrue(((NotNullValidator)validatorsEnumerator.Current).Negated);
-            Assert.IsTrue(validatorsEnumerator.MoveNext());
-            Assert.AreSame(typeof(OrCompositeValidator), validatorsEnumerator.Current.GetType());
-            Assert.AreEqual("composition template", validatorsEnumerator.Current.MessageTemplate);
-            Assert.AreEqual("composition tag", validatorsEnumerator.Current.Tag);
-            IEnumerator<Validator> valueValidatorsEnumerator = ((OrCompositeValidator)validatorsEnumerator.Current).Validators.GetEnumerator();
+            Assert.AreSame(typeof(NullIgnoringValidatorWrapper), validator.GetType());
+            Assert.AreSame(typeof(OrCompositeValidator), ((NullIgnoringValidatorWrapper)validator).WrappedValidator.GetType());
+            Assert.AreEqual("composition template", ((NullIgnoringValidatorWrapper)validator).WrappedValidator.MessageTemplate);
+            Assert.AreEqual("composition tag", ((NullIgnoringValidatorWrapper)validator).WrappedValidator.Tag);
+            IEnumerator<Validator> valueValidatorsEnumerator = ((OrCompositeValidator)((NullIgnoringValidatorWrapper)validator).WrappedValidator).Validators.GetEnumerator();
             Assert.IsTrue(valueValidatorsEnumerator.MoveNext());
             Assert.AreSame(valueValidator1, valueValidatorsEnumerator.Current);
             Assert.IsTrue(valueValidatorsEnumerator.MoveNext());
             Assert.AreSame(valueValidator2, valueValidatorsEnumerator.Current);
             Assert.IsFalse(valueValidatorsEnumerator.MoveNext());
-            Assert.IsFalse(validatorsEnumerator.MoveNext());
         }
     }
 }

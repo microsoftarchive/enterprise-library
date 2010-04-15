@@ -13,6 +13,7 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel.Unity;
 using Microsoft.Practices.ServiceLocation;
 using Microsoft.Practices.Unity;
+using System;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 {
@@ -77,6 +78,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
             IContainerConfigurator configurator,
             IConfigurationSource configSource)
         {
+            if (configurator == null) throw new ArgumentNullException("configurator");
+
             configurator.RegisterAll(configSource, locator);
 
         }

@@ -129,6 +129,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF
             ServiceEndpoint endpoint, 
             DispatchRuntime dispatchRuntime)
         {
+            if(dispatchRuntime == null) throw new ArgumentNullException("dispatchRuntime");
             AddErrorHandler(dispatchRuntime.ChannelDispatcher);
         }
 

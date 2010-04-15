@@ -64,7 +64,7 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="APTCAFixture.cs" />
+    <Compile Include="APTCAFixture.2008.cs" />
     <Compile Include="Configuration\ConfigurationSerializationFixture.cs" />
     <Compile Include="Configuration\DataAccessReconfigurableTypeRegistrationFixture.cs" />
     <Compile Include="Configuration\DataAccessTypeRegistrationFixture.cs" />
@@ -75,12 +75,12 @@
     <Compile Include="ConnectionStringFixture.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="DatabaseConnectionWrapperFixture.cs" />
     <Compile Include="DatabaseFactoryOldFixture.cs" />
     <Compile Include="DatabaseFixture.cs" />
     <Compile Include="GenericAsyncFixture.cs" />
     <Compile Include="GenericDatabaseFixture.cs" />
     <Compile Include="Instrumentation\DataInstrumentationProviderPerfCounterFixture.cs" />
-    <Compile Include="Instrumentation\DataInstrumentationProviderWmiFixture.cs" />
     <Compile Include="Instrumentation\InstrumentationEventBroadcastFixture.cs" />
     <Compile Include="Instrumentation\InstrumentationNoListenerEventBroadcastFixture.cs" />
     <Compile Include="MapBuilderFixture.cs" />
@@ -111,7 +111,7 @@
     <Compile Include="Sql\SqlParameterFixture.cs" />
     <Compile Include="Sql\SqlParameterizedSqlStringFixture.cs" />
     <Compile Include="Sql\SqlStoredProcedureCreatingFixture.cs" />
-    <Compile Include="TransactionScopConnectionsFixture.cs" />
+    <Compile Include="TransactionConnectionsFixture.cs" />
     <Compile Include="Sql\SqlTransactionScopeFixture.cs" />
     <Compile Include="Sql\SqlUpdateDataSetBehaviorsFixture.cs" />
     <Compile Include="Sql\SqlUpdateDataSetFixture.cs" />

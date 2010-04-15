@@ -11,6 +11,7 @@
 
 using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Security.Properties;
+using System.Globalization;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security
 {
@@ -94,7 +95,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security
                         };
 
                     throw new SyntaxException(
-                        string.Format(Resources.Culture, Properties.Resources.UnexpectedTokenMessage, 
+                        string.Format(CultureInfo.CurrentCulture, Properties.Resources.UnexpectedTokenMessage, 
                             ConcatTokenNames(types),
                             this.lexer.Current,
                             this.GetIndex()),
@@ -151,7 +152,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security
         {
             if (this.token != expected)
             {
-                string message = string.Format(Resources.Culture, Properties.Resources.UnexpectedTokenMessage, 
+                string message = string.Format(CultureInfo.CurrentCulture, Properties.Resources.UnexpectedTokenMessage, 
                     this.GetTokenName(this.token),
                     this.GetTokenName(expected),
                     this.GetIndex());

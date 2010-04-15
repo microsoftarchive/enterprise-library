@@ -62,7 +62,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
         }
 
         /// <summary>
-        /// 
+        /// Returns a localized <see cref="ResourceCategoryAttribute"/> for the General category.
         /// </summary>
         public static ResourceCategoryAttribute General
         {

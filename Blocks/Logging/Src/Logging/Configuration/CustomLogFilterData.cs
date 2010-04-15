@@ -18,6 +18,7 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Filters;
 using System.ComponentModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design.Validation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 {
@@ -26,6 +27,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
     /// </summary>
     [ResourceDescription(typeof(DesignResources), "CustomLogFilterDataDescription")]
     [ResourceDisplayName(typeof(DesignResources), "CustomLogFilterDataDisplayName")]
+    [TypePickingCommand(TitleResourceName = "CustomLogFilterDataDisplayName", TitleResourceType = typeof(DesignResources), Replace = CommandReplacement.DefaultAddCommandReplacement)]
     public class CustomLogFilterData
         : LogFilterData, IHelperAssistedCustomConfigurationData<CustomLogFilterData>
     {
@@ -85,7 +87,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 
         /// <summary>
         /// Gets or sets custom configuration attributes.
-        /// </summary>        		
+        /// </summary>
+        [Validation(LoggingDesignTime.ValidatorTypes.NameValueCollectionValidator)]
         public NameValueCollection Attributes
         {
             get { return helper.Attributes; }

@@ -9,15 +9,14 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using Console.Wpf.Tests.VSTS.DevTests.Contexts;
 using Console.Wpf.Tests.VSTS.Mocks;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Configuration.Design.HostAdapterV5;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Console.Wpf.Tests.VSTS.DevTests.Contexts;
+using Moq;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model_and_config_collection
 {
@@ -43,7 +42,8 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model_and_config_collection
         }
         protected override void Act()
         {
-            commandContainer = new DefaultElementCollectionAddCommand(polymorphicCollection);
+            var mockUIService = new Mock<IUIServiceWpf>();
+            commandContainer = new DefaultElementCollectionAddCommand(polymorphicCollection, mockUIService.Object);
         }
 
         [TestMethod]
@@ -59,10 +59,10 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model_and_config_collection
                 commandContainer.ChildCommands.OfType<DefaultCollectionElementAddCommand>().Select(c => c.Title);
 
             var expectedCommandTitles =
-                new[] {typeof (TestHandlerAnotherDerivedData).Name, typeof (TestHandlerSonOfDerivedData).Name}.Select(
+                new[] { typeof(TestHandlerAnotherDerivedData).Name, typeof(TestHandlerSonOfDerivedData).Name }.Select(
                     s => "Add " + s);
 
-            CollectionAssert.IsSubsetOf( expectedCommandTitles.ToArray(),
+            CollectionAssert.IsSubsetOf(expectedCommandTitles.ToArray(),
                                         collectionAddCommandTitles.ToArray());
         }
 
@@ -97,6 +97,15 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model_and_config_collection
             Assert.AreEqual(1, commandContainer.ChildCommands.OfType<CustomElementCollectionAddCommand>().Count());
             Assert.AreEqual(1, commandContainer.ChildCommands.OfType<AnotherCustomElementCollectionAddCommand>().Count());
         }
+
+        [TestMethod]
+        public void then_add_child_commands_are_ordered_alphabetically()
+        {
+            var childCommandTitles = commandContainer.ChildCommands.Select(x => x.Title).ToArray();
+            var sortedChildCommandTitles = childCommandTitles.OrderBy(x => x).ToArray();
+
+            CollectionAssert.AreEqual(sortedChildCommandTitles, childCommandTitles);
+        }
     }
 
 
@@ -123,7 +132,9 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model_and_config_collection
 
         protected override void Act()
         {
-            addCommand = new DefaultElementCollectionAddCommand(singleTypeCollection);
+            var uiService = new Mock<IUIServiceWpf>();
+
+            addCommand = new DefaultElementCollectionAddCommand(singleTypeCollection, uiService.Object);
         }
 
         [TestMethod]
@@ -162,7 +173,8 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_view_model_and_config_collection
 
         protected override void Act()
         {
-            addCommand = new DefaultElementCollectionAddCommand(singleTypeCollection);
+            var mockUIService = new Mock<IUIServiceWpf>();
+            addCommand = new DefaultElementCollectionAddCommand(singleTypeCollection, mockUIService.Object);
         }
 
         [TestMethod]

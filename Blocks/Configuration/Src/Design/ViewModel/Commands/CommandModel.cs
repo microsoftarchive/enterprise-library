@@ -13,11 +13,13 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
-using System.Text;
-using System.Drawing;
 using System.Windows.Input;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Configuration.Design.HostAdapterV5;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Commands;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
 {
@@ -25,14 +27,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
     /// Represents a bindable command that can be executed from within the designer.<br/>
     /// </summary>
     [DebuggerDisplay("Title: {Title}  Placement: {Placement}")]
-    public abstract class CommandModel : ICommand, INotifyPropertyChanged
+    public abstract class CommandModel : ICommand, INotifyPropertyChanged, IDisposable
     {
+        private readonly IUIServiceWpf uiService;
+        private List<WeakReference> _canExecuteChangedHandlers;
+
         /// <summary>
         /// Initializes an instance of CommandModel from <see cref="CommandAttribute"/>.
         /// </summary>
         /// <param name="commandAttribute"></param>
-        protected CommandModel(CommandAttribute commandAttribute)
-            : this()
+        /// <param name="uiService"></param>
+        protected CommandModel(CommandAttribute commandAttribute, IUIServiceWpf uiService)
+            : this(uiService)
         {
             Title = commandAttribute.Title;
             HelpText = string.Empty;
@@ -44,9 +50,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         /// <summary>
         /// Initializes an instance of CommandModel.
         /// </summary>
-        protected CommandModel()
+        protected CommandModel(IUIServiceWpf uiService)
         {
-            Browsable = true;
+            this.uiService = uiService;
+            this.Browsable = true;
+        }
+
+
+        /// <summary>
+        /// Service for displaying messages and dialogs to the user.
+        /// </summary>
+        protected IUIServiceWpf UIService
+        {
+            get { return this.uiService; }
         }
 
         ///<summary>
@@ -73,22 +89,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             private set;
         }
 
-        //todo: this is not in use, delete?
-        ///<summary>
-        /// The icon to display for this command.
-        ///</summary>
-        public virtual Image Icon
-        {
-            get;
-            private set;
-        }
-
         ///<summary>
         /// The command's related help text.
         ///</summary>
         public virtual string HelpText
         {
-            get; 
+            get;
             private set;
         }
 
@@ -106,6 +112,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         /// </summary>
         public virtual string KeyGesture { get; private set; }
 
+
         /// <summary>
         /// Defines the method that determines whether the command can execute in its current state.
         /// </summary>
@@ -114,7 +121,30 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         /// </returns>
         /// <param name="parameter">Data used by the command.  If the command does not require data to be passed, this object can be set to null.
         ///                 </param>
-        public virtual bool CanExecute(object parameter)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+        public bool CanExecute(object parameter)
+        {
+            try
+            {
+                return InnerCanExecute(parameter);
+            }
+            catch (Exception ex)
+            {
+                uiService.ShowError(ex, string.Format(CultureInfo.CurrentCulture, "An error occurredwhile determing if the command {0} can execute:", Title));
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// When implemented by a child, determines if the command can execute.
+        /// </summary>
+        /// <returns>
+        /// Returns <see langword="true"/> if this command can be executed; otherwise, <see langword="false"/>.
+        /// </returns>
+        /// <param name="parameter">Data used by the command.  If the command does not require data to be passed, this object can be set to null.
+        ///                 </param>
+        protected virtual bool InnerCanExecute(object parameter)
         {
             return false;
         }
@@ -122,26 +152,46 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         ///<summary>
         /// Invokes the <see cref="CanExecuteChanged"/> event.
         ///</summary>
-        public virtual void OnCanExecuteChanged()
+        public void OnCanExecuteChanged()
         {
-            var handler = CanExecuteChanged;
-            if (handler != null)
-            {
-                handler(this, EventArgs.Empty);
-            }
+            WeakEventHandlerManager.CallWeakReferenceHandlers(this, _canExecuteChangedHandlers);
         }
 
         /// <summary>
         /// Occurs when changes occur that affect whether or not the command should execute.
         /// </summary>
-        public event EventHandler CanExecuteChanged;
+        public event EventHandler CanExecuteChanged
+        {
+            add{ WeakEventHandlerManager.AddWeakReferenceHandler(ref _canExecuteChangedHandlers, value, 2);}
+            remove{ WeakEventHandlerManager.RemoveWeakReferenceHandler(_canExecuteChangedHandlers, value);}
+        }
+
 
         /// <summary>
         /// Defines the method to be called when the command is invoked.
         /// </summary>
         /// <param name="parameter">Data used by the command.  If the command does not require data to be passed, this object can be set to null.
         ///                 </param>
-        public virtual void Execute(object parameter)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+        public void Execute(object parameter)
+        {
+            try
+            {
+                InnerExecute(parameter);
+            }
+            catch (Exception ex)
+            {
+                uiService.ShowError(ex, string.Format(CultureInfo.CurrentCulture, Resources.ErrorExecutingCommand, Title, ex.Message));
+            }
+        }
+
+        /// <summary>
+        /// When implemented by a child, executes the command.
+        /// </summary>
+        /// <param name="parameter">
+        /// Data used by the command.  If the command does not require data to be passed, this object can be set to null.
+        /// </param>
+        protected virtual void InnerExecute(object parameter)
         {
         }
 
@@ -162,5 +212,28 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         /// Occurs when a property value changes.
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
+
+        #region IDisposable Members
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        /// <filterpriority>2</filterpriority>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Indicates the object is being disposed.
+        /// </summary>
+        /// <param name="disposing">Indicates <see cref="Dispose(bool)"/> was invoked through an explicit call to <see cref="Dispose()"/> instead of a finalizer call.</param>
+        /// <filterpriority>2</filterpriority>
+        protected virtual void Dispose(bool disposing)
+        {
+        }
+
+        #endregion
     }
 }

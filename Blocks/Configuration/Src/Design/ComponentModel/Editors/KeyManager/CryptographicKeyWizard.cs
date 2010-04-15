@@ -11,15 +11,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 using System.IO;
 using System.Security.Cryptography;
+using System.Windows.Forms;
 
-using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration.Design
 {
@@ -40,7 +35,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         /// </summary>
         /// <param name="keyCreator">The <see cref="IKeyCreator"/> that should be used to generate and validate an input key.</param>
         public CryptographicKeyWizard(IKeyCreator keyCreator)
-            :this(CryptographicKeyWizardStep.SupplyKey, keyCreator)
+            : this(CryptographicKeyWizardStep.SupplyKey, keyCreator)
         {
         }
 
@@ -69,7 +64,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
 
 
             createNewKeyControl.KeyCreator = keyCreator;
-            
+
             currentWizardStep = step;
             RefreshWizardControls();
         }
@@ -79,27 +74,30 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         /// </summary>
         public ProtectedKeySettings KeySettings
         {
-            get{return protectedKeySettings;}
+            get { return protectedKeySettings; }
             set
             {
+                if (value == null) throw new ArgumentNullException("value");
+
                 createNewKeyControl.Key = value.ProtectedKey.DecryptedKey;
                 chooseDpapiScopeControl.Scope = value.Scope;
-                chooseProtectionScopeControl.Filepath = value.Filename;
-
+                chooseProtectionScopeControl.FilePath = value.FileName;
             }
         }
 
         /// <summary>
         /// Sets an unencrypted key to be used within the wizard.    
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1044:PropertiesShouldNotBeWriteOnly")]
         public Byte[] Key
         {
-            set{createNewKeyControl.Key = value;}
+            set { createNewKeyControl.Key = value; }
         }
 
         /// <summary>
         /// Sets an <see cref="IKeyCreator"/> instance, that should be used to validate and generate keys.
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1044:PropertiesShouldNotBeWriteOnly")]
         public IKeyCreator KeyCreator
         {
             set { createNewKeyControl.KeyCreator = value; }
@@ -107,14 +105,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
 
         private void UpdateState()
         {
-            switch(currentWizardStep)
+            switch (currentWizardStep)
             {
                 case CryptographicKeyWizardStep.ChooseKeyFile:
-                    protectedKeySettings.Filename = chooseProtectionScopeControl.Filepath;
+                    protectedKeySettings.FileName = chooseProtectionScopeControl.FilePath;
                     break;
 
                 case CryptographicKeyWizardStep.OpenExistingKeyFile:
-                    protectedKeySettings.Filename = openExistingKeyFileControl.Filepath;
+                    protectedKeySettings.FileName = openExistingKeyFileControl.FilePath;
                     break;
 
                 case CryptographicKeyWizardStep.ChooseProtectionScope:
@@ -125,12 +123,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
 
         private CryptographicKeyWizardStep NextStep
         {
-            get 
+            get
             {
-                switch(currentWizardStep)
+                switch (currentWizardStep)
                 {
                     case CryptographicKeyWizardStep.SupplyKey:
-                        switch(supplyKeyControl.Method)
+                        switch (supplyKeyControl.Method)
                         {
                             case SupplyKeyMethod.CreateNew:
                                 return CryptographicKeyWizardStep.CreateNewKey;
@@ -141,7 +139,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
                             case SupplyKeyMethod.OpenExisting:
                                 return CryptographicKeyWizardStep.OpenExistingKeyFile;
                         }
-                        
+
                         return CryptographicKeyWizardStep.CreateNewKey;
 
                     case CryptographicKeyWizardStep.CreateNewKey:
@@ -152,7 +150,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
 
                     case CryptographicKeyWizardStep.OpenExistingKeyFile:
                         return CryptographicKeyWizardStep.ChooseProtectionScope;
-                    
+
                     case CryptographicKeyWizardStep.ImportArchivedKey:
                         return CryptographicKeyWizardStep.ChooseKeyFile;
 
@@ -164,7 +162,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
 
         private void RefreshWizardControls()
         {
-            btnNext.Visible =(NextStep != CryptographicKeyWizardStep.Finished);
+            btnNext.Visible = (NextStep != CryptographicKeyWizardStep.Finished);
             btnFinish.Visible = (NextStep == CryptographicKeyWizardStep.Finished);
             btnPrevious.Visible = (previousWizardSteps.Count != 0);
 
@@ -214,43 +212,44 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
             DoGoBack();
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
         private void btnFinish_Click(object sender, EventArgs e)
         {
-            switch(supplyKeyControl.Method)
+            switch (supplyKeyControl.Method)
             {
                 case SupplyKeyMethod.OpenExisting:
-                    using (Stream importedKeyReader = File.OpenRead(openExistingKeyFileControl.Filepath))
+                    using (Stream importedKeyReader = File.OpenRead(openExistingKeyFileControl.FilePath))
                     {
                         try
                         {
                             protectedKeySettings.ProtectedKey = KeyManager.Read(importedKeyReader, chooseDpapiScopeControl.Scope);
-							protectedKeySettings.Scope = chooseDpapiScopeControl.Scope;
+                            protectedKeySettings.Scope = chooseDpapiScopeControl.Scope;
                         }
                         catch (Exception)
                         {
-                            MessageBox.Show(KeyManagerResources.ErrorImportingKey, KeyManagerResources.CryptoKeyWizardErrorTitle, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                            MessageBox.Show(KeyManagerResources.ErrorImportingKey, KeyManagerResources.CryptoKeyWizardErrorTitle, MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
                         }
                     }
                     break;
 
                 case SupplyKeyMethod.CreateNew:
                     protectedKeySettings.ProtectedKey = ProtectedKey.CreateFromPlaintextKey(createNewKeyControl.Key, chooseDpapiScopeControl.Scope);
-					protectedKeySettings.Scope = chooseDpapiScopeControl.Scope;
-					break;
+                    protectedKeySettings.Scope = chooseDpapiScopeControl.Scope;
+                    break;
 
                 case SupplyKeyMethod.ImportKey:
-                    using (Stream archivedKeyReader = File.OpenRead(importArchivedKeyControl.Filename))
+                    using (Stream archivedKeyReader = File.OpenRead(importArchivedKeyControl.FileName))
                     {
-						try
-						{
-							protectedKeySettings.ProtectedKey = KeyManager.RestoreKey(archivedKeyReader, importArchivedKeyControl.Passphrase, chooseDpapiScopeControl.Scope);
-							protectedKeySettings.Scope = chooseDpapiScopeControl.Scope;
-						}
-						catch (CryptographicException)
-						{
-                            MessageBox.Show(KeyManagerResources.KeyCouldNotBeRead, KeyManagerResources.CryptoKeyWizardErrorTitle, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-							this.DialogResult = DialogResult.None;
-						}
+                        try
+                        {
+                            protectedKeySettings.ProtectedKey = KeyManager.RestoreKey(archivedKeyReader, importArchivedKeyControl.PassPhrase, chooseDpapiScopeControl.Scope);
+                            protectedKeySettings.Scope = chooseDpapiScopeControl.Scope;
+                        }
+                        catch (CryptographicException)
+                        {
+                            MessageBox.Show(KeyManagerResources.KeyCouldNotBeRead, KeyManagerResources.CryptoKeyWizardErrorTitle, MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
+                            this.DialogResult = DialogResult.None;
+                        }
                     }
                     break;
             }

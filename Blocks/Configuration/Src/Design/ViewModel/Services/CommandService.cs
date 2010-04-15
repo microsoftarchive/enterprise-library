@@ -12,13 +12,21 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
-using Microsoft.Practices.Unity;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Configuration.Design.HostAdapterV5;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Extensions;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Commands;
+using Microsoft.Practices.Unity;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services
 {
+    /// <summary>
+    /// Service class used to get top-level menu <see cref="CommandModel"/> instances.
+    /// </summary>
+    /// <remarks>
+    /// In order to get an instance of this class, declare it as a constructor argument on the consuming component or use the <see cref="IUnityContainer"/> to obtain an instance from code.
+    /// </remarks>
+    /// <see cref="HandlesSectionAttribute"/>
     public class MenuCommandService
     {
         AssemblyLocator assemblyLocator;
@@ -26,18 +34,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.S
         IUnityContainer builder;
         ConfigurationSourceDependency configurationSourceRefresh;
 
+        /// <summary>
+        /// This constructor supports the configuration design-time and is not intended to be used directly from your code.
+        /// </summary>
         public MenuCommandService(IUnityContainer builder, AssemblyLocator assemblyLocator, ConfigurationSourceDependency configurationSourceRefresh)
         {
             this.configurationSourceRefresh = configurationSourceRefresh;
             this.builder = builder;
             this.assemblyLocator = assemblyLocator;
-            this.globalCommands = this.assemblyLocator.Assemblies
-                                                       .SelectMany(x => x.GetCustomAttributes(typeof(CommandAttribute), true).OfType<CommandAttribute>())
-                                                       .Select(x => builder.Resolve(x.CommandModelType, new DependencyOverride(x.GetType(), x)))
-                                                       .Cast<CommandModel>()
-                                                       .ToList();
-
-            configurationSourceRefresh.Cleared += new EventHandler(configurationSourceRefresh_Refresh);
         }
 
         void configurationSourceRefresh_Refresh(object sender, EventArgs e)
@@ -48,14 +52,41 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.S
             }
         }
 
+        /// <summary>
+        /// Returns a list of <see cref="CommandModel"/> instances that belong to the specified <see cref="CommandPlacement"/>.
+        /// </summary>
+        /// <param name="placement">The <see cref="CommandPlacement"/> for which commands should be returned.</param>
+        /// <returns>
+        /// A list of <see cref="CommandModel"/> instances that belong to the specified <see cref="CommandPlacement"/>.
+        /// </returns>
         public IEnumerable<CommandModel> GetCommands(CommandPlacement placement)
         {
-            return globalCommands.Where(x => x.Placement == placement);
+            EnsureCommands();
+            return globalCommands
+                .Where(x => x.Placement == placement);
         }
 
+        private void EnsureCommands()
+        {
+            if (globalCommands == null)
+            {
+                var globalAssemblyCommands = this.assemblyLocator.Assemblies
+                   .FilterSelectManySafe(x => x.GetCustomAttributes(typeof(CommandAttribute), true).OfType<CommandAttribute>())
+                   .Select(x => builder.Resolve(x.CommandModelType, new DependencyOverride(x.GetType(), x)))
+                   .Cast<CommandModel>();
 
+                this.globalCommands = globalAssemblyCommands.ToList();
+                configurationSourceRefresh.Cleared += configurationSourceRefresh_Refresh;
+            }
+        }
+
+        /// <summary>
+        /// Adds a <see cref="SectionViewModel"/> instance to the designer for the specified section name.
+        /// </summary>
+        /// <param name="sectionName">The configuration section name that should be added to the designer.</param>
         public void ExecuteAddBlockForSection(string sectionName)
         {
+            EnsureCommands();
             var addBlockCommand = globalCommands.OfType<AddApplicationBlockCommand>().Where(x => x.SectionName == sectionName).FirstOrDefault();
             if (addBlockCommand != null && addBlockCommand.CanExecute(null)) addBlockCommand.Execute(null);
         }

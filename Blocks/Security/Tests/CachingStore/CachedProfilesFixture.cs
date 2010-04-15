@@ -130,25 +130,5 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cache.CachingStore.Test
                 Assert.Fail();
             }
         }
-
-        [TestMethod]
-        public void RetrieveCachedProfileFiresWmiEvent()
-        {
-            SecurityCacheProvider securityCache = SecurityCacheFactory.GetSecurityCacheProvider() as SecurityCacheProvider;
-
-            using (WmiEventWatcher eventWatcher = new WmiEventWatcher(1))
-            {
-                IToken token = new GuidToken();
-                object profile = securityCache.GetProfile(token);
-                eventWatcher.WaitForEvents();
-
-                Thread.Sleep(500);
-                Assert.AreEqual(1, eventWatcher.EventsReceived.Count);
-                Assert.AreEqual("SecurityCacheReadPerformedEvent", eventWatcher.EventsReceived[0].ClassPath.ClassName);
-                Assert.AreEqual(SecurityEntityType.Profile.ToString(), eventWatcher.EventsReceived[0].Properties["EntityType"].Value);
-                Assert.AreEqual("provider1", eventWatcher.EventsReceived[0].Properties["InstanceName"].Value);
-                Assert.AreEqual(token.Value, eventWatcher.EventsReceived[0].Properties["TokenUsed"].Value);
-            }
-        }
     }
 }

@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Microsoft.Practices.Unity;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
@@ -26,6 +27,12 @@ using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics
 {
+
+#pragma warning disable 1591
+    /// <summary>
+    /// This class supports block-specific configuration design-time and is not
+    /// intended to be used directly from your code.
+    /// </summary>
     public class CryptographySectionViewModel : SectionViewModel
     {
         public CryptographySectionViewModel(IUnityContainer builder, string sectionName, ConfigurationSection section)
@@ -33,7 +40,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
         {
 
         }
-
 
         public override void Save(IDesignConfigurationSource configurationSource)
         {
@@ -57,7 +63,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
                 return;
             }
 
-            using (Stream keyOutput = File.OpenWrite(protectedKeySettings.Filename))
+            using (Stream keyOutput = File.OpenWrite(protectedKeySettings.FileName))
             {
                 KeyManager.Write(keyOutput, protectedKeySettings.ProtectedKey.EncryptedKey, protectedKeySettings.Scope);
             }
@@ -69,9 +75,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
             var hashProviders = DescendentElements().Where(x => x.ConfigurationType == typeof(NameTypeConfigurationElementCollection<HashProviderData, CustomHashProviderData>)).First();
             var symmetricProviders = DescendentElements().Where(x => x.ConfigurationType == typeof(NameTypeConfigurationElementCollection<SymmetricProviderData, CustomSymmetricCryptoProviderData>)).First();
 
-            return new HorizontalListViewModel(
-                new HeaderedListViewModel(hashProviders), 
-                new HeaderedListViewModel(symmetricProviders));
+            return new HorizontalListLayout(
+                new HeaderedListLayout(hashProviders), 
+                new HeaderedListLayout(symmetricProviders));
         }
     }
+
+#pragma warning restore 1591
 }

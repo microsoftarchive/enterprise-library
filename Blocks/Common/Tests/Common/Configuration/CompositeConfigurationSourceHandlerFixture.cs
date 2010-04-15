@@ -42,8 +42,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
             CompositionHandler = new TestCompositeConfigurationSourceHandler(MainSource);
             MainSource.SetCompositeHandler(CompositionHandler);
 
-            var dummySection =  MainSource.GetSection(SectionInChildSource1);
-
             ChildSource1 = (TestConfigurationSource)CompositionHandler["Source1"];
             ChildSource2 = (TestConfigurationSource)CompositionHandler["Source2"];
 
@@ -80,10 +78,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
             }
 
             public int RefreshCallCount = 0;
-            protected override void Refresh()
+
+            protected override void DoRefresh()
             {
-                RefreshCallCount++;
-                base.Refresh();
+                ++RefreshCallCount;
+                base.DoRefresh();
             }
 
             public IConfigurationSource this[string configurationSourceName]
@@ -158,11 +157,21 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
             MainSource.Add(ConfigurationSourceSection.SectionName, sourcesSection);
             MainSource.DoSourceChanged( new []{ConfigurationSourceSection.SectionName});
 
-            var section = MainSource.GetSection(SectionInChildSource1);
+
+            try
+            {
+                MainSource.GetSection(SectionInChildSource1);
+                Assert.Fail(); // Getting here indicates the section is still in original source
+            }
+            catch(ConfigurationSourceErrorsException)
+            {
+                // not caught intentionally
+            }
 
             ChildSource2 = (TestConfigurationSource)CompositionHandler["Source2"];
             ChildSource2.Add(SectionInChildSource1, new DummySection { Name = "SectionInSource2" });
         }
+
 
         [TestMethod]
         public void Then_CompositeSourceReturnsUpdatedSectionFromOtherSource()
@@ -281,6 +290,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
             ChildSource1.DoSourceChanged(new []{"section1"});
         }
 
+        protected override void Teardown()
+        {
+            TestConfigurationSource.ConfigurationSourceContents.Remove("section1");
+            base.Teardown();
+        }
+
         [TestMethod]
         public void Then_MainSourceRaisedChange()
         {
@@ -290,15 +305,35 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
         [TestMethod]
         public void Then_MainSourceKeepsRaisingEventsAfterReset()
         {
+            TestConfigurationSource.ConfigurationSourceContents["section1"] = new DummySection();
+
             //force reset
             MainSource.DoSourceChanged( new []{ConfigurationSourceSection.SectionName});
             Assert.AreEqual(1, CompositionHandler.RefreshCallCount);
-
             this.MainSourceEventListener.ConfigurationSourceChangedRaiseCount = 0; //reset counter
-            ChildSource1.DoSourceChanged(new[] { "section1" });
-            Assert.AreEqual(1, this.MainSourceEventListener.ConfigurationSourceChangedRaiseCount);
+
+            var childSource = (TestConfigurationSource) CompositionHandler["Source1"];
+            childSource.DoSourceChanged(new[] { "section1" });
+
+            Assert.IsTrue(MainSourceEventListener.ConfigurationSourceChangedRaiseCount > 0);
         }
     }
 
+    [TestClass]
+    public class When_RequestingMissingSections : Given_CompositeConfigurationSource
+    {
+        [TestMethod]
+        [ExpectedException(typeof(ConfigurationSourceErrorsException))]
+        public void then_throws_on_registered_but_missing_sections()
+        {
+            ConfigurationSection section = MainSource.GetSection("SectionInSource2");
+        }
 
+        [TestMethod]
+        public void then_does_not_throw_on_unregistered_missing_sections()
+        {
+            ConfigurationSection section = MainSource.GetSection("UnregisteredSection");
+            Assert.IsNull(section);
+        }
+    }
 }

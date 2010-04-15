@@ -18,9 +18,19 @@ using System.Text;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services
 {
+    /// <summary>
+    /// This class supports the configuration design-time and is not
+    /// intended to be used directly from your code.
+    /// </summary>
+    /// <remarks>
+    /// Use the <see cref="AssemblyLocator"/> to obtain a list of assemblies that are used by the designer.
+    /// </remarks>
+    /// <seealso cref="AssemblyLocator"/>
     public class BinPathProbingAssemblyLocator : AssemblyLocator
     {
-
+        /// <summary>
+        /// This constructor supports the configuration design-time and is not intended to be used directly from your code.
+        /// </summary>
         public BinPathProbingAssemblyLocator()
             :base(AppDomain.CurrentDomain.BaseDirectory)
         {

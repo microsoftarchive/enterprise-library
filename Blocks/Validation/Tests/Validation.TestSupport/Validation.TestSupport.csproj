@@ -54,6 +54,9 @@
     <Compile Include="..\..\..\GlobalAssemblyInfo.cs">
       <Link>GlobalAssemblyInfo.cs</Link>
     </Compile>
+    <None Include="..\..\..\GlobalAssemblyInfo.2010.cs">
+      <Link>GlobalAssemblyInfo.2010.cs</Link>
+    </None>
     <Compile Include="Configuration\MockValidationSettings.cs" />
     <Compile Include="Configuration\MockValidatorData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -63,6 +66,8 @@
     <Compile Include="TestClasses\BaseTestTypeWithValidatorAttributesOnMethods.cs" />
     <Compile Include="TestClasses\BaseTestTypeWithValidatorAttributesOnProperties.cs" />
     <Compile Include="TestClasses\BaseTypeWithSelfValidationAttributesOnMethods.cs" />
+    <Compile Include="TestClasses\CreditCardNumberValidator.cs" />
+    <Compile Include="TestClasses\CreditCardNumberValidatorAttribute.cs" />
     <Compile Include="TestClasses\TestObjectWithMultipleSourceValidationAttributesOnProperties.cs" />
     <Compile Include="TestClasses\DerivedTestDomainObject.cs" />
     <Compile Include="TestClasses\DerivedTestTypeWithValidatorAttributes.cs" />
@@ -100,6 +105,7 @@
     <Compile Include="TestClasses\TypeWithoutValidationAttributesAtTheTypeLevel.cs" />
     <Compile Include="TestClasses\TypeWithValidatorAttributesWithRuleNames.cs" />
     <Compile Include="TestClasses\TypeWithValidatorSelfValidationAttributes.cs" />
+    <Compile Include="TestClasses\UserWithValidatedCreditCard.cs" />
     <Compile Include="TestClasses\ValidationTestHelper.cs" />
   </ItemGroup>
   <ItemGroup>

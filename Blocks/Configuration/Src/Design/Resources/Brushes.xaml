@@ -27,4 +27,9 @@
     <SolidColorBrush x:Key="ElementCommandMouseOverBrush" Color="#FFB4B4B4" />
     <SolidColorBrush x:Key="ElementCommandShadowBrush" Color="#FF000000" />
     <SolidColorBrush x:Key="ElementCommandBackgroundBrush" Color="#00FFFFFF" />    
+	
+	<SolidColorBrush x:Key="ElementContextButtonStroke" Color="#FFB2B4B7"/>
+	<SolidColorBrush x:Key="ElementContextMenuButtonStrokeHighlight" Color="#FF646464" />
+	<SolidColorBrush x:Key="ElementContextMouseOverBrush" Color="#FFECCDAA" />
+	
 </ResourceDictionary>

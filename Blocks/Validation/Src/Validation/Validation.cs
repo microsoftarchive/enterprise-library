@@ -38,7 +38,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         /// <param name="target">The instance of <typeparamref name="T"/> to validate.</param>
         /// <param name="rulesets">The rulesets to use when validating.</param>
         /// <returns>A collection of with the results of the individual validations.</returns>
-        /// <exception cref="ArgumentNullException">when the <paramref name="ruleset"/> is <see langword="null"/>.</exception>
+        /// <exception cref="ArgumentNullException">when the <paramref name="rulesets"/> is <see langword="null"/>.</exception>
         public static ValidationResults Validate<T>(T target, params string[] rulesets)
         {
             return Validate<T>(target, ValidationSpecificationSource.All, rulesets);
@@ -70,7 +70,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         /// <param name="source">The source of validation information.</param>
         /// <param name="rulesets">The rulesets to use when validating.</param>
         /// <returns>A collection of with the results of the individual validations.</returns>
-        /// <exception cref="ArgumentNullException">when the <paramref name="ruleset"/> is <see langword="null"/>.</exception>
+        /// <exception cref="ArgumentNullException">when the <paramref name="rulesets"/> is <see langword="null"/>.</exception>
         public static ValidationResults Validate<T>(T target, ValidationSpecificationSource source, params string[] rulesets)
         {
             if (rulesets == null)
@@ -113,7 +113,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         /// <param name="target">The instance of <typeparamref name="T"/> to validate.</param>
         /// <param name="rulesets">The rulesets to use when validating.</param>
         /// <returns>A collection of with the results of the individual validations.</returns>
-        /// <exception cref="ArgumentNullException">when the <paramref name="ruleset"/> is <see langword="null"/>.</exception>
+        /// <exception cref="ArgumentNullException">when the <paramref name="rulesets"/> is <see langword="null"/>.</exception>
         public static ValidationResults ValidateFromAttributes<T>(T target, params string[] rulesets)
         {
             if (rulesets == null)
@@ -158,7 +158,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         /// <param name="target">The instance of <typeparamref name="T"/> to validate.</param>
         /// <param name="rulesets">The rulesets to use when validating.</param>
         /// <returns>A collection of with the results of the individual validations.</returns>
-        /// <exception cref="ArgumentNullException">when the <paramref name="ruleset"/> is <see langword="null"/>.</exception>
+        /// <exception cref="ArgumentNullException">when the <paramref name="rulesets"/> is <see langword="null"/>.</exception>
         public static ValidationResults ValidateFromConfiguration<T>(T target, params string[] rulesets)
         {
             if (rulesets == null)

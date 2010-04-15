@@ -28,7 +28,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
 		/// <param name="fieldValueValidator">The validator for the value of the field.</param>
 		public FieldValueValidator(string fieldName, Validator fieldValueValidator)
 			: base(GetFieldValueAccess(fieldName), fieldValueValidator)
-		{ }
+		{
+		}
 
 		private static ValueAccess GetFieldValueAccess(string fieldName)
 		{

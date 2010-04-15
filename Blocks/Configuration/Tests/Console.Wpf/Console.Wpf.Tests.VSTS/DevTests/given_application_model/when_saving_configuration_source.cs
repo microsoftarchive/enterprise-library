@@ -9,40 +9,53 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.IO;
 using System.Linq;
-using System.Text;
-using System.Windows.Forms;
+using System.Windows;
 using Console.Wpf.Tests.VSTS.DevTests.Contexts;
 using Console.Wpf.Tests.VSTS.DevTests.given_shell_service;
 using Console.Wpf.Tests.VSTS.Mocks;
+using Microsoft.Practices.EnterpriseLibrary.Caching.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design.Validation;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Configuration.Design.HostAdapterV5;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.TestSupport;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Validation;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
+using Microsoft.Practices.Unity;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
-using Microsoft.Practices.Unity;
-using Microsoft.Practices.EnterpriseLibrary.Caching.Configuration;
-using System.IO;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using FileDialog = Microsoft.Win32.FileDialog;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Validation;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_application_model
 {
     [TestClass]
-    public class when_saving_configuration_source : given_clean_appllication_model
+    public class when_saving_configuration_source : given_clean_application_model
     {
         string originalFileContents;
+        bool saveOperationBeginFired;
+        bool saveOperationEndFired;
+
         protected override void Arrange()
         {
             originalFileContents = File.ReadAllText(TestConfigurationFilePath);
             base.Arrange();
 
             UIServiceMock.Setup(x => x.ShowFileDialog(It.IsAny<FileDialog>())).Returns(new FileDialogResult { DialogResult = true, FileName = TestConfigurationFilePath });
+            UIServiceMock.Setup(x => x.ShowWindow(It.IsAny<Window>()));
+
             ApplicationModel.OpenConfigurationSource();
+
+            SaveOperation saveOperation = Container.Resolve<SaveOperation>();
+
+            saveOperationBeginFired = false;
+            saveOperationEndFired = false;
+            saveOperation.BeginSaveOperation += (sender, args) => saveOperationBeginFired = true;
+            saveOperation.EndSaveOperation += (sender, args) => saveOperationEndFired = true;
 
         }
 
@@ -60,26 +73,28 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_application_model
 
         }
 
+        [TestMethod]
+        public void then_save_operation_begin_and_end_events_where_fired()
+        {
+            ApplicationModel.Save();
+
+            Assert.IsTrue(saveOperationBeginFired);
+            Assert.IsTrue(saveOperationEndFired);
+        }
+
         protected override void Teardown()
         {
             File.WriteAllText(TestConfigurationFilePath, originalFileContents);
         }
     }
 
-    [TestClass]
-    public class when_saving_configuration_source_with_validation_errors : ContainerContext
+    public abstract class ConfigurationWithErrorsCotnext : ContainerContext
     {
         protected override void Arrange()
         {
             base.Arrange();
-
-            UIServiceMock.Setup(x => x.ShowFileDialog(It.IsAny<FileDialog>()))
-                .Returns(new FileDialogResult { DialogResult = true, FileName = "unused.config" });
-
-            UIServiceMock.Setup(x => x.ShowError(It.IsAny<string>())).Verifiable();
-
             var locator = new Mock<ConfigurationSectionLocator>();
-            locator.Setup(x => x.ConfigurationSectionNames).Returns(new[] { "testSection" });
+            locator.Setup(x => x.ConfigurationSectionNames).Returns(new[] {"testSection"});
             Container.RegisterInstance(locator.Object);
 
             var section = new ElementForValidation();
@@ -90,12 +105,28 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_application_model
             var sourceModel = Container.Resolve<ConfigurationSourceModel>();
             sourceModel.Load(source);
 
+
             Assert.IsTrue(sourceModel.Sections
                               .SelectMany(s => s.DescendentElements()
                                                    .SelectMany(e => e.Properties)
-                                                   .SelectMany(p => p.ValidationErrors)
-                                                   .Union(s.Properties.SelectMany(p => p.ValidationErrors))
+                                                   .SelectMany(p => p.ValidationResults)
+                                                   .Union(s.Properties.SelectMany(p => p.ValidationResults))
                                                    ).Where(e => e.IsError).Any());
+        }
+    }
+
+
+    [TestClass]
+    public class when_saving_configuration_source_with_validation_errors : ConfigurationWithErrorsCotnext
+    {
+        protected override void Arrange()
+        {
+            base.Arrange();
+
+            UIServiceMock.Setup(x => x.ShowFileDialog(It.IsAny<FileDialog>()))
+                .Returns(new FileDialogResult { DialogResult = true, FileName = "unused.config" });
+
+            UIServiceMock.Setup(x => x.ShowError(It.IsAny<string>())).Verifiable();
         }
 
         protected override void Act()
@@ -111,22 +142,15 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_application_model
         }
     }
 
-    [TestClass]
-    public class when_saving_configuratin_with_only_validation_warnings : ContainerContext
+    public abstract class ConfigurationWithWarningsContext : ContainerContext
     {
-        private ConfigurationSourceModel sourceModel;
-
         protected override void Arrange()
         {
+
             base.Arrange();
 
-            UIServiceMock.Setup(x => x.ShowFileDialog(It.IsAny<FileDialog>()))
-                .Returns(new FileDialogResult { DialogResult = true, FileName = "unused.config" });
-
-            UIServiceMock.Setup(x => x.ShowError(It.IsAny<string>())).AtMost(0);
-
             var locator = new Mock<ConfigurationSectionLocator>();
-            locator.Setup(x => x.ConfigurationSectionNames).Returns(new[] { "testSection" });
+            locator.Setup(x => x.ConfigurationSectionNames).Returns(new[] {"testSection"});
             Container.RegisterInstance(locator.Object);
 
             var section = new ElementWithOnlyWarning();
@@ -138,12 +162,26 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_application_model
             sourceModel.Load(source);
 
             var errors = sourceModel.Sections
-                            .SelectMany(s => s.DescendentElements()
-                                                 .SelectMany(e => e.Properties)
-                                                 .SelectMany(p => p.ValidationErrors)
-                                                 .Union(s.Properties.SelectMany(p => p.ValidationErrors)));
+                .SelectMany(s => s.DescendentElements()
+                                     .SelectMany(e => e.Properties)
+                                     .SelectMany(p => p.ValidationResults)
+                                     .Union(s.Properties.SelectMany(p => p.ValidationResults)));
 
             Assert.IsTrue(errors.All(e => e.IsWarning));
+        }
+    }
+    
+    [TestClass]
+    public class when_saving_configuratin_with_only_validation_warnings : ConfigurationWithWarningsContext
+    {
+        protected override void Arrange()
+        {
+            base.Arrange();
+
+            UIServiceMock.Setup(x => x.ShowFileDialog(It.IsAny<FileDialog>()))
+                .Returns(new FileDialogResult { DialogResult = true, FileName = "unused.config" });
+
+            UIServiceMock.Setup(x => x.ShowError(It.IsAny<string>())).AtMost(0);
         }
 
         protected override void Act()
@@ -158,6 +196,50 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_application_model
             UIServiceMock.Verify();
         }
 
+    }
+
+    [TestClass]
+    public class when_saving_configuration_with_environment_errors : ConfigurationWithWarningsContext
+    {
+        private ApplicationViewModel appModel;
+
+        protected override void Arrange()
+        {
+            base.Arrange();
+            
+            UIServiceMock.Setup(x => x.ShowFileDialog(It.IsAny<FileDialog>()))
+              .Returns(new FileDialogResult { DialogResult = true, FileName = "unused.config" });
+
+            UIServiceMock.Setup(x => x.ShowError(It.IsAny<string>())).Verifiable();
+
+            appModel = Container.Resolve<ApplicationViewModel>();
+            appModel.NewEnvironment();
+            var validEnvironment = appModel.Environments.ElementAt(0);
+            validEnvironment.EnvironmentDeltaFile = "mydeltafile.dconfig";
+            Assert.IsFalse(validEnvironment.Properties
+                                .SelectMany(p => p.ValidationResults)
+                              .Where(e => e.IsError).Any());
+
+            appModel.NewEnvironment();
+            var invalidEnvironment = appModel.Environments.ElementAt(0);
+            invalidEnvironment.EnvironmentDeltaFile = string.Empty;
+
+            Assert.IsTrue(invalidEnvironment.Properties
+                              .SelectMany(p => p.ValidationResults)
+                              .Where(e => e.IsError).Any());
+        }
+
+        protected override void Act()
+        {
+            appModel.Save();
+        }
+
+        [TestMethod]
+        public void then_should_prompt_to_fix_validation_errors()
+        {
+            UIServiceMock.Verify();   
+        }
+        
     }
 
     public class ElementWithOnlyWarning : ConfigurationSection
@@ -182,12 +264,12 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_application_model
 
     public class WarningProductingValidator : Validator
     {
-        protected override void ValidateCore(object instance, string value, IList<ValidationError> errors)
+        protected override void ValidateCore(object instance, string value, IList<ValidationResult> results)
         {
             var property = instance as Property;
             if (property == null) return;
 
-            errors.Add(new ValidationError(property, "Test Warning Message", true));
+            results.Add(new PropertyValidationResult(property, "Test Warning Message", true));
         }
     }
 }

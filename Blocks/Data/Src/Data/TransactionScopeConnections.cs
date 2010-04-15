@@ -9,7 +9,6 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Transactions;
@@ -26,8 +25,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
     {
         // There's a reason why this field is not thread-static: notifications for completed Oracle transactions
         // may happen in a different thread
-        static readonly Dictionary<Transaction, Dictionary<string, DbConnection>> transactionConnections =
-            new Dictionary<Transaction, Dictionary<string, DbConnection>>();
+        static readonly Dictionary<Transaction, Dictionary<string, DatabaseConnectionWrapper>> transactionConnections =
+            new Dictionary<Transaction, Dictionary<string, DatabaseConnectionWrapper>>();
 
         /// <summary>
         ///		Returns a connection for the current transaction. This will be an existing <see cref="DbConnection"/>
@@ -36,22 +35,22 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
         /// </summary>
         /// <param name="db"></param>
         /// <returns>Either a <see cref="DbConnection"/> instance or null.</returns>
-        public static DbConnection GetConnection(Database db)
+        public static DatabaseConnectionWrapper GetConnection(Database db)
         {
             Transaction currentTransaction = Transaction.Current;
 
             if (currentTransaction == null)
                 return null;
 
-            Dictionary<string, DbConnection> connectionList;
-            DbConnection connection;
+            Dictionary<string, DatabaseConnectionWrapper> connectionList;
+            DatabaseConnectionWrapper connection;
 
             lock (transactionConnections)
             {
                 if (!transactionConnections.TryGetValue(currentTransaction, out connectionList))
                 {
                     // We don't have a list for this transaction, so create a new one
-                    connectionList = new Dictionary<string, DbConnection>();
+                    connectionList = new Dictionary<string, DatabaseConnectionWrapper>();
                     transactionConnections.Add(currentTransaction, connectionList);
 
                     // We need to know when this previously unknown transaction is completed too
@@ -70,9 +69,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
                 {
                     // we're betting the cost of acquiring a new finer-grained lock is less than 
                     // that of opening a new connection, and besides this allows threads to work in parallel
-                    connection = db.GetNewOpenConnection();
+                    var dbConnection = db.GetNewOpenConnection();
+                    connection = new DatabaseConnectionWrapper(dbConnection);
                     connectionList.Add(db.ConnectionString, connection);
                 }
+                connection.AddRef();
             }
 
             return connection;
@@ -86,7 +87,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
         /// <param name="e"></param>
         static void OnTransactionCompleted(object sender, TransactionEventArgs e)
         {
-            Dictionary<string, DbConnection> connectionList;
+            Dictionary<string, DatabaseConnectionWrapper> connectionList;
 
             lock (transactionConnections)
             {
@@ -105,9 +106,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
                 // acquiring this lock should not be necessary unless there's a possibility for this event to be fired
                 // while the transaction involved in the event is still set as the current transaction for a 
                 // different thread.
-                foreach (DbConnection connection in connectionList.Values)
+                foreach (var connectionWrapper in connectionList.Values)
                 {
-                    connection.Dispose();
+                    connectionWrapper.Dispose();
                 }
             }
         }

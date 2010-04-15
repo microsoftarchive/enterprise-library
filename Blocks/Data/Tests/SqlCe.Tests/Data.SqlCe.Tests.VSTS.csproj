@@ -53,7 +53,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="APTCAFixture.cs" />
+    <Compile Include="APTCAFixture.2008.cs" />
     <Compile Include="SqlCeExecuteResultSetFixture.cs" />
     <Compile Include="SqlCeDataSetHelper.cs" />
     <Compile Include="SqlCeDataAccessTestsFixture.cs" />

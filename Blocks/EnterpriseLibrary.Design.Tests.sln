@@ -101,8 +101,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExceptionHandling.Logging",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PolicyInjection", "PolicyInjection\Src\PolicyInjection\PolicyInjection.csproj", "{3E6129C8-18E4-410D-89FC-0DBBE6009FC5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PolicyInjection.CallHandlers", "PolicyInjection\Src\CallHandlers\PolicyInjection.CallHandlers.csproj", "{88316009-DEDF-434C-A6A8-BE79D8A1B502}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Tests.VSTS", "Common\Tests\Common\Common.Tests.VSTS.csproj", "{02FC8CE2-2CB3-41B6-8516-0A27B99708A9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Configuration.Manageability.Tests.VSTS", "Common\Tests\Configuration.Manageability\Common.Configuration.Manageability.Tests.VSTS.csproj", "{C0D9660C-5A2C-40C5-AE8E-C16C39DC8EAA}"
@@ -304,16 +302,6 @@ Global
 		{3E6129C8-18E4-410D-89FC-0DBBE6009FC5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3E6129C8-18E4-410D-89FC-0DBBE6009FC5}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{3E6129C8-18E4-410D-89FC-0DBBE6009FC5}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{88316009-DEDF-434C-A6A8-BE79D8A1B502}.Debug|.NET.ActiveCfg = Debug|Any CPU
-		{88316009-DEDF-434C-A6A8-BE79D8A1B502}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{88316009-DEDF-434C-A6A8-BE79D8A1B502}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{88316009-DEDF-434C-A6A8-BE79D8A1B502}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{88316009-DEDF-434C-A6A8-BE79D8A1B502}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{88316009-DEDF-434C-A6A8-BE79D8A1B502}.Release|.NET.ActiveCfg = Release|Any CPU
-		{88316009-DEDF-434C-A6A8-BE79D8A1B502}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{88316009-DEDF-434C-A6A8-BE79D8A1B502}.Release|Any CPU.Build.0 = Release|Any CPU
-		{88316009-DEDF-434C-A6A8-BE79D8A1B502}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{88316009-DEDF-434C-A6A8-BE79D8A1B502}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{02FC8CE2-2CB3-41B6-8516-0A27B99708A9}.Debug|.NET.ActiveCfg = Debug|Any CPU
 		{02FC8CE2-2CB3-41B6-8516-0A27B99708A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{02FC8CE2-2CB3-41B6-8516-0A27B99708A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
@@ -437,7 +425,6 @@ Global
 		{EC311AD3-0A26-4808-901B-A983E97E5790} = {BA30BD64-7E40-4022-8BF2-6E9822964491}
 		{90CBF2D3-767E-4E3C-AF8C-AB3E5F17BE18} = {BA30BD64-7E40-4022-8BF2-6E9822964491}
 		{3E6129C8-18E4-410D-89FC-0DBBE6009FC5} = {5C581318-1C04-4232-9F94-4A43F75FB93F}
-		{88316009-DEDF-434C-A6A8-BE79D8A1B502} = {5C581318-1C04-4232-9F94-4A43F75FB93F}
 	EndGlobalSection
 	GlobalSection(TextTemplating) = postSolution
 		TextTemplating = 1

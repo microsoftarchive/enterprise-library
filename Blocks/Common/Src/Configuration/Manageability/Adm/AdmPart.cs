@@ -68,6 +68,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
         /// </param>
 		public void Write(TextWriter writer)
 		{
+            if (writer == null) throw new ArgumentNullException("writer");
+
 			writer.WriteLine(String.Format(CultureInfo.InvariantCulture, PartStartTemplate, partName));
 
 			WritePart(writer);

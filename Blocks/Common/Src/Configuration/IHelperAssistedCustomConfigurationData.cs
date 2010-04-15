@@ -19,7 +19,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 	/// on a <see cref="CustomProviderDataHelper{T}"/> to perform the dynamic properties management.
 	/// </summary>
 	/// <remarks>
-	/// This interface is generic so that the helper can be strongly typed.
+	/// This interface is generic so that the helper can be strongly-typed.
 	/// </remarks>
 	/// <typeparam name="T">The configuration object type. It must match the type implementing the interface.</typeparam>
 	public interface IHelperAssistedCustomConfigurationData<T> : ICustomProviderData

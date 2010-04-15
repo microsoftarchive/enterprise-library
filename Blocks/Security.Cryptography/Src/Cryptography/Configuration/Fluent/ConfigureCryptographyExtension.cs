@@ -15,6 +15,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Properties;
+using System.Globalization;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent
 {
@@ -34,7 +35,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent
         {
             contextExtension = context as IConfigureCryptographyExtension;
             if (contextExtension == null) throw new ArgumentException(
-                string.Format(Resources.Culture, Resources.ExceptionParameterMustImplementType, typeof(IConfigureCryptographyExtension).FullName)
+                string.Format(CultureInfo.CurrentCulture, Resources.ExceptionParameterMustImplementType, typeof(IConfigureCryptographyExtension).FullName)
                 , "context");
         }
 

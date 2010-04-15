@@ -17,24 +17,22 @@ using System.Text;
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
 {
 
-    ///<summary/>
-    public static class PolicyInjectionDesignTime
+    internal static class PolicyInjectionDesignTime
     {
-        ///<summary/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]
         public static class ViewModelTypeNames
         {
-            ///<summary/>
-            public const string PiabSectionViewModel = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.PiabSectionViewModel, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
+            public const string PolicyInjectionSectionViewModel = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.PolicyInjection.PolicyInjectionSectionViewModel, Microsoft.Practices.EnterpriseLibrary.Configuration.DesignTime";
 
-            ///<summary/>
-            public const string PolicyDataViewModel = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.PolicyDataViewModel, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
+            public const string PolicyDataViewModel = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.PolicyInjection.PolicyDataViewModel, Microsoft.Practices.EnterpriseLibrary.Configuration.DesignTime";
         }
 
-        ///<summary/>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Validators")]
         public static class Validators
         {
-            ///<summary/>
-            public const string MatchCollectionPopulatedValidationType = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.Piab.MatchCollectionPopulatedValidator, Microsoft.Practices.EnterpriseLibrary.Configuration.Design";
+            public const string MatchCollectionPopulatedValidationType = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.PolicyInjection.MatchCollectionPopulatedValidator, Microsoft.Practices.EnterpriseLibrary.Configuration.DesignTime";
+
+            public const string NameValueCollectionValidator = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Validation.NameValueCollectionValidator, Microsoft.Practices.EnterpriseLibrary.Configuration.DesignTime";
         }
     }
 }

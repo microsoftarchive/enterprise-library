@@ -46,9 +46,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common
 
             string value = null;
 
-            if (null != asm) value = SearchForResource(asm, resourceName);
+            if (null != asm) value = LoadAssemblyString(asm, baseName, resourceName);
+            if (null == value && null != asm) value = SearchForResource(asm, resourceName);
             if (null == value) value = LoadAssemblyString(Assembly.GetExecutingAssembly(), baseName, resourceName);
             if (null == value) return string.Empty;
+
             return value;
         }
 

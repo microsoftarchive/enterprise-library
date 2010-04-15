@@ -49,7 +49,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
         }
     }
 
-   
+
     [TestClass]
     public class When_AddingInstrumentationSettingsToConfigurationSourceBuilder : Given_EmptyConfigurationSourceBuilder
     {
@@ -120,7 +120,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
             Assert.IsNotNull(instrumentationSettings);
             Assert.IsTrue(instrumentationSettings.EventLoggingEnabled);
             Assert.IsFalse(instrumentationSettings.PerformanceCountersEnabled);
-            Assert.IsFalse(instrumentationSettings.WmiEnabled);
             Assert.AreEqual("appInstanceName", instrumentationSettings.ApplicationInstanceName);
         }
 
@@ -130,12 +129,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
         {
             ConfigurationSourceBuilder.ConfigureInstrumentation()
                 .EnableLogging()
-                .EnablePerformanceCounters()
-                .EnableWmi();                
+                .EnablePerformanceCounters();
         }
     }
 
 
 
-   
+
 }

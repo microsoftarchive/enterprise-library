@@ -16,6 +16,7 @@ using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides.Configuration;
 using Microsoft.Practices.Unity;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_configuration_source_model
 {
@@ -24,30 +25,30 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_configuration_source_model
     {
         protected override void Act()
         {
-            var sourceModel = Container.Resolve<ConfigurationSourceModel>();
-            sourceModel.NewEnvironment();
+            var applicationModel = Container.Resolve<ApplicationViewModel>();
+            applicationModel.NewEnvironment();
         }
 
         [TestMethod]
         public void then_environment_name_is_recalculated_correctly()
         {
-            var sourceModel = Container.Resolve<ConfigurationSourceModel>();
+            var applicationViewModel = Container.Resolve<ApplicationViewModel>();
 
-            Assert.AreEqual("Environment", sourceModel.Environments.Last().Name);
+            Assert.AreEqual("Environment", applicationViewModel.Environments.Last().Name);
 
-            sourceModel.NewEnvironment();
+            applicationViewModel.NewEnvironment();
 
-            Assert.AreEqual("Environment 2", sourceModel.Environments.Last().Name);
+            Assert.AreEqual("Environment 2", applicationViewModel.Environments.Last().Name);
 
-            sourceModel.NewEnvironment();
+            applicationViewModel.NewEnvironment();
 
-            Assert.AreEqual("Environment 3", sourceModel.Environments.Last().Name);
+            Assert.AreEqual("Environment 3", applicationViewModel.Environments.Last().Name);
 
-            sourceModel.RemoveEnvironment(sourceModel.Environments.Single(e => e.Name == "Environment 2"));
+            applicationViewModel.RemoveEnvironment(applicationViewModel.Environments.Single(e => e.Name == "Environment 2"));
 
-            sourceModel.NewEnvironment();
+            applicationViewModel.NewEnvironment();
 
-            Assert.AreEqual("Environment 2", sourceModel.Environments.Last().Name);
+            Assert.AreEqual("Environment 2", applicationViewModel.Environments.Last().Name);
         }
     }
 }

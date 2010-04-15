@@ -20,6 +20,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <NoWarn>
+    </NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -34,9 +36,17 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Lib\Microsoft.Practices.EnterpriseLibrary.Configuration.Design.HostAdapter.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Practices.Unity, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Configuration.Design.HostAdapterV5, Version=5.0.414.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Lib\Microsoft.Practices.EnterpriseLibrary.Configuration.Design.HostAdapterV5.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity, Version=2.0.414.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Lib\Microsoft.Practices.Unity.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity.Interception, Version=2.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Lib\Microsoft.Practices.Unity.Interception.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Moq, Version=3.1.416.3, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
@@ -50,6 +60,9 @@
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.configuration" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -60,6 +73,9 @@
     <Reference Include="System.Messaging" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
     <Reference Include="WindowsBase">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
@@ -77,8 +93,8 @@
     <Compile Include="DevTests\given_app_settings_configuration\when_creating_app_settings_view_model.cs" />
     <Compile Include="DevTests\given_assembly_location\when_locating_assemblies_from_current_directory.cs" />
     <Compile Include="DevTests\given_assembly_location\when_locating_assembly_sections.cs" />
-    <Compile Include="DevTests\given_caching_configuraton\when_adding_caching_configuration_model.cs" />
-    <Compile Include="DevTests\given_caching_configuraton\when_saving_caching_configuration.cs" />
+    <Compile Include="BlockSpecific\Caching\given_caching_configuraton\when_adding_caching_configuration_model.cs" />
+    <Compile Include="BlockSpecific\Caching\given_caching_configuraton\when_saving_caching_configuration.cs" />
     <Compile Include="DevTests\given_configuration_element_with_properties\when_initializing_new_section.cs" />
     <Compile Include="DevTests\given_configuration_element_with_properties\when_creating_property_model_from_configuration.cs" />
     <Compile Include="DevTests\given_configuration_element_with_properties\when_creating_property_model_from_property_descriptor.cs">
@@ -94,14 +110,14 @@
     <Compile Include="DevTests\given_configuration_source_model\when_initializing_new_configuration.cs" />
     <Compile Include="DevTests\given_configuration_source_model\when_loading_configuration.cs" />
     <Compile Include="DevTests\given_configuration_source_model\when_removing_section.cs" />
-    <Compile Include="DevTests\given_cryptography_settings\given_keyed_hash_algorithm_provider_element.cs" />
-    <Compile Include="DevTests\given_cryptography_settings\given_crypto_configuration.cs" />
-    <Compile Include="DevTests\given_cryptography_settings\given_symmetric_crypto_provider_element.cs" />
+    <Compile Include="BlockSpecific\Cryptography\given_keyed_hash_algorithm_provider_element.cs" />
+    <Compile Include="BlockSpecific\Cryptography\given_crypto_configuration.cs" />
+    <Compile Include="BlockSpecific\Cryptography\given_symmetric_crypto_provider_element.cs" />
     <Compile Include="DevTests\given_custom_provider_configuration\when_creating_custom_provider_element.cs" />
-    <Compile Include="DevTests\given_data_configuration\when_creating_data_section_view_model.cs" />
-    <Compile Include="DevTests\given_data_configuration\when_saving_data_configuration_section.cs" />
-    <Compile Include="DevTests\given_data_configuration\when_saving_empty_data_configuration_section.cs" />
-    <Compile Include="DevTests\given_data_configuration\when_saving_protected_data_settings.cs">
+    <Compile Include="BlockSpecific\Data\given_data_configuration\when_creating_data_section_view_model.cs" />
+    <Compile Include="BlockSpecific\Data\given_data_configuration\when_saving_data_configuration_section.cs" />
+    <Compile Include="BlockSpecific\Data\given_data_configuration\when_saving_empty_data_configuration_section.cs" />
+    <Compile Include="BlockSpecific\Data\given_data_configuration\when_saving_protected_data_settings.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DevTests\given_elements_and_paths\when_getting_element_paths.cs" />
@@ -109,7 +125,6 @@
     <Compile Include="DevTests\given_element_lookup\when_removing_element_from_element_lookup.cs" />
     <Compile Include="DevTests\given_element_lookup\when_removing_section_from_element_lookup.cs" />
     <Compile Include="DevTests\given_element_reference\when_creating_element_reference_using_path.cs" />
-    <Compile Include="Contexts\ContainerContext.cs" />
     <Compile Include="Contexts\ExceptionHandlingSettingsContext.cs" />
     <Compile Include="DevTests\given_element_reference\when_creating_reference_using_parent_path.cs" />
     <Compile Include="DevTests\given_element_view_model_commands\given_delete_element_command.cs" />
@@ -120,13 +135,12 @@
     <Compile Include="DevTests\given_environment_node_in_view_model\when_attaching_empty_overrides.cs" />
     <Compile Include="DevTests\given_environment_node_in_view_model\when_overriding_properties.cs" />
     <Compile Include="DevTests\given_environment_node_in_view_model\when_removing_environment.cs" />
-    <Compile Include="DevTests\given_logging_configuration\given_logging_configuration.cs" />
-    <Compile Include="DevTests\given_security_configuration\given_security_configuration.cs" />
+    <Compile Include="Contexts\LoggingConfigurationContext.cs" />
+    <Compile Include="BlockSpecific\Security\given_security_configuration\given_security_configuration.cs" />
     <Compile Include="DevTests\given_application_model\when_opening_configuration_source.cs" />
     <Compile Include="DevTests\given_application_model\when_saving_configuration_source_to_file.cs" />
-    <Compile Include="DevTests\given_validation_configuration_section\when_creating_validation_view_model.cs" />
     <Compile Include="DevTests\given_view_model_and_config_collection\when_seeking_collection_add_commands.cs" />
-    <Compile Include="DevTests\given_piab_configuration\when_creating_section_view_model_for_piab.cs" />
+    <Compile Include="BlockSpecific\PolicyInjection\given_piab_configuration\when_creating_section_view_model_for_piab.cs" />
     <Compile Include="DevTests\given_host_adapter\when_creating_component_model_elements.cs" />
     <Compile Include="DevTests\given_type_picking_add_command\when_executing_command.cs" />
     <Compile Include="DevTests\given_validation_configuration_section\when_creating_reference_for_default_validation_rule.cs" />
@@ -150,9 +164,6 @@
     <Compile Include="Mocks\TestHandler.cs" />
     <Compile Include="Mocks\TestHandlerData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TestSupport\PropertyChangedListener.cs" />
-    <Compile Include="TestSupport\TestConfigurationBuilder.cs" />
-    <Compile Include="TestSupport\ElementViewModelExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Caching\Src\Caching\Caching.csproj">
@@ -195,10 +206,6 @@
       <Project>{6AC97717-899D-4F72-BC5B-2C37959CD4FF}</Project>
       <Name>Logging</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\PolicyInjection\Src\CallHandlers\PolicyInjection.CallHandlers.csproj">
-      <Project>{88316009-DEDF-434C-A6A8-BE79D8A1B502}</Project>
-      <Name>PolicyInjection.CallHandlers</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\..\PolicyInjection\Src\PolicyInjection\PolicyInjection.csproj">
       <Project>{3E6129C8-18E4-410D-89FC-0DBBE6009FC5}</Project>
       <Name>PolicyInjection</Name>
@@ -231,6 +238,10 @@
       <Project>{9CC92B51-39D9-4622-BE1D-57257C894FA7}</Project>
       <Name>Configuration.EnvironmentalOverrides</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Configuration.Design.TestSupport\Configuration.Design.TestSupport.csproj">
+      <Project>{99053495-86CF-466C-92C0-79BBF686DDBC}</Project>
+      <Name>Configuration.Design.TestSupport</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\TestAssembly1\TestAssembly1.csproj">
       <Project>{303AFD8C-1538-490D-9F83-EDF23BA1BBD1}</Project>
       <Name>TestAssembly1</Name>
@@ -245,50 +256,161 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BlockSpecific\Caching\when_cache_manager_view_model_constructed.cs" />
+    <Compile Include="BlockSpecific\Caching\given_caching_configuraton\when_backing_store_reference_is_found.cs" />
+    <Compile Include="BlockSpecific\Caching\given_caching_configuraton\given_caching_configuration.cs" />
+    <Compile Include="BlockSpecific\Caching\given_caching_configuraton\when_backing_store_is_deleted.cs" />
+    <Compile Include="BlockSpecific\Caching\given_caching_configuraton\when_cache_manager_view_model_constructed.cs" />
+    <Compile Include="BlockSpecific\Core\when_converting_redirected_section_name.cs" />
+    <Compile Include="BlockSpecific\Core\when_getting_suggested_values_for_redirect_section.cs" />
+    <Compile Include="BlockSpecific\Core\when_manageable_configuration_source_view_model_constructed.cs" />
+    <Compile Include="BlockSpecific\Core\with_new_providers.cs" />
+    <Compile Include="BlockSpecific\Core\with_no_new_providers.cs" />
+    <Compile Include="BlockSpecific\Data\when_creating_new_database_section.cs" />
+    <Compile Include="BlockSpecific\Logging\given_logging_configuration\given_email_trace_listener.cs" />
+    <Compile Include="BlockSpecific\Logging\given_logging_configuration\given_trace_source.cs" />
+    <Compile Include="BlockSpecific\Logging\when_getting_related_elements_on_trace_listeners.cs" />
+    <Compile Include="BlockSpecific\Overrides\given_two_overrides_sections.cs" />
+    <Compile Include="BlockSpecific\Overrides\when_adding_two_overrides_with_same_delta_file.cs" />
+    <Compile Include="BlockSpecific\Overrides\when_adding_two_overrides_with_same_target_file.cs" />
+    <Compile Include="BlockSpecific\Validation\given_validation_model_for_layout\given_range_bound_validator.cs" />
+    <Compile Include="BlockSpecific\Validation\given_validation_model_for_layout\when_laying_out_second_level_rules.cs" />
+    <Compile Include="ConfigFiles\ConfigFileLocator.cs" />
     <Compile Include="Contexts\NewConfigurationSourceModelContext.cs" />
     <Compile Include="BlockSpecific\Logging\when_logging_filter_priorities_invalid.cs" />
     <Compile Include="Contexts\CachingConfigurationContext.cs" />
     <Compile Include="Controls\given_elementcontainer\when_creating_new_container.cs" />
     <Compile Include="Controls\given_elementcontainer\when_is_selected_changes_on_bound_element.cs" />
     <Compile Include="Controls\given_elementcontainer\when_properties_shown_changes_on_bound_element.cs" />
+    <Compile Include="Controls\given_maskedpasswordbox\when_updating_password.cs" />
+    <Compile Include="Controls\given_splitterkeyacceleratorbehavior\GridBehaviorContext.cs" />
+    <Compile Include="Controls\given_splitterkeyacceleratorbehavior\when_behavior_decrements.cs" />
+    <Compile Include="Controls\given_splitterkeyacceleratorbehavior\when_behavior_increments.cs" />
+    <Compile Include="Controls\TextPopupEditor\given_property_with_popup_editor.cs" />
     <Compile Include="Controls\TypeBrowser\NodesFixture.cs" />
     <Compile Include="Controls\TypeBrowser\SearchOperationFixture.cs" />
     <Compile Include="Controls\TypeBrowser\TreeAssert.cs" />
     <Compile Include="Controls\TypeBrowser\TypeBrowserViewModelFixture.cs" />
     <Compile Include="Controls\TypeBrowser\TypeFilterFixture.cs" />
+    <Compile Include="Converters\given_enumerable_to_boolean_value_converter.cs" />
     <Compile Include="Converters\given_reference_property_converter.cs" />
-    <Compile Include="Converters\given_midpoint_value_converter.cs" />
     <Compile Include="DevTests\given_add_application_block_command\when_executing_add_application_block_command.cs" />
+    <Compile Include="DevTests\given_add_instrumentation_command\when_executing_add.cs" />
+    <Compile Include="DevTests\given_annotation_service\when_type_is_found_with_metadata_type_attribute.cs" />
+    <Compile Include="DevTests\given_application_model\when_saving_opened_readonly_configuration_as.cs" />
     <Compile Include="DevTests\given_application_model\when_opening_composed_source.cs" />
     <Compile Include="DevTests\given_application_model\when_opening_configuration_source_with_errors.cs" />
     <Compile Include="DevTests\given_application_model\when_saving_configuration_source.cs" />
+    <Compile Include="DevTests\given_application_model\when_saving_opened_configuration_as.cs" />
     <Compile Include="DevTests\given_application_model\when_setting_application_file_path.cs" />
     <Compile Include="DevTests\given_app_settings_configuration\when_adding_new_key_value_element_to_app_settings_view_model.cs" />
     <Compile Include="DevTests\given_app_settings_configuration\when_saving_application_settings.cs" />
     <Compile Include="DevTests\given_app_settings_configuration\when_loading_app_settings_view_model.cs" />
     <Compile Include="DevTests\given_app_settings_configuration\when_saving_application_settings_after_adding_new_settings.cs" />
-    <Compile Include="DevTests\given_an_exception_policy_add_command\when_adding_an_exception_policy.cs" />
+    <Compile Include="BlockSpecific\ExceptionHandling\given_an_exception_policy_add_command\when_adding_an_exception_policy.cs" />
     <Compile Include="Contexts\SectionWithValidatablePropertiesContext.cs" />
-    <Compile Include="DevTests\given_caching_configuraton\when_adding_cache_manager.cs" />
+    <Compile Include="BlockSpecific\Caching\given_caching_configuraton\when_adding_cache_manager.cs" />
+    <Compile Include="DevTests\given_app_settings_view_model\given_application_settings.cs" />
+    <Compile Include="DevTests\given_app_settings_view_model\when_overriding_app_settings.cs" />
     <Compile Include="DevTests\given_command_attribute.cs" />
     <Compile Include="DevTests\given_app_settings_view_model\when_getting_all_properties.cs" />
+    <Compile Include="DevTests\given_configuration_container\when_requesting_save_operation.cs" />
+    <Compile Include="DevTests\given_configuration_source\when_creating_mgmt_design_source_with_relative_path_sub_dir.cs" />
+    <Compile Include="DevTests\given_configuration_source\when_creating_design_configuration_source_to_readonly_file.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DevTests\given_configuration_source\when_creating_design_configuration_source_with_absolute_path.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DevTests\given_configuration_source\when_creating_design_configuration_source_with_invalid_relative_path.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DevTests\given_configuration_source\when_creating_design_configuration_source_with_relative_path.cs" />
+    <Compile Include="DevTests\given_configuration_source\when_creating_design_configuration_source_with_relative_path_sub_dir.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DevTests\given_doubleclick_command\when_attaching_double_click_command.cs" />
+    <Compile Include="DevTests\given_element_for_validation\when_providing_element_to_validation_error.cs" />
+    <Compile Include="DevTests\given_element_for_validation\when_validating_invalid_element.cs" />
+    <Compile Include="DevTests\given_element_for_validation\when_validating_valid_element.cs" />
+    <Compile Include="DevTests\given_element_reference\when_assiging_value_to_reference.cs" />
+    <Compile Include="DevTests\given_element_with_containedelementproperty\when_querying_associated_element_data.cs" />
+    <Compile Include="BlockSpecific\Overrides\when_adding_two_overrides_with_same_name.cs" />
+    <Compile Include="DevTests\given_logging_settings_and_overrides\when_overriding_msmq_listener.cs" />
+    <Compile Include="DevTests\given_model_for_disposal\when_removing_actual_section.cs" />
+    <Compile Include="DevTests\given_model_for_disposal\when_removing_configuration_loaded_from_file.cs" />
+    <Compile Include="DevTests\given_model_for_disposal\when_removing_model_elements.cs" />
+    <Compile Include="DevTests\given_host_adapter\when_navigating_validation_error.cs" />
+    <Compile Include="DevTests\given_invalid_model\when_navigating_validation_error.cs" />
+    <Compile Include="DevTests\given_property_to_validate\when_validation_results_change.cs" />
+    <Compile Include="DevTests\given_save_environment_delta_command\when_saving_environment_delta_file_with_file_name.cs" />
+    <Compile Include="DevTests\given_selected_source_and_parent_source\given_selected_source_and_parent.cs" />
+    <Compile Include="DevTests\given_selected_source_and_parent_source\when_validating_sources_section.cs" />
+    <Compile Include="DevTests\given_selected_source_and_redirected_sections\given_selected_source_and_redirects.cs" />
+    <Compile Include="DevTests\given_selected_source_and_redirected_sections\when_validating_sources_section.cs" />
+    <Compile Include="Mocks\ExceptionThrowingValidator.cs" />
+    <Compile Include="DevTests\given_logging_settings_and_overrides\when_overriding_protection_provider.cs" />
+    <Compile Include="DevTests\given_merge_configuration\when_overriding_protection_provider_from_none.cs" />
+    <Compile Include="DevTests\given_merge_configuration\merging_protected_sections_context.cs" />
+    <Compile Include="DevTests\given_merge_configuration\when_merging_protected_sections_dpapi.cs" />
+    <Compile Include="DevTests\given_merge_configuration\when_merging_protected_sections.cs" />
+    <Compile Include="DevTests\given_element_change_scope\when_adding_elements_that_match_scope.cs" />
+    <Compile Include="DevTests\given_merge_configuration\when_overriding_protection_provider_to_none.cs" />
+    <Compile Include="DevTests\given_shielded_command_model\when_command_model_throws.cs" />
+    <Compile Include="DevTests\given_configurationsourcesectionviewmodel\when_deleting_last_configuration_source.cs" />
+    <Compile Include="DevTests\given_configurationsourcesection\when_loading_with_bad_satellite_config_source.cs" />
+    <Compile Include="DevTests\given_configurationsourcesection\when_saving_to_alternate_config_file.cs" />
+    <Compile Include="DevTests\given_configuration_container\when_requesting_a_service.cs" />
+    <Compile Include="DevTests\given_element_lookup\when_adding_a_new_element.cs" />
+    <Compile Include="DevTests\given_exception_throwing_validator\when_validator_executed.cs" />
+    <Compile Include="DevTests\given_global_resource_dictionary\when_accessing_resources_through_static_facade.cs" />
+    <Compile Include="DevTests\given_global_resource_dictionary\when_adding_new_dictionary.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DevTests\given_global_resource_dictionary\when_attaching_merged_dictionary_properties.cs" />
+    <Compile Include="DevTests\given_logging_settings_and_overrides\when_overriding_property_with_fx_editor.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DevTests\given_logging_settings_and_overrides\when_overriding_require_permission.cs" />
+    <Compile Include="DevTests\given_throwing_command_model\when_exception_is_thrown.cs" />
+    <Compile Include="DevTests\given_view_model_needing_initialization\when_loading_configurationsourcemodel.cs" />
     <Compile Include="DevTests\given_configuration_source_model\when_removing_an_environment.cs" />
-    <Compile Include="DevTests\given_cryptography_settings\when_creating_add_command_for_keyed_hash_provider_with_child_commands.cs" />
-    <Compile Include="DevTests\given_cryptography_settings\when_creating_add_command_for_keyed_hash_provider.cs" />
-    <Compile Include="DevTests\given_data_configuration\when_executing_add_database_section_command.cs" />
+    <Compile Include="BlockSpecific\Cryptography\when_creating_add_command_for_keyed_hash_provider_with_child_commands.cs" />
+    <Compile Include="BlockSpecific\Cryptography\when_creating_add_command_for_keyed_hash_provider.cs" />
+    <Compile Include="BlockSpecific\Data\given_data_configuration\when_executing_add_database_section_command.cs" />
+    <Compile Include="DevTests\given_config_with_nametype_elements\when_creating_view_models.cs" />
     <Compile Include="DevTests\given_default_add_command\when_executing_default_add_command.cs" />
     <Compile Include="DevTests\given_delete_element_command\when_executing_default_delete_command.cs" />
     <Compile Include="DevTests\given_exception_configuration\when_selecting_a_formatter.cs" />
+    <Compile Include="DevTests\given_logging_settings_and_overrides\when_loading_logging_settings.cs" />
     <Compile Include="DevTests\given_save_environment_delta_command\when_saving_environment_delta_file_with_non_rooted_filename.cs" />
     <Compile Include="DevTests\given_section_view_model\when_accessing_section_commands.cs" />
     <Compile Include="DevTests\given_system_data_provider_converter\when_getting_standard_values.cs" />
     <Compile Include="DevTests\given_toggle_section_expanded_command\given_toggle_section_expanded_command.cs" />
+    <Compile Include="DevTests\given_type_name_parser\when_parsing_type_name.cs" />
     <Compile Include="DevTests\given_view_model_and_config_collection\SectionWithMultipleChildrenContext.cs" />
     <Compile Include="DevTests\given_view_model_and_config_collection\when_moving_collection_elements_down.cs" />
     <Compile Include="DevTests\given_view_model_and_config_collection\when_moving_collection_elements_up.cs" />
     <Compile Include="DevTests\given_view_model_and_config_collection\when_removing_an_element.cs" />
-    <Compile Include="Mocks\CollectionHasItemValidator.cs" />
+    <Compile Include="Extensions\FilteredSafeSelectTests.cs" />
+    <Compile Include="Extensions\ExceptionThrowingItem.cs" />
+    <Compile Include="Extensions\Item.cs" />
+    <Compile Include="Extensions\SafeIteratorTests.cs" />
+    <Compile Include="Extensions\SelectManySafeTests.cs" />
+    <Compile Include="Extensions\SelectSafeTest.cs" />
+    <Compile Include="Extensions\TestItemHierarchyContext.cs" />
+    <Compile Include="LogExceptionsToDbWizard\given_empty_configuration\when_exception_step_created.cs" />
+    <Compile Include="LogExceptionsToDbWizard\given_empty_configuration\when_exception_step_executes.cs" />
+    <Compile Include="LogExceptionsToDbWizard\given_empty_configuration\when_exception_step_has_valid_values.cs" />
+    <Compile Include="LogExceptionsToDbWizard\given_empty_configuration\when_select_database_step_executes.cs" />
+    <Compile Include="LogExceptionsToDbWizard\given_empty_configuration\when_wizard_created.cs" />
+    <Compile Include="LogExceptionsToDbWizard\given_empty_configuration\when_wizard_executes_all_steps.cs" />
+    <Compile Include="LogExceptionsToDbWizard\given_empty_configuration\when_wizard_steps_are_complete.cs" />
+    <Compile Include="LogExceptionsToDbWizard\given_empty_configuration\when_wizard_is_complete_but_step_is_not_last.cs" />
+    <Compile Include="LogExceptionsToDbWizard\given_prior_database_configuration\when_picking_existing_connection.cs" />
+    <Compile Include="LogExceptionsToDbWizard\given_prior_policy_configuration\ExceptionHandlingConfiguredSourceModelContext.cs" />
+    <Compile Include="LogExceptionsToDbWizard\given_prior_policy_configuration\when_creating_pick_exception_step.cs" />
+    <Compile Include="LogExceptionsToDbWizard\given_prior_policy_configuration\when_exception_step_executes.cs" />
+    <Compile Include="Mocks\CollectionCountOneValidator.cs" />
     <Compile Include="Mocks\ErrorProducingValidator.cs" />
     <Compile Include="DevTests\given_property_to_validate\when_applying_type_validation.cs" />
     <Compile Include="DevTests\given_property_to_validate\when_updating_custom_property.cs" />
@@ -310,17 +432,50 @@
     <Compile Include="DevTests\given_element_reference\when_updating_provider_name_in_reference_picker_list.cs" />
     <Compile Include="DevTests\given_environment_node_in_view_model\when_exporting_merged_configuration.cs" />
     <Compile Include="DevTests\given_element_reference_with_child_properties\when_requesting_child_properties.cs" />
-    <Compile Include="DevTests\given_environment_node_in_view_model\when_loading_environment_model.cs" />
     <Compile Include="DevTests\given_environment_node_in_view_model\when_saving_main_configuration.cs" />
-    <Compile Include="DevTests\given_logging_configuration\given_system_diagnostics_trace_listener_data.cs" />
-    <Compile Include="DevTests\given_logging_configuration\given_custom_trace_listener_data.cs" />
-    <Compile Include="DevTests\given_logging_configuration\given_msmq_trace_listener.cs" />
+    <Compile Include="BlockSpecific\Logging\given_logging_configuration\given_system_diagnostics_trace_listener_data.cs" />
+    <Compile Include="BlockSpecific\Logging\given_logging_configuration\given_custom_trace_listener_data.cs" />
+    <Compile Include="BlockSpecific\Logging\given_logging_configuration\given_msmq_trace_listener.cs" />
     <Compile Include="DevTests\given_logging_settings_and_overrides\when_overriding_tracelistener_references.cs" />
     <Compile Include="DevTests\given_merge_configuration\given_merge_configuration.cs" />
     <Compile Include="DevTests\given_open_environment_delta_command\when_opening_environment_delta_file.cs" />
     <Compile Include="DevTests\given_satelite_provider_add_command\when_executing_satelite_provider.cs" />
     <Compile Include="DevTests\given_save_environment_delta_command\when_saving_environment_delta_file_without_file_name.cs" />
     <Compile Include="Mocks\FakeElementViewModel.cs" />
+    <Compile Include="Mocks\MockWizard.cs" />
+    <Compile Include="TestSupport\CanExecuteChangedListener.cs" />
+    <Compile Include="TestSupport\DatabaseSectionConfigurationSourceModelAssertions.cs" />
+    <Compile Include="TestSupport\LoggingConfigurationSourceAssertions.cs" />
+    <Compile Include="WizardTests\given_class_with_wizard_attribute\when_requesting_wizard_commands.cs" />
+    <Compile Include="WizardTests\given_command_service\when_requesting_wizard_commands.cs" />
+    <Compile Include="WizardTests\given_wizard\TestableWizard.cs" />
+    <Compile Include="WizardTests\given_wizard\TestableWizardContext.cs" />
+    <Compile Include="WizardTests\given_wizard\when_all_steps_become_valid.cs" />
+    <Compile Include="WizardTests\given_wizard\when_calling_finish.cs" />
+    <Compile Include="WizardTests\given_wizard\when_creating_wizard.cs" />
+    <Compile Include="WizardTests\given_wizard\when_executing_wizard_produces_error.cs" />
+    <Compile Include="WizardTests\given_wizard\when_moving_to_last_step.cs" />
+    <Compile Include="WizardTests\given_wizard\when_moving_to_next_step_from_invalid_step.cs" />
+    <Compile Include="WizardTests\given_wizard\when_moving_to_next_step_from_valid_step.cs" />
+    <Compile Include="WizardTests\given_wizard\when_moving_to_prior_step.cs" />
+    <Compile Include="WizardTests\given_wizard\when_wizard_step_becomes_valid.cs" />
+    <Compile Include="WizardTests\given_wizard_command\when_executing_command.cs" />
+    <EmbeddedResource Include="ConfigFiles\configurationsource_satellite.config" />
+    <EmbeddedResource Include="ConfigFiles\configurationsource_main.config" />
+    <EmbeddedResource Include="ConfigFiles\configurationsourcemanageable_main.config" />
+    <EmbeddedResource Include="ConfigFiles\configurationsource_main_with_missing.config" />
+    <EmbeddedResource Include="ConfigFiles\configurationsource_with_invalid_satellite.config" />
+    <EmbeddedResource Include="ConfigFiles\configurationsource_invalid_satellite.config" />
+    <EmbeddedResource Include="ConfigFiles\empty.config">
+    </EmbeddedResource>
+    <EmbeddedResource Include="ConfigFiles\empty.dconfig">
+    </EmbeddedResource>
+    <EmbeddedResource Include="ConfigFiles\logging_require_permission.config" />
+    <EmbeddedResource Include="ConfigFiles\ehab_lab_and_daab.config" />
+    <EmbeddedResource Include="ConfigFiles\ehab_lab_and_daab.dconfig" />
+    <EmbeddedResource Include="ConfigFiles\override_lab_protection_dpapi.dconfig" />
+    <EmbeddedResource Include="ConfigFiles\override_lab_protection_none.dconfig" />
+    <EmbeddedResource Include="ConfigFiles\configuration_with_all_blocks.config" />
     <None Include="merge_environment.dconfig">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -342,6 +497,7 @@
     <None Include="save_as_target.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <EmbeddedResource Include="ConfigFiles\systemweb_and_el.config" />
     <None Include="temp.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -350,7 +506,13 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="BlockSpecific\Cryptography\" />
+    <Page Include="DevTests\given_global_resource_dictionary\SomeResourceFile.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="BlockSpecific\Unity\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

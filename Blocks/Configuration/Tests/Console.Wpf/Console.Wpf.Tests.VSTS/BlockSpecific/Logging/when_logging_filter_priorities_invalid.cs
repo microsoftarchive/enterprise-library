@@ -20,6 +20,7 @@ using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Console.Wpf.Tests.VSTS.TestSupport;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.TestSupport;
 
 namespace Console.Wpf.Tests.VSTS.BlockSpecific.Logging
 {
@@ -47,6 +48,7 @@ namespace Console.Wpf.Tests.VSTS.BlockSpecific.Logging
             int maximumPriority = (int) logFilter.Property("MaximumPriority").Value;
 
             logFilter.Property("MinimumPriority").Value = maximumPriority + 1;
+            logFilter.Validate();
         }
 
         protected SectionViewModel LoggingSection { get; private set; }
@@ -54,15 +56,15 @@ namespace Console.Wpf.Tests.VSTS.BlockSpecific.Logging
         [TestMethod]
         public void then_validation_error_ensures()
         {
-            Assert.IsTrue(logFilter.Property("MinimumPriority").ValidationErrors.Any());
+            Assert.IsTrue(logFilter.ValidationResults.Any());
         }
 
         [TestMethod]
         public void then_validation_message_matches()
         {
-            Assert.AreEqual("The maximum priority must be higher than the minimum priority.",
-                logFilter.Property("MinimumPriority").ValidationErrors.First().Message
-                );
+            Assert.IsTrue(
+                logFilter.ValidationResults.Any(
+                    e => e.Message == "The maximum priority must be higher than the minimum priority."));
 
         }
         

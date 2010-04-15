@@ -15,6 +15,7 @@ using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design.Validation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 {
@@ -53,5 +54,37 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 				this.UpperBoundType,
 				Negated);
 		}
+
+        /// <summary>
+        /// Overriden in order to apply validation attribute
+        /// </summary>
+        [Validation(ValidationDesignTime.Validators.RangeBoundValidator)]
+        public override int UpperBound
+        {
+            get
+            {
+                return base.UpperBound;
+            }
+            set
+            {
+                base.UpperBound = value;
+            }
+        }
+
+        /// <summary>
+        /// Overriden in order to apply validation attribute
+        /// </summary>
+        [Validation(ValidationDesignTime.Validators.RangeBoundValidator)]
+        public override int LowerBound
+        {
+            get
+            {
+                return base.LowerBound;
+            }
+            set
+            {
+                base.LowerBound = value;
+            }
+        }
 	}
 }

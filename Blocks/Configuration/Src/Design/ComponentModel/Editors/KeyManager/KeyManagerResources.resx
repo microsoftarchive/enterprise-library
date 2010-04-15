@@ -165,7 +165,7 @@ Please select the data protection mode. “User” mode will encrypt your data u
     <value>An error occurred exporting the key.</value>
   </data>
   <data name="ErrorImportingKey" xml:space="preserve">
-    <value>An error occurred importing the key. Please make sure the filepath and ProtectionScope are corrent.</value>
+    <value>An error occurred importing the key. Please make sure the file path and ProtectionScope are current.</value>
   </data>
   <data name="ExistingKeyLabel" xml:space="preserve">
     <value>Use an existing DPAPI-protected key file</value>
@@ -219,7 +219,7 @@ Please select the data protection mode. “User” mode will encrypt your data u
     <value>Could not find the specified file.</value>
   </data>
   <data name="FileShouldNotBeEmpty" xml:space="preserve">
-    <value>The filename should not be empty</value>
+    <value>The file name should not be empty</value>
   </data>
   <data name="GenerateKeyButtonText" xml:space="preserve">
     <value>&amp;Generate</value>
@@ -315,7 +315,9 @@ Please select the data protection mode. “User” mode will encrypt your data u
     <value>Key file is password protected and no password was provided.</value>
   </data>
   <data name="OpenExistingKeyFileFailureErrorMessage" xml:space="preserve">
-    <value>Unable to open Key because the key file, {0}, cannot be found. If your configuration has not been saved, save it now. If it has been saved and the key file still cannot be found, you can either put the correct key file in that location, or you can delete and recreate this node with a new key file. Exception message is: '{1}'.</value>
+    <value>Unable to open Key key file: {0}.
+
+Exception message is: '{1}'.</value>
   </data>
   <data name="OpenExistingKeyFileFailureTitle" xml:space="preserve">
     <value>Unable to open key file</value>
@@ -336,7 +338,7 @@ Please select the data protection mode. “User” mode will encrypt your data u
     <value>The DataProtectionScope that should be used.</value>
   </data>
   <data name="SaveExistingKeyFileTitle" xml:space="preserve">
-    <value>Choose keyfile</value>
+    <value>Choose key file</value>
   </data>
   <data name="SupplyKeyMessage" xml:space="preserve">
     <value>In order to use this algorithm, you must supply a key. You can either create a new key, or use an existing key.</value>
@@ -346,5 +348,12 @@ Please select the data protection mode. “User” mode will encrypt your data u
   </data>
   <data name="TypeShouldDeriveFromSymmetricAlgorithm" xml:space="preserve">
     <value>Type should derive from System.Security.Cryptography.SymmetricAlgorithm.</value>
+  </data>
+  <data name="LoadExistingKeyFileFailureErrorMessage" xml:space="preserve">
+    <value>Unable to load key from file {0}.
+
+Exception message is: '{1}'.
+
+Would you like to proceed and generate a new key?</value>
   </data>
 </root>

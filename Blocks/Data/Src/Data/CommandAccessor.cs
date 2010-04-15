@@ -22,7 +22,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
     /// Base class for Data Accessors that execute a <see cref="DbCommand"/>.
     /// </summary>
     /// <typeparam name="TResult">The element type this accessor will return.</typeparam>
-    public abstract class CommandAccessor<TResult> : IDataAccessor<TResult>
+    public abstract class CommandAccessor<TResult> : DataAccessor<TResult>
     {
         readonly IResultSetMapper<TResult> resultSetMapper;
         readonly Database database;
@@ -92,7 +92,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
             return database.BeginExecuteReader(command, callback, state);
         }
 
-        /// <summary>Complete an operation started by <see cref="IDataAccessor{TResult}.BeginExecute"/>.</summary>
+        /// <summary>Complete an operation started by <see cref="DataAccessor{TResult}.BeginExecute"/>.</summary>
         /// <returns>The result sequence.</returns>
         public override IEnumerable<TResult> EndExecute(IAsyncResult asyncResult)
         {

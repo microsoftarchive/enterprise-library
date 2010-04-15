@@ -9,6 +9,7 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using System;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 
@@ -30,6 +31,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Configur
 		/// <returns>The section, if exists in the configuration source.</returns>
 		public static MsmqDistributorSettings GetSettings(IConfigurationSource configurationSource)
 		{
+            if(configurationSource == null) throw new ArgumentNullException("configurationSource");
 			return configurationSource.GetSection(SectionName) as MsmqDistributorSettings;
 		}
 

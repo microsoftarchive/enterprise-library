@@ -22,6 +22,11 @@ using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Hosting;
 using Microsoft.Practices.Unity;
 using System.Windows;
 using System.Drawing.Design;
+using Console.Wpf.Tests.VSTS.TestSupport;
+using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_property_grid_consuming_view_model
 {
@@ -85,6 +90,39 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_property_grid_consuming_view_mod
         }
 
 
+        [TestMethod]
+        public void then_readonly_properties_with_editors_dont_offer_editors()
+        {
+            var exceptionType = model.GetDescendentsOfType<ExceptionTypeData>().First();
+            var typeNameProperty = new ElementProperty(Container.Resolve<IServiceProvider>(), 
+                                                        exceptionType, 
+                                                        TypeDescriptor.GetProperties(typeof(ExceptionTypeData)).OfType<PropertyDescriptor>().Where(x => x.Name == "TypeName").First(), 
+                                                        new Attribute[]{new EditorAttribute(typeof(TypeSelectionEditor), typeof(UITypeEditor))});
+            Assert.IsTrue(typeNameProperty.ReadOnly);
+            Assert.IsTrue(typeNameProperty.BindableProperty is PopupEditorBindableProperty);
+            Assert.IsNull(typeNameProperty.BindableProperty.GetEditor(typeof(UITypeEditor)));
+        }
+
+        [TestMethod]
+        public void then_properties_with_suggested_values_offer_standard_values()
+        {
+            var exceptionType = model.GetDescendentsOfType<ExceptionTypeData>().First();
+            var typeNameProperty = new ElementReferenceProperty(Container.Resolve<IServiceProvider>(), 
+                                                                Container.Resolve<ElementLookup>(),
+                                                                exceptionType,
+                                                                TypeDescriptor.GetProperties(typeof(ExceptionTypeData)).OfType<PropertyDescriptor>().Where(x => x.Name == "Name").First(),
+                                                                new Attribute[] { new ReferenceAttribute(typeof(ExceptionHandlingSettings), typeof(ExceptionTypeData)) });
+            typeNameProperty.Initialize(new InitializeContext());
+
+            
+            Assert.IsTrue(typeNameProperty.BindableProperty is SuggestedValuesBindableProperty);
+            Assert.IsTrue(typeNameProperty.BindableProperty is PropertyDescriptor);
+            PropertyDescriptor propertyDescriptor = (PropertyDescriptor)typeNameProperty.BindableProperty;
+            TypeConverter propertyDescriptorTypeConverter = propertyDescriptor.Converter;
+
+            Assert.IsTrue(propertyDescriptorTypeConverter.GetStandardValuesSupported());
+            Assert.IsFalse(propertyDescriptorTypeConverter.GetStandardValuesExclusive());
+        }
 
         [TestMethod]
         public void then_properties_with_framework_element_are_wrapped_in_ui_type_editor()

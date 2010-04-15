@@ -33,8 +33,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Tests
         {
             formatter = new AppDomainNameFormatter();
             formattedInstanceName = formatter.CreateName(instanceName);
-            enabledInstrumentationProvider = new SecurityCacheProviderInstrumentationProvider(instanceName, true, true, true, formatter);
-            disabledInstrumentationProvider = new SecurityCacheProviderInstrumentationProvider(instanceName, false, false, false, formatter);
+            enabledInstrumentationProvider = new SecurityCacheProviderInstrumentationProvider(instanceName, true, true, formatter);
+            disabledInstrumentationProvider = new SecurityCacheProviderInstrumentationProvider(instanceName, false, false, formatter);
 
             totalSecurityCacheReadPerformedCounter = new EnterpriseLibraryPerformanceCounter(SecurityCacheProviderInstrumentationProvider.PerfomanceCountersCategoryName, SecurityCacheProviderInstrumentationProvider.TotalSecurityCacheReadPerformedCounterName, formattedInstanceName);
 
@@ -52,30 +52,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Tests
             enabledInstrumentationProvider.FireSecurityCacheReadPerformed(SecurityEntityType.Identity, null);
 
             Assert.AreEqual(1, totalSecurityCacheReadPerformedCounter.Value);
-        }
-
-        [TestMethod]
-        public void SecurityCacheCheckDoesNotifyWmiIfEnabled()
-        {
-            using (WmiEventWatcher eventListener = new WmiEventWatcher(numberOfEvents))
-            {
-                FireSecurityCacheReadPerformed(enabledInstrumentationProvider);
-                eventListener.WaitForEvents();
-
-                Assert.AreEqual(numberOfEvents, eventListener.EventsReceived.Count);
-            }
-        }
-
-        [TestMethod]
-        public void SecurityCacheCheckDoesNotNotifyWmiIfDisabled()
-        {
-            using (WmiEventWatcher eventListener = new WmiEventWatcher(numberOfEvents))
-            {
-                FireSecurityCacheReadPerformed(disabledInstrumentationProvider);
-                eventListener.WaitForEvents();
-
-                Assert.AreEqual(0, eventListener.EventsReceived.Count);
-            }
         }
 
         [TestMethod]

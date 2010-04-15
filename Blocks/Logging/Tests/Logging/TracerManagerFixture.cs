@@ -9,10 +9,8 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Filters;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport.TraceListeners;
@@ -57,7 +55,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
             List<LogSource> traceSources = new List<LogSource>(new LogSource[] { source });
             LogWriter lg = new LogWriterImpl(new List<ILogFilter>(), new List<LogSource>(), source, null, new LogSource("errors"), "default", true, false);
 
-            TracerInstrumentationProvider instrumentationProvider = new TracerInstrumentationProvider(true, false, false, "applicationname");
+            TracerInstrumentationProvider instrumentationProvider = new TracerInstrumentationProvider(true, false, "applicationname");
             TraceManager tm = new TraceManager(lg, instrumentationProvider);
 
             Assert.IsNotNull(tm);

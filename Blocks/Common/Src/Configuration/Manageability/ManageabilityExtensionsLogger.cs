@@ -33,7 +33,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
 		/// </summary>
 		/// <param name="exception">The exception representing the error.</param>
 		public static void LogExceptionWhileOverriding(Exception exception)
-		{
+        {
+            if (exception == null) throw new ArgumentNullException("exception");
+
 			LogException(exception, Resources.ExceptionErrorWhileOverriding);
 		}
 
@@ -44,6 +46,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
 		/// <param name="title">The title that describes the error.</param>
 		public static void LogException(Exception exception, String title)
 		{
+            if (exception == null) throw new ArgumentNullException("exception");
+
 			StringBuilder entryTextBuilder = new StringBuilder();
 			entryTextBuilder.AppendLine(title);
 			entryTextBuilder.Append(exception.Message);

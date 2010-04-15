@@ -26,14 +26,19 @@ using System.Collections.ObjectModel;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
 using System.ComponentModel;
 using System.Collections;
+using System.Globalization;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors
 {
     /// <summary>
     /// Interaction logic for FlagsEditor.xaml
     /// </summary>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms", MessageId = "Flags")]
     public partial class FlagsEditor : UserControl
     {
+        ///<summary>
+        /// Initializes a new instance of <see cref="FlagsEditor"/>.
+        ///</summary>
         public FlagsEditor()
         {
             InitializeComponent();
@@ -55,7 +60,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
             property = bindableProperty.Property;
             if (property != null)
             {
-                if (!property.PropertyType.IsEnum) throw new InvalidOperationException("Enum editor can only be used with enum properties");
+                if (!property.PropertyType.IsEnum) throw new InvalidOperationException(Properties.Resources.EnumEditorExceptionInvalidPropertyType);
 
                 RefreshVisual(property);
 
@@ -75,16 +80,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
         {
             if (updatingSource) return;
 
-            int value = Convert.ToInt32(property.Value);
+            int value = Convert.ToInt32(property.Value, CultureInfo.CurrentCulture);
 
-            items = Enum.GetValues(property.Type)
+            items = Enum.GetValues(property.PropertyType)
                         .OfType<Enum>()
-                        .Select(x => Convert.ToInt32(x))
+                        .Select(x => Convert.ToInt32(x, CultureInfo.CurrentCulture))
                         .Where(x => x != 0)
                         .Select(x => new FlagsEditorItem
                         {
                             Selected = 0 < (x & value),
-                            Value = Enum.GetName(property.Type, x)
+                            Value = Enum.GetName(property.PropertyType, x)
                         }).ToList();
 
             itemChangedWatcher = new ListItemChangedWatcher(items);
@@ -112,10 +117,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
             foreach (var item in items.Where(x=>x.Selected))
             {
                 var valuePart = Enum.Parse(property.PropertyType, item.Value);
-                value += Convert.ToInt32(valuePart);
+                value += Convert.ToInt32(valuePart, CultureInfo.CurrentCulture);
             }
 
-            property.Value = value;
+            property.Value = Enum.ToObject(property.PropertyType, value);
         }
 
 
@@ -146,7 +151,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
             public event EventHandler Changed;
         }
 
-        public class FlagsEditorItem : INotifyPropertyChanged
+        class FlagsEditorItem : INotifyPropertyChanged
         {
             private string value;
             private bool selected;

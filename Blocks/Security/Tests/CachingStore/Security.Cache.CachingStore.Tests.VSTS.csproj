@@ -57,7 +57,7 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="APTCAFixture.cs" />
+    <Compile Include="APTCAFixture.2008.cs" />
     <Compile Include="CachedIdentitiesFixture.cs" />
     <Compile Include="CachedPrincipalsFixture.cs" />
     <Compile Include="CachedProfilesFixture.cs" />

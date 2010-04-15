@@ -15,7 +15,7 @@ using System.Security;
 
 [assembly : AssemblyTitle("Enterprise Library Security AzMan Provider")]
 [assembly : AssemblyDescription("Enterprise Library Security AzMan Provider")]
-[assembly: AssemblyVersion("4.1.0.0")]
+[assembly: AssemblyVersion("5.0.414.0")]
 
 [assembly: AllowPartiallyTrustedCallers]
 [assembly: SecurityTransparent]

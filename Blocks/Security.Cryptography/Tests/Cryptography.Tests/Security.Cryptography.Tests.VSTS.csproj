@@ -70,7 +70,7 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="APTCAFixture.cs" />
+    <Compile Include="APTCAFixture.2008.cs" />
     <Compile Include="AssertHelpers.cs" />
     <Compile Include="Configuration\CryptographyReconfigurableTypeRegistrationFixture.cs" />
     <Compile Include="Configuration\CryptographyTypeRegistrationFixture.cs" />
@@ -102,7 +102,6 @@
     <Compile Include="SymmetricKeyGeneratorFixture.cs" />
     <Compile Include="KeyManagerFixture.cs" />
     <Compile Include="SymmetricProviderHelper.cs" />
-    <Compile Include="HashProviderInstrumentationListenerFixture.cs" />
     <Compile Include="MockCustomSymmetricProvider.cs" />
     <Compile Include="CustomSymmetricAlgorithmProviderFixture.cs" />
     <Compile Include="CryptographerBoundsFixture.cs" />

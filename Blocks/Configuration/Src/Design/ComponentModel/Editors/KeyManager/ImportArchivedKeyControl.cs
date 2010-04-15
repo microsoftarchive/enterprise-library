@@ -44,7 +44,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         /// <summary>
         /// Gets the file path to archived key file.
         /// </summary>
-        public string Filename
+        public string FileName
         {
             get { return txtChooseImportFileLocation.Text; }
         }
@@ -52,7 +52,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         /// <summary>
         /// Gets the password that should be used reading information from the archived key file.
         /// </summary>
-        public string Passphrase
+        public string PassPhrase
         {
             get { return txtPasswordImportFile.Text; }
         }
@@ -67,15 +67,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
 
         bool IWizardValidationTarget.ValidateControl()
         {
-            if (String.IsNullOrEmpty(Filename))
+            if (String.IsNullOrEmpty(FileName))
             {
-                MessageBox.Show(KeyManagerResources.FileShouldNotBeEmpty, KeyManagerResources.CryptoKeyWizardErrorTitle, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show(KeyManagerResources.FileShouldNotBeEmpty, KeyManagerResources.CryptoKeyWizardErrorTitle, MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
                 return false;
             }
 
-            if (!File.Exists(Filename))
+            if (!File.Exists(FileName))
             {
-                MessageBox.Show(KeyManagerResources.FileDoesNotExists, KeyManagerResources.CryptoKeyWizardErrorTitle, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show(KeyManagerResources.FileDoesNotExists, KeyManagerResources.CryptoKeyWizardErrorTitle, MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
                 return false;
             }
             return true;

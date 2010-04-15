@@ -118,37 +118,38 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="DataCacheStorageDataDatabaseInstanceNameDescription" xml:space="preserve">
-    <value>75 - Name of the database instance to use for storage of cached data, as configured in the Data Access Application Block.</value>
+    <value>Name of the database instance to use for storage of cached data, as configured in the Data Access Application Block.</value>
   </data>
   <data name="DataCacheStorageDataDatabaseInstanceNameDisplayName" xml:space="preserve">
     <value>Database Instance</value>
   </data>
   <data name="DataCacheStorageDataDescription" xml:space="preserve">
-    <value>73 - Stores the cached data in a database configured through the Data Access Application Block.</value>
+    <value>Stores the cached data in a database configured through the Data Access Application Block.</value>
   </data>
   <data name="DataCacheStorageDataDisplayName" xml:space="preserve">
     <value>Data Cache Storage</value>
   </data>
   <data name="DataCacheStorageDataNameDescription" xml:space="preserve">
-    <value>77 - The name of the Data Cache Storage provider.</value>
+    <value>The name of the Data Cache Storage provider.</value>
   </data>
   <data name="DataCacheStorageDataNameDisplayName" xml:space="preserve">
     <value>Name</value>
   </data>
   <data name="DataCacheStorageDataPartitionNameDescription" xml:space="preserve">
-    <value>79 - Name of the particular section or partition within the database used to store the cached data.This allows different applications to share the same database safely, and prevents different applications accessing the same cached data.</value>
+    <value>The name of the particular section or partition within the database used to store the cached data. 
+This allows different applications to share the same database safely, and prevents different applications accessing the same cached data.</value>
   </data>
   <data name="DataCacheStorageDataPartitionNameDisplayName" xml:space="preserve">
     <value>Partition Name</value>
   </data>
   <data name="DataCacheStorageDataStorageEncryptionDescription" xml:space="preserve">
-    <value>81 - The name of the Encryption Provider to use for this Database Cache Store.</value>
+    <value>The name of the Encryption Provider to use for this Database Cache Store.</value>
   </data>
   <data name="DataCacheStorageDataStorageEncryptionDisplayName" xml:space="preserve">
     <value>Encryption Provider</value>
   </data>
   <data name="DataCacheStorageDataTypeNameDescription" xml:space="preserve">
-    <value>83 - The fully qualified type name of the Database Cache Storage provider.</value>
+    <value>The fully qualified type name of the Database Cache Storage provider.</value>
   </data>
   <data name="DataCacheStorageDataTypeNameDisplayName" xml:space="preserve">
     <value>Type Name</value>

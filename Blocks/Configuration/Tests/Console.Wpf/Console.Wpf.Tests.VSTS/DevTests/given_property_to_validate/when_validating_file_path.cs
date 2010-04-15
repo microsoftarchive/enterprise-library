@@ -56,7 +56,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_a_validation_service
     {
        
         private FilePathValidator validator;
-        private List<ValidationError> errorResults;
+        private List<ValidationResult> errorResults;
 
         protected override void Arrange()
         {
@@ -84,7 +84,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_a_validation_service
 
         protected override void Act()
         {
-            errorResults = new List<ValidationError>();
+            errorResults = new List<ValidationResult>();
             validator.Validate(PathProperty, PathProperty.Value.ToString(), errorResults);
         }
 
@@ -96,11 +96,11 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_a_validation_service
     }
 
     [TestClass]
-    public class when_validating_unavailable_path : PathedPropertyContext
+    public class when_validating_unavailable_path_for_file : PathedPropertyContext
     {
 
         private FilePathValidator validator;
-        private List<ValidationError> errorResults;
+        private List<ValidationResult> errorResults;
         protected override void Arrange()
         {
             base.Arrange();
@@ -115,7 +115,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_a_validation_service
 
         protected override void Act()
         {
-            errorResults = new List<ValidationError>();
+            errorResults = new List<ValidationResult>();
             validator.Validate(PathProperty, PathProperty.Value.ToString(), errorResults);
         }
 
@@ -123,6 +123,97 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_a_validation_service
         public void then_results_in_errors()
         {
             Assert.AreEqual(1, errorResults.Count);
+        }
+    }
+
+    [TestClass]
+    public class when_validating_invalid_path_for_file : PathedPropertyContext
+    {
+
+        private FilePathValidator validator;
+        private List<ValidationResult> errorResults;
+        protected override void Arrange()
+        {
+            base.Arrange();
+
+            var applicationModel = new Mock<IApplicationModel>();
+            applicationModel.Setup(x => x.ConfigurationFilePath).Returns(Path.Combine(Environment.CurrentDirectory,
+                                                                                      "test.config"));
+
+            PathProperty.Value = ">??<";
+            validator = new FilePathValidator() { ApplicationModel = applicationModel.Object };
+        }
+
+        protected override void Act()
+        {
+            errorResults = new List<ValidationResult>();
+            validator.Validate(PathProperty, PathProperty.Value.ToString(), errorResults);
+        }
+
+        [TestMethod]
+        public void then_results_in_errors()
+        {
+            Assert.AreEqual(1, errorResults.Count);
+        }
+    }
+
+    [TestClass]
+    public class when_validating_unavailable_path_existsnce : PathedPropertyContext
+    {
+        private FilePathExistsValidator validator;
+        private List<ValidationResult> errorResults;
+        protected override void Arrange()
+        {
+            base.Arrange();
+
+            var applicationModel = new Mock<IApplicationModel>();
+            applicationModel.Setup(x => x.ConfigurationFilePath).Returns(Path.Combine(Environment.CurrentDirectory,
+                                                                                      "test.config"));
+
+            PathProperty.Value = "some/invalid/path/somefile.txt";
+            validator = new FilePathExistsValidator() { ApplicationModel = applicationModel.Object };
+        }
+
+        protected override void Act()
+        {
+            errorResults = new List<ValidationResult>();
+            validator.Validate(PathProperty, PathProperty.Value.ToString(), errorResults);
+        }
+
+        [TestMethod]
+        public void then_results_in_errors()
+        {
+            Assert.AreEqual(1, errorResults.Count);
+        }
+    }
+
+    [TestClass]
+    public class when_validating_unavailable_path_over_unc_existsnce : PathedPropertyContext
+    {
+        private FilePathExistsValidator validator;
+        private List<ValidationResult> errorResults;
+        protected override void Arrange()
+        {
+            base.Arrange();
+
+            var applicationModel = new Mock<IApplicationModel>();
+            applicationModel.Setup(x => x.ConfigurationFilePath).Returns(Path.Combine(Environment.CurrentDirectory,
+                                                                                      "test.config"));
+
+            PathProperty.Value = "\\\\server\\file\\somefile.txt";
+            validator = new FilePathExistsValidator() { ApplicationModel = applicationModel.Object };
+        }
+
+        protected override void Act()
+        {
+            errorResults = new List<ValidationResult>();
+            validator.Validate(PathProperty, PathProperty.Value.ToString(), errorResults);
+        }
+
+        [TestMethod]
+        public void then_results_doesnt_contain_errors()
+        {
+            Assert.AreEqual(0, errorResults.Count);
         }
     }
    

@@ -12,16 +12,20 @@
 using System;
 using System.ComponentModel;
 using System.Configuration;
-using System.Reflection;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Configuration.Design.HostAdapterV5;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
 
 namespace Console.Wpf.Tests.VSTS.Mocks
 {
     public class TestHandlerData : NameTypeConfigurationElement
     {
+        public TestHandlerData()
+        {
+            this.Type = typeof(TestHandler);
+        }
     }
 
     public class TestHandlerAnotherDerivedData : TestHandlerData
@@ -33,7 +37,7 @@ namespace Console.Wpf.Tests.VSTS.Mocks
     }
 
     [ACustomCollectionElementAddCommandAttribute(typeof(CustomElementCollectionAddCommand))]
-    [ACustomCollectionElementAddCommandAttribute(typeof(AnotherCustomElementCollectionAddCommand), Replace=CommandReplacement.NoCommand)]
+    [ACustomCollectionElementAddCommandAttribute(typeof(AnotherCustomElementCollectionAddCommand), Replace = CommandReplacement.NoCommand)]
     public class TestHandlerSonOfDerivedData : TestHandlerDerivedData
     {
     }
@@ -51,6 +55,8 @@ namespace Console.Wpf.Tests.VSTS.Mocks
 
         public TestHandlerDataWithChildren()
         {
+            this.Type = typeof(TestHandler);
+
             this[childrenProperty] = new NamedElementCollection<TestHandlerData>();
         }
 
@@ -65,36 +71,31 @@ namespace Console.Wpf.Tests.VSTS.Mocks
         }
     }
 
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple=true)]
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
     public class ACustomCollectionElementAddCommandAttribute : CommandAttribute
     {
-        public ACustomCollectionElementAddCommandAttribute(Type commandType) : base(commandType.AssemblyQualifiedName)
+        public ACustomCollectionElementAddCommandAttribute(Type commandType)
+            : base(commandType.AssemblyQualifiedName)
         {
             this.CommandPlacement = CommandPlacement.ContextAdd;
             this.Replace = CommandReplacement.DefaultAddCommandReplacement;
         }
 
-        public override object TypeId
-        {
-            get
-            {
-                return GetHashCode();
-            }
-        }
+
     }
 
     public class CustomElementCollectionAddCommand : DefaultCollectionElementAddCommand
     {
-        public CustomElementCollectionAddCommand(ConfigurationElementType configurationElementType, ElementCollectionViewModel elementCollectionModel) :
-            base(configurationElementType, elementCollectionModel)
+        public CustomElementCollectionAddCommand(ConfigurationElementType configurationElementType, ElementCollectionViewModel elementCollectionModel, IUIServiceWpf uiService) :
+            base(configurationElementType, elementCollectionModel, uiService)
         {
         }
     }
 
     public class AnotherCustomElementCollectionAddCommand : DefaultCollectionElementAddCommand
     {
-        public AnotherCustomElementCollectionAddCommand(ConfigurationElementType configurationElementType, ElementCollectionViewModel elementCollectionModel) :
-            base(configurationElementType, elementCollectionModel)
+        public AnotherCustomElementCollectionAddCommand(ConfigurationElementType configurationElementType, ElementCollectionViewModel elementCollectionModel, IUIServiceWpf uiService) :
+            base(configurationElementType, elementCollectionModel, uiService)
         {
         }
     }

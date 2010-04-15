@@ -15,6 +15,7 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using System.Reflection;
 using System.Globalization;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Utility;
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF
 {
@@ -28,6 +29,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF
 		private NameValueCollection attributes;
 		private Type faultContractType;
 		private string exceptionMessage;
+        private readonly IStringResolver exceptionMessageResolver;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="FaultContractExceptionHandler"/> class.
@@ -51,7 +53,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF
 		/// {Guid} value that will load the current exception handlingInstanceId value.
 		/// See <see cref="HandleException"/>. NOTICE that names and values are case sensitive.</param>
 		/// <exception cref="ArgumentNullException"/>
-		public FaultContractExceptionHandler(Type faultContractType, string exceptionMessage, NameValueCollection attributes)
+		public FaultContractExceptionHandler(Type faultContractType, string exceptionMessage, NameValueCollection attributes) :
+            this(new ConstantStringResolver(exceptionMessage), faultContractType, attributes)
 		{
 			if (faultContractType == null)
 			{
@@ -61,6 +64,31 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF
 			this.attributes = attributes;
 			this.exceptionMessage = exceptionMessage;
 		}
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FaultContractExceptionHandler"/> class.
+        /// </summary>
+        /// <param name="exceptionMessageResolver">The exception message resolver.</param>
+        /// <param name="faultContractType">Type of the fault contract.</param>
+        /// <param name="attributes">A collection of nam value paries that specify the mapping
+        /// between the properties of the FaultContract class and the values in the <see cref="Exception"/>
+        /// instance. You can specify something like: FaultPropertyName = "{Message}" where {Message}
+        /// points to the Message property value of the current exception. You can also specify a
+        /// {Guid} value that will load the current exception handlingInstanceId value.
+        /// See <see cref="HandleException"/>. NOTICE that names and values are case sensitive.</param>
+        /// <exception cref="ArgumentNullException"/>
+        public FaultContractExceptionHandler(IStringResolver exceptionMessageResolver, Type faultContractType, NameValueCollection attributes)
+        {
+            if (faultContractType == null)
+            {
+                throw new ArgumentNullException("faultContractType");
+            }
+
+            this.faultContractType = faultContractType;
+            this.attributes = attributes;
+            this.exceptionMessageResolver = exceptionMessageResolver;
+            this.exceptionMessage = this.exceptionMessageResolver.GetString();
+        }
 
 		/// <summary>
 		/// Handles the exception.

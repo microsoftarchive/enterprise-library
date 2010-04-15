@@ -46,6 +46,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Lib\Microsoft.Practices.Unity.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Practices.Unity.Interception, Version=2.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Lib\Microsoft.Practices.Unity.Interception.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>True</SpecificVersion>
       <Private>False</Private>
@@ -64,11 +68,12 @@
     <Compile Include="AndExpressionFixture.cs" />
     <Compile Include="AnonymousExpressionFixture.cs" />
     <Compile Include="AnyExpressionFixture.cs" />
-    <Compile Include="APTCAFixture.cs" />
+    <Compile Include="APTCAFixture.2008.cs" />
     <Compile Include="AuthorizationInstrumentationFixture.cs" />
     <Compile Include="AuthorizationProviderFactoryFixture.cs" />
     <Compile Include="AuthorizationRuleProviderFixture.cs" />
     <Compile Include="ComplexExpressionFixture.cs" />
+    <Compile Include="Configuration\AuthorizationCallHandlerDataFixture.cs" />
     <Compile Include="Configuration\AuthorizationConfigurationSerializationFixture.cs" />
     <Compile Include="Configuration\Fluent\AuthorizeUsingCustomExtensionFixture.cs" />
     <Compile Include="Configuration\Fluent\AuthorizeUsingRuleProviderExtensionFixture.cs" />
@@ -78,6 +83,7 @@
     <Compile Include="Configuration\SecurityCacheConfigurationSerializationFixture.cs" />
     <Compile Include="Configuration\SecuritySettingsGetRegistrationsFixture.cs" />
     <Compile Include="Configuration\Unity\SecurityBlockInstantiationFixture.cs" />
+    <Compile Include="PolicyInjection\AuthorizationCallHandlerAttributeFixture.cs" />
     <Compile Include="SecurityCacheInstrumentationFixture.cs" />
     <Compile Include="CustomSecurityCacheProviderFixture.cs" />
     <Compile Include="CustomAuthorizationProviderFixture.cs" />

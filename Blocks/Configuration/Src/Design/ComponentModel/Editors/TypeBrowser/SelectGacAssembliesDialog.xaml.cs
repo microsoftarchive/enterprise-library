@@ -23,8 +23,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
     /// <summary>
     /// Interaction logic for SelectGacAssembliesDialog.xaml
     /// </summary>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Gac")]
     public partial class SelectGacAssembliesDialog : Window
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SelectGacAssembliesDialog"/> class.
+        /// </summary>
         public SelectGacAssembliesDialog()
         {
             InitializeComponent();
@@ -33,12 +37,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             var assemblyNames = (AssemblyNamesCollection)this.Resources["AssemblyNames"];
-            var assemblyCacheEnum = new AssemblyCacheEnum(null);
+            AssemblyCacheEnum assemblyCacheEnum = null;
 
             Action initialize = null;
             initialize = () =>
             {
-                int count = 25;
+                if (assemblyCacheEnum == null)
+                {
+                    assemblyCacheEnum = new AssemblyCacheEnum(null);
+                }
+
+                int count = 5;
                 string name = null;
                 while (count-- > 0 && (name = assemblyCacheEnum.GetNextAssembly()) != null)
                 {
@@ -53,23 +62,23 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
             Dispatcher.BeginInvoke(initialize);
         }
 
-        public IEnumerable<Assembly> GetAssemblies()
+        /// <summary>
+        /// Returns the names for the assemblies selected by the user.
+        /// </summary>
+        /// <returns>The names for the assemblies selected by the user.</returns>
+        public IEnumerable<AssemblyName> GetAssemblyNames()
         {
-            return this.Assemblies.SelectedItems.Cast<AssemblyName>()
-                .Select(an =>
-                    {
-                        try
-                        {
-                            return Assembly.ReflectionOnlyLoad(an.FullName);
-                        }
-                        catch (Exception)
-                        {
-                            return null;
-                        }
-                    })
-                .Where(a => a != null);
+            return this.Assemblies.SelectedItems.OfType<AssemblyName>();
+        }
+
+        private void OKButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.DialogResult = true;
         }
     }
 
+    /// <summary>
+    /// Non-generic ObservableCollection subclass for XAML support.
+    /// </summary>
     public class AssemblyNamesCollection : ObservableCollection<AssemblyName> { }
 }

@@ -13,29 +13,32 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
 using System.ComponentModel;
+using System.Globalization;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Validation
 {
     internal class DefaultPropertyValidator : PropertyValidator
     {
-        protected override void ValidateCore(Property property, string value, IList<ValidationError> errors)
+        protected override void ValidateCore(Property property, string value, IList<ValidationResult> results)
         {
             object convertedValue = null;
-            if (TryGetConvertedValue(property, value, errors, out convertedValue))
+            if (TryGetConvertedValue(property, value, results, out convertedValue))
             {
                 var validators = GetConfigurationPropertyValidators(property)
                     .Union(GetConfigurationValidators(property));
 
                 foreach (var validator in validators)
                 {
-                    validator.Validate(property, value, errors);
+                    validator.Validate(property, value, results);
                 }
             }
         }
 
-        private static bool TryGetConvertedValue(Property property, string value, IList<ValidationError> errors, out object convertedValue)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+        private static bool TryGetConvertedValue(Property property, string value, IList<ValidationResult> errors, out object convertedValue)
         {
             convertedValue = null;
             try
@@ -45,13 +48,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Validation
             }
             catch (Exception ex)
             {
-                errors.Add(new ValidationError(property, ex.Message));
+                errors.Add(new PropertyValidationResult(property, ex.Message));
             }
 
             return false;
         }
 
-        private IEnumerable<Validator> GetConfigurationValidators(Property property)
+        private static IEnumerable<Validator> GetConfigurationValidators(Property property)
         {
             var configurationValidators = property.Attributes
                 .OfType<ConfigurationValidatorAttribute>()
@@ -79,7 +82,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Validation
 
         private class UniqueCollectionElementValidator : Validator
         {
-            protected override void ValidateCore(object instance, string value, IList<ValidationError> errors)
+            protected override void ValidateCore(object instance, string value, IList<ValidationResult> results)
             {
                 var property = instance as ElementProperty;
                 if (property == null) return;
@@ -91,43 +94,71 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Validation
 
                 var parentCollection = containingElement.ParentElement as ElementCollectionViewModel;
 
-                var newItemComparer = CreateMatchKeyPredicate(property, containingElement.ConfigurationElement);
+                var newItemComparer = CreateMatchKeyPredicate(containingElement, property);
 
-                var collection = parentCollection.ConfigurationElement as ConfigurationElementCollection;
-
-                foreach (ConfigurationElement element in collection)
+                if ((typeof(KeyValueConfigurationElement) == containingElement.ConfigurationElement.GetType()))
                 {
-                    if (element == containingElement.ConfigurationElement) continue;
-
-                    if (newItemComparer(element))
+                    
+                    int itemCount = 0;
+                    foreach (var element in parentCollection.ChildElements)
                     {
-                        errors.Add(new ValidationError(property, "Duplicate key value."));
+                        if (string.Compare(value, (string)element.NameProperty.Value, StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            itemCount++;
+                        }
+                    }
+
+                    if (itemCount > 1)
+                    {
+                        results.Add(new PropertyValidationResult(property, Resources.ValidationErrorDuplicateKeyValue));
                         return;
+                    }
+                }
+                else
+                {
+
+                    foreach (var element in parentCollection.ChildElements.OfType<CollectionElementViewModel>())
+                    {
+                        if (element.ElementId == containingElement.ElementId) { continue; }
+
+                        if (newItemComparer(element))
+                        {
+                            results.Add(new PropertyValidationResult(property, Resources.ValidationErrorDuplicateKeyValue));
+                            return;
+                        }
                     }
                 }
             }
 
-            private bool IsKeyItem(ElementProperty property)
+            private static bool IsKeyItem(ElementProperty property)
             {
                 var configPropertyAttribute = property.Attributes.OfType<ConfigurationPropertyAttribute>().FirstOrDefault();
                 return (configPropertyAttribute != null && configPropertyAttribute.IsKey == true);
             }
 
-            private Func<ConfigurationElement, bool> CreateMatchKeyPredicate(ElementProperty property, ConfigurationElement other)
+            private static Func<ElementViewModel, bool> CreateMatchKeyPredicate(ElementViewModel elementBeingValidated, Property propertyBeingValidated)
             {
-                string[] keyPropertyNames = other.ElementInformation.Properties.Cast<PropertyInformation>().Where(x => x.IsKey).Select(x => x.Name).ToArray();
+                string[] keyPropertyNames = elementBeingValidated.ConfigurationElement.
+                                            ElementInformation.Properties.
+                                            Cast<PropertyInformation>().
+                                            Where(x => x.IsKey).
+                                            Select(x => x.Name).ToArray();
 
-                return x =>
+                return otherElementInKeyComparison =>
                 {
-                    int keyCount = other.ElementInformation.Properties.Keys.Count;
                     foreach (string keyProperty in keyPropertyNames)
                     {
-                        object originalValue;
-                        originalValue = keyProperty == property.ConfigurationName ? 
-                                property.ConvertFromBindableValue(property.BindableProperty.BindableValue) 
-                                : other.ElementInformation.Properties[keyProperty].Value;
-
-                        if (!object.Equals(originalValue, x.ElementInformation.Properties[keyProperty].Value))
+                        BindableProperty otherElementInKeyComparisonBindableProperty = otherElementInKeyComparison.Properties.OfType<ElementProperty>().Where(y => y.ConfigurationName == keyProperty).Single().BindableProperty;
+                        BindableProperty propertyOnElementBeingValidatedBindable = elementBeingValidated.Properties.OfType<ElementProperty>().Where(y=>y.ConfigurationName == keyProperty).Single().BindableProperty;
+                        if (!otherElementInKeyComparisonBindableProperty.IsBindableValueCommitted)
+                        {
+                            return false;
+                        }
+                        if (propertyOnElementBeingValidatedBindable.Property != propertyBeingValidated && !propertyOnElementBeingValidatedBindable.IsBindableValueCommitted)
+                        {
+                            return false;
+                        }
+                        if (!string.Equals(otherElementInKeyComparisonBindableProperty.BindableValue, propertyOnElementBeingValidatedBindable.BindableValue, StringComparison.OrdinalIgnoreCase))
                         {
                             return false;
                         }
@@ -146,7 +177,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Validation
                 this.validatorInstance = validatorInstance;
             }
 
-            protected override void ValidateCore(object instance, string value, IList<ValidationError> errors)
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+            protected override void ValidateCore(object instance, string value, IList<ValidationResult> results)
             {
                 var property = instance as ElementProperty;
                 if (property == null) return;
@@ -159,7 +191,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Validation
                     }
                     catch (Exception ex)
                     {
-                        errors.Add(new ValidationError(property, ex.Message));
+                        results.Add(new PropertyValidationResult(property, ex.Message));
                     }
                 }
             }

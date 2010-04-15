@@ -23,16 +23,18 @@ namespace Console.Wpf.Tests.VSTS.Mocks
 {
     public class FakeElementViewModel : ElementViewModel
     {
-        public FakeElementViewModel()
-            : base(null, new TestHandlerData(), new Attribute[0])
+        public FakeElementViewModel(IEnumerable<Attribute> attributes)
+            : base(null, new TestHandlerData(), attributes)
         {
-
             base.ElementViewModelServiceDependencies(null, ApplicationModel.Object);
         }
 
+        public FakeElementViewModel()
+            : this(new Attribute[0])
+        {
+        }
+
         public Mock<IApplicationModel> ApplicationModel = new Mock<IApplicationModel>(MockBehavior.Loose);
-
-
 
         protected override IEnumerable<CommandModel> GetAllCommands()
         {

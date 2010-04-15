@@ -10,39 +10,35 @@
 //===============================================================================
 
 using System;
-using System.Text;
-using System.Collections.Generic;
-using ManagementInstrumentation = System.Management.Instrumentation.Instrumentation;
-using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation;
-using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Security.Properties;
 using System.Diagnostics;
+using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation;
+using Microsoft.Practices.EnterpriseLibrary.Security.Properties;
+using System.Globalization;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Instrumentation
 {
     /// <summary>
     /// The instrumentation gateway for the Security Application Block when no instances of the objects are involved.
     /// </summary>
-	[EventLogDefinition("Application", EventLogSourceName)]
+    [EventLogDefinition("Application", EventLogSourceName)]
     public class DefaultSecurityEventLogger : InstrumentationListener
     {
-		private IEventLogEntryFormatter eventLogEntryFormatter;
+        private IEventLogEntryFormatter eventLogEntryFormatter;
 
         /// <summary>
         /// Made public for testing purposes.
         /// </summary>
-		public const string EventLogSourceName = "Enterprise Library Security";
+        public const string EventLogSourceName = "Enterprise Library Security";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DefaultSecurityEventLogger"/> class, specifying whether 
-        /// logging to the event log and firing WMI events is allowed.
+        /// logging to the event log is allowed.
         /// </summary>
         /// <param name="eventLoggingEnabled"><code>true</code> if writing to the event log is allowed, <code>false</code> otherwise.</param>
-        /// <param name="wmiEnabled"><code>true</code> if firing WMI events is allowed, <code>false</code> otherwise.</param>
-        public DefaultSecurityEventLogger(bool eventLoggingEnabled, bool wmiEnabled)
-			: base((string)null, false, eventLoggingEnabled, wmiEnabled, null)
+        public DefaultSecurityEventLogger(bool eventLoggingEnabled)
+            : base((string)null, false, eventLoggingEnabled, null)
         {
-			eventLogEntryFormatter = new EventLogEntryFormatter(Resources.BlockName);
+            eventLogEntryFormatter = new EventLogEntryFormatter(Resources.BlockName);
         }
 
         /// <summary>
@@ -55,18 +51,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Instrumentation
         /// <exception cref="FormatException"><paramref name="messageTemplate"/> could not be formatted by <see cref="String.Format(System.IFormatProvider, string, object[])"/> given the parameter <paramref name="instanceName"/>.</exception>
         public void LogConfigurationError(string instanceName, string messageTemplate, Exception exception)
         {
-			if (WmiEnabled) FireManagementInstrumentation(new SecurityConfigurationFailureEvent(instanceName, exception.ToString()));
+            if (exception == null) throw new ArgumentNullException("exception");
+
             if (EventLoggingEnabled)
             {
-				string errorMessage
-					= string.Format(
-						Resources.Culture,
-						messageTemplate,
-						instanceName);
-				string entryText = eventLogEntryFormatter.GetEntryText(errorMessage, exception);
+                string errorMessage
+                    = string.Format(
+                        CultureInfo.CurrentCulture,
+                        messageTemplate,
+                        instanceName);
+                string entryText = eventLogEntryFormatter.GetEntryText(errorMessage, exception);
 
-				EventLog.WriteEntry(GetEventSourceName(), entryText, EventLogEntryType.Error);
-			}
+                EventLog.WriteEntry(GetEventSourceName(), entryText, EventLogEntryType.Error);
+            }
         }
     }
 }

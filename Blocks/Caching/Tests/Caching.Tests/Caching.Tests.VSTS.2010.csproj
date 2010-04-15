@@ -1,0 +1,143 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{C2B20EFD-0147-4FF9-A7BD-86A40B78E83A}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Microsoft.Practices.EnterpriseLibrary.Caching.Tests</RootNamespace>
+    <AssemblyName>Microsoft.Practices.EnterpriseLibrary.Caching.Tests</AssemblyName>
+    <WarningLevel>4</WarningLevel>
+    <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <FileUpgradeFlags></FileUpgradeFlags>
+    <UpgradeBackupLocation></UpgradeBackupLocation>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <NoWarn>618</NoWarn>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugSymbols>false</DebugSymbols>
+    <Optimize>true</Optimize>
+    <OutputPath>.\bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <NoWarn>618</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Lib\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Lib\Microsoft.Practices.Unity.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Configuration.Install" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.XML" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="APTCAFixture.2008.cs" />
+    <Compile Include="BackgroundSchedulerFixture.cs" />
+    <Compile Include="BackingStoreImplementations\CustomBackingStoreFixture.cs" />
+    <Compile Include="BackingStoreImplementations\IsolatedBackingStoreWithEncryptionFixture.cs" />
+    <Compile Include="BackingStoreImplementations\IsolatedStorageBackingStoreFixture.cs" />
+    <Compile Include="BackingStoreImplementations\IsolatedStorageBackingStoreInitializationFixture.cs" />
+    <Compile Include="BackingStoreImplementations\IsolatedStorageCacheItemFixture.cs" />
+    <Compile Include="BackingStoreImplementations\StorageEncryptionFactoryFixture.cs" />
+    <Compile Include="CacheExceptionHandlingFixture.cs" />
+    <Compile Include="CacheFactoryFixture.cs" />
+    <Compile Include="CacheFeatureTestFixture.cs" />
+    <Compile Include="CacheItemFixture.cs" />
+    <Compile Include="CacheManagerFactoryFixture.cs" />
+    <Compile Include="CacheManagerFixture.cs" />
+    <Compile Include="CacheManagerThreadTestFixture.cs" />
+    <Compile Include="Configuration\CacheManagerDataFixture.cs" />
+    <Compile Include="Configuration\CacheManagerSettingsTypeRegistrationFixture.cs" />
+    <Compile Include="Configuration\CacheManagerSettingsReconfigurableTypeRegistrationFixture.cs" />
+    <Compile Include="Configuration\Fluent\CachingConfigurationSourceBuilderExtensionsFixture.cs" />
+    <Compile Include="Configuration\Fluent\ForCustomCacheManagerNamedExtensionFixture.cs" />
+    <Compile Include="Configuration\Fluent\ForCacheManagerNamedExtensionFixture.cs" />
+    <Compile Include="Configuration\Fluent\StoreCacheManagerItemsInCustomStorageExtensionFixture.cs" />
+    <Compile Include="Configuration\Fluent\StoreCacheManagerItemsInIsolatedStorageExtensionFixture.cs" />
+    <Compile Include="Configuration\Fluent\StoreCacheManagerItemsInMemoryFixture.cs" />
+    <Compile Include="Configuration\IsolatedStorageCacheStorageDataFixture.cs" />
+    <Compile Include="Configuration\MockCacheManagerDataFixture.cs" />
+    <Compile Include="Configuration\Unity\CachingBlockInstantiationFixture.cs" />
+    <Compile Include="CustomCacheManager.cs" />
+    <Compile Include="CustomCacheManagerFixture.cs" />
+    <Compile Include="ExpirationPollTimerFixture.cs" />
+    <Compile Include="Expirations\AbsoluteTimeFixture.cs" />
+    <None Include="Expirations\FileDependencyFixture.2008.cs" />
+    <Compile Include="Expirations\ExtendedFormatFixture.cs" />
+    <Compile Include="Expirations\FileDependencyFixture.cs" />
+    <Compile Include="Expirations\SlidingTimeFixture.cs" />
+    <Compile Include="ExpirationTaskFixture.cs" />
+    <Compile Include="Expirations\ExtendedFormatTimeFixture.cs" />
+    <Compile Include="Instrumentation\CachingEventLogFixture.cs" />
+    <Compile Include="Instrumentation\CachingPerformanceCountersFixture.cs" />
+    <Compile Include="Instrumentation\DefaultCachingEventLoggerFixture.cs" />
+    <Compile Include="IsolatedStoragePersistentCacheFactoryFixture.cs" />
+    <Compile Include="PriorityDateComparerFixture.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="RefreshActionInvokerFixture.cs" />
+    <Compile Include="ScavengerFixture.cs" />
+    <Compile Include="SerializationUtilityFixture.cs" />
+    <Compile Include="TestConfigurationSource.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\Tests\Common.TestSupport\Common.TestSupport.csproj">
+      <Project>{C6DE0220-E31B-486B-AB57-107636AEB927}</Project>
+      <Name>Common.TestSupport</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Src\Caching\Caching.csproj">
+      <Project>{E725A5B4-A379-492F-89E3-3D8021376C3F}</Project>
+      <Name>Caching</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Common\Src\Common.csproj">
+      <Project>{A09297C8-2C40-470B-8856-D856676DDFFA}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Caching.TestSupport\Caching.TestSupport.csproj">
+      <Project>{D9E0815E-1687-4A2E-A2FD-86CE6D0AE2C4}</Project>
+      <Name>Caching.TestSupport</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Microsoft.Practices.EnterpriseLibrary.Caching.Tests.dll.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="test.exe.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSHARP.Targets" />
+</Project>

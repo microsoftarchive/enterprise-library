@@ -13,6 +13,7 @@ using System;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
 {
@@ -66,7 +67,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
                     MessageTemplate = "template {1}"
                 };
 
-            Assert.IsTrue(attribute.IsValid("2.0"));
+            Assert.IsTrue(attribute.IsValid((2.0d).ToString(CultureInfo.CurrentCulture)));
         }
 
         [TestMethod]

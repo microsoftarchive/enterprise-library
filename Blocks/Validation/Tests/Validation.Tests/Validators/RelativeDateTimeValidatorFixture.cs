@@ -735,7 +735,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
         {
             RelativeDateTimeValidator validator = new RelativeDateTimeValidator(0, DateTimeUnit.None, RangeBoundaryType.Exclusive);
 
-            Assert.IsFalse(validator.Validate(DateTime.Now).IsValid);
+            Assert.IsFalse(validator.Validate(DateTime.Now.AddSeconds(1)).IsValid);
             Assert.IsFalse(validator.Validate(DateTime.Now.AddDays(1)).IsValid);
         }
 

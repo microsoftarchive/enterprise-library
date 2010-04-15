@@ -21,6 +21,7 @@ using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent;
 using Microsoft.Practices.EnterpriseLibrary.Common.Properties;
+using System.Globalization;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 {
@@ -89,7 +90,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
             if (attributes == null) throw new ArgumentNullException("attributes");
 
             if (!typeof(IHashProvider).IsAssignableFrom(customHashCryptoProviderType))
-                throw new ArgumentException(string.Format(Resources.Culture,
+                throw new ArgumentException(string.Format(CultureInfo.CurrentCulture,
                     Resources.ExceptionTypeMustImplementInterface, typeof(IHashProvider)), "customHashCryptoProviderType");
 
             return new EncryptUsingCustomHashProviderNamedBuilder(context, customHashCryptoProviderName, customHashCryptoProviderType, attributes);

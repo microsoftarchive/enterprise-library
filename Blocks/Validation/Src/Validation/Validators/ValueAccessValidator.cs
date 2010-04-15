@@ -82,5 +82,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         {
             get { return Resources.ValueValidatorDefaultMessageTemplate; }
         }
+
+        /// <summary>
+        /// Key used to access the member being validated.
+        /// </summary>
+        public string Key
+        {
+            get { return valueAccess.Key; }
+        }
     }
 }

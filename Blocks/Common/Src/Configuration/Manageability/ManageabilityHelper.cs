@@ -32,7 +32,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
         /// Initialize a new instance of a <see cref="ManageabilityHelper"/> class.
         ///</summary>
         ///<param name="manageabilityProviders">The manageability propvodiers.</param>
-        ///<param name="readGroupPolicies">true to read group policies; otherwise, false.</param>
+        ///<param name="readGroupPolicies">true to read Group Policies; otherwise, false.</param>
         ///<param name="applicationName">The application name.</param>
         public ManageabilityHelper(IDictionary<string, ConfigurationSectionManageabilityProvider> manageabilityProviders,
                                    bool readGroupPolicies,
@@ -46,7 +46,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
         /// Initialize a new instance of the <see cref="ManageabilityHelper"/> class.
         ///</summary>
         ///<param name="manageabilityProviders">The manageability providers.</param>
-        ///<param name="readGroupPolicies">true to read group policies; otherwise, false.</param>
+        ///<param name="readGroupPolicies">true to read Group Policies; otherwise, false.</param>
         ///<param name="registryAccessor">A registry accessor.</param>
         ///<param name="applicationName">The application name.</param>
         public ManageabilityHelper(IDictionary<string, ConfigurationSectionManageabilityProvider> manageabilityProviders,

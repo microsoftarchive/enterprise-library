@@ -26,6 +26,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Property | AttributeTargets.Assembly, AllowMultiple = true)]
     public class CommandAttribute : Attribute
     {
+        private Guid typeId;
+        private string title;
+        private bool resourceLoaded;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="CommandAttribute"/> class, specifying the Command Model Type.
         /// </summary>
@@ -42,6 +46,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
             this.CommandModelTypeName = commandModelTypeName;
             this.Replace = CommandReplacement.NoCommand;
             this.CommandPlacement = CommandPlacement.ContextCustom;
+
+            this.typeId = Guid.NewGuid();
         }
 
         /// <summary>
@@ -71,7 +77,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
         /// <summary>
         /// Gets the title that will be shown for this command in the UI (User Interface).
         /// </summary>
-        public string Title
+        public virtual string Title
         {
             get
             {
@@ -79,7 +85,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
                 {
                     EnsureTitleLoaded();
                 }
-                return title;
+                return title;    
             }
             set
             {
@@ -87,9 +93,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
             }
         }
 
-        private string title;
-
-        private bool resourceLoaded;
         private void EnsureTitleLoaded()
         {
             if (resourceLoaded) return;
@@ -108,10 +111,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
             resourceLoaded = true;
         }
 
-        /// <summary/>
+        /// <summary>
+        /// Gets or sets the <see cref="CommandReplacement"/> options for this command.
+        /// </summary>
         public CommandReplacement Replace { get; set; }
 
-        /// <summary/>
+        /// <summary>
+        /// Gets or sets the <see cref="CommandPlacement"/> options for this command.
+        /// </summary>
         public CommandPlacement CommandPlacement { get; set; }
 
         /// <summary>
@@ -138,38 +145,85 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
         ///     command.KeyGesture = "Ctrl+1";
         /// </example>
         public string KeyGesture { get; set; }
+
+        /// <summary>
+        /// When implemented in a derived class, gets a unique identifier for this <see cref="T:System.Attribute"/>.
+        /// </summary>
+        /// <returns>
+        /// An <see cref="T:System.Object"/> that is a unique identifier for the attribute.
+        /// </returns>
+        /// <filterpriority>2</filterpriority>
+        public override object TypeId
+        {
+            get
+            {
+                //the identity of a CommandAttribute is either the command it replaces or unique value per instance.
+                if (Replace == CommandReplacement.NoCommand)
+                {
+                    return typeId;
+                }
+                return Replace;
+            }
+        }
+
     }
 
-    /// <summary/>
+    /// <summary>
+    /// Specifies whether a command replaces a default command.
+    /// </summary>
     public enum CommandReplacement
     {
-        /// <summary/>
+        /// <summary>
+        /// Specifies that the command should be used to replace the default add command.
+        /// </summary>
         DefaultAddCommandReplacement,
 
-        /// <summary/>
+        /// <summary>
+        /// Specifies that the command should be used to replace the default delete command.
+        /// </summary>
         DefaultDeleteCommandReplacement,
 
-        /// <summary/>
+        /// <summary>
+        /// Specifies that the command should not be used to replace any default command.
+        /// </summary>
         NoCommand
     }
 
-
-    /// <summary/>
+    /// <summary>
+    /// Specifies the placement of a command. This can be either a top level menu, e.g.: <see cref="CommandPlacement.FileMenu"/> or <see cref="CommandPlacement.BlocksMenu"/> or
+    /// a context menu, e.g.: <see cref="CommandPlacement.ContextAdd"/>,  <see cref="CommandPlacement.ContextCustom"/>.
+    /// </summary>
     public enum CommandPlacement
     {
-        /// <summary/>
+        /// <summary>
+        /// Specifies placement of the command in the top level file menu.
+        /// </summary>
         FileMenu,
 
-        /// <summary/>
+        /// <summary>
+        /// Specifies placement of the command in the top level blocks menu.
+        /// </summary>
         BlocksMenu,
 
-        /// <summary/>
+        /// <summary>
+        /// Specifies placement of the command in the top level wizards menu.
+        /// </summary>
+        WizardMenu,
+
+        /// <summary>
+        /// Specifies placement of the command in the contextual add menu for an configuration element.
+        /// </summary>
         ContextAdd,
 
-        /// <summary/>
+        /// <summary>
+        /// Specifies placement of the command in the custom commands menu for an configuration element.
+        /// </summary>
         ContextCustom,
 
-        /// <summary/>
+        /// <summary>
+        /// Specifies placement of the command in the delete commands menu for an configuration element.
+        /// </summary>
         ContextDelete,
+
     }
 }

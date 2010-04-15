@@ -16,7 +16,7 @@ using System.Configuration;
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability
 {
     /// <summary>
-    /// Defines an accessor for configuraiton.
+    /// Defines an accessor for configuration.
     /// </summary>
 	public interface IConfigurationAccessor
 	{

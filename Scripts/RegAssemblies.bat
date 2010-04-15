@@ -237,12 +237,12 @@ pushd %binDir%
 @REM Policy Injection Call Handlers
 @REM ------------------------------------------------------------------
 cd ..\Blocks\bin\%buildType%
-if Exist Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.dll installutil %action% /LogToConsole=%logToConsole% /CategoryName="Call Handler Unit Tests" Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.dll 
+if Exist Microsoft.Practices.EnterpriseLibrary.PolicyInjection.dll installutil %action% /LogToConsole=%logToConsole% /Category="Call Handler Unit Tests" Microsoft.Practices.EnterpriseLibrary.PolicyInjection.dll 
 @if errorlevel 1 goto :error
 popd
 pushd %binDir%
-cd ..\Blocks\PolicyInjection\Tests\CallHandlers\bin\%buildType%
-if Exist Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tests.dll installutil %action% /LogToConsole=%logToConsole% Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tests.dll
+cd ..\Blocks\PolicyInjection\Tests\PolicyInjection\bin\%buildType%
+if Exist Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.dll installutil %action% /LogToConsole=%logToConsole% Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.dll
 @if errorlevel 1 goto :error
 popd
 

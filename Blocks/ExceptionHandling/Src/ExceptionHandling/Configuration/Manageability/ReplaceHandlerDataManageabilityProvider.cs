@@ -20,7 +20,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
 {
     /// <summary>
     /// Provides an implementation for <see cref="WrapHandlerData"/> that
-    /// splits policy overrides processing and WMI objects generation, performing appropriate logging of 
+    /// processes policy overrides, performing appropriate logging of 
     /// policy processing errors.
     /// </summary>
     public class ReplaceHandlerDataManageabilityProvider
@@ -30,6 +30,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
         /// The name of the exception message property.
         /// </summary>
         public const String ExceptionMessagePropertyName = "exceptionMessage";
+
+        /// <summary>
+        /// The name of the exception message resource type property.
+        /// </summary>
+        public const string ExceptionMessageResourceTypePropertyName = "exceptionMessageResourceType";
+
+        /// <summary>
+        /// The name of the exception message resource name property.
+        /// </summary>
+        public const string ExceptionMessageResourceNamePropertyName = "exceptionMessageResourceName";
 
         /// <summary>
         /// The name of the replace exception type property.
@@ -96,7 +106,21 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
                 ExceptionMessagePropertyName,
                 configurationObject.ExceptionMessage,
                 1024,
-                true);
+                false);
+
+            contentBuilder.AddEditTextPart(Resources.ReplaceHandlerExceptionMessageResourceTypePartName,
+                elementPolicyKeyName,
+                ExceptionMessageResourceTypePropertyName,
+                configurationObject.ExceptionMessageResourceType,
+                1024,
+                false);
+
+            contentBuilder.AddEditTextPart(Resources.ReplaceHandlerExceptionMessageResourceNamePartName,
+                elementPolicyKeyName,
+                ExceptionMessageResourceNamePropertyName,
+                configurationObject.ExceptionMessageResourceName,
+                1024,
+                false);
 
             contentBuilder.AddEditTextPart(Resources.ReplaceHandlerExceptionTypePartName,
                 elementPolicyKeyName,
@@ -131,10 +155,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
         /// the override values will cancel policy processing.</remarks>
         protected override void OverrideWithGroupPolicies(ReplaceHandlerData configurationObject, IRegistryKey policyKey)
         {
-            String exceptionMessageOverride = policyKey.GetStringValue(ExceptionMessagePropertyName);
+            string exceptionMessageOverride = policyKey.GetStringValue(ExceptionMessagePropertyName);
+            string exceptionMessageResourceTypeOverride = policyKey.GetStringValue(ExceptionMessageResourceTypePropertyName);
+            string exceptionMessageResourceNameOverride = policyKey.GetStringValue(ExceptionMessageResourceNamePropertyName);
             Type replaceExceptionTypeOverride = policyKey.GetTypeValue(ReplaceExceptionTypePropertyName);
 
             configurationObject.ExceptionMessage = exceptionMessageOverride;
+            configurationObject.ExceptionMessageResourceType = exceptionMessageResourceTypeOverride;
+            configurationObject.ExceptionMessageResourceName = exceptionMessageResourceNameOverride;
             configurationObject.ReplaceExceptionType = replaceExceptionTypeOverride;
         }
     }

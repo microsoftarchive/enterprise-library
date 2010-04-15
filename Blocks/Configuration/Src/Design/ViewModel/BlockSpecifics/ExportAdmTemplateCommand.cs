@@ -11,65 +11,64 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
-using System.Windows.Forms;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Console;
-using System.Windows.Forms.Design;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Properties;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability.Adm;
+using System.Globalization;
 using System.IO;
+using System.Windows.Forms;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability.Adm;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Configuration.Design.HostAdapterV5;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics
 {
+#pragma warning disable 1591
+
+    /// <summary>
+    /// This class supports block-specific configuration design-time and is not
+    /// intended to be used directly from your code.
+    /// </summary>
     public class ExportAdmTemplateCommand : CommandModel
     {
-        private static IDictionary<Type, ConfigurationElementManageabilityProvider> NoProviders
-           = new Dictionary<Type, ConfigurationElementManageabilityProvider>(0);
-
-
         ApplicationViewModel applicationViewModel;
-        IUIService uiService;
         ElementViewModel element;
         ConfigurationManageabilityProviderAttributeRetriever attributeRetriever;
 
-        public ExportAdmTemplateCommand(CommandAttribute commandAttribute, 
-                                        ApplicationViewModel applicationViewModel, 
-                                        IUIService uiService, 
+        public ExportAdmTemplateCommand(CommandAttribute commandAttribute,
+                                        ApplicationViewModel applicationViewModel,
+                                        IUIServiceWpf uiService,
                                         ElementViewModel element,
                                         AssemblyLocator assemblyLocator)
-            :base(commandAttribute)
+            : base(commandAttribute, uiService)
         {
             this.applicationViewModel = applicationViewModel;
-            this.uiService = uiService;
             this.element = element;
             this.attributeRetriever = new ConfigurationManageabilityProviderAttributeRetriever(assemblyLocator);
         }
 
-        public override bool CanExecute(object parameter)
+        protected override bool InnerCanExecute(object parameter)
         {
             return true;
         }
 
         public override string Title
         {
-            get{ return Resources.GenerateAdmTemplateCommandText; }
+            get { return Resources.GenerateAdmTemplateCommandText; }
         }
 
         /// <summary>
         /// 
         /// </summary>
-        public override void Execute(object parameter)
+        protected override void InnerExecute(object parameter)
         {
             // check for dirty and ask for saving
             if (applicationViewModel.IsDirty)
             {
                 DialogResult result
-                    = uiService.ShowMessage(Resources.SaveApplicationBeforeExportingAdmRequest,
+                    = UIService.ShowMessage(Resources.SaveApplicationBeforeExportingAdmRequest,
                         Resources.SaveApplicationCaption,
                         MessageBoxButtons.YesNo);
                 if (DialogResult.Yes == result)
@@ -88,6 +87,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
             TryAndExportAdmTemplate();
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
         private void TryAndExportAdmTemplate()
         {
             SaveFileDialog dialog = new SaveFileDialog();
@@ -99,27 +99,31 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
                     = GetManageabilityProviders();
                 try
                 {
-                    AdmContent content = AdministrativeTemplateGenerator.GenerateAdministrativeTemplateContent(
-                        new FileConfigurationSource(applicationViewModel.ConfigurationFilePath),
-                        element.Property("ApplicationName").Value as string,
-                        manageabilityProviders);
-
-                    using (StreamWriter fileWriter = new StreamWriter(dialog.OpenFile()))
+                    using (var configurationSource = new FileConfigurationSource(this.ConfigurationFilePath, false))
                     {
-                        fileWriter.WriteLine("CLASS MACHINE");
-                        content.Write(fileWriter);
-                        fileWriter.WriteLine("CLASS USER");
-                        content.Write(fileWriter);
-                        fileWriter.Flush();
-                        fileWriter.Close();
+                        AdmContent content = AdministrativeTemplateGenerator.GenerateAdministrativeTemplateContent(
+                            configurationSource,
+                            element.Property("ApplicationName").Value as string,
+                            manageabilityProviders);
+
+                        using (StreamWriter fileWriter = new StreamWriter(dialog.OpenFile()))
+                        {
+                            fileWriter.WriteLine("CLASS MACHINE");
+                            content.Write(fileWriter);
+                            fileWriter.WriteLine("CLASS USER");
+                            content.Write(fileWriter);
+                            fileWriter.Flush();
+                            fileWriter.Close();
+                        }
                     }
                 }
                 catch (Exception e)
                 {
-                    MessageBox.Show(String.Format(Resources.Culture, Resources.ErrorGeneratingAdmFile, e.Message),
+                    MessageBox.Show(String.Format(CultureInfo.CurrentCulture, Resources.ErrorGeneratingAdmFile, e.Message),
                         Resources.AdmGenerationDialogErrorTitle,
                         MessageBoxButtons.OK,
-                        MessageBoxIcon.Exclamation);
+                        MessageBoxIcon.Exclamation,
+                        MessageBoxDefaultButton.Button1);
                 }
             }
         }
@@ -152,5 +156,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
 
             return manageabilityProviders;
         }
+
+        private string ConfigurationFilePath
+        {
+            get
+            {
+                var manageableConfigurationSourceElement =
+                    this.element.ConfigurationElement as ManageableConfigurationSourceElement;
+                return manageableConfigurationSourceElement != null
+                    ? manageableConfigurationSourceElement.FilePath
+                    : this.applicationViewModel.ConfigurationFilePath;
+            }
+        }
     }
+#pragma warning restore 1591
 }

@@ -212,11 +212,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
             get { return Resources.RangeValidatorNegatedDefaultMessageTemplate; }
         }
 
-
-        #region test only properties
-
         /// <summary>
-        /// 
+        /// Internal helper object used to do the actual range check.
         /// </summary>
         public RangeChecker<T> RangeChecker
         {
@@ -224,7 +221,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         }
 
         /// <summary>
-        /// 
+        /// Lower bound of range.
         /// </summary>
         public T LowerBound
         {
@@ -232,7 +229,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         }
 
         /// <summary>
-        /// 
+        /// Upper bound of range.
         /// </summary>
         public T UpperBound
         {
@@ -240,7 +237,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         }
 
         /// <summary>
-        /// 
+        /// Is lower bound included, excluded, or ignored.
         /// </summary>
         public RangeBoundaryType LowerBoundType
         {
@@ -248,13 +245,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         }
 
         /// <summary>
-        /// 
+        /// Is upper bound included, excluded, or ignored.
         /// </summary>
         public RangeBoundaryType UpperBoundType
         {
             get { return this.rangeChecker.UpperBoundType; }
         }
-
-        #endregion
     }
 }

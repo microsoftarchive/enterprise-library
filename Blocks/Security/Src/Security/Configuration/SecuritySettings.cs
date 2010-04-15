@@ -147,7 +147,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration
 
             return defaultLoggerRegistrations
                 .Concat(authorizationProviderRegistrations)
-                .Concat(securityCacheProviderRegistrations);
+                .Concat(securityCacheProviderRegistrations)
+                .Select(r => MarkAsPublicName<IAuthorizationProvider>(r))
+                .Select(r => MarkAsPublicName<ISecurityCacheProvider>(r));
         }
 
         /// <summary>
@@ -163,14 +165,24 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration
             return GetRegistrations(configurationSource);
         }
 
+        private TypeRegistration MarkAsPublicName<TService>(TypeRegistration registration)
+        {
+            if(registration.ServiceType == typeof(TService))
+            {
+                registration.IsPublicName = true;
+            }
+            return registration;
+        }
+
         private IEnumerable<TypeRegistration> GetDefaultSecurityEventLoggerRegistrations(IConfigurationSource configurationSource)
         {
             var instrumentationSection = InstrumentationConfigurationSection.GetSection(configurationSource);
 
             yield return new TypeRegistration<DefaultSecurityEventLogger>(
-                () => new DefaultSecurityEventLogger(instrumentationSection.EventLoggingEnabled, instrumentationSection.WmiEnabled))
+                () => new DefaultSecurityEventLogger(instrumentationSection.EventLoggingEnabled))
                 {
-                    Lifetime = TypeRegistrationLifetime.Transient
+                    Lifetime = TypeRegistrationLifetime.Transient,
+                    IsDefault = true
                 };
         }
 

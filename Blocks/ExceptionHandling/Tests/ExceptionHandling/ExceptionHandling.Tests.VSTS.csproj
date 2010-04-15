@@ -43,6 +43,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Lib\Microsoft.Practices.Unity.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Practices.Unity.Interception, Version=2.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Lib\Microsoft.Practices.Unity.Interception.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>True</SpecificVersion>
       <Private>False</Private>
@@ -58,14 +62,17 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="APTCAFixture.cs" />
+    <Compile Include="APTCAFixture.2008.cs" />
     <Compile Include="Configuration\ConfigurationSerializationFixture.cs" />
     <Compile Include="Configuration\ConfigurationSourceBuilderExtensionsFixture.cs" />
+    <Compile Include="Configuration\ExceptionCallHandlerDataFixture.cs" />
     <Compile Include="Configuration\ExceptionHandlingReconfigurableTypeRegistrationFixture.cs" />
     <Compile Include="Configuration\ExceptionHandlingTypeRegistrationFixture.cs" />
     <Compile Include="Configuration\Unity\ExceptionHandlingBlockExtensionFixture.cs" />
+    <Compile Include="ExceptionFormatterFixture.2008.cs" />
     <Compile Include="DefaultExceptionHandlingInstrumentationProviderFixture.cs" />
     <Compile Include="ExceptionManagerFixture.cs" />
+    <Compile Include="PolicyInjection\ExceptionCallHandlerAttributeFixture.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

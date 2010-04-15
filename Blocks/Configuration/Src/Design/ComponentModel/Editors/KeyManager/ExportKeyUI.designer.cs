@@ -81,7 +81,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
 			// exportKeyControl1
 			// 
 			this.exportKeyControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.exportKeyControl1.Filename = "";
+			this.exportKeyControl1.FileName = "";
 			this.exportKeyControl1.Location = new System.Drawing.Point(0, 0);
 			this.exportKeyControl1.Name = "exportKeyControl1";
 			this.exportKeyControl1.Size = new System.Drawing.Size(349, 197);

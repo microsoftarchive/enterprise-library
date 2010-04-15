@@ -57,7 +57,7 @@
     <Compile Include="Common\MockLoggingExceptionHandler.cs" />
     <Compile Include="Common\MockService.cs" />
     <Compile Include="ConfigurationFixture.cs" />
-    <Compile Include="APTCAFixture.cs" />
+    <Compile Include="APTCAFixture.2008.cs" />
     <Compile Include="Configuration\ConfigurationSourceBuilderExtensionsFixture.cs" />
     <Compile Include="Configuration\FaultContractExceptionHandlerDataFixture.cs" />
     <Compile Include="ExceptionShieldingAttributeFixture.cs" />
@@ -70,6 +70,11 @@
     <Compile Include="Common\MockFaultContract.cs" />
     <Compile Include="Common\MockFaultContractExceptionHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -98,6 +103,12 @@
       <Project>{6AC97717-899D-4F72-BC5B-2C37959CD4FF}</Project>
       <Name>Logging</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSHARP.Targets" />
 </Project>

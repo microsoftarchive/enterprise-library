@@ -26,6 +26,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
     {
         private readonly string scopeTypeName;
         private readonly string targetTypeName;
+        private Type cachedType;
+        private Type cachedScopeType;
+        private bool scopeTypeCached = false;
 
 
         /// <summary>
@@ -45,6 +48,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
         /// <param name="targetTypeName">The configuration type name of the provider that used as a reference.</param>
         public ReferenceAttribute(string scopeTypeName, string targetTypeName)
         {
+            if (string.IsNullOrEmpty(scopeTypeName)) throw new ArgumentException(Resources.ExceptionStringNullOrEmpty, "scopeTypeName");
+            if (string.IsNullOrEmpty(targetTypeName)) throw new ArgumentException(Resources.ExceptionStringNullOrEmpty, "targetTypeName");
+
             this.scopeTypeName = scopeTypeName;
             this.targetTypeName = targetTypeName;
         }
@@ -55,6 +61,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
         /// <param name="targetType">The configuration type of the provider that used as a reference.</param>
         public ReferenceAttribute(Type targetType)
         {
+            if (targetType == null) throw new ArgumentNullException("targetType");
+
             this.targetTypeName = targetType.AssemblyQualifiedName;
         }
 
@@ -66,6 +74,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
         /// <param name="targetType">The configuration type of the provider that used as a reference.</param>
         public ReferenceAttribute(Type scopeType, Type targetType)
         {
+            if (targetType == null) throw new ArgumentNullException("targetType");
+            if (scopeType == null) throw new ArgumentNullException("scopeType");
+
             this.scopeTypeName = scopeType.AssemblyQualifiedName;
             this.targetTypeName = targetType.AssemblyQualifiedName;
         }
@@ -75,7 +86,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
         /// </summary>
         public Type ScopeType
         {
-            get { return string.IsNullOrEmpty(scopeTypeName) ? null : Type.GetType(scopeTypeName); }
+            get
+            {
+                if (!scopeTypeCached)
+                {
+                    cachedScopeType = string.IsNullOrEmpty(scopeTypeName) ? null : Type.GetType(scopeTypeName);
+                    scopeTypeCached = true;
+                }
+
+                return cachedScopeType;
+            }
         }
 
         /// <summary>
@@ -95,7 +115,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
         /// </summary>
         public Type TargetType
         {
-            get { return Type.GetType(targetTypeName); }
+            get
+            {
+                if (cachedType == null)
+                {
+                    cachedType = Type.GetType(targetTypeName);
+                }
+                
+                return cachedType;
+            }
         }
     }
 }

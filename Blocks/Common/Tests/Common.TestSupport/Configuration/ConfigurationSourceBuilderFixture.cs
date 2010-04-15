@@ -9,15 +9,10 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Configuration;
-using System.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration
 {
@@ -45,8 +40,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration
 
             Builder
                 .ConfigureInstrumentation()
-                    .EnableLogging()
-                    .EnableWmi();
+                    .EnableLogging();
 
         }
 
@@ -73,13 +67,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration
 
             mergedConfiguration = new DictionaryConfigurationSource();
             mergedConfiguration.Add(
-                           InstrumentationConfigurationSection.SectionName, 
-                           new InstrumentationConfigurationSection(false, true, false));
+                           InstrumentationConfigurationSection.SectionName,
+                           new InstrumentationConfigurationSection(false, true));
 
             Builder
                 .ConfigureInstrumentation()
-                    .EnablePerformanceCounters()
-                    .EnableWmi();
+                    .EnablePerformanceCounters();
         }
 
         protected override void Act()
@@ -91,12 +84,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration
         [TestMethod]
         public void Then_MergingConfigurationSourceMovesSections()
         {
-            var section = (InstrumentationConfigurationSection) mergedConfiguration
+            var section = (InstrumentationConfigurationSection)mergedConfiguration
                                                                     .GetSection(InstrumentationConfigurationSection.SectionName);
 
             Assert.IsFalse(section.EventLoggingEnabled);
             Assert.IsTrue(section.PerformanceCountersEnabled);
-            Assert.IsTrue(section.WmiEnabled);
         }
     }
 }

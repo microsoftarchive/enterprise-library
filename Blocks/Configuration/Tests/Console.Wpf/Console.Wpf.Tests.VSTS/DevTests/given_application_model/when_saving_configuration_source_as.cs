@@ -10,16 +10,13 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Console.Wpf.Tests.VSTS.DevTests.given_shell_service;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
-using Moq;
-using Microsoft.Win32;
 using System.Windows;
+using Console.Wpf.Tests.VSTS.DevTests.given_shell_service;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Configuration.Design.HostAdapterV5;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Win32;
+using Moq;
 
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_application_model
@@ -34,6 +31,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_application_model
         {
             base.Arrange();
             base.UIServiceMock.Setup(x => x.ShowFileDialog(It.IsAny<SaveFileDialog>())).Returns(new FileDialogResult { DialogResult = true, FileName = SaveAsTargetFile });
+            UIServiceMock.Setup(x => x.ShowWindow(It.IsAny<Window>()));
         }
     }
 

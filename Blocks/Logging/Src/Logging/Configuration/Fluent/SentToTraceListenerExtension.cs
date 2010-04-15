@@ -21,6 +21,7 @@ using System.Collections.Specialized;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Properties;
+using System.Globalization;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent
 {
@@ -43,7 +44,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent
             extensionContext = context as ILoggingConfigurationSendToExtension;
 
             if (extensionContext == null) throw new ArgumentException(
-                string.Format(Resources.Culture, Resources.ParameterMustImplementType, typeof(ILoggingConfigurationSendToExtension)),
+                string.Format(CultureInfo.CurrentCulture, Resources.ParameterMustImplementType, typeof(ILoggingConfigurationSendToExtension)),
                 "context");
         }
 

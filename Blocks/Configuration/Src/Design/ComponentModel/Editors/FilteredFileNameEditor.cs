@@ -18,6 +18,7 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using System.ComponentModel;
 using System.Windows.Forms;
 using System.IO;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors
 {
@@ -56,21 +57,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
         {
             file = value as string;
 
-            if (null == context) return base.EditValue(context, provider, value);
-            if (null == provider) return base.EditValue(context, provider, value);
-
-            IWindowsFormsEditorService edSvc = (IWindowsFormsEditorService)provider.GetService(typeof(IWindowsFormsEditorService));
-            if (edSvc != null)
+            Property property = context as Property;
+            if (property != null)
             {
-                foreach (Attribute attribute in context.PropertyDescriptor.Attributes)
-                {
-                    editorAttribute = attribute as FilteredFileNameEditorAttribute;
-                    if (editorAttribute != null)
-                    {
-                        break;
-                    }
-                }
+                editorAttribute = property.Attributes.OfType<FilteredFileNameEditorAttribute>().FirstOrDefault();
             }
+
             return base.EditValue(context, provider, value);
         }
         

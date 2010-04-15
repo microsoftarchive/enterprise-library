@@ -212,7 +212,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         private void ConfigureContainer(string containerConfigName)
         {
             var section = (UnityConfigurationSection) ConfigurationManager.GetSection("unity");
-            section.Containers[containerConfigName].Configure(container);
+            container.LoadConfiguration(section, containerConfigName);
         }
 
         private void AssertValidatorIsBasedOnAttributesOnly(Validator<TestObjectWithFailingAttributesOnProperties> v)

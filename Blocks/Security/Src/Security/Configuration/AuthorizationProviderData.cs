@@ -10,15 +10,14 @@
 //===============================================================================
 
 using System;
-using System.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using System.Collections.Generic;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using System.Linq.Expressions;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
-using Microsoft.Practices.EnterpriseLibrary.Security.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Security.Instrumentation;
+using Microsoft.Practices.EnterpriseLibrary.Security.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration
 {
@@ -29,21 +28,21 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration
     public class AuthorizationProviderData : NameTypeConfigurationElement
     {
         /// <summary>
-		/// Initializes a new instance of the <see cref="AuthorizationProviderData"/> class.
+        /// Initializes a new instance of the <see cref="AuthorizationProviderData"/> class.
         /// </summary>
         public AuthorizationProviderData()
         {
         }
 
-		/// <summary>
-		/// Initialize an instance of the <see cref="AuthorizationProviderData"/> class.
-		/// </summary>
-		/// <param name="name">The name of the element.</param>
-		/// <param name="type">The <see cref="Type"/> that this element is the configuration for.</param>
-		public AuthorizationProviderData(string name, Type type)
-			: base(name, type)
-		{
-		}
+        /// <summary>
+        /// Initialize an instance of the <see cref="AuthorizationProviderData"/> class.
+        /// </summary>
+        /// <param name="name">The name of the element.</param>
+        /// <param name="type">The <see cref="Type"/> that this element is the configuration for.</param>
+        public AuthorizationProviderData(string name, Type type)
+            : base(name, type)
+        {
+        }
 
         /// <summary>
         /// 
@@ -51,7 +50,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration
         /// <returns></returns>
         public virtual IEnumerable<TypeRegistration> GetRegistrations(IConfigurationSource configurationSource)
         {
-            Expression<Func<IAuthorizationProvider>> newExpression =  GetCreationExpression();
+            Expression<Func<IAuthorizationProvider>> newExpression = GetCreationExpression();
 
             yield return new TypeRegistration<IAuthorizationProvider>(newExpression)
             {
@@ -74,7 +73,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration
                     Name,
                     instrumentationSection.PerformanceCountersEnabled,
                     instrumentationSection.EventLoggingEnabled,
-                    instrumentationSection.WmiEnabled,
                     instrumentationSection.ApplicationInstanceName))
             {
                 Name = Name,

@@ -122,7 +122,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
         /// <param name="database">The <see cref="Database"/> that contains the stored procedure.</param>
         /// <param name="procedureName">The name of the stored procedure that should be executed by the <see cref="SprocAccessor&lt;TResult&gt;"/>. </param>
         /// <returns>A new instance of <see cref="SprocAccessor&lt;TResult&gt;"/>.</returns>
-        public static IDataAccessor<TResult> CreateSprocAccessor<TResult>(this Database database, string procedureName)
+        public static DataAccessor<TResult> CreateSprocAccessor<TResult>(this Database database, string procedureName)
             where TResult : new()
         {
             IRowMapper<TResult> defaultRowMapper = MapBuilder<TResult>.BuildAllProperties();
@@ -139,7 +139,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
         /// <param name="database">The <see cref="Database"/> that contains the stored procedure.</param>
         /// <param name="procedureName">The name of the stored procedure that should be executed by the <see cref="SprocAccessor&lt;TResult&gt;"/>. </param>
         /// <returns>A new instance of <see cref="SprocAccessor&lt;TResult&gt;"/>.</returns>
-        public static IDataAccessor<TResult> CreateSprocAccessor<TResult>(this Database database, string procedureName, IParameterMapper parameterMapper)
+        public static DataAccessor<TResult> CreateSprocAccessor<TResult>(this Database database, string procedureName, IParameterMapper parameterMapper)
             where TResult : new()
         {
             IRowMapper<TResult> defaultRowMapper = MapBuilder<TResult>.BuildAllProperties();
@@ -155,7 +155,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
         /// <param name="database">The <see cref="Database"/> that contains the stored procedure.</param>
         /// <param name="procedureName">The name of the stored procedure that should be executed by the <see cref="SprocAccessor&lt;TResult&gt;"/>. </param>
         /// <returns>A new instance of <see cref="SprocAccessor&lt;TResult&gt;"/>.</returns>
-        public static IDataAccessor<TResult> CreateSprocAccessor<TResult>(this Database database, string procedureName, IRowMapper<TResult> rowMapper)
+        public static DataAccessor<TResult> CreateSprocAccessor<TResult>(this Database database, string procedureName, IRowMapper<TResult> rowMapper)
         {
             if (string.IsNullOrEmpty(procedureName)) throw new ArgumentException(Resources.ExceptionNullOrEmptyString);
 
@@ -171,7 +171,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
         /// <param name="procedureName">The name of the stored procedure that should be executed by the <see cref="SprocAccessor&lt;TResult&gt;"/>. </param>
         /// <param name="parameterMapper">The <see cref="IParameterMapper"/> that will be used to interpret the parameters passed to the Execute method.</param>
         /// <returns>A new instance of <see cref="SprocAccessor&lt;TResult&gt;"/>.</returns>
-        public static IDataAccessor<TResult> CreateSprocAccessor<TResult>(this Database database, string procedureName, IParameterMapper parameterMapper, IRowMapper<TResult> rowMapper)
+        public static DataAccessor<TResult> CreateSprocAccessor<TResult>(this Database database, string procedureName, IParameterMapper parameterMapper, IRowMapper<TResult> rowMapper)
         {
             if (string.IsNullOrEmpty(procedureName)) throw new ArgumentException(Resources.ExceptionNullOrEmptyString);
 
@@ -186,7 +186,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
         /// <param name="database">The <see cref="Database"/> that contains the stored procedure.</param>
         /// <param name="procedureName">The name of the stored procedure that should be executed by the <see cref="SprocAccessor&lt;TResult&gt;"/>. </param>
         /// <returns>A new instance of <see cref="SprocAccessor&lt;TResult&gt;"/>.</returns>
-        public static IDataAccessor<TResult> CreateSprocAccessor<TResult>(this Database database, string procedureName, IResultSetMapper<TResult> resultSetMapper)
+        public static DataAccessor<TResult> CreateSprocAccessor<TResult>(this Database database, string procedureName, IResultSetMapper<TResult> resultSetMapper)
         {
             if (string.IsNullOrEmpty(procedureName)) throw new ArgumentException(Resources.ExceptionNullOrEmptyString);
             
@@ -202,7 +202,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
         /// <param name="procedureName">The name of the stored procedure that should be executed by the <see cref="SprocAccessor&lt;TResult&gt;"/>. </param>
         /// <param name="parameterMapper">The <see cref="IParameterMapper"/> that will be used to interpret the parameters passed to the Execute method.</param>
         /// <returns>A new instance of <see cref="SprocAccessor&lt;TResult&gt;"/>.</returns>
-        public static IDataAccessor<TResult> CreateSprocAccessor<TResult>(this Database database, string procedureName, IParameterMapper parameterMapper, IResultSetMapper<TResult> resultSetMapper)
+        public static DataAccessor<TResult> CreateSprocAccessor<TResult>(this Database database, string procedureName, IParameterMapper parameterMapper, IResultSetMapper<TResult> resultSetMapper)
         {
             if (string.IsNullOrEmpty(procedureName)) throw new ArgumentException(Resources.ExceptionNullOrEmptyString);
 
@@ -261,7 +261,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
         /// <param name="database">The <see cref="Database"/> that contains the stored procedure.</param>
         /// <param name="sqlString">The Transact-SQL query that will be executed by the <see cref="SqlStringAccessor&lt;TResult&gt;"/>.</param>
         /// <returns>A new instance of <see cref="SprocAccessor&lt;TResult&gt;"/>.</returns>
-        public static IDataAccessor<TResult> CreateSqlStringAccessor<TResult>(this Database database, string sqlString)
+        public static DataAccessor<TResult> CreateSqlStringAccessor<TResult>(this Database database, string sqlString)
             where TResult : new()
         {
             IRowMapper<TResult> defaultRowMapper = MapBuilder<TResult>.BuildAllProperties();
@@ -278,7 +278,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
         /// <param name="sqlString">The Transact-SQL query that will be executed by the <see cref="SqlStringAccessor&lt;TResult&gt;"/>.</param>
         /// <param name="parameterMapper">The <see cref="IParameterMapper"/> that will be used to interpret the parameters passed to the Execute method.</param>
         /// <returns>A new instance of <see cref="SprocAccessor&lt;TResult&gt;"/>.</returns>
-        public static IDataAccessor<TResult> CreateSqlStringAccessor<TResult>(this Database database, string sqlString, IParameterMapper parameterMapper)
+        public static DataAccessor<TResult> CreateSqlStringAccessor<TResult>(this Database database, string sqlString, IParameterMapper parameterMapper)
             where TResult : new()
         {
             IRowMapper<TResult> defaultRowMapper = MapBuilder<TResult>.BuildAllProperties();
@@ -294,7 +294,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
         /// <param name="sqlString">The Transact-SQL query that will be executed by the <see cref="SqlStringAccessor&lt;TResult&gt;"/>.</param>
         /// <param name="rowMapper">The <see cref="IRowMapper&lt;TResult&gt;"/> that will be used to convert the returned data to clr type <typeparamref name="TResult"/>.</param>
         /// <returns>A new instance of <see cref="SprocAccessor&lt;TResult&gt;"/>.</returns>
-        public static IDataAccessor<TResult> CreateSqlStringAccessor<TResult>(this Database database, string sqlString, IRowMapper<TResult> rowMapper)
+        public static DataAccessor<TResult> CreateSqlStringAccessor<TResult>(this Database database, string sqlString, IRowMapper<TResult> rowMapper)
         {
             return new SqlStringAccessor<TResult>(database, sqlString, rowMapper);
         }
@@ -307,7 +307,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
         /// <param name="sqlString">The Transact-SQL query that will be executed by the <see cref="SqlStringAccessor&lt;TResult&gt;"/>.</param>
         /// <param name="resultSetMapper">The <see cref="IResultSetMapper&lt;TResult&gt;"/> that will be used to convert the returned set to an enumerable of clr type <typeparamref name="TResult"/>.</param>
         /// <returns>A new instance of <see cref="SprocAccessor&lt;TResult&gt;"/>.</returns>
-        public static IDataAccessor<TResult> CreateSqlStringAccessor<TResult>(this Database database, string sqlString, IResultSetMapper<TResult> resultSetMapper)
+        public static DataAccessor<TResult> CreateSqlStringAccessor<TResult>(this Database database, string sqlString, IResultSetMapper<TResult> resultSetMapper)
         {
             return new SqlStringAccessor<TResult>(database, sqlString, resultSetMapper);
         }
@@ -321,7 +321,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
         /// <param name="parameterMapper">The <see cref="IParameterMapper"/> that will be used to interpret the parameters passed to the Execute method.</param>
         /// <param name="rowMapper">The <see cref="IRowMapper&lt;TResult&gt;"/> that will be used to convert the returned data to clr type <typeparamref name="TResult"/>.</param>
         /// <returns>A new instance of <see cref="SprocAccessor&lt;TResult&gt;"/>.</returns>
-        public static IDataAccessor<TResult> CreateSqlStringAccessor<TResult>(this Database database, string sqlString, IParameterMapper parameterMapper, IRowMapper<TResult> rowMapper)
+        public static DataAccessor<TResult> CreateSqlStringAccessor<TResult>(this Database database, string sqlString, IParameterMapper parameterMapper, IRowMapper<TResult> rowMapper)
         {
             return new SqlStringAccessor<TResult>(database, sqlString, parameterMapper, rowMapper);
         }
@@ -335,7 +335,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
         /// <param name="parameterMapper">The <see cref="IParameterMapper"/> that will be used to interpret the parameters passed to the Execute method.</param>
         /// <param name="resultSetMapper">The <see cref="IResultSetMapper&lt;TResult&gt;"/> that will be used to convert the returned set to an enumerable of clr type <typeparamref name="TResult"/>.</param>
         /// <returns>A new instance of <see cref="SprocAccessor&lt;TResult&gt;"/>.</returns>
-        public static IDataAccessor<TResult> CreateSqlStringAccessor<TResult>(this Database database, string sqlString, IParameterMapper parameterMapper, IResultSetMapper<TResult> resultSetMapper)
+        public static DataAccessor<TResult> CreateSqlStringAccessor<TResult>(this Database database, string sqlString, IParameterMapper parameterMapper, IResultSetMapper<TResult> resultSetMapper)
         {
             return new SqlStringAccessor<TResult>(database, sqlString, parameterMapper, resultSetMapper);
         }

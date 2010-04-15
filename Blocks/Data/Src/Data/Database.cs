@@ -202,6 +202,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
                                          DataRowVersion sourceVersion,
                                          object value)
         {
+            if (command == null) throw new ArgumentNullException("command");
+
             DbParameter parameter = CreateParameter(name, dbType, size, direction, nullable, precision, scale, sourceColumn, sourceVersion, value);
             command.Parameters.Add(parameter);
         }
@@ -401,7 +403,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
         /// <param name="command">The <see cref="DbCommand"/> to discover the parameters.</param>
         public void DiscoverParameters(DbCommand command)
         {
-            using (ConnectionWrapper wrapper = GetOpenConnection())
+            if (command == null) throw new ArgumentNullException("command");
+
+            using (var wrapper = GetOpenConnection())
             {
                 using (DbCommand discoveryCommand = CreateCommandByCommandType(command.CommandType, command.CommandText))
                 {
@@ -424,6 +428,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
         /// <returns>The quantity of rows affected.</returns>
         protected int DoExecuteNonQuery(DbCommand command)
         {
+            if (command == null) throw new ArgumentNullException("command");
+
             try
             {
                 DateTime startTime = DateTime.Now;
@@ -702,7 +708,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
         /// <seealso cref="IDbCommand.ExecuteScalar"/>
         public virtual int ExecuteNonQuery(DbCommand command)
         {
-            using (ConnectionWrapper wrapper = GetOpenConnection())
+            using (var wrapper = GetOpenConnection())
             {
                 PrepareCommand(command, wrapper.Connection);
                 return DoExecuteNonQuery(command);
@@ -824,7 +830,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
 
         /// <summary>
         /// <para>Executes the <paramref name="command"/> and returns an <see cref="IDataReader"></see> through which the result can be read.
-        /// It is the responsibility of the caller to close the connection and reader when finished.</para>
+        /// It is the responsibility of the caller to close the reader when finished.</para>
         /// </summary>
         /// <param name="command">
         /// <para>The command that contains the query to execute.</para>
@@ -834,39 +840,25 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
         /// </returns>        
         public virtual IDataReader ExecuteReader(DbCommand command)
         {
-            DbConnection connection = null;
-            CommandBehavior commandBehavior;
+            using(DatabaseConnectionWrapper wrapper = GetOpenConnection())
+            {
+                PrepareCommand(command, wrapper.Connection);
+                IDataReader realReader = DoExecuteReader(command, CommandBehavior.Default);
+                return CreateWrappedReader(wrapper, realReader);
+            }
+        }
 
-            if (Transaction.Current == null)
-            {
-                commandBehavior = CommandBehavior.CloseConnection;
-                connection = this.GetNewOpenConnection();
-            }
-            else
-            {
-                // If there is a current transaction, we'll be using a shared connection, so we don't
-                // want to close the connection when we're done with the reader.
-                commandBehavior = CommandBehavior.Default;
-                connection = TransactionScopeConnections.GetConnection(this);
-            }
-
-            try
-            {
-                PrepareCommand(command, connection);
-                return DoExecuteReader(command, commandBehavior);
-            }
-            catch
-            {
-                if (commandBehavior == CommandBehavior.CloseConnection)
-                {
-                    // close only if the connection if not shared.
-                    // the connection is closed by SqlCommand in the ocurrence of an exception if the CommandBehavior is
-                    // CloseConnection, but this is not documented so the connection will be closed explicitly unless
-                    // it is shared.
-                    connection.Close();
-                }
-                throw;
-            }
+        /// <summary>
+        /// All data readers get wrapped in objects so that they properly manage connections.
+        /// Some derived Database classes will need to create a different wrapper, so this
+        /// method is provided so that they can do this.
+        /// </summary>
+        /// <param name="connection">Connection + refcount.</param>
+        /// <param name="innerReader">The reader to wrap.</param>
+        /// <returns>The new reader.</returns>
+        protected virtual IDataReader CreateWrappedReader(DatabaseConnectionWrapper connection, IDataReader innerReader)
+        {
+            return new RefCountingDataReader(connection, innerReader);
         }
 
         /// <summary>
@@ -1000,7 +992,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
         {
             if (command == null) throw new ArgumentNullException("command");
 
-            using (ConnectionWrapper wrapper = GetOpenConnection())
+            using (var wrapper = GetOpenConnection())
             {
                 PrepareCommand(command, wrapper.Connection);
                 return DoExecuteScalar(command);
@@ -1188,35 +1180,24 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
         }
 
         /// <summary>
-        ///		Get's a "wrapped" connection that will be not be disposed if a transaction is
+        ///		Gets a "wrapped" connection that will be not be disposed if a transaction is
         ///		active (created by creating a <see cref="TransactionScope"/> instance). The
         ///		connection will be disposed when no transaction is active.
         /// </summary>
         /// <returns></returns>
-        protected ConnectionWrapper GetOpenConnection()
+        protected DatabaseConnectionWrapper GetOpenConnection()
         {
-            return GetOpenConnection(true);
+            DatabaseConnectionWrapper connection = TransactionScopeConnections.GetConnection(this);
+            return connection ?? GetWrappedConnection();
         }
 
         /// <summary>
-        ///		Get's a "wrapped" connection that will be not be disposed if a transaction is
-        ///		active (created by creating a <see cref="TransactionScope"/> instance). The
-        ///		connection can be disposed when no transaction is active.
+        /// Gets a "wrapped" connection for use outside a transaction.
         /// </summary>
-        /// <param name="disposeInnerConnection">
-        ///		Determines if the connection will be disposed when there isn't an active
-        ///		transaction.
-        /// </param>
         /// <returns>The wrapped connection.</returns>
-        protected ConnectionWrapper GetOpenConnection(bool disposeInnerConnection)
+        protected virtual DatabaseConnectionWrapper GetWrappedConnection()
         {
-            DbConnection connection = TransactionScopeConnections.GetConnection(this);
-            if (connection != null)
-            {
-                return new ConnectionWrapper(connection, false);
-            }
-
-            return new ConnectionWrapper(GetNewOpenConnection(), disposeInnerConnection);
+            return new DatabaseConnectionWrapper(GetNewOpenConnection());
         }
 
         /// <summary>
@@ -1228,6 +1209,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
         public virtual object GetParameterValue(DbCommand command,
                                                 string name)
         {
+            if (command == null) throw new ArgumentNullException("command");
+
             return command.Parameters[BuildParameterName(name)].Value;
         }
 
@@ -1394,7 +1377,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
                                         DataSet dataSet,
                                         string[] tableNames)
         {
-            using (ConnectionWrapper wrapper = GetOpenConnection())
+            using (var wrapper = GetOpenConnection())
             {
                 PrepareCommand(command, wrapper.Connection);
                 DoLoadDataSet(command, dataSet, tableNames);
@@ -1538,16 +1521,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
         }
 
         /// <summary>
-        /// <para>Opens a connection.</para>
-        /// </summary>
-        /// <returns>The opened connection.</returns>
-        [Obsolete("Use GetOpenConnection instead.")]
-        protected DbConnection OpenConnection()
-        {
-            return GetNewOpenConnection();
-        }
-
-        /// <summary>
         /// <para>Assigns a <paramref name="connection"/> to the <paramref name="command"/> and discovers parameters if needed.</para>
         /// </summary>
         /// <param name="command"><para>The command that contains the query to prepare.</para></param>
@@ -1605,6 +1578,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
                                               string parameterName,
                                               object value)
         {
+            if (command == null) throw new ArgumentNullException("command");
+
             command.Parameters[BuildParameterName(parameterName)].Value = value ?? DBNull.Value;
         }
 
@@ -1633,7 +1608,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
                                  UpdateBehavior updateBehavior,
                                  int? updateBatchSize)
         {
-            using (ConnectionWrapper wrapper = GetOpenConnection())
+            using (var wrapper = GetOpenConnection())
             {
                 if (updateBehavior == UpdateBehavior.Transactional && Transaction.Current == null)
                 {
@@ -2324,7 +2299,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
         ///		need to use a shared connection instead of a new connection for each request in order
         ///		to prevent a distributed transaction.
         /// </summary>
-        protected class ConnectionWrapper : IDisposable
+        protected class OldConnectionWrapper : IDisposable
         {
             readonly DbConnection connection;
             readonly bool disposeConnection;
@@ -2336,7 +2311,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
             /// <param name="disposeConnection">
             ///		Whether or not to dispose of the connection when this class is disposed.
             ///	</param>
-            public ConnectionWrapper(DbConnection connection,
+            public OldConnectionWrapper(DbConnection connection,
                                      bool disposeConnection)
             {
                 this.connection = connection;

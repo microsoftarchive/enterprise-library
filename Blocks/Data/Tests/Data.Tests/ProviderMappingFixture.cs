@@ -24,6 +24,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
     /// Summary description for ConnectionStringHandlingFixture
     /// </summary>
     [TestClass]
+    [DeploymentItem("test.exe.config")]
     public class ProviderMappingFixture
     {
         const string OdbcProviderName = "System.Data.Odbc";

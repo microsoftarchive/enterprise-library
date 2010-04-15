@@ -18,6 +18,13 @@ using System.Windows.Controls;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls
 {
+    /// <summary>
+    /// The <see cref="SelectionNotifyingContextMenu"/> tracks the currently
+    /// selected <see cref="SelectionNotifyingMenuItem"/> as the user navigates
+    /// through the menu.
+    /// <br/>
+    /// This is used by the design-time infrastructure and is not intended to be used directly from your code.
+    /// </summary>
     public class SelectionNotifyingContextMenu : ContextMenu
     {
         internal static readonly RoutedEvent IsSelectedChangedEvent =
@@ -26,7 +33,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls
                 typeof(RoutedPropertyChangedEventHandler<bool>),
                 typeof(SelectionNotifyingContextMenu));
 
-        // Using a DependencyProperty as the backing store for CurrentSelection.  This enables animation, styling, binding, etc...
+        ///<summary>
+        /// The currently selected <see cref="MenuItem"/>.
+        ///</summary>
         public static readonly DependencyProperty CurrentSelectionProperty =
             DependencyProperty.Register("CurrentSelection", typeof(MenuItem), typeof(SelectionNotifyingContextMenu), new UIPropertyMetadata(null));
 
@@ -40,6 +49,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls
                 new RoutedPropertyChangedEventHandler<bool>(OnIsSelectedChanged));
         }
 
+        /// <summary>
+        /// Creates or identifies the element used to display the specified item.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="SelectionNotifyingMenuItem"/>.
+        /// </returns>
         protected override DependencyObject GetContainerForItemOverride()
         {
             return new SelectionNotifyingMenuItem();
@@ -62,6 +77,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls
             e.Handled = true; 
         }
 
+        ///<summary>
+        /// Gets the currently selected <see cref="MenuItem"/> from <see cref="CurrentSelectionProperty"/>.
+        ///</summary>
         public MenuItem CurrentSelection
         {
             get { return (MenuItem)GetValue(CurrentSelectionProperty); }

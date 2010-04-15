@@ -42,7 +42,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Tests
         public void SetUp()
         {
             nameFormatter = new AppDomainNameFormatter(applicationInstanceName);
-            instrumentationProvider = new SymmetricAlgorithmInstrumentationProvider(instanceName, true, true, true, nameFormatter);
+            instrumentationProvider = new SymmetricAlgorithmInstrumentationProvider(instanceName, true, true, nameFormatter);
             formattedInstanceName = nameFormatter.CreateName(instanceName);
             totalSymmetricDecryptionPerformedCounter = new EnterpriseLibraryPerformanceCounter(SymmetricAlgorithmInstrumentationProvider.counterCategoryName, SymmetricAlgorithmInstrumentationProvider.TotalSymmetricDecryptionPerformedCounterName, formattedInstanceName);
             totalSymmetricEncryptionPerformedCounter = new EnterpriseLibraryPerformanceCounter(SymmetricAlgorithmInstrumentationProvider.counterCategoryName, SymmetricAlgorithmInstrumentationProvider.TotalSymmetricEncryptionPerformedCounterName, formattedInstanceName);

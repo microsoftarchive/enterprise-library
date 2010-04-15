@@ -12,6 +12,7 @@
 using System;
 
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability.Properties;
+using System.Globalization;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability
 {
@@ -87,7 +88,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
 			catch (ArgumentException)
 			{
 				throw new RegistryAccessException(
-					String.Format(Resources.Culture,
+                    String.Format(CultureInfo.CurrentCulture,
 									Resources.ExceptionRegistryValueNotEnumValue,
 									this.Name,
 									valueName,
@@ -114,7 +115,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
 			catch (InvalidCastException)
 			{
 				throw new RegistryAccessException(
-					String.Format(Resources.Culture,
+                    String.Format(CultureInfo.CurrentCulture,
 									Resources.ExceptionRegistryValueOfWrongType,
 									this.Name,
 									valueName,
@@ -141,7 +142,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
 			catch (InvalidCastException)
 			{
 				throw new RegistryAccessException(
-					String.Format(Resources.Culture,
+                    String.Format(CultureInfo.CurrentCulture,
 									Resources.ExceptionRegistryValueOfWrongType,
 									this.Name,
 									valueName,
@@ -168,7 +169,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
 			if (type == null)
 			{
 				throw new RegistryAccessException(
-					String.Format(Resources.Culture,
+                    String.Format(CultureInfo.CurrentCulture,
 									Resources.ExceptionRegistryValueNotTypeName,
 									this.Name,
 									valueName,
@@ -223,7 +224,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
 			if (value == null)
 			{
 				throw new RegistryAccessException(
-					String.Format(Resources.Culture,
+                    String.Format(CultureInfo.CurrentCulture,
 						Resources.ExceptionMissingRegistryValue,
 						this.Name,
 						valueName));
@@ -240,7 +241,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
 			}
 			if (name.Length == 0)
 			{
-				throw new ArgumentException(String.Format(Resources.Culture,
+                throw new ArgumentException(String.Format(CultureInfo.CurrentCulture,
 						Resources.ExceptionArgumentEmpty, 
 						argumentName));
 			}

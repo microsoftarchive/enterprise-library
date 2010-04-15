@@ -24,7 +24,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         public void Setup()
         {
             var factory =
-                new ValidationAttributeValidatorFactory(new ValidationInstrumentationProvider(false, false, false, ""));
+                new ValidationAttributeValidatorFactory(new ValidationInstrumentationProvider(false, false, ""));
             this.validator = factory.CreateValidator<TypeWithNoValidationAttributes>();
         }
 
@@ -65,7 +65,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         public void Setup()
         {
             var factory =
-                new ValidationAttributeValidatorFactory(new ValidationInstrumentationProvider(false, false, false, ""));
+                new ValidationAttributeValidatorFactory(new ValidationInstrumentationProvider(false, false, ""));
             this.validator = factory.CreateValidator<TypeWithValidationAttributes>();
         }
 
@@ -120,7 +120,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         public void Setup()
         {
             var factory =
-                new ValidationAttributeValidatorFactory(new ValidationInstrumentationProvider(false, false, false, ""));
+                new ValidationAttributeValidatorFactory(new ValidationInstrumentationProvider(false, false, ""));
             this.validator = factory.CreateValidator<TypeWithValidationAttributes>("ruleset");
         }
 

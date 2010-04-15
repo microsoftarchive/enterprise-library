@@ -224,6 +224,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
         /// <returns>The value for the corresponding column converted to the type of the mapped property.</returns>
         public override object GetPropertyValue(IDataRecord row)
         {
+            if (row == null) throw new ArgumentNullException("row");
+
             object value;
             try
             {
@@ -281,6 +283,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data
         public FuncMapping(PropertyInfo property, Func<IDataRecord, object> func)
             : base(property)
         {
+            Guard.ArgumentNotNull(func, "func");
             Func = func;
         }
 

@@ -13,18 +13,19 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Console.Wpf.Tests.VSTS.BlockSpecific.Caching.given_caching_configuraton;
+using Console.Wpf.Tests.VSTS.Contexts;
 using Console.Wpf.Tests.VSTS.DevTests.Contexts;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
-using Console.Wpf.Tests.VSTS.DevTests.given_caching_configuraton;
 using Console.Wpf.Tests.VSTS.TestSupport;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Configuration;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_element_reference
 {
     [TestClass]
-    public class when_updating_provider_name_in_reference_picker_list : given_caching_configuration
+    public class when_updating_provider_name_in_reference_picker_list : CachingConfigurationContext
     {
         ElementReferenceProperty defaultCacheManagerProperty;
         ElementViewModel cacheManager;

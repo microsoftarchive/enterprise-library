@@ -9,23 +9,26 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Commands;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using System.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Manageability;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Configuration.Design.HostAdapterV5;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Properties;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Commands;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics
 {
+
+#pragma warning disable 1591
+    /// <summary>
+    /// This class supports block-specific configuration design-time and is not
+    /// intended to be used directly from your code.
+    /// </summary>
     public class AddDatabaseBlockCommand : AddApplicationBlockCommand
     {
-        private readonly string DefaultConnectionStringName = "Connection String";
+        private readonly string DefaultConnectionStringName = Resources.AddDatabaseBlockCommandDefaultConnectionStringName;
 
-        public AddDatabaseBlockCommand(ConfigurationSourceModel configurationSourceModel, AddApplicationBlockCommandAttribute attribute)
-            : base(configurationSourceModel, attribute)
+        public AddDatabaseBlockCommand(ConfigurationSourceModel configurationSourceModel, AddApplicationBlockCommandAttribute attribute, IUIServiceWpf uiService)
+            : base(configurationSourceModel, attribute, uiService)
         {
         }
 
@@ -45,9 +48,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
             };
         }
 
-        public override void Execute(object parameter)
+        protected override void InnerExecute(object parameter)
         {
-            base.Execute(parameter);
+            base.InnerExecute(parameter);
 
             if (AddedSection != null)
             {
@@ -59,4 +62,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
             }
         }
     }
+
+#pragma warning restore 1591
 }

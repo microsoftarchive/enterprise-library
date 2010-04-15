@@ -18,6 +18,13 @@ using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics
 {
+#pragma warning disable 1591
+
+    /// <summary>
+    /// This class supports block-specific configuration design-time and is not
+    /// intended to be used directly from your code.
+    /// </summary>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Ruleset")]
     public class ValidationRulesetDataViewModel: CollectionElementViewModel
     {
         public ValidationRulesetDataViewModel(ElementCollectionViewModel containingCollection, ConfigurationElement thisElement)
@@ -27,17 +34,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
 
         protected override object CreateBindable()
         {
-            return new TwoColumnsViewModel(
+            return new TwoColumnsLayout(
                 this,
-                new ListViewModel(new ViewModel[]{
-                    new HierarchicalViewModel(ChildElement("Validators"), ChildElement("Validators").ChildElements),
-                    new ElementListViewModel(ChildElement("Properties").ChildElements),
-                    new ElementListViewModel(ChildElement("Fields").ChildElements),
-                    new ElementListViewModel(ChildElement("Methods").ChildElements)
-                }))
-                {
-                    ColumnName = "Column1"
-                };
+                new ListLayout(new ViewModel[]{
+                    new HierarchicalLayout(ChildElement("Validators"), ChildElement("Validators").ChildElements, 2),
+                    new ElementListLayout(ChildElement("Properties").ChildElements),
+                    new ElementListLayout(ChildElement("Fields").ChildElements),
+                    new ElementListLayout(ChildElement("Methods").ChildElements)
+                }), 1);
         }
     }
+#pragma warning restore 1591
 }

@@ -34,6 +34,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
 			: base(null, null)
 		{
 			this.valueAccessValidator = new ValueAccessValidator(valueAccess, valueValidator);
+		    Validator = valueValidator;
 		}
 
 		/// <summary>
@@ -57,5 +58,21 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
 		{
 			get { return null; }
 		}
+
+        /// <summary>
+        /// The actual validator that gets run against this field.
+        /// </summary>
+        public Validator Validator
+        {
+            get; private set;
+        }
+
+        /// <summary>
+        /// Key used to access the value.
+        /// </summary>
+        public string Key
+        {
+            get { return valueAccessValidator.Key; }
+        }
 	}
 }

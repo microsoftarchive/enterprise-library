@@ -9,10 +9,7 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Configuration;
@@ -43,7 +40,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
                 () => new ValidationInstrumentationProvider(
                     instrumentationSection.PerformanceCountersEnabled,
                     instrumentationSection.EventLoggingEnabled,
-                    instrumentationSection.WmiEnabled,
                     instrumentationSection.ApplicationInstanceName))
                 {
                     IsDefault = true
@@ -51,17 +47,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 
             yield return new TypeRegistration<AttributeValidatorFactory>(
                 () => new AttributeValidatorFactory(
-                          Container.Resolved<IValidationInstrumentationProvider>())) { IsDefault = true };
+                          Container.Resolved<IValidationInstrumentationProvider>())) { IsDefault = true, IsPublicName = true };
 
             yield return new TypeRegistration<ConfigurationValidatorFactory>(
                 () =>
                 new ConfigurationValidatorFactory(
                     availableConfigurationSource,
-                    Container.Resolved<IValidationInstrumentationProvider>())) { IsDefault = true };
+                    Container.Resolved<IValidationInstrumentationProvider>())) { IsDefault = true, IsPublicName = true };
 
             yield return new TypeRegistration<ValidationAttributeValidatorFactory>(
                 () => new ValidationAttributeValidatorFactory(
-                          Container.Resolved<IValidationInstrumentationProvider>())) { IsDefault = true };
+                          Container.Resolved<IValidationInstrumentationProvider>())) { IsDefault = true, IsPublicName = true };
 
             yield return new TypeRegistration<ValidatorFactory>(
                 () =>
@@ -70,7 +66,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
                     Container.Resolved<AttributeValidatorFactory>(),
                     Container.Resolved<ConfigurationValidatorFactory>(),
                     Container.Resolved<ValidationAttributeValidatorFactory>())
-                ) { IsDefault = true };
+                ) { IsDefault = true, IsPublicName = true };
         }
 
         /// <summary>

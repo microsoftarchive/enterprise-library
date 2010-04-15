@@ -54,7 +54,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Oracle.Tests
             CreateStoredProcedures();
 
             baseFixture = new TransactionScopeFixture(db);
-            baseFixture.Clenaup();
+            baseFixture.Cleanup();
         }
 
         [TestCleanup]
@@ -62,7 +62,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Oracle.Tests
         {
             try
             {
-                baseFixture.Clenaup();
+                baseFixture.Cleanup();
                 DeleteStoredProcedures();
             }
             catch {}

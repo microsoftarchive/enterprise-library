@@ -78,9 +78,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         public const String SourceDefaultLevelPropertyName = "switchValue";
 
         /// <summary>
+        /// The name of the auto flush level property.
+        /// </summary>
+        public const String SourceAutoFlushPropertyName = "autoFlush";
+
+        /// <summary>
         /// The name of the source trace listerners property.
         /// </summary>
-        public const String SourceTraceListenersPropertyName = "traceListeners";
+        public const String SourceTraceListenersPropertyName = "listeners";
 
         /// <summary>
         /// The name of the source kind category property.
@@ -279,6 +284,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
                 contentBuilder.AddDropDownListPartForEnumeration<SourceLevels>(Resources.TraceSourceDefaultLevelPartName,
                     SourceDefaultLevelPropertyName,
                     traceSourceData.DefaultLevel);
+
+                contentBuilder.AddCheckboxPart(Resources.TraceSourceAutoFlushPartName,
+                    SourceAutoFlushPropertyName,
+                    traceSourceData.AutoFlush);
 
                 contentBuilder.AddTextPart(Resources.TraceSourceListenersPartName);
 
@@ -505,6 +514,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
                     try
                     {
                         SourceLevels? defaultLevelOverride = policyKey.GetEnumValue<SourceLevels>(SourceDefaultLevelPropertyName);
+                        bool? autoFlushOverride = policyKey.GetBoolValue(SourceAutoFlushPropertyName);
 
                         // the key where the values for the source listeners are stored
                         // might not exist if no listener is selected
@@ -520,6 +530,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
                             }
                         }
                         traceSourceData.DefaultLevel = defaultLevelOverride.Value;
+                        traceSourceData.AutoFlush = autoFlushOverride.Value;
                     }
                     catch (RegistryAccessException ex)
                     {

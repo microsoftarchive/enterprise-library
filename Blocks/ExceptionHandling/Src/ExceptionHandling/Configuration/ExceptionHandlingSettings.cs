@@ -18,7 +18,6 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Instrumentation;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Properties;
 
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
@@ -46,6 +45,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
         /// <returns>The exception handling section.</returns>
         public static ExceptionHandlingSettings GetExceptionHandlingSettings(IConfigurationSource configurationSource)
         {
+            if(configurationSource == null) throw new ArgumentNullException("configurationSource");
             return (ExceptionHandlingSettings)configurationSource.GetSection(SectionName);
         }
 
@@ -67,7 +67,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
         [ResourceDescription(typeof(DesignResources), "ExceptionHandlingSettingsExceptionPoliciesDescription")]
         [ResourceDisplayName(typeof(DesignResources), "ExceptionHandlingSettingsExceptionPoliciesDisplayName")]
         [ConfigurationCollection(typeof(ExceptionPolicyData))]
-        [Command(ExceptionHandlingDesignTime.CommandTypeNames.AddExceptionPolicyCommand, CommandPlacement=CommandPlacement.ContextAdd, Replace = CommandReplacement.DefaultAddCommandReplacement)]
+        [Command(ExceptionHandlingDesignTime.CommandTypeNames.AddExceptionPolicyCommand, CommandPlacement = CommandPlacement.ContextAdd, Replace = CommandReplacement.DefaultAddCommandReplacement)]
         public NamedElementCollection<ExceptionPolicyData> ExceptionPolicies
         {
             get { return (NamedElementCollection<ExceptionPolicyData>)this[policiesProperty]; }
@@ -94,13 +94,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
                     registrations.Add(policyTypeRegistration);
 
                     registrations.AddRange(
-                        policyTypeData.ExceptionHandlers.SelectMany(ehd =>ehd.GetRegistrations(policyTypeRegistration.Name)));
+                        policyTypeData.ExceptionHandlers.SelectMany(ehd => ehd.GetRegistrations(policyTypeRegistration.Name)));
                 }
             }
 
-            registrations.Add(
-                GetManagerRegistration(ExceptionPolicies.Select(p => p.Name).ToArray())
-                );
+            TypeRegistration managerRegistration =
+                GetManagerRegistration(ExceptionPolicies.Select(p => p.Name).ToArray());
+            managerRegistration.IsPublicName = true;
+
+            registrations.Add(managerRegistration);
 
             return registrations;
         }
@@ -123,9 +125,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
             var instrumentationSection = InstrumentationConfigurationSection.GetSection(configurationSource);
 
             yield return new TypeRegistration<DefaultExceptionHandlingEventLogger>(
-                () => new DefaultExceptionHandlingEventLogger(
-                    instrumentationSection.EventLoggingEnabled, 
-                    instrumentationSection.WmiEnabled))
+                () => new DefaultExceptionHandlingEventLogger(instrumentationSection.EventLoggingEnabled))
                 {
                     Lifetime = TypeRegistrationLifetime.Transient,
                     IsDefault = true
@@ -136,7 +136,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
                 () => new DefaultExceptionHandlingEventLogger(
                     instrumentationSection.PerformanceCountersEnabled,
                     instrumentationSection.EventLoggingEnabled,
-                    instrumentationSection.WmiEnabled,
                     instrumentationSection.ApplicationInstanceName))
                 {
                     Lifetime = TypeRegistrationLifetime.Transient,

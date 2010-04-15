@@ -34,7 +34,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
         {
             configurationSource = new DictionaryConfigurationSourceWithHandlersQuery();
 
-            InstrumentationConfigurationSection instrumentationConfig = new InstrumentationConfigurationSection(true, true, false);
+            InstrumentationConfigurationSection instrumentationConfig = new InstrumentationConfigurationSection(true, true);
             configurationSource.Add(InstrumentationConfigurationSection.SectionName, instrumentationConfig);
 
             settings = new LoggingSettings();

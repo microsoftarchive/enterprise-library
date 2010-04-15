@@ -8,9 +8,42 @@
 
 
     <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="/Microsoft.Practices.EnterpriseLibrary.Configuration.Design;component/Resources/Converters.xaml" />
-        <ResourceDictionary Source="/Microsoft.Practices.EnterpriseLibrary.Configuration.Design;component/Resources/Brushes.xaml" />
+        <ResourceDictionary Source="/Microsoft.Practices.EnterpriseLibrary.Configuration.DesignTime;component/Resources/Converters.xaml" />
+        <ResourceDictionary Source="/Microsoft.Practices.EnterpriseLibrary.Configuration.DesignTime;component/Resources/Brushes.xaml" />
     </ResourceDictionary.MergedDictionaries>
+
+    <ControlTemplate x:Key="ElementModelContextMenuButton" TargetType="{x:Type Controls:ContextMenuButton}">
+        <Canvas x:Name="canvas" Height="12" Width="12" Background="{TemplateBinding Background}">
+        	<Canvas.Effect>
+				<DropShadowEffect ShadowDepth="0" BlurRadius="0" Opacity="0"/>
+			</Canvas.Effect>
+        	<Rectangle x:Name="rectangle" Width="12" Height="12" Margin="0" Opacity="0" Fill="Blue" IsHitTestVisible="True" Canvas.Left="0" Canvas.Top="0" />
+        	<Viewbox x:Name="viewbox" Width="4.085" Height="3.911" Canvas.Left="6.614" Canvas.Top="6.47">
+        		<Canvas Width="6.794" Height="6.896">
+        			<Path x:Name="path1" Width="9.794" Height="10.135" Canvas.Left="-1.998" Canvas.Top="-2.237" Stretch="Fill" StrokeThickness="2" StrokeLineJoin="Round" Stroke="{DynamicResource ElementContextButtonStroke}" Data="F1 M 5.79369,1.00426L 5.79369,5.89604L 1.1338,5.89604"/>
+        			<Path x:Name="path2" Width="9.603" Height="9.925" Canvas.Left="-1.998" Canvas.Top="-2.099" Stretch="Fill" StrokeThickness="2" StrokeLineJoin="Round" Stroke="{DynamicResource ElementContextButtonStroke}" Data="F1 M 5.60292,5.82433L 0.999999,1"/>
+        		</Canvas>
+        	</Viewbox>
+        	<Path x:Name="path" Stretch="Fill" StrokeThickness="2" StrokeLineJoin="Round" Stroke="{DynamicResource ElementContextButtonStroke}" Data="F1 M 4.32661,14.7089L 4.32661,4.92529L 13.6607,4.9253" Width="9.081" Height="9.022" Canvas.Left="1.497" Canvas.Top="1.331"/>
+        </Canvas>
+    	<ControlTemplate.Triggers>
+    		<Trigger Property="IsMouseOver" Value="True">
+    			<Setter Property="Stroke" TargetName="path" Value="{DynamicResource ElementContextMenuButtonStrokeHighlight}">
+    			</Setter>
+    			<Setter Property="Stroke" TargetName="path1"  Value="{DynamicResource ElementContextMenuButtonStrokeHighlight}" >
+    			</Setter>
+    			<Setter Property="Stroke" TargetName="path2" Value="{DynamicResource ElementContextMenuButtonStrokeHighlight}" >
+    			</Setter>
+    			<Setter Property="Background" TargetName="canvas" Value="{DynamicResource ElementContextMouseOverBrush}"/>
+				<Setter Property="Effect" TargetName="canvas">
+					<Setter.Value>
+						<DropShadowEffect ShadowDepth="1" BlurRadius="1" Opacity="1"/>
+					</Setter.Value>
+				</Setter>
+    		</Trigger>
+    	</ControlTemplate.Triggers>
+    </ControlTemplate>
+
 
     <Style TargetType="{x:Type Controls:ElementModelContainer}">
         <Setter Property="Margin" Value="12,0,12,6" />
@@ -44,13 +77,13 @@
                                 Focusable="False"
                                 HorizontalAlignment="Stretch" 
                                 HorizontalContentAlignment="Stretch" >
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="24" />
-                                            <ColumnDefinition Width="*" />
-                                        </Grid.ColumnDefinitions>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="24" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
 
-                                        <ToggleButton Template="{DynamicResource ExpanderToggleButton}"
+                                    <ToggleButton Template="{DynamicResource ExpanderToggleButton}"
                                             x:Name="ShowProperties"
                                             Focusable="False"
 									        Background="{DynamicResource NormalBrush}"
@@ -58,21 +91,34 @@
 									        OverridesDefaultStyle="True" 
                                             Grid.Column="0">
 
-                                            <ToggleButton.Visibility>
-                                                <Binding Path="Properties" 
-                                                 Converter="{StaticResource EnumerableToVisibilityConverter}" 
+                                        <ToggleButton.Visibility>
+                                            <Binding Path="Properties" 
+                                                 Converter="{StaticResource PropertiesToVisibilityConverter}" 
                                                  FallbackValue="Collapsed">
-                                                </Binding>
-                                            </ToggleButton.Visibility>
-                                        </ToggleButton>
+                                            </Binding>
+                                        </ToggleButton.Visibility>
+                                    </ToggleButton>
 
-                                        <TextBlock Text="{Binding Name, Mode=OneWay}"
+                                    <TextBlock Text="{Binding Name, Mode=OneWay}"
 				                           HorizontalAlignment="Left"
 				                           VerticalAlignment="Center"
 				                           Background="{x:Null}"
 				                           Margin="5,0,15,0"
 				                           Grid.Column="1"/>
-                                    </Grid>
+
+                                    <Controls:ContextMenuButton
+                                        x:Name="ContextMenuButton"
+                                        HorizontalAlignment="Right" 
+                                        Margin="0,0,0,-2" 
+                                        VerticalAlignment="Bottom" 
+                                        Content="ContextMenuButton" 
+                                        Grid.Column="1" 
+                                        Visibility ="Visible"
+                                        Opacity="0"
+                                        TargetElement="{Binding RelativeSource={RelativeSource TemplatedParent}}"
+                                        Template="{StaticResource ElementModelContextMenuButton}" Width="11" Height="11" Padding="0"
+                                        />
+                                </Grid>
                             </ContentControl>
                         </Border>
 
@@ -94,7 +140,7 @@
 									Grid.Row="1"
 									Visibility="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BooleanToVisibilityConverter}}">
 
-                            <ItemsControl Focusable="False" Grid.IsSharedSizeScope="True">
+                            <ItemsControl Focusable="False" Grid.IsSharedSizeScope="True" x:Name="ElementProperties">
                                 <ItemsControl.Resources>
                                     <CollectionViewSource x:Key="SortedProperties" Source="{Binding Properties}">
                                         <CollectionViewSource.SortDescriptions>
@@ -108,7 +154,10 @@
                                 </ItemsControl.ItemsSource>
                                 <ItemsControl.Template>
                                     <ControlTemplate>
-                                        <Grid HorizontalAlignment="Stretch">
+                                        <Grid HorizontalAlignment="Stretch" x:Name="ElementPropertyGrid" 
+                                              Controls:GridSplitterKeyAccelerator.TargetColumn="1"
+                                              Controls:GridSplitterKeyAccelerator.DecrementKeyGesture="Alt+Left"
+                                              Controls:GridSplitterKeyAccelerator.IncrementKeyGesture="Alt+Right">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="12" />
                                                 <ColumnDefinition MinWidth="50" Width="75" SharedSizeGroup="PropLabel"/>
@@ -136,17 +185,13 @@
                             </ItemsControl>
                         </Border>
                     </Grid>
-                    <ControlTemplate.Triggers>
-                        <DataTrigger Binding="{Binding Path=Content, ElementName=contentPresenter, Converter={StaticResource TypeToVisibilityConverter}}"
-									 Value="Header">
-                            <Setter Property="BorderBrush"
-									Value="Transparent"
-									TargetName="contentBorder" />
-                            <Setter Property="Background"
-									Value="Transparent"
-									TargetName="contentBorder" />
-                        </DataTrigger>
-                    </ControlTemplate.Triggers>
+                    <ControlTemplate.Triggers>               		
+                		<Trigger Property="IsMouseOver" Value="true">
+                			<Setter TargetName="ContextMenuButton"
+                				Property="Opacity"
+                				Value="1" />
+                		</Trigger>
+                	</ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

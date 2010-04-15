@@ -42,6 +42,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
             IValidationInstrumentationProvider instrumentationProvider
             )
         {
+            if (configurationSource == null) throw new ArgumentNullException("configurationSource");
+            if (instrumentationProvider == null) throw new ArgumentNullException("instrumentationProvider");
+
             try
             {
                 return configurationSource.GetSection(ValidationSettings.SectionName) as ValidationSettings;

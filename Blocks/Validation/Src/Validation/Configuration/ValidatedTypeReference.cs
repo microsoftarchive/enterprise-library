@@ -38,9 +38,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 		/// </summary>
 		/// <param name="type">The represented type.</param>
 		public ValidatedTypeReference(Type type)
-			: base(type.FullName)
+			: base(GetFullName(type))
 		{ }
 
+        private static string GetFullName(Type type)
+        {
+            if (type == null) throw new ArgumentNullException("type");
+
+            return type.FullName;
+        }
         /// <summary>
         /// 
         /// </summary>

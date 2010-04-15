@@ -12,29 +12,34 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.ComponentModel;
-using System.Drawing.Design;
-using System.Windows;
-using System.Globalization;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
-using System.Windows.Input;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design.Validation;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.ComponentModel;
 using System.Configuration;
-using Microsoft.Practices.Unity;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics;
+using System.Diagnostics;
+using System.Drawing.Design;
+using System.Globalization;
+using System.Linq;
+using System.Windows;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design.Validation;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Validation;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls;
-using System.Windows.Data;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
+using Microsoft.Practices.Unity;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
 {
+    /// <summary>
+    /// The <see cref="Property"/> represents a property of a single <see cref="ConfigurationElement"/>.
+    /// </summary>
+    /// <remarks>
+    /// The <see cref="Property"/> describes the configuration property via property metadata <see cref="Attributes"/> and
+    /// provides access to set and retrieve its value via <see cref="Value"/>.
+    /// <br/>
+    /// The value described by <see cref="Property"/> is maintained by another <see cref="object"/> provided at construction time.
+    /// </remarks>
+    /// <seealso cref="CustomProperty{TProperty}"/>
+    /// <seealso cref="ElementProperty"/>
     [DebuggerDisplay("Name : {DisplayName} Value: {Value}")]
-    public class Property : ViewModel, ITypeDescriptorContext, INotifyPropertyChanged, INeedInitialization
+    public class Property : ViewModel, ITypeDescriptorContext, INotifyPropertyChanged
     {
         private readonly IServiceProvider serviceProvider;
 
@@ -43,25 +48,35 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         private readonly MetadataCollection metadata;
         SectionViewModel containingSection;
         IApplicationModel appModel;
-        private ObservableCollection<ValidationError> validationErrors = new ObservableCollection<ValidationError>();
-        private CompositeErrorsCollection compositedErrors;
+        private ObservableCollection<ValidationResult> validationResults = new ObservableCollection<ValidationResult>();
+        private CompositeValidationResultsCollection compositedValidationResults;
         private IEnumerable<Property> childProperties;
 
         private string propertyName;
-        private string displayName;
-        private string description;
         private Type propertyType;
         private bool hidden;
-        private bool @readonly;
+        private bool propertiesShown;
         private TypeConverter converter;
-        private string category;
 
+        /// <summary>
+        /// Intantiates a new instance of <see cref="Property"/>.
+        /// </summary>
+        /// <param name="serviceProvider">The <see cref="IServiceProvider"/> used to obtain services.  This is most-often used when the property appears in an editor.</param>
+        /// <param name="component">The <see cref="object"/> that contains the property described by <paramref name="declaringProperty"/>.</param>
+        /// <param name="declaringProperty">The description of the property owned by <paramref name="component"/>.</param>
         [InjectionConstructor]
         public Property(IServiceProvider serviceProvider, object component, PropertyDescriptor declaringProperty)
             : this(serviceProvider, component, declaringProperty, new Attribute[0])
         {
         }
 
+        /// <summary>
+        /// Intantiates a new instance of <see cref="Property"/>.
+        /// </summary>
+        /// <param name="serviceProvider">The <see cref="IServiceProvider"/> used to obtain services.  This is most-often used when the property appears in an editor.</param>
+        /// <param name="component">The <see cref="object"/> that contains the property described by <paramref name="declaringProperty"/>.</param>
+        /// <param name="declaringProperty">The description of the property owned by <paramref name="component"/>.</param>
+        /// <param name="additionalAttributes">Additional, or overridden, meta-data attributes for the <paramref name="declaringProperty"/></param>
         public Property(IServiceProvider serviceProvider, object component, PropertyDescriptor declaringProperty, IEnumerable<Attribute> additionalAttributes)
         {
             this.serviceProvider = serviceProvider;
@@ -83,16 +98,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
 
         private void Initialize(PropertyDescriptor declaringProperty, IEnumerable<Attribute> attributes)
         {
-            this.category = ResourceCategoryAttribute.General.Category;
             this.converter = new StringConverter();
 
             if (declaringProperty != null)
             {
                 this.propertyName = declaringProperty.Name;
-                this.displayName = declaringProperty.DisplayName;
-                this.description = declaringProperty.Description;
                 this.propertyType = declaringProperty.PropertyType;
-                this.@readonly = declaringProperty.IsReadOnly;
                 this.hidden = !declaringProperty.IsBrowsable;
                 this.converter = declaringProperty.Converter;
             }
@@ -105,6 +116,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             }
         }
 
+        /// <summary>
+        /// Property dependencies not provided through the constructor and satisfied via dependency-injection.
+        /// </summary>
+        /// <param name="containingSection">The <see cref="SectionViewModel"/> that contains this property.</param>
+        /// <param name="applicationModel">The <see cref="IApplicationModel"/> the property resides in.</param>
         [InjectionMethod]
         public virtual void PropertyDependencyInitialization(SectionViewModel containingSection, IApplicationModel applicationModel)
         {
@@ -112,6 +128,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             this.appModel = applicationModel;
         }
 
+        /// <summary>
+        /// Gets the <see cref="SectionViewModel"/> containing this <see cref="Property"/>.
+        /// </summary>
+        /// <remarks>
+        /// The containing section for this property is typically specified in the <see cref="PropertyDependencyInitialization"/>.
+        /// </remarks>
         public SectionViewModel ContainingSection
         {
             get
@@ -120,44 +142,53 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             }
         }
 
-        protected override object CreateBindable()
+        /// <summary>
+        /// Returns a Bindable property for the property passed in as the <paramref name="propertyToBind"/>. <br/>
+        /// Note that the <paramref name="propertyToBind"/> may not be the property you override, but in the case of 
+        /// environmental overrides, might be a overridden property that is based on the current one. <br/>
+        /// <br/>
+        /// This method translates the metadata of the current property into a <see ref="BindableProperty"/> that determines the visual layout. <br/>
+        /// </summary>
+        /// <param name="propertyToBind">The <see cref="Property"/> for which a <see cref="BindableProperty"/> needs to be created.</param>
+        /// <returns></returns>
+        public virtual BindableProperty CreateBindableProperty(Property propertyToBind)
         {
+            var editorAttributes = propertyToBind.Attributes.OfType<EditorAttribute>();
+            if (editorAttributes.Where(x => Type.GetType(x.EditorBaseTypeName) == typeof(FrameworkElement)).Any())
+            {
+                var frameworkEditorType = editorAttributes
+                        .Where(x => Type.GetType(x.EditorBaseTypeName, false) == typeof(FrameworkElement))
+                        .Select(x => Type.GetType(x.EditorTypeName))
+                        .First();
+
+                return new FrameworkEditorBindableProperty(propertyToBind, frameworkEditorType);
+            }
+
             if (HasSuggestedValues)
             {
-                return new SuggestedValuesBindableProperty(this);
-            }
-            else if (EditorBehavior == EditorBehavior.ModalPopup)
-            {
-                return new PopupEditorBindableProperty(this);
-            }
-            else
-            {
-                return new BindableProperty(this);
-            }
-        }
-
-        public override FrameworkElement CreateCustomVisual()
-        {
-            var customVisual = base.CreateCustomVisual();
-            if (customVisual != null)
-            {
-                return customVisual;
+                return new SuggestedValuesBindableProperty(propertyToBind);
             }
 
-            if (Attributes.OfType<EditorAttribute>().Where(x => Type.GetType(x.EditorBaseTypeName) == typeof(FrameworkElement)).Any())
+            if (editorAttributes.Where(x => Type.GetType(x.EditorBaseTypeName) == typeof(UITypeEditor)).Any())
             {
-                var editor = Attributes.OfType<EditorAttribute>().Where(x => Type.GetType(x.EditorBaseTypeName) == typeof(FrameworkElement)).First();
-                var editorType = Type.GetType(editor.EditorTypeName, true);
-                FrameworkElement editorInstance = (FrameworkElement)Activator.CreateInstance(editorType);
-                editorInstance.DataContext = Bindable;
-                return editorInstance;
+                return new PopupEditorBindableProperty(propertyToBind);
             }
 
-            return null;
+            return new BindableProperty(propertyToBind);
         }
 
         /// <summary>
-        /// Gets the attributes that where supplied to this <see cref="Property"/> instance.
+        /// Returns an appropriate bindable property for this <see cref="Property"/> based on the <see cref="Attributes"/> meta-data.
+        /// </summary>
+        /// <seealso cref="CreateBindableProperty(Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Property)"/>
+        /// <returns></returns>
+        public virtual BindableProperty CreateBindableProperty()
+        {
+            return CreateBindableProperty(this);
+        }
+
+        /// <summary>
+        /// Gets the attributes that were supplied to this <see cref="Property"/> instance.
         /// </summary>
         public virtual IEnumerable<Attribute> Attributes
         {
@@ -167,7 +198,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             }
         }
 
-        public virtual string Category
+        /// <summary>
+        /// Gets or sets a value indicating that child properties should be shown.
+        /// </summary>
+        /// <seealso cref="ChildProperties"/>
+        public bool PropertiesShown
+        {
+            get { return propertiesShown; }
+            set { propertiesShown = value; }
+        }
+
+        /// <summary>
+        /// Gets a category for the <see cref="Property"/>.
+        /// </summary>
+        public string Category
         {
             get { return BindableProperty.Category; }
         }
@@ -183,31 +227,23 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         /// <summary>
         /// The name of this property as it should appear in the UI.
         /// </summary>
-        public virtual string DisplayName
+        public string DisplayName
         {
             get { return BindableProperty.DisplayName; }
         }
 
         /// <summary>
-        /// The description for this property.
+        /// Gets a description for this property.
         /// </summary>
-        public virtual string Description
+        public string Description
         {
-            get { return description; }
+            get { return BindableProperty.Description; }
         }
 
         /// <summary>
-        /// The type of the property.
+        /// Gets the <see cref="Type"/> of the property.
         /// </summary>
         public virtual Type PropertyType
-        {
-            get { return propertyType; }
-        }
-
-        /// <summary>
-        /// The type of the value.
-        /// </summary>
-        public virtual Type Type
         {
             get { return propertyType; }
         }
@@ -221,12 +257,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             get { return hidden; }
         }
 
+        /// <summary>
+        /// Gets the <see cref="object"/> that defines the property described by <see cref="Property"/>.
+        /// </summary>
         public object Component
         {
             get { return component; }
         }
 
 
+        /// <summary>
+        /// Gets the <see cref="PropertyDescriptor"/> for the property defined on <see cref="Component"/>.
+        /// </summary>
         public PropertyDescriptor DeclaringProperty
         {
             get { return declaringProperty; }
@@ -241,25 +283,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         }
 
         /// <summary>
-        /// 
+        /// Gets a value indiciating that this <see cref="Property"/> has child properties.
         /// </summary>
-        public virtual EditorBehavior EditorBehavior
-        {
-            get
-            {
-                if (Attributes.OfType<EditorAttribute>().Where(x => Type.GetType(x.EditorBaseTypeName) == typeof(UITypeEditor)).Any()) return EditorBehavior.ModalPopup;
-
-                return EditorBehavior.None;
-            }
-        }
-
-        /// <summary/>
+        /// <seealso cref="ChildProperties"/>
         public virtual bool HasChildProperties
         {
             get { return Converter.GetPropertiesSupported(this); }
         }
 
-        /// <summary/>
+        /// <summary>
+        /// Gets the child properties for this <see cref="Property"/>.
+        /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1721:PropertyNamesShouldNotMatchGetMethods")]
         public virtual IEnumerable<Property> ChildProperties
         {
             get
@@ -275,6 +310,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             childProperties = GetChildProperties();
         }
 
+        /// <summary>
+        /// Retrieves child properties for this <see cref="Property"/>.
+        /// </summary>
+        /// <returns></returns>
         protected virtual IEnumerable<Property> GetChildProperties()
         {
             if (Converter == null) return Enumerable.Empty<Property>();
@@ -288,16 +327,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         }
 
         /// <summary>
-        /// returns <see langword="true"/> if there are suggested values for this property. 
-        /// otherwise <see langword="false"/>.
+        /// Returns a value indicating that this property has suggested values.
         /// </summary>
+        /// <value>Returns <see langword="true"/> if there are suggested values for this property. 
+        /// Otherwise, returns <see langword="false"/>.
+        /// </value>
+        /// <seealso cref="SuggestedValues"/>
         public virtual bool HasSuggestedValues
         {
             get { return Converter.GetStandardValuesSupported(this); }
         }
 
         /// <summary>
-        /// returns a list of suggested values.
+        /// Get a list of suggested values.
         /// </summary>
         public virtual IEnumerable<object> SuggestedValues
         {
@@ -309,9 +351,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         }
 
         /// <summary>
-        /// returns <see langword="true"/> if the property is readonly.
-        /// otherwise <see langword="false"/>.
+        /// Gets a value indicating if the property is read-only.
         /// </summary>
+        /// <value>
+        /// Returns <see langword="true"/> if the property is read-only.
+        /// Otherwise, returns <see langword="false"/>.
+        /// </value>
         public bool ReadOnly
         {
             get
@@ -320,6 +365,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating if the values must be from the <see cref="SuggestedValues"/> set
+        /// or if other values an be provided.
+        /// </summary>
+        /// <remarks>
+        /// Returns <see langword="true"/> if the value must come from the <see cref="SuggestedValues"/> list.
+        /// Otherwise, returns <see langword="false"/>.</remarks>
         public virtual bool SuggestedValuesEditable
         {
             get
@@ -328,53 +380,104 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             }
         }
 
+        private BindableProperty bindableProproperty;
+
+        /// <summary>
+        /// Gets a <see cref="BindableProperty"/> used as the bound value in the user-interface.
+        /// </summary>
         public BindableProperty BindableProperty
         {
-            get { return Bindable as BindableProperty; }
+            get { return bindableProproperty ?? (bindableProproperty = CreateBindableProperty()); }
         }
 
-        public IEnumerable<ValidationError> ValidateWithResults(string value)
+        /// <summary>
+        /// Validates this property by invoking <see cref="Validate(string)"/> with the value from <see cref="BindableProperty"/>.
+        /// </summary>
+        public void Validate()
         {
-             var results = new List<ValidationError>();
-
-            foreach (var validation in this.GetValidators())
-            {
-                validation.Validate(this, value, results);
-            }
-
-            return results;
+            Validate(this.BindableProperty.BindableValue);
         }
 
         ///<summary>
-        /// Validates the property and updates the <see cref="ValidationErrors"/> collection.
+        /// Validates the property and updates the <see cref="ValidationResults"/> collection.
         ///</summary>
-        public virtual void Validate()
+        ///<param name="value">The value to run validation against.  This may be different from the internal value.</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+        public virtual void Validate(string value)
         {
-            ResetValidationResults(ValidateWithResults(this.BindableProperty.BindableValue));
+            var results = new List<ValidationResult>();
+
+            foreach (var validation in this.GetValidators())
+            {
+                try
+                {
+                    validation.Validate(this, value, results);
+                }
+                catch (Exception ex)
+                {
+                    results.Add(new PropertyValidationResult(this, string.Format(CultureInfo.CurrentCulture, Resources.ValidationErrorExceptionMessage, ex.Message)));
+                }
+            }
+
+            ResetValidationResults(results);
         }
 
-        public void ResetValidationResults(IEnumerable<ValidationError> results)
+        /// <summary>
+        /// Resets the validation results with the provided enumerable of <see cref="ValidationResult"/>.
+        /// </summary>
+        /// <param name="results"></param>
+        protected void ResetValidationResults(IEnumerable<ValidationResult> results)
         {
-            validationErrors.Clear();
+            foreach (IDisposable error in validationResults)
+            {
+                error.Dispose();
+            }
+            if (validationResults.Any())
+            {
+                validationResults.Clear();
+            }
             foreach (var result in results)
             {
-                validationErrors.Add(result);
+                validationResults.Add(result);
             }
         }
 
+        /// <summary>
+        /// Converts a value from an internal value to one that can be displayed in the user-interface.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public string ConvertToBindableValue(object value)
         {
-            return Converter.ConvertToString(this, CultureInfo.CurrentUICulture, value);
+            return Converter.ConvertToString(this, CultureInfo.CurrentCulture, value);
         }
 
+        /// <summary>
+        /// Converts a value from a <see cref="BindableProperty"/> value to a value
+        /// that can be stored internally.
+        /// </summary>
+        /// <param name="bindableValue"></param>
+        /// <returns></returns>
         public object ConvertFromBindableValue(string bindableValue)
         {
-            return Converter.ConvertFromString(this, CultureInfo.CurrentUICulture, bindableValue);
+            return Converter.ConvertFromString(this, CultureInfo.CurrentCulture, bindableValue);
+        }
+
+        /// <summary>
+        /// Converts a value with no <see cref="CultureInfo"/> considerations, from a <see cref="BindableProperty"/> value to a value
+        /// that can be stored internally.
+        /// </summary>
+        /// <param name="bindableValue"></param>
+        /// <returns></returns>
+        public object ConvertFromBindableValueInvariant(string bindableValue)
+        {
+            return Converter.ConvertFromString(this, CultureInfo.InvariantCulture, bindableValue);
         }
 
         /// <summary>
         /// The value of the property.
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1721:PropertyNamesShouldNotMatchGetMethods")]
         public virtual object Value
         {
             get
@@ -388,19 +491,39 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             }
         }
 
+        /// <summary>
+        /// Gets the underlying, stored value.
+        /// </summary>
+        /// <returns></returns>
         protected virtual object GetValue()
         {
             return declaringProperty.GetValue(component);
         }
 
+
+        /// <summary>
+        /// Sets the underlying, stored value.
+        /// </summary>
+        /// <remarks>
+        /// Once the value is stored, the property is <see cref="Validate()"/>.
+        /// 
+        /// </remarks>
+        /// <param name="value"></param>
         protected virtual void SetValue(object value)
         {
             declaringProperty.SetValue(component, value);
             Validate();
         }
 
+        /// <summary>
+        /// Occurs when a property value changes.
+        /// </summary>
         public virtual event PropertyChangedEventHandler PropertyChanged;
 
+        /// <summary>
+        /// Invoked when a property changes.
+        /// </summary>
+        /// <param name="propertyName"></param>
         protected virtual void OnPropertyChanged(string propertyName)
         {
             if (propertyName == "Value")
@@ -440,14 +563,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
 
         PropertyDescriptor ITypeDescriptorContext.PropertyDescriptor
         {
-            get { return declaringProperty; }
+            get { return BindableProperty; }
         }
 
         object IServiceProvider.GetService(Type serviceType)
         {
             return serviceProvider.GetService(serviceType);
         }
-
 
         ///<summary>
         /// Provides an opportunity to initialize the property after creation and prior to visualization.
@@ -457,51 +579,53 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         {
         }
 
+        /// <summary>
+        /// Gets a value indicating if the property is requried.
+        /// </summary>
+        /// <value>
+        /// Returns <see langword="true"/> if the property is required.
+        /// Otherwise, returns <see langword="false"/>.
+        /// </value>
         public virtual bool IsRequired
         {
-            get{ return false; }
+            get { return false; }
         }
 
         ///<summary>
-        /// Returns true if valid.
+        /// Gets a value indicating if the property is valid.
         ///</summary>
+        /// <value>
+        /// Returns <see langword="true"/> if the property is valid.
+        /// Otherwise, returns <see langword="false"/>.
+        /// </value>
+
         public bool IsValid
         {
-            get { return !ValidationErrors.Any(); }
+            get { return !ValidationResults.Any(); }
         }
 
 
-        protected IList<ValidationError> InternalErrors
+        /// <summary>
+        /// Gets any validation results for this property.
+        /// </summary>
+        public virtual IEnumerable<ValidationResult> ValidationResults
         {
-            get { return validationErrors; }
+            get { return validationResults; }
         }
 
-        ///<summary>
-        /// The validation errors for this property.
-        ///</summary>
-        public virtual IEnumerable<ValidationError> ValidationErrors
-        {
-            get
-            {
-                EnsureCompositeErrors();
-                return compositedErrors;
-            }
-        }
 
-        private void EnsureCompositeErrors()
-        {
-            if (compositedErrors == null)
-            {
-                compositedErrors = new CompositeErrorsCollection();
-                compositedErrors.Add(validationErrors);
-
-                foreach(var childProperty in ChildProperties)
-                {
-                    compositedErrors.Add(childProperty.ValidationErrors);
-                }
-            }
-        }
-
+        /// <summary>
+        /// Gets the set of validators for this property.
+        /// </summary>
+        /// <remarks>
+        /// Validators may be added by deriving from this and returning additional <see cref="Validator"/> objects.  
+        /// Or, they can be added by providing <see cref="ValidationAttribute"/> attributes to the 
+        /// underlying <see cref="Component"/> or during the construction of <see cref="Property"/>.<br/>
+        /// Validators specified by <see cref="ValidationAttribute"/> are created by the containing <see cref="SectionViewModel"/>.
+        /// </remarks>
+        /// <returns>An <see cref="IEnumerable{Validator}"/> containing default property validators, obtained from <see cref="GetDefaultPropertyValidators"/>
+        /// and additional validators provided through <see cref="ValidationAttribute"/>.</returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Validators")]
         public virtual IEnumerable<Validator> GetValidators()
         {
             var validations = GetDefaultPropertyValidators()
@@ -511,22 +635,58 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             return validations;
         }
 
+        /// <summary>
+        /// Gets the set of default property validators this <see cref="Property"/>.
+        /// </summary>
+        /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Validators")]
         protected virtual IEnumerable<Validator> GetDefaultPropertyValidators()
         {
-            if (this.Converter is CollectionConverter)
+            if (typeof(ConfigurationElementCollection).IsAssignableFrom(this.propertyType))
             {
                 yield break;
             }
 
             yield return new DefaultPropertyValidator();
         }
-    }
 
+        /// <summary>
+        /// Indicates the object is being disposed.
+        /// </summary>
+        /// <param name="disposing">Indicates <see cref="ViewModel.Dispose(bool)"/> was invoked through an explicit call to <see cref="ViewModel.Dispose()"/> instead of a finalizer call.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (childProperties != null)
+                {
+                    foreach (var childProperty in this.childProperties)
+                    {
+                        childProperty.Dispose();
+                    }
+                }
 
-    public enum EditorBehavior
-    {
-        None = 0,
-        DropDown,
-        ModalPopup
+                childProperties = null;
+
+                if (compositedValidationResults != null)
+                {
+                    compositedValidationResults.Clear();
+                    compositedValidationResults = null;
+                }
+
+                foreach (IDisposable error in validationResults)
+                {
+                    error.Dispose();
+                }
+                if (bindableProproperty != null)
+                {
+                    bindableProproperty.Dispose();
+                }
+                validationResults.Clear();
+
+            }
+
+            base.Dispose(disposing);
+        }
     }
 }

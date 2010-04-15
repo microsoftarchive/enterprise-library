@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability.Properties;
+using System.Globalization;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability
 {
@@ -84,7 +85,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
                     catch (Exception e)
                     {
                         ManageabilityExtensionsLogger.LogException(e,
-                                                                   String.Format(Resources.Culture,
+                                                                   String.Format(CultureInfo.CurrentCulture,
                                                                                  Resources.ExceptionErrorOnCallbackForSectionUpdate,
                                                                                  sectionName,
                                                                                  callback.ToString()));

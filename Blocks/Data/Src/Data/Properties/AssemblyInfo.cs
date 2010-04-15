@@ -9,28 +9,27 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System.Management.Instrumentation;
+using System.Configuration;
 using System.Reflection;
 using System.Runtime.ConstrainedExecution;
 using System.Security;
 using System.Security.Permissions;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Microsoft.Practices.EnterpriseLibrary.Data.Configuration;
-using System.Configuration;
 
-[assembly : SecurityPermission(SecurityAction.RequestMinimum)]
-[assembly : ReliabilityContract(Consistency.WillNotCorruptState, Cer.None)]
-[assembly : AssemblyTitle("Enterprise Library Data Access Application Block")]
-[assembly : AssemblyDescription("Enterprise Library Data Access Application Block")]
-[assembly : AssemblyVersion("4.1.0.0")]
-[assembly : Instrumented(@"root\EnterpriseLibrary")]
-[assembly : AllowPartiallyTrustedCallers]
-[assembly : SecurityTransparent]
+[assembly: SecurityPermission(SecurityAction.RequestMinimum)]
+[assembly: ReliabilityContract(Consistency.WillNotCorruptState, Cer.None)]
+[assembly: AssemblyTitle("Enterprise Library Data Access Application Block")]
+[assembly: AssemblyDescription("Enterprise Library Data Access Application Block")]
+[assembly: AssemblyVersion("5.0.414.0")]
+[assembly: AllowPartiallyTrustedCallers]
+[assembly: SecurityTransparent]
 
 [assembly: HandlesSection(DataAccessDesignTime.ConnectionStringSettingsSectionName)]
+[assembly: HandlesSection(DatabaseSettings.SectionName, ClearOnly = true)]
 
 [assembly: AddApplicationBlockCommand(
-            DataAccessDesignTime.ConnectionStringSettingsSectionName, 
+            DataAccessDesignTime.ConnectionStringSettingsSectionName,
             typeof(ConnectionStringsSection),
             TitleResourceName = "AddDataSettings",
             TitleResourceType = typeof(DesignResources),

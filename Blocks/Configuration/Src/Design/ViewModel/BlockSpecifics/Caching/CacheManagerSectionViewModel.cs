@@ -25,6 +25,12 @@ using System.Windows;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics
 {
+
+#pragma warning disable 1591
+    /// <summary>
+    /// This class supports block-specific configuration design-time and is not
+    /// intended to be used directly from your code.
+    /// </summary>
     public class CacheManagerSectionViewModel : SectionViewModel
     {
         public const string DefaultNullBackingStore = "NullBackingStore";
@@ -57,14 +63,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
             var backingStores = DescendentElements().Where(x => x.ConfigurationType == typeof(NameTypeConfigurationElementCollection<CacheStorageData, CustomCacheStorageData>)).First();
             var storeEncryptionProviders = DescendentElements().Where(x => x.ConfigurationType == typeof(NameTypeConfigurationElementCollection<StorageEncryptionProviderData, StorageEncryptionProviderData>)).First();
 
-            return new HorizontalListViewModel(
-                new HeaderedListViewModel(cacheManagers), 
-                new HeaderedListViewModel(backingStores), 
-                new HeaderedListViewModel(storeEncryptionProviders));
+            return new HorizontalListLayout(
+                new HeaderedListLayout(cacheManagers), 
+                new HeaderedListLayout(backingStores), 
+                new HeaderedListLayout(storeEncryptionProviders));
         }
 
 
-        public override void BeforeSave(ConfigurationSection sectionToSave)
+        protected override void BeforeSave(ConfigurationSection sectionToSave)
         {
             base.BeforeSave(sectionToSave);
             CacheManagerSettings cacheManagerToSave = (CacheManagerSettings)sectionToSave;
@@ -80,4 +86,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
             private set;
         }
     }
+
+#pragma warning restore 1591
 }

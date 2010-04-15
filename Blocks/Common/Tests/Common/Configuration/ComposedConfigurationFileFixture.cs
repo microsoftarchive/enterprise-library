@@ -11,15 +11,14 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests;
 using System.IO;
+using System.Threading;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Storage;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests;
 using Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.TestObjects;
-using System.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
 {
@@ -90,10 +89,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
             base.Arrange();
 
             var customSourceContents = new Dictionary<string, System.Configuration.ConfigurationSection>();
-            customSourceContents.Add(CustomSourceDummySectionName, 
+            customSourceContents.Add(CustomSourceDummySectionName,
                                      sectionInCustomSource = new DummySection
                                         {
-                                            Value = 12, 
+                                            Value = 12,
                                             Name = CustomSourceDummySectionName
                                         });
 
@@ -118,7 +117,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
     public class When_WritngExternalSectionThroughFileConfigurationSource : Given_ConfigurationFileWithSectionsInOtherConfigurationSources
     {
         string originalConfigurationFileContents;
-        
+
         protected override void Arrange()
         {
             originalConfigurationFileContents = File.ReadAllText("ExternalFileSource.config");
@@ -129,7 +128,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
         {
             var section = (DummySection)CompositeSource.GetSection(FileSourceDummySectionName);
             CompositeSource.Remove(FileSourceDummySectionName);
-            CompositeSource.Add(FileSourceDummySectionName, new DummySection 
+            CompositeSource.Add(FileSourceDummySectionName, new DummySection
             {
                 Value = 24,
                 Name = "new name"
@@ -170,7 +169,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
     }
 
     [TestClass]
-    public class When_ReadingSectionThatPointsToNonExtingSource : Given_ConfigurationFileWithSectionsInOtherConfigurationSources
+    public class When_ReadingSectionThatPointsToNonExistingSource : Given_ConfigurationFileWithSectionsInOtherConfigurationSources
     {
         [TestMethod]
         [ExpectedException(typeof(ConfigurationSourceErrorsException))]
@@ -212,5 +211,117 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
         }
     }
 
-    
+    [TestClass]
+    public class When_ComposedConfigurationSourceChanges : Given_ConfigurationFileWithSectionsInOtherConfigurationSources
+    {
+        DummySection section;
+        string originalConfigurationFileContents;
+        int sourceChangedEvents = 0;
+        int sectionChangedEvents = 0;
+        
+        // Quick & dirty sync object to work around lack of WaitHandle.WaitAll in STA threads.
+        private class Multiwaiter : IDisposable
+        {
+            private readonly int totalToWait = 0;
+            private int releases = 0;
+            private ManualResetEvent waitOnMe = new ManualResetEvent(false);
+            private readonly object padlock = new object();
+
+            public Multiwaiter(int numberOfReleasesToWaitOn)
+            {
+                totalToWait = numberOfReleasesToWaitOn;
+            }
+
+            public void Dispose()
+            {
+                if(waitOnMe != null)
+                {
+                    waitOnMe.Close();
+                    waitOnMe = null;
+                }
+            }
+
+            public void Release()
+            {
+                lock(padlock)
+                {
+                    ++releases;
+                    if(releases >= totalToWait)
+                    {
+                        waitOnMe.Set();
+                    }
+                }
+            }
+
+            public bool Wait(int timeoutMS)
+            {
+                return waitOnMe.WaitOne(timeoutMS);
+            }
+        }
+
+        private Multiwaiter waitForChangedEvents = new Multiwaiter(2);
+
+        protected override void Arrange()
+        {
+            ConfigurationChangeWatcher.SetDefaultPollDelayInMilliseconds(1000);
+
+            originalConfigurationFileContents = File.ReadAllText(@"ExternalFileSource.config");
+
+            using (FileConfigurationSource externalConfigurationFileSource = new FileConfigurationSource(@"ExternalFileSource.config", false))
+            {
+                externalConfigurationFileSource.Save(FileSourceDummySectionName, new DummySection { });
+            }
+
+            base.Arrange();
+
+            this.CompositeSource.SourceChanged +=
+                (sender, e) =>
+                {
+                    sourceChangedEvents++;
+                    waitForChangedEvents.Release();
+                };
+            this.CompositeSource.AddSectionChangeHandler(
+                FileSourceDummySectionName,
+                (sender, e) =>
+                {
+                    sectionChangedEvents++;
+                    waitForChangedEvents.Release();
+                });
+        }
+
+        protected override void Act()
+        {
+            section = CompositeSource.GetSection(FileSourceDummySectionName) as DummySection;
+
+            File.SetLastWriteTime(@"ExternalFileSource.config", DateTime.Now);
+
+            // Wait for at least two events
+            waitForChangedEvents.Wait(30000);
+
+            // And give it a little more time in case more come in
+            Thread.Sleep(3000);
+        }
+
+        [TestMethod]
+        public void Then_ThereIsSingleSourceChangedEvent()
+        {
+            Assert.AreEqual(1, sourceChangedEvents);
+        }
+
+        [TestMethod]
+        public void Then_ThereIsSingleSectionChangedEvent()
+        {
+            Assert.AreEqual(1, sectionChangedEvents);
+        }
+
+        protected override void Teardown()
+        {
+            ConfigurationChangeWatcher.ResetDefaultPollDelay();
+
+            File.WriteAllText(@"ExternalFileSource.config", originalConfigurationFileContents);
+            waitForChangedEvents.Dispose();
+        }
+    }
+
+
 }

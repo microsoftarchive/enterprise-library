@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Diagnostics;
 using Microsoft.Practices.EnterpriseLibrary.Common.Properties;
+using System.Globalization;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation
 {
@@ -82,7 +83,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation
 			StringBuilder entryTextBuilder
 				= new StringBuilder(
 					string.Format(
-						Resources.Culture,
+                        CultureInfo.CurrentCulture,
 						Resources.EventLogEntryHeaderTemplate,
 						applicationName,
 						blockName));
@@ -102,7 +103,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation
 			{
 				entryTextBuilder.AppendLine(
 				   string.Format(
-					   Resources.Culture,
+                       CultureInfo.CurrentCulture,
 					   Resources.EventLogEntryExceptionTemplate,
 					   exception.ToString()));
 			}

@@ -14,8 +14,6 @@ using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Filters;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport;
@@ -385,47 +383,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
             log.Categories = new string[] { "ConsoleCategory" };
             log.Severity = TraceEventType.Error;
             Logger.Write(log);
-        }
-
-        [TestMethod]
-        public void WmiEventFiredWhenLoggingConfigurationIsCorrupt()
-        {
-            //corrupt the logging configuration
-            System.Configuration.Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-            LoggingSettings rwLoggingSettings = (LoggingSettings)config.GetSection(LoggingSettings.SectionName);
-            string originalFirstTraceListenerName = rwLoggingSettings.TraceListeners.Get(0).Name;
-            rwLoggingSettings.TraceSources.Get(0).TraceListeners.Get(0).Name = "wrongName";
-            InstrumentationConfigurationSection rwInstrumentationSettings = (InstrumentationConfigurationSection)config.GetSection(InstrumentationConfigurationSection.SectionName);
-            rwInstrumentationSettings.WmiEnabled = true;
-            config.Save(ConfigurationSaveMode.Full);
-            ConfigurationManager.RefreshSection(LoggingSettings.SectionName);
-            ConfigurationManager.RefreshSection(InstrumentationConfigurationSection.SectionName);
-
-            using (WmiEventWatcher eventListener = new WmiEventWatcher(1))
-            {
-                try
-                {
-                    Logger.Write("Some message");
-                }
-                catch (ConfigurationErrorsException)
-                {
-                    eventListener.WaitForEvents();
-                    Assert.AreEqual(1, eventListener.EventsReceived.Count);
-                    Assert.AreEqual("LoggingConfigurationFailureEvent", eventListener.EventsReceived[0].ClassPath.ClassName);
-                    string exceptionMessage = (string)eventListener.EventsReceived[0].GetPropertyValue("ExceptionMessage");
-
-                    Assert.IsTrue(exceptionMessage.Contains("wrongName"));
-                }
-                finally
-                {
-                    //restore the logging configuration
-                    rwLoggingSettings.TraceSources.Get(0).TraceListeners.Get(0).Name = originalFirstTraceListenerName;
-                    rwInstrumentationSettings.WmiEnabled = false;
-                    config.Save(ConfigurationSaveMode.Full);
-                    ConfigurationManager.RefreshSection(LoggingSettings.SectionName);
-                    ConfigurationManager.RefreshSection(InstrumentationConfigurationSection.SectionName);
-                }
-            }
         }
 
         [TestMethod]

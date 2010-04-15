@@ -10,6 +10,7 @@
 //===============================================================================
 
 using System.Linq;
+using Console.Wpf.Tests.VSTS.TestSupport;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
@@ -91,10 +92,44 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_element_reference
         }
     }
 
+    [TestClass]
+    public class when_reference_bindable_becomes_invalid : given_reference_property
+    {
+        private PropertyChangedListener propertyChangeListener;
+        private Property requiredReferenceingProperty;
+
+        protected override void Arrange()
+        {
+            base.Arrange();
+            requiredReferenceingProperty = this.SectionViewModel.Property("RequiredReferenceItem");
+
+            requiredReferenceingProperty.Value = "FirstItem";
+            propertyChangeListener = new PropertyChangedListener(requiredReferenceingProperty);
+        }
+
+        protected override void Act()
+        {
+            requiredReferenceingProperty.BindableProperty.BindableValue = string.Empty;
+        }
+
+        [TestMethod]
+        public void then_notifies_haschildproperties_changed()
+        {
+            Assert.IsTrue(propertyChangeListener.ChangedProperties.Contains("HasChildProperties"));
+        }
+
+        [TestMethod]
+        public void then_notifies_childproperties_changed()
+        {
+            Assert.IsTrue(propertyChangeListener.ChangedProperties.Contains("ChildProperties"));
+        }
+    }
+    
     public class SectionWithReference : ConfigurationSection
     {
         private const string itemsCollection = "itemsCollection";
         private const string defaultItem = "defaultItem";
+        private const string requiredReferenceItem = "requiredReferenceItem";
 
         [ConfigurationProperty(defaultItem, IsRequired = false)]
         [Reference(typeof(NamedReferencedItem), ScopeIsDeclaringElement = true)]
@@ -102,6 +137,14 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_element_reference
         {
             get { return (string) this[defaultItem]; }
             set { this[defaultItem] = value; }
+        }
+
+        [ConfigurationProperty(requiredReferenceItem, IsRequired = true, DefaultValue = "TestItem")]
+        [Reference(typeof(NamedReferencedItem), ScopeIsDeclaringElement = true)]
+        public string RequiredReferenceItem
+        {
+            get { return (string) this[requiredReferenceItem]; }
+            set { this[requiredReferenceItem] = value; }
         }
 
         [ConfigurationProperty(itemsCollection)]

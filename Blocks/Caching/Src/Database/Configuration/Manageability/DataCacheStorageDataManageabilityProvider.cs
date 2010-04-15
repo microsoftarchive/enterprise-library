@@ -21,7 +21,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Database.Configuration.M
 {
     /// <summary>
     /// Provides an implementation for <see cref="DataCacheStorageData"/> that
-    /// splits policy overrides processing and WMI objects generation, performing appropriate logging of 
+    /// processes policy overrides, performing appropriate logging of 
     /// policy processing errors.
     /// </summary>
     public class DataCacheStorageDataManageabilityProvider

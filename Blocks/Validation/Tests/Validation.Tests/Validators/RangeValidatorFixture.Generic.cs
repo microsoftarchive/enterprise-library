@@ -114,5 +114,45 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             Assert.AreEqual(1, resultsList.Count);
             Assert.AreEqual(message, resultsList[0].Message);
         }
+
+        [TestMethod]
+        public void NegatedRejectsNullForReferenceType()
+        {
+            Validator<string> validator = new RangeValidator<string>("aaaa", RangeBoundaryType.Inclusive, "bbbb", RangeBoundaryType.Inclusive, "test", true);
+
+            ValidationResults results = validator.Validate(null);
+
+            Assert.IsFalse(results.IsValid);
+        }
+
+        [TestMethod]
+        public void NonNegatedRejectsNullForReferenceType()
+        {
+            Validator<string> validator = new RangeValidator<string>("aaaa", RangeBoundaryType.Inclusive, "bbbb", RangeBoundaryType.Inclusive, "test");
+
+            ValidationResults results = validator.Validate(null);
+
+            Assert.IsFalse(results.IsValid);
+        }
+
+        [TestMethod]
+        public void NegatedRejectsNullForValueType()
+        {
+            Validator<int> validator = new RangeValidator<int>(0, RangeBoundaryType.Inclusive, 2, RangeBoundaryType.Inclusive, "test", true);
+
+            ValidationResults results = validator.Validate(null);
+
+            Assert.IsFalse(results.IsValid);
+        }
+
+        [TestMethod]
+        public void NonNegatedRejectsNullForValueType()
+        {
+            Validator<int> validator = new RangeValidator<int>(0, RangeBoundaryType.Inclusive, 2, RangeBoundaryType.Inclusive, "test");
+
+            ValidationResults results = validator.Validate(null);
+
+            Assert.IsFalse(results.IsValid);
+        }
     }
 }

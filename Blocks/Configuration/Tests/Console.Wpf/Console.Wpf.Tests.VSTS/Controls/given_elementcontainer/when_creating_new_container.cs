@@ -9,21 +9,18 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Windows.Input;
 using Console.Wpf.Tests.VSTS.DevTests.Contexts;
-using Console.Wpf.Tests.VSTS.Mocks;
 using Console.Wpf.Tests.VSTS.TestSupport;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Configuration.Design.HostAdapterV5;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.TestSupport;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Practices.Unity;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls;
-using System.Windows.Input;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 
 namespace Console.Wpf.Tests.VSTS.Controls.given_elementcontainer
 {
@@ -44,11 +41,13 @@ namespace Console.Wpf.Tests.VSTS.Controls.given_elementcontainer
             var sourceModel = Container.Resolve<ConfigurationSourceModel>();
             sourceModel.Load(source);
             exceptionSection =
-                sourceModel.Sections.Where(x => x.ConfigurationType == typeof (ExceptionHandlingSettings)).Single();
+                sourceModel.Sections.Where(x => x.ConfigurationType == typeof(ExceptionHandlingSettings)).Single();
 
             policy = exceptionSection.DescendentElements()
-                .Where(x => x.ConfigurationType == typeof (ExceptionPolicyData))
+                .Where(x => x.ConfigurationType == typeof(ExceptionPolicyData))
                 .First();
+
+            this.Container.RegisterInstance(new Mock<IAssemblyDiscoveryService>().Object);
         }
 
         protected override void Act()
@@ -65,18 +64,13 @@ namespace Console.Wpf.Tests.VSTS.Controls.given_elementcontainer
             var converter = new KeyGestureConverter();
             var commandAndGestures = elementContainer.InputBindings.OfType<InputBinding>()
                 .Select(x =>
-                            new {
+                            new
+                            {
                                 x.Command,
-                                Gesture=converter.ConvertTo((KeyGesture)x.Gesture, typeof(string))
+                                Gesture = converter.ConvertTo((KeyGesture)x.Gesture, typeof(string))
                             });
-            
-            Assert.IsTrue(commandAndGestures.Any(x => policy.Commands.Any(y => y == x.Command && y.KeyGesture == x.Gesture)));
-        }
 
-        //[TestMethod]
-        //public void then_element_model_container_has_context_menu()
-        //{
-        //    Assert.IsNotNull(elementContainer.ContextMenu);
-        //}
+            Assert.IsTrue(commandAndGestures.Any(x => policy.Commands.Any(y => y == x.Command && y.KeyGesture == x.Gesture.ToString())));
+        }
     }
 }

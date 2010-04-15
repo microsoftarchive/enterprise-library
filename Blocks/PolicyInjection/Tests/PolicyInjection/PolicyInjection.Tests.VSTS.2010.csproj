@@ -1,0 +1,130 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{37B1BE56-EF65-4012-A4A8-B14E27083E16}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests</RootNamespace>
+    <AssemblyName>Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests</AssemblyName>
+    <WarningLevel>4</WarningLevel>
+    <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <FileUpgradeFlags></FileUpgradeFlags>
+    <UpgradeBackupLocation></UpgradeBackupLocation>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>.\bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <NoWarn>618</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugSymbols>false</DebugSymbols>
+    <Optimize>true</Optimize>
+    <OutputPath>.\bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <NoWarn>618</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Lib\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Lib\Microsoft.Practices.Unity.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity.Interception, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Lib\Microsoft.Practices.Unity.Interception.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Configuration.Install" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="APTCAFixture.2008.cs" />
+    <Compile Include="CallHandlers\PerfCounterForCallHandlerTestsInstaller.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CallHandlers\PerformanceCounterCallHandlerAttributeFixture.cs" />
+    <Compile Include="CallHandlers\PerformanceCounterCallHandlerFixture.cs" />
+    <Compile Include="ConfigFiles\ConfigFileLocator.cs" />
+    <Compile Include="Configuration\AssemblyMatchingRuleDataFixture.cs" />
+    <Compile Include="Configuration\ConfigurationStructureFixture.cs" />
+    <Compile Include="Configuration\CustomAttributeMatchingRuleDataFixture.cs" />
+    <Compile Include="Configuration\CustomCallHandlerDataFixture.cs" />
+    <Compile Include="Configuration\MatchingRuleDataFixtureBase.cs" />
+    <Compile Include="Configuration\MatchingRulesContainerModelFixture.cs" />
+    <Compile Include="Configuration\MemberNameMatchingRuleDataFixture.cs" />
+    <Compile Include="Configuration\MethodSignatureMatchingRuleDataFixture.cs" />
+    <Compile Include="Configuration\NamespaceMatchingRuleDataFixture..cs" />
+    <Compile Include="Configuration\ParameterTypeMatchingRuleDataFixture.cs" />
+    <Compile Include="Configuration\PerformanceCounterCallHandlerDataFixture.cs" />
+    <Compile Include="Configuration\PolicyDataFixture.cs" />
+    <Compile Include="Configuration\PolicyInjectionSettingsFixture.cs" />
+    <Compile Include="Configuration\PolicyInjectionSettingsMergeFixture.cs" />
+    <Compile Include="Configuration\PolicyInjectionUpdateableSettingsFixture.cs" />
+    <Compile Include="Configuration\PropertyMatchingRuleDataFixture.cs" />
+    <Compile Include="Configuration\ReturnTypeMatchingRuleDataFixture.cs" />
+    <Compile Include="Configuration\TagAttributeMatchingRuleFixture.cs" />
+    <Compile Include="Configuration\TypeMatchingRuleDataFixture.cs" />
+    <Compile Include="Installer\PerformanceCountersInstallerFixture.cs" />
+    <Compile Include="PolicyInjectorFixture.cs" />
+    <Compile Include="RuleCreationFixture.cs" />
+    <Compile Include="PolicyInjectionFixture.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TransparentProxyInjectionMemberFixture.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Validation\Src\Validation\Validation.csproj">
+      <Project>{E814A5DC-C15B-4BA4-AB7C-B7C9A34AC2FD}</Project>
+      <Name>Validation</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PolicyInjection.TestSupport\PolicyInjection.TestSupport.csproj">
+      <Project>{EBCB52B8-C189-4958-9BB2-B7670BCB49FB}</Project>
+      <Name>PolicyInjection.TestSupport</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Common\Src\Common.csproj">
+      <Project>{A09297C8-2C40-470B-8856-D856676DDFFA}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Common\Tests\Common.TestSupport\Common.TestSupport.csproj">
+      <Project>{C6DE0220-E31B-486B-AB57-107636AEB927}</Project>
+      <Name>Common.TestSupport</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Logging\Src\Logging\Logging.csproj">
+      <Project>{6AC97717-899D-4F72-BC5B-2C37959CD4FF}</Project>
+      <Name>Logging</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Src\PolicyInjection\PolicyInjection.csproj">
+      <Project>{3E6129C8-18E4-410D-89FC-0DBBE6009FC5}</Project>
+      <Name>PolicyInjection</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <EmbeddedResource Include="ConfigFiles\main.config" />
+    <EmbeddedResource Include="ConfigFiles\subordinate.config" />
+    <None Include="OldStyle.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="test.exe.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSHARP.Targets" />
+</Project>

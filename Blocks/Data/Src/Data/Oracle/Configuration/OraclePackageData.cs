@@ -64,6 +64,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Oracle.Configuration
 		[ConfigurationProperty(prefixProperty, IsRequired= true)]
         [ResourceDescription(typeof(DesignResources), "OraclePackageDataPrefixDescription")]
         [ResourceDisplayName(typeof(DesignResources), "OraclePackageDataPrefixDisplayName")]
+        [ViewModel(CommonDesignTime.ViewModelTypeNames.CollectionEditorContainedElementProperty)]
 		public string Prefix
 		{
 			get
@@ -75,5 +76,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Oracle.Configuration
 				this[prefixProperty] = value;
 			}
 		}
+        /// <summary>
+        /// Gets or sets the name of the element.
+        /// </summary>
+        /// <value>
+        /// The name of the element.
+        /// </value>
+        /// <remarks>
+        /// Overriden in order to annotate with designtime attribute.
+        /// </remarks>
+        [ViewModel(CommonDesignTime.ViewModelTypeNames.CollectionEditorContainedElementProperty)]
+        public override string Name
+        {
+            get { return base.Name; }
+            set { base.Name = value; }
+        }
     }
 }

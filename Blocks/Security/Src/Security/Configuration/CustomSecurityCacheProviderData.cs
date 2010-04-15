@@ -19,6 +19,8 @@ using Microsoft.Practices.EnterpriseLibrary.Security.Properties;
 using System.Collections.Generic;
 using System.ComponentModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design.Validation;
+using System.Globalization;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration
 {
@@ -86,7 +88,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration
 
 		/// <summary>
 		/// Gets or sets custom configuration attributes.
-		/// </summary>        		
+		/// </summary>
+        [Validation(SecurityDesignTime.ValidatorTypes.NameValueCollectionValidator)]
 		public NameValueCollection Attributes
 		{
 			get { return helper.Attributes; }
@@ -197,7 +200,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration
 
             if (!typeof(ISecurityCacheProvider).IsAssignableFrom(this.Type))
             {
-                throw new ConfigurationErrorsException(string.Format(Resources.Culture, Resources.ExceptionTypeForCustomCacheProviderMustDeriveFrom, Name, this.Type.FullName)); 
+                throw new ConfigurationErrorsException(string.Format(CultureInfo.CurrentCulture, Resources.ExceptionTypeForCustomCacheProviderMustDeriveFrom, Name, this.Type.FullName)); 
             }
 
             yield return new TypeRegistration(

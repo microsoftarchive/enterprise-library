@@ -38,7 +38,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
         /// Initialize a new instance of the <see cref="GroupPolicyWatcher"/> class with a registration builder.
         /// </summary>
         /// <param name="registrationBuilder">
-        /// The builder used to create the registration for group policy.
+        /// The builder used to create the registration for Group Policy.
         /// </param>
         public GroupPolicyWatcher(GroupPolicyNotificationRegistrationBuilder registrationBuilder)
         {
@@ -116,7 +116,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
         public event GroupPolicyUpdateDelegate GroupPolicyUpdated;
 
         /// <summary>
-        /// Starts watching group policy.
+        /// Starts watching Group Policy.
         /// </summary>
         public void StartWatching()
         {
@@ -136,7 +136,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
         }
 
         /// <summary>
-        /// Stops watching group policy.
+        /// Stops watching Group Policy.
         /// </summary>
         public void StopWatching()
         {

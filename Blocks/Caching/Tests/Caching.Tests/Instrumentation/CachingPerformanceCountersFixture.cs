@@ -45,7 +45,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation.Tests
             formatter = new NoPrefixNameFormatter();
             formattedInstanceName = formatter.CreateName(instanceName);
 
-            enabledProvider = new CachingInstrumentationProvider(instanceName, true, true, true, formatter);
+            enabledProvider = new CachingInstrumentationProvider(instanceName, true, true, formatter);
 
             cacheHitsCounter = CreatePerformanceCounter("Cache Hits/sec", formattedInstanceName);
             cacheHitsCounter.RawValue = 0;
@@ -151,7 +151,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation.Tests
         public void CacheAccessWithPerformanceCountersDisabledDoesnNotUpdateCounters()
         {
             ICachingInstrumentationProvider provider
-                = new CachingInstrumentationProvider(instanceName, false, false, false, formatter);
+                = new CachingInstrumentationProvider(instanceName, false, false, formatter);
 
             provider.FireCacheAccessed("key", true);
 
@@ -165,7 +165,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation.Tests
         public void CacheHitWithPerformanceCountersEnabledDoesUpdateCounters()
         {
             ICachingInstrumentationProvider provider
-                = new CachingInstrumentationProvider(instanceName, true, false, false, formatter);
+                = new CachingInstrumentationProvider(instanceName, true, false, formatter);
 
             provider.FireCacheAccessed("key", true);
 
@@ -179,7 +179,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation.Tests
         public void CacheMissWithPerformanceCountersEnabledDoesUpdateCounters()
         {
             ICachingInstrumentationProvider provider
-                = new CachingInstrumentationProvider(instanceName, true, false, false, formatter);
+                = new CachingInstrumentationProvider(instanceName, true, false, formatter);
 
             provider.FireCacheAccessed("key", false);
 
@@ -193,7 +193,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation.Tests
         public void MultipleCacheAccessWithPerformanceCountersEnabledDoesUpdateCounters()
         {
             ICachingInstrumentationProvider provider
-                = new CachingInstrumentationProvider(instanceName, true, false, false, formatter);
+                = new CachingInstrumentationProvider(instanceName, true, false, formatter);
 
             for (int i = 0; i < 10; i++)
             {
@@ -212,7 +212,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation.Tests
         public void CacheExpirationWithPerformanceCountersDisabledDoesnNotUpdateCounters()
         {
             ICachingInstrumentationProvider provider
-                = new CachingInstrumentationProvider(instanceName, false, false, false, formatter);
+                = new CachingInstrumentationProvider(instanceName, false, false, formatter);
 
             provider.FireCacheExpired(10);
 
@@ -223,7 +223,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation.Tests
         public void CacheExpirationWithPerformanceCountersEnabledDoesUpdateCounters()
         {
             ICachingInstrumentationProvider provider
-                = new CachingInstrumentationProvider(instanceName, true, false, false, formatter);
+                = new CachingInstrumentationProvider(instanceName, true, false, formatter);
 
             provider.FireCacheExpired(10);
 
@@ -234,7 +234,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation.Tests
         public void MultipleCacheExpirationsWithPerformanceCountersEnabledDoesUpdateCounters()
         {
             ICachingInstrumentationProvider provider
-                = new CachingInstrumentationProvider(instanceName, true, false, false, formatter);
+                = new CachingInstrumentationProvider(instanceName, true, false, formatter);
 
             for (int i = 1; i <= 10; i++)
             {
@@ -248,7 +248,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation.Tests
         public void CacheScavengingWithPerformanceCountersDisabledDoesnNotUpdateCounters()
         {
             ICachingInstrumentationProvider provider
-                = new CachingInstrumentationProvider(instanceName, false, false, false, formatter);
+                = new CachingInstrumentationProvider(instanceName, false, false, formatter);
 
             provider.FireCacheScavenged(10);
 
@@ -259,7 +259,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation.Tests
         public void CacheScavengingWithPerformanceCountersEnabledDoesUpdateCounters()
         {
             ICachingInstrumentationProvider provider
-                = new CachingInstrumentationProvider(instanceName, true, false, false, formatter);
+                = new CachingInstrumentationProvider(instanceName, true, false, formatter);
 
             provider.FireCacheScavenged(10);
 
@@ -270,7 +270,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation.Tests
         public void MultipleCacheScavengingsWithPerformanceCountersEnabledDoesUpdateCounters()
         {
             ICachingInstrumentationProvider provider
-                = new CachingInstrumentationProvider(instanceName, true, false, false, formatter);
+                = new CachingInstrumentationProvider(instanceName, true, false, formatter);
 
             for (int i = 1; i <= 10; i++)
             {
@@ -284,7 +284,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation.Tests
         public void CacheUpdateWithPerformanceCountersDisabledDoesNotUpdateCounters()
         {
             ICachingInstrumentationProvider provider
-                = new CachingInstrumentationProvider(instanceName, false, false, false, formatter);
+                = new CachingInstrumentationProvider(instanceName, false, false, formatter);
 
             provider.FireCacheUpdated(10, 20);
 
@@ -296,7 +296,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation.Tests
         public void CacheUpdateWithPerformanceCountersEnabledDoesUpdateCounters()
         {
             ICachingInstrumentationProvider provider
-                = new CachingInstrumentationProvider(instanceName, true, false, false, formatter);
+                = new CachingInstrumentationProvider(instanceName, true, false, formatter);
 
             provider.FireCacheUpdated(10, 20);
 
@@ -308,7 +308,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation.Tests
         public void MultipleCacheUpdatesWithPerformanceCountersEnabledDoesUpdateCounters()
         {
             ICachingInstrumentationProvider provider
-                = new CachingInstrumentationProvider(instanceName, true, false, false, formatter);
+                = new CachingInstrumentationProvider(instanceName, true, false, formatter);
 
             for (int i = 1; i <= 10; i++)
             {

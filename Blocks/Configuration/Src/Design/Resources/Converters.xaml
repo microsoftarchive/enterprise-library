@@ -5,14 +5,14 @@
 	<!--Converters -->
 	<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     <Converters:BooleanToHiddenConverter x:Key="BooleanToHiddenConverter" />
-	<Converters:ZIndexToBooleanConverter x:Key="BooleanToZIndexConverter" />
-	<Converters:EnumerableToVisibilityConverter x:Key="EnumerableToVisibilityConverter" />
-	<Converters:ChildCountToVisibility x:Key="ChildCountToVisibility" />
-	<Converters:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
+    <Converters:InverseBooleanToCollapsedConverter x:Key="InverseBooleanToCollapsedConverter" />
+    <Converters:EnumerableToVisibilityConverter x:Key="EnumerableToVisibilityConverter" />
+    <Converters:EnumerableToBooleanConverter x:Key="EnumerableToBooleanConverter" />
+	<Converters:PropertiesToVisibilityConverter x:Key="PropertiesToVisibilityConverter" />
 	<Converters:BooleanInverseConverter x:Key="BooleanInverseConverter" />
-	<Converters:TypeToVisibilityConverter x:Key="TypeToVisibilityConverter" />
-	<Converters:SuggestedValueTypeConverter x:Key="SuggestedValueTypeConverter" />
-    <Converters:MidpointConverter x:Key="MidpointConverter" />
     <Converters:ErrorsToStringConverter x:Key="ErrorsToStringConverter" />
     <Converters:NullOrEmptyToBooleanConverter x:Key="NullOrEmptyToBooleanConverter" />
+    <Converters:NullToBooleanConverter x:Key="NullToBooleanConverter" />
+    <Converters:NullToHiddenConverter x:Key="NullToHiddenConverter" />
+    <Converters:IsWarningToTextConverter x:Key="IsWarningToTextConverter" />
 </ResourceDictionary>

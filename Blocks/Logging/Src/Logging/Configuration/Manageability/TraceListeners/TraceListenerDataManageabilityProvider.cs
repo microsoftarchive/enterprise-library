@@ -45,13 +45,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         /// built by the <paramref name="contentBuilder"/>.
         /// </summary>
         /// <param name="contentBuilder">The builder for the content where the part will be added.</param>
+        /// <param name="parentKey"></param>
         /// <param name="traceOutputOptions">The default value for the part.</param>
         protected internal static void AddTraceOptionsPart(AdmContentBuilder contentBuilder,
+            string parentKey,
             TraceOptions traceOutputOptions)
         {
-            contentBuilder.AddDropDownListPartForEnumeration<TraceOptions>(Resources.TraceListenerTraceOptionsPartName,
-                TraceOutputOptionsPropertyName,
-                traceOutputOptions);
+            contentBuilder.AddTextPart(Resources.TraceListenerTraceOptionsPartName);
+
+            var traceOptionsKey = parentKey + @"\" + TraceOutputOptionsPropertyName;
+
+            AddCheckboxPartsForFlagsEnumeration<TraceOptions>(contentBuilder, traceOptionsKey, traceOutputOptions);
         }
 
         /// <summary>

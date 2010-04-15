@@ -25,17 +25,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerMo
         /// </summary>
         /// <remarks>
         /// 
-        /// Given a class Foo defined as:
+        /// Given a class Example defined as:
         /// 
-        /// public class Foo
+        /// public class Example
         /// {
-        ///     public Foo(Bar bar); 
+        ///     public Example(Argument arg); 
         /// }
         /// 
         /// A <see cref="TypeRegistration{T}"/> and <see cref="LambdaExpression"/> for this configuration might appear as follows:
-        ///   new TypeRegistration&lt;Foo&gt;(() => new Foo(Container.Resolved&lt;Bar&gt;("SomeName"));
+        ///   new TypeRegistration&lt;Example&gt;(() => new Example(Container.Resolved&lt;Argument&gt;("SomeName"));
         /// 
-        /// During construction of the Foo class, Bar will be resolved and injected by the container.
+        /// During construction of the Example class, Argument will be resolved and injected by the container.
         /// The <see cref="Container.Resolved{T}()"/> marker interface is used to represent
         /// this requirement to a container configurator and is translated to a <see cref="ContainerResolvedParameter"/>.
         /// </remarks>

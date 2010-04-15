@@ -104,11 +104,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         /// Adds a <see cref="ConfigurationSection"/> to the configuration and saves the configuration source using encryption.
         /// </summary>
         /// <remarks>
-        /// If a configuration section with the specified name already exists it will be replaced.
+        /// If a configuration section with the specified name already exists it will be replaced.<br/>
+        /// If a configuration section was retrieved from an instance of <see cref="FileBasedConfigurationSource"/>, a <see cref="System.InvalidOperationException"/> will be thrown.
         /// </remarks>
         /// <param name="sectionName">The name by which the <paramref name="configurationSection"/> should be added.</param>
         /// <param name="configurationSection">The configuration section to add.</param>
         /// <param name="protectionProviderName">The name of the protection provider to use when encrypting the section.</param>
+        /// <exception cref="System.InvalidOperationException">The configuration section was retrieved from an instance of  <see cref="FileBasedConfigurationSource"/> or <see cref="Configuration"/> and cannot be added to the current source.</exception>
         public void Add(
             string sectionName,
             ConfigurationSection configurationSection,

@@ -9,21 +9,32 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Converters;
 using System.Windows.Data;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Converters;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
+using Microsoft.Practices.Unity.Utility;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors
 {
-    public class CustomEditorBinder
+    /// <summary>
+    /// Utility class for custom editors to establish bindings between <see cref="FrameworkElement"/> and a <see cref="BindableProperty"/> 
+    /// <br/>
+    /// This is used by the design-time infrastructure and is not intended to be used directly from your code.
+    /// </summary>
+    public static class CustomEditorBinder
     {
+        ///<summary>
+        /// Creates a binding between a <see cref="UIElement.IsEnabledProperty"/> and
+        /// the <see cref="BindableProperty.ReadOnly"/> value.
+        ///</summary>
+        ///<param name="element">The visual element to bind to.</param>
+        ///<param name="property">The property to bind with.</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Validated with Guard class")]
         public static void BindProperty(FrameworkElement element, BindableProperty property)
         {
+            Guard.ArgumentNotNull(element, "element");
+
             var enabledBinding = new Binding("ReadOnly");
             enabledBinding.Converter = new BooleanInverseConverter();
             enabledBinding.Source = property;

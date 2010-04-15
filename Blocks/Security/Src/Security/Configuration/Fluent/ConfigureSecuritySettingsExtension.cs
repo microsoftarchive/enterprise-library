@@ -15,6 +15,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Security.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Security.Properties;
+using System.Globalization;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent
 {
@@ -36,7 +37,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent
             contextExtension = context as IConfigureSecuritySettingsExtension;
 
             if (contextExtension == null) throw new ArgumentException(
-                string.Format(Resources.Culture, Resources.ExceptionParameterMustImplementType, typeof(IConfigureSecuritySettingsExtension).FullName),
+                string.Format(CultureInfo.CurrentCulture, Resources.ExceptionParameterMustImplementType, typeof(IConfigureSecuritySettingsExtension).FullName),
                 "context");
         }
 

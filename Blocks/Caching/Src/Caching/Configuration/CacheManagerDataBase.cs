@@ -66,7 +66,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
 
             TypeRegistration cacheManagerRegistration = new TypeRegistration<ICacheManager>(newExpression)
             {
-                Name = this.Name
+                Name = this.Name,
+                IsPublicName = true
             };
 
             return new TypeRegistration[] { cacheManagerRegistration };

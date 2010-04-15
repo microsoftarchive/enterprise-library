@@ -9,19 +9,15 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using System;
 using System.ComponentModel;
 using System.Configuration.Install;
 using System.Diagnostics;
 using System.IO;
-using System.Management.Instrumentation;
 using System.Reflection;
 using System.ServiceProcess;
-using Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Properties;
-using Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using System.Threading;
 using System.Xml;
-using System;
+using Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor
 {
@@ -30,7 +26,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor
     /// </summary>    
     [DesignerCategory("Code")]
     [RunInstaller(true)]
-	public class ProjectInstaller : DefaultManagementProjectInstaller
+    public class ProjectInstaller : Installer
     {
         private ServiceProcessInstaller serviceProcessInstaller;
         private ServiceInstaller serviceInstaller;
@@ -79,7 +75,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor
                     this.serviceName = serviceNameNode.Value;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new LoggingException(Resources.InstallerCannotReadServiceName, ex);
             }

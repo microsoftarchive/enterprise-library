@@ -130,6 +130,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         [ResourceDescription(typeof(DesignResources), "FlatFileTraceListenerDataFileNameDescription")]
         [ResourceDisplayName(typeof(DesignResources), "FlatFileTraceListenerDataFileNameDisplayName")]
         [System.ComponentModel.Editor(CommonDesignTime.EditorTypes.FilteredFilePath, CommonDesignTime.EditorTypes.UITypeEditor)]
+        [FilteredFileNameEditor(typeof(DesignResources), "LogFileDialogFilter", CheckFileExists = false)]
         public string FileName
         {
             get { return (string)base[fileNameProperty]; }

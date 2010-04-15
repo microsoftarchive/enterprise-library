@@ -30,7 +30,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
         /// Initialize a new instance of the <see cref="ScavengerTask"/> with a <see cref="CacheManager"/> name, the <see cref="CacheCapacityScavengingPolicy"/> and the <see cref="ICacheOperations"/>.
         /// </summary>
         /// <param name="numberToRemoveWhenScavenging">The number of items that should be removed from the cache when scavenging.</param>
-        /// <param name="maximumElementsInCacheBeforeScavenging">TODO: copy from configuration console :-)</param>
+        /// <param name="maximumElementsInCacheBeforeScavenging"></param>
         /// <param name="cacheOperations">The <see cref="ICacheOperations"/> to perform.</param>
         /// <param name="instrumentationProvider">An instrumentation provider.</param>
         public ScavengerTask(int numberToRemoveWhenScavenging,

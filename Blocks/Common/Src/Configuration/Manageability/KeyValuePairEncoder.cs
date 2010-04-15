@@ -35,7 +35,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
 		/// <param name="key">The key of the pair.</param>
 		/// <param name="value">The value of the pair.</param>
 		public void AppendKeyValuePair(String key, String value)
-		{
+        {
+            if (value == null) throw new ArgumentNullException("value");
+
 			builder.Append(EncodeKeyValuePair(key, value, true));
 			builder.Append(';');
 		}
@@ -56,7 +58,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
 		/// <param name="value">The value of the pair.</param>
 		/// <returns>The encoded key/value pair.</returns>
 		public static String EncodeKeyValuePair(String key, String value)
-		{
+        {
+            if (value == null) throw new ArgumentNullException("value");
+
 			return EncodeKeyValuePair(key, value, false);
 		}
 
@@ -71,6 +75,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
 		/// <returns>The encoded key/value pair.</returns>
 		public static String EncodeKeyValuePair(String key, String value, bool escapeSemicolons)
 		{
+            if (value == null) throw new ArgumentNullException("value");
+
 			return key
 				+ "="
 				+ (escapeSemicolons ? value.Replace(";", ";;") : value);

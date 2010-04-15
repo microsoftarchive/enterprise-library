@@ -22,6 +22,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Configuration;
+using Microsoft.Practices.Unity;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_element_reference_with_child_properties
 {
@@ -62,7 +63,8 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_element_reference_with_child_pro
 
         private SectionViewModel GetSection(string sectionName, IConfigurationSource source)
         {
-            return SectionViewModel.CreateSection(Container, sectionName, source.GetSection(sectionName));
+            var configurationSourceModel = Container.Resolve<ConfigurationSourceModel>();
+            return configurationSourceModel.AddSection(sectionName, source.GetSection(sectionName));
         }
     }
 
@@ -150,4 +152,6 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_element_reference_with_child_pro
             Assert.IsTrue(propertiesChanged.Contains("HasChildProperties"));
         }
     }
+
+
 }

@@ -9,6 +9,7 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using System;
 using System.Security.Principal;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security
@@ -83,6 +84,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security
         /// is performed.</remarks>
         public override bool Evaluate(IPrincipal principal)
         {
+            if (principal == null) throw new ArgumentNullException("principal");
+
             return this.wordExpression.Evaluate(principal.Identity);
         }
     }

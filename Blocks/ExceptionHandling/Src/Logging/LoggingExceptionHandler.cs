@@ -153,7 +153,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging
             if (constructor == null)
             {
                 throw new ExceptionHandlingException(
-                    string.Format(Resources.Culture, Resources.MissingConstructor, formatterType.AssemblyQualifiedName));
+                    string.Format(CultureInfo.CurrentCulture, Resources.MissingConstructor, formatterType.AssemblyQualifiedName));
             }
             return constructor;
         }

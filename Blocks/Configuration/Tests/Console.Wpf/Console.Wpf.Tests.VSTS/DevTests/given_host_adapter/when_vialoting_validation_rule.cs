@@ -24,7 +24,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Console.Wpf.Tests.VSTS.DevTests.given_host_adapter
 {
     [TestClass]
-    public class when_vialoting_validation_rule : given_host_adapter
+    public class when_violating_validation_rule : given_host_adapter
     {
         bool TasksChangedFired;
 

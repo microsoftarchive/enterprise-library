@@ -17,9 +17,7 @@ using System.ComponentModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.ComponentModel
 {
-    /// <DevDoc>
-    ///  If we are not integrating back into the property editor, we might not need this at all
-    /// </DevDoc>
+
     class ViewModelTypeDescriptorProxy : ICustomTypeDescriptor
     {
         ElementViewModel elementViewModel;
@@ -76,7 +74,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.C
 
         public PropertyDescriptorCollection GetProperties(Attribute[] attributes)
         {
-            return new PropertyDescriptorCollection(elementViewModel.Properties.Where(x => !x.Hidden).Select(x=>x.Bindable).OfType<PropertyDescriptor>().ToArray());
+            return new PropertyDescriptorCollection(
+                        elementViewModel.
+                            Properties.
+                            Where(x => !x.Hidden).
+                            Select(x => x.BindableProperty).
+                            OfType<PropertyDescriptor>().
+                            ToArray());
         }
 
         public PropertyDescriptorCollection GetProperties()

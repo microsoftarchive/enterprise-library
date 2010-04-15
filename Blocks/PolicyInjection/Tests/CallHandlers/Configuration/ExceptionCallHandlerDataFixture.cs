@@ -10,10 +10,12 @@
 //===============================================================================
 
 using System.Linq;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
-using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.PolicyInjection;
+using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.TestSupport;
 using Microsoft.Practices.Unity.InterceptionExtension;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
@@ -21,6 +23,7 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tests.Configuration
 {
     [TestClass]
+    [DeploymentItem("test.exe.config")]
     public class ExceptionCallHandlerDataFixture : CallHandlerDataFixtureBase
     {
         [TestMethod]
@@ -38,69 +41,4 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
         }
     }
 
-    [TestClass]
-    public class GivenAnExceptionCallHandlerData
-    {
-        private CallHandlerData callHandlerData;
-
-        [TestInitialize]
-        public void Setup()
-        {
-            callHandlerData =
-                new ExceptionCallHandlerData("exception")
-                {
-                    Order = 400,
-                    ExceptionPolicyName = "policy"
-                };
-        }
-
-        [TestMethod]
-        public void WhenCreatesTypeRegistration_ThenCreatesSingleRegistration()
-        {
-            var registrations = callHandlerData.GetRegistrations("-suffix");
-
-            Assert.AreEqual(1, registrations.Count());
-        }
-
-        [TestMethod]
-        public void WhenCreatesTypeRegistration_ThenRegistrationHasTransientLifetime()
-        {
-            var registrations = callHandlerData.GetRegistrations("-suffix").First();
-
-            Assert.AreEqual(TypeRegistrationLifetime.Transient, registrations.Lifetime);
-        }
-
-        [TestMethod]
-        public void WhenCreatesTypeRegistration_ThenRegistrationIsForICallHandlerWithNameAndImplementationType()
-        {
-            var registrations = callHandlerData.GetRegistrations("-suffix");
-
-            registrations.ElementAt(0)
-                .AssertForServiceType(typeof(ICallHandler))
-                .ForName("exception-suffix")
-                .ForImplementationType(typeof(ExceptionCallHandler));
-        }
-
-        [TestMethod]
-        public void WhenCreatesRegistrations_ThenCallHandlerRegistrationInjectsConstructorParameters()
-        {
-            var registrations = callHandlerData.GetRegistrations("-suffix");
-
-            registrations.ElementAt(0)
-                .AssertConstructor()
-                .WithContainerResolvedParameter<ExceptionPolicyImpl>("policy")
-                .VerifyConstructorParameters();
-        }
-
-        [TestMethod]
-        public void WhenCreatesRegistrations_ThenMatchingRuleRegistrationInjectsOrderProperty()
-        {
-            var registrations = callHandlerData.GetRegistrations("-suffix");
-
-            registrations.ElementAt(0)
-                .AssertProperties()
-                .WithValueProperty("Order", 400)
-                .VerifyProperties();
-        }
-    }
 }

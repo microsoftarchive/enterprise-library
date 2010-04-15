@@ -19,9 +19,9 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability.P
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability
 {
     /// <summary>
-    /// Provides a default base implementation for <see cref="ConfigurationSectionManageabilityProvider"/> that splits
-    /// policy override processing and WMI object generation for the section, performing appropriate logging of
-    /// policy processing errors, from policy override processing and WMI object generation for configuration objects
+    /// Provides a default base implementation for <see cref="ConfigurationSectionManageabilityProvider"/> that
+    /// processes policy override processing, performing appropriate logging of
+    /// policy processing errors, from policy override processing for configuration objects
     /// contained by the section.
     /// </summary>
     /// <typeparam name="T"></typeparam>

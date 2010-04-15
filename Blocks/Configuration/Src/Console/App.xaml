@@ -4,13 +4,5 @@
     StartupUri="Shell.xaml">
     <Application.Resources>
          
-    	<ResourceDictionary>
-			<ResourceDictionary.MergedDictionaries>
-				<ResourceDictionary Source="/Microsoft.Practices.EnterpriseLibrary.Configuration.Design;component/Resources/ExpanderDictionary.xaml" />
-				<ResourceDictionary Source="/Microsoft.Practices.EnterpriseLibrary.Configuration.Design;component/Resources/ViewModelDataTemplates.xaml" />
-                <ResourceDictionary Source="ValidationDisplayStyles.xaml" />
-			</ResourceDictionary.MergedDictionaries>
-		</ResourceDictionary>
-         
     </Application.Resources>
 </Application>

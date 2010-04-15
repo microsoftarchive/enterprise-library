@@ -23,7 +23,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.SqlCe
         /// <summary>
         ///		Keeps a list of "keep alive" connections.
         /// </summary>
-        protected static Dictionary<string, DbConnection> connections = new Dictionary<string, DbConnection>();
+        protected static Dictionary<string, DatabaseConnectionWrapper> connections = new Dictionary<string, DatabaseConnectionWrapper>();
 
         /// <summary>
         ///		Closes the "keep alive" connection that is used by all databases with the same connection
@@ -32,14 +32,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.SqlCe
         /// <param name="database">The database with the connection string that defines which connections should be closed.</param>
         public static void CloseSharedConnection(Database database)
         {
-            DbConnection connection;
+            DatabaseConnectionWrapper connection;
             string connectionString = database.ConnectionStringWithoutCredentials;
 
             lock (connections)
             {
                 if (connections.TryGetValue(connectionString, out connection))
                 {
-                    connection.Close();
                     connection.Dispose();
                     connections.Remove(connectionString);
                 }
@@ -53,9 +52,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.SqlCe
         {
             lock (connections)
             {
-                foreach (KeyValuePair<string, DbConnection> pair in connections)
+                foreach (KeyValuePair<string, DatabaseConnectionWrapper> pair in connections)
                 {
-                    pair.Value.Close();
                     pair.Value.Dispose();
                 }
                 connections.Clear();
@@ -65,16 +63,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.SqlCe
         /// <summary>
         ///		Creates a new connection. If this is the first connection,  it also creates an extra
         ///		"Keep Alive" connection to keep the database open.
+        /// If <paramref name="usePooledConnection"/> is true, than if this connection has been opened before,
+        /// the connection from the pool will be returned rather than creating a new one.
         /// </summary>
         /// <param name="db">The database instance that will be used to create a connection.</param>
+        /// <param name="usePooledConnection">If true, return an already created connection for this object. If
+        /// false, always create a new one.</param>
         /// <returns>A new connection.</returns>
-        public static DbConnection CreateConnection(SqlCeDatabase db)
+        public static DatabaseConnectionWrapper CreateConnection(SqlCeDatabase db, bool usePooledConnection)
         {
             string connectionString = db.ConnectionStringWithoutCredentials;
-
-            if (!connections.ContainsKey(connectionString))
+            DatabaseConnectionWrapper connection;
+            lock (connections)
             {
-                lock (connections)
+                if (!connections.TryGetValue(connectionString, out connection))
                 {
                     //
                     // We have to test this again in case another thread added a connection.
@@ -84,13 +86,30 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.SqlCe
                         DbConnection keepAliveConnection = new SqlCeConnection();
                         db.SetConnectionString(keepAliveConnection);
                         keepAliveConnection.Open();
-
-                        connections.Add(connectionString, keepAliveConnection);
+                        connection = new DatabaseConnectionWrapper(keepAliveConnection);
+                        connections.Add(connectionString, connection);
                     }
                 }
-            }
+                if (usePooledConnection)
+                {
+                    connection.AddRef();
+                    return connection;
+                }
 
-            return new SqlCeConnection();
+                return new DatabaseConnectionWrapper(new SqlCeConnection());
+            }
+        }
+
+        /// <summary>
+        ///		Creates a new connection. If this is the first connection,  it also creates an extra
+        ///		"Keep Alive" connection to keep the database open. Always returns a new <see cref="SqlCeConnection"/>
+        ///     object, not a pooled one.
+        /// </summary>
+        /// <param name="db">The database instance that will be used to create a connection.</param>
+        /// <returns>A new connection.</returns>
+        public static DatabaseConnectionWrapper CreateConnection(SqlCeDatabase db)
+        {
+            return CreateConnection(db, false);
         }
     }
 }

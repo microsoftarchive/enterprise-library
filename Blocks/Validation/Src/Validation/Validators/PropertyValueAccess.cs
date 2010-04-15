@@ -70,7 +70,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         }
 
         /// <summary>
-        /// 
+        /// Key used to retrieve item - the property name.
         /// </summary>
         public override string Key
         {

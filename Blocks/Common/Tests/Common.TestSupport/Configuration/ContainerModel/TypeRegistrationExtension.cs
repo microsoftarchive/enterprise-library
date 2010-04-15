@@ -64,6 +64,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration
                 return this;
             }
 
+            public IAssertRegistrationProperties IsPublicName()
+            {
+                Assert.IsTrue(_registration.IsPublicName);
+                return this;
+            }
+
+            public IAssertRegistrationProperties IsNotPublicName()
+            {
+                Assert.IsFalse(_registration.IsPublicName);
+                return this;
+            }
+
             public IAssertRegistrationProperties IsNotDefault()
             {
                 Assert.IsFalse(_registration.IsDefault);
@@ -269,6 +281,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration
         public interface IAssertRegistrationProperties : IHideObjectMembers
         {
             IAssertRegistrationProperties ForName(string name);
+            IAssertRegistrationProperties IsPublicName();
+            IAssertRegistrationProperties IsNotPublicName();
             IAssertRegistrationProperties IsDefault();
             IAssertRegistrationProperties IsNotDefault();
             IAssertRegistrationProperties IsSingleton();

@@ -10,13 +10,13 @@
 //===============================================================================
 
 using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Security.Cryptography;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
-using System.Collections.Generic;
-using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configuration
 {
@@ -27,6 +27,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
     [ResourceDescription(typeof(DesignResources), "SymmetricAlgorithmProviderDataDescription")]
     [ResourceDisplayName(typeof(DesignResources), "SymmetricAlgorithmProviderDataDisplayName")]
     [ViewModel(CryptographyDesignTime.ViewModelTypeNames.SymmetricAlgorithmProviderDataViewModel)]
+    [Command(CryptographyDesignTime.CommandTypeNames.ExportKeyCommand, TitleResourceType=typeof(DesignResources), TitleResourceName="ExportCyrptographyKeyCommandTitle")]
     public class SymmetricAlgorithmProviderData : SymmetricProviderData
     {
         private AssemblyQualifiedTypeNameConverter typeConverter = new AssemblyQualifiedTypeNameConverter();
@@ -38,7 +39,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         /// <summary>
         /// <para>Initializes a new instance of <see cref="SymmetricAlgorithmProviderData"/> class.</para>
         /// </summary>
-        public SymmetricAlgorithmProviderData() : base(typeof(SymmetricAlgorithmProvider))
+        public SymmetricAlgorithmProviderData()
+            : base(typeof(SymmetricAlgorithmProvider))
         {
         }
 
@@ -75,6 +77,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         /// <value>
         /// The fully qualified name of the type of <see cref="System.Security.Cryptography.SymmetricAlgorithm"/>.
         /// </value>
+        [DesignTimeReadOnly(true)]
         [ConfigurationProperty(algorithmTypeProperty)]
         [System.ComponentModel.Editor(CommonDesignTime.EditorTypes.TypeSelector, CommonDesignTime.EditorTypes.UITypeEditor)]
         [BaseType(typeof(SymmetricAlgorithm))]

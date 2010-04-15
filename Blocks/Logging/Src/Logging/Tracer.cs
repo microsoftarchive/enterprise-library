@@ -12,6 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Reflection;
 using System.Security;
 using System.Security.Permissions;
@@ -333,7 +334,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         private void WriteTraceStartMessage(string entryTitle)
         {
             string methodName = GetExecutingMethodName();
-            string message = string.Format(Resources.Culture, Resources.Tracer_StartMessageFormat, GetActivityId(), methodName, tracingStartTicks);
+            string message = string.Format(CultureInfo.CurrentCulture, Resources.Tracer_StartMessageFormat, GetActivityId(), methodName, tracingStartTicks);
 
             WriteTraceMessage(message, entryTitle, TraceEventType.Start);
         }
@@ -344,7 +345,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
             decimal secondsElapsed = GetSecondsElapsed(stopwatch.ElapsedMilliseconds);
 
             string methodName = GetExecutingMethodName();
-            string message = string.Format(Resources.Culture, Resources.Tracer_EndMessageFormat, GetActivityId(), methodName, tracingEndTicks, secondsElapsed);
+            string message = string.Format(CultureInfo.CurrentCulture, Resources.Tracer_EndMessageFormat, GetActivityId(), methodName, tracingEndTicks, secondsElapsed);
             WriteTraceMessage(message, entryTitle, TraceEventType.Stop);
 
             instrumentationProvider.FireTraceOperationEnded(PeekLogicalOperationStack() as string, stopwatch.ElapsedMilliseconds);
@@ -367,7 +368,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
             {
                 StackFrame frame = trace.GetFrame(index);
                 MethodBase method = frame.GetMethod();
-                if (method.DeclaringType != GetType())
+                Type declaringType = method.DeclaringType;
+                if (declaringType != GetType() && declaringType != typeof(TraceManager))
                 {
                     result = string.Concat(method.DeclaringType.FullName, ".", method.Name);
                     break;

@@ -9,10 +9,8 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
-using System.Security.Principal;
-using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation;
 using System.Diagnostics;
+using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Instrumentation
 {
@@ -23,47 +21,47 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Instrumentation
     [PerformanceCountersDefinition(PerformanceCountersCategoryName, "SecurityHelpResourceName")]
     [EventLogDefinition("Application", "Enterprise Library Security")]
     public class AuthorizationProviderInstrumentationProvider : InstrumentationListener, IAuthorizationProviderInstrumentationProvider
-	{
-		static EnterpriseLibraryPerformanceCounterFactory factory = new EnterpriseLibraryPerformanceCounterFactory();
-		
-		/// <summary>
+    {
+        static EnterpriseLibraryPerformanceCounterFactory factory = new EnterpriseLibraryPerformanceCounterFactory();
+
+        /// <summary>
         /// Made public for testing purposes.
-		/// </summary>
-		public const string AuthorizationCheckPerformedCounterName = "Authorization Requests/sec";
+        /// </summary>
+        public const string AuthorizationCheckPerformedCounterName = "Authorization Requests/sec";
 
         /// <summary>
         /// Made public for testing purposes.
         /// </summary>
         public const string TotalAuthorizationCheckPerformedCounterName = "Total Authorization Requests/sec";
 
-		/// <summary>
+        /// <summary>
         /// Made public for testing purposes.
-		/// </summary>
-		public const string AuthorizationCheckFailedCounterName = "Authorization Requests Denied/sec";
+        /// </summary>
+        public const string AuthorizationCheckFailedCounterName = "Authorization Requests Denied/sec";
 
         /// <summary>
         /// Made public for testing purposes.
         /// </summary>
         public const string TotalAuthorizationCheckFailedCounterName = "Total Authorization Requests Denied/sec";
 
-		/// <summary>
+        /// <summary>
         /// Made public for testing purposes.
-		/// </summary>
-		public const string PerformanceCountersCategoryName = "Enterprise Library Security Counters";
+        /// </summary>
+        public const string PerformanceCountersCategoryName = "Enterprise Library Security Counters";
 
-		[PerformanceCounter(AuthorizationCheckPerformedCounterName, "AuthorizationCheckPerformedHelpResource", PerformanceCounterType.RateOfCountsPerSecond32)]
-		EnterpriseLibraryPerformanceCounter authorizationCheckPerformedCounter;
+        [PerformanceCounter(AuthorizationCheckPerformedCounterName, "AuthorizationCheckPerformedHelpResource", PerformanceCounterType.RateOfCountsPerSecond32)]
+        EnterpriseLibraryPerformanceCounter authorizationCheckPerformedCounter;
 
-		[PerformanceCounter(AuthorizationCheckFailedCounterName, "AuthorizationCheckFailedHelpResource", PerformanceCounterType.RateOfCountsPerSecond32)]
-		EnterpriseLibraryPerformanceCounter authorizationCheckFailedCounter;
+        [PerformanceCounter(AuthorizationCheckFailedCounterName, "AuthorizationCheckFailedHelpResource", PerformanceCounterType.RateOfCountsPerSecond32)]
+        EnterpriseLibraryPerformanceCounter authorizationCheckFailedCounter;
 
         [PerformanceCounter(TotalAuthorizationCheckPerformedCounterName, "TotalAuthorizationCheckPerformedHelpResource", PerformanceCounterType.NumberOfItems32)]
         EnterpriseLibraryPerformanceCounter totalAuthorizationCheckPerformedCounter;
 
         [PerformanceCounter(TotalAuthorizationCheckFailedCounterName, "TotalAuthorizationCheckFailedHelpResource", PerformanceCounterType.NumberOfItems32)]
         EnterpriseLibraryPerformanceCounter totalAuthorizationCheckFailedCounter;
-		
-		private string instanceName;
+
+        private string instanceName;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AuthorizationProviderInstrumentationProvider"/> class.
@@ -71,16 +69,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Instrumentation
         /// <param name="instanceName">The name of the <see cref="AuthorizationProvider"/> instance the events apply on.</param>
         /// <param name="performanceCountersEnabled"><code>true</code> if performance counters should be updated.</param>
         /// <param name="eventLoggingEnabled"><code>true</code> if event log entries should be written.</param>
-        /// <param name="wmiEnabled"><code>true</code> if WMI events should be fired.</param>
         /// <param name="applicationInstanceName">The application instance name</param>
         public AuthorizationProviderInstrumentationProvider(string instanceName,
-										   bool performanceCountersEnabled,
-										   bool eventLoggingEnabled,
-										   bool wmiEnabled,
+                                           bool performanceCountersEnabled,
+                                           bool eventLoggingEnabled,
                                            string applicationInstanceName)
-			: this(instanceName, performanceCountersEnabled, eventLoggingEnabled, wmiEnabled, new AppDomainNameFormatter(applicationInstanceName))
-		{
-		}
+            : this(instanceName, performanceCountersEnabled, eventLoggingEnabled, new AppDomainNameFormatter(applicationInstanceName))
+        {
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AuthorizationProviderInstrumentationProvider"/> class.
@@ -88,31 +84,27 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Instrumentation
         /// <param name="instanceName">The name of the <see cref="AuthorizationProvider"/> instance the events apply on.</param>
         /// <param name="performanceCountersEnabled"><code>true</code> if performance counters should be updated.</param>
         /// <param name="eventLoggingEnabled"><code>true</code> if event log entries should be written.</param>
-        /// <param name="wmiEnabled"><code>true</code> if WMI events should be fired.</param>
         /// <param name="nameFormatter">The <see cref="IPerformanceCounterNameFormatter"/> that is used to creates unique name for each <see cref="PerformanceCounter"/> instance.</param>
         public AuthorizationProviderInstrumentationProvider(string instanceName,
-										   bool performanceCountersEnabled,
-										   bool eventLoggingEnabled,
-										   bool wmiEnabled,
-										   IPerformanceCounterNameFormatter nameFormatter)
-			: base(instanceName, performanceCountersEnabled, eventLoggingEnabled, wmiEnabled, nameFormatter)
+                                           bool performanceCountersEnabled,
+                                           bool eventLoggingEnabled,
+                                           IPerformanceCounterNameFormatter nameFormatter)
+            : base(instanceName, performanceCountersEnabled, eventLoggingEnabled, nameFormatter)
         {
             this.instanceName = instanceName;
-		}
+        }
 
         /// <summary>
         /// </summary>
         /// <param name="identity">The name of the identify which authorization has been checked for.</param>
         /// <param name="ruleName">The name of the authorization rule that has been evaluated.</param>
-		public void FireAuthorizationCheckPerformed(string identity, string ruleName)
+        public void FireAuthorizationCheckPerformed(string identity, string ruleName)
         {
             if (PerformanceCountersEnabled)
             {
                 authorizationCheckPerformedCounter.Increment();
                 totalAuthorizationCheckPerformedCounter.Increment();
             }
-
-            if (WmiEnabled) FireManagementInstrumentation(new AuthorizationCheckPerformedEvent(instanceName, identity, ruleName));
         }
 
         /// <summary>
@@ -126,8 +118,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Instrumentation
                 authorizationCheckFailedCounter.Increment();
                 totalAuthorizationCheckFailedCounter.Increment();
             }
-
-            if (WmiEnabled) FireManagementInstrumentation(new AuthorizationCheckFailedEvent(instanceName, identity, ruleName));
         }
 
         /// <summary>
@@ -146,5 +136,5 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Instrumentation
                 = factory.CreateCounter(PerformanceCountersCategoryName, TotalAuthorizationCheckFailedCounterName, instanceNames);
         }
 
-	}
+    }
 }

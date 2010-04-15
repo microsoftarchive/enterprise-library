@@ -19,6 +19,12 @@ using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics
 {
+#pragma warning disable 1591
+
+    /// <summary>
+    /// This class supports block-specific configuration design-time and is not
+    /// intended to be used directly from your code.
+    /// </summary>
     public class AppSettingsViewModel : SectionViewModel
     {
         public AppSettingsViewModel(IUnityContainer builder, string sectionName, ConfigurationSection section)
@@ -31,7 +37,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
         {
             var settings = DescendentElements().Where(x => x.ConfigurationType == typeof(KeyValueConfigurationCollection)).First();
             
-            return new HorizontalListViewModel( new HeaderedListViewModel(settings) );
+            return new HorizontalListLayout( new HeaderedListLayout(settings) );
         }
 
         protected override IEnumerable<Property> GetAllProperties()
@@ -41,7 +47,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
                    select p;
         }
 
-        public override void BeforeSave(ConfigurationSection sectionToSave)
+        protected override void BeforeSave(ConfigurationSection sectionToSave)
         {
             AppSettingsSection appSettingsSectionToSave = (AppSettingsSection)sectionToSave;
             appSettingsSectionToSave.Settings.Clear();
@@ -54,4 +60,5 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
             }
         }
     }
+#pragma warning restore 1591
 }

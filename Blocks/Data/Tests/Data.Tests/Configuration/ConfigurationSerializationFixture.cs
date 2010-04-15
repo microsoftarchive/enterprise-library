@@ -21,6 +21,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration.Tests
 {
     [TestClass]
+    [DeploymentItem("test.exe.config")]
     public class ConfigurationSerializationFixture
     {
         const string providerName1 = "provider 1";

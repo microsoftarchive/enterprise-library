@@ -9,17 +9,16 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using Console.Wpf.Tests.VSTS.DevTests.Contexts;
+using Console.Wpf.Tests.VSTS.TestSupport;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Configuration.Design.HostAdapterV5;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Console.Wpf.Tests.VSTS.DevTests.Contexts;
-using Microsoft.Practices.Unity;
-using Console.Wpf.Tests.VSTS.TestSupport;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
+using Microsoft.Practices.Unity;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_element_lookup
 {
@@ -34,6 +33,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_element_lookup
             base.Arrange();
 
             sectionViewModel = SectionViewModel.CreateSection(Container, ExceptionHandlingSettings.SectionName, base.Section);
+            this.Container.RegisterInstance(new Mock<IAssemblyDiscoveryService>().Object);
         }
 
         protected override void Act()

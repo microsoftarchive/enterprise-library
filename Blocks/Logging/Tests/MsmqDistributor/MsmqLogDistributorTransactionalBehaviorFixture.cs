@@ -12,8 +12,10 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Messaging;
 using System.Security.Principal;
+using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Filters;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 using Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Instrumentation;
@@ -30,8 +32,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Tests
     {
         MsmqLogDistributor msmqDistributor;
         LogSource clientSource;
+        MsmqTraceListener clientListener;
         LogWriter logWriter;
         DistributorEventLogger eventLogger;
+        public const string TestEventSource = "Test Log Distributor";
 
         [TestInitialize]
         public void SetUp()
@@ -39,17 +43,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Tests
             CommonUtil.DeletePrivateTestQ();
             CreateQueueForTesting();
 
-            clientSource = new LogSource("unnamed", SourceLevels.All);
-            clientSource.Listeners.Add(
+            clientListener =
                 new MsmqTraceListener("unnamed", CommonUtil.MessageQueuePath, new BinaryLogFormatter(),
                                       MessagePriority.Normal, false, new TimeSpan(0, 1, 0), new TimeSpan(0, 1, 0),
-                                      false, true, false, MessageQueueTransactionType.Single));
+                                      false, true, false, MessageQueueTransactionType.Single);
+
+            clientSource = new LogSource("unnamed", SourceLevels.All);
+            clientSource.Listeners.Add(clientListener);
 
             LogSource distributorSource = new LogSource("unnamed", SourceLevels.All);
             distributorSource.Listeners.Add(new MockTraceListener());
             Dictionary<string, LogSource> traceSources = new Dictionary<string, LogSource>();
-            logWriter = new LogWriterImpl(new List<ILogFilter>(), traceSources, distributorSource, null, new LogSource("errors"), "default", false, false);
-            eventLogger = new DistributorEventLogger();
+            logWriter =
+                new LogWriterImpl(new List<ILogFilter>(), traceSources, distributorSource, null, new LogSource("errors"), "default", false, false);
+            eventLogger = new DistributorEventLogger(TestEventSource);
             msmqDistributor = new MsmqLogDistributor(logWriter, CommonUtil.MessageQueuePath, eventLogger);
             msmqDistributor.StopReceiving = false;
         }
@@ -221,6 +228,21 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Tests
             Assert.IsTrue(actual.IndexOf(expected) > -1);
         }
 
+        [TestMethod]
+        public void InvalidMessageIsLoggedAndRemovedFromTheQueue()
+        {
+            clientListener.TraceData(new TraceEventCache(), "source", TraceEventType.Error, 0, "not a log entry");
+
+            using (var eventLog = new EventLogTracker(GetEventLog()))
+            {
+                msmqDistributor.CheckForMessages();
+
+                Assert.AreEqual(1, eventLog.NewEntries().Count(ev => EventIsFromLogger(ev, eventLogger)));
+            }
+
+            Assert.IsTrue(IsQueueEmpty());
+        }
+
         void SendMessageToQ(string body)
         {
             //submit msg to queue
@@ -230,6 +252,44 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor.Tests
             logEntry.Severity = TraceEventType.Information;
 
             clientSource.TraceData(logEntry.Severity, 1, logEntry);
+        }
+
+        private static EventLog GetEventLog()
+        {
+            return new EventLog("Application");
+        }
+
+        private static bool EventIsFromLogger(EventLogEntry entry, DistributorEventLogger logger)
+        {
+            return entry.Source == logger.EventSource;
+        }
+
+        private bool IsQueueEmpty()
+        {
+            bool empty = false;
+            try
+            {
+                using (MessageQueue msmq = CreateMessageQueue())
+                {
+                    msmq.Peek(new TimeSpan(0));
+                }
+            }
+            catch (MessageQueueException e)
+            {
+                if (e.MessageQueueErrorCode == MessageQueueErrorCode.IOTimeout)
+                {
+                    empty = true;
+                }
+            }
+
+            return empty;
+        }
+
+        private MessageQueue CreateMessageQueue()
+        {
+            MessageQueue messageQueue = new MessageQueue(CommonUtil.MessageQueuePath, false, true);
+            ((XmlMessageFormatter)messageQueue.Formatter).TargetTypeNames = new string[] { "System.String" };
+            return messageQueue;
         }
     }
 }

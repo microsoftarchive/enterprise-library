@@ -21,6 +21,7 @@ using System.Collections.Specialized;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent;
 using Microsoft.Practices.EnterpriseLibrary.Common.Properties;
+using System.Globalization;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 {
@@ -89,7 +90,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
             if (attributes == null) throw new ArgumentNullException("attributes");
 
             if (!typeof(ILogFormatter).IsAssignableFrom(customFormatterType))
-                throw new ArgumentException(string.Format(Resources.Culture,
+                throw new ArgumentException(string.Format(CultureInfo.CurrentCulture,
                     Resources.ExceptionTypeMustImplementInterface, typeof(ILogFormatter)), "customFilterType");
 
             return new CustomFormatterBuilder(formatterName, customFormatterType, attributes);

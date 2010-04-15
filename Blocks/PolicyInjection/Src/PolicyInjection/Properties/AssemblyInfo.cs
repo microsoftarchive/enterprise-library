@@ -22,7 +22,7 @@ using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
 
 [assembly : AssemblyTitle("Enterprise Library Policy Injection Application Block")]
 [assembly: AssemblyDescription("Enterprise Library Policy Injection Application Block")]
-[assembly: AssemblyVersion("4.1.0.0")]
+[assembly: AssemblyVersion("5.0.414.0")]
 
 [assembly: AllowPartiallyTrustedCallers]
 [assembly: SecurityTransparent]

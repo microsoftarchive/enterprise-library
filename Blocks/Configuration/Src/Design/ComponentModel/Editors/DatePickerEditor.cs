@@ -10,18 +10,30 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Windows.Controls;
+using System.ComponentModel;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Controls.Toolkit.Windows.Controls;
 using System.Windows;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
 using System.Windows.Data;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors
 {
+    /// <summary>
+    /// The <see cref="DatePickerEditor"/> is an in-line editor that can be applied to a <see cref="Property"/>.
+    /// </summary>
+    /// <remarks>
+    /// The editor displays a visual for selecting a date and updates a property value with the result.
+    /// <br/>
+    /// The editor can be applied by using the <see cref="EditorAttribute"/> on a property of
+    /// the <see cref="System.Configuration.ConfigurationElement"/>.  
+    /// </remarks>
+    /// <seealso cref="CommonDesignTime.EditorTypes.DatePickerEditor"/>
     public class DatePickerEditor : DatePicker
     {  
+        /// <summary>
+        /// Initializes a new instance of <see cref="DatePickerEditor"/>.
+        /// </summary>
         public DatePickerEditor ()
 	    {
             base.DataContextChanged += new DependencyPropertyChangedEventHandler(DatePickerEditor_DataContextChanged);

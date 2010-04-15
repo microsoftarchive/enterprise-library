@@ -16,6 +16,7 @@ using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Caching;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Properties;
+using System.Globalization;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent
 {
@@ -36,7 +37,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent
             contextExtension = context as ICachingConfigurationCacheStorageExtension;
 
             if (contextExtension == null) throw new ArgumentException(
-                string.Format(Resources.Culture, Resources.ExceptionParameterMustImplement, typeof(ICachingConfigurationCacheStorageExtension).FullName),
+                string.Format(CultureInfo.CurrentCulture, Resources.ExceptionParameterMustImplement, typeof(ICachingConfigurationCacheStorageExtension).FullName),
                 "context");
         }
 

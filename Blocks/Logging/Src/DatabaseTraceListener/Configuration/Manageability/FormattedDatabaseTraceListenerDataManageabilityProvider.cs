@@ -104,7 +104,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Configuration.M
                 512,
                 false);
 
-            AddTraceOptionsPart(contentBuilder, configurationObject.TraceOutputOptions);
+            AddTraceOptionsPart(contentBuilder, elementPolicyKeyName, configurationObject.TraceOutputOptions);
 
             AddFilterPart(contentBuilder, configurationObject.Filter);
 
@@ -126,7 +126,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Configuration.M
             String addCategoryStoredProcNameOverride = policyKey.GetStringValue(AddCategoryStoredProcNamePropertyName);
             String databaseInstanceNameOverride = policyKey.GetStringValue(DatabaseInstanceNamePropertyName);
             String formatterOverride = GetFormatterPolicyOverride(policyKey);
-            TraceOptions? traceOutputOptionsOverride = policyKey.GetEnumValue<TraceOptions>(TraceOutputOptionsPropertyName);
+            TraceOptions? traceOutputOptionsOverride =
+                GetFlagsEnumOverride<TraceOptions>(policyKey, TraceOutputOptionsPropertyName);
             String writeLogStoredProcNameOverride = policyKey.GetStringValue(WriteLogStoredProcNamePropertyName);
 
             configurationObject.AddCategoryStoredProcName = addCategoryStoredProcNameOverride;

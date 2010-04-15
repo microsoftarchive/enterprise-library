@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Console.Wpf.Tests.VSTS.DevTests.Contexts;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -22,6 +23,8 @@ using Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics;
 using Console.Wpf.Tests.VSTS.TestSupport;
 using Microsoft.Practices.Unity;
+using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport;
+using Console.Wpf.Tests.VSTS.ConfigFiles;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_environment_node_in_view_model
 {
@@ -36,18 +39,25 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_environment_node_in_view_model
         protected Property OverriddenExceptionMessage;
         protected Property MainExceptionMessage;
 
-        protected EnvironmentMergeSection EnvironmentSection;
+        protected EnvironmentalOverridesSection EnvironmentSection;
 
         protected override void Arrange()
         {
             base.Arrange();
-            
-            ConfigurationSourceModel sourceModel = Container.Resolve<ConfigurationSourceModel>();
-            sourceModel.NewEnvironment();
 
-            EhabModel = SectionViewModel.CreateSection(Container, ExceptionHandlingSettings.SectionName, Section);
-            EnvironmentViewModel = sourceModel.Environments.First();
-            EnvironmentSection = (EnvironmentMergeSection)EnvironmentViewModel.ConfigurationElement;
+            var resources = new ResourceHelper<ConfigFileLocator>();
+            resources.DumpResourceFileToDisk("empty.config");
+
+            var applicationViewModel = Container.Resolve<ApplicationViewModel>();
+            ConfigurationSourceModel sourceModel = applicationViewModel.CurrentConfigurationSource;
+            applicationViewModel.NewEnvironment();
+
+            EhabModel = sourceModel.AddSection(ExceptionHandlingSettings.SectionName, Section);
+            EnvironmentViewModel = applicationViewModel.Environments.First();
+            EnvironmentSection = (EnvironmentalOverridesSection)EnvironmentViewModel.ConfigurationElement;
+
+            ((EnvironmentSourceViewModel)EnvironmentViewModel).EnvironmentConfigurationFile = "empty.config";
+            ((EnvironmentSourceViewModel)EnvironmentViewModel).EnvironmentDeltaFile = "empty.config";
 
             WrapHandler = EhabModel.DescendentElements().Where(x => x.ConfigurationType == typeof(WrapHandlerData)).First();
 
@@ -63,6 +73,15 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_environment_node_in_view_model
     [TestClass]
     public class when_attaching_empty_overrides : given_environmental_overrides_and_ehab
     {
+        [TestMethod]
+        public void then_environment_section_delta_file_property_had_logical_parent_element()
+        {
+            var environmentDeltaFileProperty = (ILogicalPropertyContainerElement)EnvironmentViewModel.Property("EnvironmentDeltaFile");
+            Assert.IsNotNull(environmentDeltaFileProperty);
+            Assert.IsNotNull(environmentDeltaFileProperty.ContainingElement);
+            Assert.IsNotNull(environmentDeltaFileProperty.ContainingElementDisplayName);
+        }
+
         [TestMethod]
         public void then_environment_model_is_extended_property_provider()
         {
@@ -93,19 +112,25 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_environment_node_in_view_model
         public void then_overrides_property_returns_dont_override()
         {
             string displayValueInGrid = OverridesProperty.Converter.ConvertToString(OverridesProperty.Value);
-            Assert.AreEqual("Dont Override Properties", displayValueInGrid);
+            Assert.AreEqual("Don't Override Properties", displayValueInGrid);
         }
 
         [TestMethod]
         public void then_overrides_property_itself_is_not_overridable()
         {
-            Assert.IsFalse(OverridesProperty.ChildProperties.Where(x => x.PropertyType == typeof(OverriddenElementViewModel)).Any());
+            Assert.IsFalse(OverridesProperty.ChildProperties.OfType<EnvironmentOverriddenElementProperty>().Any());
         }
 
         [TestMethod]
         public void then_name_property_is_not_overridable()
         {
             Assert.IsFalse(OverridesProperty.ChildProperties.Where(x => x.PropertyName == "Name").Any());
+        }
+
+        [TestMethod]
+        public void then_designtimereadonly_property_is_not_overridable()
+        {
+            Assert.IsFalse(OverridesProperty.ChildProperties.Where(x => x.PropertyName == "TypeName").Any());
         }
 
         [TestMethod]

@@ -11,15 +11,15 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
-using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
-using System.ComponentModel;
+using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 {
@@ -64,7 +64,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// </summary>
         public TraceListenerData()
         {
-            
+
         }
 
         /// <summary>
@@ -135,7 +135,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// <summary>
         /// Gets or sets the <see cref="TraceOptions"/> for the represented <see cref="TraceListener"/>.
         /// </summary>
-        [ConfigurationProperty(traceOutputOptionsProperty, IsRequired = false, DefaultValue=TraceOptions.None)]
+        [ConfigurationProperty(traceOutputOptionsProperty, IsRequired = false, DefaultValue = TraceOptions.None)]
         [ResourceDescription(typeof(DesignResources), "TraceListenerDataTraceOutputOptionsDescription")]
         [ResourceDisplayName(typeof(DesignResources), "TraceListenerDataTraceOutputOptionsDisplayName")]
         [Editor(CommonDesignTime.EditorTypes.Flags, CommonDesignTime.EditorTypes.FrameworkElement)]
@@ -157,6 +157,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         [ConfigurationProperty(filterProperty, IsRequired = false, DefaultValue = SourceLevels.All)]
         [ResourceDescription(typeof(DesignResources), "TraceListenerDataFilterDescription")]
         [ResourceDisplayName(typeof(DesignResources), "TraceListenerDataFilterDisplayName")]
+        [ViewModel(LoggingDesignTime.ViewModelTypeNames.SourceLevelsProperty)]
         public SourceLevels Filter
         {
             get { return (SourceLevels)this[filterProperty]; }

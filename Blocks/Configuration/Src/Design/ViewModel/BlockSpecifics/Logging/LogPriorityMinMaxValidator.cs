@@ -18,14 +18,17 @@ using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Validation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.Logging
 {
-    public class LogPriorityMinMaxValidator : PropertyValidator
+#pragma warning disable 1591
+    /// <summary>
+    /// This class supports block-specific configuration design-time and is not
+    /// intended to be used directly from your code.
+    /// </summary>
+    public class LogPriorityMinMaxValidator : Validator
     {
-        protected override void ValidateCore(Property property, string value, IList<ValidationError> errors)
+        protected override void ValidateCore(object instance, string value, IList<ValidationResult> results)
         {
-            var elementProperty = property as ElementProperty;
-            if (elementProperty == null) return;
-
-            var logPriorityFilter = elementProperty.DeclaringElement;
+            var logPriorityFilter = instance as ElementViewModel;
+            if (logPriorityFilter == null) return;
 
             var minimumProperty = logPriorityFilter.Property("MinimumPriority");
             var maximumProperty = logPriorityFilter.Property("MaximumPriority");
@@ -33,14 +36,26 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
             if (minimumProperty == null || minimumProperty.BindableProperty.BindableValue == null) return;
             if (maximumProperty == null || minimumProperty.BindableProperty.BindableValue == null) return;
 
-            if (int.Parse(minimumProperty.BindableProperty.BindableValue) >= int.Parse(maximumProperty.BindableProperty.BindableValue))
+            int maximum, minimum;
+
+            // bypass invalid int values, do not log error because the range validator will log it
+            // and if we also log it we'll get a duplicate message
+
+            if (!int.TryParse(maximumProperty.BindableProperty.BindableValue, out maximum)
+                || !int.TryParse(minimumProperty.BindableProperty.BindableValue, out minimum))
             {
-                errors.Add(
-                    new ValidationError(property,
-                        Resources.ValidationLoggingPriorityValuesInvalid,
-                        false
+                return;
+            }
+
+            if (minimum >= maximum)
+            {
+                results.Add(
+                    new ElementValidationResult(logPriorityFilter,
+                                                Resources.ValidationLoggingPriorityValuesInvalid,
+                                                false
                         ));
             }
         }
     }
+#pragma warning restore 1591
 }

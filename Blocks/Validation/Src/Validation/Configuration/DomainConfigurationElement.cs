@@ -37,5 +37,21 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 		public DomainConfigurationElement(string name)
 			: base(name)
 		{ }
+
+        /// <summary>
+        /// Gets or sets the name of the element.
+        /// </summary>
+        /// <value>
+        /// The name of the element.
+        /// </value>
+        /// <remarks>
+        /// Overriden in order to annotate with designtime attribute.
+        /// </remarks>
+        [ViewModel(CommonDesignTime.ViewModelTypeNames.CollectionEditorContainedElementProperty)]
+        public override string Name
+        {
+            get { return base.Name; }
+            set { base.Name = value; }
+        }
 	}
 }

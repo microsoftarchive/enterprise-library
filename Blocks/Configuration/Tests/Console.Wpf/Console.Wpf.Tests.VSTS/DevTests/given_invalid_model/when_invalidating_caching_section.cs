@@ -23,18 +23,37 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Practices.Unity;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Validation;
+using Console.Wpf.Tests.VSTS.DevTests.Contexts;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.TestSupport;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_invalid_model
 {
-    public abstract class CachingElementModelContext : CachingConfigurationContext
+    public abstract class CachingElementModelContext : ContainerContext
     {
+        private DictionaryConfigurationSource configSource;
+
+        protected const string CacheManagerName = TestConfigurationBuilder.CacheManagerName;
+
+        protected CacheManagerSettings CachingConfiguration
+        {
+            get
+            {
+                return (CacheManagerSettings)configSource.GetSection(BlockSectionNames.Caching);
+            }
+        }
+
         protected override void Arrange()
         {
-            base.Arrange();
+              base.Arrange();
+
+            var builder = new TestConfigurationBuilder();
+            configSource = new DictionaryConfigurationSource();
+            builder.AddCachingSettings()
+                .Build(configSource);
+
             var configurationSourceModel = Container.Resolve<ConfigurationSourceModel>();
             var source = new DesignDictionaryConfigurationSource();
-            source.Add(BlockSectionNames.Caching, CachingSettings);
+            source.Add(BlockSectionNames.Caching, CachingConfiguration);
             configurationSourceModel.Load(source);
 
             CachingSettingsViewModel =
@@ -55,7 +74,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_invalid_model
         {
             base.Arrange();
             validationModel = Container.Resolve<ValidationModel>();
-            cacheManager = CachingSettingsViewModel.DescendentElements(x => x.ConfigurationType == typeof(CacheManagerData)).Single();
+            cacheManager = CachingSettingsViewModel.DescendentElements(x => x.ConfigurationType == typeof(CacheManagerData)).First();
         }
 
         protected override void Act()
@@ -67,7 +86,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_invalid_model
         [TestMethod]
         public void then_only_one_validation_error_message()
         {
-            Assert.AreEqual(1, validationModel.ValidationErrors.Count());
+            Assert.AreEqual(1, validationModel.ValidationResults.Count());
         }
     }
 
@@ -87,7 +106,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_invalid_model
             var newItem = cacheManagerCollection.AddNewCollectionElement(typeof(CacheManagerData));
             newItem.Property("Name").BindableProperty.BindableValue = "";
 
-            originalCount = validationModel.ValidationErrors.Count();
+            originalCount = validationModel.ValidationResults.Count();
         }
 
         protected override void Act()
@@ -98,7 +117,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_invalid_model
         [TestMethod]
         public void then_validation_model_retains_errors()
         {
-            Assert.AreEqual(originalCount, validationModel.ValidationErrors.Count());
+            Assert.AreEqual(originalCount, validationModel.ValidationResults.Count());
         }
     }
 }

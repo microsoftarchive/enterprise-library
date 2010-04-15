@@ -304,7 +304,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
                     // look for max sequence for date
                     int newSequence = FindMaxSequenceNumber(directory, fileNameBuilder.ToString(), extension) + 1;
                     fileNameBuilder.Append('.');
-                    fileNameBuilder.Append(newSequence.ToString(CultureInfo.CurrentCulture));
+                    fileNameBuilder.Append(newSequence.ToString(CultureInfo.InvariantCulture));
                 }
 
                 fileNameBuilder.Append(extension);

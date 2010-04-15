@@ -48,7 +48,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
 
             registration.AssertForServiceType(typeof(ExceptionManager))
                 .IsDefault()
-                .ForImplementationType(typeof(ExceptionManagerImpl));
+                .ForImplementationType(typeof(ExceptionManagerImpl))
+                .IsPublicName();
         }
 
         [TestMethod]
@@ -62,7 +63,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
             var registration = registrations.ElementAt(0);
             registration.AssertForServiceType(typeof (DefaultExceptionHandlingEventLogger))
                 .IsDefault()
-                .ForImplementationType(typeof (DefaultExceptionHandlingEventLogger));
+                .ForImplementationType(typeof (DefaultExceptionHandlingEventLogger))
+                .IsNotPublicName();
         }
 	}
 
@@ -94,7 +96,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
             TypeRegistration registration = registrations.First(r => r.ImplementationType == typeof(ExceptionPolicyImpl));
             registration.AssertForServiceType(typeof(ExceptionPolicyImpl))
                 .ForName("aPolicy")
-                .ForImplementationType(typeof(ExceptionPolicyImpl));
+                .ForImplementationType(typeof(ExceptionPolicyImpl))
+                .IsNotPublicName();
         }
 
         [TestMethod]
@@ -125,7 +128,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
 
             registration.AssertForServiceType(typeof(ExceptionPolicyEntry))
                 .ForName("aPolicy.ExceptionType")
-                .ForImplementationType(typeof(ExceptionPolicyEntry));
+                .ForImplementationType(typeof(ExceptionPolicyEntry))
+                .IsNotPublicName();
         }
 
         [TestMethod]
@@ -144,9 +148,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
 
             TypeRegistration registration = registrations.First(r => r.ImplementationType == typeof(WrapHandler));
 
-            registration.AssertForServiceType(typeof(IExceptionHandler))
+            registration.AssertForServiceType(typeof (IExceptionHandler))
                 .ForName("aPolicy.ExceptionType.aWrapHandler")
-                .ForImplementationType(typeof(WrapHandler));
+                .ForImplementationType(typeof (WrapHandler))
+                .IsNotPublicName();
         }
 
         [TestMethod]

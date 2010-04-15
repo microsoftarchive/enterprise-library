@@ -53,7 +53,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
         }
 
         [TestMethod]
-        public void WhenValidatingValueWithinBouds_ThenRetunsValidResult()
+        public void WhenValidatingValueWithinBounds_ThenRetunsValidResult()
         {
             var results = this.validator.Validate(7);
 
@@ -61,7 +61,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
         }
 
         [TestMethod]
-        public void WhenValidatingValueOutOfBouds_ThenRetunsInvalidResult()
+        public void WhenValidatingValueOutOfBounds_ThenRetunsInvalidResult()
         {
             var results = this.validator.Validate(2);
 
@@ -70,12 +70,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
         }
 
         [TestMethod]
-        public void WhenValidatingAValudOfAnNonCompatibleType_ThenReturnsInvalidResult()
+        public void WhenValidatingAValueOfAnNonCompatibleType_ThenReturnsInvalidResult()
         {
             var results = this.validator.Validate("a string");
 
             Assert.IsFalse(results.IsValid);
-            Assert.AreNotEqual("test message", results.ElementAt(0).Message);
         }
     }
 
@@ -135,7 +134,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
         }
 
         [TestMethod]
-        public void WhenValidatingAValudOfAnNonCompatibleType_ThenReturnsInvalidResultsForEachValidator()
+        public void WhenValidatingAValueOfAnNonCompatibleType_ThenReturnsInvalidResultsForEachValidator()
         {
             var results = this.validator.Validate(1);
 

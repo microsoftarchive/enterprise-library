@@ -27,7 +27,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.SqlCe.Tests
         TestConnectionString testConnection;
         const string insertString = "Insert into Region values (99, 'Midwest')";
         const string queryString = "Select * from Region";
-        Database db;
+        SqlCeDatabase db;
 
         [TestInitialize]
         public void TestInitialize()
@@ -44,80 +44,79 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.SqlCe.Tests
         }
 
         [TestMethod]
-        public void ExecuteResultSet_ShouldNotCloseConnection()
+        public void ExecuteResultSet_ShouldCloseConnection()
         {
-            SqlCeDatabase db = (SqlCeDatabase)this.db;
+            DbConnection connection;
             using (DbCommand command = db.GetSqlStringCommand(queryString))
             {
-                SqlCeResultSet reader = db.ExecuteResultSet(command);
-                reader.Close();
+                using (SqlCeResultSet reader = db.ExecuteResultSet(command))
+                {
+                    connection = command.Connection;
+                }
 
-                Assert.AreEqual(ConnectionState.Open, command.Connection.State);
-                command.Connection.Close();
+                // Force shared pool closed, this should close out shared connection used by the reader.
+                SqlCeConnectionPool.CloseSharedConnections();
+                Assert.AreEqual(ConnectionState.Closed, connection.State);
             }
         }
 
         [TestMethod]
         public void CanExecuteResultSetWithCommand()
         {
-            SqlCeDatabase db = (SqlCeDatabase)this.db;
             using (DbCommand command = db.GetSqlStringCommand(queryString))
             {
-                SqlCeResultSet reader = db.ExecuteResultSet(command);
                 string accumulator = "";
-                while (reader.Read())
+                using(SqlCeResultSet reader = db.ExecuteResultSet(command))
                 {
-                    accumulator += ((string)reader["RegionDescription"]).Trim();
+                    while (reader.Read())
+                    {
+                        accumulator += ((string)reader["RegionDescription"]).Trim();
+                    }
+                    
                 }
-                reader.Close();
-                command.Connection.Close();
-
                 Assert.AreEqual("EasternWesternNorthernSouthern", accumulator);
             }
         }
 
         [TestMethod]
-        [ExpectedException(typeof(SqlCeException))]
         public void ExecuteResultSetWithBadCommandThrowsAndClosesConnection()
         {
-            SqlCeDatabase db = (SqlCeDatabase)this.db;
             DbCommand badCommand = db.GetSqlStringCommand("select * from foobar");
             try
             {
                 db.ExecuteResultSet(badCommand);
             }
-            finally
+            catch(SqlCeException)
             {
-                Assert.IsFalse(badCommand.Connection != null && badCommand.Connection.State == ConnectionState.Open);
             }
+
+            Assert.IsNotNull(badCommand.Connection); // Held open by pool
+            // Force shared connection closed
+            SqlCeConnectionPool.CloseSharedConnections();
+            Assert.IsNull(badCommand.Connection);
         }
 
         [TestMethod]
         public void ShouldHaveCorrectRowsAffectedAfterInsertCommand()
         {
             int count = -1;
-            SqlCeResultSet reader = null;
-            DbCommand command = null;
             try
             {
-                SqlCeDatabase db = (SqlCeDatabase)this.db;
-                command = db.GetSqlStringCommand(insertString);
-                reader = db.ExecuteResultSet(command);
-                count = reader.RecordsAffected;
+                using (DbCommand command = db.GetSqlStringCommand(insertString))
+                {
+                    using (SqlCeResultSet reader = db.ExecuteResultSet(command))
+                    {
+                        count = reader.RecordsAffected;
+                    }
+                }
             }
             finally
             {
-                if (reader != null)
-                    reader.Close();
-                if (command != null)
-                {
-                    command.Connection.Close();
-                    command.Dispose();
-                }
-
                 string deleteString = "Delete from Region where RegionId = 99";
-                DbCommand cleanupCommand = db.GetSqlStringCommand(deleteString);
-                db.ExecuteNonQuery(cleanupCommand);
+                using(DbCommand cleanupCommand = db.GetSqlStringCommand(deleteString))
+                {
+                    db.ExecuteNonQuery(cleanupCommand);
+                }
             }
 
             Assert.AreEqual(1, count);
@@ -126,14 +125,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.SqlCe.Tests
         [TestMethod]
         public void CanExecuteQueryThroughDataReaderUsingTransaction()
         {
-            SqlCeDatabase db = (SqlCeDatabase)this.db;
-
             using (DbConnection connection = db.CreateConnection())
             {
                 connection.Open();
                 using (DbCommand command = db.GetSqlStringCommand(insertString))
                 {
-                    using (RollbackTransactionWrapper transaction = new RollbackTransactionWrapper(connection.BeginTransaction()))
+                    using (var transaction = new RollbackTransactionWrapper(connection.BeginTransaction()))
                     {
                         using (SqlCeResultSet reader = db.ExecuteResultSet(command, transaction.Transaction))
                         {
@@ -152,8 +149,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.SqlCe.Tests
         [ExpectedException(typeof(ArgumentNullException))]
         public void ExecuteResultSetUsingNullCommandThrows()
         {
-            SqlCeDatabase db = (SqlCeDatabase)this.db;
-
             using (SqlCeResultSet reader = db.ExecuteResultSet((DbCommand)null)) { }
         }
 
@@ -161,8 +156,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.SqlCe.Tests
         [ExpectedException(typeof(ArgumentNullException))]
         public void ExecuteQueryThroughDataReaderUsingNullCommandAndNullTransactionThrows()
         {
-            SqlCeDatabase db = (SqlCeDatabase)this.db;
-
             using (SqlCeResultSet reader = db.ExecuteResultSet(null, (DbTransaction)null)) { }
         }
 
@@ -170,8 +163,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.SqlCe.Tests
         [ExpectedException(typeof(ArgumentNullException))]
         public void ExecuteQueryThroughDataReaderUsingNullTransactionThrows()
         {
-            SqlCeDatabase db = (SqlCeDatabase)this.db;
-
             using (DbConnection connection = db.CreateConnection())
             {
                 try
@@ -180,7 +171,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.SqlCe.Tests
 
                     using (DbCommand command = db.GetSqlStringCommand(queryString))
                     {
-                        using (IDataReader reader = this.db.ExecuteReader(command, null)) { }
+                        using (db.ExecuteReader(command, null)) { }
                     }
                 }
                 finally
@@ -194,7 +185,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.SqlCe.Tests
         [ExpectedException(typeof(ArgumentNullException))]
         public void ExecuteResultSetWithNullCommandThrows()
         {
-            SqlCeDatabase db = (SqlCeDatabase)this.db;
             db.ExecuteResultSet(null);
         }
 
@@ -202,11 +192,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.SqlCe.Tests
         [ExpectedException(typeof(ArgumentException))]
         public void NullQueryStringTest()
         {
-            SqlCeDatabase db = (SqlCeDatabase)this.db;
-
             using (DbCommand myCommand = db.GetSqlStringCommand(null))
             {
-                IDataReader reader = db.ExecuteResultSet(myCommand);
+                using(db.ExecuteResultSet(myCommand))
+                {
+                }
             }
         }
 
@@ -214,11 +204,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.SqlCe.Tests
         [ExpectedException(typeof(ArgumentException))]
         public void EmptyQueryStringTest()
         {
-            SqlCeDatabase db = (SqlCeDatabase)this.db;
-
             using (DbCommand myCommand = db.GetSqlStringCommand(String.Empty))
             {
-                IDataReader reader = db.ExecuteResultSet(myCommand);
+                using(db.ExecuteResultSet(myCommand))
+                {
+                }
             }
         }
 
@@ -241,8 +231,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.SqlCe.Tests
             {
                 SqlCeResultSet reader = ceDb.ExecuteResultSet(command);
                 reader.Close();
-
-                command.Connection.Close();
             }
             Assert.AreEqual(1, executeCount);
             Assert.AreEqual(0, failedCount);
@@ -269,8 +257,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.SqlCe.Tests
                 {
                     SqlCeResultSet reader = ceDb.ExecuteResultSet(command);
                     reader.Close();
-
-                    command.Connection.Close();
                 }
             }
             catch { }

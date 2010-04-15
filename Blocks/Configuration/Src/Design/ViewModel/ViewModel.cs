@@ -19,57 +19,47 @@ using System.ComponentModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
 {
-
-    //base class for everything that can be rendered in the grid.
-    //actual elements, collections, sections and even headers derive from this.
-    public class ViewModel 
+    /// <summary>
+    /// The <see cref="ViewModel"/> provides a base definition for the logic backing a view-element within
+    /// the Enterprise Library Configuration Design tool.
+    /// </summary>
+    /// <seealso cref="ElementViewModel"/>
+    /// <seealso cref="Property"/>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1724:TypeNamesShouldNotMatchNamespaces")]
+    public class ViewModel : IDisposable 
     {
-        public ViewModel()
+        /// <summary>
+        /// When overridden, gets an object that is bound to the view.
+        /// </summary>
+        /// <remarks>
+        /// By default, the <see cref="ViewModel"/> returns itself.
+        /// </remarks>
+        public virtual object Bindable
+        {
+            get { return this; }
+        }
+
+        #region IDisposable Members
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        /// <filterpriority>2</filterpriority>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Indicates the object is being disposed.
+        /// </summary>
+        /// <param name="disposing">Indicates <see cref="Dispose(bool)"/> was invoked through an explicit call to <see cref="Dispose()"/> instead of a finalizer call.</param>
+        /// <filterpriority>2</filterpriority>
+        protected virtual void Dispose(bool disposing)
         {
         }
 
-        private object bindable;
-
-        protected virtual object CreateBindable()
-        {
-            return this;
-        }
-
-        public object Bindable
-        {
-            get
-            {
-                return (bindable == null) ?
-                    bindable = CreateBindable() :
-                    bindable;
-            }
-        }
-
-        public Type CustomVisualType { get; set; }
-
-        public virtual FrameworkElement CreateCustomVisual()
-        {
-            if (CustomVisualType == null) return null;
-            var visualElement = (FrameworkElement)Activator.CreateInstance(CustomVisualType);
-            visualElement.DataContext = Bindable;
-            return visualElement;
-        }
-
-        public FrameworkElement Visual
-        {
-            get
-            {
-                var visual = CreateCustomVisual();
-                if (visual == null)
-                {
-                    visual = new ContentControl()
-                    {
-                        Focusable = false,
-                        Content = Bindable
-                    };
-                }
-                return visual;
-            }
-        }
+        #endregion
     }
 }

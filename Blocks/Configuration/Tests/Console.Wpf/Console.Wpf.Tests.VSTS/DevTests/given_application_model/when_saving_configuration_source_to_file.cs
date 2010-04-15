@@ -10,15 +10,16 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
-using Moq;
-using Microsoft.Win32;
+using System.Configuration;
 using System.IO;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Windows;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Configuration.Design.HostAdapterV5;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
+using Microsoft.Practices.Unity;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Win32;
+using Moq;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_shell_service
 {
@@ -29,7 +30,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_shell_service
         protected override void Arrange()
         {
             base.Arrange();
-            
+
             lastWriteTimeInArrange = File.GetLastWriteTime(TestConfigurationFilePath);
         }
 
@@ -51,6 +52,109 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_shell_service
         {
             var currentLastWriteTime = File.GetLastWriteTime(TestConfigurationFilePath);
             Assert.AreNotEqual(lastWriteTimeInArrange, currentLastWriteTime);
+        }
+    }
+
+    [TestClass]
+    public class when_saving_configuration_source_with_configuration_source_section_that_throws_to_external_source : given_dirty_application_model
+    {
+        string originalFileContents;
+        protected override void Arrange()
+        {
+            originalFileContents = File.ReadAllText(TestConfigurationFilePath);
+
+            base.Arrange();
+
+            var sourceModel = Container.Resolve<ConfigurationSourceModel>();
+            sourceModel.RemoveSection(ConfigurationSourceSection.SectionName);
+            sourceModel.AddSection("ThrowsOnSerialize", new ConfigurationSourceSectionThrowsOnSerialization());
+
+
+            base.UIServiceMock.Setup(x => x.ShowError(It.IsAny<ConfigurationErrorsException>(), It.IsAny<string>()));
+        }
+
+        protected override void Act()
+        {
+            base.Act();
+
+            ApplicationModel.Save();
+        }
+
+        [TestMethod]
+        public void then_exception_message_was_displayed()
+        {
+            base.UIServiceMock.VerifyAll();
+        }
+
+        private class ConfigurationSourceSectionThrowsOnSerialization : ConfigurationSourceSection
+        {
+            public ConfigurationSourceSectionThrowsOnSerialization()
+            {
+                this.SelectedSource = "Source";
+                this.Sources.Add(new FileConfigurationSourceElement { Name = "Source", FilePath = "ext.config" });
+            }
+            protected override string SerializeSection(ConfigurationElement parentElement, string name, ConfigurationSaveMode saveMode)
+            {
+                throw new InvalidOperationException("TestException");
+            }
+        }
+
+        protected override void Teardown()
+        {
+            File.WriteAllText(TestConfigurationFilePath, originalFileContents);
+        }
+    }
+
+    [TestClass]
+    public class when_saving_configuration_source_with_section_that_throws_to_external_source : given_dirty_application_model
+    {
+        string originalFileContents;
+        protected override void Arrange()
+        {
+            originalFileContents = File.ReadAllText(TestConfigurationFilePath);
+
+            base.Arrange();
+
+            var sourceModel = Container.Resolve<ConfigurationSourceModel>();
+            sourceModel.AddSection("ThrowsOnSerialize", new SectionThrowsOnSerialization());
+
+            sourceModel.RemoveSection(ConfigurationSourceSection.SectionName);
+            sourceModel.AddSection(ConfigurationSourceSection.SectionName, new ConfigurationSourceSection
+                                                                               {
+                                                                                   SelectedSource = "ext",
+                                                                                   Sources = { { new FileConfigurationSourceElement { Name = "ext", FilePath = "ext.config" } } }
+                                                                               });
+
+
+            base.UIServiceMock.Setup(x => x.ShowError(It.IsAny<ConfigurationErrorsException>(), It.IsAny<string>()));
+
+
+        }
+
+        protected override void Act()
+        {
+            base.Act();
+
+            ApplicationModel.Save();
+        }
+
+        [TestMethod]
+        public void then_exception_message_was_displayed()
+        {
+            base.UIServiceMock.VerifyAll();
+        }
+
+        protected override void Teardown()
+        {
+            File.WriteAllText(TestConfigurationFilePath, originalFileContents);
+        }
+
+        private class SectionThrowsOnSerialization : ConfigurationSection
+        {
+            protected override string SerializeSection(ConfigurationElement parentElement, string name, ConfigurationSaveMode saveMode)
+            {
+                throw new InvalidOperationException("TestException");
+            }
         }
     }
 
@@ -186,7 +290,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_shell_service
     }
 
     [TestClass]
-    public class when_saving_configuration_source_without_current_file : given_clean_appllication_model
+    public class when_saving_configuration_source_without_current_file : given_clean_application_model
     {
         protected override void Arrange()
         {

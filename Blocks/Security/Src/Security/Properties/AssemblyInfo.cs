@@ -9,7 +9,6 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System.Management.Instrumentation;
 using System.Reflection;
 using System.Security;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
@@ -17,8 +16,7 @@ using Microsoft.Practices.EnterpriseLibrary.Security.Configuration;
 
 [assembly: AssemblyTitle("Enterprise Library Security Application Block")]
 [assembly: AssemblyDescription("Enterprise Library Security Application Block")]
-[assembly: AssemblyVersion("4.1.0.0")]
-[assembly: Instrumented(@"root\EnterpriseLibrary")]
+[assembly: AssemblyVersion("5.0.414.0")]
 [assembly: AllowPartiallyTrustedCallers]
 [assembly: SecurityTransparent]
 

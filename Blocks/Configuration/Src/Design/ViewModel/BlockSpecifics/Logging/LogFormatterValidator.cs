@@ -19,9 +19,14 @@ using Microsoft.Practices.EnterpriseLibrary.Logging;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.Logging
 {
+#pragma warning disable 1591
+    /// <summary>
+    /// This class supports block-specific configuration design-time and is not
+    /// intended to be used directly from your code.
+    /// </summary>
     public class LogFormatterValidator : PropertyValidator
     {
-        protected override void ValidateCore(Property property, string value, IList<ValidationError> errors)
+        protected override void ValidateCore(Property property, string value, IList<ValidationResult> results)
         {
             if (!string.IsNullOrEmpty(value))
             {
@@ -30,13 +35,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
                 if (interestedType == null
                     || !interestedType.IsSubclassOf(typeof(Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.ExceptionFormatter)))
                 {
-                    errors.Add(
-                        new ValidationError(property,
-                            "Invalid Exception formatter",
+                    results.Add(
+                        new PropertyValidationResult(property,
+                            Resources.ValidationLogFormatterInvalidExceptionFormatter,
                             false
                             ));
                 }
             }
         }
     }
+#pragma warning restore 1591
 }

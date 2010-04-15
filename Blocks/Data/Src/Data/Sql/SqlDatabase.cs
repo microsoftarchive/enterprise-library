@@ -14,7 +14,6 @@ using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Security.Permissions;
-using System.Transactions;
 using System.Xml;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Utility;
@@ -81,15 +80,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql
         /// <para>Executes the <see cref="SqlCommand"/> and returns a new <see cref="XmlReader"/>.</para>
         /// </summary>
         /// <remarks>
-        ///		Unlike other Execute... methods that take a <see cref="DbCommand"/> instance, this method
-        ///		does not set the command behavior to close the connection when you close the reader.
-        ///		That means you'll need to close the connection yourself, by calling the
-        ///		command.Connection.Close() method.
-        ///		<para>
-        ///			There is one exception to the rule above. If you're using <see cref="TransactionScope"/> to provide
-        ///			implicit transactions, you should NOT close the connection on this reader when you're
-        ///			done. Only close the connection if <see cref="Transaction"/>.Current is null.
-        ///		</para>
+        ///	When the returned reader is closed, the underlying connection will be closed
+        /// (with appropriate handling of connections in the case of an ambient transaction).
+        /// This is a behavior change from Enterprise Library versions prior to v5.
         /// </remarks>
         /// <param name="command">
         /// <para>The <see cref="SqlCommand"/> to execute.</para>
@@ -101,10 +94,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql
         {
             SqlCommand sqlCommand = CheckIfSqlCommand(command);
 
-            using (ConnectionWrapper wrapper = GetOpenConnection(false))
+            using (var wrapper = GetOpenConnection())
             {
                 PrepareCommand(command, wrapper.Connection);
-                return DoExecuteXmlReader(sqlCommand, Transaction.Current == null);
+                return new RefCountingXmlReader(wrapper, DoExecuteXmlReader(sqlCommand));
             }
         }
 
@@ -131,7 +124,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql
             SqlCommand sqlCommand = CheckIfSqlCommand(command);
 
             PrepareCommand(sqlCommand, transaction);
-            return DoExecuteXmlReader(sqlCommand, false);
+            return DoExecuteXmlReader(sqlCommand);
         }
 
         /// <summary>
@@ -157,7 +150,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql
             DbConnection connection = this.GetNewOpenConnection();
             try
             {
-                PrepareCommand(command, this.GetNewOpenConnection());
+                PrepareCommand(command, connection);
                 return DoBeginExecuteXmlReader(sqlCommand, callback, state);
             }
             catch
@@ -214,10 +207,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql
             {
                 XmlReader reader = command.EndExecuteXmlReader(daabAsyncResult.InnerAsyncResult);
                 instrumentationProvider.FireCommandExecutedEvent(daabAsyncResult.StartTime);
-                return
-                    command.Transaction == null
-                        ? new ConnectionClosingXmlReaderWrapper(reader, command.Connection)
-                        : reader;
+
+                if(command.Transaction == null)
+                {
+                    using (var wrapper = new DatabaseConnectionWrapper(command.Connection))
+                    {
+                        return new RefCountingXmlReader(wrapper, reader);
+                    }
+                }
+                return reader;
             }
             catch (Exception e)
             {
@@ -255,14 +253,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql
         /// <devdoc>
         /// Execute the actual XML Reader call.
         /// </devdoc>        
-        private XmlReader DoExecuteXmlReader(SqlCommand sqlCommand, bool closeConnectionOnReaderClose)
+        private XmlReader DoExecuteXmlReader(SqlCommand sqlCommand)
         {
             try
             {
                 DateTime startTime = DateTime.Now;
                 XmlReader reader = sqlCommand.ExecuteXmlReader();
                 instrumentationProvider.FireCommandExecutedEvent(startTime);
-                return closeConnectionOnReaderClose ? new ConnectionClosingXmlReaderWrapper(reader, sqlCommand.Connection) : reader;
+                return reader;
             }
             catch (Exception e)
             {
@@ -328,6 +326,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql
         /// <returns>A correctly formated parameter name.</returns>
         public override string BuildParameterName(string name)
         {
+            if (name == null) throw new ArgumentNullException("name");
+
             if (name[0] != ParameterToken)
             {
                 return name.Insert(0, new string(ParameterToken, 1));
@@ -374,6 +374,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Sql
         /// <param name="value"><para>The value of the parameter.</para></param>       
         public virtual void AddParameter(DbCommand command, string name, SqlDbType dbType, int size, ParameterDirection direction, bool nullable, byte precision, byte scale, string sourceColumn, DataRowVersion sourceVersion, object value)
         {
+            if (command == null) throw new ArgumentNullException("command");
+
             DbParameter parameter = CreateParameter(name, dbType, size, direction, nullable, precision, scale, sourceColumn, sourceVersion, value);
             command.Parameters.Add(parameter);
         }

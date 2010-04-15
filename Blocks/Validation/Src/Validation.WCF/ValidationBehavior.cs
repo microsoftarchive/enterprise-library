@@ -97,6 +97,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WCF
             ServiceEndpoint endpoint,
             BindingParameterCollection bindingParameters)
         {
+            if (endpoint == null) throw new ArgumentNullException("endpoint");
+
             AddBindingParameters(endpoint.Contract, endpoint, bindingParameters);
         }
 
@@ -109,6 +111,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WCF
             ServiceEndpoint endpoint,
             ClientRuntime clientRuntime)
         {
+            if (endpoint == null) throw new ArgumentNullException("endpoint");
+
             ApplyClientBehavior(endpoint.Contract, endpoint, clientRuntime);
         }
 
@@ -121,6 +125,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WCF
             ServiceEndpoint endpoint,
             EndpointDispatcher endpointDispatcher)
         {
+            if (endpoint == null) throw new ArgumentNullException("endpoint");
+            if (endpointDispatcher == null) throw new ArgumentNullException("endpointDispatcher");
+
             ApplyDispatchBehavior(endpoint.Contract, endpoint, endpointDispatcher.DispatchRuntime);
         }
 
@@ -130,6 +137,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration.WCF
         /// <param name="endpoint">The endpoint to validate.</param>
         public void Validate(ServiceEndpoint endpoint)
         {
+            if (endpoint == null) throw new ArgumentNullException("endpoint");
+
             Validate(endpoint.Contract, endpoint);
         }
 

@@ -14,7 +14,6 @@ using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -32,7 +31,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Tests
                 new EmailTraceListenerData("listener", "to", "from", "subject starter", "subject ender", "smtp", 25, "formatter")
                 {
                     TraceOutputOptions = TraceOptions.DateTime | TraceOptions.Callstack,
-                    Filter = SourceLevels.Warning
+                    Filter = SourceLevels.Warning,
+                    AuthenticationMode = EmailAuthenticationMode.UserNameAndPassword,
+                    UserName = "user",
+                    Password = "secret",
+                    UseSSL = true
                 };
         }
         
@@ -107,6 +110,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Tests
                 .WithValueConstructorParameter("smtp")
                 .WithValueConstructorParameter(25)
                 .WithContainerResolvedParameter<ILogFormatter>("formatter")
+                .WithValueConstructorParameter(EmailAuthenticationMode.UserNameAndPassword)
+                .WithValueConstructorParameter("user")
+                .WithValueConstructorParameter("secret")
+                .WithValueConstructorParameter(true)
                 .VerifyConstructorParameters();
         }
 

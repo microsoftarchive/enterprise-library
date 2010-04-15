@@ -27,7 +27,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.Design
 	/// </summary>
 	public partial class TypeMemberChooserUI : Form
 	{
-		private IUIService uiService;
 		private TreeNode typeTreeNode;
 
 		/// <summary>
@@ -35,10 +34,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.Design
 		/// </summary>
 		/// <param name="type">The <see cref="Type"/> for which the members are to be chosen from.</param>
 		/// <param name="uiService">The <see cref="IUIService"/> to provide UI services.</param>
-		public TypeMemberChooserUI(Type type, IUIService uiService)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "uiService")]
+        public TypeMemberChooserUI(Type type, IUIService uiService)
 		{
-			this.uiService = uiService;
-
 			InitializeComponent();
 
 			typeTreeNode = new TypeTreeNode(type);

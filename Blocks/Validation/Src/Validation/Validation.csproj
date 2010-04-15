@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -24,7 +25,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <CodeAnalysisRules>-Microsoft.Design#CA1020;-Microsoft.Design#CA1004;-Microsoft.Interoperability#CA1403;-Microsoft.Interoperability#CA1406;-Microsoft.Interoperability#CA1413;-Microsoft.Interoperability#CA1402;-Microsoft.Interoperability#CA1407;-Microsoft.Interoperability#CA1404;-Microsoft.Interoperability#CA1410;-Microsoft.Interoperability#CA1411;-Microsoft.Interoperability#CA1405;-Microsoft.Interoperability#CA1409;-Microsoft.Interoperability#CA1415;-Microsoft.Interoperability#CA1408;-Microsoft.Interoperability#CA1414;-Microsoft.Interoperability#CA1412;-Microsoft.Interoperability#CA1400;-Microsoft.Interoperability#CA1401;-Microsoft.Maintainability#CA1500;-Microsoft.Naming#CA1704;-Microsoft.Security#CA2116;-Microsoft.Security#CA2117;-Microsoft.Design#CA2210;-Microsoft.Design#CA1021;-Microsoft.Performance#CA1823;-Microsoft.Design#CA1011;-Microsoft.Design#CA1019;-Microsoft.Design#CA1031;-Microsoft.Design#CA1002;-Microsoft.Performance#CA1805;-Microsoft.Naming#CA1709;-Microsoft.Naming#CA1710;-Microsoft.Usage#CA2208;-Microsoft.Design#CA1033;-Microsoft.Design#CA1017;-Microsoft.Performance#CA1824;-Microsoft.Performance#CA1822;-Microsoft.Naming#CA1717;-Microsoft.Naming#CA1721;-Microsoft.Usage#CA1801;-Microsoft.Performance#CA1820;-Microsoft.Naming#CA1724;-Microsoft.Design#CA1024</CodeAnalysisRules>
+    <CodeAnalysisRules>-Microsoft.Design#CA2210;-Microsoft.Design#CA1020;-Microsoft.Design#CA1021;-Microsoft.Design#CA1011;-Microsoft.Design#CA1019;-Microsoft.Design#CA1031;-Microsoft.Design#CA1002;-Microsoft.Design#CA1004;-Microsoft.Design#CA1032;-Microsoft.Design#CA1033;-Microsoft.Design#CA1017;-Microsoft.Design#CA1024;-Microsoft.Interoperability#CA1403;-Microsoft.Interoperability#CA1406;-Microsoft.Interoperability#CA1413;-Microsoft.Interoperability#CA1402;-Microsoft.Interoperability#CA1407;-Microsoft.Interoperability#CA1404;-Microsoft.Interoperability#CA1410;-Microsoft.Interoperability#CA1411;-Microsoft.Interoperability#CA1405;-Microsoft.Interoperability#CA1409;-Microsoft.Interoperability#CA1415;-Microsoft.Interoperability#CA1408;-Microsoft.Interoperability#CA1414;-Microsoft.Interoperability#CA1412;-Microsoft.Interoperability#CA1400;-Microsoft.Interoperability#CA1401;-Microsoft.Maintainability#CA1500;-Microsoft.Naming#CA1709;-Microsoft.Naming#CA1704;-Microsoft.Naming#CA1710;-Microsoft.Naming#CA1717;-Microsoft.Naming#CA1721;-Microsoft.Naming#CA1724;-Microsoft.Performance#CA1813;-Microsoft.Performance#CA1823;-Microsoft.Performance#CA1800;-Microsoft.Performance#CA1805;-Microsoft.Performance#CA1824;-Microsoft.Performance#CA1822;-Microsoft.Performance#CA1820;-Microsoft.Portability#CA1903;-Microsoft.Security#CA2116;-Microsoft.Security#CA2117;-Microsoft.Usage#CA2214;-Microsoft.Usage#CA2208;-Microsoft.Usage#CA1801</CodeAnalysisRules>
     <RunCodeAnalysis>false</RunCodeAnalysis>
     <DocumentationFile>..\..\..\bin\Debug\Microsoft.Practices.EnterpriseLibrary.Validation.xml</DocumentationFile>
   </PropertyGroup>
@@ -38,20 +39,24 @@
     <DocumentationFile>..\..\..\bin\Release\Microsoft.Practices.EnterpriseLibrary.Validation.xml</DocumentationFile>
     <DebugSymbols>true</DebugSymbols>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <CodeAnalysisRules>-Microsoft.Security#CA2116;-Microsoft.Security#CA2117;-Microsoft.Design#CA2210;-Microsoft.Design#CA1021;-Microsoft.Performance#CA1823;-Microsoft.Design#CA1011;-Microsoft.Design#CA1019;-Microsoft.Design#CA1031;-Microsoft.Design#CA1002;-Microsoft.Performance#CA1805;-Microsoft.Naming#CA1709;-Microsoft.Naming#CA1710;-Microsoft.Usage#CA2208;-Microsoft.Design#CA1033;-Microsoft.Design#CA1017;-Microsoft.Performance#CA1824;-Microsoft.Performance#CA1822;-Microsoft.Naming#CA1717;-Microsoft.Naming#CA1721;-Microsoft.Usage#CA1801;-Microsoft.Performance#CA1820;-Microsoft.Naming#CA1724;-Microsoft.Design#CA1024</CodeAnalysisRules>
+    <CodeAnalysisRules>-Microsoft.Design#CA2210;-Microsoft.Design#CA1020;-Microsoft.Design#CA1021;-Microsoft.Design#CA1011;-Microsoft.Design#CA1019;-Microsoft.Design#CA1031;-Microsoft.Design#CA1002;-Microsoft.Design#CA1004;-Microsoft.Design#CA1032;-Microsoft.Design#CA1033;-Microsoft.Design#CA1017;-Microsoft.Design#CA1024;-Microsoft.Interoperability#CA1403;-Microsoft.Interoperability#CA1406;-Microsoft.Interoperability#CA1413;-Microsoft.Interoperability#CA1402;-Microsoft.Interoperability#CA1407;-Microsoft.Interoperability#CA1404;-Microsoft.Interoperability#CA1410;-Microsoft.Interoperability#CA1411;-Microsoft.Interoperability#CA1405;-Microsoft.Interoperability#CA1409;-Microsoft.Interoperability#CA1415;-Microsoft.Interoperability#CA1408;-Microsoft.Interoperability#CA1414;-Microsoft.Interoperability#CA1412;-Microsoft.Interoperability#CA1400;-Microsoft.Interoperability#CA1401;-Microsoft.Maintainability#CA1500;-Microsoft.Naming#CA1709;-Microsoft.Naming#CA1704;-Microsoft.Naming#CA1710;-Microsoft.Naming#CA1717;-Microsoft.Naming#CA1721;-Microsoft.Naming#CA1724;-Microsoft.Performance#CA1813;-Microsoft.Performance#CA1823;-Microsoft.Performance#CA1800;-Microsoft.Performance#CA1805;-Microsoft.Performance#CA1824;-Microsoft.Performance#CA1822;-Microsoft.Performance#CA1820;-Microsoft.Portability#CA1903;-Microsoft.Security#CA2116;-Microsoft.Security#CA2117;-Microsoft.Usage#CA2214;-Microsoft.Usage#CA2208;-Microsoft.Usage#CA1801</CodeAnalysisRules>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Lib\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Practices.Unity, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.Practices.Unity, Version=2.0.414.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Lib\Microsoft.Practices.Unity.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Practices.Unity.Configuration, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.Practices.Unity.Configuration, Version=2.0.414.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Lib\Microsoft.Practices.Unity.Configuration.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity.Interception, Version=2.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Lib\Microsoft.Practices.Unity.Interception.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations">
@@ -63,15 +68,18 @@
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Data" />
-    <Reference Include="System.Management" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\..\GlobalAssemblyInfo.cs">
       <Link>GlobalAssemblyInfo.cs</Link>
     </Compile>
+    <None Include="..\..\..\GlobalAssemblyInfo.2010.cs">
+      <Link>GlobalAssemblyInfo.2010.cs</Link>
+    </None>
     <Compile Include="AttributeValidatorFactory.cs" />
     <Compile Include="ConfigurationValidatorFactory.cs" />
+    <Compile Include="Configuration\ConfigurationCultureInfoConverter.cs" />
     <Compile Include="Configuration\DesignResources.Designer.cs">
       <DependentUpon>DesignResources.resx</DependentUpon>
       <AutoGen>True</AutoGen>
@@ -80,30 +88,29 @@
     <Compile Include="Configuration\PropertyComparisonValidatorData.cs" />
     <Compile Include="Configuration\Unity\InjectionValidationSource.cs" />
     <Compile Include="Configuration\Unity\ValidationBlockExtension.cs" />
+    <Compile Include="Configuration\Unity\ValidationConfigExtension.cs" />
     <Compile Include="Configuration\Unity\ValidationSourceElement.cs" />
     <Compile Include="Configuration\Unity\ValidationSpecificationSourcePolicy.cs" />
     <Compile Include="Configuration\Unity\ValidatorCreationStrategy.cs" />
     <Compile Include="Configuration\Unity\ValidatorDependencyAttribute.cs" />
     <Compile Include="Configuration\Unity\ValidatorParameter.cs" />
     <Compile Include="Configuration\Unity\ValidatorResolver.cs" />
+    <Compile Include="Configuration\ValidationCallHandlerData.cs" />
     <Compile Include="Configuration\ValidationDesignTime.cs" />
     <Compile Include="Configuration\ValidationTypeRegistrationProvider.cs" />
     <Compile Include="DataErrorInfoHelper.cs" />
+    <Compile Include="PolicyInjection\ArgumentValidationException.cs" />
+    <Compile Include="PolicyInjection\ValidationCallHandler.cs" />
+    <Compile Include="PolicyInjection\ValidationCallHandlerAttribute.cs" />
     <Compile Include="ValidationAttributeValidatedElement.cs" />
     <Compile Include="ValidationAttributeValidatedType.cs" />
     <Compile Include="ValidationAttributeValidatorBuilder.cs" />
-    <Compile Include="Instrumentation\ValidationCalledEvent.cs" />
     <Compile Include="Instrumentation\ValidationInstrumentationInstaller.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Instrumentation\ValidationInstrumentationInstaller.Designer.cs">
       <DependentUpon>ValidationInstrumentationInstaller.cs</DependentUpon>
     </Compile>
-    <Compile Include="Instrumentation\ValidationExceptionEvent.cs" />
-    <Compile Include="Instrumentation\ValidationSucceededEvent.cs" />
-    <Compile Include="Instrumentation\ValidationConfigurationFailureEvent.cs" />
-    <Compile Include="Instrumentation\ValidationEvent.cs" />
-    <Compile Include="Instrumentation\ValidationFailedEvent.cs" />
     <Compile Include="Instrumentation\ValidationInstrumentationProvider.cs" />
     <Compile Include="Instrumentation\IValidationInstrumentationProvider.cs" />
     <Compile Include="MemberValueAccessBuilder.cs" />
@@ -171,6 +178,7 @@
     <Compile Include="Validators\ContainsCharacters.cs" />
     <Compile Include="Validators\ContainsCharactersValidator.cs" />
     <Compile Include="Validators\ContainsCharactersValidatorAttribute.cs" />
+    <Compile Include="Validators\NullIgnoringValidatorWrapper.cs" />
     <Compile Include="Validators\ValidationAttributeValidator.cs" />
     <Compile Include="Validators\FieldValueValidator.cs" />
     <Compile Include="Validators\MemberAccessValidator.cs" />

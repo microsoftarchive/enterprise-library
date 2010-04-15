@@ -181,7 +181,7 @@ Message:
  Parameters: 0 - exceptionString (string) </comment>
   </data>
   <data name="DefaultLogDestinationMessage" xml:space="preserve">
-    <value>An error occurred while the Distributor was processing the message.  Please check your configuration files for errors or typos.  Verify that your sinks are reachable (queues exist, permissions are set, database exists, etc...)</value>
+    <value>An error occurred while the Distributor was processing the message.  Please check your configuration files for errors or typos.  Verify that your sinks are reachable (queues exist, permissions are set, database exists, and so forth...)</value>
   </data>
   <data name="DefaultLogDestinationFailed" xml:space="preserve">
     <value>Failed to log message to the default log destination.</value>
@@ -528,5 +528,8 @@ Message:
   </data>
   <data name="ParameterMustImplementType" xml:space="preserve">
     <value>Parameter must implement type '{0}'.</value>
+  </data>
+  <data name="DefaultLogEntryTitle" xml:space="preserve">
+    <value>Call Logging</value>
   </data>
 </root>

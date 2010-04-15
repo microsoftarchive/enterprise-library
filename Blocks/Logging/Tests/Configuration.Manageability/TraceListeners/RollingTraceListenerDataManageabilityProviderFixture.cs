@@ -28,7 +28,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
     {
         RollingFlatFileTraceListenerDataManageabilityProvider provider;
         MockRegistryKey machineKey;
+        MockRegistryKey machineOptionsKey;
         MockRegistryKey userKey;
+        MockRegistryKey userOptionsKey;
         RollingFlatFileTraceListenerData configurationObject;
 
         [TestInitialize]
@@ -36,7 +38,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
         {
             provider = new RollingFlatFileTraceListenerDataManageabilityProvider();
             machineKey = new MockRegistryKey(true);
+            machineOptionsKey = new MockRegistryKey(false);
             userKey = new MockRegistryKey(true);
+            userOptionsKey = new MockRegistryKey(false);
             configurationObject = new RollingFlatFileTraceListenerData();
         }
 
@@ -81,6 +85,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             configurationObject.Filter = SourceLevels.Error;
             configurationObject.Header = "header";
             configurationObject.Footer = "footer";
+            configurationObject.MaxArchivedFiles = 10;
 
             provider.OverrideWithGroupPolicies(configurationObject, true, null, null);
 
@@ -94,6 +99,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             Assert.AreEqual(SourceLevels.Error, configurationObject.Filter);
             Assert.AreEqual("header", configurationObject.Header);
             Assert.AreEqual("footer", configurationObject.Footer);
+            Assert.AreEqual(10, configurationObject.MaxArchivedFiles);
         }
 
         [TestMethod]
@@ -109,6 +115,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             configurationObject.Filter = SourceLevels.Error;
             configurationObject.Header = "header";
             configurationObject.Footer = "footer";
+            configurationObject.MaxArchivedFiles = 10;
 
             machineKey.AddStringValue(RollingFlatFileTraceListenerDataManageabilityProvider.FileNamePropertyName, "overriden file name");
             machineKey.AddStringValue(RollingFlatFileTraceListenerDataManageabilityProvider.FormatterPropertyName, "overriden formatter");
@@ -116,10 +123,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             machineKey.AddEnumValue<RollInterval>(RollingFlatFileTraceListenerDataManageabilityProvider.RollIntervalPropertyName, RollInterval.Day);
             machineKey.AddIntValue(RollingFlatFileTraceListenerDataManageabilityProvider.RollSizeKBPropertyName, 200);
             machineKey.AddStringValue(RollingFlatFileTraceListenerDataManageabilityProvider.TimeStampPatternPropertyName, "overriden pattern");
-            machineKey.AddEnumValue<TraceOptions>(RollingFlatFileTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, TraceOptions.ProcessId | TraceOptions.ThreadId);
             machineKey.AddEnumValue<SourceLevels>(RollingFlatFileTraceListenerDataManageabilityProvider.FilterPropertyName, SourceLevels.Critical);
             machineKey.AddStringValue(RollingFlatFileTraceListenerDataManageabilityProvider.HeaderPropertyName, "overriden header");
             machineKey.AddStringValue(RollingFlatFileTraceListenerDataManageabilityProvider.FooterPropertyName, "overriden footer");
+            machineKey.AddIntValue(RollingFlatFileTraceListenerDataManageabilityProvider.MaxArchivedFilesPropertyName, 20);
+            machineKey.AddSubKey(RollingFlatFileTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, machineOptionsKey);
+            machineOptionsKey.AddIntValue(TraceOptions.ProcessId.ToString(), 1);
+            machineOptionsKey.AddIntValue(TraceOptions.ThreadId.ToString(), 1);
 
             provider.OverrideWithGroupPolicies(configurationObject, true, machineKey, null);
 
@@ -133,6 +143,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             Assert.AreEqual(SourceLevels.Critical, configurationObject.Filter);
             Assert.AreEqual("overriden header", configurationObject.Header);
             Assert.AreEqual("overriden footer", configurationObject.Footer);
+            Assert.AreEqual(20, configurationObject.MaxArchivedFiles);
         }
 
         [TestMethod]
@@ -148,6 +159,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             configurationObject.Filter = SourceLevels.Error;
             configurationObject.Header = "header";
             configurationObject.Footer = "footer";
+            configurationObject.MaxArchivedFiles = 10;
 
             userKey.AddStringValue(RollingFlatFileTraceListenerDataManageabilityProvider.FileNamePropertyName, "overriden file name");
             userKey.AddStringValue(RollingFlatFileTraceListenerDataManageabilityProvider.FormatterPropertyName, "overriden formatter");
@@ -155,10 +167,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             userKey.AddEnumValue<RollInterval>(RollingFlatFileTraceListenerDataManageabilityProvider.RollIntervalPropertyName, RollInterval.Day);
             userKey.AddIntValue(RollingFlatFileTraceListenerDataManageabilityProvider.RollSizeKBPropertyName, 200);
             userKey.AddStringValue(RollingFlatFileTraceListenerDataManageabilityProvider.TimeStampPatternPropertyName, "overriden pattern");
-            userKey.AddEnumValue<TraceOptions>(RollingFlatFileTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, TraceOptions.ProcessId | TraceOptions.ThreadId);
             userKey.AddEnumValue<SourceLevels>(RollingFlatFileTraceListenerDataManageabilityProvider.FilterPropertyName, SourceLevels.Critical);
             userKey.AddStringValue(RollingFlatFileTraceListenerDataManageabilityProvider.HeaderPropertyName, "overriden header");
             userKey.AddStringValue(RollingFlatFileTraceListenerDataManageabilityProvider.FooterPropertyName, "overriden footer");
+            userKey.AddIntValue(RollingFlatFileTraceListenerDataManageabilityProvider.MaxArchivedFilesPropertyName, 20);
+            userKey.AddSubKey(RollingFlatFileTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, userOptionsKey);
+            userOptionsKey.AddIntValue(TraceOptions.ProcessId.ToString(), 1);
+            userOptionsKey.AddIntValue(TraceOptions.ThreadId.ToString(), 1);
 
             provider.OverrideWithGroupPolicies(configurationObject, true, null, userKey);
 
@@ -172,6 +187,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             Assert.AreEqual(SourceLevels.Critical, configurationObject.Filter);
             Assert.AreEqual("overriden header", configurationObject.Header);
             Assert.AreEqual("overriden footer", configurationObject.Footer);
+            Assert.AreEqual(20, configurationObject.MaxArchivedFiles);
         }
 
         [TestMethod]
@@ -187,6 +203,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             configurationObject.Filter = SourceLevels.Error;
             configurationObject.Header = "header";
             configurationObject.Footer = "footer";
+            configurationObject.MaxArchivedFiles = 10;
 
             machineKey.AddStringValue(RollingFlatFileTraceListenerDataManageabilityProvider.FileNamePropertyName, "overriden file name");
             machineKey.AddStringValue(RollingFlatFileTraceListenerDataManageabilityProvider.FormatterPropertyName, "overriden formatter");
@@ -194,10 +211,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             machineKey.AddEnumValue<RollInterval>(RollingFlatFileTraceListenerDataManageabilityProvider.RollIntervalPropertyName, RollInterval.Day);
             machineKey.AddIntValue(RollingFlatFileTraceListenerDataManageabilityProvider.RollSizeKBPropertyName, 200);
             machineKey.AddStringValue(RollingFlatFileTraceListenerDataManageabilityProvider.TimeStampPatternPropertyName, "overriden pattern");
-            machineKey.AddEnumValue<TraceOptions>(RollingFlatFileTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, TraceOptions.ProcessId | TraceOptions.ThreadId);
             machineKey.AddEnumValue<SourceLevels>(RollingFlatFileTraceListenerDataManageabilityProvider.FilterPropertyName, SourceLevels.Critical);
             machineKey.AddStringValue(RollingFlatFileTraceListenerDataManageabilityProvider.HeaderPropertyName, "overriden header");
             machineKey.AddStringValue(RollingFlatFileTraceListenerDataManageabilityProvider.FooterPropertyName, "overriden footer");
+            machineKey.AddIntValue(RollingFlatFileTraceListenerDataManageabilityProvider.MaxArchivedFilesPropertyName, 20);
+            machineKey.AddSubKey(RollingFlatFileTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, machineOptionsKey);
+            machineOptionsKey.AddIntValue(TraceOptions.ProcessId.ToString(), 1);
+            machineOptionsKey.AddIntValue(TraceOptions.ThreadId.ToString(), 1);
 
             provider.OverrideWithGroupPolicies(configurationObject, false, machineKey, null);
 
@@ -211,6 +231,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             Assert.AreEqual(SourceLevels.Error, configurationObject.Filter);
             Assert.AreEqual("header", configurationObject.Header);
             Assert.AreEqual("footer", configurationObject.Footer);
+            Assert.AreEqual(10, configurationObject.MaxArchivedFiles);
         }
 
         [TestMethod]
@@ -224,10 +245,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
             machineKey.AddEnumValue<RollInterval>(RollingFlatFileTraceListenerDataManageabilityProvider.RollIntervalPropertyName, RollInterval.Day);
             machineKey.AddIntValue(RollingFlatFileTraceListenerDataManageabilityProvider.RollSizeKBPropertyName, 200);
             machineKey.AddStringValue(RollingFlatFileTraceListenerDataManageabilityProvider.TimeStampPatternPropertyName, "overriden pattern");
-            machineKey.AddEnumValue<TraceOptions>(RollingFlatFileTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, TraceOptions.ProcessId | TraceOptions.ThreadId);
             machineKey.AddEnumValue<SourceLevels>(RollingFlatFileTraceListenerDataManageabilityProvider.FilterPropertyName, SourceLevels.Critical);
             machineKey.AddStringValue(RollingFlatFileTraceListenerDataManageabilityProvider.HeaderPropertyName, "overriden header");
             machineKey.AddStringValue(RollingFlatFileTraceListenerDataManageabilityProvider.FooterPropertyName, "overriden footer");
+            machineKey.AddIntValue(RollingFlatFileTraceListenerDataManageabilityProvider.MaxArchivedFilesPropertyName, 20);
+            machineKey.AddSubKey(RollingFlatFileTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName, machineOptionsKey);
+            machineOptionsKey.AddIntValue(TraceOptions.ProcessId.ToString(), 1);
+            machineOptionsKey.AddIntValue(TraceOptions.ThreadId.ToString(), 1);
 
             provider.OverrideWithGroupPolicies(configurationObject, true, machineKey, userKey);
 
@@ -297,10 +321,46 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageabil
                             partsEnumerator.Current.ValueName);
 
             Assert.IsTrue(partsEnumerator.MoveNext());
-            Assert.AreSame(typeof(AdmDropDownListPart), partsEnumerator.Current.GetType());
+            Assert.AreSame(typeof(AdmNumericPart), partsEnumerator.Current.GetType());
             Assert.IsNull(partsEnumerator.Current.KeyName);
-            Assert.AreEqual(RollingFlatFileTraceListenerDataManageabilityProvider.TraceOutputOptionsPropertyName,
+            Assert.AreEqual(RollingFlatFileTraceListenerDataManageabilityProvider.MaxArchivedFilesPropertyName,
                             partsEnumerator.Current.ValueName);
+
+            Assert.IsTrue(partsEnumerator.MoveNext());
+            Assert.AreSame(typeof(AdmTextPart), partsEnumerator.Current.GetType());
+            Assert.IsNull(partsEnumerator.Current.KeyName);
+            Assert.IsNull(partsEnumerator.Current.ValueName);
+
+            // trace output options checkboxes
+            Assert.IsTrue(partsEnumerator.MoveNext());
+            Assert.AreSame(typeof(AdmCheckboxPart), partsEnumerator.Current.GetType());
+            Assert.IsNotNull(partsEnumerator.Current.KeyName);
+            Assert.AreEqual("LogicalOperationStack", partsEnumerator.Current.ValueName);
+
+            Assert.IsTrue(partsEnumerator.MoveNext());
+            Assert.AreSame(typeof(AdmCheckboxPart), partsEnumerator.Current.GetType());
+            Assert.IsNotNull(partsEnumerator.Current.KeyName);
+            Assert.AreEqual("DateTime", partsEnumerator.Current.ValueName);
+
+            Assert.IsTrue(partsEnumerator.MoveNext());
+            Assert.AreSame(typeof(AdmCheckboxPart), partsEnumerator.Current.GetType());
+            Assert.IsNotNull(partsEnumerator.Current.KeyName);
+            Assert.AreEqual("Timestamp", partsEnumerator.Current.ValueName);
+
+            Assert.IsTrue(partsEnumerator.MoveNext());
+            Assert.AreSame(typeof(AdmCheckboxPart), partsEnumerator.Current.GetType());
+            Assert.IsNotNull(partsEnumerator.Current.KeyName);
+            Assert.AreEqual("ProcessId", partsEnumerator.Current.ValueName);
+
+            Assert.IsTrue(partsEnumerator.MoveNext());
+            Assert.AreSame(typeof(AdmCheckboxPart), partsEnumerator.Current.GetType());
+            Assert.IsNotNull(partsEnumerator.Current.KeyName);
+            Assert.AreEqual("ThreadId", partsEnumerator.Current.ValueName);
+
+            Assert.IsTrue(partsEnumerator.MoveNext());
+            Assert.AreSame(typeof(AdmCheckboxPart), partsEnumerator.Current.GetType());
+            Assert.IsNotNull(partsEnumerator.Current.KeyName);
+            Assert.AreEqual("Callstack", partsEnumerator.Current.ValueName);
 
             Assert.IsTrue(partsEnumerator.MoveNext());
             Assert.AreSame(typeof(AdmDropDownListPart), partsEnumerator.Current.GetType());

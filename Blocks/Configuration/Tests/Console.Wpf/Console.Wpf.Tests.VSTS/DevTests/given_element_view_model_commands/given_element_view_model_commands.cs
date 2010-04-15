@@ -9,18 +9,11 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Console.Wpf.Tests.VSTS.Mocks;
-using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
-using Console.Wpf.Tests.VSTS.DevTests;
-using System.ComponentModel.Design;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Configuration;
-using System.ComponentModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Console.Wpf.Tests.VSTS.DevTests.Contexts;
 

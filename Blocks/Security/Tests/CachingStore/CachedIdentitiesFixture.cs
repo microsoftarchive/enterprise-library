@@ -11,11 +11,7 @@
 
 using System;
 using System.Security.Principal;
-using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation;
-using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Instrumentation;
-using Microsoft.Practices.EnterpriseLibrary.Security.Instrumentation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Cache.CachingStore.Tests
 {
@@ -126,25 +122,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cache.CachingStore.Test
             if (token != null)
             {
                 Assert.Fail();
-            }
-        }
-
-        [TestMethod]
-        public void RetrieveCachedIdentityFiresWmiEvent()
-        {
-            SecurityCacheProvider securityCache = SecurityCacheFactory.GetSecurityCacheProvider() as SecurityCacheProvider;
-
-            using (WmiEventWatcher eventWatcher = new WmiEventWatcher(1))
-            {
-                IToken token = new GuidToken();
-                object profile = securityCache.GetIdentity(token);
-                eventWatcher.WaitForEvents();
-
-                Assert.AreEqual(1, eventWatcher.EventsReceived.Count);
-                Assert.AreEqual("SecurityCacheReadPerformedEvent", eventWatcher.EventsReceived[0].ClassPath.ClassName);
-                Assert.AreEqual(SecurityEntityType.Identity.ToString(), eventWatcher.EventsReceived[0].Properties["EntityType"].Value);
-                Assert.AreEqual("provider1", eventWatcher.EventsReceived[0].Properties["InstanceName"].Value);
-                Assert.AreEqual(token.Value, eventWatcher.EventsReceived[0].Properties["TokenUsed"].Value);
             }
         }
     }

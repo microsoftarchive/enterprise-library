@@ -127,16 +127,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
 			get { return Resources.DomainNegatedDefaultMessageTemplate; }
 		}
 
-		#region test only properties
-
         /// <summary>
-        /// 
+        /// The set of items we're checking for membership in.
         /// </summary>
 		public List<T> Domain
 		{
 			get { return new List<T>(this.domain); }
 		}
-
-		#endregion
 	}
 }

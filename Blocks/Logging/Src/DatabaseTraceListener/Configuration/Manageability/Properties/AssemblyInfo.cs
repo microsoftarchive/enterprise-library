@@ -9,11 +9,9 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System.Management.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Manageability;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Database.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Database.Configuration.Manageability;
 
-[assembly : Instrumented(@"root\EnterpriseLibrary")]
-[assembly : ConfigurationElementManageabilityProvider(typeof(FormattedDatabaseTraceListenerDataManageabilityProvider), typeof(FormattedDatabaseTraceListenerData), typeof(LoggingSettingsManageabilityProvider))]
+[assembly: ConfigurationElementManageabilityProvider(typeof(FormattedDatabaseTraceListenerDataManageabilityProvider), typeof(FormattedDatabaseTraceListenerData), typeof(LoggingSettingsManageabilityProvider))]

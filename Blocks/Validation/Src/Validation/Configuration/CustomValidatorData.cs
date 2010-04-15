@@ -17,6 +17,7 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 using System.ComponentModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design.Validation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 {
@@ -90,7 +91,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 
 		/// <summary>
 		/// Gets or sets custom configuration attributes.
-		/// </summary>        		
+		/// </summary>
+        [Validation(ValidationDesignTime.Validators.NameValueCollectionValidator)]
 		public NameValueCollection Attributes
 		{
 			get { return helper.Attributes; }

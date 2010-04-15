@@ -379,7 +379,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
             {
                 Exception ex1 = thrownException;
                 int result = manager.Process(() => { throw ex1;
-                                                       return 37;  }, "policy1");
+#pragma warning disable 162 // Unreachable code
+                                                       return 37;
+#pragma warning restore 162
+                }, "policy1");
                 Assert.Fail("should have thrown");
             }
             catch (Exception e)
@@ -394,7 +397,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
             thrownException = new ArgumentOutOfRangeException();
             Exception ex3 = thrownException;
             int swallowedResult = manager.Process(() => { throw ex3;
-                                                   return 17; }, -20, "policy1");
+#pragma warning disable 162 // Unreachable code
+                                                   return 17; 
+#pragma warning restore 162
+            }, -20, "policy1");
             Assert.AreEqual(1, TestExceptionHandler.HandlingNames.Count);
             Assert.AreEqual("handler13", TestExceptionHandler.HandlingNames[0]);
             Assert.AreEqual(-20, swallowedResult);            

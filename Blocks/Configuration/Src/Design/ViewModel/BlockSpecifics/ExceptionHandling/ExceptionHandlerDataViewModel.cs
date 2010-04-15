@@ -17,6 +17,11 @@ using System.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics
 {
+#pragma warning disable 1591
+    /// <summary>
+    /// This class supports block-specific configuration design-time and is not
+    /// intended to be used directly from your code.
+    /// </summary>
     public class ExceptionHandlerDataViewModel: CollectionElementViewModel
     {
         public ExceptionHandlerDataViewModel(ElementCollectionViewModel containingCollection, ConfigurationElement thisElement)
@@ -26,12 +31,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
 
         protected override object CreateBindable()
         {
-            return new HierarchicalViewModel(
-                this, 
-                Enumerable.Empty<ElementViewModel>())
-                {
-                    ColumnName = "Column2"
-                };
+            return new HierarchicalLayout(
+                this,
+                Enumerable.Empty<ElementViewModel>(),
+                2);
         }
     }
+#pragma warning restore 1591
 }

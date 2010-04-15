@@ -12,6 +12,7 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Practices.EnterpriseLibrary.Logging.ExtraInformation.Helpers;
+using System.Globalization;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.ExtraInformation
 {
@@ -95,7 +96,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.ExtraInformation
             }
             catch (Exception e)
             {
-				result = String.Format(Properties.Resources.Culture, Properties.Resources.ExtendedPropertyError, e.Message);
+                result = String.Format(CultureInfo.CurrentCulture, Properties.Resources.ExtendedPropertyError, e.Message);
             }            
             return result;
         }

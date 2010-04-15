@@ -27,6 +27,7 @@ using Console.Wpf.Tests.VSTS.DevTests.Contexts;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design;
 using Console.Wpf.Tests.VSTS.Mocks;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.TestSupport;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_element_reference
 {
@@ -35,7 +36,6 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_element_reference
     {
         private TestReferencingSection testreferencingSection;
         private SectionViewModel section;
-        private ElementLookup lookup;
         private SectionViewModel newSection;
         private ConfigurationSourceModel configSource;
 

@@ -11,35 +11,28 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Configuration;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.Drawing.Design;
-using System.Windows;
-using System.Windows.Input;
-using System.Globalization;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Validation;
+using System.Configuration;
+using System.Linq;
 using Microsoft.Practices.Unity;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.EnvironmentalOverrides;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
 {
     ///<summary>
     /// A property model from a property discovered on a <see cref="ConfigurationElement"/>.
     ///</summary>
-    public class ElementProperty : Property, IElementAssociation
+    public class ElementProperty : Property, ILogicalPropertyContainerElement, IEnvironmentalOverridesProperty
     {
         private readonly ConfigurationPropertyAttribute configurationPropertyAttribute;
         private readonly PropertyInformation configurationProperty;
         private readonly ElementViewModel declaringElement;
 
-
         ///<summary>
         /// Initializes an instance of ElementProperty.
         ///</summary>
-        ///<param name="serviceProvider">Service provider used to locate certain services for the configuration system.</param>
+        ///<param name="serviceProvider">Service provider used to locate services for the configuration system.</param>
         ///<param name="parent">The parent <see cref="ElementViewModel"/> owning the property.</param>
         ///<param name="declaringProperty">The description of the property.</param>
         [InjectionConstructor]
@@ -47,7 +40,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             : this(serviceProvider, parent, declaringProperty, new Attribute[0])
         {
         }
-        
+
         ///<summary>
         /// Initializes an instance of ElementProperty.
         ///</summary>
@@ -65,10 +58,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             ConfigurationElement parentElement = parent.ConfigurationElement;
 
             configurationPropertyAttribute = declaringProperty.Attributes.OfType<ConfigurationPropertyAttribute>().FirstOrDefault();
+            if (configurationPropertyAttribute == null)
+            {
+                configurationPropertyAttribute = additionalAttributes.OfType<ConfigurationPropertyAttribute>().FirstOrDefault();
+            }
             if (configurationPropertyAttribute != null)
             {
                 configurationProperty = parentElement.ElementInformation.Properties[configurationPropertyAttribute.Name];
             }
+
+            this.declaringElement.PropertyChanged += DeclaringElementPropertyChanged;
         }
 
         /// <summary>
@@ -80,7 +79,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         }
 
         ///<summary>
-        /// Returns true if the property is required.
+        /// Returns <see langword="true" /> if the property is required.
         ///</summary>
         public override bool IsRequired
         {
@@ -95,17 +94,129 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             get { return declaringElement; }
         }
 
-        #region IElementAssociation Members
-
-        ElementViewModel IElementAssociation.AssociatedElement
+        /// <summary>
+        /// Indicates the object is being disposed.
+        /// </summary>
+        /// <param name="disposing">Indicates <see cref="ViewModel.Dispose(bool)"/> was invoked through an explicit call to <see cref="ViewModel.Dispose()"/> instead of a finalizer call.</param>
+        protected override void Dispose(bool disposing)
         {
-            get { return DeclaringElement; }
+            if (disposing)
+            {
+                this.declaringElement.PropertyChanged -= DeclaringElementPropertyChanged;
+            }
+
+            base.Dispose(disposing);
         }
 
-        string IElementAssociation.ElementName
+        private void DeclaringElementPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "Name")
+            {
+                this.OnPropertyChanged("ContainingElementDisplayName");
+            }
+        }
+
+        #region ILogicalPropertyContainerElement Members
+
+        ElementViewModel ILogicalPropertyContainerElement.ContainingElement
+        {
+            get 
+            { 
+                return DeclaringElement; 
+            }
+        }
+
+        string ILogicalPropertyContainerElement.ContainingElementDisplayName
         {
             get { return DeclaringElement.Name; }
         }
+
+        #endregion
+
+        #region IEnvironmentalOverridesProperty Members
+
+        /// <summary>
+        /// Gets a value indicating that this property supports the ability to be over-ridden.
+        /// </summary>
+        public virtual bool SupportsOverride
+        {
+            get
+            {
+                if (!DeclaringElement.IsElementPathReliableXPath) return false;
+
+                //we need this to be sure the property attribute name is correct.
+                if (configurationProperty == null) return false;
+
+                if (Hidden) return false;
+
+                if (ReadOnly) return false;
+
+                var overridesAttribute = Attributes.OfType<EnvironmentalOverridesAttribute>().FirstOrDefault();
+                if (overridesAttribute == null || overridesAttribute.StorageConverterType == null)
+                {
+                    if ((!typeof(IConvertible).IsAssignableFrom(PropertyType)) &&
+                        (!typeof(ConfigurationElement).IsAssignableFrom(PropertyType)))
+                        return false;
+                }
+
+                return true;
+            }
+        }
+
+
+        /// <summary>
+        /// The name of the attribute which is used to serialize this configuration property in XML.
+        /// </summary>
+        public virtual string PropertyAttributeName
+        {
+            get { return configurationProperty.Name; }
+        }
+
+
+        /// <summary>
+        /// The XPath to the XML element that declares the attribute for this configuration property.
+        /// </summary>
+        public virtual string ContainingElementXPath 
+        {
+            get { return DeclaringElement.Path; }
+        }
+
+        /// <summary>
+        /// The name of the configuration section that contains the property.
+        /// </summary>
+        public virtual string ConfigurationSectionName
+        {
+            get { return declaringElement.ContainingSection.SectionName; }
+        }
+
+        /// <summary>
+        /// The XPath to the XML element that declares the containing configuration section.
+        /// </summary>
+        public virtual string ContainingSectionXPath
+        {
+            get { return declaringElement.ContainingSection.Path; }
+        }
+
+        /// <summary>
+        /// The <see cref="TypeConverter"/> that converts the internal overridden value to a string that can be stored in the delta configuration file.<br/>
+        /// </summary>
+        /// <remarks>
+        /// In order to use a default implementation, return an instance of <see cref="Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.EnvironmentalOverrides.DefaultDeltaConfigurationStorageConverter"/>.
+        /// </remarks>
+        public virtual TypeConverter DeltaConfigurationStorageConverter 
+        {
+            get
+            {
+                var overridesAttribute = Attributes.OfType<EnvironmentalOverridesAttribute>().FirstOrDefault();
+                if (overridesAttribute == null || overridesAttribute.StorageConverterType == null)
+                {
+                    return new DefaultDeltaConfigurationStorageConverter();
+                }
+                TypeConverter storageConverter = Activator.CreateInstance(overridesAttribute.StorageConverterType) as TypeConverter;
+                return new InteropDeltaStorageConverter(storageConverter);
+            }
+        }
+        
 
         #endregion
     }

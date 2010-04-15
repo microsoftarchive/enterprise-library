@@ -38,6 +38,22 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 			: base(name, typeof(RangeValidator))
 		{ }
 
+        private const string CulturePropertyName = "culture";
+
+        /// <summary>
+        /// Gets or sets the name of the culture that will be used to read lower and upperbound from the configuration file.
+        /// </summary>
+        [ConfigurationProperty(CulturePropertyName)]
+        [TypeConverter(typeof(ConfigurationCultureInfoConverter))]
+        [ViewModel(ValidationDesignTime.ViewModelTypeNames.RangeValidatorCultureProperty)]
+        [ResourceDescription(typeof(DesignResources), "RangeValidatorDataCultureDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "RangeValidatorDataCultureDisplayName")]
+        public CultureInfo Culture
+        {
+            get { return (CultureInfo)this[CulturePropertyName]; }
+            set { this[CulturePropertyName] = value; }
+        }
+
 		/// <summary>
 		/// Creates the <see cref="RangeValidator"/> described by the configuration object.
 		/// </summary>
@@ -54,8 +70,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 				typeConverter = TypeDescriptor.GetConverter(targetType);
 				if (typeConverter != null)
 				{
-					lowerBound = (IComparable)typeConverter.ConvertFromString(null, CultureInfo.CurrentCulture, LowerBound);
-					upperBound = (IComparable)typeConverter.ConvertFromString(null, CultureInfo.CurrentCulture, UpperBound); 
+                    //backwards compatibility
+                    var conversionCulture = Culture ?? CultureInfo.CurrentCulture;
+
+                    lowerBound = (IComparable)typeConverter.ConvertFromString(null, conversionCulture, LowerBound);
+                    upperBound = (IComparable)typeConverter.ConvertFromString(null, conversionCulture, UpperBound); 
 				}
 			}
 

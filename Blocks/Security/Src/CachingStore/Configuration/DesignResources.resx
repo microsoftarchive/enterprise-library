@@ -118,37 +118,37 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CachingStoreProviderDataAbsoluteExpirationDescription" xml:space="preserve">
-    <value>997 - The number of minutes since the security information was first added to the cache that it will expire. The default is 60 minutes.</value>
+    <value>The number of minutes since the security information was first added to the cache that it will expire. The default is 60 minutes.</value>
   </data>
   <data name="CachingStoreProviderDataAbsoluteExpirationDisplayName" xml:space="preserve">
     <value>Absolute Expiration (minutes)</value>
   </data>
   <data name="CachingStoreProviderDataCacheManagerDescription" xml:space="preserve">
-    <value>999 - The name of the Cache Manager configured in the Caching Application Block Cache to use as the security information store.</value>
+    <value>The name of the Cache Manager configured in the Caching Application Block Cache to use as the security information store.</value>
   </data>
   <data name="CachingStoreProviderDataCacheManagerDisplayName" xml:space="preserve">
     <value>Cache Manager</value>
   </data>
   <data name="CachingStoreProviderDataDescription" xml:space="preserve">
-    <value>995 - A providers that implements a cache for storing security information. It uses the caching mechanism implemented by the Caching Application Block.</value>
+    <value>A provider that implements a cache for storing security information. It uses the caching mechanism implemented by the Caching Application Block.</value>
   </data>
   <data name="CachingStoreProviderDataDisplayName" xml:space="preserve">
     <value>Security Cache</value>
   </data>
   <data name="CachingStoreProviderDataNameDescription" xml:space="preserve">
-    <value>1001 - The name of the Caching Store Provider.</value>
+    <value>The name of the Caching Store Provider.</value>
   </data>
   <data name="CachingStoreProviderDataNameDisplayName" xml:space="preserve">
     <value>Name</value>
   </data>
   <data name="CachingStoreProviderDataSlidingExpirationDescription" xml:space="preserve">
-    <value>1003 - The number of minutes since the security information was last accessed that it will expire. The default is 10 minutes.</value>
+    <value>The number of minutes since the security information was last accessed that it will expire. The default is 10 minutes.</value>
   </data>
   <data name="CachingStoreProviderDataSlidingExpirationDisplayName" xml:space="preserve">
     <value>Sliding Expiration Time (minutes)</value>
   </data>
   <data name="CachingStoreProviderDataTypeNameDescription" xml:space="preserve">
-    <value>1005 - The fully qualified type name of the Caching Store Provider .</value>
+    <value>The fully qualified type name of the Caching Store Provider .</value>
   </data>
   <data name="CachingStoreProviderDataTypeNameDisplayName" xml:space="preserve">
     <value>Type</value>

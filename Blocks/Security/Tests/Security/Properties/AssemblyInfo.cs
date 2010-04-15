@@ -14,6 +14,6 @@ using System.Reflection;
 
 [assembly : AssemblyTitle("Enterprise Library Security Application Block Tests")]
 [assembly : AssemblyDescription("Enterprise Library Security Application Block Tests")]
-[assembly: AssemblyVersion("4.1.0.0")]
+[assembly: AssemblyVersion("5.0.414.0")]
 [assembly: CLSCompliant(false)]
 

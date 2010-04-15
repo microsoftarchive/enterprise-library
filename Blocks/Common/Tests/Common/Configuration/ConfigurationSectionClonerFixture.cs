@@ -43,6 +43,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
         }
 
         [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void then_cloning_null_section_throws_argument_null_exception()
+        {
+            cloner.Clone(null);
+        }
+
+        [TestMethod]
         public void then_attributes_are_cloned_too()
         {
             Assert.IsTrue(clonedSection.Custom.Attributes.Cast<string>().Any(x => x == "k1"));

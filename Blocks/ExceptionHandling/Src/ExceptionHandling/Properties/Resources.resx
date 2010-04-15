@@ -303,4 +303,7 @@
   <data name="WrapExceptionTypeNameDisplayName" xml:space="preserve">
     <value>Wrap exception type</value>
   </data>
+  <data name="CantSwallowNonVoidReturnMessage" xml:space="preserve">
+    <value>Cannot swallow exceptions for methods with non-null return type.</value>
+  </data>
 </root>

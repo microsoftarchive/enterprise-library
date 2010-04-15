@@ -91,9 +91,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Expirations
     {
         private readonly string format;
 
-        private static readonly char argumentDelimiter = Convert.ToChar(",", CultureInfo.CurrentUICulture);
-        private static readonly char wildcardAll = Convert.ToChar("*", CultureInfo.CurrentUICulture);
-        private static readonly char refreshDelimiter = Convert.ToChar(" ", CultureInfo.CurrentUICulture);
+        private static readonly char argumentDelimiter = Convert.ToChar(",", CultureInfo.InvariantCulture);
+        private static readonly char wildcardAll = Convert.ToChar("*", CultureInfo.InvariantCulture);
+        private static readonly char refreshDelimiter = Convert.ToChar(" ", CultureInfo.InvariantCulture);
 
         private int[] minutes;
         private int[] hours;
@@ -352,7 +352,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Expirations
                 result = new int[values.Length];
                 for (int index = 0; index < values.Length; index++)
                 {
-                    result[index] = int.Parse(values[index], CultureInfo.CurrentUICulture);
+                    result[index] = int.Parse(values[index], CultureInfo.InvariantCulture);
                 }
             }
             return result;

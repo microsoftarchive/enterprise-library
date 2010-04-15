@@ -169,10 +169,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
             get { return Resources.ContainsCharactersNegatedDefaultMessageTemplate; }
         }
 
-        #region test only properties
-
         /// <summary>
-        /// 
+        /// The character set to validate against.
         /// </summary>
         public string CharacterSet
         {
@@ -180,13 +178,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         }
 
         /// <summary>
-        /// 
+        /// How does this validator check?
         /// </summary>
         public ContainsCharacters ContainsCharacters
         {
             get { return containsCharacters; }
         }
-
-        #endregion
     }
 }

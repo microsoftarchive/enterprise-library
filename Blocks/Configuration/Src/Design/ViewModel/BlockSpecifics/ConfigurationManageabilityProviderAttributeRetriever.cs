@@ -20,6 +20,8 @@ using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Servi
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics
 {
+
+#pragma warning disable 1591
     /// <summary>
     /// This type supports the Enterprise Library Manageability Extensions infrastructure and is not intended to 
     /// be used directly from your code.
@@ -97,4 +99,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.B
             }
         }
     }
+
+#pragma warning restore 1591
 }

@@ -66,7 +66,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         [ConfigurationProperty(defaultLevelProperty, IsRequired = true, DefaultValue = SourceLevels.All)]
         [ResourceDescription(typeof(DesignResources), "TraceSourceDataDefaultLevelDescription")]
         [ResourceDisplayName(typeof(DesignResources), "TraceSourceDataDefaultLevelDisplayName")]
-        //[System.ComponentModel.Editor(CommonDesignTime.EditorTypes.Flags, CommonDesignTime.EditorTypes.FrameworkElement)]
+        [ViewModel(LoggingDesignTime.ViewModelTypeNames.SourceLevelsProperty)]
         public SourceLevels DefaultLevel
         {
             get { return (SourceLevels)base[defaultLevelProperty]; }
@@ -88,7 +88,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// <summary>
         /// Gets the collection of references to trace listeners for the trace source.
         /// </summary>
-        [ConfigurationProperty(traceListenersProperty)]        
+        [ConfigurationProperty(traceListenersProperty)]
         [ConfigurationCollection(typeof(TraceListenerReferenceData))]
         [ResourceDescription(typeof(DesignResources), "TraceSourceDataTraceListenersDescription")]
         [ResourceDisplayName(typeof(DesignResources), "TraceSourceDataTraceListenersDisplayName")]

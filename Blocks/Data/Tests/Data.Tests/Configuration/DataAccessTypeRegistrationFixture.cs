@@ -70,6 +70,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration
             registration.AssertForServiceType(typeof(DefaultDataEventLogger))
                 .IsDefault();
         }
+
+        [TestMethod]
+        public void ThenEventLoggerIsNotPublicName()
+        {
+            var registration = registrations.Where(r => r.ServiceType == typeof(DefaultDataEventLogger)).First();
+
+            registration.AssertForServiceType(typeof(DefaultDataEventLogger))
+                .IsNotPublicName();
+        }
     }
 
     [TestClass]
@@ -117,7 +126,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration
             registration
                 .AssertForServiceType(typeof(Database))
                 .ForName("sql connection")
-                .ForImplementationType(typeof(SqlDatabase));
+                .ForImplementationType(typeof(SqlDatabase))
+                .IsPublicName();
 
             registration.AssertConstructor()
                 .WithValueConstructorParameter("connection string")
@@ -169,7 +179,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration
             registration
                 .AssertForServiceType(typeof(Database))
                 .ForName("odbc connection")
-                .ForImplementationType(typeof(GenericDatabase));
+                .ForImplementationType(typeof(GenericDatabase))
+                .IsPublicName();
 
             registration.AssertConstructor()
                 .WithValueConstructorParameter("connection string")
@@ -219,6 +230,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration
         public void WhenRegistrationsRequested_ThenReturnsThreeRegistrationsForDatabases()
         {
             Assert.AreEqual(3, settings.GetRegistrations(configurationSource).Where(r=> r.ServiceType == typeof(Database)).Count());
+        }
+
+        [TestMethod]
+        public void WhenRegistrationsRequested_ThenDatabaseRegistrationsArePublicNames()
+        {
+            Assert.IsTrue(settings.GetRegistrations(configurationSource).Where(r => r.ServiceType == typeof(Database)).All(r => r.IsPublicName));
         }
 
         [TestMethod]
@@ -284,7 +301,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration
 
             registration.AssertForServiceType(typeof(Database))
                 .ForName("myConnectionName")
-                .ForImplementationType(typeof(OracleDatabase));
+                .ForImplementationType(typeof(OracleDatabase))
+                .IsPublicName();
 
             IEnumerable<IOraclePackage> packages;
 
@@ -496,6 +514,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests.Configuration
                 .First(db => db.Name == "sql connection");
 
             Assert.IsFalse(typeRegistration.IsDefault);
+            Assert.IsTrue(typeRegistration.IsPublicName);
         }
     }
 

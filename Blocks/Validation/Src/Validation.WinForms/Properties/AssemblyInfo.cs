@@ -16,6 +16,6 @@ using System.Security.Permissions;
 [assembly : SecurityPermission(SecurityAction.RequestMinimum)]
 [assembly : AssemblyTitle("Enterprise Library Validation Application Block WinForms Integration")]
 [assembly : AssemblyDescription("Enterprise Library Validation Application Block WinForms Integration")]
-[assembly : AssemblyVersion("4.1.0.0")]
+[assembly : AssemblyVersion("5.0.414.0")]
 [assembly : AllowPartiallyTrustedCallers]
 [assembly : SecurityTransparent]

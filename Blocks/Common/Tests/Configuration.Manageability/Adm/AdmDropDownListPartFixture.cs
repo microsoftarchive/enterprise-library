@@ -13,12 +13,22 @@ using System.Collections.Generic;
 using System.IO;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability.Adm;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability.Tests.Adm
 {
     [TestClass]
     public class AdmDropDownListPartFixture
     {
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void AdmDropDownListPartWriteWithNullWriterThrows()
+        {
+            AdmDropDownListPart part = new AdmDropDownListPart("name", "key", "value", new List<AdmDropDownListItem>(), null);
+
+            part.Write(null);
+        }
+
         [TestMethod]
         public void InstanceGeneratesAppropriateAdmTextWithoutDefault()
         {

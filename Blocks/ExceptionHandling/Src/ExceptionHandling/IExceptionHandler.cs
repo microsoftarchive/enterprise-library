@@ -16,7 +16,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
 {
     /// <summary>
     /// Defines the contract for an ExceptionHandler.  An ExceptionHandler contains specific handling
-    /// logic (i.e. logging the exception, replacing the exception, etc.) that is executed in a chain of multiple
+    /// logic (i.e. logging the exception, replacing the exception, and so forth.) that is executed in a chain of multiple
     /// ExceptionHandlers.  A chain of one or more ExceptionHandlers is executed based on the exception type being 
     /// handled, as well as the <see cref="ExceptionPolicy"/>.  <seealso cref="ExceptionPolicy.HandleException(Exception,String)"/>
     /// </summary>    

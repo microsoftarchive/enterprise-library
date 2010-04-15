@@ -217,15 +217,6 @@ Expected {2} but got {3} instead.</value>
   <data name="ExceptionUnexpectedType" xml:space="preserve">
     <value>The expected type '{0}' was not provided.</value>
   </data>
-  <data name="ExceptionWmiImplementationAttributeNotFound" xml:space="preserve">
-    <value>No WmiImplementationAttribute was found for implementation '{0}' on type {1}.</value>
-  </data>
-  <data name="ExceptionWmiImplementationIncompatibleType" xml:space="preserve">
-    <value>The type specified in the WmiImplementationAttribute for implementation '{0}' on type {2} is incompatible with the requested type {1}.</value>
-  </data>
-  <data name="ExceptionWmiImplementationInvalidTypeName" xml:space="preserve">
-    <value>The type specified in the WmiImplementationAttribute for implementation '{0}' on type {1} is invalid or cannot be found.</value>
-  </data>
   <data name="GroupPolicyWatcherThread" xml:space="preserve">
     <value>Group policy notification thread</value>
   </data>
@@ -240,9 +231,6 @@ Expected {2} but got {3} instead.</value>
   </data>
   <data name="InstrumentationSectionPolicyName" xml:space="preserve">
     <value>Specify settings for the instrumentation section</value>
-  </data>
-  <data name="InstrumentationSectionWmiEnabledPartName" xml:space="preserve">
-    <value>WMI enabled</value>
   </data>
   <data name="ManageableConfigurationSourceName" xml:space="preserve">
     <value>Manageable Configuration Source</value>

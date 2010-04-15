@@ -75,6 +75,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         /// <param name="fieldInfo">The field.</param>
         public void UpdateFlyweight(ValidatedFieldReference validatedFieldReference, FieldInfo fieldInfo)
         {
+            if (fieldInfo == null) throw new ArgumentNullException("fieldInfo");
+
             this.UpdateFlyweight(validatedFieldReference, fieldInfo, fieldInfo.FieldType);
         }
 
@@ -85,6 +87,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         /// <param name="methodInfo">The method.</param>
         public void UpdateFlyweight(ValidatedMethodReference validatedMethodReference, MethodInfo methodInfo)
         {
+            if (methodInfo == null) throw new ArgumentNullException("methodInfo");
+
             UpdateFlyweight(validatedMethodReference, methodInfo, methodInfo.ReturnType);
         }
 
@@ -95,6 +99,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         /// <param name="propertyInfo">The property.</param>
         public void UpdateFlyweight(ValidatedPropertyReference validatedPropertyReference, PropertyInfo propertyInfo)
         {
+            if (propertyInfo == null) throw new ArgumentNullException("propertyInfo");
+
             UpdateFlyweight(validatedPropertyReference, propertyInfo, propertyInfo.PropertyType);
         }
 

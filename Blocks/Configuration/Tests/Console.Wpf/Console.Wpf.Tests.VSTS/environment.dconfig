@@ -1,18 +1,17 @@
 ﻿<configuration>
   <configSections>
-    <section name="EnvironmentMergeData" type="Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides.Configuration.EnvironmentMergeSection, Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null" />
+    <section name="environmentallyOverriddenProperties" type="Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides.Configuration.EnvironmentalOverridesSection, Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides, Version=4.1.0.0, Culture=neutral, PublicKeyToken=null" />
   </configSections>
-  <EnvironmentMergeData environmentName="Environment" environmentConfigurationFile="environmentoutput.config">
-    <mergeElements>
-      <override nodePath="/LoggingSettings:Logging Settings/NamedElementCollection`1:Trace Sources/TraceSourceData:General"
-          overrideProperties="true">
-        <overridddenProperties>
-          <add key="AutoFlush" value="True" />
-          <add key="DefaultLevel" value="All" />
-          <add key="NewTraceListener" value="Event Log Listener" />
-          <add key="SendTo" value="Event Log Listener" />
-        </overridddenProperties>
+  <environmentallyOverriddenProperties environmentName="Environment" environmentConfigurationFile="environmentoutput.config">
+    <designtimeLogicalPropertyGroups>
+      <override logicalParentElementPath="/configuration/cachingConfiguration/cacheManagers/add[@name='Cache Manager']">
+        <overriddenProperties>
+          <property containingConfigurationSectionName="cachingConfiguration" containingSectionXPath="/configuration/cachingConfiguration" containingElementXPath="/configuration/cachingConfiguration/cacheManagers/add[@name='Cache Manager']" attribute="backingStoreName" overridenValue="NullBackingStore" />
+          <property containingConfigurationSectionName="cachingConfiguration" containingSectionXPath="/configuration/cachingConfiguration" containingElementXPath="/configuration/cachingConfiguration/cacheManagers/add[@name='Cache Manager']" attribute="expirationPollFrequencyInSeconds" overridenValue="1" />
+          <property containingConfigurationSectionName="cachingConfiguration" containingSectionXPath="/configuration/cachingConfiguration" containingElementXPath="/configuration/cachingConfiguration/cacheManagers/add[@name='Cache Manager']" attribute="maximumElementsInCacheBeforeScavenging" overridenValue="1" />
+          <property containingConfigurationSectionName="cachingConfiguration" containingSectionXPath="/configuration/cachingConfiguration" containingElementXPath="/configuration/cachingConfiguration/cacheManagers/add[@name='Cache Manager']" attribute="numberToRemoveWhenScavenging" overridenValue="1" />
+        </overriddenProperties>
       </override>
-    </mergeElements>
-  </EnvironmentMergeData>
+    </designtimeLogicalPropertyGroups>
+  </environmentallyOverriddenProperties>
 </configuration>

@@ -16,22 +16,33 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Configuration;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
-using System.Windows;
 using System.Windows.Input;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design.Validation;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Configuration.Design.HostAdapterV5;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Properties;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Validation;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
 using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.Utility;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
 {
+    /// <summary>
+    /// The <see cref="ElementViewModel"/> provides a description of a <see cref="ConfigurationElement"/> 
+    /// displayed in the Enterprise Library Configuration Design tool.
+    /// </summary>
+    /// <remarks>
+    /// The <see cref="ElementViewModel"/> collects metadata about a <see cref="ConfigurationElement"/> using
+    /// reflection and additional <see cref="Attribute"/> values provided during construction.</remarks>
     [DebuggerDisplay("Name : {Name} ConfigurationType : {ConfigurationType} Path = {Path}")]
-    public class ElementViewModel : ViewModel, INotifyPropertyChanged, INeedInitialization
+    public class ElementViewModel : ViewModel, INotifyPropertyChanged, IEnvironmentalOverridesElement
     {
         private readonly ConfigurationPropertyAttribute configurationProperty;
         private readonly PropertyDescriptor declaringProperty;
         private readonly MetadataCollection metadata;
-        private readonly ConfigurationElement parentElement;
         private readonly ElementViewModel parentElementModel;
         private readonly ElementViewModelPathBuilder path;
         private readonly ConfigurationElement thisElement;
@@ -39,32 +50,54 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         private ObservableCollection<ElementViewModel> childElements;
         private IEnumerable<CommandModel> commands;
         private ElementLookup elementLookup;
-
+        private Guid elementId = Guid.NewGuid();
+        private bool inheritedFromParentConfiguration = false;
         private ExtendedPropertyContainer extendedProperties;
+        private ObservableCollection<ValidationResult> validtionResults = new ObservableCollection<ValidationResult>();
 
         private bool promoteCommands = false;
         private ObservableCollection<Property> properties;
 
+        /// <summary>
+        /// Initializes a new instance of <see cref="ElementViewModel" />.
+        /// </summary>
+        /// <param name="parentElementModel">The parent <see cref="ElementViewModel"/>.</param>
+        /// <param name="declaringProperty">The <see cref="PropertyDescriptor"/> describing the <see cref="ConfigurationElement"/> the <see cref="ElementViewModel"/> represents.</param>
         [InjectionConstructor]
         public ElementViewModel(ElementViewModel parentElementModel, PropertyDescriptor declaringProperty)
             : this(parentElementModel, declaringProperty, new Attribute[0])
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of <see cref="ElementViewModel" />.
+        /// </summary>
+        /// <param name="parentElementModel">The parent <see cref="ElementViewModel"/>.</param>
+        /// <param name="declaringProperty">The <see cref="PropertyDescriptor"/> describing the <see cref="ConfigurationElement"/> the <see cref="ElementViewModel"/> represents.</param>        
+        /// <param name="additionalAttributes">Additional metadata <see cref="Attribute"/> values to apply to this item.</param>
         public ElementViewModel(ElementViewModel parentElementModel, PropertyDescriptor declaringProperty,
                                 IEnumerable<Attribute> additionalAttributes)
             : this(
-                parentElementModel, declaringProperty.GetValue(parentElementModel.thisElement) as ConfigurationElement,
-                declaringProperty.Attributes.OfType<Attribute>(), additionalAttributes)
+                parentElementModel,
+                declaringProperty.GetValue(parentElementModel.thisElement) as ConfigurationElement,
+                declaringProperty.Attributes.OfType<Attribute>(),
+                additionalAttributes)
         {
             this.declaringProperty = declaringProperty;
         }
 
+        /// <summary>
+        /// Initializes a new instance of <see cref="ElementViewModel" />.
+        /// </summary>
+        /// <param name="parentElementModel">The parent <see cref="ElementViewModel"/>.</param>
+        /// <param name="thisElement">The </param>
+        /// <param name="additionalAttributes">Additional metadata <see cref="Attribute"/> values to apply to this item.</param>
         protected ElementViewModel(ElementViewModel parentElementModel, ConfigurationElement thisElement,
                                    IEnumerable<Attribute> additionalAttributes)
-            : this(
-                parentElementModel, thisElement, TypeDescriptor.GetAttributes(thisElement).OfType<Attribute>(),
-                additionalAttributes)
+            : this(parentElementModel,
+                    thisElement,
+                    TypeDescriptor.GetAttributes(thisElement).OfType<Attribute>(),
+                    additionalAttributes)
         {
         }
 
@@ -81,9 +114,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
 
             if (parentElementModel != null)
             {
-                parentElement = parentElementModel.thisElement;
-                this.parentElementModel.PropertyChanged +=
-                    (sender, args) => { if (args.PropertyName == "Path") OnPropertyChanged("Path"); };
+                this.parentElementModel.PropertyChanged += ParentPropertyChangedHandler;
             }
 
             promoteCommands = metadata.Attributes.OfType<PromoteCommandsAttribute>().Any();
@@ -93,19 +124,25 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         #region INeedInitialization Members
 
         /// <summary>
-        /// Initialization for this element during the <see cref="ConfigurationSourceModel.Load"/> or <see cref="ConfigurationSourceModel.AddSection"/>.
+        /// Initialization for this element during the <see cref="ConfigurationSourceModel.Load"/> or <see cref="ConfigurationSourceModel.AddSection(string,System.Configuration.ConfigurationSection)"/>.
         /// </summary>
         /// <param name="context">The load context for this call</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Validated with Guard class")]
         public virtual void Initialize(InitializeContext context)
         {
+            Guard.ArgumentNotNull(context, "context");
+
+            EnsureHasChildElements();
+            inheritedFromParentConfiguration = (context.WasLoadedFromSource && ConfigurationElement != null && ConfigurationElement.ElementInformation.IsPresent == false);
         }
 
         #endregion
 
         /// <summary>
-        /// Injection Method used to supply additional dependencies to the <see cref="ElementViewModel"/>
+        /// Injection Method used to supply additional dependencies to the <see cref="ElementViewModel"/>.
         /// </summary>
-        /// <param name="elementLookup"></param>
+        /// <param name="elementLookup">The element registration.</param>
+        /// <param name="applicationModel">The <see cref="IApplicationModel"/> this element is part of.</param>
         [InjectionMethod]
         public void ElementViewModelServiceDependencies(ElementLookup elementLookup, IApplicationModel applicationModel)
         {
@@ -123,12 +160,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
 
         private void PropagatePropertyValueChanged(string propertyName, string thisPropertyName)
         {
-            var propertyToListenFor = Property(propertyName);
+            var propertyToListenFor = Property(propertyName).BindableProperty;
             if (propertyToListenFor != null)
             {
                 propertyToListenFor.PropertyChanged += (sender, args) =>
                                                            {
-                                                               if (args.PropertyName == "Value")
+                                                               if (args.PropertyName == "BindableValue")
                                                                {
                                                                    OnPropertyChanged(thisPropertyName);
                                                                }
@@ -136,11 +173,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             }
         }
 
+        #region Validation
         ///<summary>
-        /// Validates the <see cref="Properties"/> of this <see cref="ElementViewModel"/>
+        /// Validates this <see cref="ElementViewModel"/> and it's <see cref="Properties"/>.
         ///</summary>
         public virtual void Validate()
         {
+            ValidateElement();
+
             foreach (var property in Properties)
             {
                 property.Validate();
@@ -152,6 +192,78 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+        private void ValidateElement()
+        {
+            var validators = GetValidators();
+            var results = new List<ValidationResult>();
+            foreach (var validator in validators)
+            {
+                try
+                {
+                    validator.Validate(this, null, results);
+                }
+                catch (Exception ex)
+                {
+                    results.Add(new ElementValidationResult(this, string.Format(CultureInfo.CurrentCulture, Resources.ValidationErrorExceptionMessage, ex.Message), true));
+                }
+            }
+
+            foreach (IDisposable error in validtionResults)
+            {
+                error.Dispose();
+            }
+
+            if (validtionResults.Any())
+            {
+                validtionResults.Clear();
+            }
+
+            foreach (var result in results)
+            {
+                validtionResults.Add(result);
+            }
+        }
+
+
+        /// <summary>
+        /// Retrieves the <see cref="Validator"/> items for this element.
+        /// </summary>
+        /// <remarks>
+        /// Element <see cref="Validator"/> items are specified by using the <see cref="ElementValidationAttribute"/>.</remarks>
+        /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Validators")]
+        protected virtual IEnumerable<Validator> GetValidators()
+        {
+            return Attributes.OfType<ElementValidationAttribute>()
+                .Select(v => ContainingSection.CreateValidatorInstance(v.ValidatorType));
+        }
+
+        ///<summary>
+        /// The validation results for this <see cref="ElementViewModel"/>.
+        ///</summary>
+        public virtual IEnumerable<ValidationResult> ValidationResults
+        {
+            get
+            {
+                return validtionResults;
+            }
+        }
+
+        #endregion
+
+
+        #region Event Subscription
+        private void ParentPropertyChangedHandler(object o, PropertyChangedEventArgs args)
+        {
+            if (args.PropertyName == "Path") OnPropertyChanged("Path");
+        }
+
+        #endregion
+
+        /// <summary>
+        /// Makes this element the selected one on the <see cref="IApplicationModel"/>.
+        /// </summary>
         public void Select()
         {
             applicationModel.OnSelectedElementChanged(this);
@@ -159,13 +271,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         }
 
         private bool isSelected;
+        
+        /// <summary>
+        /// Gets or sets the value indicating this element is selected.
+        /// </summary>
         public bool IsSelected
         {
             get
             {
                 return isSelected;
             }
-            set
+            internal set
             {
                 if (isSelected != value)
                 {
@@ -177,6 +293,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
 
 
         private bool propertiesShown;
+        /// <summary>
+        /// Gets or sets the value indicating if this element's <see cref="Properties"/> are shown in the view.
+        /// </summary>
         public bool PropertiesShown
         {
             get
@@ -194,11 +313,62 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             }
         }
 
+        private object bindable;
+        private IEnumerable<ElementViewModel> cachedAncestors;
+
+        /// <summary>
+        /// Creates the element the view binds to.  By default it is the element itself.
+        /// </summary>
+        /// <returns></returns>
+        protected virtual object CreateBindable()
+        {
+            return this;
+        }
+
+        /// <summary>
+        /// Gets the element the view should bind to.  By default it is the element itself.
+        /// </summary>
+        /// <remarks>This is the cached bindable value created from <see cref="CreateBindable"/>.</remarks>
+        /// <seealso cref="CreateBindable"/>
+        public override object Bindable
+        {
+            get
+            {
+                return bindable ?? (bindable = CreateBindable());
+            }
+        }
+
         #region Identity
 
-        //property witn null-value.
+        /// <summary>
+        /// Gets or sets a value indicating that this configuratio was inherited from a parent configuration (such as machine.config).
+        /// </summary>
+        public bool InheritedFromParentConfiguration
+        {
+            get { return inheritedFromParentConfiguration; }
+
+            //setter available for unittesting.
+            set { inheritedFromParentConfiguration = value; }
+        }
+
+        /// <summary>
+        /// Gets a unique identifier for this element.        
+        /// </summary>
+        /// <remarks>
+        /// This identifier is unique within the lifetime of this element instance, but is not persisted in any way.
+        /// </remarks>
+        public Guid ElementId
+        {
+            get { return elementId; }
+        }
+
+        
+        /// <summary>
+        /// Gets a value indicating that the underlying <see cref="ConfigurationElement"/> is <see langword="null"/>
+        /// </summary>
+        //property with null-value.
         //empty leaf
-        private bool IsNull
+        public bool IsNull
         {
             get { return thisElement == null; }
         }
@@ -211,7 +381,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         /// </remarks>
         public virtual Type ConfigurationType
         {
-            get { return thisElement.GetType(); }
+            get { return thisElement == null ? declaringProperty.PropertyType : thisElement.GetType(); }
         }
 
         /// <summary>
@@ -228,6 +398,34 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         public PropertyDescriptor DeclaringProperty
         {
             get { return declaringProperty; }
+        }
+
+
+        /// <summary>
+        /// Gets a string that can be used to uniquely identify this <see cref="ElementViewModel"/>. <br/>
+        /// </summary>
+        public virtual string Path
+        {
+            get { return path.XPath; }
+        }
+
+
+        /// <summary>
+        /// Gets the type path information for an <see cref="ElementViewModel"/> in the
+        /// form ParentTypePath/ConfigurationElementType.
+        /// </summary>
+        public virtual string TypePath
+        {
+            get { return path.TypePath; }
+        }
+
+        /// <summary>
+        /// Gets a string that can be appended to the parent's <see cref="ElementViewModel.Path"/> to compose a <see cref="ElementViewModel.Path"/> used to uniquely identify this <see cref="ElementViewModel"/>. <br/>
+        /// </summary>
+        protected virtual string GetLocalPathPart()
+        {
+            if (configurationProperty == null) return declaringProperty.Name;
+            return configurationProperty.Name;
         }
 
         #endregion
@@ -254,7 +452,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         }
 
         /// <summary>
-        /// Gets the name of the <see cref="ElementViewModel"/> for use in the UI (User Interface).<br/>
+        /// Gets the name of the <see cref="ElementViewModel"/> for use in the user-interface.<br/>
         /// </summary>
         public virtual string Name
         {
@@ -263,8 +461,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
                 var namePropertyAttribute = metadata.Attributes.OfType<NamePropertyAttribute>().FirstOrDefault();
                 if (namePropertyAttribute != null)
                 {
-                    var namePropertiesDisplay = string.Format(namePropertyAttribute.NamePropertyDisplayFormat,
-                                                              Property(namePropertyAttribute.PropertyName).Value);
+                    var namePropertiesDisplay = string.Format(CultureInfo.CurrentCulture, namePropertyAttribute.NamePropertyDisplayFormat,
+                                                              Property(namePropertyAttribute.PropertyName).BindableProperty.BindableValue);
                     return namePropertiesDisplay;
                 }
 
@@ -283,7 +481,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             }
         }
 
-        public Property NameProperty
+        /// <summary>
+        /// Gets the property that provides the 'name' for the element.
+        /// </summary>
+        public virtual Property NameProperty
         {
             get
             {
@@ -297,29 +498,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         }
 
         /// <summary>
-        /// Gets a string that can be used to uniquely identify this <see cref="ElementViewModel"/>. <br/>
+        /// Gets the <see cref="NameProperty"/> internval value as a string representation.
         /// </summary>
-        public virtual string Path
+        public string NamePropertyInternalValue
         {
-            get { return path.XPath; }
-        }
-
-
-        /// <summary>
-        /// Gets the type path information for an <see cref="ElementViewModel"/> in the
-        /// form ParentTypePath/ConfigurationElementType.
-        /// </summary>
-        public virtual string TypePath
-        {
-            get { return path.TypePath; }
-        }
-
-        /// <summary>
-        /// Gets a string that can be appended to the parent's <see cref="ElementViewModel.Path"/> to compose a <see cref="ElementViewModel.Path"/> used to uniquely identify this <see cref="ElementViewModel"/>. <br/>
-        /// </summary>
-        protected virtual string GetLocalPathPart()
-        {
-            return configurationProperty.Name;
+            get
+            {
+                if (NameProperty != null)
+                {
+                    return NameProperty.Value as string;
+                }
+                return null;
+            }
         }
 
         #endregion
@@ -339,9 +529,34 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         }
 
         /// <summary>
+        /// Invoked when this element's <see cref="ChildElements"/> collection is changed.
+        /// </summary>
+        public event NotifyCollectionChangedEventHandler ChildElementsCollectionChange;
+
+        /// <summary>
+        /// Removes an element from the <see cref="ChildElements"/> collection.
+        /// </summary>
+        /// <param name="element"></param>
+        protected void RemoveChildFromView(ElementViewModel element)
+        {
+            EnsureHasChildElements();
+            childElements.Remove(element);
+        }
+
+        /// <summary>
+        /// Adds an element to the <see cref="ChildElements"/> collection.
+        /// </summary>
+        /// <param name="element"></param>
+        protected void AddChildToView(ElementViewModel element)
+        {
+            EnsureHasChildElements();
+            childElements.Add(element);
+        }
+
+        /// <summary>
         /// Gets all <see cref="ElementViewModel"/> instances contained as direct child elements.
         /// </summary>
-        public ObservableCollection<ElementViewModel> ChildElements
+        public IEnumerable<ElementViewModel> ChildElements
         {
             get
             {
@@ -366,12 +581,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             get
             {
                 if (this is SectionViewModel) return (SectionViewModel)this;
-                return AncesterElements().OfType<SectionViewModel>().First();
+                return AncestorElements().OfType<SectionViewModel>().First();
             }
         }
 
         /// <summary>
-        /// Gets all the <see cref="Property"/> intstances that are part of this <see cref="ElementViewModel"/> instance.
+        /// Gets all the <see cref="Property"/> instances that are part of this <see cref="ElementViewModel"/> instance.
         /// </summary>
         /// <returns>
         /// Returns an un evaluated iterator class. <br/>
@@ -380,14 +595,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         {
             var declaredProperties = TypeDescriptor.GetProperties(thisElement)
                 .OfType<PropertyDescriptor>()
-                .Where(
-                x =>
-                !typeof(ConfigurationElement).IsAssignableFrom(x.PropertyType) ||
-                (x.GetEditor(typeof(FrameworkElement)) != null)) //filter out configuration elements
+                .Where(x => !typeof(ConfigurationElement).IsAssignableFrom(x.PropertyType) || (x.Attributes.OfType<EditorAttribute>().Any())) //filter out configuration elements
                 .Where(x => x.Attributes.OfType<ConfigurationPropertyAttribute>().Any())
-                //only the once where we have a configurationPropertyAtt
                 .Select(x => ContainingSection.CreateElementProperty(this, x))
-                .Cast<Property>();
+                .OfType<Property>();
 
             return declaredProperties;
         }
@@ -415,10 +626,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         }
 
         /// <summary>
-        /// Gets all the <see cref="ElementViewModel"/> intstances that are directly contained in this <see cref="ElementViewModel"/> instance.
+        /// Gets all the <see cref="ElementViewModel"/> instances that are directly contained in this <see cref="ElementViewModel"/> instance.
         /// </summary>
         /// <returns>
-        /// An un evaluated iterator class. <br/>
         /// </returns>
         protected virtual IEnumerable<ElementViewModel> GetAllChildElements()
         {
@@ -433,15 +643,33 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
                 .Where(x => x.IsNull == false); //make sure it wasnt an empty leaf
         }
 
-        private void EnsureHasChildElements()
+
+        /// <summary>
+        /// Ensures that that the children of this element have been discovered and populated for <see cref="ChildElements"/>.
+        /// </summary>
+        protected void EnsureHasChildElements()
         {
             if (childElements == null)
             {
                 childElements = new ObservableCollection<ElementViewModel>(GetAllChildElements());
-                childElements.CollectionChanged += (sender, args) => { OnDescendentElementsChanged(this, args); };
+                childElements.CollectionChanged += (sender, args) =>
+                {
+                    var childElementHandler = ChildElementsCollectionChange;
+                    if (childElementHandler != null)
+                    {
+                        childElementHandler(sender, args);
+                    }
+
+                    OnDescendentElementsChanged(this, args);
+                };
             }
         }
 
+        /// <summary>
+        /// Retrieves a child element whose property name matches the specified property name.
+        /// </summary>
+        /// <param name="propertyName">The property name to match to the child element's property name.</param>
+        /// <returns>The located child element or <see langword="null"/></returns>
         public ElementViewModel ChildElement(string propertyName)
         {
             return ChildElements.Where(x => x.declaringProperty.Name == propertyName).FirstOrDefault();
@@ -476,15 +704,37 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         }
 
         /// <summary>
-        /// Gets all ancester <see cref="ElementViewModel"/> for this <see cref="ElementViewModel"/> instance.
+        /// Returns all descending <see cref="ElementViewModel"/> instances relative to this <see cref="ElementViewModel"/>
+        /// whose <see cref="ConfigurationType"/> is assignable to <typeparamref name="T"/>.
         /// </summary>
-        public IEnumerable<ElementViewModel> AncesterElements()
+        /// <typeparam name="T"></typeparam>
+        /// <returns>An empty set or a set <see cref="ElementViewModel"/> items.</returns>
+        public IEnumerable<ElementViewModel> DescendentConfigurationsOfType<T>()
+            where T : ConfigurationElement
+        {
+            return DescendentElements(x => typeof(T).IsAssignableFrom(x.ConfigurationType));
+        }
+
+        /// <summary>
+        /// Gets all ancestors <see cref="ElementViewModel"/> for this <see cref="ElementViewModel"/> instance.
+        /// </summary>
+        public IEnumerable<ElementViewModel> AncestorElements()
+        {
+            if (cachedAncestors == null)
+            {
+                cachedAncestors = CollectAncestors().ToArray();
+            }
+
+            return cachedAncestors;
+        }
+
+        private IEnumerable<ElementViewModel> CollectAncestors()
         {
             if (ParentElement != null)
             {
                 yield return ParentElement;
 
-                foreach (var grandParent in ParentElement.AncesterElements())
+                foreach (var grandParent in ParentElement.AncestorElements())
                 {
                     yield return grandParent;
                 }
@@ -512,7 +762,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         }
 
         ///<summary>
-        /// The <see cref="CommandModel"/> command associated with this configuraiton element.
+        /// The <see cref="CommandModel"/> command associated with this configuration element.
         ///</summary>
         ///<remarks>
         /// Default command are typically provided by the <see cref="ContainingSection"/>.  These may be overridden
@@ -556,16 +806,24 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         protected virtual IEnumerable<CommandModel> GetAllCommands()
         {
             return CreateDeleteCommand()
-                .Union( new CommandModel[] { new ToggleShowPropertiesCommand(this) })
+                .Union(CreateOtherCommands())
                 .Union(CreateCustomCommands())
                 .Union(GetPromotedCommands());
         }
 
+        /// <summary>
+        /// Creates a delete <see cref="CommandModel"/> for this element based on it's <see cref="Attributes"/>.
+        /// </summary>
+        /// <returns></returns>
         protected IEnumerable<CommandModel> CreateDeleteCommand()
         {
             yield return ContainingSection.CreateDeleteCommand(this, Attributes);
         }
 
+        /// <summary>
+        /// Creates any custom commands for this element based on it's <see cref="Attributes"/>.
+        /// </summary>
+        /// <returns></returns>
         protected IEnumerable<CommandModel> CreateCustomCommands()
         {
             foreach (var command in ContainingSection.CreateCustomCommands(this, Attributes))
@@ -574,6 +832,26 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             }
         }
 
+        /// <summary>
+        /// Creates commands other than Add, Delete, or custom command specified via attribute, for this element.
+        /// </summary>
+        /// <returns>
+        /// An enumerable containing instances of <see cref="ToggleShowPropertiesCommand"/> and <see cref="ValidateCommand"/>.
+        /// </returns>
+        protected IEnumerable<CommandModel> CreateOtherCommands()
+        {
+            yield return ContainingSection.CreateCommand<ToggleShowPropertiesCommand>(
+                new Dictionary<Type, object>() { { typeof(ElementViewModel), this } });
+            yield return ContainingSection.CreateCommand<ValidateCommand>(
+                new Dictionary<Type, object>() { { typeof(ElementViewModel), this } });
+        }
+
+        /// <summary>
+        /// Gets any commands promoted by their child elements.
+        /// </summary>
+        /// <remarks>
+        /// Commands promoted by children via the <see cref="PromoteCommandsAttribute"/> appear in their parent's <see cref="Commands"/> list.</remarks>
+        /// <returns></returns>
         protected IEnumerable<CommandModel> GetPromotedCommands()
         {
             foreach (var child in ChildElements)
@@ -593,15 +871,65 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
         ///</summary>
         public virtual void Delete()
         {
+            DeclaringProperty.SetValue(ParentElement.ConfigurationElement, null);
+            OnDeleted();
+        }
+
+        #endregion
+
+        #region IEnvironmentalOverridesElement Members
+
+        /// <summary>
+        /// Gets a value indicating that this Element's <see cref="Path"/> is reliable 
+        /// </summary>
+        public virtual bool IsElementPathReliableXPath
+        {
+            get
+            {
+                if (ParentElement != null && !ParentElement.IsElementPathReliableXPath) return false;
+
+                if (ConfigurationElement == null) return false;
+
+                //we need this to be sure we have a reliable xpath.
+                if (configurationProperty == null) return false;
+
+                if (InheritedFromParentConfiguration) return false;
+
+                return true;
+            }
         }
 
         #endregion
 
         #region Events and Event Invocation
 
+        /// <summary>
+        /// Raised when elements visually related to this element change.
+        /// </summary>
+        public event EventHandler ElementReferencesChanged;
+
+        /// <summary>
+        /// Invokes the <see cref="ElementReferencesChanged"/> event.
+        /// </summary>
+        protected internal void OnElementReferencesChanged()
+        {
+            var handler = ElementReferencesChanged;
+            if (handler != null)
+            {
+                handler(this, EventArgs.Empty);
+            }
+        }
+
+
+        /// <summary>
+        /// Occurs when a property value changes.
+        /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public virtual void OnDeleted()
+        /// <summary>
+        /// Invokes the <see cref="Deleted"/> event.
+        /// </summary>
+        protected internal void OnDeleted()
         {
             var handler = Deleted;
             if (handler != null)
@@ -610,10 +938,57 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             }
         }
 
-        //todo: we can remove this here. though i didnt think i'd hurt having.
-        //removing would mean, relying on the contaning collections NotifyCollectionChange
+        /// <summary>
+        /// Raised when this element is deleted.
+        /// </summary>
         public event EventHandler Deleted;
 
+        /// <summary>
+        /// Indicates the object is being disposed.
+        /// </summary>
+        /// <param name="disposing">Indicates <see cref="ViewModel.Dispose(bool)"/> was invoked through an explicit call to <see cref="ViewModel.Dispose()"/> instead of a finalizer call.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (parentElementModel != null)
+                {
+                    this.parentElementModel.PropertyChanged -= ParentPropertyChangedHandler;
+                }
+
+                if (properties != null)
+                {
+                    foreach (IDisposable prop in properties)
+                    {
+                        prop.Dispose();
+                    }
+
+                    properties.Clear();
+                }
+
+                if (extendedProperties != null)
+                {
+                    extendedProperties.Dispose();
+                    extendedProperties = null;
+                }
+
+                if (childElements != null)
+                {
+                    foreach (var child in childElements)
+                    {
+                        child.Dispose();
+                    }
+                }
+            }
+
+            base.Dispose(disposing);
+        }
+
+        /// <summary>
+        /// Raises the <see cref="DescendentElementsChanged"/> event.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="collectionChanged"></param>
         protected virtual void OnDescendentElementsChanged(ElementViewModel sender,
                                                            NotifyCollectionChangedEventArgs collectionChanged)
         {
@@ -628,8 +1003,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             }
         }
 
+        /// <summary>
+        /// Raised when <see cref="DescendentElements()"/> change.
+        /// </summary>
         public event NotifyCollectionChangedEventHandler DescendentElementsChanged;
 
+        /// <summary>
+        /// Raises the <see cref="PropertyChanged"/> event.
+        /// </summary>
+        /// <param name="propertyName"></param>
         protected virtual void OnPropertyChanged(string propertyName)
         {
             if (propertyName == "Name")
@@ -687,9 +1069,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
 
         #region Nested type: ExtendedPropertyContainer
 
-        private class ExtendedPropertyContainer
+        private class ExtendedPropertyContainer : IDisposable
         {
-            private readonly IElementChangeScope extendedPropetryProviders;
+            private IElementChangeScope extendedPropetryProviders;
             private readonly ObservableCollection<Property> properties;
 
             private readonly Dictionary<IElementExtendedPropertyProvider, Property[]> propertiesByExtensionProviders =
@@ -703,8 +1085,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
                 this.properties = properties;
                 this.subject = subject;
                 extendedPropetryProviders = lookup.FindExtendedPropertyProviders();
-                extendedPropetryProviders.CollectionChanged +=
-                    new NotifyCollectionChangedEventHandler(extendedPropetryProviders_CollectionChanged);
+                extendedPropetryProviders.CollectionChanged += extendedPropetryProviders_CollectionChanged;
 
                 Refresh();
             }
@@ -735,6 +1116,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
                     foreach (var property in extendedProperties)
                     {
                         properties.Remove(property);
+                        property.Dispose();
                     }
                 }
             }
@@ -747,8 +1129,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
                     propertiesByExtensionProviders.Add(provider, extendedProperties);
                     foreach (var extendedProperty in extendedProperties)
                     {
-                        properties.Add(extendedProperty);
                         extendedProperty.Initialize(new InitializeContext());
+                        properties.Add(extendedProperty);
                     }
                 }
             }
@@ -776,16 +1158,32 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
                         break;
                 }
             }
+
+            #region IDisposable Members
+
+            public void Dispose()
+            {
+                if (extendedPropetryProviders != null)
+                {
+                    extendedPropetryProviders.CollectionChanged -= extendedPropetryProviders_CollectionChanged;
+                    extendedPropetryProviders.Dispose();
+                    extendedPropetryProviders = null;
+                }
+
+                GC.SuppressFinalize(this);
+            }
+
+            #endregion
         }
 
         #endregion
-
 
         private class ToggleShowPropertiesCommand : CommandModel
         {
             private readonly ElementViewModel viewModel;
 
-            public ToggleShowPropertiesCommand(ElementViewModel viewModel)
+            public ToggleShowPropertiesCommand(ElementViewModel viewModel, IUIServiceWpf uiService)
+                : base(uiService)
             {
                 this.viewModel = viewModel;
             }
@@ -794,25 +1192,68 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             {
                 get
                 {
-                    return "Toggle Properties";
+                    return Resources.ToggleShowPropertiesCommandTitle;
                 }
             }
 
-            public override bool CanExecute(object parameter)
+            protected override bool InnerCanExecute(object parameter)
             {
                 return true;
             }
 
-            public override void Execute(object parameter)
+            protected override void InnerExecute(object parameter)
             {
                 viewModel.PropertiesShown = !viewModel.PropertiesShown;
+            }
+
+
+            public override string KeyGesture
+            {
+                get
+                {
+                    return new KeyGestureConverter().ConvertToInvariantString(new KeyGesture(Key.Space));
+                }
+            }
+        }
+
+        private class ValidateCommand : CommandModel
+        {
+            private readonly ElementViewModel viewModel;
+            private KeyGestureConverter keyGestureConverter;
+
+            public ValidateCommand(ElementViewModel viewModel, IUIServiceWpf uiService)
+                : base(uiService)
+            {
+                this.viewModel = viewModel;
+                this.keyGestureConverter = new KeyGestureConverter();
+            }
+
+            public override string Title
+            {
+                get
+                {
+                    return Resources.ValidateCommandTitle;
+                }
+            }
+
+            protected override bool InnerCanExecute(object parameter)
+            {
+                return true;
+            }
+
+            protected override void InnerExecute(object parameter)
+            {
+                this.viewModel.Validate();
             }
 
             public override string KeyGesture
             {
                 get
                 {
-                    return new KeyGestureConverter().ConvertToString(new KeyGesture(Key.Space));
+                    return
+                        keyGestureConverter.ConvertToInvariantString(new KeyGesture(Key.V,
+                                                                                    ModifierKeys.Control |
+                                                                                    ModifierKeys.Shift));
                 }
             }
         }

@@ -10,15 +10,16 @@
 //===============================================================================
 
 using System;
+using System.Diagnostics;
 using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Properties;
-using System.Diagnostics;
+using System.Globalization;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Instrumentation
 {
-	/// <summary>
-	/// Defines the logical events that can be instrumented for hash providers.
-	/// </summary>
+    /// <summary>
+    /// Defines the logical events that can be instrumented for hash providers.
+    /// </summary>
     [HasInstallableResourcesAttribute]
     [PerformanceCountersDefinition(counterCategoryName, "CryptographyHelpResourceName")]
     [EventLogDefinition("Application", "Enterprise Library Cryptography")]
@@ -26,7 +27,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Instrument
     {
         static EnterpriseLibraryPerformanceCounterFactory factory = new EnterpriseLibraryPerformanceCounterFactory();
 
-        
+
         /// <summary>
         /// Made public for testing
         /// </summary>
@@ -42,120 +43,115 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Instrument
         /// </summary>
         public const string TotalHashMismatchesPerformedPerformanceCounterName = "Total Hash Mismatches";
 
-		[PerformanceCounter("Hash Operations/sec", "HashOperationPerformedHelpResource", PerformanceCounterType.RateOfCountsPerSecond32)]
-		EnterpriseLibraryPerformanceCounter hashOperationPerformedCounter;
+        [PerformanceCounter("Hash Operations/sec", "HashOperationPerformedHelpResource", PerformanceCounterType.RateOfCountsPerSecond32)]
+        EnterpriseLibraryPerformanceCounter hashOperationPerformedCounter;
 
         [PerformanceCounter(TotalHashOperationPerformedPerformanceCounterName, "TotalHashOperationPerformedHelpResource", PerformanceCounterType.NumberOfItems32)]
         EnterpriseLibraryPerformanceCounter totalHashOperationPerformedPerformanceCounter;
 
-		[PerformanceCounter("Hash Comparisons/sec", "HashComparisonPerformedHelpResource", PerformanceCounterType.RateOfCountsPerSecond32)]
-		EnterpriseLibraryPerformanceCounter hashComparisonPerformedCounter;
+        [PerformanceCounter("Hash Comparisons/sec", "HashComparisonPerformedHelpResource", PerformanceCounterType.RateOfCountsPerSecond32)]
+        EnterpriseLibraryPerformanceCounter hashComparisonPerformedCounter;
 
         [PerformanceCounter(TotalHashComparisonPerformedPerformanceCounterName, "TotalHashComparisonPerformedHelpResource", PerformanceCounterType.NumberOfItems32)]
         EnterpriseLibraryPerformanceCounter totalHashComparisonPerformedPerformanceCounter;
 
-		[PerformanceCounter("Hash Mismatches/sec", "HashMismatchDetectedHelpResource", PerformanceCounterType.RateOfCountsPerSecond32)]
-		EnterpriseLibraryPerformanceCounter hashMismatchDetectedCounter;
+        [PerformanceCounter("Hash Mismatches/sec", "HashMismatchDetectedHelpResource", PerformanceCounterType.RateOfCountsPerSecond32)]
+        EnterpriseLibraryPerformanceCounter hashMismatchDetectedCounter;
 
         [PerformanceCounter(TotalHashMismatchesPerformedPerformanceCounterName, "TotalHashMismatchDetectedHelpResource", PerformanceCounterType.NumberOfItems32)]
         EnterpriseLibraryPerformanceCounter totalHashMismatchesPerformedPerformanceCounter;
 
-		private string instanceName;
+        private string instanceName;
 
         /// <summary>
         /// Made public for testing
         /// </summary>
-		public const string counterCategoryName = "Enterprise Library Cryptography Counters";
+        public const string counterCategoryName = "Enterprise Library Cryptography Counters";
 
-		/// <summary>
+        /// <summary>
         /// Initializes a new instance of the <see cref="HashAlgorithmInstrumentationProvider"/> class.
-		/// </summary>
-		/// <param name="instanceName">The name of the <see cref="IHashProvider"/> instance this instrumentation listener is created for.</param>
-		/// <param name="performanceCountersEnabled"><b>true</b> if performance counters should be updated.</param>
-		/// <param name="eventLoggingEnabled"><b>true</b> if event log entries should be written.</param>
-		/// <param name="wmiEnabled"><b>true</b> if WMI events should be fired.</param>
+        /// </summary>
+        /// <param name="instanceName">The name of the <see cref="IHashProvider"/> instance this instrumentation listener is created for.</param>
+        /// <param name="performanceCountersEnabled"><b>true</b> if performance counters should be updated.</param>
+        /// <param name="eventLoggingEnabled"><b>true</b> if event log entries should be written.</param>
         /// <param name="applicationInstanceName">The application instance name.</param>
-		public HashAlgorithmInstrumentationProvider(string instanceName,
-										   bool performanceCountersEnabled,
-										   bool eventLoggingEnabled,
-										   bool wmiEnabled,
-                                           string applicationInstanceName)
-            : this(instanceName, performanceCountersEnabled, eventLoggingEnabled, wmiEnabled, new AppDomainNameFormatter(applicationInstanceName))
-		{
-		}
-
-		/// <summary>
-        /// Initializes a new instance of the <see cref="HashAlgorithmInstrumentationProvider"/> class.
-		/// </summary>
-		/// <param name="instanceName">The name of the <see cref="IHashProvider"/> instance this instrumentation listener is created for.</param>
-		/// <param name="performanceCountersEnabled"><b>true</b> if performance counters should be updated.</param>
-		/// <param name="eventLoggingEnabled"><b>true</b> if event log entries should be written.</param>
-		/// <param name="wmiEnabled"><b>true</b> if WMI events should be fired.</param>
-		/// <param name="nameFormatter">The <see cref="IPerformanceCounterNameFormatter"/> that is used to creates unique name for each <see cref="PerformanceCounter"/> instance.</param>
         public HashAlgorithmInstrumentationProvider(string instanceName,
-										   bool performanceCountersEnabled,
-										   bool eventLoggingEnabled,
-										   bool wmiEnabled,
-										   IPerformanceCounterNameFormatter nameFormatter)
-			: base(instanceName, performanceCountersEnabled, eventLoggingEnabled, wmiEnabled, nameFormatter)
-		{
-			this.instanceName = instanceName;
-		}
+                                           bool performanceCountersEnabled,
+                                           bool eventLoggingEnabled,
+                                           string applicationInstanceName)
+            : this(instanceName, performanceCountersEnabled, eventLoggingEnabled, new AppDomainNameFormatter(applicationInstanceName))
+        {
+        }
 
-		/// <summary>
-		/// </summary>
-		/// <param name="message">The message that describes the failure.</param>
-		/// <param name="exception">The exception thrown during the failure.</param>
-		public void FireCyptographicOperationFailed(string message, Exception exception)
-		{
-			if (EventLoggingEnabled)
-			{
-				string errorMessage
-					= string.Format(
-						Resources.Culture,
-						Resources.ErrorCryptographicOperationFailed,
-						instanceName);
-				string entryText = new EventLogEntryFormatter(Resources.BlockName).GetEntryText(errorMessage, exception, message);
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HashAlgorithmInstrumentationProvider"/> class.
+        /// </summary>
+        /// <param name="instanceName">The name of the <see cref="IHashProvider"/> instance this instrumentation listener is created for.</param>
+        /// <param name="performanceCountersEnabled"><b>true</b> if performance counters should be updated.</param>
+        /// <param name="eventLoggingEnabled"><b>true</b> if event log entries should be written.</param>
+        /// <param name="nameFormatter">The <see cref="IPerformanceCounterNameFormatter"/> that is used to creates unique name for each <see cref="PerformanceCounter"/> instance.</param>
+        public HashAlgorithmInstrumentationProvider(string instanceName,
+                                           bool performanceCountersEnabled,
+                                           bool eventLoggingEnabled,
+                                           IPerformanceCounterNameFormatter nameFormatter)
+            : base(instanceName, performanceCountersEnabled, eventLoggingEnabled, nameFormatter)
+        {
+            this.instanceName = instanceName;
+        }
 
-				EventLog.WriteEntry(GetEventSourceName(), entryText, EventLogEntryType.Error);
-			}
-			if (WmiEnabled) FireManagementInstrumentation(new HashOperationFailedEvent(instanceName, message, exception.ToString()));
-		}
+        /// <summary>
+        /// </summary>
+        /// <param name="message">The message that describes the failure.</param>
+        /// <param name="exception">The exception thrown during the failure.</param>
+        public void FireCyptographicOperationFailed(string message, Exception exception)
+        {
+            if (exception == null) throw new ArgumentNullException("exception");
 
-		/// <summary>
-		/// </summary>
-		public void FireHashOperationPerformed()
+            if (EventLoggingEnabled)
+            {
+                string errorMessage
+                    = string.Format(
+                        CultureInfo.CurrentCulture,
+                        Resources.ErrorCryptographicOperationFailed,
+                        instanceName);
+                string entryText = new EventLogEntryFormatter(Resources.BlockName).GetEntryText(errorMessage, exception, message);
+
+                EventLog.WriteEntry(GetEventSourceName(), entryText, EventLogEntryType.Error);
+            }
+        }
+
+        /// <summary>
+        /// </summary>
+        public void FireHashOperationPerformed()
         {
             if (PerformanceCountersEnabled)
             {
                 hashOperationPerformedCounter.Increment();
                 totalHashOperationPerformedPerformanceCounter.Increment();
             }
-		}
+        }
 
-		/// <summary>
-		/// </summary>
-		public void FireHashComparisonPerformed()
+        /// <summary>
+        /// </summary>
+        public void FireHashComparisonPerformed()
         {
             if (PerformanceCountersEnabled)
             {
                 hashComparisonPerformedCounter.Increment();
                 totalHashComparisonPerformedPerformanceCounter.Increment();
             }
-		}
+        }
 
-		/// <summary>
-		/// </summary>
-		public void FireHashMismatchDetected()
+        /// <summary>
+        /// </summary>
+        public void FireHashMismatchDetected()
         {
             if (PerformanceCountersEnabled)
             {
                 hashMismatchDetectedCounter.Increment();
                 totalHashMismatchesPerformedPerformanceCounter.Increment();
             }
-
-            if (WmiEnabled) FireManagementInstrumentation(new HashMismatchDetectedEvent(instanceName));
-		}
+        }
 
         /// <summary>
         /// Creates the performance counters to instrument the hash provider events for the specified instance names.
@@ -176,5 +172,5 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Instrument
             totalHashMismatchesPerformedPerformanceCounter
                 = factory.CreateCounter(counterCategoryName, TotalHashMismatchesPerformedPerformanceCounterName, instanceNames);
         }
-	}
+    }
 }

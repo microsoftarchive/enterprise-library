@@ -30,7 +30,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_host_adapter
  
         protected override void Act()
         {
-            hostAdapter = new SingleHierarchyConfigurationUIHostAdapter(new HostAdapterConfiguration(AppDomain.CurrentDomain.BaseDirectory));
+            hostAdapter = new SingleHierarchyConfigurationUIHostAdapter(new HostAdapterConfiguration(AppDomain.CurrentDomain.BaseDirectory), null);
         }
 
         [TestMethod]

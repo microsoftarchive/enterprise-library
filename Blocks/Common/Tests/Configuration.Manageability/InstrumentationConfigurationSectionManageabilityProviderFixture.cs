@@ -47,13 +47,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
         {
             section.EventLoggingEnabled = true;
             section.PerformanceCountersEnabled = true;
-            section.WmiEnabled = true;
 
             provider.OverrideWithGroupPolicies(section, true, null, null);
 
             Assert.AreEqual(true, section.EventLoggingEnabled);
             Assert.AreEqual(true, section.PerformanceCountersEnabled);
-            Assert.AreEqual(true, section.WmiEnabled);
         }
 
         [TestMethod]
@@ -61,13 +59,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
         {
             section.EventLoggingEnabled = true;
             section.PerformanceCountersEnabled = true;
-            section.WmiEnabled = true;
 
             provider.OverrideWithGroupPolicies(section, true, null, null);
 
             Assert.AreEqual(true, section.EventLoggingEnabled);
             Assert.AreEqual(true, section.PerformanceCountersEnabled);
-            Assert.AreEqual(true, section.WmiEnabled);
         }
 
         [TestMethod]
@@ -75,18 +71,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
         {
             section.EventLoggingEnabled = true;
             section.PerformanceCountersEnabled = true;
-            section.WmiEnabled = true;
 
             machineKey.AddBooleanValue(InstrumentationConfigurationSectionManageabilityProvider.PolicyValueName, true);
             machineKey.AddBooleanValue(InstrumentationConfigurationSectionManageabilityProvider.EventLoggingEnabledPropertyName, false);
             machineKey.AddBooleanValue(InstrumentationConfigurationSectionManageabilityProvider.PerformanceCountersEnabledPropertyName, true);
-            machineKey.AddBooleanValue(InstrumentationConfigurationSectionManageabilityProvider.WmiEnabledPropertyName, true);
 
             provider.OverrideWithGroupPolicies(section, true, machineKey, null);
 
             Assert.AreEqual(false, section.EventLoggingEnabled);
             Assert.AreEqual(true, section.PerformanceCountersEnabled);
-            Assert.AreEqual(true, section.WmiEnabled);
         }
 
         [TestMethod]
@@ -94,18 +87,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
         {
             section.EventLoggingEnabled = true;
             section.PerformanceCountersEnabled = true;
-            section.WmiEnabled = true;
 
             machineKey.AddBooleanValue(InstrumentationConfigurationSectionManageabilityProvider.PolicyValueName, true);
             machineKey.AddBooleanValue(InstrumentationConfigurationSectionManageabilityProvider.EventLoggingEnabledPropertyName, true);
             machineKey.AddBooleanValue(InstrumentationConfigurationSectionManageabilityProvider.PerformanceCountersEnabledPropertyName, false);
-            machineKey.AddBooleanValue(InstrumentationConfigurationSectionManageabilityProvider.WmiEnabledPropertyName, true);
 
             provider.OverrideWithGroupPolicies(section, true, machineKey, null);
 
             Assert.AreEqual(true, section.EventLoggingEnabled);
             Assert.AreEqual(false, section.PerformanceCountersEnabled);
-            Assert.AreEqual(true, section.WmiEnabled);
         }
 
         [TestMethod]
@@ -113,18 +103,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
         {
             section.EventLoggingEnabled = true;
             section.PerformanceCountersEnabled = true;
-            section.WmiEnabled = true;
 
             machineKey.AddBooleanValue(InstrumentationConfigurationSectionManageabilityProvider.PolicyValueName, true);
             machineKey.AddBooleanValue(InstrumentationConfigurationSectionManageabilityProvider.EventLoggingEnabledPropertyName, true);
             machineKey.AddBooleanValue(InstrumentationConfigurationSectionManageabilityProvider.PerformanceCountersEnabledPropertyName, true);
-            machineKey.AddBooleanValue(InstrumentationConfigurationSectionManageabilityProvider.WmiEnabledPropertyName, false);
 
             provider.OverrideWithGroupPolicies(section, true, machineKey, null);
 
             Assert.AreEqual(true, section.EventLoggingEnabled);
             Assert.AreEqual(true, section.PerformanceCountersEnabled);
-            Assert.AreEqual(false, section.WmiEnabled);
         }
 
         [TestMethod]
@@ -132,22 +119,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
         {
             section.EventLoggingEnabled = true;
             section.PerformanceCountersEnabled = true;
-            section.WmiEnabled = true;
 
             machineKey.AddBooleanValue(InstrumentationConfigurationSectionManageabilityProvider.PolicyValueName, true);
             machineKey.AddBooleanValue(InstrumentationConfigurationSectionManageabilityProvider.EventLoggingEnabledPropertyName, false);
             machineKey.AddBooleanValue(InstrumentationConfigurationSectionManageabilityProvider.PerformanceCountersEnabledPropertyName, true);
-            machineKey.AddBooleanValue(InstrumentationConfigurationSectionManageabilityProvider.WmiEnabledPropertyName, false);
             userKey.AddBooleanValue(InstrumentationConfigurationSectionManageabilityProvider.PolicyValueName, true);
             userKey.AddBooleanValue(InstrumentationConfigurationSectionManageabilityProvider.EventLoggingEnabledPropertyName, true);
             userKey.AddBooleanValue(InstrumentationConfigurationSectionManageabilityProvider.PerformanceCountersEnabledPropertyName, false);
-            userKey.AddBooleanValue(InstrumentationConfigurationSectionManageabilityProvider.WmiEnabledPropertyName, true);
 
             provider.OverrideWithGroupPolicies(section, true, machineKey, userKey);
 
             Assert.AreEqual(false, section.EventLoggingEnabled);
             Assert.AreEqual(true, section.PerformanceCountersEnabled);
-            Assert.AreEqual(false, section.WmiEnabled);
         }
 
         [TestMethod]
@@ -155,22 +138,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
         {
             section.EventLoggingEnabled = true;
             section.PerformanceCountersEnabled = true;
-            section.WmiEnabled = true;
 
             machineKey.AddBooleanValue(InstrumentationConfigurationSectionManageabilityProvider.PolicyValueName, true);
             machineKey.AddBooleanValue(InstrumentationConfigurationSectionManageabilityProvider.EventLoggingEnabledPropertyName, false);
             machineKey.AddBooleanValue(InstrumentationConfigurationSectionManageabilityProvider.PerformanceCountersEnabledPropertyName, true);
-            machineKey.AddBooleanValue(InstrumentationConfigurationSectionManageabilityProvider.WmiEnabledPropertyName, false);
             userKey.AddBooleanValue(InstrumentationConfigurationSectionManageabilityProvider.PolicyValueName, true);
             userKey.AddBooleanValue(InstrumentationConfigurationSectionManageabilityProvider.EventLoggingEnabledPropertyName, true);
             userKey.AddBooleanValue(InstrumentationConfigurationSectionManageabilityProvider.PerformanceCountersEnabledPropertyName, false);
-            userKey.AddBooleanValue(InstrumentationConfigurationSectionManageabilityProvider.WmiEnabledPropertyName, true);
 
             provider.OverrideWithGroupPolicies(section, false, machineKey, userKey);
 
             Assert.AreEqual(true, section.EventLoggingEnabled);
             Assert.AreEqual(true, section.PerformanceCountersEnabled);
-            Assert.AreEqual(true, section.WmiEnabled);
         }
 
         [TestMethod]
@@ -199,7 +178,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageabili
 
             section.EventLoggingEnabled = false;
             section.PerformanceCountersEnabled = true;
-            section.WmiEnabled = false;
 
             MockAdmContentBuilder contentBuilder = new MockAdmContentBuilder();
 

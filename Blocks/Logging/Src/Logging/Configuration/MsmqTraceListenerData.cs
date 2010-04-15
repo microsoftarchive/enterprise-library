@@ -19,6 +19,7 @@ using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using ComponentModel = System.ComponentModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 {
@@ -167,7 +168,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// Gets or sets the message queue path.
         /// </summary>
         [ConfigurationProperty(queuePathProperty, Options=ConfigurationPropertyOptions.IsRequired)]
-        [DesigntimeDefault(".\\Private$\\myQueue")]
+        [DesigntimeDefaultAttribute(".\\Private$\\myQueue")]
+        [ResourceDescription(typeof(DesignResources), "MsmqTraceListenerDataQueuePathDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "MsmqTraceListenerDataQueuePathDisplayName")]
         public string QueuePath
         {
             get
@@ -184,7 +187,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// Gets or sets formatter name.
         /// </summary>
         [Reference(typeof(NameTypeConfigurationElementCollection<FormatterData, CustomFormatterData>), typeof(FormatterData))]
-        [ConfigurationProperty(formatterNameProperty, Options=ConfigurationPropertyOptions.IsRequired)]
+        [ConfigurationProperty(formatterNameProperty, Options = ConfigurationPropertyOptions.IsRequired)]
+        [ResourceDescription(typeof(DesignResources), "MsmqTraceListenerDataFormatterDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "MsmqTraceListenerDataFormatterDisplayName")]
         public string Formatter
         {
             get
@@ -200,7 +205,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// <summary>
         /// Gets or sets the message priority.
         /// </summary>
-        [ConfigurationProperty(messagePriorityProperty, DefaultValue=DefaultPriority)]
+        [ConfigurationProperty(messagePriorityProperty, DefaultValue = DefaultPriority)]
+        [ResourceDescription(typeof(DesignResources), "MsmqTraceListenerDataMessagePriorityDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "MsmqTraceListenerDataMessagePriorityDisplayName")]
         public MessagePriority MessagePriority
         {
             get
@@ -217,6 +224,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// Gets or sets the time to reach queue.
         /// </summary>
         [ConfigurationProperty(timeToReachQueueProperty, DefaultValue = "49710.06:28:15")] //DefaultValue = Message.InfiniteTimeout
+        [EnvironmentalOverrides(true, StorageConverterType = typeof(ComponentModel.TimeSpanConverter))]
+        [ResourceDescription(typeof(DesignResources), "MsmqTraceListenerDataTimeToReachQueueDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "MsmqTraceListenerDataTimeToReachQueueDisplayName")]
         public TimeSpan TimeToReachQueue
         {
             get
@@ -233,6 +243,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// Gets or sets the time to be received.
         /// </summary>
         [ConfigurationProperty(timeToBeReceivedProperty, DefaultValue = "49710.06:28:15")] //DefaultValue = Message.InfiniteTimeout
+        [EnvironmentalOverrides(true, StorageConverterType = typeof(ComponentModel.TimeSpanConverter))]
+        [ResourceDescription(typeof(DesignResources), "MsmqTraceListenerDataTimeToBeReceivedDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "MsmqTraceListenerDataTimeToBeReceivedDisplayName")]
         public TimeSpan TimeToBeReceived
         {
             get
@@ -248,7 +261,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// <summary>
         /// Gets or sets the recoverable value.
         /// </summary>
-        [ConfigurationProperty(recoverableProperty, DefaultValue=DefaultRecoverable)]
+        [ConfigurationProperty(recoverableProperty, DefaultValue = DefaultRecoverable)]
+        [ResourceDescription(typeof(DesignResources), "MsmqTraceListenerDataRecoverableDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "MsmqTraceListenerDataRecoverableDisplayName")]
         public bool Recoverable
         {
             get
@@ -264,7 +279,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// <summary>
         /// Gets or sets the use authentication value.
         /// </summary>
-        [ConfigurationProperty(useAuthenticationProperty, DefaultValue=DefaultUseAuthentication)]
+        [ConfigurationProperty(useAuthenticationProperty, DefaultValue = DefaultUseAuthentication)]
+        [ResourceDescription(typeof(DesignResources), "MsmqTraceListenerDataUseAuthenticationDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "MsmqTraceListenerDataUseAuthenticationDisplayName")]
         public bool UseAuthentication
         {
             get
@@ -281,6 +298,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// Gets or sets the use dead letter value.
         /// </summary>
         [ConfigurationProperty(useDeadLetterQueueProperty, DefaultValue = DefaultUseDeadLetter)]
+        [ResourceDescription(typeof(DesignResources), "MsmqTraceListenerDataUseDeadLetterQueueDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "MsmqTraceListenerDataUseDeadLetterQueueDisplayName")]
         public bool UseDeadLetterQueue
         {
             get
@@ -297,6 +316,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// Gets or sets the use encryption value.
         /// </summary>
         [ConfigurationProperty(useEncryptionProperty, DefaultValue = DefaultUseEncryption)]
+        [ResourceDescription(typeof(DesignResources), "MsmqTraceListenerDataUseEncryptionDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "MsmqTraceListenerDataUseEncryptionDisplayName")]
         public bool UseEncryption
         {
             get
@@ -313,6 +334,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// Gets or sets the transaction type.
         /// </summary>
         [ConfigurationProperty(transactionTypeProperty, DefaultValue = DefaultTransactionType)]
+        [ResourceDescription(typeof(DesignResources), "MsmqTraceListenerDataTransactionTypeDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "MsmqTraceListenerDataTransactionTypeDisplayName")]
         public MessageQueueTransactionType TransactionType
         {
             get
@@ -324,22 +347,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
                 this[transactionTypeProperty] = value;
             }
         }
-
-        ///// <summary>
-        ///// This property supports the Enterprise Library infrastructure and is not intended to be used directly from your code.
-        ///// Builds a <see cref="EmailTraceListener"/> based on an instance of <see cref="EmailTraceListenerData"/>.
-        ///// Gets the collection of properties.
-        ///// </summary>
-        ///// <remarks>
-        ///// The default implementation is overriden to deal with non-constant defaults.
-        ///// </remarks>
-        //protected override ConfigurationPropertyCollection Properties
-        //{
-        //    get
-        //    {
-        //        return properties;
-        //    }
-        //}
 
         /// <summary>
         /// Returns a lambda expression that represents the creation of the trace listener described by this

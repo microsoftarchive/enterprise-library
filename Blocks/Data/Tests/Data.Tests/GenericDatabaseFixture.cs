@@ -37,6 +37,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Tests
         }
 
         [TestMethod]
+        [DeploymentItem("Northwind.mdb")]
         public void CanDoExecuteDataReaderForGenericDatabaseBug1836()
         {
             Database db = new GenericDatabase(@"Driver={Microsoft Access Driver (*.mdb)};Dbq=northwind.mdb;Uid=sa;Pwd=sa;", OdbcFactory.Instance);

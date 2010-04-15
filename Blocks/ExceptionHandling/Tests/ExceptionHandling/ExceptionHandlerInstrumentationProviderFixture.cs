@@ -44,7 +44,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
         {
             var handlers = new IExceptionHandler[] { new MockThrowingExceptionHandler() };
 
-            var instrumentationProvider = new ExceptionHandlingInstrumentationProvider(policyName, true, true, true,
+            var instrumentationProvider = new ExceptionHandlingInstrumentationProvider(policyName, true, true,
                                                                                           "ApplicationInstanceName");
             var policyEntry = new ExceptionPolicyEntry(typeof(ArgumentException), PostHandlingAction.None, handlers, instrumentationProvider);
             var policyEntries = new Dictionary<Type, ExceptionPolicyEntry>
@@ -55,7 +55,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
             exceptionPolicy = new ExceptionPolicyImpl(policyName, policyEntries);
 
             nameFormatter = new FixedPrefixNameFormatter("Prefix - ");
-            provider = new ExceptionHandlingInstrumentationProvider(instanceName, true, true, true, nameFormatter);
+            provider = new ExceptionHandlingInstrumentationProvider(instanceName, true, true, nameFormatter);
             formattedInstanceName = nameFormatter.CreateName(instanceName);
             totalExceptionHandlersExecuted = new EnterpriseLibraryPerformanceCounter(counterCategoryName, TotalExceptionHandlersExecuted, formattedInstanceName);
             totalExceptionsHandled = new EnterpriseLibraryPerformanceCounter(counterCategoryName, TotalExceptionsHandled, formattedInstanceName);
@@ -89,7 +89,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
                 {
                     exceptionPolicy.HandleException(exception);
                 }
-                catch (ExceptionHandlingException) {}
+                catch (ExceptionHandlingException) { }
 
                 var entries = eventLog.GetEntriesSince(testStartTime)
                     .Where(entry => entry.Message.IndexOf(exceptionMessage) > -1);

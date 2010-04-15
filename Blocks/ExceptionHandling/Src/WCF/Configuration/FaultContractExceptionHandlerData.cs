@@ -19,6 +19,7 @@ using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
 using System.Collections.Generic;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using System.ComponentModel;
+using Microsoft.Practices.EnterpriseLibrary.Common.Utility;
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.Configuration
 {
@@ -29,6 +30,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.Configurat
     [ResourceDisplayName(typeof(DesignResources), "FaultContractExceptionHandlerDataDisplayName")]
 	public class FaultContractExceptionHandlerData : ExceptionHandlerData
 	{
+        private const string ExceptionMessageResourceTypeNameProperty = "exceptionMessageResourceType";
+        private const string ExceptionMessageResourceNameProperty = "exceptionMessageResourceName";
+
 		/// <summary>
 		/// The attribute name for an alternative exception message for the specified FaultContract.
 		/// </summary>
@@ -52,6 +56,30 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.Configurat
 		/// <param name="name">The name.</param>
 		public FaultContractExceptionHandlerData(string name)
 			: this(name, string.Empty) { }
+
+        /// <summary/>
+        [ConfigurationProperty(ExceptionMessageResourceTypeNameProperty)]
+        [ResourceDescription(typeof(DesignResources), "FaultContractDataExceptionMessageResourceTypeDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "FaultContractDataExceptionMessageResourceTypeDisplayName")]
+        [ResourceCategory(typeof(ResourceCategoryAttribute), "CategoryLocalization")]
+        [Editor(CommonDesignTime.EditorTypes.TypeSelector, CommonDesignTime.EditorTypes.UITypeEditor)]
+        [BaseType(typeof(Object), TypeSelectorIncludes.None)]
+        public string ExceptionMessageResourceType
+        {
+            get { return (string)this[ExceptionMessageResourceTypeNameProperty]; }
+            set { this[ExceptionMessageResourceTypeNameProperty] = value; }
+        }
+
+        /// <summary/>
+        [ConfigurationProperty(ExceptionMessageResourceNameProperty)]
+        [ResourceDescription(typeof(DesignResources), "FaultContractDataExceptionMessageResourceNameDescription")]
+        [ResourceDisplayName(typeof(DesignResources), "FaultContractDataExceptionMessageResourceNameDisplayName")]
+        [ResourceCategory(typeof(ResourceCategoryAttribute), "CategoryLocalization")]
+        public string ExceptionMessageResourceName
+        {
+            get { return (string)this[ExceptionMessageResourceNameProperty]; }
+            set { this[ExceptionMessageResourceNameProperty] = value; }
+        }
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="FaultContractExceptionHandlerData"/> class.
@@ -93,6 +121,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.Configurat
 		[ConfigurationProperty(ExceptionMessageAttributeName, IsRequired = false)]
         [ResourceDescription(typeof(DesignResources), "FaultContractExceptionHandlerDataExceptionMessageDescription")]
         [ResourceDisplayName(typeof(DesignResources), "FaultContractExceptionHandlerDataExceptionMessageDisplayName")]
+        [Editor(CommonDesignTime.EditorTypes.MultilineText, CommonDesignTime.EditorTypes.FrameworkElement)]
 		public string ExceptionMessage
 		{
 			get { return this[ExceptionMessageAttributeName] as string; }
@@ -138,8 +167,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.WCF.Configurat
         /// <returns></returns>
         public override IEnumerable<TypeRegistration> GetRegistrations(string namePrefix)
         {
+            var exceptionMessageResolver =
+                 new ResourceStringResolver(ExceptionMessageResourceType, ExceptionMessageResourceName, ExceptionMessage);
+
             yield return new TypeRegistration<IExceptionHandler>(
-                () => new FaultContractExceptionHandler(Type.GetType(this.FaultContractType), ExceptionMessage, this.Attributes)
+                () => new FaultContractExceptionHandler(exceptionMessageResolver, Type.GetType(this.FaultContractType), this.Attributes)
                 )
                        {
                            Name = BuildName(namePrefix),

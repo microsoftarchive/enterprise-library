@@ -19,6 +19,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Tests
     public class EventBinderFixture
     {
         [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void AttachingToNullEventInfoThrows()
+        {
+            Publisher publisher = new Publisher();
+            Subscriber subscriber = new Subscriber();
+            MethodInfo methodInfo = GetMemberInfo<MethodInfo>(subscriber, "HookMeUp");
+
+            EventBinder binder = new EventBinder(publisher, subscriber);
+            binder.Bind(null, methodInfo);
+        }
+
+        [TestMethod]
         public void AttachesEventToSubject()
         {
             Publisher publisher = new Publisher();

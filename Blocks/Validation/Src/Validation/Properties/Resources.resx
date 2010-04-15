@@ -334,4 +334,22 @@
   <data name="IllegalUseOfValidationDependencyAttribute" xml:space="preserve">
     <value>The ValidationDependencyAttribute was applied to a dependency of type {0}, which is a generic Enterprise Library validator class.</value>
   </data>
+  <data name="ValidationFailedMessage" xml:space="preserve">
+    <value>Parameter validation failed</value>
+  </data>
+  <data name="ValidationResultsHeader" xml:space="preserve">
+    <value>Validation results:</value>
+  </data>
+  <data name="ValidationResultTemplate" xml:space="preserve">
+    <value>    Result: {0} Message: {1}</value>
+  </data>
+  <data name="ValidationResultWithKeyTemplate" xml:space="preserve">
+    <value>    Result: {0} Key: {2} Message: {1}</value>
+  </data>
+  <data name="ExceptionValidatingNullOnValueType" xml:space="preserve">
+    <value>Value to validate is null but expected an instance of the non-reference type {0}.</value>
+  </data>
+  <data name="InvariantCultureCannotBeUsedToDeserializeConfiguration" xml:space="preserve">
+    <value>InvariantCulture cannot be used to deserialize configuration.</value>
+  </data>
 </root>

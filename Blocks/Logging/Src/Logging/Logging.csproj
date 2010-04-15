@@ -49,6 +49,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Lib\Microsoft.Practices.Unity.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Practices.Unity.Interception, Version=2.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Lib\Microsoft.Practices.Unity.Interception.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Configuration.Install" />
@@ -138,9 +142,6 @@
     <Compile Include="Formatters\BinaryLogFormatter.cs" />
     <Compile Include="Formatters\XmlLogFormatter.cs" />
     <Compile Include="Instrumentation\DefaultLoggingEventLogger.cs" />
-    <Compile Include="Instrumentation\LoggingConfigurationFailureEvent.cs" />
-    <Compile Include="Instrumentation\LoggingEvent.cs" />
-    <Compile Include="Instrumentation\LoggingFailureLoggingErrorEvent.cs" />
     <Compile Include="Instrumentation\TracerPerformanceCounter.cs" />
     <Compile Include="LoggingException.cs" />
     <Compile Include="LogWriterStructureHolder.cs" />
@@ -223,6 +224,15 @@
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\..\GlobalAssemblyInfo.2010.cs">
+      <Link>GlobalAssemblyInfo.2010.cs</Link>
+    </None>
+    <Compile Include="Configuration\LogCallHandlerCategoryEntry.cs" />
+    <Compile Include="Configuration\LogCallHandlerData.cs" />
+    <Compile Include="PolicyInjection\CategoryFormatter.cs" />
+    <Compile Include="PolicyInjection\LogCallHandler.cs" />
+    <Compile Include="PolicyInjection\LogCallHandlerAttribute.cs" />
+    <Compile Include="PolicyInjection\TraceLogEntry.cs" />
     <Compile Include="Configuration\DesignResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -279,7 +289,6 @@
     <Compile Include="Configuration\Fluent\LoggingConfigurationExtension.cs" />
     <Compile Include="Configuration\LoggingDesignTime.cs" />
     <Compile Include="ILoggingUpdateCoordinator.cs" />
-    <Compile Include="Instrumentation\LoggingReconfigurationFailureEvent.cs" />
     <Compile Include="LoggingUpdateCoordinator.cs" />
     <Compile Include="LogWriterImpl.cs" />
     <Compile Include="TraceListeners\AttributeSettingTraceListenerWrapper.cs" />
@@ -289,6 +298,7 @@
     <Compile Include="Instrumentation\NullLoggingInstrumentationProvider.cs" />
     <Compile Include="Instrumentation\NullTracerInstrumentationProvider.cs" />
     <Compile Include="Instrumentation\TracerInstrumentationProvider.cs" />
+    <Compile Include="TraceListeners\EmailAuthenticationMode.cs" />
     <Compile Include="TraceListeners\ReconfigurableTraceListenerWrapper.cs" />
     <Compile Include="TraceListeners\RollingFlatFilePurger.cs" />
     <Compile Include="TraceListeners\TraceListenerWrapper.cs" />

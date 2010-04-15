@@ -106,7 +106,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor
 				this.queueTimer.Interval = this.QueueTimerInterval;
 				this.queueTimer.Enabled = true;
 
-				this.eventLogger.AddMessage(Resources.ListenerStartCompleteMessage, string.Format(Resources.Culture, Resources.ListenerStartComplete, this.QueueTimerInterval));
+                this.eventLogger.AddMessage(Resources.ListenerStartCompleteMessage, string.Format(CultureInfo.CurrentCulture, Resources.ListenerStartComplete, this.QueueTimerInterval));
 			}
 			catch (Exception e)
 			{
@@ -159,7 +159,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor
 				if (this.logDistributor.IsCompleted)
 				{
 					this.eventLogger.AddMessage(Resources.ListenerStopCompletedMessage,
-												string.Format(Resources.Culture, Resources.ListenerStopCompleted, timeOut.ToString(CultureInfo.InvariantCulture)));
+                                                string.Format(CultureInfo.CurrentCulture, Resources.ListenerStopCompleted, timeOut.ToString(CultureInfo.InvariantCulture)));
 
 					return true;
 				}
@@ -168,7 +168,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.MsmqDistributor
 			}
 
 			this.eventLogger.AddMessage(Resources.StopListenerWarningMessage,
-										string.Format(Resources.Culture, Resources.ListenerCannotStop, timeOut.ToString(CultureInfo.InvariantCulture)));
+                                        string.Format(CultureInfo.CurrentCulture, Resources.ListenerCannotStop, timeOut.ToString(CultureInfo.InvariantCulture)));
 
 			return false;
 		}

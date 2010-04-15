@@ -1,0 +1,13 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:Wizard="clr-namespace:Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Wizard">
+
+
+    <DataTemplate DataType="{x:Type Wizard:ConfigurationWizardStep}">
+        <StackPanel>
+            <Grid Grid.IsSharedSizeScope="true">
+                <ItemsControl ItemsSource="{Binding Properties}" />
+            </Grid>
+        </StackPanel>
+    </DataTemplate>
+</ResourceDictionary>

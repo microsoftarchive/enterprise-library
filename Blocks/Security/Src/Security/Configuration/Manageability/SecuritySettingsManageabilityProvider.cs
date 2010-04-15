@@ -26,7 +26,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Configuration.Manageabi
     /// the creation of the ADM template categories and policies required to edit Group Policy Objects for the block.
     /// </summary>
     /// <remarks>
-    /// This class performs the actual Group Policy update and Wmi object generation for the <see cref="SecuritySettings"/>
+    /// This class performs the actual Group Policy update for the <see cref="SecuritySettings"/>
     /// configuration section. Processing for <see cref="AuthorizationProviderData"/> and <see cref="SecurityCacheProviderData"/> 
     /// instances is delegated to <see cref="ConfigurationElementManageabilityProvider"/> objects registered to the 
     /// configuration object data types.

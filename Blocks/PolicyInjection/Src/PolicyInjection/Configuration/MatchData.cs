@@ -65,6 +65,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         [ConfigurationProperty(MatchPropertyName, IsRequired = true, IsKey=true)]
         [ResourceDescription(typeof(DesignResources), "MatchDataMatchDescription")]
         [ResourceDisplayName(typeof(DesignResources), "MatchDataMatchDisplayName")]
+        [ViewModel(CommonDesignTime.ViewModelTypeNames.CollectionEditorContainedElementProperty)]
         public string Match
         {
             get { return (string)base[MatchPropertyName]; }
@@ -78,6 +79,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         [ConfigurationProperty(IgnoreCasePropertyName, DefaultValue = false, IsRequired = false)]
         [ResourceDescription(typeof(DesignResources), "MatchDataIgnoreCaseDescription")]
         [ResourceDisplayName(typeof(DesignResources), "MatchDataIgnoreCaseDisplayName")]
+        [ViewModel(CommonDesignTime.ViewModelTypeNames.CollectionEditorContainedElementProperty)]
         public bool IgnoreCase
         {
             get { return (bool)base[IgnoreCasePropertyName]; }

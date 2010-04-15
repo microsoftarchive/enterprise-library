@@ -16,7 +16,7 @@ using System.Threading;
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability
 {
     /// <summary>
-    /// Represents a group policy notification registration to watch group policy notifications.
+    /// Represents a Group Policy notification registration to watch Group Policy notifications.
     /// </summary>
     public class GroupPolicyNotificationRegistration : IDisposable
     {

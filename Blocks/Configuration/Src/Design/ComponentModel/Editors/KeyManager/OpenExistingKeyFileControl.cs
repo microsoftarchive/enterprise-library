@@ -42,7 +42,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
         /// <summary>
         /// The file path to the existing key file.
         /// </summary>
-        public string Filepath
+        public string FilePath
         {
             get { return txtChooseExistingKeyFileLocation.Text; }
             set { txtChooseExistingKeyFileLocation.Text = value; }
@@ -58,14 +58,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Security.Cryptography.Configurat
 
         bool IWizardValidationTarget.ValidateControl()
         {
-            if (string.IsNullOrEmpty(Filepath))
+            if (string.IsNullOrEmpty(FilePath))
             {
-                MessageBox.Show(KeyManagerResources.FileShouldNotBeEmpty, KeyManagerResources.CryptoKeyWizardErrorTitle, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show(KeyManagerResources.FileShouldNotBeEmpty, KeyManagerResources.CryptoKeyWizardErrorTitle, MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
                 return false;
             }
-            if (!File.Exists(Filepath))
+            if (!File.Exists(FilePath))
             {
-                MessageBox.Show(KeyManagerResources.FileDoesNotExists, KeyManagerResources.CryptoKeyWizardErrorTitle, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show(KeyManagerResources.FileDoesNotExists, KeyManagerResources.CryptoKeyWizardErrorTitle, MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
                 return false;
             }
 

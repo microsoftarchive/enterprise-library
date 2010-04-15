@@ -10,28 +10,37 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Console.Wpf.Tests.VSTS.DevTests.Contexts;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
+using Console.Wpf.Tests.VSTS.Contexts;
 using Console.Wpf.Tests.VSTS.TestSupport;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
-using Microsoft.Practices.Unity;
-using Microsoft.Practices.EnterpriseLibrary.Data.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.Configuration.Design.HostAdapterV5;
+using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services;
+using Microsoft.Practices.EnterpriseLibrary.Data.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Database.Configuration;
+using Microsoft.Practices.Unity;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_satelite_provider_add_command
 {
     [TestClass]
     [DeploymentItem("Microsoft.Practices.EnterpriseLibrary.Logging.Database.dll")]
-    public class when_executing_satelite_provider  : given_logging_configuration.given_logging_configuration
+    public class when_executing_satelite_provider : LoggingConfigurationContext
     {
+        private ConfigurationSourceModel configurationSourceModel;
+
+        protected override void Arrange()
+        {
+            base.Arrange();
+            this.Container.RegisterInstance(new Mock<IAssemblyDiscoveryService>().Object);
+        }
+
         protected override void Act()
         {
-            var loggingViewModel = SectionViewModel.CreateSection(base.Container, LoggingSettings.SectionName, LoggingSection);
+            configurationSourceModel = Container.Resolve<ConfigurationSourceModel>();
+            var loggingViewModel = configurationSourceModel.AddSection(LoggingSettings.SectionName, LoggingSection);
             var tracelistenersCollection = loggingViewModel.GetDescendentsOfType<TraceListenerDataCollection>().First();
             var addDBtracelinerCommand = tracelistenersCollection.Commands.First().ChildCommands.Where(x => x.Title == "Add Database Trace Listener").First();
             addDBtracelinerCommand.Execute(null);
@@ -41,8 +50,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_satelite_provider_add_command
         [TestMethod]
         public void then_dependend_block_is_added()
         {
-            var sourceModel = Container.Resolve<ConfigurationSourceModel>();
-            Assert.IsTrue(sourceModel.HasSection(DataAccessDesignTime.ConnectionStringSettingsSectionName));
+            Assert.IsTrue(configurationSourceModel.HasSection(DataAccessDesignTime.ConnectionStringSettingsSectionName));
         }
 
         [TestMethod]

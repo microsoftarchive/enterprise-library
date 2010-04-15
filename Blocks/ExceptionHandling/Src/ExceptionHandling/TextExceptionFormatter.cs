@@ -85,7 +85,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
         {
             // An exception of type {0} occurred and was caught.
             // -------------------------------------------------
-            string line = string.Format(Resources.Culture, Resources.ExceptionWasCaught, base.Exception.GetType().FullName);
+            string line = string.Format(CultureInfo.CurrentCulture, Resources.ExceptionWasCaught, base.Exception.GetType().FullName);
             this.Writer.WriteLine(line);
 
             string separator = new string('-', line.Length);

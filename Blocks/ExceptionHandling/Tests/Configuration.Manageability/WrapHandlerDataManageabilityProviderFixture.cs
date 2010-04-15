@@ -69,11 +69,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
         public void ConfigurationObjectIsNotModifiedIfThereAreNoPolicyOverrides()
         {
             configurationObject.ExceptionMessage = "message";
+            configurationObject.ExceptionMessageResourceType = typeof(object).AssemblyQualifiedName;
+            configurationObject.ExceptionMessageResourceName = "resource";
             configurationObject.WrapExceptionType = typeof(ArgumentException);
 
             provider.OverrideWithGroupPolicies(configurationObject, true, null, null);
 
             Assert.AreEqual("message", configurationObject.ExceptionMessage);
+            Assert.AreEqual(typeof(object).AssemblyQualifiedName, configurationObject.ExceptionMessageResourceType);
+            Assert.AreEqual("resource", configurationObject.ExceptionMessageResourceName);
             Assert.AreSame(typeof(ArgumentException), configurationObject.WrapExceptionType);
         }
 
@@ -81,14 +85,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
         public void ConfigurationObjectIsModifiedIfThereAreMachinePolicyOverrides()
         {
             configurationObject.ExceptionMessage = "message";
+            configurationObject.ExceptionMessageResourceType = typeof(object).AssemblyQualifiedName;
+            configurationObject.ExceptionMessageResourceName = "resource";
             configurationObject.WrapExceptionType = typeof(ArgumentException);
 
-            machineKey.AddStringValue(WrapHandlerDataManageabilityProvider.ExceptionMessagePropertyName, "overriden message");
+            machineKey.AddStringValue(WrapHandlerDataManageabilityProvider.ExceptionMessagePropertyName, "overridden message");
+            machineKey.AddStringValue(WrapHandlerDataManageabilityProvider.ExceptionMessageResourceTypePropertyName, typeof(int).AssemblyQualifiedName);
+            machineKey.AddStringValue(WrapHandlerDataManageabilityProvider.ExceptionMessageResourceNamePropertyName, "overridden resource");
             machineKey.AddStringValue(WrapHandlerDataManageabilityProvider.WrapExceptionTypePropertyName, typeof(NullReferenceException).AssemblyQualifiedName);
 
             provider.OverrideWithGroupPolicies(configurationObject, true, machineKey, null);
 
-            Assert.AreEqual("overriden message", configurationObject.ExceptionMessage);
+            Assert.AreEqual("overridden message", configurationObject.ExceptionMessage);
+            Assert.AreEqual(typeof(int).AssemblyQualifiedName, configurationObject.ExceptionMessageResourceType);
+            Assert.AreEqual("overridden resource", configurationObject.ExceptionMessageResourceName);
             Assert.AreSame(typeof(NullReferenceException), configurationObject.WrapExceptionType);
         }
 
@@ -96,14 +106,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
         public void ConfigurationObjectIsModifiedIfThereAreUserPolicyOverrides()
         {
             configurationObject.ExceptionMessage = "message";
+            configurationObject.ExceptionMessageResourceType = typeof(object).AssemblyQualifiedName;
+            configurationObject.ExceptionMessageResourceName = "resource";
             configurationObject.WrapExceptionType = typeof(ArgumentException);
 
-            userKey.AddStringValue(WrapHandlerDataManageabilityProvider.ExceptionMessagePropertyName, "overriden message");
+            userKey.AddStringValue(WrapHandlerDataManageabilityProvider.ExceptionMessagePropertyName, "overridden message");
+            userKey.AddStringValue(WrapHandlerDataManageabilityProvider.ExceptionMessageResourceTypePropertyName, typeof(int).AssemblyQualifiedName);
+            userKey.AddStringValue(WrapHandlerDataManageabilityProvider.ExceptionMessageResourceNamePropertyName, "overridden resource");
             userKey.AddStringValue(WrapHandlerDataManageabilityProvider.WrapExceptionTypePropertyName, typeof(NullReferenceException).AssemblyQualifiedName);
 
             provider.OverrideWithGroupPolicies(configurationObject, true, null, userKey);
 
-            Assert.AreEqual("overriden message", configurationObject.ExceptionMessage);
+            Assert.AreEqual("overridden message", configurationObject.ExceptionMessage);
+            Assert.AreEqual(typeof(int).AssemblyQualifiedName, configurationObject.ExceptionMessageResourceType);
+            Assert.AreEqual("overridden resource", configurationObject.ExceptionMessageResourceName);
             Assert.AreSame(typeof(NullReferenceException), configurationObject.WrapExceptionType);
         }
 
@@ -111,23 +127,31 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
         public void ConfigurationObjectIsNotModifiedIfThereArePolicyOverridesButGroupPoliciesAreDisabled()
         {
             configurationObject.ExceptionMessage = "message";
+            configurationObject.ExceptionMessageResourceType = typeof(object).AssemblyQualifiedName;
+            configurationObject.ExceptionMessageResourceName = "resource";
             configurationObject.WrapExceptionType = typeof(ArgumentException);
 
-            machineKey.AddStringValue(WrapHandlerDataManageabilityProvider.ExceptionMessagePropertyName, "overriden message");
+            machineKey.AddStringValue(WrapHandlerDataManageabilityProvider.ExceptionMessagePropertyName, "overridden message");
+            machineKey.AddStringValue(WrapHandlerDataManageabilityProvider.ExceptionMessageResourceTypePropertyName, typeof(int).AssemblyQualifiedName);
+            machineKey.AddStringValue(WrapHandlerDataManageabilityProvider.ExceptionMessageResourceNamePropertyName, "overridden resource");
             machineKey.AddStringValue(WrapHandlerDataManageabilityProvider.WrapExceptionTypePropertyName, typeof(NullReferenceException).AssemblyQualifiedName);
 
             provider.OverrideWithGroupPolicies(configurationObject, false, machineKey, null);
 
             Assert.AreEqual("message", configurationObject.ExceptionMessage);
+            Assert.AreEqual(typeof(object).AssemblyQualifiedName, configurationObject.ExceptionMessageResourceType);
+            Assert.AreEqual("resource", configurationObject.ExceptionMessageResourceName);
             Assert.AreSame(typeof(ArgumentException), configurationObject.WrapExceptionType);
         }
 
         [TestMethod]
-        public void ExceptionTypeIsOverridenIfValueIsValid()
+        public void ExceptionTypeIsoverriddenIfValueIsValid()
         {
             configurationObject.WrapExceptionType = typeof(ArgumentException);
 
             machineKey.AddStringValue(WrapHandlerDataManageabilityProvider.ExceptionMessagePropertyName, "msg");
+            machineKey.AddStringValue(WrapHandlerDataManageabilityProvider.ExceptionMessageResourceTypePropertyName, typeof(int).AssemblyQualifiedName);
+            machineKey.AddStringValue(WrapHandlerDataManageabilityProvider.ExceptionMessageResourceNamePropertyName, "overridden resource");
             machineKey.AddStringValue(WrapHandlerDataManageabilityProvider.WrapExceptionTypePropertyName, typeof(NullReferenceException).AssemblyQualifiedName);
 
             provider.OverrideWithGroupPolicies(configurationObject, true, machineKey, null);
@@ -136,11 +160,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
         }
 
         [TestMethod]
-        public void TypeIsNotOverridenIfValueIsInvalid()
+        public void TypeIsNotoverriddenIfValueIsInvalid()
         {
             configurationObject.WrapExceptionType = typeof(ArgumentException);
 
             machineKey.AddStringValue(WrapHandlerDataManageabilityProvider.ExceptionMessagePropertyName, "msg");
+            machineKey.AddStringValue(WrapHandlerDataManageabilityProvider.ExceptionMessageResourceTypePropertyName, typeof(int).AssemblyQualifiedName);
+            machineKey.AddStringValue(WrapHandlerDataManageabilityProvider.ExceptionMessageResourceNamePropertyName, "overridden resource");
             machineKey.AddStringValue(WrapHandlerDataManageabilityProvider.WrapExceptionTypePropertyName, "An invalid type name");
 
             provider.OverrideWithGroupPolicies(configurationObject, true, machineKey, null);
@@ -176,11 +202,25 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
             Assert.IsNotNull(((AdmEditTextPart)partsEnumerator.Current).KeyName);
             Assert.AreEqual(WrapHandlerDataManageabilityProvider.ExceptionMessagePropertyName,
                             partsEnumerator.Current.ValueName);
+            Assert.IsFalse(((AdmEditTextPart)partsEnumerator.Current).Required);
+            Assert.IsTrue(partsEnumerator.MoveNext());
+            Assert.AreSame(typeof(AdmEditTextPart), partsEnumerator.Current.GetType());
+            Assert.IsNotNull(((AdmEditTextPart)partsEnumerator.Current).KeyName);
+            Assert.AreEqual(WrapHandlerDataManageabilityProvider.ExceptionMessageResourceTypePropertyName,
+                            partsEnumerator.Current.ValueName);
+            Assert.IsFalse(((AdmEditTextPart)partsEnumerator.Current).Required);
+            Assert.IsTrue(partsEnumerator.MoveNext());
+            Assert.AreSame(typeof(AdmEditTextPart), partsEnumerator.Current.GetType());
+            Assert.IsNotNull(((AdmEditTextPart)partsEnumerator.Current).KeyName);
+            Assert.AreEqual(WrapHandlerDataManageabilityProvider.ExceptionMessageResourceNamePropertyName,
+                            partsEnumerator.Current.ValueName);
+            Assert.IsFalse(((AdmEditTextPart)partsEnumerator.Current).Required);
             Assert.IsTrue(partsEnumerator.MoveNext());
             Assert.AreSame(typeof(AdmEditTextPart), partsEnumerator.Current.GetType());
             Assert.IsNotNull(((AdmEditTextPart)partsEnumerator.Current).KeyName);
             Assert.AreEqual(WrapHandlerDataManageabilityProvider.WrapExceptionTypePropertyName,
                             partsEnumerator.Current.ValueName);
+            Assert.IsTrue(((AdmEditTextPart)partsEnumerator.Current).Required);
             Assert.IsFalse(partsEnumerator.MoveNext());
         }
     }

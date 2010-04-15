@@ -9,9 +9,11 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using System;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design.Validation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration
 {
@@ -49,6 +51,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Data.Configuration
 		/// configuration source does not contain database settings.</returns>
 		public static DatabaseSettings GetDatabaseSettings(IConfigurationSource configurationSource)
 		{
+		    if (configurationSource == null) throw new ArgumentNullException("configurationSource");
+
 			return (DatabaseSettings)configurationSource.GetSection(SectionName);
 		}
 

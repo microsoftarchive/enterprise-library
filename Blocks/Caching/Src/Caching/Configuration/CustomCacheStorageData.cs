@@ -17,6 +17,8 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using System.Collections.Generic;
 using System.ComponentModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design.Validation;
+using System.Globalization;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
 {
@@ -87,7 +89,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
 
 		/// <summary>
 		/// Gets or sets custom configuration attributes.
-		/// </summary>        		
+		/// </summary>
+        [Validation(CachingDesignTime.ValidatorTypes.NameValueCollectionValidator)]
 		public NameValueCollection Attributes
 		{
 			get { return helper.Attributes; }
@@ -196,7 +199,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
         {
             if (!typeof(IBackingStore).IsAssignableFrom(this.Type))
             {
-                throw new ConfigurationErrorsException(string.Format(Caching.Properties.Resources.Culture, Caching.Properties.Resources.ExceptionTypeForCustomBackingStoreMustDeriveFrom, Name, this.Type.FullName));
+                throw new ConfigurationErrorsException(string.Format(CultureInfo.CurrentCulture, Caching.Properties.Resources.ExceptionTypeForCustomBackingStoreMustDeriveFrom, Name, this.Type.FullName));
             }
 
             yield return new TypeRegistration(

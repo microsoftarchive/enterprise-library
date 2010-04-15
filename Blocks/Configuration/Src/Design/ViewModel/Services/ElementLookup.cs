@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Configuration;
@@ -19,10 +20,19 @@ using System.Collections.Specialized;
 using System.Windows.Data;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
+using System.Collections;
+using System.Windows;
+using Microsoft.Practices.Unity;
 
 
 namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.Services
 {
+    /// <summary>
+    /// Service class used to access <see cref="ElementViewModel"/> instances loaded in the designer.
+    /// </summary>
+    /// <remarks>
+    /// In order to get an instance of this class, declare it as a constructor argument on the consuming component or use the <see cref="IUnityContainer"/> to obtain an instance from code.
+    /// </remarks>
     public class ElementLookup : INotifyCollectionChanged
     {
         ConfigurationSourceDependency sourceModelDependency;
@@ -37,10 +47,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.S
         Dictionary<ElementViewModel, CollectionContainer> elementCollectionContainers = new Dictionary<ElementViewModel, CollectionContainer>();
         private bool refreshing;
 
-        //TODO : Should depend on configurationSourceModel.
         ObservableCollection<SectionViewModel> sections = new ObservableCollection<SectionViewModel>();
         ObservableCollection<ElementViewModel> customElementViewModels = new ObservableCollection<ElementViewModel>();
-
+        
+        /// <summary>
+        /// This constructor supports the configuration design-time and is not intended to be used directly from your code.
+        /// </summary>
         public ElementLookup(ConfigurationSourceDependency sourceModelDependency)
         {
             this.sourceModelDependency = sourceModelDependency;
@@ -59,6 +71,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.S
                                                             {
                                                                 if (!refreshing)
                                                                 {
+                                                                    if (args.Action == NotifyCollectionChangedAction.Reset) return;
                                                                     OnCollectionChanged(args);
                                                                 }
                                                             };
@@ -67,56 +80,108 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.S
         void sourceModelDependency_Refresh(object sender, EventArgs e)
         {
             refreshing = true;
-            elements.Clear();
-            elementPathTrackers.Clear();
+
+            ClearElementTrackers();
+            ClearPathTrackers();
+            
             references.Clear();
             sections.Clear();
             customElementViewModels.Clear();
+            elementCollectionContainers.Clear();
 
             innerCollection.Clear();
             innerCollection.Add(new CollectionContainer { Collection = sections });
             innerCollection.Add(new CollectionContainer { Collection = customElementViewModels });
-            
+
             refreshing = false;
             OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         }
 
+        private void ClearPathTrackers()
+        {
+            foreach (var tracker in elementPathTrackers.Values)
+            {
+                tracker.Dispose();
+            }
+            elementPathTrackers.Clear();
+        }
+
+        private void ClearElementTrackers()
+        {
+            foreach (var tracker in elements.Values)
+            {
+                tracker.Dispose();
+            }
+
+            elements.Clear();
+        }
+
+        /// <summary>
+        /// Returns all <see cref="ElementViewModel"/> instances that where created for configuration elements of type <paramref name="configurationType"/>, contained inside a configuration element of type <paramref name="scope"/>.
+        /// </summary>
+        /// <param name="scope">The configuration type that contains the <see cref="ElementViewModel"/> returned.</param>
+        /// <param name="configurationType">The configuration type of which <see cref="ElementViewModel"/> instances should be returned.</param>
+        /// <returns>
+        /// All <see cref="ElementViewModel"/> instances that where created for configuration elements of type <paramref name="configurationType"/>, contained inside a configuration element of type <paramref name="scope"/>.
+        /// </returns>
         public IEnumerable<ElementViewModel> FindInstancesOfConfigurationType(Type scope, Type configurationType)
         {
             var scopeElements = FindInstancesOfConfigurationType(scope);
-            return FindInstancesOfConfigurationType(scopeElements.SelectMany(x=>x.DescendentElements()), configurationType);
+            return FindInstancesOfConfigurationType(scopeElements.SelectMany(x => x.DescendentElements()), configurationType);
         }
 
+        /// <summary>
+        /// Returns all <see cref="ElementViewModel"/> instances that where created for configuration elements of type <paramref name="configurationType"/>.
+        /// </summary>
+        /// <param name="configurationType">The configuration type of which <see cref="ElementViewModel"/> instances should be returned.</param>
+        /// <returns>
+        /// All <see cref="ElementViewModel"/> instances that where created for configuration elements of type <paramref name="configurationType"/>.
+        /// </returns>
         public IEnumerable<ElementViewModel> FindInstancesOfConfigurationType(Type configurationType)
         {
             return FindInstancesOfConfigurationType(allElements, configurationType);
         }
 
-        private IEnumerable<ElementViewModel> FindInstancesOfConfigurationType(IEnumerable<ElementViewModel> elements, Type configurationType)
+        private static IEnumerable<ElementViewModel> FindInstancesOfConfigurationType(IEnumerable<ElementViewModel> elements, Type configurationType)
         {
-            var a = elements.Where(x => configurationType.IsAssignableFrom(x.ConfigurationType)).ToList();
-            return a;
+            return elements.Where(x => configurationType.IsAssignableFrom(x.ConfigurationType)).ToList();
         }
 
+        /// <summary>
+        /// Adds a custom element to the <see cref="ElementLookup"/>.
+        /// </summary>
+        /// <remarks>
+        /// Custom elements are elements that are created by user code.
+        /// </remarks>
+        /// <param name="element">
+        /// The element that should be added to the <see cref="ElementLookup"/>.
+        /// </param>
         public void AddCustomElement(ElementViewModel element)
         {
             customElementViewModels.Add(element);
         }
 
+        /// <summary>
+        /// Adds a <see cref="SectionViewModel"/> instance to the <see cref="ElementLookup"/>.
+        /// </summary>
+        /// <param name="sectionModel">The <see cref="SectionViewModel"/> that should be added.</param>
         public void AddSection(SectionViewModel sectionModel)
         {
             sections.Add(sectionModel);
-            
+
             AddElement(sectionModel);
         }
 
-
+        /// <summary>
+        /// Removes a <see cref="SectionViewModel"/> instance from the <see cref="ElementLookup"/>.
+        /// </summary>
+        /// <param name="sectionViewModel">The <see cref="SectionViewModel"/> that should be removed.</param>
         public void RemoveSection(SectionViewModel sectionViewModel)
         {
             sections.Remove(sectionViewModel);
 
             RemoveElement(sectionViewModel);
-            
+
         }
 
         private void RemoveChildElements(ElementViewModel element)
@@ -135,11 +200,24 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.S
             if (elementCollectionContainers.TryGetValue(element, out collectionContainer))
             {
                 innerCollection.Remove(collectionContainer);
+                elementCollectionContainers.Remove(element);
             }
+
             elements.Remove(element);
-            elementPathTrackers.Remove(element);
+
+            TrackPathPropertyChangedAndUpdateReferences elementPathTracker;
+            if (elementPathTrackers.TryGetValue(element, out elementPathTracker))
+            {
+                elementPathTrackers.Remove(element);
+                elementPathTracker.Dispose();
+            }
 
             RemoveChildElements(element);
+
+            if (element.ChildElements.Any())
+            {
+                OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, (ObservableCollection<ElementViewModel>)element.ChildElements));
+            }
         }
 
         private void AddElement(ElementViewModel element)
@@ -148,27 +226,82 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.S
             elementCollectionContainers.Add(element, collectionContainer);
             elements.Add(element, new TrackChildElementCreationAndRemoval(this, element));
             elementPathTrackers.Add(element, new TrackPathPropertyChangedAndUpdateReferences(this, element));
+
             innerCollection.Add(collectionContainer);
+
+            if (element.ChildElements.Any())
+            {
+                OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, (ObservableCollection<ElementViewModel>)element.ChildElements));
+            }
         }
 
+        /// <summary>
+        /// Returns the <see cref="ElementViewModel"/> that matched a given <see cref="ElementViewModel.ElementId"/>.
+        /// </summary>
+        /// <param name="elementId">The <see cref="ElementViewModel.ElementId"/> for which an <see cref="ElementViewModel"/> should be returned.</param>
+        /// <returns>
+        /// If an element with <see cref="ElementViewModel.ElementId"/> is found, returns the <see cref="ElementViewModel"/>; Otherwise <see langword="null"/>.
+        /// </returns>
+        public ElementViewModel GetElementById(Guid elementId)
+        {
+            return allElements.FirstOrDefault(x => x.ElementId == elementId);
+        }
+
+        /// <summary>
+        /// Returns an <see cref="IElementChangeScope"/> that can be used to monitor <see cref="IElementExtendedPropertyProvider"/> instances.
+        /// </summary>
+        /// <returns>
+        /// An <see cref="IElementChangeScope"/> that can be used to monitor <see cref="IElementExtendedPropertyProvider"/> instances.
+        /// </returns>
         public IElementChangeScope FindExtendedPropertyProviders()
         {
-            return new ElementChangeScope(this, x=>x is IElementExtendedPropertyProvider);
+            return new ElementChangeScope(this, x => x is IElementExtendedPropertyProvider);
         }
 
+        /// <summary>
+        /// Creates an <see cref="ElementReference"/> that can be used to monitor changes and events to an <see cref="ElementViewModel"/> instance.
+        /// </summary>
+        /// <param name="ancestorPath">
+        /// The <see cref="ElementViewModel.Path"/> used to narrow the scope for this reference. <br/>
+        /// The reference will only apply to elements that are contained inside this path.</param>
+        /// <param name="elementType">
+        /// The configuration type for which a reference should be created.
+        /// </param>
+        /// <param name="elementName">
+        /// The name of the element for which this element should be created.
+        /// </param>
+        /// <returns>
+        /// an <see cref="ElementReference"/> that can be used to monitor changes and events to an <see cref="ElementViewModel"/> instance.
+        /// </returns>
         public ElementReference CreateReference(string ancestorPath, Type elementType, string elementName)
         {
             ElementViewModel element = null;
             ElementViewModel parentElement = elements.Keys.Where(x => x.Path == ancestorPath).FirstOrDefault();
-            if (parentElement != null) element = parentElement.DescendentElements(x => x.Name == elementName && elementType.IsAssignableFrom(x.ConfigurationType)).FirstOrDefault();
+            if (parentElement != null) element = parentElement.DescendentElements(x => MatchesNamePropertyValue(x, elementName) && elementType.IsAssignableFrom(x.ConfigurationType)).FirstOrDefault();
 
             var reference = new ElementReferenceOverAncestorPath(this, element, ancestorPath, elementName);
 
             references.Add(reference);
             return reference;
-
         }
 
+        private static bool MatchesNamePropertyValue(ElementViewModel element, string name)
+        {
+            if (element.NameProperty != null)
+            {
+                string elementName = element.NameProperty.Value as string;
+                return string.Compare(name, elementName, StringComparison.CurrentCulture) == 0;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Creates an <see cref="ElementReference"/> that can be used to monitor changes and events to an <see cref="ElementViewModel"/> instance with the specified <see cref="ElementViewModel.Path"/>.
+        /// </summary>
+        /// <param name="elementPath">The <see cref="ElementViewModel.Path"/> for which the <see cref="ElementReference"/> should be created.</param>
+        /// <returns>
+        /// An <see cref="ElementReference"/> that can be used to monitor changes and events to an <see cref="ElementViewModel"/> instance with the specified <see cref="ElementViewModel.Path"/>.
+        /// </returns>
         public ElementReference CreateReference(string elementPath)
         {
             ElementViewModel element = elements.Keys.Where(x => x.Path == elementPath).FirstOrDefault();
@@ -178,6 +311,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.S
             return reference;
         }
 
+        /// <summary>
+        /// Creates an instance of <see cref="IElementChangeScope"/> which can be used to monitor <see cref="ElementViewModel"/> instances that match <paramref name="predicate"/>.
+        /// </summary>
+        /// <param name="predicate">A predicate that returns <see langword="true"/> for all elements that should be included in the <see cref="IElementChangeScope"/>.</param>
+        /// <returns>
+        /// An instance of <see cref="IElementChangeScope"/> which can be used to monitor <see cref="ElementViewModel"/> instances that match <paramref name="predicate"/>.
+        /// </returns>
         public IElementChangeScope CreateChangeScope(Func<ElementViewModel, bool> predicate)
         {
             return new ElementChangeScope(this, predicate);
@@ -185,6 +325,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.S
 
         #region INotifyCollectionChanged implementation
 
+        /// <summary>
+        /// Raises the <see cref="CollectionChanged"/> event.
+        /// </summary>
+        /// <param name="args">The <see cref="NotifyCollectionChangedEventArgs"/> that contains additional information about the <see cref="CollectionChanged"/> event.</param>
         protected virtual void OnCollectionChanged(NotifyCollectionChangedEventArgs args)
         {
             var handler = CollectionChanged;
@@ -194,10 +338,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.S
             }
         }
 
+        /// <summary>
+        /// Occurs when the collection changes.
+        /// </summary>
         public event NotifyCollectionChangedEventHandler CollectionChanged;
 
         #endregion
-
 
         private abstract class ElementReferenceImplementationBase : ElementReference
         {
@@ -205,7 +351,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.S
             readonly NotifyCollectionChangedEventHandler lookupChangedHandler;
 
             public ElementReferenceImplementationBase(ElementLookup lookup, ElementViewModel element)
-                :base(element)
+                : base(element)
             {
                 this.lookup = lookup;
                 this.lookupChangedHandler = new NotifyCollectionChangedEventHandler(lookup_CollectionChanged);
@@ -229,9 +375,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.S
                         if (base.Element != null) return;
 
                         FindMatchingeElement(lookup.allElements);
-                        
-                        break;
 
+                        break;
                 }
             }
 
@@ -252,7 +397,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.S
                 if (Matches(element)) OnElementFound(element);
             }
 
-            public override void Dispose(bool disposing)
+            protected override void Dispose(bool disposing)
             {
                 base.Dispose(disposing);
 
@@ -275,7 +420,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.S
                 : base(lookup, element)
             {
                 this.path = path;
-                
+
                 base.PathChanged += (sender, args) =>
                     {
                         this.path = Element.Path;
@@ -284,11 +429,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.S
 
             protected override bool Matches(ElementViewModel element)
             {
-                return this.path == element.Path;   
+                return this.path == element.Path;
             }
-
         }
-        
+
         private class ElementReferenceOverAncestorPath : ElementReferenceImplementationBase
         {
             string ancestorPath;
@@ -303,47 +447,56 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.S
                 base.PathChanged += (sender, args) =>
                 {
                     this.ancestorPath = Element.ParentElement.Path;
-                    this.elementName = Element.Name;
+                    this.elementName = GetElementNamePropertyValue(Element);
                 };
             }
 
             protected override bool Matches(ElementViewModel element)
             {
                 if (element.ParentElement == null) return false;
-                return element.AncesterElements().Any(x => x.Path == this.ancestorPath) && element.Name == elementName;
+                return element.AncestorElements().Any(x => x.Path == this.ancestorPath) && GetElementNamePropertyValue(element) == elementName;
+            }
+
+            private static string GetElementNamePropertyValue(ElementViewModel element)
+            {
+                if (element.NameProperty != null)
+                {
+                    return element.NameProperty.Value as string;
+                }
+                return null;
             }
         }
 
-        private class TrackPathPropertyChangedAndUpdateReferences  : IDisposable
+        private class TrackPathPropertyChangedAndUpdateReferences : IDisposable
         {
             readonly ElementLookup lookup;
             readonly ElementViewModel element;
             readonly PropertyChangedEventHandler elementPropertyChangedHandler;
 
             public TrackPathPropertyChangedAndUpdateReferences(ElementLookup lookup, ElementViewModel element)
-	        {
+            {
                 this.lookup = lookup;
                 this.element = element;
 
                 elementPropertyChangedHandler = new PropertyChangedEventHandler(element_PropertyChanged);
                 this.element.PropertyChanged += elementPropertyChangedHandler;
-	        }
+            }
 
             void element_PropertyChanged(object sender, PropertyChangedEventArgs e)
             {
                 if (e.PropertyName == "Path")
                 {
-                    string newPath = element.Path;
-                    foreach (var reference in lookup.references)
+                    foreach (var reference in lookup.references.ToArray())
                     {
                         reference.TryMatch(element);
                     }
                 }
             }
 
-            public void  Dispose()
+            public void Dispose()
             {
                 element.PropertyChanged -= elementPropertyChangedHandler;
+                GC.SuppressFinalize(this);
             }
         }
 
@@ -359,10 +512,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.S
                 this.element = element;
 
                 AddElements(element.ChildElements);
-                
-                childElementsChangedHandler = new NotifyCollectionChangedEventHandler(ChildElements_CollectionChanged);
-                element.ChildElements.CollectionChanged += childElementsChangedHandler;
 
+                childElementsChangedHandler = new NotifyCollectionChangedEventHandler(ChildElements_CollectionChanged);
+                element.ChildElementsCollectionChange += childElementsChangedHandler;
             }
 
             void ChildElements_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -382,9 +534,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.S
                         break;
 
                     case NotifyCollectionChangedAction.Reset:
-                        
-                        break;
 
+                        break;
                 }
             }
 
@@ -408,8 +559,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.S
             {
                 if (element != null && element.ChildElements != null && childElementsChangedHandler != null)
                 {
-                    element.ChildElements.CollectionChanged -= childElementsChangedHandler;
+                    element.ChildElementsCollectionChange -= childElementsChangedHandler;
                 }
+                GC.SuppressFinalize(this);
             }
         }
 
@@ -417,28 +569,32 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.S
         {
             readonly ElementLookup lookup;
             readonly Func<ElementViewModel, bool> predicate;
-            readonly NotifyCollectionChangedEventHandler lookupChangedHandler;
             public ElementChangeScope(ElementLookup lookup, Func<ElementViewModel, bool> predicate)
             {
                 this.lookup = lookup;
                 this.predicate = predicate;
-                this.lookupChangedHandler = new NotifyCollectionChangedEventHandler(lookup_CollectionChanged);
-                
-                this.lookup.CollectionChanged += lookupChangedHandler;
+                this.lookup.CollectionChanged += lookup_CollectionChanged;
             }
 
             void lookup_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
             {
                 NotifyCollectionChangedEventArgs args;
-                
-                switch(e.Action)
+
+                switch (e.Action)
                 {
                     case NotifyCollectionChangedAction.Add:
-                        args = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, e.NewItems.OfType<ElementViewModel>().Where(predicate).ToList());
+                        var newItems = e.NewItems.OfType<ElementViewModel>().Where(predicate).ToList();
+                        if (newItems.Count == 0) return;
+
+                        args = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, newItems);
+
                         break;
 
                     case NotifyCollectionChangedAction.Remove:
-                        args = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, e.OldItems.OfType<ElementViewModel>().Where(predicate).ToList());
+                        var oldItems = e.OldItems.OfType<ElementViewModel>().Where(predicate).ToList();
+                        if (oldItems.Count == 0) return;
+
+                        args = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, oldItems);
                         break;
 
                     case NotifyCollectionChangedAction.Reset:
@@ -460,7 +616,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.S
 
             public void Dispose()
             {
-                lookup.CollectionChanged -= lookupChangedHandler;
+                lookup.CollectionChanged -= lookup_CollectionChanged;
+                GC.SuppressFinalize(this);
             }
 
             public IEnumerator<ElementViewModel> GetEnumerator()
@@ -473,13 +630,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.S
                 return GetEnumerator();
             }
         }
-
-        public IEnumerable<ElementViewModel> FindInstancesOfConfigurationType(ElementViewModel scope, Type configurationType)
-        {
-            return scope.DescendentElements(x => x.ConfigurationType == configurationType);
-        }
     }
 
+    /// <summary>
+    /// An implementation of <see cref="INotifyCollectionChanged"/> and <see cref="IEnumerable{ElementViewModel}"/> that can be used to iterate over and receive <see cref="INotifyCollectionChanged.CollectionChanged"/> events for <see cref="ElementViewModel"/> instances.
+    /// </summary>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
     public interface IElementChangeScope : INotifyCollectionChanged, IEnumerable<ElementViewModel>, IDisposable
     {
     }

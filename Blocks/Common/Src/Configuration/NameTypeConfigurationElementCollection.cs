@@ -13,6 +13,7 @@ using System;
 using System.Configuration;
 using System.Xml;
 using Microsoft.Practices.EnterpriseLibrary.Common.Properties;
+using System.Globalization;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 {
@@ -51,7 +52,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
                         Attribute attribute = Attribute.GetCustomAttribute(providerType, typeof(ConfigurationElementTypeAttribute));
                         if (attribute == null)
                         {
-                            throw new ConfigurationErrorsException(string.Format(Resources.Culture, Resources.ExceptionNoConfigurationElementAttribute, providerType.Name));
+                            throw new ConfigurationErrorsException(string.Format(CultureInfo.CurrentCulture, Resources.ExceptionNoConfigurationElementAttribute, providerType.Name));
                         }
 
                         configurationElementType = ((ConfigurationElementTypeAttribute)attribute).ConfigurationType;
@@ -61,7 +62,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 
                 if (configurationElementType == null)
                 {
-                    throw new ConfigurationErrorsException(string.Format(Resources.Culture, Resources.ExceptionNoTypeAttribute, reader.Name));
+                    throw new ConfigurationErrorsException(string.Format(CultureInfo.CurrentCulture, Resources.ExceptionNoTypeAttribute, reader.Name));
                 }
 
                 // cover the traces ;)

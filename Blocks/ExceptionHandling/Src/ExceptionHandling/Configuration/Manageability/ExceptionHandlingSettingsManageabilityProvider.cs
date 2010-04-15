@@ -27,7 +27,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
     /// the creation of the ADM template categories and policies required to edit Group Policy Objects for the block.
     /// </summary>
     /// <remarks>
-    /// This class performs the actual Group Policy update and Wmi object generation for the <see cref="ExceptionHandlingSettings"/>
+    /// This class performs the actual Group Policy update for the <see cref="ExceptionHandlingSettings"/>
     /// configuration section and its <see cref="ExceptionPolicyData"/> instances together with the <see cref="ExceptionTypeData"/>
     /// objects they contain. Processing for <see cref="ExceptionHandlerData"/> instances is delegated to 
     /// <see cref="ConfigurationElementManageabilityProvider"/> objects registered to the handler data types.

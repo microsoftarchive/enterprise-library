@@ -36,7 +36,8 @@ namespace Console.Wpf.Tests.VSTS.Controls.TypeBrowser
                             typeof(TestAssembly2.Namespace1.Class1).Assembly
                         })
                 };
-            this.model = new TypeBrowserViewModel(groups);
+            this.model = new TypeBrowserViewModel(null);
+            this.model.UpdateAssemblyGroups(groups);
         }
 
         [TestMethod]
