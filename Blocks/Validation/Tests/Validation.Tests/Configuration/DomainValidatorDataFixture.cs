@@ -12,7 +12,6 @@
 using System.Collections.Generic;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Validation.TestSupport.Configuration;
@@ -24,6 +23,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
     [TestClass]
     public class DomainValidatorDataFixture
     {
+#if !SILVERLIGHT
         [TestMethod]
         public void CanDeserializeSerializedInstanceWithName()
         {
@@ -34,7 +34,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             IDictionary<string, ConfigurationSection> sections = new Dictionary<string, ConfigurationSection>();
             sections[ValidationSettings.SectionName] = rwSettings;
 
-            using (ConfigurationFileHelper configurationFileHelper = new ConfigurationFileHelper(sections))
+            using (var configurationFileHelper = new Common.TestSupport.Configuration.ConfigurationFileHelper(sections))
             {
                 IConfigurationSource configurationSource = configurationFileHelper.ConfigurationSource;
 
@@ -62,7 +62,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             IDictionary<string, ConfigurationSection> sections = new Dictionary<string, ConfigurationSection>();
             sections[ValidationSettings.SectionName] = rwSettings;
 
-            using (ConfigurationFileHelper configurationFileHelper = new ConfigurationFileHelper(sections))
+            using (var configurationFileHelper = new Common.TestSupport.Configuration.ConfigurationFileHelper(sections))
             {
                 IConfigurationSource configurationSource = configurationFileHelper.ConfigurationSource;
 
@@ -76,15 +76,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
                 Assert.AreEqual(3, ((DomainValidatorData)roSettings.Validators.Get(0)).Domain.Count);
             }
         }
+#endif
 
         [TestMethod]
         public void CanCreateValidatorFromConfigurationObject()
         {
-            DomainValidatorData rwValidatorData = new DomainValidatorData("validator1");
+            DomainValidatorData rwValidatorData = new DomainValidatorData { Name = "validator1" };
             rwValidatorData.Negated = true;
-            rwValidatorData.Domain.Add(new DomainConfigurationElement("1"));
-            rwValidatorData.Domain.Add(new DomainConfigurationElement("2"));
-            rwValidatorData.Domain.Add(new DomainConfigurationElement("3"));
+            rwValidatorData.Domain.Add(new DomainConfigurationElement { Name = "1" });
+            rwValidatorData.Domain.Add(new DomainConfigurationElement { Name = "2" });
+            rwValidatorData.Domain.Add(new DomainConfigurationElement { Name = "3" });
 
             Validator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(null, null, null, null);
 
@@ -99,11 +100,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
         [TestMethod]
         public void CanCreateValidatorFromConfigurationObjectUsingIntDomain()
         {
-            DomainValidatorData rwValidatorData = new DomainValidatorData("validator1");
+            DomainValidatorData rwValidatorData = new DomainValidatorData { Name = "validator1" };
             rwValidatorData.Negated = true;
-            rwValidatorData.Domain.Add(new DomainConfigurationElement("1"));
-            rwValidatorData.Domain.Add(new DomainConfigurationElement("2"));
-            rwValidatorData.Domain.Add(new DomainConfigurationElement("3"));
+            rwValidatorData.Domain.Add(new DomainConfigurationElement { Name = "1" });
+            rwValidatorData.Domain.Add(new DomainConfigurationElement { Name = "2" });
+            rwValidatorData.Domain.Add(new DomainConfigurationElement { Name = "3" });
 
             Validator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(typeof(int), null, null, null);
 
@@ -118,12 +119,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
         [TestMethod]
         public void CanCreateValidatorFromConfigurationObjectWithMessageTemplateOverride()
         {
-            DomainValidatorData rwValidatorData = new DomainValidatorData("validator1");
+            DomainValidatorData rwValidatorData = new DomainValidatorData { Name = "validator1" };
             rwValidatorData.MessageTemplate = "message template override";
             rwValidatorData.Negated = true;
-            rwValidatorData.Domain.Add(new DomainConfigurationElement("1"));
-            rwValidatorData.Domain.Add(new DomainConfigurationElement("2"));
-            rwValidatorData.Domain.Add(new DomainConfigurationElement("3"));
+            rwValidatorData.Domain.Add(new DomainConfigurationElement { Name = "1" });
+            rwValidatorData.Domain.Add(new DomainConfigurationElement { Name = "2" });
+            rwValidatorData.Domain.Add(new DomainConfigurationElement { Name = "3" });
 
             Validator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(null, null, null, null);
 

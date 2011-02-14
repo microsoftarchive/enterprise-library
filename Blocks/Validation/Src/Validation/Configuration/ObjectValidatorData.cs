@@ -10,8 +10,6 @@
 //===============================================================================
 
 using System;
-using System.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 
@@ -20,26 +18,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
     /// <summary>
     /// Configuration object to describe an instance of class <see cref="ObjectValidator"/>.
     /// </summary>
-    [ResourceDescription(typeof(DesignResources), "ObjectValidatorDataDescription")]
-    [ResourceDisplayName(typeof(DesignResources), "ObjectValidatorDataDisplayName")]
-    public class ObjectValidatorData : ValidatorData
+    public partial class ObjectValidatorData : ValidatorData
     {
-        /// <summary>
-        /// <para>Initializes a new instance of the <see cref="ObjectValidatorData"/> class.</para>
-        /// </summary>
-        public ObjectValidatorData()
-        {
-            this.Type = typeof(ObjectValidator);
-        }
-
-        /// <summary>
-        /// <para>Initializes a new instance of the <see cref="ObjectValidatorData"/> class with a name.</para>
-        /// </summary>
-        /// <param name="name">The name for the instance.</param>
-        public ObjectValidatorData(string name)
-            : base(name, typeof(ObjectValidator))
-        { }
-
         /// <summary>
         /// Creates the <see cref="ObjectValidator"/> described by the configuration object.
         /// </summary>
@@ -75,32 +55,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
             {
                 return new ObjectValidator(targetType, validatorFactory, this.TargetRuleset);
             }
-        }
-
-        private const string TargetRulesetPropertyName = "targetRuleset";
-        /// <summary>
-        /// Gets or sets the name for the target ruleset for the represented validator.
-        /// </summary>
-        [ConfigurationProperty(TargetRulesetPropertyName)]
-        [ResourceDescription(typeof(DesignResources), "ObjectValidatorDataTargetRulesetDescription")]
-        [ResourceDisplayName(typeof(DesignResources), "ObjectValidatorDataTargetRulesetDisplayName")]
-        public string TargetRuleset
-        {
-            get { return (string)this[TargetRulesetPropertyName]; }
-            set { this[TargetRulesetPropertyName] = value; }
-        }
-
-        private const string ValidateActualTypePropertyName = "validateActualType";
-        /// <summary>
-        /// Gets or sets the value indicating whether to validate based on the static type or the actual type.
-        /// </summary>
-        [ConfigurationProperty(ValidateActualTypePropertyName, DefaultValue = false)]
-        [ResourceDescription(typeof(DesignResources), "ObjectValidatorDataValidateActualTypeDescription")]
-        [ResourceDisplayName(typeof(DesignResources), "ObjectValidatorDataValidateActualTypeDisplayName")]
-        public bool ValidateActualType
-        {
-            get { return (bool)this[ValidateActualTypePropertyName]; }
-            set { this[ValidateActualTypePropertyName] = value; }
         }
     }
 }

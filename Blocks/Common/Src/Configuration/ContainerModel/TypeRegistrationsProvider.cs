@@ -66,6 +66,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerMo
             return Enumerable.Empty<TypeRegistration>();
         }
 
+#if !SILVERLIGHT
         /// <summary>
         /// Creates a new <see cref="TypeRegistrationsProvider"/> that will return all the
         /// configuration for entlib blocks.
@@ -88,6 +89,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerMo
         {
             return ConfigurationBasedTypeRegistrationsProviderFactory.CreateProvider(configurationSource, reconfiguringEventSource);
         }
+#else
+        /// <summary>
+        /// Creates a new <see cref="TypeRegistrationsProvider"/> that will return all the
+        /// configuration for entlib blocks.
+        /// </summary>
+        /// <param name="configurationSource">Configuration source containing any customizations
+        /// to the locator list.</param>
+        /// <returns>The locator.</returns>
+        public static ITypeRegistrationsProvider CreateDefaultProvider(IConfigurationSource configurationSource)
+        {
+            return ConfigurationBasedTypeRegistrationsProviderFactory.CreateProvider(configurationSource);
+        }
+#endif
     }
 
     /// <summary>

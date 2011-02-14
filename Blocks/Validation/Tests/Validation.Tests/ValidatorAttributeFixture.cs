@@ -13,7 +13,6 @@ using System;
 using Microsoft.Practices.EnterpriseLibrary.Validation.TestSupport.TestClasses;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Practices.Unity;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
 {

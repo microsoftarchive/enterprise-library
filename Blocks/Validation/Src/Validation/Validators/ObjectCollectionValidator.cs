@@ -11,8 +11,6 @@
 
 using System;
 using System.Collections;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
@@ -22,7 +20,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
     /// to its members.
     /// </summary>
     /// <seealso cref="ValidationFactory"/>
-    [ConfigurationElementType(typeof(ObjectCollectionValidatorData))]
+#if !SILVERLIGHT
+    [Common.Configuration.ConfigurationElementType(typeof(Configuration.ObjectCollectionValidatorData))]
+#endif
     public class ObjectCollectionValidator : Validator
     {
         private readonly Type targetType;

@@ -13,8 +13,6 @@ using System;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using Microsoft.Practices.EnterpriseLibrary.Common;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
@@ -22,7 +20,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
     /// <summary>
     /// Performs validation on strings by matching them to a <see cref="Regex"/>.
     /// </summary>
-    [ConfigurationElementType(typeof(RegexValidatorData))]
+#if !SILVERLIGHT
+    [Common.Configuration.ConfigurationElementType(typeof(Configuration.RegexValidatorData))]
+#endif
     public class RegexValidator : ValueValidator<string>
     {
         private string pattern;

@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ExceptionConfigurationObjectIsNotCustomProviderData" xml:space="preserve">
     <value>The configuration object for type '{0}' with name '{1}' has type '{2}' which is does not implement ICustomProviderData.</value>
@@ -318,5 +318,20 @@ The local elements type '{0}' is  incompatible with the parent elements type '{1
   </data>
   <data name="CannotCreateDesignSource" xml:space="preserve">
     <value>Cannot create design source for rootSource other than DesignConfigurationSource.</value>
+  </data>
+  <data name="ExceptionXamlConfigurationInvalidFormat" xml:space="preserve">
+    <value>The configuration content has an invalid format. The content should be in XAML format and the root element must be a ResourceDictionary. Each entry in the dictionary should correspond to each configuration section.</value>
+  </data>
+  <data name="ExceptionXamlConfigurationResourceNotFound" xml:space="preserve">
+    <value>The configuration resource stream cannot be found at URI '{0}'.</value>
+  </data>
+  <data name="CannotStartConfigurationDownload" xml:space="preserve">
+    <value>Enterprise Library asynchronous configuration is already in progress. Only one asynchronous configuration can be done at a time.</value>
+  </data>
+  <data name="ConfigurationDownloadFailed" xml:space="preserve">
+    <value>The configuration download has failed, error message {0}. See the InnerException for more details.</value>
+  </data>
+  <data name="EntlibNotYetConfigured" xml:space="preserve">
+    <value>Enterprise Library is in the process of downloading configuration information. It may not be used until this process is complete.</value>
   </data>
 </root>

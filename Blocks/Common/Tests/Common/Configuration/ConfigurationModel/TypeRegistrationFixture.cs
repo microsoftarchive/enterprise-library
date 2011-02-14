@@ -725,7 +725,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
 
     }
 
-    class Foo : IFoo
+    public class Foo : IFoo
     {
         public Foo()
         {
@@ -746,7 +746,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
         public IBar MyProperty { get; set; }
     }
 
-    internal interface IBar
+    public interface IBar
     {
     }
 }

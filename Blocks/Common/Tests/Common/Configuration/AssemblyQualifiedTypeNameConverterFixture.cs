@@ -43,7 +43,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
             config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             section = config.Sections[sectionName] as ConverterSection;
             Assert.IsNotNull(section);
-            Assert.AreEqual(section.Type, typeof(Exception));
+            Assert.AreEqual(typeof(Exception), section.Type);
         }
 
         [TestMethod]

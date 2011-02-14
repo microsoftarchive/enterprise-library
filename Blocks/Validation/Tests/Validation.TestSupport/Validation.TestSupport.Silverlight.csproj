@@ -1,0 +1,141 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{D44A04F1-98FA-48F4-B22C-925D4E47A051}</ProjectGuid>
+    <ProjectTypeGuids>{A1591282-1198-4647-A2B1-27E5FF5F6F3B};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Microsoft.Practices.EnterpriseLibrary.Validation.TestSupport</RootNamespace>
+    <AssemblyName>Microsoft.Practices.EnterpriseLibrary.Validation.TestSupport.Silverlight</AssemblyName>
+    <TargetFrameworkIdentifier>Silverlight</TargetFrameworkIdentifier>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <SilverlightVersion>$(TargetFrameworkVersion)</SilverlightVersion>
+    <SilverlightApplication>false</SilverlightApplication>
+    <ValidateXaml>true</ValidateXaml>
+    <ThrowErrorsInValidation>true</ThrowErrorsInValidation>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <!-- This property group is only here to support building this project using the 
+       MSBuild 3.5 toolset. In order to work correctly with this older toolset, it needs 
+       to set the TargetFrameworkVersion to v3.5 -->
+  <PropertyGroup Condition="'$(MSBuildToolsVersion)' == '3.5'">
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>Bin\DebugSL\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;SILVERLIGHT</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>Bin\ReleaseSL\</OutputPath>
+    <DefineConstants>TRACE;SILVERLIGHT</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib" />
+    <Reference Include="System.ComponentModel.DataAnnotations, Version=2.0.5.0, Culture=neutral, PublicKeyToken=ddd0da4d3e678217, processorArchitecture=MSIL" />
+    <Reference Include="System.Windows" />
+    <Reference Include="system" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Net" />
+    <Reference Include="System.Windows.Browser" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Configuration\MockValidatorData.Silverlight.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestClasses\BaseTestDomainObject.cs" />
+    <Compile Include="TestClasses\BaseTestTypeWithValidatorAttributes.cs" />
+    <Compile Include="TestClasses\BaseTestTypeWithValidatorAttributesOnFields.cs" />
+    <Compile Include="TestClasses\BaseTestTypeWithValidatorAttributesOnMethods.cs" />
+    <Compile Include="TestClasses\BaseTestTypeWithValidatorAttributesOnProperties.cs" />
+    <Compile Include="TestClasses\BaseTypeWithSelfValidationAttributesOnMethods.cs" />
+    <Compile Include="TestClasses\MockCustomValidator.Silverlight.cs" />
+    <Compile Include="TestClasses\DerivedTestDomainObject.cs" />
+    <Compile Include="TestClasses\DerivedTestTypeWithValidatorAttributes.cs" />
+    <Compile Include="TestClasses\DerivedTestTypeWithValidatorAttributesOnMembersAndType.cs" />
+    <Compile Include="TestClasses\DerivedTestTypeWithValidatorAttributesOnMethods.cs" />
+    <Compile Include="TestClasses\DerivedTestTypeWithValidatorAttributesOnNewFields.cs" />
+    <Compile Include="TestClasses\DerivedTestTypeWithValidatorAttributesOnNewMethods.cs" />
+    <Compile Include="TestClasses\DerivedTestTypeWithValidatorAttributesOnNewProperties.cs" />
+    <Compile Include="TestClasses\DerivedTestTypeWithValidatorAttributesOnProperties.cs" />
+    <Compile Include="TestClasses\DerivedTypeWithSelfValidationAttributesOnMethods.cs" />
+    <Compile Include="TestClasses\MockClassWithValidatorAttributesOnProperties.cs" />
+    <Compile Include="TestClasses\MockMemberAccessValidatorBuilderFactory.cs" />
+    <Compile Include="TestClasses\MockValidatedElement.cs" />
+    <Compile Include="TestClasses\MockValidationInstrumentationProvider.cs" />
+    <Compile Include="TestClasses\MockValidator.cs" />
+    <Compile Include="TestClasses\MockValidator.Generic.cs" />
+    <Compile Include="TestClasses\MockValidatorAttribute.cs" />
+    <Compile Include="TestClasses\MockValueAccess.cs" />
+    <Compile Include="TestClasses\TemplateStringTester.cs" />
+    <Compile Include="TestClasses\TestObjectWithFailingAttributesOnProperties.cs" />
+    <Compile Include="TestClasses\TestObjectWithMultipleSourceValidationAttributesOnProperties.cs" />
+    <Compile Include="TestClasses\TestResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>TestResources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="TestClasses\TestTypeWithoutSelfValidationAttributesOnMethods.cs" />
+    <Compile Include="TestClasses\TestTypeWithValidatorAttributesOnNonPublicFields.cs" />
+    <Compile Include="TestClasses\TestTypeWithValidatorAttributesOnNonPublicMethods.cs" />
+    <Compile Include="TestClasses\TestTypeWithValidatorAttributesOnNonPublicProperties.cs" />
+    <Compile Include="TestClasses\TestTypeWithValidatorAttributesOnSetterOnlyProperties.cs" />
+    <Compile Include="TestClasses\TestTypeWithValidatorAttributesOnVoidOrParameterizedMethods.cs" />
+    <Compile Include="TestClasses\TypeWithMultipleValidationAttributesAtTheTypeLevel.cs" />
+    <Compile Include="TestClasses\TypeWithoutValidationAttributesAtTheTypeLevel.cs" />
+    <Compile Include="TestClasses\TypeWithValidatorAttributesWithRuleNames.cs" />
+    <Compile Include="TestClasses\TypeWithValidatorSelfValidationAttributes.cs" />
+    <Compile Include="TestClasses\ValidationInstrumentationProvider.Silverlight.cs" />
+    <Compile Include="TestClasses\ValidationTestHelper.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\Src\Common.Silverlight.csproj">
+      <Project>{453CC31C-5264-411F-96C7-84CB52298DE1}</Project>
+      <Name>Common.Silverlight</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Src\Validation\Validation.Silverlight.csproj">
+      <Project>{6F8B11CC-D60E-4822-84C3-AADFB6757BAE}</Project>
+      <Name>Validation.Silverlight</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TestClasses\TestResources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>TestResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Silverlight\$(SilverlightVersion)\Microsoft.Silverlight.CSharp.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{A1591282-1198-4647-A2B1-27E5FF5F6F3B}">
+        <SilverlightProjectProperties />
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

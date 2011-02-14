@@ -104,5 +104,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         /// <remarks>This operation must be overriden by subclasses.</remarks>
         /// <returns>The created <see cref="Validator"/>.</returns>
         protected abstract Validator DoCreateValidator(Type targetType);
+
     }
 }

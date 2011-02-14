@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cryptography Application Block", "Cryptography Application Block", "{7A7D6DD5-6BB2-4B7D-8C39-D5BA67DA9E62}"
 	ProjectSection(FolderStartupServices) = postProject
 		{B4F97281-0DBD-4835-9ED8-7DFB966E87FF} = {B4F97281-0DBD-4835-9ED8-7DFB966E87FF}
@@ -23,6 +23,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Unit Tests", "Unit Tests", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CC6C9183-C8EF-487F-AA8A-FF4E5354CE32}"
 	ProjectSection(SolutionItems) = preProject
+		Cryptography.VSTS.vsmdi = Cryptography.VSTS.vsmdi
+		Cryptography.VSTS1.vsmdi = Cryptography.VSTS1.vsmdi
 		..\EnterpriseLibrary.testrunconfig = ..\EnterpriseLibrary.testrunconfig
 	EndProjectSection
 	ProjectSection(FolderStartupServices) = postProject
@@ -40,6 +42,40 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.TestSupport", "..\Common\Tests\Common.TestSupport\Common.TestSupport.csproj", "{C6DE0220-E31B-486B-AB57-107636AEB927}"
 EndProject
 Global
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 8
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = http://pagtfs2008:8080/
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = ..\\Common\\Src\\Common.csproj
+		SccProjectTopLevelParentUniqueName1 = Cryptography.sln
+		SccProjectName1 = ../Common/Src
+		SccLocalPath1 = ..\\Common\\Src
+		SccProjectUniqueName2 = ..\\Common\\Tests\\Common\\Common.Tests.VSTS.csproj
+		SccProjectTopLevelParentUniqueName2 = Cryptography.sln
+		SccProjectName2 = ../Common/Tests/Common
+		SccLocalPath2 = ..\\Common\\Tests\\Common
+		SccProjectUniqueName3 = ..\\Common\\Tests\\Configuration.Manageability\\Common.Configuration.Manageability.Tests.VSTS.csproj
+		SccProjectTopLevelParentUniqueName3 = Cryptography.sln
+		SccProjectName3 = ../Common/Tests/Configuration.Manageability
+		SccLocalPath3 = ..\\Common\\Tests\\Configuration.Manageability
+		SccProjectUniqueName4 = Src\\Cryptography\\Security.Cryptography.csproj
+		SccProjectTopLevelParentUniqueName4 = Cryptography.sln
+		SccProjectName4 = Src/Cryptography
+		SccLocalPath4 = Src\\Cryptography
+		SccProjectUniqueName5 = Tests\\Cryptography.Tests\\Security.Cryptography.Tests.VSTS.csproj
+		SccProjectTopLevelParentUniqueName5 = Cryptography.sln
+		SccProjectName5 = Tests/Cryptography.Tests
+		SccLocalPath5 = Tests\\Cryptography.Tests
+		SccProjectUniqueName6 = Tests\\Configuration.Manageability.Tests\\Security.Cryptography.Configuration.Manageability.Tests.VSTS.csproj
+		SccProjectTopLevelParentUniqueName6 = Cryptography.sln
+		SccProjectName6 = Tests/Configuration.Manageability.Tests
+		SccLocalPath6 = Tests\\Configuration.Manageability.Tests
+		SccProjectUniqueName7 = ..\\Common\\Tests\\Common.TestSupport\\Common.TestSupport.csproj
+		SccProjectTopLevelParentUniqueName7 = Cryptography.sln
+		SccProjectName7 = ../Common/Tests/Common.TestSupport
+		SccLocalPath7 = ..\\Common\\Tests\\Common.TestSupport
+	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = Cryptography.VSTS1.vsmdi
 	EndGlobalSection

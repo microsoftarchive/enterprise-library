@@ -12,7 +12,6 @@
 using System.Collections.Generic;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.TestSupport.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
@@ -23,6 +22,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
     [TestClass]
     public class ObjectCollectionValidatorDataFixture
     {
+#if !SILVERLIGHT
         [TestMethod]
         public void CanDeserializeSerializedInstanceWithNameOnly()
         {
@@ -33,7 +33,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             IDictionary<string, ConfigurationSection> sections = new Dictionary<string, ConfigurationSection>();
             sections[ValidationSettings.SectionName] = rwSettings;
 
-            using (ConfigurationFileHelper configurationFileHelper = new ConfigurationFileHelper(sections))
+            using (var configurationFileHelper = new Common.TestSupport.Configuration.ConfigurationFileHelper(sections))
             {
                 IConfigurationSource configurationSource = configurationFileHelper.ConfigurationSource;
 
@@ -60,7 +60,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             IDictionary<string, ConfigurationSection> sections = new Dictionary<string, ConfigurationSection>();
             sections[ValidationSettings.SectionName] = rwSettings;
 
-            using (ConfigurationFileHelper configurationFileHelper = new ConfigurationFileHelper(sections))
+            using (var configurationFileHelper = new Common.TestSupport.Configuration.ConfigurationFileHelper(sections))
             {
                 IConfigurationSource configurationSource = configurationFileHelper.ConfigurationSource;
 
@@ -74,13 +74,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
                 Assert.AreEqual("ruleset", ((ObjectCollectionValidatorData)roSettings.Validators.Get(0)).TargetRuleset);
             }
         }
+#endif
 
         [TestMethod]
         [ExpectedException(typeof(ConfigurationErrorsException))]
         [Ignore]    // no longer true
         public void CreateValidatorWithNullTargetTypeThrows()
         {
-            ObjectCollectionValidatorData rwValidatorData = new ObjectCollectionValidatorData("validator1");
+            ObjectCollectionValidatorData rwValidatorData = new ObjectCollectionValidatorData { Name = "validator1" };
 
             ((IValidatorDescriptor)rwValidatorData).CreateValidator(null, null, null, null);
         }
@@ -88,7 +89,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
         [TestMethod]
         public void CanCreateValidatorFromConfigurationObject()
         {
-            ObjectCollectionValidatorData rwValidatorData = new ObjectCollectionValidatorData("validator1");
+            ObjectCollectionValidatorData rwValidatorData = new ObjectCollectionValidatorData { Name = "validator1" };
             rwValidatorData.TargetType = typeof(ObjectCollectionValidatorDataFixture);
             rwValidatorData.TargetRuleset = "ruleset";
 
@@ -105,7 +106,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
         [TestMethod]
         public void CanCreateValidatorFromConfigurationObjectWithNoTargetType()
         {
-            ObjectCollectionValidatorData rwValidatorData = new ObjectCollectionValidatorData("validator1");
+            ObjectCollectionValidatorData rwValidatorData = new ObjectCollectionValidatorData { Name = "validator1" };
             rwValidatorData.TargetRuleset = "ruleset";
 
             Validator validator =

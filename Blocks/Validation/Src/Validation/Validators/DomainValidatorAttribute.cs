@@ -48,7 +48,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
 			this.domain = domain;
 		}
 
-		/// <summary>
+        /// <summary>
+        /// List of values to be used in the validation.
+        /// </summary>
+	    public object[] Domain
+	    {
+	        get { return domain; }
+	    }
+
+	    /// <summary>
 		/// Creates the <see cref="DomainValidatorAttribute"/> described by the attribute object.
 		/// </summary>
 		/// <param name="targetType">The type of object that will be validated by the validator.</param>
@@ -56,7 +64,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
 		/// <returns>The created <see cref="DomainValidatorAttribute"/>.</returns>
 		protected override Validator DoCreateValidator(Type targetType)
 		{
-			return new DomainValidator<object>(Negated, domain);
+			return new DomainValidator<object>(Negated, Domain);
 		}
 	}
 }

@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Logging Application Block", "Logging Application Block", "{2A9F3278-C43E-4B2A-B722-B8FFBB0B0513}"
 	ProjectSection(FolderStartupServices) = postProject
 		{B4F97281-0DBD-4835-9ED8-7DFB966E87FF} = {B4F97281-0DBD-4835-9ED8-7DFB966E87FF}
@@ -25,6 +25,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		..\codecoverage.testrunconfig = ..\codecoverage.testrunconfig
 		..\EnterpriseLibrary.testrunconfig = ..\EnterpriseLibrary.testrunconfig
+		Logging.vsmdi = Logging.vsmdi
 	EndProjectSection
 	ProjectSection(FolderStartupServices) = postProject
 		{B4F97281-0DBD-4835-9ED8-7DFB966E87FF} = {B4F97281-0DBD-4835-9ED8-7DFB966E87FF}
@@ -55,6 +56,64 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logging.TestSupport", "Tests\Logging.TestSupport\Logging.TestSupport.csproj", "{BA6BBE25-09D1-47F8-9BAB-F0FF66AD0D70}"
 EndProject
 Global
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 14
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = http://pagtfs2008:8080/
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = ..\\Common\\Src\\Common.csproj
+		SccProjectTopLevelParentUniqueName1 = Logging.sln
+		SccProjectName1 = ../Common/Src
+		SccLocalPath1 = ..\\Common\\Src
+		SccProjectUniqueName2 = ..\\Data\\Src\\Data\\Data.csproj
+		SccProjectTopLevelParentUniqueName2 = Logging.sln
+		SccProjectName2 = ../Data/Src/Data
+		SccLocalPath2 = ..\\Data\\Src\\Data
+		SccProjectUniqueName3 = Src\\Logging\\Logging.csproj
+		SccProjectTopLevelParentUniqueName3 = Logging.sln
+		SccProjectName3 = Src/Logging
+		SccLocalPath3 = Src\\Logging
+		SccProjectUniqueName4 = Src\\DatabaseTraceListener\\Logging.Database.csproj
+		SccProjectTopLevelParentUniqueName4 = Logging.sln
+		SccProjectName4 = Src/DatabaseTraceListener
+		SccLocalPath4 = Src\\DatabaseTraceListener
+		SccProjectUniqueName5 = Src\\MsmqDistributor\\Logging.MsmqDistributor.csproj
+		SccProjectTopLevelParentUniqueName5 = Logging.sln
+		SccProjectName5 = Src/MsmqDistributor
+		SccLocalPath5 = Src\\MsmqDistributor
+		SccProjectUniqueName6 = ..\\Common\\Tests\\Configuration.Manageability\\Common.Configuration.Manageability.Tests.VSTS.csproj
+		SccProjectTopLevelParentUniqueName6 = Logging.sln
+		SccProjectName6 = ../Common/Tests/Configuration.Manageability
+		SccLocalPath6 = ..\\Common\\Tests\\Configuration.Manageability
+		SccProjectUniqueName7 = Tests\\Logging\\Logging.Tests.VSTS.csproj
+		SccProjectTopLevelParentUniqueName7 = Logging.sln
+		SccProjectName7 = Tests/Logging
+		SccLocalPath7 = Tests\\Logging
+		SccProjectUniqueName8 = Tests\\DatabaseTraceListener\\Logging.Database.Tests.VSTS.csproj
+		SccProjectTopLevelParentUniqueName8 = Logging.sln
+		SccProjectName8 = Tests/DatabaseTraceListener
+		SccLocalPath8 = Tests\\DatabaseTraceListener
+		SccProjectUniqueName9 = Tests\\Database.Configuration.Manageability\\Logging.Database.Configuration.Manageability.Tests.VSTS.csproj
+		SccProjectTopLevelParentUniqueName9 = Logging.sln
+		SccProjectName9 = Tests/Database.Configuration.Manageability
+		SccLocalPath9 = Tests\\Database.Configuration.Manageability
+		SccProjectUniqueName10 = Tests\\Configuration.Manageability\\Logging.Configuration.Manageability.Tests.VSTS.csproj
+		SccProjectTopLevelParentUniqueName10 = Logging.sln
+		SccProjectName10 = Tests/Configuration.Manageability
+		SccLocalPath10 = Tests\\Configuration.Manageability
+		SccProjectUniqueName11 = Tests\\MsmqDistributor\\Logging.MsmqDistributor.Tests.VSTS.csproj
+		SccProjectTopLevelParentUniqueName11 = Logging.sln
+		SccProjectName11 = Tests/MsmqDistributor
+		SccLocalPath11 = Tests\\MsmqDistributor
+		SccProjectUniqueName12 = ..\\Common\\Tests\\Common.TestSupport\\Common.TestSupport.csproj
+		SccProjectTopLevelParentUniqueName12 = Logging.sln
+		SccProjectName12 = ../Common/Tests/Common.TestSupport
+		SccLocalPath12 = ..\\Common\\Tests\\Common.TestSupport
+		SccProjectUniqueName13 = Tests\\Logging.TestSupport\\Logging.TestSupport.csproj
+		SccProjectTopLevelParentUniqueName13 = Logging.sln
+		SccProjectName13 = Tests/Logging.TestSupport
+		SccLocalPath13 = Tests\\Logging.TestSupport
+	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = Logging.vsmdi
 	EndGlobalSection

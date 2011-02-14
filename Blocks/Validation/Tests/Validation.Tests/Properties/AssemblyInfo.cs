@@ -1,4 +1,4 @@
-//===============================================================================
+﻿//===============================================================================
 // Microsoft patterns & practices Enterprise Library
 // Validation Application Block
 //===============================================================================
@@ -9,12 +9,7 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System.Security.Permissions;
 using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.ConstrainedExecution;
-
-[assembly: SecurityPermission(SecurityAction.RequestMinimum)]
 
 [assembly: AssemblyTitle("Enterprise Library Validation Application Block Tests")]
 [assembly: AssemblyDescription("Enterprise Library Validation Application Block Tests")]

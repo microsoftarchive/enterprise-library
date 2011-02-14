@@ -36,7 +36,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Instrumentation
         /// Notifies provider that configuration for validation has failed.
         ///</summary>
         ///<param name="configurationException"></param>
+#if SILVERLIGHT     //TODO: is this separation needed? Can Desktop use Exception instead?
+        void NotifyConfigurationFailure(Exception configurationException);
+#else
         void NotifyConfigurationFailure(ConfigurationErrorsException configurationException);
+#endif
 
         ///<summary>
         /// Notifies provider that a configuration based validation has been called.

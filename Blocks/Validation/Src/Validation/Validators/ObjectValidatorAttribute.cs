@@ -82,11 +82,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         {
             if (this.ValidateActualType)
             {
-                return new ObjectValidator(validatorFactory, targetRuleset);
+                return new ObjectValidator(validatorFactory, TargetRuleset);
             }
             else
             {
-                return new ObjectValidator(targetType, validatorFactory, targetRuleset);
+                return new ObjectValidator(targetType, validatorFactory, TargetRuleset);
             }
         }
 
@@ -94,5 +94,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         /// Gets or sets the value indicating whether to validate based on the static type or the actual type.
         /// </summary>
         public bool ValidateActualType { get; set; }
+
+        /// <summary>
+        /// The target ruleset.
+        /// </summary>
+        public string TargetRuleset
+        {
+            get { return targetRuleset; }
+        }
     }
 }

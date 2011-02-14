@@ -33,7 +33,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.C
         /// </summary>
         /// <param name="attribute">The <see cref="WizardCommandAttribute"/> used to define this command.</param>
         /// <param name="uiService">The service to use when displaying dialogs.</param>
-        /// <param name="resolver">The service to use to get instances of new <see cref="WizardModel"/> based on <paramref name="attributedClassType"/></param>
+        /// <param name="resolver">The service to use to get instances of new <see cref="WizardModel"/> based on <paramref name="attribute"/></param>
         public WizardCommand(WizardCommandAttribute attribute
             , IUIServiceWpf uiService
             , IResolver<WizardModel> resolver)

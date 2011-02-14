@@ -185,6 +185,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
         {
             return null; // Don't care about this for the purposes of this test.
         }
+
+        protected override void RegisterConfigurationSource(IConfigurationSource configurationSource)
+        {
+            // Don't care about this for the purposes of this test.
+        }
     }
 
     class MockConfigSource : IConfigurationSource

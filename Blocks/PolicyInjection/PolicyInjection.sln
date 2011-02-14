@@ -1,10 +1,11 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F584B324-C649-4841-936E-B0CC18CAAFE4}"
 	ProjectSection(SolutionItems) = preProject
 		..\codecoverage.testrunconfig = ..\codecoverage.testrunconfig
 		localtestrun.testrunconfig = localtestrun.testrunconfig
+		PolicyInjection.vsmdi = PolicyInjection.vsmdi
 	EndProjectSection
 	ProjectSection(FolderStartupServices) = postProject
 		{B4F97281-0DBD-4835-9ED8-7DFB966E87FF} = {B4F97281-0DBD-4835-9ED8-7DFB966E87FF}
@@ -46,6 +47,52 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PolicyInjection.TestSupport", "Tests\PolicyInjection.TestSupport\PolicyInjection.TestSupport.csproj", "{EBCB52B8-C189-4958-9BB2-B7670BCB49FB}"
 EndProject
 Global
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 11
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = http://pagtfs2008:8080/
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = ..\\Common\\Src\\Common.csproj
+		SccProjectTopLevelParentUniqueName1 = PolicyInjection.sln
+		SccProjectName1 = ../Common/Src
+		SccLocalPath1 = ..\\Common\\Src
+		SccProjectUniqueName2 = ..\\ExceptionHandling\\Src\\ExceptionHandling\\ExceptionHandling.csproj
+		SccProjectTopLevelParentUniqueName2 = PolicyInjection.sln
+		SccProjectName2 = ../ExceptionHandling/Src/ExceptionHandling
+		SccLocalPath2 = ..\\ExceptionHandling\\Src\\ExceptionHandling
+		SccProjectUniqueName3 = ..\\Logging\\Src\\Logging\\Logging.csproj
+		SccProjectTopLevelParentUniqueName3 = PolicyInjection.sln
+		SccProjectName3 = ../Logging/Src/Logging
+		SccLocalPath3 = ..\\Logging\\Src\\Logging
+		SccProjectUniqueName4 = ..\\Security\\Src\\Security\\Security.csproj
+		SccProjectTopLevelParentUniqueName4 = PolicyInjection.sln
+		SccProjectName4 = ../Security/Src/Security
+		SccLocalPath4 = ..\\Security\\Src\\Security
+		SccProjectUniqueName5 = ..\\Validation\\Src\\Validation\\Validation.csproj
+		SccProjectTopLevelParentUniqueName5 = PolicyInjection.sln
+		SccProjectName5 = ../Validation/Src/Validation
+		SccLocalPath5 = ..\\Validation\\Src\\Validation
+		SccProjectUniqueName6 = Src\\PolicyInjection\\PolicyInjection.csproj
+		SccProjectTopLevelParentUniqueName6 = PolicyInjection.sln
+		SccProjectName6 = Src/PolicyInjection
+		SccLocalPath6 = Src\\PolicyInjection
+		SccProjectUniqueName7 = Tests\\PolicyInjection\\PolicyInjection.Tests.VSTS.csproj
+		SccProjectTopLevelParentUniqueName7 = PolicyInjection.sln
+		SccProjectName7 = Tests/PolicyInjection
+		SccLocalPath7 = Tests\\PolicyInjection
+		SccProjectUniqueName8 = Tests\\CallHandlers\\PolicyInjection.CallHandlers.Tests.VSTS.csproj
+		SccProjectTopLevelParentUniqueName8 = PolicyInjection.sln
+		SccProjectName8 = Tests/CallHandlers
+		SccLocalPath8 = Tests\\CallHandlers
+		SccProjectUniqueName9 = ..\\Common\\Tests\\Common.TestSupport\\Common.TestSupport.csproj
+		SccProjectTopLevelParentUniqueName9 = PolicyInjection.sln
+		SccProjectName9 = ../Common/Tests/Common.TestSupport
+		SccLocalPath9 = ..\\Common\\Tests\\Common.TestSupport
+		SccProjectUniqueName10 = Tests\\PolicyInjection.TestSupport\\PolicyInjection.TestSupport.csproj
+		SccProjectTopLevelParentUniqueName10 = PolicyInjection.sln
+		SccProjectName10 = Tests/PolicyInjection.TestSupport
+		SccLocalPath10 = Tests\\PolicyInjection.TestSupport
+	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = PolicyInjection.vsmdi
 	EndGlobalSection

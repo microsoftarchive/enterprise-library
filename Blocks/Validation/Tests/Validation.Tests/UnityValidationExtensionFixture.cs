@@ -11,15 +11,17 @@
 
 using System;
 using System.Configuration;
-using System.Text;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Unity;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.Unity;
 using Microsoft.Practices.EnterpriseLibrary.Validation.TestSupport.TestClasses;
 using Microsoft.Practices.Unity;
+#if !SILVERLIGHT
 using Microsoft.Practices.Unity.Configuration;
+#endif
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel.Unity;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
 {
@@ -34,8 +36,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         [TestInitialize]
         public void Setup()
         {
-            container = new UnityContainer()
-                .AddNewExtension<EnterpriseLibraryCoreExtension>();
+            container = new UnityContainer();
+            var configurationSource =
+#if !SILVERLIGHT
+                new SystemConfigurationSource();
+#else
+                ResourceDictionaryConfigurationSource.FromXaml(new Uri("/Microsoft.Practices.EnterpriseLibrary.Validation.Silverlight.Tests;component/Configuration.xaml", UriKind.Relative));
+#endif
+            EnterpriseLibraryContainer.ConfigureContainer(new UnityContainerConfigurator(container), configurationSource);
         }
 
         [TestCleanup]
@@ -130,7 +138,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         public void CanControlValidationSourceAndRuleSetWhenConfiguringInjectionInAPI()
         {
             container.RegisterType<ObjectWithValidatorPropertiesAndNoAttributes>(
-                new InjectionProperty("Val1", 
+                new InjectionProperty("Val1",
                     new ValidatorParameter<TestObjectWithFailingAttributesOnProperties>("RuleA", ValidationSpecificationSource.Attributes)));
 
             var o = container.Resolve<ObjectWithValidatorPropertiesAndNoAttributes>();
@@ -168,7 +176,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
             AssertValidatorIsBasedOnAttributesOnlyForRuleSetA(o.Val1);
         }
 
+        [TestMethod]
+        public void AddingTheValidationBlockExtensionDoesNotConfigureTheContainer()
+        {
+            var container = new UnityContainer();
 
+            container.AddNewExtension<ValidationBlockExtension>();
+
+            Assert.AreEqual(1, container.Registrations.Count());        // account for the container registering itself
+        }
+
+#if !SILVERLIGHT
         [TestMethod]
         public void CanConfigureValidationSourceFromUnityConfigurationToReadOnlyAttributes()
         {
@@ -211,10 +229,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
 
         private void ConfigureContainer(string containerConfigName)
         {
-            var section = (UnityConfigurationSection) ConfigurationManager.GetSection("unity");
+            var section = (UnityConfigurationSection)ConfigurationManager.GetSection("unity");
             container.LoadConfiguration(section, containerConfigName);
         }
-
+#endif
         private void AssertValidatorIsBasedOnAttributesOnly(Validator<TestObjectWithFailingAttributesOnProperties> v)
         {
             ValidationResults validationResults = v.Validate(new TestObjectWithFailingAttributesOnProperties());
@@ -224,7 +242,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
             Assert.AreEqual(2, resultsMapping.Count);
             Assert.IsTrue(resultsMapping.ContainsKey("message1"));
             Assert.IsTrue(resultsMapping.ContainsKey("message2"));
-            
+
         }
 
         private void AssertValidatorIsBasedOnConfigOnly(Validator<TestObjectWithFailingAttributesOnProperties> v)

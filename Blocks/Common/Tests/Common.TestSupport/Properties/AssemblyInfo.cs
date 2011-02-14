@@ -1,4 +1,4 @@
-//===============================================================================
+﻿//===============================================================================
 // Microsoft patterns & practices Enterprise Library
 // Core
 //===============================================================================
@@ -9,15 +9,8 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
 using System.Reflection;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Manageability;
-using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration.Manageability.Mocks;
 
 [assembly: AssemblyTitle("Enterprise Library Shared Tests Support")]
 [assembly: AssemblyDescription("Enterprise Library Shared Tests Support")]
 [assembly: AssemblyVersion("5.0.414.0")]
-
-[assembly: ConfigurationSectionManageabilityProvider("section1", typeof(MockConfigurationSectionManageabilityProvider))]
-[assembly: ConfigurationElementManageabilityProvider(typeof(MockConfigurationSectionManageabilityProviderAlt), typeof(string), typeof(MockConfigurationSectionManageabilityProvider))]
-[assembly: CLSCompliant(false)]

@@ -40,7 +40,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
             MemberAccessValidatorBuilderFactory memberAccessValidatorBuilderFactory,
             ValidatorFactory validatorFactory)
         {
-            var instrumentationProvider = ValidationInstrumentationProvider.FromConfigurationSource(configurationSource);
+            var instrumentationProvider =
+#if !SILVERLIGHT    // todo remove when including other sources
+                ValidationInstrumentationProvider.FromConfigurationSource(configurationSource);
+#else
+                new NullValidationInstrumentationProvider();
+#endif
+
             var settings = ValidationSettings.TryGet(configurationSource, instrumentationProvider);
 
             return
@@ -108,7 +114,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
                 ValidatedTypeReference typeReference = validationSettings.Types.Get(type.FullName);
                 return typeReference;
             }
+#if SILVERLIGHT     //TODO: is this separation needed? Can Desktop use Exception instead?
+            catch (Exception configurationErrors)
+#else
             catch (ConfigurationErrorsException configurationErrors)
+#endif
             {
                 instrumentationProvider.NotifyConfigurationFailure(configurationErrors);
                 throw;

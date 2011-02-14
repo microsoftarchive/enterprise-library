@@ -12,7 +12,6 @@
 using System.Collections.Generic;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.TestSupport.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.TestSupport.TestClasses;
@@ -24,6 +23,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
     [TestClass]
     public class AndCompositeValidatorDataFixture
     {
+#if !SILVERLIGHT
         [TestMethod]
         public void CanDeserializeSerializedInstanceWithNoChildValidators()
         {
@@ -34,7 +34,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             IDictionary<string, ConfigurationSection> sections = new Dictionary<string, ConfigurationSection>();
             sections[ValidationSettings.SectionName] = rwSettings;
 
-            using (ConfigurationFileHelper configurationFileHelper = new ConfigurationFileHelper(sections))
+            using (var configurationFileHelper = new Common.TestSupport.Configuration.ConfigurationFileHelper(sections))
             {
                 IConfigurationSource configurationSource = configurationFileHelper.ConfigurationSource;
 
@@ -60,7 +60,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             IDictionary<string, ConfigurationSection> sections = new Dictionary<string, ConfigurationSection>();
             sections[ValidationSettings.SectionName] = rwSettings;
 
-            using (ConfigurationFileHelper configurationFileHelper = new ConfigurationFileHelper(sections))
+            using (var configurationFileHelper = new Common.TestSupport.Configuration.ConfigurationFileHelper(sections))
             {
                 IConfigurationSource configurationSource = configurationFileHelper.ConfigurationSource;
 
@@ -75,11 +75,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
                 Assert.AreEqual("child validator 2", ((AndCompositeValidatorData)roSettings.Validators.Get(0)).Validators.Get(1).Name);
             }
         }
+#endif
 
         [TestMethod]
         public void CanCreateValidatorFromEmptyConfigurationObject()
         {
-            AndCompositeValidatorData rwValidatorData = new AndCompositeValidatorData("validator1");
+            AndCompositeValidatorData rwValidatorData = new AndCompositeValidatorData { Name = "validator1" };
 
             Validator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(null, null, null, null);
 
@@ -92,7 +93,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
         [TestMethod]
         public void CanCreateValidatorFromConfigurationObject()
         {
-            AndCompositeValidatorData rwValidatorData = new AndCompositeValidatorData("validator1");
+            AndCompositeValidatorData rwValidatorData = new AndCompositeValidatorData { Name = "validator1" };
             rwValidatorData.Validators.Add(new MockValidatorData("child validator 1", false));
             rwValidatorData.Validators.Get(0).MessageTemplate = "child validator 1";
             rwValidatorData.Validators.Add(new MockValidatorData("child validator 2", false));

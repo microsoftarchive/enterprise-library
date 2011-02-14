@@ -432,6 +432,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
             Assert.IsTrue(results.IsValid);
         }
 
+        [Ignore]
         [TestMethod]
         public void NonNegatedFailuresForSameUpperBoundValueUsingExclusiveBoundaryType()
         {

@@ -12,6 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.TestSupport.TestClasses;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -267,5 +268,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
                 invalidResults.Any(vr =>
                     vr.Key == "PropertyWithMixedAttributes" && vr.Message == "vab-mixed"));
         }
+
+#if SILVERLIGHT
+        [TestInitialize]
+        public void Setup()
+        {
+            var configurationSource = ResourceDictionaryConfigurationSource.FromXaml(new Uri("/Microsoft.Practices.EnterpriseLibrary.Validation.Silverlight.Tests;component/Configuration.xaml", UriKind.Relative));
+            EnterpriseLibraryContainer.Current = EnterpriseLibraryContainer.CreateDefaultContainer(configurationSource);
+        }
+#endif
     }
 }

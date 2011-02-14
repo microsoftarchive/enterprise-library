@@ -1,0 +1,274 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{6F8B11CC-D60E-4822-84C3-AADFB6757BAE}</ProjectGuid>
+    <ProjectTypeGuids>{A1591282-1198-4647-A2B1-27E5FF5F6F3B};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Microsoft.Practices.EnterpriseLibrary.Validation</RootNamespace>
+    <AssemblyName>Microsoft.Practices.EnterpriseLibrary.Validation.Silverlight</AssemblyName>
+    <TargetFrameworkIdentifier>Silverlight</TargetFrameworkIdentifier>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <SilverlightVersion>$(TargetFrameworkVersion)</SilverlightVersion>
+    <SilverlightApplication>false</SilverlightApplication>
+    <ValidateXaml>true</ValidateXaml>
+    <ThrowErrorsInValidation>true</ThrowErrorsInValidation>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <!-- This property group is only here to support building this project using the 
+       MSBuild 3.5 toolset. In order to work correctly with this older toolset, it needs 
+       to set the TargetFrameworkVersion to v3.5 -->
+  <PropertyGroup Condition="'$(MSBuildToolsVersion)' == '3.5'">
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>Bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;TRACE;SILVERLIGHT</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>Bin\Release</OutputPath>
+    <DefineConstants>TRACE;SILVERLIGHT</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\Lib\Silverlight\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity.Silverlight, Version=2.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\Lib\Silverlight\Microsoft.Practices.Unity.Silverlight.dll</HintPath>
+    </Reference>
+    <Reference Include="mscorlib" />
+    <Reference Include="System.ComponentModel.DataAnnotations, Version=2.0.5.0, Culture=neutral, PublicKeyToken=ddd0da4d3e678217, processorArchitecture=MSIL" />
+    <Reference Include="System.Windows" />
+    <Reference Include="system" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Net" />
+    <Reference Include="System.Windows.Browser" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AttributeValidatorFactory.cs" />
+    <Compile Include="CompositeValidatorBuilder.cs" />
+    <Compile Include="CompositeValidatorFactory.cs" />
+    <Compile Include="ConfigurationValidatedElement.cs" />
+    <Compile Include="ConfigurationValidatedType.cs" />
+    <Compile Include="ConfigurationValidatorBuilder.cs" />
+    <Compile Include="ConfigurationValidatorFactory.cs" />
+    <Compile Include="Configuration\AndCompositeValidatorData.cs" />
+    <Compile Include="Configuration\AndCompositeValidatorData.Silverlight.cs" />
+    <Compile Include="Configuration\ContainsCharactersValidatorData.cs" />
+    <Compile Include="Configuration\ContainsCharactersValidatorData.Silverlight.cs" />
+    <Compile Include="Configuration\CustomValidatorData.cs" />
+    <Compile Include="Configuration\CustomValidatorData.Silverlight.cs" />
+    <Compile Include="Configuration\DateTimeRangeValidatorData.cs" />
+    <Compile Include="Configuration\DomainConfigurationElement.Silverlight.cs" />
+    <Compile Include="Configuration\DomainValidatorData.cs" />
+    <Compile Include="Configuration\DomainValidatorData.Silverlight.cs" />
+    <Compile Include="Configuration\EnumConversionValidatorData.cs" />
+    <Compile Include="Configuration\EnumConversionValidatorData.Silverlight.cs" />
+    <Compile Include="Configuration\NotNullValidatorData.cs" />
+    <Compile Include="Configuration\ObjectCollectionValidatorData.cs" />
+    <Compile Include="Configuration\ObjectCollectionValidatorData.Silverlight.cs" />
+    <Compile Include="Configuration\ObjectValidatorData.cs" />
+    <Compile Include="Configuration\ObjectValidatorData.Silverlight.cs" />
+    <Compile Include="Configuration\OrCompositeValidatorData.cs" />
+    <Compile Include="Configuration\OrCompositeValidatorData.Silverlight.cs" />
+    <Compile Include="Configuration\PropertyComparisonValidatorData.cs" />
+    <Compile Include="Configuration\PropertyComparisonValidatorData.Silverlight.cs" />
+    <Compile Include="Configuration\RangeValidatorData.cs" />
+    <Compile Include="Configuration\RangeValidatorData.Silverlight.cs" />
+    <Compile Include="Configuration\RegexValidatorData.cs" />
+    <Compile Include="Configuration\RegexValidatorData.Silverlight.cs" />
+    <Compile Include="Configuration\RelativeDateTimeValidatorData.cs" />
+    <Compile Include="Configuration\RelativeDateTimeValidatorData.Silverlight.cs" />
+    <Compile Include="Configuration\TypeConversionValidatorData.cs" />
+    <Compile Include="Configuration\TypeConversionValidatorData.Silverlight.cs" />
+    <Compile Include="Configuration\Unity\InjectionValidationSource.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Configuration\Unity\ValidationBlockExtension.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Configuration\Unity\ValidationSpecificationSourcePolicy.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Configuration\Unity\ValidatorCreationStrategy.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Configuration\Unity\ValidatorDependencyAttribute.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Configuration\Unity\ValidatorParameter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Configuration\Unity\ValidatorResolver.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Configuration\ValidatedFieldReference.Silverlight.cs" />
+    <Compile Include="Configuration\ValidatedMemberReference.Silverlight.cs" />
+    <Compile Include="Configuration\ValidatedMethodReference.Silverlight.cs" />
+    <Compile Include="Configuration\ValidatedPropertyReference.Silverlight.cs" />
+    <Compile Include="Configuration\ValidatedTypeReference.Silverlight.cs" />
+    <Compile Include="Configuration\ValidationRulesetData.Silverlight.cs" />
+    <Compile Include="Configuration\ValidationSettings.Silverlight.cs" />
+    <Compile Include="DataErrorInfoHelper.cs" />
+    <Compile Include="Instrumentation\NullValidationInstrumentationProvider.cs" />
+    <Compile Include="Configuration\ValidationTypeRegistrationProvider.Silverlight.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Configuration\ValidatorData.Silverlight.cs" />
+    <Compile Include="Configuration\ValueValidatorData.Silverlight.cs" />
+    <Compile Include="Configuration\RangeValidatorData.Generic.cs" />
+    <Compile Include="Configuration\RangeValidatorData.Generic.Silverlight.cs" />
+    <Compile Include="Configuration\StringLengthValidatorData.cs" />
+    <Compile Include="Configuration\ValidatorData.cs" />
+    <Compile Include="Configuration\ValueValidatorData.cs" />
+    <Compile Include="Instrumentation\IValidationInstrumentationProvider.cs" />
+    <Compile Include="IValidatedElement.cs" />
+    <Compile Include="IValidatedType.cs" />
+    <Compile Include="IValidatorDescriptor.cs" />
+    <Compile Include="MemberAccessValidatorBuilderFactory.cs" />
+    <Compile Include="MemberValueAccessBuilder.cs" />
+    <Compile Include="MetadataValidatedElement.cs" />
+    <Compile Include="MetadataValidatedParameterElement.cs" />
+    <Compile Include="MetadataValidatedType.cs" />
+    <Compile Include="MetadataValidatorBuilder.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\AssemblyInfo.Silverlight.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="PropertyValidationFactory.cs" />
+    <Compile Include="ReflectionMemberValueAccessBuilder.cs" />
+    <Compile Include="TagFilter.cs" />
+    <Compile Include="Validation.cs" />
+    <Compile Include="ValidationAttributeValidatedElement.cs" />
+    <Compile Include="ValidationAttributeValidatedType.cs" />
+    <Compile Include="ValidationAttributeValidatorBuilder.cs" />
+    <Compile Include="ValidationAttributeValidatorFactory.cs" />
+    <Compile Include="ValidationFactory.cs" />
+    <Compile Include="ValidationReflectionHelper.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ValidationResult.cs" />
+    <Compile Include="ValidationResults.cs" />
+    <Compile Include="ValidationSpecificationSource.cs" />
+    <Compile Include="Validator.cs" />
+    <Compile Include="Validator.Generic.cs" />
+    <Compile Include="ValidatorBuilderBase.cs" />
+    <Compile Include="ValidatorCacheKey.cs" />
+    <Compile Include="ValidatorFactory.cs" />
+    <Compile Include="Validators\AndCompositeValidator.cs" />
+    <Compile Include="Validators\BaseValidationAttribute.cs" />
+    <Compile Include="Validators\ComparisonOperator.cs" />
+    <Compile Include="Validators\CompositionType.cs" />
+    <Compile Include="Validators\ContainsCharacters.cs" />
+    <Compile Include="Validators\ContainsCharactersValidator.cs" />
+    <Compile Include="Validators\ContainsCharactersValidatorAttribute.cs" />
+    <Compile Include="Validators\BaseValidationAttribute.Silverlight.cs" />
+    <Compile Include="Validators\GenericValidatorWrapper.cs" />
+    <Compile Include="Validators\HasSelfValidationAttribute.cs" />
+    <Compile Include="Validators\NotNullValidatorAttribute.cs" />
+    <Compile Include="Validators\ObjectCollectionValidator.cs" />
+    <Compile Include="Validators\ObjectCollectionValidatorAttribute.cs" />
+    <Compile Include="Validators\ObjectValidator.cs" />
+    <Compile Include="Validators\ObjectValidatorAttribute.cs" />
+    <Compile Include="Validators\PropertyComparisonValidatorAttribute.Silverlight.cs" />
+    <Compile Include="Validators\RangeValidatorAttribute.cs" />
+    <Compile Include="Validators\RegexValidator.cs" />
+    <Compile Include="Validators\RegexValidatorAttribute.cs" />
+    <Compile Include="Validators\SelfValidationAttribute.cs" />
+    <Compile Include="Validators\SelfValidationValidator.cs" />
+    <Compile Include="Validators\TypeConversionValidator.cs" />
+    <Compile Include="Validators\TypeConversionValidatorAttribute.cs" />
+    <Compile Include="Validators\ValidationAttributeValidator.cs" />
+    <Compile Include="Validators\ValueValidatorAttribute.Silverlight.cs" />
+    <Compile Include="Validators\DateTimeRangeValidator.cs" />
+    <Compile Include="Validators\DateTimeRangeValidatorAttribute.cs" />
+    <Compile Include="Validators\DateTimeUnit.cs" />
+    <Compile Include="Validators\DomainValidator.cs" />
+    <Compile Include="Validators\DomainValidatorAttribute.cs" />
+    <Compile Include="Validators\EnumConversionValidator.cs" />
+    <Compile Include="Validators\EnumConversionValidatorAttribute.cs" />
+    <Compile Include="Validators\FieldValueAccess.cs" />
+    <Compile Include="Validators\FieldValueValidator.cs" />
+    <Compile Include="Validators\IgnoreNullsAttribute.cs" />
+    <Compile Include="Validators\MemberAccessValidator.cs" />
+    <Compile Include="Validators\MethodReturnValueValidator.cs" />
+    <Compile Include="Validators\MethodValueAccess.cs" />
+    <Compile Include="Validators\NotNullValidator.cs" />
+    <Compile Include="Validators\NullIgnoringValidatorWrapper.cs" />
+    <Compile Include="Validators\OrCompositeValidator.cs" />
+    <Compile Include="Validators\PropertyComparisonValidator.cs" />
+    <Compile Include="Validators\PropertyComparisonValidatorAttribute.cs" />
+    <Compile Include="Validators\PropertyValueAccess.cs" />
+    <Compile Include="Validators\PropertyValueValidator.cs" />
+    <Compile Include="Validators\RangeBoundaryType.cs" />
+    <Compile Include="Validators\RangeChecker.cs" />
+    <Compile Include="Validators\RangeValidator.cs" />
+    <Compile Include="Validators\RangeValidator.Generic.cs" />
+    <Compile Include="Validators\RelativeDateTimeGenerator.cs" />
+    <Compile Include="Validators\RelativeDateTimeValidator.cs" />
+    <Compile Include="Validators\RelativeDateTimeValidatorAttribute.cs" />
+    <Compile Include="Validators\StringLengthValidator.cs" />
+    <Compile Include="Validators\StringLengthValidatorAttribute.cs" />
+    <Compile Include="Validators\ValidatorArgumentsValidatorHelper.cs" />
+    <Compile Include="Validators\ValidatorAttribute.cs" />
+    <Compile Include="Validators\ValidatorCompositionAttribute.cs" />
+    <Compile Include="Validators\ValueAccess.cs" />
+    <Compile Include="Validators\ValueAccessComparisonValidator.cs" />
+    <Compile Include="Validators\ValueAccessValidator.cs" />
+    <Compile Include="Validators\ValueValidator.cs" />
+    <Compile Include="Validators\ValueValidator.Generic.cs" />
+    <Compile Include="Validators\ValueValidatorAttribute.cs" />
+    <Compile Include="ValueAccessValidatorBuilder.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\Src\Common.Silverlight.csproj">
+      <Project>{453CC31C-5264-411F-96C7-84CB52298DE1}</Project>
+      <Name>Common.Silverlight</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Silverlight\$(SilverlightVersion)\Microsoft.Silverlight.CSharp.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{A1591282-1198-4647-A2B1-27E5FF5F6F3B}">
+        <SilverlightProjectProperties />
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -90,6 +90,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         }
     }
 
+#if !SILVERLIGHT
     [TestClass]
     public class GivenValidatorCreatedByValidationAttributeValidatorBuilderForTypeWithValidationAttributesOnMetadataType
     {
@@ -172,4 +173,5 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
             public string MyField;
         }
     }
+#endif
 }

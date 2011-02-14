@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TestLists xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2006" xmlns:custom="http://microsoft.com/schemas/VisualStudio/TeamTest/2006/XsltFunctions">
+<TestLists xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
   <TestList name="Lists of Tests" id="8c43106b-9dc1-4907-a29f-aa66a61bf5b6">
     <RunConfiguration name="EnterpriseLibrary" storage="..\..\..\enterpriselibrary.testrunconfig" id="b30ab5c0-4c61-4809-bc08-afc893741cba" type="Microsoft.VisualStudio.TestTools.Common.TestRunConfiguration" />
   </TestList>

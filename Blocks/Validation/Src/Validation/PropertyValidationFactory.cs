@@ -200,23 +200,21 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
                 PropertyValidatorCacheKey key = new PropertyValidatorCacheKey(type, propertyInfo.Name, ruleset);
                 if (!defaultConfigurationOnlyPropertyValidatorsCache.TryGetValue(key, out validator))
                 {
-                    using (var configurationSource = ConfigurationSourceFactory.Create())
-                    {
-                        ConfigurationValidatorBuilder builder =
-                            ConfigurationValidatorBuilder.FromConfiguration(
-                                configurationSource,
-                                memberAccessValidatorBuilderFactory,
-                                ValidationFactory.DefaultCompositeValidatorFactory);
+                    var configurationSource = EnterpriseLibraryContainer.Current.GetInstance<IConfigurationSource>();
+                    ConfigurationValidatorBuilder builder =
+                        ConfigurationValidatorBuilder.FromConfiguration(
+                            configurationSource,
+                            memberAccessValidatorBuilderFactory,
+                            ValidationFactory.DefaultCompositeValidatorFactory);
 
-                        ValidatedPropertyReference propertyReference =
-                            GetValidatedPropertyReference(type, ruleset, propertyInfo.Name, configurationSource);
-                        if (null == propertyReference)
-                            validator = null;
-                        else
-                            validator = builder.CreateValidatorForProperty(type, propertyReference);
+                    ValidatedPropertyReference propertyReference =
+                        GetValidatedPropertyReference(type, ruleset, propertyInfo.Name, configurationSource);
+                    if (null == propertyReference)
+                        validator = null;
+                    else
+                        validator = builder.CreateValidatorForProperty(type, propertyReference);
 
-                        defaultConfigurationOnlyPropertyValidatorsCache[key] = validator;
-                    }
+                    defaultConfigurationOnlyPropertyValidatorsCache[key] = validator;
                 }
             }
 

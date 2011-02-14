@@ -40,7 +40,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         [TestMethod]
         public void FlyweightUpdatedWithValidatedPropertyReferenceReturnsCorrectValues()
         {
-            ValidatedPropertyReference propertyReference = new ValidatedPropertyReference("Property");
+            ValidatedPropertyReference propertyReference = new ValidatedPropertyReference { Name = "Property" };
             propertyReference.Validators.Add(new MockValidatorData("validator1", false));
             propertyReference.Validators.Get("validator1").MessageTemplate = "property validator 1 message";
             propertyReference.Validators.Add(new MockValidatorData("validator2", false));
@@ -73,7 +73,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         [TestMethod]
         public void FlyweightUpdatedWithValidatedFieldReferenceReturnsCorrectValues()
         {
-            ValidatedFieldReference fieldReference = new ValidatedFieldReference("Field");
+            ValidatedFieldReference fieldReference = new ValidatedFieldReference { Name = "Field" };
             fieldReference.Validators.Add(new MockValidatorData("validator1", false));
             fieldReference.Validators.Get("validator1").MessageTemplate = "field validator 1 message";
             fieldReference.Validators.Add(new MockValidatorData("validator2", false));
@@ -109,7 +109,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         [TestMethod]
         public void FlyweightUpdatedWithValidatedMethodReferenceReturnsCorrectValues()
         {
-            ValidatedMethodReference methodReference = new ValidatedMethodReference("Method");
+            ValidatedMethodReference methodReference = new ValidatedMethodReference { Name = "Method" };
             methodReference.Validators.Add(new MockValidatorData("validator1", false));
             methodReference.Validators.Get("validator1").MessageTemplate = "method validator 1 message";
             methodReference.Validators.Add(new MockValidatorData("validator2", false));
@@ -151,12 +151,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         [TestMethod]
         public void IterationContinuesAfterFlyweightUpdate()
         {
-            ValidatedPropertyReference propertyReference = new ValidatedPropertyReference("Property");
+            ValidatedPropertyReference propertyReference = new ValidatedPropertyReference { Name = "Property" };
             propertyReference.Validators.Add(new MockValidatorData("validator1", false));
             propertyReference.Validators.Get("validator1").MessageTemplate = "property validator 1 message";
             propertyReference.Validators.Add(new MockValidatorData("validator2", false));
             propertyReference.Validators.Get("validator2").MessageTemplate = "property validator 2 message";
-            ValidatedFieldReference fieldReference = new ValidatedFieldReference("Field");
+            ValidatedFieldReference fieldReference = new ValidatedFieldReference { Name = "Field" };
             fieldReference.Validators.Add(new MockValidatorData("validator1", false));
             fieldReference.Validators.Get("validator1").MessageTemplate = "field validator 1 message";
             fieldReference.Validators.Add(new MockValidatorData("validator2", false));

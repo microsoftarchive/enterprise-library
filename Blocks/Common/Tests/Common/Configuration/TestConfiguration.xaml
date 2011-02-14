@@ -1,0 +1,8 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:config="clr-namespace:Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration;assembly=Microsoft.Practices.EnterpriseLibrary.Common.Silverlight.Tests">
+    
+    <config:MockConfigurationSection x:Key="section1" TestProperty="DummyText" />
+    
+</ResourceDictionary>

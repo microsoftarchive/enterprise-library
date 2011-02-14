@@ -14,7 +14,7 @@
 
     <ControlTemplate x:Key="ExpanderToggleButton"
 					 TargetType="{x:Type ToggleButton}">
-        <Grid>
+        <Grid Background="Transparent" IsHitTestVisible="True">
             <Path HorizontalAlignment="Stretch"
 				  x:Name="Close_Arrow"
 				  VerticalAlignment="Stretch"
@@ -64,7 +64,7 @@
                             <ScaleTransform ScaleX="1.3"
 											ScaleY="1.3" />
                             <SkewTransform />
-                            <RotateTransform Angle="-45" />
+                            <RotateTransform Angle="135" />
                             <TranslateTransform />
                         </TransformGroup>
                     </Setter.Value>
@@ -119,16 +119,6 @@
                 <Setter Property="Visibility"
 						TargetName="Open_Arrow"
 						Value="Collapsed" />
-                <Setter Property="RenderTransform" TargetName="Close_Arrow">
-                    <Setter.Value>
-                        <TransformGroup>
-                            <ScaleTransform/>
-                            <SkewTransform/>
-                            <RotateTransform Angle="135"/>
-                            <TranslateTransform/>
-                        </TransformGroup>
-                    </Setter.Value>
-                </Setter>
             </Trigger>
             <Trigger Property="IsEnabled"
 					 Value="False">

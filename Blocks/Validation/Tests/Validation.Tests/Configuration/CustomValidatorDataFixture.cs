@@ -12,7 +12,6 @@
 using System.Collections.Generic;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.TestSupport.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.TestSupport.TestClasses;
@@ -23,6 +22,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
     [TestClass]
     public class CustomValidatorDataFixture
     {
+#if !SILVERLIGHT
         [TestMethod]
         public void CanDeserializeSerializedInstanceWithNameOnly()
         {
@@ -33,7 +33,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             IDictionary<string, ConfigurationSection> sections = new Dictionary<string, ConfigurationSection>();
             sections[ValidationSettings.SectionName] = rwSettings;
 
-            using (ConfigurationFileHelper configurationFileHelper = new ConfigurationFileHelper(sections))
+            using (var configurationFileHelper = new Common.TestSupport.Configuration.ConfigurationFileHelper(sections))
             {
                 IConfigurationSource configurationSource = configurationFileHelper.ConfigurationSource;
 
@@ -59,7 +59,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             IDictionary<string, ConfigurationSection> sections = new Dictionary<string, ConfigurationSection>();
             sections[ValidationSettings.SectionName] = rwSettings;
 
-            using (ConfigurationFileHelper configurationFileHelper = new ConfigurationFileHelper(sections))
+            using (var configurationFileHelper = new Common.TestSupport.Configuration.ConfigurationFileHelper(sections))
             {
                 IConfigurationSource configurationSource = configurationFileHelper.ConfigurationSource;
 
@@ -74,11 +74,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
                 Assert.AreEqual("bar", ((CustomValidatorData)roSettings.Validators.Get(0)).Attributes["foo"]);
             }
         }
+#endif
 
         [TestMethod]
         public void CanCreateValidatorFromConfigurationObject()
         {
-            CustomValidatorData rwValidatorData = new CustomValidatorData("validator1", typeof(MockCustomValidator));
+            CustomValidatorData rwValidatorData = new CustomValidatorData
+            {
+                Name = "validator1",
+                Type = typeof(MockCustomValidator)
+            };
             rwValidatorData.Attributes.Add("returnFailure", "true");
             rwValidatorData.Attributes.Add("foo", "bar");
 
@@ -93,7 +98,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
         [TestMethod]
         public void CanCreateValidatorFromConfigurationObjectWithMessageTemplateOverride()
         {
-            CustomValidatorData rwValidatorData = new CustomValidatorData("validator1", typeof(MockCustomValidator));
+            CustomValidatorData rwValidatorData = new CustomValidatorData
+            {
+                Name = "validator1",
+                Type = typeof(MockCustomValidator)
+            };
             rwValidatorData.Attributes.Add("returnFailure", "true");
             rwValidatorData.Attributes.Add("foo", "bar");
             rwValidatorData.MessageTemplate = "message template override";
@@ -104,6 +113,25 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             Assert.AreSame(typeof(MockCustomValidator), validator.GetType());
             Assert.AreEqual(true, ((MockCustomValidator)validator).ReturnFailure);
             Assert.AreEqual("message template override", ((MockCustomValidator)validator).MessageTemplate);
+        }
+
+        [TestMethod]
+        public void CanCreateValidatorFromConfigurationObjectUsingTypeName()
+        {
+            CustomValidatorData rwValidatorData = new CustomValidatorData
+            {
+                Name = "validator1",
+                TypeName = typeof(MockCustomValidator).AssemblyQualifiedName
+            };
+            rwValidatorData.Attributes.Add("returnFailure", "true");
+            rwValidatorData.Attributes.Add("foo", "bar");
+
+            Validator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(null, null, null, null);
+
+            Assert.IsNotNull(validator);
+            Assert.AreSame(typeof(MockCustomValidator), validator.GetType());
+            Assert.AreEqual(true, ((MockCustomValidator)validator).ReturnFailure);
+            Assert.AreEqual(MockCustomValidator.DefaultMockValidatorMessageTemplate, ((MockCustomValidator)validator).MessageTemplate);
         }
     }
 }

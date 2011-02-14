@@ -9,11 +9,6 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Unity;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.ObjectBuilder;
 
@@ -23,7 +18,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.Unity
     /// A <see cref="UnityContainerExtension"/> that allows the container
     /// to directly resolve <see cref="Validator{T}"/> instances.
     ///</summary>
-    public class ValidationBlockExtension : EnterpriseLibraryBlockExtension
+    public class ValidationBlockExtension : UnityContainerExtension
     {
         /// <summary>
         /// Ensure that this container has been configured to resolve Validation
@@ -31,8 +26,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.Unity
         /// </summary>
         protected override void Initialize()
         {
-            base.Initialize();
-
             Context.Strategies.Add(new ValidatorCreationStrategy(), UnityBuildStage.PreCreation);
         }
     }

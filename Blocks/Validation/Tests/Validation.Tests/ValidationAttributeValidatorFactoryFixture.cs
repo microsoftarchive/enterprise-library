@@ -12,6 +12,9 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Instrumentation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+#if SILVERLIGHT
+using Microsoft.Practices.EnterpriseLibrary.Validation.TestSupport.TestClasses;
+#endif
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
 {

@@ -187,6 +187,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
 
         private static MemberInfo GetMatchingElement(MemberInfo element)
         {
+#if SILVERLIGHT
+            return element;
+#else
             Type sourceType = element as Type;
             bool elementIsType = sourceType != null;
             if (sourceType == null)
@@ -228,6 +231,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
             }
 
             return element;
+#endif
         }
 
         private static bool MatchMethodBase(MethodBase mb, Type[] parameterTypes)

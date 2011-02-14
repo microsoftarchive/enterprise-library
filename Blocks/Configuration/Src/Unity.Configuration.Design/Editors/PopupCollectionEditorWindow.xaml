@@ -1,0 +1,20 @@
+﻿<Window x:Class="Microsoft.Practices.Unity.Configuration.Design.Editors.PopupCollectionEditorWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    MinHeight="300" 
+    MaxHeight="900"
+    MinWidth="300" 
+    MaxWidth="900"
+    ShowActivated="False" 
+    ShowInTaskbar="False" 
+    SizeToContent="WidthAndHeight" 
+    Title="Collection Editor" 
+    WindowStartupLocation="CenterOwner" 
+    ResizeMode="NoResize" 
+    WindowStyle="ToolWindow">
+    
+    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+    <ContentControl Margin="0, 12, 0, 0" x:Name="Contained" Focusable="False" />
+    </ScrollViewer>
+
+</Window>

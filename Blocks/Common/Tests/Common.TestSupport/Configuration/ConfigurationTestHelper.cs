@@ -30,6 +30,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration
 
         public static IConfigurationSource SaveSectionsInFileAndReturnConfigurationSource(IDictionary<string, ConfigurationSection> sections)
         {
+            File.WriteAllText(
+                "test.exe.config",
+                @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<configuration/>");
+
             System.Configuration.Configuration configuration
                 = GetConfigurationForCustomFile("test.exe.config");
 

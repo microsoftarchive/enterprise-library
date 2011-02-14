@@ -31,6 +31,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
 		/// <summary>
 		/// <para>Initializes a new instance of the <see cref="EnumConversionValidatorAttribute"/> </para>
 		/// </summary>
+		/// <param name="enumType">The type of enum that should be validated</param>
 		public EnumConversionValidatorAttribute(Type enumType)
 		{
 			ValidatorArgumentsValidatorHelper.ValidateEnumConversionValidator(enumType);
@@ -38,7 +39,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
 			this.enumType = enumType;
 		}
 
-		/// <summary>
+        /// <summary>
+        /// The type of enum that should be validated. 
+        /// </summary>
+	    public Type EnumType
+	    {
+	        get { return enumType; }
+	    }
+
+	    /// <summary>
 		/// Creates the <see cref="EnumConversionValidator"/> described by the attribute object.
 		/// </summary>
 		/// <param name="targetType">The type of object that will be validated by the validator.</param>
@@ -46,7 +55,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
 		/// <returns>The created <see cref="EnumConversionValidator"/>.</returns>
 		protected override Validator DoCreateValidator(Type targetType)
 		{
-			return new EnumConversionValidator(enumType, Negated);
+			return new EnumConversionValidator(EnumType, Negated);
 		}
 	}
 }

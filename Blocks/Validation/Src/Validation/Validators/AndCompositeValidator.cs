@@ -10,8 +10,6 @@
 //===============================================================================
 
 using System.Collections.Generic;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
 {
@@ -21,7 +19,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
     /// <remarks>
     /// Validation fails if any of the composed validators fails.
     /// </remarks>
-    [ConfigurationElementType(typeof(AndCompositeValidatorData))]
+#if !SILVERLIGHT
+    [Common.Configuration.ConfigurationElementType(typeof(Configuration.AndCompositeValidatorData))]
+#endif
     public class AndCompositeValidator : Validator
     {
         private IEnumerable<Validator> validators;

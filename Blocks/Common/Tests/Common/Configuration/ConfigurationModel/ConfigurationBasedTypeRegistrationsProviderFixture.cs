@@ -9,28 +9,35 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using System.Configuration;
+using System.Linq;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.ConfigurationModel
 {
     [TestClass]
     public class GivenConfigurationBasedTypeRegistrationsProvider
     {
-        DictionaryConfigurationSource configurationSource = new DictionaryConfigurationSource();
+        DictionaryConfigurationSource configurationSource;
+
+        [TestInitialize]
+        public void Setup()
+        {
+            this.configurationSource = new DictionaryConfigurationSource();
+        }
 
         [TestMethod]
         public void WhenConfigurationDoesntContainSection_ThenDefaultRegistrationsAreReturned()
         {
 
             var locators = ConfigurationBasedTypeRegistrationsProviderFactory.CreateTypeRegistrationsProviderLocators(configurationSource, new NullContainerReconfiguringEventSource());
+#if !SILVERLIGHT
             Assert.AreEqual(9, locators.Count());
+#else
+            Assert.AreEqual(1, locators.Count());
+#endif
         }
 
         [TestMethod]
@@ -60,6 +67,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
             Assert.IsInstanceOfType(locators.First(), typeof(TypeLoadingLocator));
         }
 
+#if !SILVERLIGHT
         [TestMethod]
         [ExpectedException(typeof(ConfigurationErrorsException))]
         public void WhenBothSectionAndProviderTypeAreSpecified_ThenThrowsConfigurationErrorsException()
@@ -72,5 +80,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
 
             ConfigurationBasedTypeRegistrationsProviderFactory.CreateProvider(configurationSource, new NullContainerReconfiguringEventSource()).GetRegistrations(configurationSource);
         }
+#endif
     }
 }

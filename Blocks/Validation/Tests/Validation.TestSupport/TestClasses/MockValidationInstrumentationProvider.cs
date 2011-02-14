@@ -10,7 +10,6 @@
 //===============================================================================
 
 using System;
-using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.TestSupport.TestClasses
@@ -27,7 +26,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.TestSupport.TestClass
             // Intentional no-op
         }
 
-        public void NotifyConfigurationFailure(ConfigurationErrorsException configurationException)
+#if SILVERLIGHT
+        public void NotifyConfigurationFailure(Exception configurationException)
+#else
+        public void NotifyConfigurationFailure(System.Configuration.ConfigurationErrorsException configurationException)
+#endif
         {
             // Intentional no-op
         }

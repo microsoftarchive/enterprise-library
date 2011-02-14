@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Caching Application Block", "Caching Application Block", "{D369F38F-660C-48D9-918F-99C4678434AB}"
 	ProjectSection(FolderStartupServices) = postProject
 		{B4F97281-0DBD-4835-9ED8-7DFB966E87FF} = {B4F97281-0DBD-4835-9ED8-7DFB966E87FF}
@@ -23,6 +23,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Unit Tests", "Unit Tests", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7DAA99C4-78B4-4D3D-80BB-C7431B1F55AC}"
 	ProjectSection(SolutionItems) = preProject
+		Caching.VSTS.vsmdi = Caching.VSTS.vsmdi
 		..\EnterpriseLibrary.testrunconfig = ..\EnterpriseLibrary.testrunconfig
 	EndProjectSection
 	ProjectSection(FolderStartupServices) = postProject
@@ -60,6 +61,72 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Caching.TestSupport", "Tests\Caching.TestSupport\Caching.TestSupport.csproj", "{D9E0815E-1687-4A2E-A2FD-86CE6D0AE2C4}"
 EndProject
 Global
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 16
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = http://pagtfs2008:8080/
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = ..\\Common\\Src\\Common.csproj
+		SccProjectTopLevelParentUniqueName1 = Caching.sln
+		SccProjectName1 = ../Common/Src
+		SccLocalPath1 = ..\\Common\\Src
+		SccProjectUniqueName2 = ..\\Data\\Src\\Data\\Data.csproj
+		SccProjectTopLevelParentUniqueName2 = Caching.sln
+		SccProjectName2 = ../Data/Src/Data
+		SccLocalPath2 = ..\\Data\\Src\\Data
+		SccProjectUniqueName3 = ..\\Security.Cryptography\\Src\\Cryptography\\Security.Cryptography.csproj
+		SccProjectTopLevelParentUniqueName3 = Caching.sln
+		SccProjectName3 = ../Security.Cryptography/Src/Cryptography
+		SccLocalPath3 = ..\\Security.Cryptography\\Src\\Cryptography
+		SccProjectUniqueName4 = Src\\Caching\\Caching.csproj
+		SccProjectTopLevelParentUniqueName4 = Caching.sln
+		SccProjectName4 = Src/Caching
+		SccLocalPath4 = Src\\Caching
+		SccProjectUniqueName5 = Src\\Cryptography\\Caching.Cryptography.csproj
+		SccProjectTopLevelParentUniqueName5 = Caching.sln
+		SccProjectName5 = Src/Cryptography
+		SccLocalPath5 = Src\\Cryptography
+		SccProjectUniqueName6 = Src\\Database\\Caching.Database.csproj
+		SccProjectTopLevelParentUniqueName6 = Caching.sln
+		SccProjectName6 = Src/Database
+		SccLocalPath6 = Src\\Database
+		SccProjectUniqueName7 = Tests\\Caching.Tests\\Caching.Tests.VSTS.csproj
+		SccProjectTopLevelParentUniqueName7 = Caching.sln
+		SccProjectName7 = Tests/Caching.Tests
+		SccLocalPath7 = Tests\\Caching.Tests
+		SccProjectUniqueName8 = Tests\\Configuration.Manageability.Tests\\Caching.Configuration.Manageability.Tests.VSTS.csproj
+		SccProjectTopLevelParentUniqueName8 = Caching.sln
+		SccProjectName8 = Tests/Configuration.Manageability.Tests
+		SccLocalPath8 = Tests\\Configuration.Manageability.Tests
+		SccProjectUniqueName9 = Tests\\Cryptography.Configuration.Manageability.Tests\\Caching.Cryptography.Configuration.Manageability.Tests.VSTS.csproj
+		SccProjectTopLevelParentUniqueName9 = Caching.sln
+		SccProjectName9 = Tests/Cryptography.Configuration.Manageability.Tests
+		SccLocalPath9 = Tests\\Cryptography.Configuration.Manageability.Tests
+		SccProjectUniqueName10 = Tests\\Cryptography.Tests\\Caching.Cryptography.Tests.VSTS.csproj
+		SccProjectTopLevelParentUniqueName10 = Caching.sln
+		SccProjectName10 = Tests/Cryptography.Tests
+		SccLocalPath10 = Tests\\Cryptography.Tests
+		SccProjectUniqueName11 = Tests\\Database.Configuration.Manageability.Tests\\Caching.Database.Configuration.Manageability.Tests.VSTS.csproj
+		SccProjectTopLevelParentUniqueName11 = Caching.sln
+		SccProjectName11 = Tests/Database.Configuration.Manageability.Tests
+		SccLocalPath11 = Tests\\Database.Configuration.Manageability.Tests
+		SccProjectUniqueName12 = Tests\\Database.Tests\\Caching.Database.Tests.VSTS.csproj
+		SccProjectTopLevelParentUniqueName12 = Caching.sln
+		SccProjectName12 = Tests/Database.Tests
+		SccLocalPath12 = Tests\\Database.Tests
+		SccProjectUniqueName13 = Tests\\DatabaseAndCryptography.Tests\\Caching.DatabaseAndCryptography.Tests.VSTS.csproj
+		SccProjectTopLevelParentUniqueName13 = Caching.sln
+		SccProjectName13 = Tests/DatabaseAndCryptography.Tests
+		SccLocalPath13 = Tests\\DatabaseAndCryptography.Tests
+		SccProjectUniqueName14 = ..\\Common\\Tests\\Common.TestSupport\\Common.TestSupport.csproj
+		SccProjectTopLevelParentUniqueName14 = Caching.sln
+		SccProjectName14 = ../Common/Tests/Common.TestSupport
+		SccLocalPath14 = ..\\Common\\Tests\\Common.TestSupport
+		SccProjectUniqueName15 = Tests\\Caching.TestSupport\\Caching.TestSupport.csproj
+		SccProjectTopLevelParentUniqueName15 = Caching.sln
+		SccProjectName15 = Tests/Caching.TestSupport
+		SccLocalPath15 = Tests\\Caching.TestSupport
+	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = Caching.VSTS.vsmdi
 	EndGlobalSection

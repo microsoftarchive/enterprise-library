@@ -51,7 +51,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
             Validator<TestObjectWithFailingAttributesOnProperties> secondValidator
                 = validationFactory.CreateValidator<TestObjectWithFailingAttributesOnProperties>();
 
-            Assert.AreSame(firstValidator,secondValidator);
+            Assert.AreSame(firstValidator, secondValidator);
         }
 
         [TestMethod]
@@ -64,7 +64,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
                 = validationFactory.CreateValidator(typeof(TestObjectWithFailingAttributesOnProperties));
 
             Assert.AreSame(firstValidator, secondValidator);
-            
+
         }
 
         [TestMethod]
@@ -135,7 +135,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
 
 
     [TestClass]
-    public class GivenAValidtorBuiltFromAnInstanceFactoryWithAnEmptyConfigurationSource
+    public class GivenAValidatorBuiltFromAnInstanceFactoryWithAnEmptyConfigurationSource
     {
         private Validator<BaseTestDomainObject> validator;
 
@@ -175,9 +175,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
             ValidatedTypeReference typeReference = new ValidatedTypeReference(typeof(BaseTestDomainObject));
             settings.Types.Add(typeReference);
             typeReference.DefaultRuleset = "RuleA";
-            ValidationRulesetData ruleData = new ValidationRulesetData("RuleA");
+            ValidationRulesetData ruleData = new ValidationRulesetData { Name = "RuleA" };
             typeReference.Rulesets.Add(ruleData);
-            ValidatedPropertyReference propertyReference1 = new ValidatedPropertyReference("Property1");
+            ValidatedPropertyReference propertyReference1 = new ValidatedPropertyReference { Name = "Property1" };
             ruleData.Properties.Add(propertyReference1);
             MockValidatorData validator11 = new MockValidatorData("validator1", true);
             propertyReference1.Validators.Add(validator11);
@@ -189,9 +189,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
             propertyReference1.Validators.Add(validator13);
             validator13.MessageTemplate = "message-from-config3-RuleA";
 
-            ValidationRulesetData ruleDataB = new ValidationRulesetData("RuleB");
+            ValidationRulesetData ruleDataB = new ValidationRulesetData { Name = "RuleB" };
             typeReference.Rulesets.Add(ruleDataB);
-            ValidatedPropertyReference propertyReferenceB1 = new ValidatedPropertyReference("Property1");
+            ValidatedPropertyReference propertyReferenceB1 = new ValidatedPropertyReference { Name = "Property1" };
             ruleDataB.Properties.Add(propertyReferenceB1);
             MockValidatorData validator21 = new MockValidatorData("validator21", true);
             propertyReferenceB1.Validators.Add(validator21);
@@ -234,7 +234,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
                  = validationFactory.CreateValidator<BaseTestDomainObject>("RuleB");
 
             Validator<BaseTestDomainObject> secondValidator
-                 = validationFactory.CreateValidator<BaseTestDomainObject>("RuleB");  
+                 = validationFactory.CreateValidator<BaseTestDomainObject>("RuleB");
 
             Assert.AreSame(firstValidator, secondValidator);
         }
@@ -295,9 +295,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
             ValidatedTypeReference typeReference = new ValidatedTypeReference(typeof(TestObjectWithFailingAttributesOnProperties));
             settings.Types.Add(typeReference);
             typeReference.DefaultRuleset = "RuleA";
-            ValidationRulesetData ruleData = new ValidationRulesetData("RuleA");
+            ValidationRulesetData ruleData = new ValidationRulesetData { Name = "RuleA" };
             typeReference.Rulesets.Add(ruleData);
-            ValidatedPropertyReference propertyReference1 = new ValidatedPropertyReference("FailingProperty1");
+            ValidatedPropertyReference propertyReference1 = new ValidatedPropertyReference { Name = "FailingProperty1" };
             ruleData.Properties.Add(propertyReference1);
             MockValidatorData validator11 = new MockValidatorData("validator1", true);
             propertyReference1.Validators.Add(validator11);
@@ -370,7 +370,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         public void WhenRetrievingAValidatorTwiceUsingNonGenericMethods_ThenTheValidatorsAreTheSame()
         {
             var firstValidator
-                = validationFactory.CreateValidator(typeof (TestObjectWithFailingAttributesOnProperties));
+                = validationFactory.CreateValidator(typeof(TestObjectWithFailingAttributesOnProperties));
 
             var secondValidator
                 = validationFactory.CreateValidator(typeof(TestObjectWithFailingAttributesOnProperties));
@@ -416,12 +416,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         public void Given()
         {
             var instrumentationProvider = new MockValidationInstrumentationProvider();
+            var configurationSource =
+#if !SILVERLIGHT
+                ConfigurationSourceFactory.Create();
+#else
+                ResourceDictionaryConfigurationSource.FromXaml(new Uri("/Microsoft.Practices.EnterpriseLibrary.Validation.Silverlight.Tests;component/Configuration.xaml", UriKind.Relative));
+#endif
             validationFactory = new CompositeValidatorFactory(
                 instrumentationProvider,
                 new ValidatorFactory[]
                     {
                         new AttributeValidatorFactory(instrumentationProvider),
-                        new ConfigurationValidatorFactory(ConfigurationSourceFactory.Create(), instrumentationProvider)
+                        new ConfigurationValidatorFactory(configurationSource, instrumentationProvider)
                     });
         }
 

@@ -10,80 +10,45 @@
 //===============================================================================
 
 using System;
-using System.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.ComponentModel;
 using System.Globalization;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
+using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 {
-	/// <summary>
-	/// Configuration object to describe an instance of class <see cref="DomainValidatorData"/>.
-	/// </summary>
-    [ResourceDescription(typeof(DesignResources), "DomainValidatorDataDescription")]
-    [ResourceDisplayName(typeof(DesignResources), "DomainValidatorDataDisplayName")]
-    public class DomainValidatorData : ValueValidatorData
-	{
-		/// <summary>
-		/// <para>Initializes a new instance of the <see cref="DomainValidatorData"/> class.</para>
-		/// </summary>
-        public DomainValidatorData() { Type = typeof(DomainValidator<object>); }
+    /// <summary>
+    /// Configuration object to describe an instance of class <see cref="DomainValidatorData"/>.
+    /// </summary>
+    public partial class DomainValidatorData : ValueValidatorData
+    {
+        /// <summary>
+        /// Creates the <see cref="DomainValidator{T}"/> described by the configuration object.
+        /// </summary>
+        /// <param name="targetType">The type of object that will be validated by the validator.</param>
+        /// <returns>The created <see cref="DomainValidator{T}"/>.</returns>	
+        protected override Validator DoCreateValidator(Type targetType)
+        {
+            List<object> domainObjects = new List<object>();
 
-		/// <summary>
-		/// <para>Initializes a new instance of the <see cref="DomainValidatorData"/> class with a name.</para>
-		/// </summary>
-		/// <param name="name">The name for the instance.</param>
-		public DomainValidatorData(string name)
-			: base(name, typeof(DomainValidator<object>))
-		{ }
+            foreach (var domainConfigurationElement in this.Domain)
+            {
+                object domainObject = null;
+                if (targetType != null)
+                {
+                    domainObject = Convert.ChangeType(domainConfigurationElement.Name, targetType, CultureInfo.InvariantCulture);
+                }
 
-		private const string DomainPropertyName = "domain";
-		/// <summary>
-		/// Gets the collection of elements for the domain for the represented <see cref="DomainValidator{T}"/>.
-		/// </summary>
-		[ConfigurationProperty(DomainPropertyName)]
-        [ConfigurationCollection(typeof(DomainConfigurationElement))]
-        [ResourceDescription(typeof(DesignResources), "DomainValidatorDataDomainDescription")]
-        [ResourceDisplayName(typeof(DesignResources), "DomainValidatorDataDomainDisplayName")]
-        [System.ComponentModel.Editor(CommonDesignTime.EditorTypes.CollectionEditor, CommonDesignTime.EditorTypes.FrameworkElement)]
-        [EnvironmentalOverrides(false)]
-        [DesignTimeReadOnly(false)]
-		public NamedElementCollection<DomainConfigurationElement> Domain
-		{
-			get { return (NamedElementCollection<DomainConfigurationElement>)this[DomainPropertyName]; }
-		}
+                if (domainObject != null)
+                {
+                    domainObjects.Add(domainObject);
+                }
+                else
+                {	
+                    domainObjects.Add(domainConfigurationElement.Name);
+                }
+            }
 
-		/// <summary>
-		/// Creates the <see cref="DomainValidator{T}"/> described by the configuration object.
-		/// </summary>
-		/// <param name="targetType">The type of object that will be validated by the validator.</param>
-		/// <returns>The created <see cref="DomainValidator{T}"/>.</returns>	
-		protected override Validator DoCreateValidator(Type targetType)
-		{
-			List<object> domainObjects = new List<object>();
-			TypeConverter typeConverter = null;
-			if (targetType != null)
-			{
-				typeConverter = TypeDescriptor.GetConverter(targetType);
-			}
-
-			foreach (DomainConfigurationElement domainConfigurationElement in Domain)
-			{
-				if (typeConverter != null)
-				{
-					domainObjects.Add(typeConverter.ConvertFromInvariantString(null, domainConfigurationElement.Name));
-				}
-				else
-				{	
-					domainObjects.Add(domainConfigurationElement.Name);
-				}
-			}
-
-			return new DomainValidator<object>(domainObjects, Negated);
-		}
-	}
+            return new DomainValidator<object>(domainObjects, Negated);
+        }
+    }
 }

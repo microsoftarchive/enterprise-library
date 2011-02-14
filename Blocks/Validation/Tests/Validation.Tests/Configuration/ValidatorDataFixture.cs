@@ -12,7 +12,6 @@
 using System.Collections.Generic;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Validation.TestSupport.Configuration;
@@ -24,6 +23,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
     [TestClass]
     public class ValidatorDataFixture
     {
+#if !SILVERLIGHT
         [TestMethod]
         public void CanDeserializeSerializedInstanceWithNameAndType()
         {
@@ -34,7 +34,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             IDictionary<string, ConfigurationSection> sections = new Dictionary<string, ConfigurationSection>();
             sections[ValidationSettings.SectionName] = rwSettings;
 
-            using (ConfigurationFileHelper configurationFileHelper = new ConfigurationFileHelper(sections))
+            using (var configurationFileHelper = new Common.TestSupport.Configuration.ConfigurationFileHelper(sections))
             {
                 IConfigurationSource configurationSource = configurationFileHelper.ConfigurationSource;
 
@@ -62,7 +62,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             IDictionary<string, ConfigurationSection> sections = new Dictionary<string, ConfigurationSection>();
             sections[ValidationSettings.SectionName] = rwSettings;
 
-            using (ConfigurationFileHelper configurationFileHelper = new ConfigurationFileHelper(sections))
+            using (var configurationFileHelper = new Common.TestSupport.Configuration.ConfigurationFileHelper(sections))
             {
                 IConfigurationSource configurationSource = configurationFileHelper.ConfigurationSource;
 
@@ -91,7 +91,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             IDictionary<string, ConfigurationSection> sections = new Dictionary<string, ConfigurationSection>();
             sections[ValidationSettings.SectionName] = rwSettings;
 
-            using (ConfigurationFileHelper configurationFileHelper = new ConfigurationFileHelper(sections))
+            using (var configurationFileHelper = new Common.TestSupport.Configuration.ConfigurationFileHelper(sections))
             {
                 IConfigurationSource configurationSource = configurationFileHelper.ConfigurationSource;
 
@@ -119,7 +119,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             IDictionary<string, ConfigurationSection> sections = new Dictionary<string, ConfigurationSection>();
             sections[ValidationSettings.SectionName] = rwSettings;
 
-            using (ConfigurationFileHelper configurationFileHelper = new ConfigurationFileHelper(sections))
+            using (var configurationFileHelper = new Common.TestSupport.Configuration.ConfigurationFileHelper(sections))
             {
                 IConfigurationSource configurationSource = configurationFileHelper.ConfigurationSource;
 
@@ -135,6 +135,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
                 Assert.AreEqual("tag", roSettings.Validators.Get(0).Tag);
             }
         }
+#endif
 
         [TestMethod]
         public void GetsNullForMessageTemplateIfNeitherLiteralOrResourceTemplateIsSet()
@@ -178,6 +179,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
         public void CreatesValidatorWithNullTagIfTagNotSet()
         {
             ValidatorData rwValidatorData = new MockValidatorData("validator1", false);
+            rwValidatorData.Tag = string.Empty;
 
             Validator validator = ((IValidatorDescriptor)rwValidatorData).CreateValidator(null, null, null, null);
 

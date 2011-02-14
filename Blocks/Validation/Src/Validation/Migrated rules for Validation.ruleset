@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RuleSet Name="Migrated rules for Validation.ruleset" Description="This rule set was created from the CodeAnalysisRules property for the &quot;Debug (Any CPU)&quot; configuration in project &quot;C:\dev\EntLib SL Spike\V5-SL\Entlib\Source\Blocks\Validation\Src\Validation\Validation.csproj&quot;." ToolsVersion="10.0">
+  <IncludeAll Action="Warning" />
+  <Rules AnalyzerId="Microsoft.Analyzers.ManagedCodeAnalysis" RuleNamespace="Microsoft.Rules.Managed">
+    <Rule Id="CA1002" Action="None" />
+    <Rule Id="CA1004" Action="None" />
+    <Rule Id="CA1011" Action="None" />
+    <Rule Id="CA1017" Action="None" />
+    <Rule Id="CA1019" Action="None" />
+    <Rule Id="CA1020" Action="None" />
+    <Rule Id="CA1021" Action="None" />
+    <Rule Id="CA1024" Action="None" />
+    <Rule Id="CA1031" Action="None" />
+    <Rule Id="CA1032" Action="None" />
+    <Rule Id="CA1033" Action="None" />
+    <Rule Id="CA1400" Action="None" />
+    <Rule Id="CA1401" Action="None" />
+    <Rule Id="CA1402" Action="None" />
+    <Rule Id="CA1403" Action="None" />
+    <Rule Id="CA1404" Action="None" />
+    <Rule Id="CA1405" Action="None" />
+    <Rule Id="CA1406" Action="None" />
+    <Rule Id="CA1407" Action="None" />
+    <Rule Id="CA1408" Action="None" />
+    <Rule Id="CA1409" Action="None" />
+    <Rule Id="CA1410" Action="None" />
+    <Rule Id="CA1411" Action="None" />
+    <Rule Id="CA1412" Action="None" />
+    <Rule Id="CA1413" Action="None" />
+    <Rule Id="CA1414" Action="None" />
+    <Rule Id="CA1415" Action="None" />
+    <Rule Id="CA1500" Action="None" />
+    <Rule Id="CA1704" Action="None" />
+    <Rule Id="CA1709" Action="None" />
+    <Rule Id="CA1710" Action="None" />
+    <Rule Id="CA1717" Action="None" />
+    <Rule Id="CA1721" Action="None" />
+    <Rule Id="CA1724" Action="None" />
+    <Rule Id="CA1800" Action="None" />
+    <Rule Id="CA1801" Action="None" />
+    <Rule Id="CA1813" Action="None" />
+    <Rule Id="CA1820" Action="None" />
+    <Rule Id="CA1822" Action="None" />
+    <Rule Id="CA1823" Action="None" />
+    <Rule Id="CA1824" Action="None" />
+    <Rule Id="CA1903" Action="None" />
+    <Rule Id="CA2116" Action="None" />
+    <Rule Id="CA2117" Action="None" />
+    <Rule Id="CA2208" Action="None" />
+    <Rule Id="CA2210" Action="None" />
+    <Rule Id="CA2214" Action="None" />
+  </Rules>
+</RuleSet>

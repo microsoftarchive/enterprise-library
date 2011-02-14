@@ -10,8 +10,6 @@
 //===============================================================================
 
 using System;
-using System.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Instrumentation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
@@ -62,11 +60,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
                     instrumentationProvider.NotifyValidationFailed(typeBeingValidated, validationResults);
                 }
             }
-            catch (ConfigurationErrorsException configurationErrors)
+#if !SILVERLIGHT
+            catch (System.Configuration.ConfigurationErrorsException configurationErrors)
             {
                 instrumentationProvider.NotifyConfigurationFailure(configurationErrors);
                 throw;
             }
+#endif
             catch (Exception ex)
             {
                 instrumentationProvider.NotifyValidationException(typeBeingValidated, ex.Message, ex);

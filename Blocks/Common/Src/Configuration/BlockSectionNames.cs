@@ -77,7 +77,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         /// for the Validation Application Block.
         /// </summary>
         public const string ValidationRegistrationProviderLocatorType =
+#if !SILVERLIGHT
             "Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.ValidationTypeRegistrationProvider, Microsoft.Practices.EnterpriseLibrary.Validation";
-
+#else
+            "Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.ValidationTypeRegistrationProvider, Microsoft.Practices.EnterpriseLibrary.Validation.Silverlight, Version=5.0.414.0, Culture=neutral, PublicKeyToken=null";
+#endif
     }
 }

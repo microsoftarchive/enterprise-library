@@ -10,7 +10,6 @@
 //===============================================================================
 
 using System;
-using System.ComponentModel;
 using System.Globalization;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Properties;
 
@@ -29,6 +28,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         Justification = "Fields are used internally")]
     public sealed class RangeValidatorAttribute : ValueValidatorAttribute
     {
+
         private IComparable lowerBound;
         private RangeBoundaryType lowerBoundType;
         private IComparable upperBound;
@@ -169,14 +169,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
                 }
                 catch (FormatException e)
                 {
-                    throw new ArgumentException(Resources.ExceptionInvalidDate, boundParameter, e);
+                    throw new ArgumentException(Resources.ExceptionInvalidDate, e);
                 }
             }
             else
             {
                 try
                 {
-                    return (IComparable)TypeDescriptor.GetConverter(boundType).ConvertFrom(null, CultureInfo.InvariantCulture, bound);
+                    return (IComparable)Convert.ChangeType(bound, boundType, CultureInfo.InvariantCulture);
                 }
                 catch (Exception e)
                 {
@@ -193,26 +193,26 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         /// <returns>The created <see cref="RangeValidator"/>.</returns>
         protected override Validator DoCreateValidator(Type targetType)
         {
-            return new RangeValidator(this.lowerBound, this.lowerBoundType, this.upperBound, this.upperBoundType, this.Negated);
+            return new RangeValidator(this.LowerBound, this.LowerBoundType, this.UpperBound, this.UpperBoundType, this.Negated);
         }
 
         /// <summary>
-        /// 
+        /// The lower bound
         /// </summary>
         public IComparable LowerBound { get { return this.lowerBound; } }
 
         /// <summary>
-        /// 
+        /// The indication of how to perform the lower bound check.
         /// </summary>
         public RangeBoundaryType LowerBoundType { get { return this.lowerBoundType; } }
 
         /// <summary>
-        /// 
+        /// The upper bound, or <see langword="null"/>.
         /// </summary>
         public IComparable UpperBound { get { return this.upperBound; } }
 
         /// <summary>
-        /// 
+        /// The indication of how to perform the upper bound check.
         /// </summary>
         public RangeBoundaryType UpperBoundType { get { return this.upperBoundType; } }
     }

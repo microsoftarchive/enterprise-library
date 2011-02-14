@@ -12,7 +12,6 @@
 using System.Collections.Generic;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators;
@@ -25,6 +24,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
     [TestClass]
     public class EnumConversionValidatorDataFixture
     {
+#if !SILVERLIGHT
         [TestMethod]
         public void CanDeserializeSerializedInstanceWithNameOnly()
         {
@@ -35,7 +35,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             IDictionary<string, ConfigurationSection> sections = new Dictionary<string, ConfigurationSection>();
             sections[ValidationSettings.SectionName] = rwSettings;
 
-            using (ConfigurationFileHelper configurationFileHelper = new ConfigurationFileHelper(sections))
+            using (var configurationFileHelper = new Common.TestSupport.Configuration.ConfigurationFileHelper(sections))
             {
                 IConfigurationSource configurationSource = configurationFileHelper.ConfigurationSource;
 
@@ -60,7 +60,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             IDictionary<string, ConfigurationSection> sections = new Dictionary<string, ConfigurationSection>();
             sections[ValidationSettings.SectionName] = rwSettings;
 
-            using (ConfigurationFileHelper configurationFileHelper = new ConfigurationFileHelper(sections))
+            using (var configurationFileHelper = new Common.TestSupport.Configuration.ConfigurationFileHelper(sections))
             {
                 IConfigurationSource configurationSource = configurationFileHelper.ConfigurationSource;
 
@@ -74,11 +74,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
                 Assert.AreEqual(typeof(MockEnumValidator), ((EnumConversionValidatorData)roSettings.Validators.Get(0)).EnumType);
             }
         }
+#endif
 
         [TestMethod]
         public void CanCreateValidatorFromConfigurationObject()
         {
-            EnumConversionValidatorData rwValidatorData = new EnumConversionValidatorData("validator1");
+            EnumConversionValidatorData rwValidatorData = new EnumConversionValidatorData { Name = "validator1" };
             rwValidatorData.Negated = true;
             rwValidatorData.EnumType = typeof(MockEnumValidator);
 
@@ -94,7 +95,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
         [TestMethod]
         public void CanCreateValidatorFromConfigurationObjectWithMessageTemplateOverride()
         {
-            EnumConversionValidatorData rwValidatorData = new EnumConversionValidatorData("validator1");
+            EnumConversionValidatorData rwValidatorData = new EnumConversionValidatorData { Name = "validator1" };
             rwValidatorData.MessageTemplate = "message template override";
             rwValidatorData.Negated = true;
             rwValidatorData.EnumType = typeof(MockEnumValidator);

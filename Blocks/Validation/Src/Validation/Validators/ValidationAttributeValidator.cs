@@ -12,8 +12,8 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Globalization;
+using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
@@ -67,11 +67,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         {
             foreach (var validationAttribute in this.validationAttributes)
             {
+                var context = new ValidationContext(currentTarget, null, null) { MemberName = key };
                 try
                 {
-                    if (!validationAttribute.IsValid(objectToValidate))
+                    var result = validationAttribute.GetValidationResult(objectToValidate, context);
+                    if (result != null && !string.IsNullOrEmpty(result.ErrorMessage))
                     {
-                        this.LogValidationResult(validationResults, validationAttribute.FormatErrorMessage(key), currentTarget, key);
+                        this.LogValidationResult(validationResults, result.ErrorMessage, currentTarget, key);
                     }
                 }
                 catch (Exception e)

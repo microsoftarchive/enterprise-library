@@ -50,7 +50,23 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
 			this.containsCharacters = containsCharacters;
 		}
 
-		/// <summary>
+        /// <summary>
+        /// The character set to be evaluated.
+        /// </summary>
+	    public string CharacterSet
+	    {
+	        get { return characterSet; }
+	    }
+
+        /// <summary>
+        /// The mode to evaluate the character set.
+        /// </summary>
+	    public ContainsCharacters ContainsCharacters
+	    {
+	        get { return containsCharacters; }
+	    }
+
+	    /// <summary>
 		/// Creates the <see cref="ContainsCharactersValidator"/> described by the attribute object.
 		/// </summary>
 		/// <param name="targetType">The type of object that will be validated by the validator.</param>
@@ -58,7 +74,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
 		/// <returns>The created <see cref="ContainsCharactersValidator"/>.</returns>
 		protected override Validator DoCreateValidator(Type targetType)
 		{
-			return new ContainsCharactersValidator(characterSet, containsCharacters, Negated);
+			return new ContainsCharactersValidator(CharacterSet, ContainsCharacters, Negated);
 		}
 	}
 }

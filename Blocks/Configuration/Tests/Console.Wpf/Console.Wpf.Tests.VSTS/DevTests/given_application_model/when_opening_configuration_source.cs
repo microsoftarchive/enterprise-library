@@ -28,10 +28,10 @@ using Moq;
 
 namespace Console.Wpf.Tests.VSTS.DevTests.given_shell_service
 {
-    [DeploymentItem("test.config")]
+    [DeploymentItem("test.design.config")]
     public abstract class given_clean_application_model : ContainerContext
     {
-        protected static string TestConfigurationFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "test.config");
+        protected static string TestConfigurationFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "test.design.config");
 
         protected ApplicationViewModel ApplicationModel;
 

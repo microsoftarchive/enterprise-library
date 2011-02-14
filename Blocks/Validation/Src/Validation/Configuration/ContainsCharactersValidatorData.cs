@@ -10,60 +10,15 @@
 //===============================================================================
 
 using System;
-using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 {
 	/// <summary>
 	/// Configuration object to describe an instance of class <see cref="ContainsCharactersValidatorData"/>.
 	/// </summary>
-    [ResourceDescription(typeof(DesignResources), "ContainsCharactersValidatorDataDescription")]
-    [ResourceDisplayName(typeof(DesignResources), "ContainsCharactersValidatorDataDisplayName")]
-	public class ContainsCharactersValidatorData : ValueValidatorData
+	public partial class ContainsCharactersValidatorData : ValueValidatorData
 	{
-		/// <summary>
-		/// <para>Initializes a new instance of the <see cref="ContainsCharactersValidatorData"/> class.</para>
-		/// </summary>
-        public ContainsCharactersValidatorData() { Type = typeof(ContainsCharactersValidator); }
-
-		/// <summary>
-		/// <para>Initializes a new instance of the <see cref="ContainsCharactersValidatorData"/> class with a name.</para>
-		/// </summary>
-		/// <param name="name">The name for the instance.</param>
-		public ContainsCharactersValidatorData(string name)
-			: base(name, typeof(ContainsCharactersValidator))
-		{ }
-
-		private const string CharacterSetPropertyName = "characterSet";
-		/// <summary>
-		/// Gets or sets the string containing the characters to use by the represented 
-		/// <see cref="ContainsCharactersValidator"/>.
-		/// </summary>
-        [ConfigurationProperty(CharacterSetPropertyName, IsRequired = true)]
-        [ResourceDescription(typeof(DesignResources), "ContainsCharactersValidatorDataCharacterSetDescription")]
-        [ResourceDisplayName(typeof(DesignResources), "ContainsCharactersValidatorDataCharacterSetDisplayName")]
-		public string CharacterSet
-		{
-			get { return (string)this[CharacterSetPropertyName]; }
-			set { this[CharacterSetPropertyName] = value; }
-		}
-
-		private const string ContainsCharactersPropertyName = "containsCharacter";
-		/// <summary>
-		/// Gets or sets the <see cref="ContainsCharacters"/> value indicating the behavior for 
-		/// the represented <see cref="ContainsCharactersValidator"/>.
-		/// </summary>
-		[ConfigurationProperty(ContainsCharactersPropertyName, DefaultValue=ContainsCharacters.Any, IsRequired=true)]
-        [ResourceDescription(typeof(DesignResources), "ContainsCharactersValidatorDataContainsCharactersDescription")]
-        [ResourceDisplayName(typeof(DesignResources), "ContainsCharactersValidatorDataContainsCharactersDisplayName")]
-		public ContainsCharacters ContainsCharacters
-		{
-			get { return (ContainsCharacters)this[ContainsCharactersPropertyName]; }
-			set { this[ContainsCharactersPropertyName] = value; }
-		}
-
 		/// <summary>
 		/// Creates the <see cref="ContainsCharactersValidator"/> described by the configuration object.
 		/// </summary>

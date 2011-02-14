@@ -88,7 +88,39 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
 			this.patternResourceType = patternResourceType;
 		}
 
-		/// <summary>
+        /// <summary>
+        /// >The pattern to match.
+        /// </summary>
+	    public string Pattern
+	    {
+	        get { return pattern; }
+	    }
+
+        /// <summary>
+        /// The <see cref="RegexOptions"/> to use when matching.
+        /// </summary>
+	    public RegexOptions Options
+	    {
+	        get { return options; }
+	    }
+
+        /// <summary>
+        /// The resource name containing the pattern for the regular expression.
+        /// </summary>
+	    public string PatternResourceName
+	    {
+	        get { return patternResourceName; }
+	    }
+
+        /// <summary>
+        /// The type containing the resource for the regular expression.
+        /// </summary>
+	    public Type PatternResourceType
+	    {
+	        get { return patternResourceType; }
+	    }
+
+	    /// <summary>
 		/// Creates the <see cref="RegexValidator"/> described by the attribute object.
 		/// </summary>
 		/// <param name="targetType">The type of object that will be validated by the validator.</param>
@@ -96,10 +128,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
 		/// <returns>The created <see cref="RegexValidator"/>.</returns>
 		protected override Validator DoCreateValidator(Type targetType)
 		{
-			return new RegexValidator(this.pattern,
-				this.patternResourceName,
-				this.patternResourceType,
-				this.options,
+			return new RegexValidator(this.Pattern,
+				this.PatternResourceName,
+				this.PatternResourceType,
+				this.Options,
 				this.MessageTemplate,
 				Negated);
 		}

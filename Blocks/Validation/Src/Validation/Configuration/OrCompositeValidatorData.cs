@@ -11,10 +11,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
-using System.ComponentModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 {
@@ -23,37 +20,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
     /// </summary>
     /// <seealso cref="OrCompositeValidator"/>
     /// <seealso cref="ValidatorData"/>
-    [ResourceDescription(typeof(DesignResources), "OrCompositeValidatorDataDescription")]
-    [ResourceDisplayName(typeof(DesignResources), "OrCompositeValidatorDataDisplayName")]
-    public class OrCompositeValidatorData : ValidatorData
+    public partial class OrCompositeValidatorData : ValidatorData
     {
-        /// <summary>
-        /// <para>Initializes a new instance of the <see cref="OrCompositeValidatorData"/> class.</para>
-        /// </summary>
-        public OrCompositeValidatorData() { Type = typeof(OrCompositeValidator); }
-
-        /// <summary>
-        /// <para>Initializes a new instance of the <see cref="OrCompositeValidatorData"/> class with a name.</para>
-        /// </summary>
-        /// <param name="name">The name for the instance.</param>
-        public OrCompositeValidatorData(string name)
-            : base(name, typeof(OrCompositeValidator))
-        { }
-
-        private const string ValidatorsPropertyName = "";
-        /// <summary>
-        /// Gets the collection with the definitions for the validators composed by 
-        /// the represented <see cref="OrCompositeValidator"/>.
-        /// </summary>
-        [ConfigurationProperty(ValidatorsPropertyName, IsDefaultCollection = true)]
-        [ResourceDescription(typeof(DesignResources), "OrCompositeValidatorDataValidatorsDescription")]
-        [ResourceDisplayName(typeof(DesignResources), "OrCompositeValidatorDataValidatorsDisplayName")]
-        [PromoteCommands]
-        public ValidatorDataCollection Validators
-        {
-            get { return (ValidatorDataCollection)this[ValidatorsPropertyName]; }
-        }
-
         /// <summary>
         /// Creates the <see cref="OrCompositeValidator"/> described by the configuration object.
         /// </summary>

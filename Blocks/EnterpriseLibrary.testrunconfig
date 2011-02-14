@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TestRunConfiguration id="b30ab5c0-4c61-4809-bc08-afc893741cba" name="EnterpriseLibrary" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2006">
+<TestRunConfiguration id="b30ab5c0-4c61-4809-bc08-afc893741cba" name="EnterpriseLibrary" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
   <Description>This is a default test run configuration for a local test run.</Description>
   <Timeouts runTimeout="0" testTimeout="300000" agentNotRespondingTimeout="300000" deploymentTimeout="300000" />
   <Deployment>

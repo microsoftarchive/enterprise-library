@@ -1,7 +1,16 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Referenced Projects", "Referenced Projects", "{3D1D9CCC-B85F-4929-AE73-1E06A5E7F5D8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{484A2325-DDBD-4AC1-827A-C8BFD11CDB73}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CE44C72A-7C80-4046-AB4B-8389B8605A8C}"
+	ProjectSection(SolutionItems) = preProject
+		Console.Wpf.vsmdi = Console.Wpf.vsmdi
+		Console7.vsmdi = Console7.vsmdi
+		LocalTestRun.testrunconfig = LocalTestRun.testrunconfig
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "..\..\Common\Src\Common.csproj", "{A09297C8-2C40-470B-8856-D856676DDFFA}"
 EndProject
@@ -9,14 +18,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExceptionHandling", "..\..\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.TestSupport", "..\..\Common\Tests\Common.TestSupport\Common.TestSupport.csproj", "{C6DE0220-E31B-486B-AB57-107636AEB927}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{484A2325-DDBD-4AC1-827A-C8BFD11CDB73}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Console.Wpf.Tests.VSTS", "..\Tests\Console.Wpf\Console.Wpf.Tests.VSTS\Console.Wpf.Tests.VSTS.csproj", "{D0E92C3B-3A4E-4963-811A-28A6B067FE6D}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CE44C72A-7C80-4046-AB4B-8389B8605A8C}"
-	ProjectSection(SolutionItems) = preProject
-		LocalTestRun.testrunconfig = LocalTestRun.testrunconfig
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Tests.VSTS", "..\..\Common\Tests\Common\Common.Tests.VSTS.csproj", "{02FC8CE2-2CB3-41B6-8516-0A27B99708A9}"
 EndProject
@@ -65,6 +67,118 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Configuration.Design.TestSupport", "..\Tests\Configuration.Design.TestSupport\Configuration.Design.TestSupport.csproj", "{99053495-86CF-466C-92C0-79BBF686DDBC}"
 EndProject
 Global
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 28
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = http://pagtfs2008:8080/
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = ..\\..\\Common\\Src\\Common.csproj
+		SccProjectTopLevelParentUniqueName1 = Console.sln
+		SccProjectName1 = ../../Common/Src
+		SccLocalPath1 = ..\\..\\Common\\Src
+		SccProjectUniqueName2 = ..\\..\\ExceptionHandling\\Src\\ExceptionHandling\\ExceptionHandling.csproj
+		SccProjectTopLevelParentUniqueName2 = Console.sln
+		SccProjectName2 = ../../ExceptionHandling/Src/ExceptionHandling
+		SccLocalPath2 = ..\\..\\ExceptionHandling\\Src\\ExceptionHandling
+		SccProjectUniqueName3 = ..\\..\\Common\\Tests\\Common.TestSupport\\Common.TestSupport.csproj
+		SccProjectTopLevelParentUniqueName3 = Console.sln
+		SccProjectName3 = ../../Common/Tests/Common.TestSupport
+		SccLocalPath3 = ..\\..\\Common\\Tests\\Common.TestSupport
+		SccProjectUniqueName4 = ..\\Tests\\Console.Wpf\\Console.Wpf.Tests.VSTS\\Console.Wpf.Tests.VSTS.csproj
+		SccProjectTopLevelParentUniqueName4 = Console.sln
+		SccProjectName4 = ../Tests/Console.Wpf/Console.Wpf.Tests.VSTS
+		SccLocalPath4 = ..\\Tests\\Console.Wpf\\Console.Wpf.Tests.VSTS
+		SccProjectUniqueName5 = ..\\..\\Common\\Tests\\Common\\Common.Tests.VSTS.csproj
+		SccProjectTopLevelParentUniqueName5 = Console.sln
+		SccProjectName5 = ../../Common/Tests/Common
+		SccLocalPath5 = ..\\..\\Common\\Tests\\Common
+		SccProjectUniqueName6 = ..\\..\\Security.Cryptography\\Src\\Cryptography\\Security.Cryptography.csproj
+		SccProjectTopLevelParentUniqueName6 = Console.sln
+		SccProjectName6 = ../../Security.Cryptography/Src/Cryptography
+		SccLocalPath6 = ..\\..\\Security.Cryptography\\Src\\Cryptography
+		SccProjectUniqueName7 = ..\\..\\Security.Cryptography\\Tests\\Cryptography.Tests\\Security.Cryptography.Tests.VSTS.csproj
+		SccProjectTopLevelParentUniqueName7 = Console.sln
+		SccProjectName7 = ../../Security.Cryptography/Tests/Cryptography.Tests
+		SccLocalPath7 = ..\\..\\Security.Cryptography\\Tests\\Cryptography.Tests
+		SccProjectUniqueName8 = ..\\..\\Security\\Src\\Security\\Security.csproj
+		SccProjectTopLevelParentUniqueName8 = Console.sln
+		SccProjectName8 = ../../Security/Src/Security
+		SccLocalPath8 = ..\\..\\Security\\Src\\Security
+		SccProjectUniqueName9 = ..\\..\\Security\\Src\\CachingStore\\Security.Cache.CachingStore.csproj
+		SccProjectTopLevelParentUniqueName9 = Console.sln
+		SccProjectName9 = ../../Security/Src/CachingStore
+		SccLocalPath9 = ..\\..\\Security\\Src\\CachingStore
+		SccProjectUniqueName10 = ..\\..\\Caching\\Src\\Caching\\Caching.csproj
+		SccProjectTopLevelParentUniqueName10 = Console.sln
+		SccProjectName10 = ../../Caching/Src/Caching
+		SccLocalPath10 = ..\\..\\Caching\\Src\\Caching
+		SccProjectUniqueName11 = ..\\..\\Logging\\Src\\Logging\\Logging.csproj
+		SccProjectTopLevelParentUniqueName11 = Console.sln
+		SccProjectName11 = ../../Logging/Src/Logging
+		SccLocalPath11 = ..\\..\\Logging\\Src\\Logging
+		SccProjectUniqueName12 = ..\\..\\ExceptionHandling\\Src\\Logging\\ExceptionHandling.Logging.csproj
+		SccProjectTopLevelParentUniqueName12 = Console.sln
+		SccProjectName12 = ../../ExceptionHandling/Src/Logging
+		SccLocalPath12 = ..\\..\\ExceptionHandling\\Src\\Logging
+		SccProjectUniqueName13 = EnvironmentalOverrides\\Configuration.EnvironmentalOverrides.csproj
+		SccProjectTopLevelParentUniqueName13 = Console.sln
+		SccProjectName13 = EnvironmentalOverrides
+		SccLocalPath13 = EnvironmentalOverrides
+		SccProjectUniqueName14 = ..\\..\\Caching\\Src\\Database\\Caching.Database.csproj
+		SccProjectTopLevelParentUniqueName14 = Console.sln
+		SccProjectName14 = ../../Caching/Src/Database
+		SccLocalPath14 = ..\\..\\Caching\\Src\\Database
+		SccProjectUniqueName15 = ..\\..\\Caching\\Src\\Cryptography\\Caching.Cryptography.csproj
+		SccProjectTopLevelParentUniqueName15 = Console.sln
+		SccProjectName15 = ../../Caching/Src/Cryptography
+		SccLocalPath15 = ..\\..\\Caching\\Src\\Cryptography
+		SccProjectUniqueName16 = ..\\..\\Data\\Src\\Data\\Data.csproj
+		SccProjectTopLevelParentUniqueName16 = Console.sln
+		SccProjectName16 = ../../Data/Src/Data
+		SccLocalPath16 = ..\\..\\Data\\Src\\Data
+		SccProjectUniqueName17 = ..\\..\\ExceptionHandling\\Src\\WCF\\ExceptionHandling.WCF.csproj
+		SccProjectTopLevelParentUniqueName17 = Console.sln
+		SccProjectName17 = ../../ExceptionHandling/Src/WCF
+		SccLocalPath17 = ..\\..\\ExceptionHandling\\Src\\WCF
+		SccProjectUniqueName18 = ..\\..\\Logging\\Src\\DatabaseTraceListener\\Logging.Database.csproj
+		SccProjectTopLevelParentUniqueName18 = Console.sln
+		SccProjectName18 = ../../Logging/Src/DatabaseTraceListener
+		SccLocalPath18 = ..\\..\\Logging\\Src\\DatabaseTraceListener
+		SccProjectUniqueName19 = ..\\..\\Validation\\Src\\Validation\\Validation.csproj
+		SccProjectTopLevelParentUniqueName19 = Console.sln
+		SccProjectName19 = ../../Validation/Src/Validation
+		SccLocalPath19 = ..\\..\\Validation\\Src\\Validation
+		SccProjectUniqueName20 = ..\\..\\PolicyInjection\\Src\\PolicyInjection\\PolicyInjection.csproj
+		SccProjectTopLevelParentUniqueName20 = Console.sln
+		SccProjectName20 = ../../PolicyInjection/Src/PolicyInjection
+		SccLocalPath20 = ..\\..\\PolicyInjection\\Src\\PolicyInjection
+		SccProjectUniqueName21 = ..\\..\\Security\\Src\\AzMan\\Security.AzMan.csproj
+		SccProjectTopLevelParentUniqueName21 = Console.sln
+		SccProjectName21 = ../../Security/Src/AzMan
+		SccLocalPath21 = ..\\..\\Security\\Src\\AzMan
+		SccProjectUniqueName22 = Design\\Configuration.Design.csproj
+		SccProjectName22 = Design
+		SccLocalPath22 = Design
+		SccProjectUniqueName23 = Console\\Configuration.Console.csproj
+		SccProjectName23 = Console
+		SccLocalPath23 = Console
+		SccProjectUniqueName24 = ..\\Tests\\TestAssembly1\\TestAssembly1.csproj
+		SccProjectTopLevelParentUniqueName24 = Console.sln
+		SccProjectName24 = ../Tests/TestAssembly1
+		SccLocalPath24 = ..\\Tests\\TestAssembly1
+		SccProjectUniqueName25 = ..\\Tests\\TestAssembly2\\TestAssembly2.csproj
+		SccProjectTopLevelParentUniqueName25 = Console.sln
+		SccProjectName25 = ../Tests/TestAssembly2
+		SccLocalPath25 = ..\\Tests\\TestAssembly2
+		SccProjectUniqueName26 = ..\\Tests\\TestAssembly3\\TestAssembly3.csproj
+		SccProjectTopLevelParentUniqueName26 = Console.sln
+		SccProjectName26 = ../Tests/TestAssembly3
+		SccLocalPath26 = ..\\Tests\\TestAssembly3
+		SccProjectUniqueName27 = ..\\Tests\\Configuration.Design.TestSupport\\Configuration.Design.TestSupport.csproj
+		SccProjectTopLevelParentUniqueName27 = Console.sln
+		SccProjectName27 = ../Tests/Configuration.Design.TestSupport
+		SccLocalPath27 = ..\\Tests\\Configuration.Design.TestSupport
+	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = Console7.vsmdi
 	EndGlobalSection

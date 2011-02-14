@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RuleSet Name="Migrated rules for PolicyInjection.ruleset" Description="This rule set was created from the CodeAnalysisRules property for the &quot;Debug (Any CPU)&quot; configuration in project &quot;C:\dev\EntLib SL Spike\V5-SL\Entlib\Source\Blocks\PolicyInjection\Src\PolicyInjection\PolicyInjection.csproj&quot;." ToolsVersion="10.0">
+  <IncludeAll Action="Warning" />
+  <Rules AnalyzerId="Microsoft.Analyzers.ManagedCodeAnalysis" RuleNamespace="Microsoft.Rules.Managed">
+    <Rule Id="CA1004" Action="None" />
+    <Rule Id="CA1010" Action="None" />
+    <Rule Id="CA1012" Action="None" />
+    <Rule Id="CA1017" Action="None" />
+    <Rule Id="CA1019" Action="None" />
+    <Rule Id="CA1020" Action="None" />
+    <Rule Id="CA1033" Action="None" />
+    <Rule Id="CA1405" Action="None" />
+    <Rule Id="CA1724" Action="None" />
+    <Rule Id="CA1811" Action="None" />
+    <Rule Id="CA1813" Action="None" />
+    <Rule Id="CA1816" Action="None" />
+    <Rule Id="CA1822" Action="None" />
+    <Rule Id="CA1824" Action="None" />
+    <Rule Id="CA2116" Action="None" />
+    <Rule Id="CA2117" Action="None" />
+    <Rule Id="CA2208" Action="None" />
+    <Rule Id="CA2210" Action="None" />
+    <Rule Id="CA2214" Action="None" />
+    <Rule Id="CA2227" Action="None" />
+  </Rules>
+</RuleSet>

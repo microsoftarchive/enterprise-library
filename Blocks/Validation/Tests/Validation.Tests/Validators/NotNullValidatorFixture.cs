@@ -210,7 +210,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
             Assert.IsFalse(match.Groups["param2"].Success);
         }
 
-        class TargetAddress
+        public class TargetAddress
         {
             [NotNullValidator] public string City;
 
@@ -220,6 +220,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
 #pragma warning restore 649
         }
 
+#if !SILVERLIGHT        // TODO remove after adding top level facade
         [TestMethod]
         public void NotNullValidatorWorksInIsolation_Bug4295()
         {
@@ -229,6 +230,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
             ValidationResults results = Validation.Validate(target);
             Assert.IsFalse(results.IsValid);
         }
+#endif
 
         [TestMethod]
         public void NotNullValidatorWorksInIsolationFromConfig_Bug4295()
@@ -263,7 +265,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
 
             fieldRef.Validators.Add(validatorData);
 
-            var rulesetData = new ValidationRulesetData("default");
+            var rulesetData = new ValidationRulesetData { Name = "default" };
             rulesetData.Fields.Add(fieldRef);
 
             var typeData = new ValidatedTypeReference(typeof (TargetAddress));

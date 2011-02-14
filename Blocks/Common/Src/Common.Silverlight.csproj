@@ -1,0 +1,143 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{453CC31C-5264-411F-96C7-84CB52298DE1}</ProjectGuid>
+    <ProjectTypeGuids>{A1591282-1198-4647-A2B1-27E5FF5F6F3B};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Microsoft.Practices.EnterpriseLibrary.Common</RootNamespace>
+    <AssemblyName>Microsoft.Practices.EnterpriseLibrary.Common.Silverlight</AssemblyName>
+    <TargetFrameworkIdentifier>Silverlight</TargetFrameworkIdentifier>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <SilverlightVersion>$(TargetFrameworkVersion)</SilverlightVersion>
+    <SilverlightApplication>false</SilverlightApplication>
+    <ValidateXaml>true</ValidateXaml>
+    <ThrowErrorsInValidation>true</ThrowErrorsInValidation>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <!-- This property group is only here to support building this project using the 
+       MSBuild 3.5 toolset. In order to work correctly with this older toolset, it needs 
+       to set the TargetFrameworkVersion to v3.5 -->
+  <PropertyGroup Condition="'$(MSBuildToolsVersion)' == '3.5'">
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>Bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;TRACE;SILVERLIGHT</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>Bin\Release</OutputPath>
+    <DefineConstants>TRACE;SILVERLIGHT</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\..\Lib\Silverlight\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity.Silverlight, Version=2.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\..\Lib\Silverlight\Microsoft.Practices.Unity.Silverlight.dll</HintPath>
+    </Reference>
+    <Reference Include="mscorlib" />
+    <Reference Include="System.Windows" />
+    <Reference Include="system" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Net" />
+    <Reference Include="System.Windows.Browser" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Configuration\AssemblyQualifiedTypeNameConverter.cs" />
+    <Compile Include="Configuration\BlockSectionNames.cs" />
+    <Compile Include="Configuration\ConfigurationErrorsException.Silverlight.cs" />
+    <Compile Include="Configuration\ConfigurationSection.Silverlight.cs" />
+    <Compile Include="Configuration\ConfigurationSourceFactory.Silverlight.cs" />
+    <Compile Include="Configuration\ContainerModel\ConfigSectionLocator.cs" />
+    <Compile Include="Configuration\ContainerModel\ConfigurationBasedTypeRegistrationsProviderFactory.Silverlight.cs" />
+    <Compile Include="Configuration\ContainerModel\ConstantParameterValue.cs" />
+    <Compile Include="Configuration\ContainerModel\Container.cs" />
+    <Compile Include="Configuration\ContainerModel\ContainerReconfiguringEventArgs.cs" />
+    <Compile Include="Configuration\ContainerModel\ContainerResolvedEnumerableParameter.cs" />
+    <Compile Include="Configuration\ContainerModel\ContainerResolvedParameter.cs" />
+    <Compile Include="Configuration\ContainerModel\IContainerConfigurator.cs" />
+    <Compile Include="Configuration\ContainerModel\IContainerReconfiguringEventSource.cs" />
+    <Compile Include="Configuration\ContainerModel\InjectedProperty.cs" />
+    <Compile Include="Configuration\ContainerModel\ITypeRegistrationsProvider.cs" />
+    <Compile Include="Configuration\ContainerModel\NullContainerReconfiguringEventSource.cs" />
+    <Compile Include="Configuration\ContainerModel\ParameterValue.cs" />
+    <Compile Include="Configuration\ContainerModel\ParameterValueVisitor.cs" />
+    <Compile Include="Configuration\ContainerModel\TypeLoadingLocator.cs" />
+    <Compile Include="Configuration\ContainerModel\TypeRegistration.cs" />
+    <Compile Include="Configuration\ContainerModel\TypeRegistrationsProvider.cs" />
+    <Compile Include="Configuration\ContainerModel\Unity\UnityContainerConfigurator.Silverlight.cs" />
+    <Compile Include="Configuration\ContainerModel\Unity\UnityContainerConfigurator.cs" />
+    <Compile Include="Configuration\DictionaryConfigurationSource.cs" />
+    <Compile Include="Configuration\EnterpriseLibraryContainer.Silverlight.cs" />
+    <Compile Include="Configuration\IObjectWithNameAndType.cs" />
+    <Compile Include="Configuration\TypeRegistrationProviderElement.Silverlight.cs" />
+    <Compile Include="Configuration\TypeRegistrationProviderElementCollection.Silverlight.cs" />
+    <Compile Include="Configuration\TypeRegistrationProvidersConfigurationSection.Silverlight.cs" />
+    <Compile Include="Configuration\EnterpriseLibraryContainer.cs" />
+    <Compile Include="Configuration\IConfigurationSource.cs" />
+    <Compile Include="Configuration\IObjectWithName.cs" />
+    <Compile Include="Configuration\NamedConfigurationElement.Silverlight.cs" />
+    <Compile Include="Configuration\NamedElementCollection.Silverlight.cs" />
+    <Compile Include="Configuration\Unity\EnterpriseLibraryBlockExtension.cs" />
+    <Compile Include="Configuration\Unity\EnterpriseLibraryCoreExtension.cs" />
+    <Compile Include="Configuration\Unity\TransientPolicyBuildUpExtension.cs" />
+    <Compile Include="Configuration\Unity\UnityContainerExtensions.cs" />
+    <Compile Include="Configuration\ResourceDictionaryConfigurationSource.Silverlight.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="ResourceStringLoader.cs" />
+    <Compile Include="Utility\ConstantStringResolver.cs" />
+    <Compile Include="Utility\DelegateStringResolver.cs" />
+    <Compile Include="Utility\EnumerableExtensions.cs" />
+    <Compile Include="Utility\IStringResolver.cs" />
+    <Compile Include="Utility\ResourceStringResolver.cs" />
+    <Compile Include="Utility\ServiceLocatorExtensions.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Silverlight\$(SilverlightVersion)\Microsoft.Silverlight.CSharp.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{A1591282-1198-4647-A2B1-27E5FF5F6F3B}">
+        <SilverlightProjectProperties />
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

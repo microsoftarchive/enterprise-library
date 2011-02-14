@@ -99,17 +99,49 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
 			this.upperBoundType = upperBoundType;
 		}
 
-		/// <summary>
+        /// <summary>
+        /// The lower bound.
+        /// </summary>
+	    public DateTime LowerBound
+	    {
+	        get { return lowerBound; }
+	    }
+
+        /// <summary>
+        /// The bound type for the lower bound.
+        /// </summary>
+	    public RangeBoundaryType LowerBoundType
+	    {
+	        get { return lowerBoundType; }
+	    }
+
+        /// <summary>
+        /// The upper bound.
+        /// </summary>
+	    public DateTime UpperBound
+	    {
+	        get { return upperBound; }
+	    }
+
+        /// <summary>
+        /// The bound type for the upper bound.
+        /// </summary>
+	    public RangeBoundaryType UpperBoundType
+	    {
+	        get { return upperBoundType; }
+	    }
+
+	    /// <summary>
 		/// Creates the <see cref="DateTimeRangeValidator"/> described by the configuration object.
 		/// </summary>
 		/// <param name="targetType">The type of object that will be validated by the validator.</param>
 		/// <returns>The created <see cref="Validator"/>.</returns>
 		protected override Validator DoCreateValidator(Type targetType)
 		{
-			return new DateTimeRangeValidator(this.lowerBound,
-				this.lowerBoundType,
-				this.upperBound,
-				this.upperBoundType,
+			return new DateTimeRangeValidator(this.LowerBound,
+				this.LowerBoundType,
+				this.UpperBound,
+				this.UpperBoundType,
 				Negated);
 		}
 
@@ -125,7 +157,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
 			}
 			catch (FormatException e)
 			{
-				throw new ArgumentException(Resources.ExceptionInvalidDate, "dateString", e);
+				throw new ArgumentException(Resources.ExceptionInvalidDate, e);
 			}
 		}
 	}

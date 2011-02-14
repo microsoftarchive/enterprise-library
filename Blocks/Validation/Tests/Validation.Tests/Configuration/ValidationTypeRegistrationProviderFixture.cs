@@ -38,6 +38,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             registrations = typeRegistrationProvider.GetRegistrations(configurationSource);
         }
 
+#if !SILVERLIGHT
         [TestMethod]
         public void ThenContainsRegistrationForValidationInstrumentationProvider()
         {
@@ -62,6 +63,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
                 .WithValueConstructorParameter(string.Empty)
                 .VerifyConstructorParameters();
         }
+#endif
 
         [TestMethod]
         public void ThenContainsRegistrationForDefaultNamedAttributeValidatorFactory()
@@ -152,6 +154,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             registrations = typeRegistrationProvider.GetUpdatedRegistrations(configurationSource);
         }
 
+#if !SILVERLIGHT
         [TestMethod]
         public void ThenContainsRegistrationForValidationInstrumentationProvider()
         {
@@ -176,6 +179,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
                 .WithValueConstructorParameter(string.Empty)
                 .VerifyConstructorParameters();
         }
+#endif
 
         [TestMethod]
         public void ThenContainsRegistrationForDefaultNamedAttributeValidatorFactory()
@@ -274,7 +278,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             Assert.IsTrue(validatingObject.DoValidation());
         }
 
-        internal class SomeValidatingObject
+        public class SomeValidatingObject
         {
             private Validator<TestObjectWithFailingAttributesOnProperties> validator;
 
@@ -306,9 +310,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             ValidatedTypeReference typeReference = new ValidatedTypeReference(typeof(BaseTestDomainObject));
             settings.Types.Add(typeReference);
             typeReference.DefaultRuleset = "RuleA";
-            ValidationRulesetData ruleData = new ValidationRulesetData("RuleA");
+            ValidationRulesetData ruleData = new ValidationRulesetData { Name = "RuleA" };
             typeReference.Rulesets.Add(ruleData);
-            ValidatedPropertyReference propertyReference1 = new ValidatedPropertyReference("Property1");
+            ValidatedPropertyReference propertyReference1 = new ValidatedPropertyReference { Name = "Property1" };
             ruleData.Properties.Add(propertyReference1);
             MockValidatorData validator11 = new MockValidatorData("validator1", true);
             propertyReference1.Validators.Add(validator11);
@@ -332,7 +336,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             Assert.IsTrue(validatingObject.DoValidation());
         }
 
-        internal class SomeValidatingObject
+        public class SomeValidatingObject
         {
             private Validator<BaseTestDomainObject> validator;
 

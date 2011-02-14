@@ -10,8 +10,6 @@
 //===============================================================================
 
 using System.Globalization;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
@@ -22,7 +20,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
     /// <remarks>
     /// <see langword="null"/> is logged as a failure.
     /// </remarks>
-    [ConfigurationElementType(typeof(StringLengthValidatorData))]
+#if !SILVERLIGHT
+    [Common.Configuration.ConfigurationElementType(typeof(Configuration.StringLengthValidatorData))]
+#endif
     public class StringLengthValidator : ValueValidator<string>
     {
         private RangeChecker<int> rangeChecker;

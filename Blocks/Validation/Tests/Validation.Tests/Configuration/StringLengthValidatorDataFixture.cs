@@ -12,7 +12,6 @@
 using System.Collections.Generic;
 using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Validation.TestSupport.Configuration;
@@ -24,6 +23,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
     [TestClass]
     public class StringLengthValidatorDataFixture
     {
+#if !SILVERLIGHT
         [TestMethod]
         public void CanDeserializeSerializedInstanceWithNameOnly()
         {
@@ -34,7 +34,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             IDictionary<string, ConfigurationSection> sections = new Dictionary<string, ConfigurationSection>();
             sections[ValidationSettings.SectionName] = rwSettings;
 
-            using (ConfigurationFileHelper configurationFileHelper = new ConfigurationFileHelper(sections))
+            using (var configurationFileHelper = new Common.TestSupport.Configuration.ConfigurationFileHelper(sections))
             {
                 IConfigurationSource configurationSource = configurationFileHelper.ConfigurationSource;
 
@@ -66,7 +66,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             IDictionary<string, ConfigurationSection> sections = new Dictionary<string, ConfigurationSection>();
             sections[ValidationSettings.SectionName] = rwSettings;
 
-            using (ConfigurationFileHelper configurationFileHelper = new ConfigurationFileHelper(sections))
+            using (var configurationFileHelper = new Common.TestSupport.Configuration.ConfigurationFileHelper(sections))
             {
                 IConfigurationSource configurationSource = configurationFileHelper.ConfigurationSource;
 
@@ -83,11 +83,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
                 Assert.AreEqual(false, ((StringLengthValidatorData)roSettings.Validators.Get(0)).Negated);
             }
         }
+#endif
 
         [TestMethod]
         public void CanCreateValidatorFromConfigurationObject()
         {
-            StringLengthValidatorData rwValidatorData = new StringLengthValidatorData("validator1");
+            StringLengthValidatorData rwValidatorData = new StringLengthValidatorData { Name = "validator1" };
             rwValidatorData.LowerBound = 10;
             rwValidatorData.LowerBoundType = RangeBoundaryType.Exclusive;
             rwValidatorData.UpperBound = 20;
@@ -108,7 +109,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
         [TestMethod]
         public void CanCreateNegatedValidatorFromConfigurationObject()
         {
-            StringLengthValidatorData rwValidatorData = new StringLengthValidatorData("validator1");
+            StringLengthValidatorData rwValidatorData = new StringLengthValidatorData { Name = "validator1" };
             rwValidatorData.LowerBound = 10;
             rwValidatorData.LowerBoundType = RangeBoundaryType.Exclusive;
             rwValidatorData.UpperBound = 20;
@@ -130,7 +131,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
         [TestMethod]
         public void CanCreateValidatorFromConfigurationObjectWithMessageTemplateOverride()
         {
-            StringLengthValidatorData rwValidatorData = new StringLengthValidatorData("validator1");
+            StringLengthValidatorData rwValidatorData = new StringLengthValidatorData { Name = "validator1" };
             rwValidatorData.LowerBound = 10;
             rwValidatorData.LowerBoundType = RangeBoundaryType.Exclusive;
             rwValidatorData.UpperBound = 20;
@@ -152,7 +153,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
         [TestMethod]
         public void CanCreateNegatedValidatorFromConfigurationObjectWithMessageTemplateOverride()
         {
-            StringLengthValidatorData rwValidatorData = new StringLengthValidatorData("validator1");
+            StringLengthValidatorData rwValidatorData = new StringLengthValidatorData { Name = "validator1" };
             rwValidatorData.LowerBound = 10;
             rwValidatorData.LowerBoundType = RangeBoundaryType.Exclusive;
             rwValidatorData.UpperBound = 20;

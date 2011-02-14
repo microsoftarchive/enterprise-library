@@ -21,6 +21,7 @@ using Microsoft.Practices.EnterpriseLibrary.Logging.Database.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.IO;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Tests.Configuration
 {
@@ -31,6 +32,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Database.Tests.Configura
         public void SetUp()
         {
             AppDomain.CurrentDomain.SetData("APPBASE", Environment.CurrentDirectory);
+            File.WriteAllText("test.exe.config", @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<configuration>
+  <connectionStrings>
+    <add name=""LoggingDb"" providerName=""System.Data.SqlClient"" connectionString=""server=(local)\SQLEXPRESS;database=Logging;Integrated Security=true"" />
+  </connectionStrings>
+</configuration>");
         }
 
         [TestMethod]

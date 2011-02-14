@@ -10,8 +10,6 @@
 //===============================================================================
 
 using System;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
@@ -20,7 +18,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
     /// Performs validation on objects by applying the validation rules specified for a supplied type.
     /// </summary>
     /// <seealso cref="ValidationFactory"/>
-    [ConfigurationElementType(typeof(ObjectValidatorData))]
+#if !SILVERLIGHT
+    [Common.Configuration.ConfigurationElementType(typeof(Configuration.ObjectValidatorData))]
+#endif
     public class ObjectValidator : Validator
     {
         private readonly Type targetType;

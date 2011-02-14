@@ -12,8 +12,6 @@
 using System;
 using System.ComponentModel;
 using System.Globalization;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
@@ -21,7 +19,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
     /// <summary>
     /// Validates a string by checking it represents a value for a given type.
     /// </summary>
-    [ConfigurationElementType(typeof(TypeConversionValidatorData))]
+#if !SILVERLIGHT
+    [Common.Configuration.ConfigurationElementType(typeof(Configuration.TypeConversionValidatorData))]
+#endif
     public class TypeConversionValidator : ValueValidator<string>
     {
         private Type targetType;
@@ -88,8 +88,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
                 {
                     try
                     {
-                        TypeConverter typeConverter = TypeDescriptor.GetConverter(targetType);
-                        object convertedValue = typeConverter.ConvertFromString(null, CultureInfo.CurrentCulture, objectToValidate);
+                        object convertedValue = Convert.ChangeType(objectToValidate, targetType, CultureInfo.CurrentCulture);
                         if (convertedValue == null)
                         {
                             logError = true;

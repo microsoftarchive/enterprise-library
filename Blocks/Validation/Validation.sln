@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Validation Application Block", "Validation Application Block", "{C6D8F857-CF82-4059-A67D-7595B38CC637}"
 	ProjectSection(FolderStartupServices) = postProject
 		{B4F97281-0DBD-4835-9ED8-7DFB966E87FF} = {B4F97281-0DBD-4835-9ED8-7DFB966E87FF}
@@ -10,6 +10,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		..\codecoverage.testrunconfig = ..\codecoverage.testrunconfig
 		..\EnterpriseLibrary.testrunconfig = ..\EnterpriseLibrary.testrunconfig
+		Validation.VSTS.vsmdi = Validation.VSTS.vsmdi
 	EndProjectSection
 	ProjectSection(FolderStartupServices) = postProject
 		{B4F97281-0DBD-4835-9ED8-7DFB966E87FF} = {B4F97281-0DBD-4835-9ED8-7DFB966E87FF}
@@ -48,19 +49,23 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Validation.Integration.WinF
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Validation.Integration.WCF.Tests.VSTS", "Tests\Integration.WCF.Tests\Validation.Integration.WCF.Tests.VSTS.csproj", "{2364A790-3FEF-4CBC-B0DE-A6C9FD9922F4}"
 EndProject
-Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "Web", "Tests\Integration.AspNet.Tests\Web", "{4357B0D3-7E91-4771-8CA7-05C6C3F75E10}"
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "Web", "Tests\Integration.AspNet.Tests.Web\Web", "{4357B0D3-7E91-4771-8CA7-05C6C3F75E10}"
 	ProjectSection(WebsiteProperties) = preProject
-	TargetFramework = "3.5"
+		SccProjectName = "SAK"
+		SccAuxPath = "SAK"
+		SccLocalPath = "SAK"
+		SccProvider = "SAK"
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
 		ProjectReferences = "{A09297C8-2C40-470B-8856-D856676DDFFA}|Microsoft.Practices.EnterpriseLibrary.Common.dll;{E814A5DC-C15B-4BA4-AB7C-B7C9A34AC2FD}|Microsoft.Practices.EnterpriseLibrary.Validation.dll;{5E66DD34-3ABB-48F7-AF8E-1F6D1C41FB9B}|Microsoft.Practices.EnterpriseLibrary.Validation.Integration.AspNet.dll;{A1EBF2C2-A0BC-4970-8FA3-7796D287152A}|Microsoft.Practices.EnterpriseLibrary.Validation.Tests.dll;{C6DE0220-E31B-486B-AB57-107636AEB927}|Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.dll;{3D3C0BEE-437E-487C-B9B3-46288AE933B9}|Microsoft.Practices.EnterpriseLibrary.Validation.TestSupport.dll;"
 		Debug.AspNetCompiler.VirtualPath = "/Web"
-		Debug.AspNetCompiler.PhysicalPath = "Tests\Integration.AspNet.Tests\Web\"
+		Debug.AspNetCompiler.PhysicalPath = "Tests\Integration.AspNet.Tests.Web\Web\"
 		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\Web\"
 		Debug.AspNetCompiler.Updateable = "true"
 		Debug.AspNetCompiler.ForceOverwrite = "true"
 		Debug.AspNetCompiler.FixedNames = "false"
 		Debug.AspNetCompiler.Debug = "True"
 		Release.AspNetCompiler.VirtualPath = "/Web"
-		Release.AspNetCompiler.PhysicalPath = "Tests\Integration.AspNet.Tests\Web\"
+		Release.AspNetCompiler.PhysicalPath = "Tests\Integration.AspNet.Tests.Web\Web\"
 		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\Web\"
 		Release.AspNetCompiler.Updateable = "true"
 		Release.AspNetCompiler.ForceOverwrite = "true"
@@ -78,6 +83,70 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Validation.Integration.WPF.Tests.VSTS", "Tests\Integration.WPF.Tests\Validation.Integration.WPF.Tests.VSTS.csproj", "{18B678FE-E8BB-4B8B-B152-44D94BE5EB7B}"
 EndProject
 Global
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 15
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = http://pagtfs2008:8080/
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = ..\\Common\\Src\\Common.csproj
+		SccProjectTopLevelParentUniqueName1 = Validation.sln
+		SccProjectName1 = ../Common/Src
+		SccLocalPath1 = ..\\Common\\Src
+		SccProjectUniqueName2 = Src\\Validation\\Validation.csproj
+		SccProjectTopLevelParentUniqueName2 = Validation.sln
+		SccProjectName2 = Src/Validation
+		SccLocalPath2 = Src\\Validation
+		SccProjectUniqueName3 = Src\\Validation.AspNet\\Validation.Integration.AspNet.csproj
+		SccProjectTopLevelParentUniqueName3 = Validation.sln
+		SccProjectName3 = Src/Validation.AspNet
+		SccLocalPath3 = Src\\Validation.AspNet
+		SccProjectUniqueName4 = Src\\Validation.WCF\\Validation.Integration.WCF.csproj
+		SccProjectTopLevelParentUniqueName4 = Validation.sln
+		SccProjectName4 = Src/Validation.WCF
+		SccLocalPath4 = Src\\Validation.WCF
+		SccProjectUniqueName5 = Src\\Validation.WinForms\\Validation.Integration.WinForms.csproj
+		SccProjectTopLevelParentUniqueName5 = Validation.sln
+		SccProjectName5 = Src/Validation.WinForms
+		SccLocalPath5 = Src\\Validation.WinForms
+		SccProjectUniqueName6 = Tests\\Validation.Tests\\Validation.Tests.VSTS.csproj
+		SccProjectTopLevelParentUniqueName6 = Validation.sln
+		SccProjectName6 = Tests/Validation.Tests
+		SccLocalPath6 = Tests\\Validation.Tests
+		SccProjectUniqueName7 = Tests\\Integration.AspNet.Tests\\Validation.Integration.AspNet.Tests.VSTS.csproj
+		SccProjectTopLevelParentUniqueName7 = Validation.sln
+		SccProjectName7 = Tests/Integration.AspNet.Tests
+		SccLocalPath7 = Tests\\Integration.AspNet.Tests
+		SccProjectUniqueName8 = Tests\\Integration.WinForms.Tests\\Validation.Integration.WinForms.Tests.VSTS.csproj
+		SccProjectTopLevelParentUniqueName8 = Validation.sln
+		SccProjectName8 = Tests/Integration.WinForms.Tests
+		SccLocalPath8 = Tests\\Integration.WinForms.Tests
+		SccProjectUniqueName9 = Tests\\Integration.WCF.Tests\\Validation.Integration.WCF.Tests.VSTS.csproj
+		SccProjectTopLevelParentUniqueName9 = Validation.sln
+		SccProjectName9 = Tests/Integration.WCF.Tests
+		SccLocalPath9 = Tests\\Integration.WCF.Tests
+		SccWebProject10 = true
+		SccProjectUniqueName10 = Tests\\Integration.AspNet.Tests.Web\\Web
+		SccProjectTopLevelParentUniqueName10 = Validation.sln
+		SccLocalPath10 = .
+		SccProjectFilePathRelativizedFromConnection10 = Tests\\Integration.AspNet.Tests.Web\\Web\\
+		SccProjectEnlistmentChoice10 = 2
+		SccProjectUniqueName11 = ..\\Common\\Tests\\Common.TestSupport\\Common.TestSupport.csproj
+		SccProjectTopLevelParentUniqueName11 = Validation.sln
+		SccProjectName11 = ../Common/Tests/Common.TestSupport
+		SccLocalPath11 = ..\\Common\\Tests\\Common.TestSupport
+		SccProjectUniqueName12 = Tests\\Validation.TestSupport\\Validation.TestSupport.csproj
+		SccProjectTopLevelParentUniqueName12 = Validation.sln
+		SccProjectName12 = Tests/Validation.TestSupport
+		SccLocalPath12 = Tests\\Validation.TestSupport
+		SccProjectUniqueName13 = Src\\Validation.Integration.WPF\\Validation.Integration.WPF.csproj
+		SccProjectTopLevelParentUniqueName13 = Validation.sln
+		SccProjectName13 = Src/Validation.Integration.WPF
+		SccLocalPath13 = Src\\Validation.Integration.WPF
+		SccProjectUniqueName14 = Tests\\Integration.WPF.Tests\\Validation.Integration.WPF.Tests.VSTS.csproj
+		SccProjectTopLevelParentUniqueName14 = Validation.sln
+		SccProjectName14 = Tests/Integration.WPF.Tests
+		SccLocalPath14 = Tests\\Integration.WPF.Tests
+	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = Validation.VSTS.vsmdi
 	EndGlobalSection
@@ -180,16 +249,16 @@ Global
 		{2364A790-3FEF-4CBC-B0DE-A6C9FD9922F4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2364A790-3FEF-4CBC-B0DE-A6C9FD9922F4}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{2364A790-3FEF-4CBC-B0DE-A6C9FD9922F4}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{4357B0D3-7E91-4771-8CA7-05C6C3F75E10}.Debug|.NET.ActiveCfg = Debug|.NET
-		{4357B0D3-7E91-4771-8CA7-05C6C3F75E10}.Debug|.NET.Build.0 = Debug|.NET
-		{4357B0D3-7E91-4771-8CA7-05C6C3F75E10}.Debug|Any CPU.ActiveCfg = Debug|.NET
-		{4357B0D3-7E91-4771-8CA7-05C6C3F75E10}.Debug|Mixed Platforms.ActiveCfg = Debug|.NET
-		{4357B0D3-7E91-4771-8CA7-05C6C3F75E10}.Debug|Mixed Platforms.Build.0 = Debug|.NET
-		{4357B0D3-7E91-4771-8CA7-05C6C3F75E10}.Release|.NET.ActiveCfg = Debug|.NET
-		{4357B0D3-7E91-4771-8CA7-05C6C3F75E10}.Release|.NET.Build.0 = Debug|.NET
-		{4357B0D3-7E91-4771-8CA7-05C6C3F75E10}.Release|Any CPU.ActiveCfg = Debug|.NET
-		{4357B0D3-7E91-4771-8CA7-05C6C3F75E10}.Release|Mixed Platforms.ActiveCfg = Debug|.NET
-		{4357B0D3-7E91-4771-8CA7-05C6C3F75E10}.Release|Mixed Platforms.Build.0 = Debug|.NET
+		{4357B0D3-7E91-4771-8CA7-05C6C3F75E10}.Debug|.NET.ActiveCfg = Debug|Any CPU
+		{4357B0D3-7E91-4771-8CA7-05C6C3F75E10}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4357B0D3-7E91-4771-8CA7-05C6C3F75E10}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4357B0D3-7E91-4771-8CA7-05C6C3F75E10}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{4357B0D3-7E91-4771-8CA7-05C6C3F75E10}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{4357B0D3-7E91-4771-8CA7-05C6C3F75E10}.Release|.NET.ActiveCfg = Debug|Any CPU
+		{4357B0D3-7E91-4771-8CA7-05C6C3F75E10}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{4357B0D3-7E91-4771-8CA7-05C6C3F75E10}.Release|Any CPU.Build.0 = Debug|Any CPU
+		{4357B0D3-7E91-4771-8CA7-05C6C3F75E10}.Release|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{4357B0D3-7E91-4771-8CA7-05C6C3F75E10}.Release|Mixed Platforms.Build.0 = Debug|Any CPU
 		{C6DE0220-E31B-486B-AB57-107636AEB927}.Debug|.NET.ActiveCfg = Debug|Any CPU
 		{C6DE0220-E31B-486B-AB57-107636AEB927}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C6DE0220-E31B-486B-AB57-107636AEB927}.Debug|Any CPU.Build.0 = Debug|Any CPU
@@ -243,13 +312,13 @@ Global
 		{F2B37E3C-5C7C-468A-8497-AD0A13A1005B} = {C6D8F857-CF82-4059-A67D-7595B38CC637}
 		{3789EFE9-AC16-4D57-AC1C-468DDF9A8B73} = {4DB99299-23D1-48F9-B4B7-0EECFEA68E18}
 		{A09297C8-2C40-470B-8856-D856676DDFFA} = {4DB99299-23D1-48F9-B4B7-0EECFEA68E18}
+		{A1EBF2C2-A0BC-4970-8FA3-7796D287152A} = {BEB677A0-0530-4889-B6E6-CB45E732398A}
 		{09F316EC-2F5F-48C9-9EBE-90E4705E6F09} = {BEB677A0-0530-4889-B6E6-CB45E732398A}
 		{B29D0579-A72E-4B82-A376-342176AF5475} = {BEB677A0-0530-4889-B6E6-CB45E732398A}
 		{2364A790-3FEF-4CBC-B0DE-A6C9FD9922F4} = {BEB677A0-0530-4889-B6E6-CB45E732398A}
 		{4357B0D3-7E91-4771-8CA7-05C6C3F75E10} = {BEB677A0-0530-4889-B6E6-CB45E732398A}
 		{3D3C0BEE-437E-487C-B9B3-46288AE933B9} = {BEB677A0-0530-4889-B6E6-CB45E732398A}
 		{18B678FE-E8BB-4B8B-B152-44D94BE5EB7B} = {BEB677A0-0530-4889-B6E6-CB45E732398A}
-		{A1EBF2C2-A0BC-4970-8FA3-7796D287152A} = {BEB677A0-0530-4889-B6E6-CB45E732398A}
 		{C6DE0220-E31B-486B-AB57-107636AEB927} = {3789EFE9-AC16-4D57-AC1C-468DDF9A8B73}
 	EndGlobalSection
 	GlobalSection(TextTemplating) = postSolution

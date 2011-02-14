@@ -65,6 +65,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
             var firstValidator = ValidationFactory.CreateValidatorFromConfiguration<TestObjectWithFailingAttributesOnProperties>();
             var secondValidator = ValidationFactory.CreateValidatorFromConfiguration<TestObjectWithFailingAttributesOnProperties>();
 
+            Assert.IsNotNull(firstValidator);
             Assert.AreSame(firstValidator, secondValidator);
         }
 
@@ -74,6 +75,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
             var firstValidator = ValidationFactory.CreateValidatorFromConfiguration(typeof(TestObjectWithFailingAttributesOnProperties), string.Empty);
             var secondValidator = ValidationFactory.CreateValidatorFromConfiguration(typeof(TestObjectWithFailingAttributesOnProperties), string.Empty);
 
+            Assert.IsNotNull(firstValidator);
             Assert.AreSame(firstValidator, secondValidator);
         }
 
@@ -118,15 +120,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
             configurationSource.Add(ValidationSettings.SectionName, settings);
             ValidatedTypeReference typeReference = new ValidatedTypeReference(typeof(BaseTestDomainObject));
             settings.Types.Add(typeReference);
-            ValidationRulesetData ruleData = new ValidationRulesetData("RuleA");
+            ValidationRulesetData ruleData = new ValidationRulesetData { Name = "RuleA" };
             typeReference.Rulesets.Add(ruleData);
-            ValidatedPropertyReference propertyReference1 = new ValidatedPropertyReference("Property1");
+            ValidatedPropertyReference propertyReference1 = new ValidatedPropertyReference { Name = "Property1" };
             ruleData.Properties.Add(propertyReference1);
             MockValidatorData validator11 = new MockValidatorData("validator1", true);
             propertyReference1.Validators.Add(validator11);
             validator11.MessageTemplate = "message-from-config1-RuleA";
 
-            ValidatedPropertyReference propertyReference2 = new ValidatedPropertyReference("Property2");
+            ValidatedPropertyReference propertyReference2 = new ValidatedPropertyReference { Name = "Property2" };
             ruleData.Properties.Add(propertyReference2);
             propertyReference2.Validators.Add(validator11);
 
@@ -221,6 +223,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
             Assert.IsTrue(results.Any(vr => vr.Key == "PropertyWithDataAnnotationsAttributes" && vr.Message == "data annotations-only"));
         }
 
+#if !SILVERLIGHT    // TODO review
         [TestMethod]
         public void CanGetValidatorFromConfigurationOly()
         {
@@ -243,7 +246,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
             Assert.IsTrue(results.Any(vr => vr.Key == "PropertyWithDataAnnotationsAttributes" && vr.Message == "configuration1"));
             Assert.IsTrue(results.Any(vr => vr.Key == "PropertyWithVABOnlyAttributes" && vr.Message == "configuration2"));
         }
-
+#endif
         #endregion
     }
 }

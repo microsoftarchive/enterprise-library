@@ -12,7 +12,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
 using Microsoft.Practices.EnterpriseLibrary.Validation.TestSupport.TestClasses;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -50,16 +49,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
             Assert.IsTrue(validationResults.IsValid);
         }
 
-		[TestMethod]
-		public void ReturnsActualResultsCount()
-		{
-			ValidationResults validationResults = new ValidationResults();
-			Assert.AreEqual(0, validationResults.Count);
-			validationResults.AddResult(new ValidationResult("message1", null, null, null, null));
-			Assert.AreEqual(1, validationResults.Count);
-			validationResults.AddResult(new ValidationResult("message2", null, null, null, null));
-			Assert.AreEqual(2, validationResults.Count);
-		}
+        [TestMethod]
+        public void ReturnsActualResultsCount()
+        {
+            ValidationResults validationResults = new ValidationResults();
+            Assert.AreEqual(0, validationResults.Count);
+            validationResults.AddResult(new ValidationResult("message1", null, null, null, null));
+            Assert.AreEqual(1, validationResults.Count);
+            validationResults.AddResult(new ValidationResult("message2", null, null, null, null));
+            Assert.AreEqual(2, validationResults.Count);
+        }
 
         [TestMethod]
         public void CanEnumerateThroughGenericEnumeratorInterface()
@@ -249,10 +248,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
             Assert.IsTrue(resultsMapping.ContainsKey("new 3"));
         }
 
+#if !SILVERLIGHT
         [TestMethod]
         public void ResultsCanBeSerializedAndDeserialized()
         {
-            BinaryFormatter formatter = new BinaryFormatter();
+            var formatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
             byte[] serializedResults = null;
 
             ValidationResults validationResults = new ValidationResults();
@@ -284,5 +284,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
             Assert.IsNull(resultsList[0].Target);
             Assert.IsNull(resultsList[0].Validator);
         }
+#endif
     }
 }

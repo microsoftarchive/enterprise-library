@@ -11,7 +11,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
@@ -19,25 +18,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
     /// <summary>
     /// Represents a configuration source that is backed by a dictionary of named objects.
     /// </summary>
-    public class DictionaryConfigurationSource : IConfigurationSource
+    public partial class DictionaryConfigurationSource : IConfigurationSource
     {
         /// <summary>
         /// This field supports the Enterprise Library infrastructure and is not intended to be used directly from your code.
         /// </summary>
         protected internal Dictionary<string, ConfigurationSection> sections;
-        /// <summary>
-        /// This field supports the Enterprise Library infrastructure and is not intended to be used directly from your code.
-        /// </summary>
-        protected internal EventHandlerList eventHandlers = new EventHandlerList();
-
-        /// <summary>
-        /// Raised when anything in the source changes.
-        /// </summary>
-        /// <remarks>
-        /// <see cref="DictionaryConfigurationSource"/> does not report any
-        /// configuration change events.
-        /// </remarks>
-        public event EventHandler<ConfigurationSourceChangedEventArgs> SourceChanged;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DictionaryConfigurationSource"/> class.
@@ -92,39 +78,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         public bool Contains(string name)
         {
             return sections.ContainsKey(name);
-        }
-
-        /// <summary>
-        /// Adds a handler to be called when changes to the section named <paramref name="sectionName"/> are detected.
-        /// </summary>
-        /// <param name="sectionName">The name of the section to watch for.</param>
-        /// <param name="handler">The handler for the change event to add.</param>
-        public void AddSectionChangeHandler(string sectionName, ConfigurationChangedEventHandler handler)
-        {
-            eventHandlers.AddHandler(sectionName, handler);
-        }
-
-        /// <summary>
-        /// Removes a handler to be called when changes to section <code>sectionName</code> are detected.
-        /// </summary>
-        /// <param name="sectionName">The name of the watched section.</param>
-        /// <param name="handler">The handler for the change event to remove.</param>
-        public void RemoveSectionChangeHandler(string sectionName, ConfigurationChangedEventHandler handler)
-        {
-            eventHandlers.RemoveHandler(sectionName, handler);
-        }
-
-        /// <summary>
-        /// Raises the <see cref="SourceChanged"/> event.
-        /// </summary>
-        /// <param name="args">Event arguments</param>
-        protected void OnSourceChangedEvent(ConfigurationSourceChangedEventArgs args)
-        {
-            var handler = this.SourceChanged;
-            if (handler != null)
-            {
-                handler(this, args);
-            }
         }
 
         void IDisposable.Dispose()

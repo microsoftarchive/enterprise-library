@@ -29,9 +29,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         ///<returns>A new ConfigurationValidatorFactory</returns>
         public static ConfigurationValidatorFactory FromConfigurationSource(IConfigurationSource configurationSource)
         {
-            return new ConfigurationValidatorFactory(
-                configurationSource,
-                ValidationInstrumentationProvider.FromConfigurationSource(configurationSource));
+            var instrumentationProvider =
+#if !SILVERLIGHT    // todo remove when including other sources
+                ValidationInstrumentationProvider.FromConfigurationSource(configurationSource);
+#else
+                new NullValidationInstrumentationProvider();
+#endif
+            return new ConfigurationValidatorFactory(configurationSource, instrumentationProvider);
         }
 
         ///<summary>

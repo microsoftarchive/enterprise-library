@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data Access Application Block", "Data Access Application Block", "{E6145382-274E-4947-A0B4-0516F1375D94}"
 	ProjectSection(FolderStartupServices) = postProject
 		{B4F97281-0DBD-4835-9ED8-7DFB966E87FF} = {B4F97281-0DBD-4835-9ED8-7DFB966E87FF}
@@ -27,6 +27,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{932DB7A9-F61D-4C12-91EA-F6A15C74AACD}"
 	ProjectSection(SolutionItems) = preProject
 		..\codecoverage.testrunconfig = ..\codecoverage.testrunconfig
+		Data.vsmdi = Data.vsmdi
 		..\EnterpriseLibrary.testrunconfig = ..\EnterpriseLibrary.testrunconfig
 	EndProjectSection
 	ProjectSection(FolderStartupServices) = postProject
@@ -52,6 +53,48 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oracle.Tests.VSTS", "Tests\Oracle.Tests.VSTS\Oracle.Tests.VSTS.csproj", "{8258FB05-E92F-428E-AB48-86D7E3F5FE43}"
 EndProject
 Global
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 10
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = http://pagtfs2008:8080/
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = ..\\Common\\Src\\Common.csproj
+		SccProjectTopLevelParentUniqueName1 = Data.sln
+		SccProjectName1 = ../Common/Src
+		SccLocalPath1 = ..\\Common\\Src
+		SccProjectUniqueName2 = Src\\Data\\Data.csproj
+		SccProjectTopLevelParentUniqueName2 = Data.sln
+		SccProjectName2 = Src/Data
+		SccLocalPath2 = Src\\Data
+		SccProjectUniqueName3 = Src\\SqlCe\\Data.SqlCe.csproj
+		SccProjectTopLevelParentUniqueName3 = Data.sln
+		SccProjectName3 = Src/SqlCe
+		SccLocalPath3 = Src\\SqlCe
+		SccProjectUniqueName4 = Tests\\Configuration.Manageability.Tests\\Data.Configuration.Manageability.Tests.VSTS.csproj
+		SccProjectTopLevelParentUniqueName4 = Data.sln
+		SccProjectName4 = Tests/Configuration.Manageability.Tests
+		SccLocalPath4 = Tests\\Configuration.Manageability.Tests
+		SccProjectUniqueName5 = Tests\\Data.Tests\\Data.Tests.VSTS.csproj
+		SccProjectTopLevelParentUniqueName5 = Data.sln
+		SccProjectName5 = Tests/Data.Tests
+		SccLocalPath5 = Tests\\Data.Tests
+		SccProjectUniqueName6 = Tests\\SqlCe.Tests\\Data.SqlCe.Tests.VSTS.csproj
+		SccProjectTopLevelParentUniqueName6 = Data.sln
+		SccProjectName6 = Tests/SqlCe.Tests
+		SccLocalPath6 = Tests\\SqlCe.Tests
+		SccProjectUniqueName7 = ..\\Common\\Tests\\Common.TestSupport\\Common.TestSupport.csproj
+		SccProjectTopLevelParentUniqueName7 = Data.sln
+		SccProjectName7 = ../Common/Tests/Common.TestSupport
+		SccLocalPath7 = ..\\Common\\Tests\\Common.TestSupport
+		SccProjectUniqueName8 = Tests\\Data.TestSupport\\Data.TestSupport.csproj
+		SccProjectTopLevelParentUniqueName8 = Data.sln
+		SccProjectName8 = Tests/Data.TestSupport
+		SccLocalPath8 = Tests\\Data.TestSupport
+		SccProjectUniqueName9 = Tests\\Oracle.Tests.VSTS\\Oracle.Tests.VSTS.csproj
+		SccProjectTopLevelParentUniqueName9 = Data.sln
+		SccProjectName9 = Tests/Oracle.Tests.VSTS
+		SccLocalPath9 = Tests\\Oracle.Tests.VSTS
+	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = Data.vsmdi
 	EndGlobalSection

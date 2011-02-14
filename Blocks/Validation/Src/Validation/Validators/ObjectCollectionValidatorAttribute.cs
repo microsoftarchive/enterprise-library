@@ -101,9 +101,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
             ValidatorFactory validatorFactory)
         {
             // avoid supplied target type - that's the type of the collection
-            if (this.targetType != null)
+            if (this.TargetType != null)
             {
-                return new ObjectCollectionValidator(this.targetType, validatorFactory, this.targetRuleset);
+                return new ObjectCollectionValidator(this.TargetType, validatorFactory, this.targetRuleset);
             }
             else
             {
@@ -125,6 +125,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
                 }
                 this.targetRuleset = value;
             }
+        }
+
+        /// <summary>
+        /// The target type
+        /// </summary>
+        public Type TargetType
+        {
+            get { return targetType; }
         }
     }
 }

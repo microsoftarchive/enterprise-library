@@ -39,7 +39,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
 			this.targetType = targetType;
 		}
 
-		/// <summary>
+        /// <summary>
+        /// The target type. 
+        /// </summary>
+	    public Type TargetType
+	    {
+	        get { return targetType; }
+	    }
+
+	    /// <summary>
 		/// Creates the <see cref="TypeConversionValidator"/> described by the attribute object.
 		/// </summary>
 		/// <param name="targetType">The type of object that will be validated by the validator.</param>
@@ -47,7 +55,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
 		/// <returns>The created <see cref="TypeConversionValidator"/>.</returns>
 		protected override Validator DoCreateValidator(Type targetType)
 		{
-			return new TypeConversionValidator(this.targetType, Negated);
+			return new TypeConversionValidator(this.TargetType, Negated);
 		}
 	}
 }

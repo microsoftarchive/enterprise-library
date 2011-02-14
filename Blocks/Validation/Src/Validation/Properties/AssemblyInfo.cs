@@ -1,4 +1,4 @@
-//===============================================================================
+﻿//===============================================================================
 // Microsoft patterns & practices Enterprise Library
 // Validation Application Block
 //===============================================================================
@@ -11,22 +11,9 @@
 
 using System.Reflection;
 using System.Security;
-using System.Security.Permissions;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
-using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration;
-
-[assembly: SecurityPermission(SecurityAction.RequestMinimum)]
 
 [assembly: AssemblyTitle("Enterprise Library Validation Application Block")]
 [assembly: AssemblyDescription("Enterprise Library Validation Application Block")]
 [assembly: AssemblyVersion("5.0.414.0")]
 
-[assembly: AllowPartiallyTrustedCallers]
 [assembly: SecurityTransparent]
-
-[assembly: HandlesSection(ValidationSettings.SectionName)]
-[assembly: AddApplicationBlockCommand(
-                ValidationSettings.SectionName,
-                typeof(ValidationSettings),
-                TitleResourceType = typeof(DesignResources),
-                TitleResourceName = "AddValidationSettings")]

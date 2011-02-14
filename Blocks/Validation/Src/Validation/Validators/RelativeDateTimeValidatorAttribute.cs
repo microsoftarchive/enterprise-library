@@ -86,7 +86,56 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
 			this.upperBoundType = upperBoundType;
 		}
 
-		/// <summary>
+        /// <summary>
+        /// The lower bound
+        /// </summary>
+	    public int LowerBound
+	    {
+	        get { return lowerBound; }
+	    }
+
+
+        /// <summary>
+        /// The lower bound unit of time.
+        /// </summary>
+	    public DateTimeUnit LowerUnit
+	    {
+	        get { return lowerUnit; }
+	    }
+
+        /// <summary>
+        /// The indication of how to perform the lower bound check.
+        /// </summary>
+	    public RangeBoundaryType LowerBoundType
+	    {
+	        get { return lowerBoundType; }
+	    }
+
+        /// <summary>
+        /// The upper bound
+        /// </summary>
+	    public int UpperBound
+	    {
+	        get { return upperBound; }
+	    }
+
+        /// <summary>
+        /// The upper bound unit of time.
+        /// </summary>
+	    public DateTimeUnit UpperUnit
+	    {
+	        get { return upperUnit; }
+	    }
+
+        /// <summary>
+        /// The indication of how to perform the upper bound check.
+        /// </summary>
+	    public RangeBoundaryType UpperBoundType
+	    {
+	        get { return upperBoundType; }
+	    }
+
+	    /// <summary>
 		/// Creates the <see cref="RelativeDateTimeValidator"/> described by the attribute object.
 		/// </summary>
 		/// <param name="targetType">The type of object that will be validated by the validator.</param>
@@ -94,7 +143,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
 		/// <returns>The created <see cref="RelativeDateTimeValidator"/>.</returns>
 		protected override Validator DoCreateValidator(Type targetType)
 		{
-			return new RelativeDateTimeValidator(lowerBound, lowerUnit, lowerBoundType, upperBound, upperUnit, upperBoundType, Negated);
+			return new RelativeDateTimeValidator(LowerBound, LowerUnit, LowerBoundType, UpperBound, UpperUnit, UpperBoundType, Negated);
 		}
 	}
 }

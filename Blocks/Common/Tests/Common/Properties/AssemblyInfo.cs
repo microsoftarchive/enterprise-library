@@ -1,4 +1,4 @@
-//===============================================================================
+﻿//===============================================================================
 // Microsoft patterns & practices Enterprise Library
 // Core
 //===============================================================================
@@ -9,13 +9,8 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
 using System.Reflection;
-using System.Security;
 
 [assembly: AssemblyTitle("Enterprise Library Shared Library Tests")]
 [assembly: AssemblyDescription("Enterprise Library Shared Library Tests")]
 [assembly: AssemblyVersion("5.0.414.0")]
-
-[assembly: AllowPartiallyTrustedCallers]
-[assembly: CLSCompliant(false)]

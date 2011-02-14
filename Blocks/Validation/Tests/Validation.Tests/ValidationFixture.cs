@@ -232,9 +232,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
             ValidatedTypeReference typeReference = new ValidatedTypeReference(typeof(BaseTestDomainObject));
             settings.Types.Add(typeReference);
             typeReference.DefaultRuleset = "RuleA";
-            ValidationRulesetData ruleData = new ValidationRulesetData("RuleA");
+            ValidationRulesetData ruleData = new ValidationRulesetData { Name = "RuleA" };
             typeReference.Rulesets.Add(ruleData);
-            ValidatedPropertyReference propertyReference1 = new ValidatedPropertyReference("Property1");
+            ValidatedPropertyReference propertyReference1 = new ValidatedPropertyReference { Name = "Property1" };
             ruleData.Properties.Add(propertyReference1);
             MockValidatorData validator11 = new MockValidatorData("validator1", true);
             propertyReference1.Validators.Add(validator11);
@@ -282,5 +282,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
                 get { return "failing2"; }
             }
         }
+
+#if SILVERLIGHT
+        [TestInitialize]
+        public void Setup()
+        {
+            var configurationSource = ResourceDictionaryConfigurationSource.FromXaml(new Uri("/Microsoft.Practices.EnterpriseLibrary.Validation.Silverlight.Tests;component/Configuration.xaml", UriKind.Relative));
+            EnterpriseLibraryContainer.Current = EnterpriseLibraryContainer.CreateDefaultContainer(configurationSource);
+        }
+#endif
     }
 }

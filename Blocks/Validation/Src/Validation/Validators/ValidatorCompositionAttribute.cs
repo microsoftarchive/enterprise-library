@@ -36,8 +36,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         {
             this.compositionType = compositionType;
         }
-
-        internal CompositionType CompositionType
+        /// <summary>
+        /// The <see cref="CompositionType"/> to be used.
+        /// </summary>
+        public CompositionType CompositionType
         {
             get { return compositionType; }
         }

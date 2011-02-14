@@ -70,17 +70,49 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
 			this.upperBoundType = upperBoundType;
 		}
 
-		/// <summary>
+        /// <summary>
+        /// The lower bound.
+        /// </summary>
+	    public int LowerBound
+	    {
+	        get { return lowerBound; }
+	    }
+
+        /// <summary>
+        /// The indication of how to perform the lower bound check.
+        /// </summary>
+	    public RangeBoundaryType LowerBoundType
+	    {
+	        get { return lowerBoundType; }
+	    }
+
+        /// <summary>
+        /// The upper bound.
+        /// </summary>
+	    public int UpperBound
+	    {
+	        get { return upperBound; }
+	    }
+
+        /// <summary>
+        /// The indication of how to perform the upper bound check.
+        /// </summary>
+	    public RangeBoundaryType UpperBoundType
+	    {
+	        get { return upperBoundType; }
+	    }
+
+	    /// <summary>
 		/// Creates the <see cref="StringLengthValidator"/> described by the configuration object.
 		/// </summary>
 		/// <param name="targetType">The type of object that will be validated by the validator.</param>
 		/// <returns>The created <see cref="Validator"/>.</returns>
 		protected override Validator DoCreateValidator(Type targetType)
 		{
-			return new StringLengthValidator(this.lowerBound,
-				this.lowerBoundType,
-				this.upperBound,
-				this.upperBoundType,
+			return new StringLengthValidator(this.LowerBound,
+				this.LowerBoundType,
+				this.UpperBound,
+				this.UpperBoundType,
 				Negated);
 		}
 	}
