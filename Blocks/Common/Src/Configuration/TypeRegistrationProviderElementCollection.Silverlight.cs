@@ -22,7 +22,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         /// </summary>
         public TypeRegistrationProviderElementCollection()
         {
-            //BaseAdd(new TypeRegistrationProviderElement() { Name = TypeRegistrationProvidersConfigurationSection.CachingTypeRegistrationProviderName, SectionName = BlockSectionNames.Caching });
+            BaseAdd(new TypeRegistrationProviderElement() { Name = TypeRegistrationProvidersConfigurationSection.CachingTypeRegistrationProviderName, SectionName = BlockSectionNames.Caching });
             //BaseAdd(new TypeRegistrationProviderElement() { Name = TypeRegistrationProvidersConfigurationSection.CryptographyTypeRegistrationProviderName, SectionName = BlockSectionNames.Cryptography });
             //BaseAdd(new TypeRegistrationProviderElement() { Name = TypeRegistrationProvidersConfigurationSection.ExceptionHandlingTypeRegistrationProviderName, SectionName = BlockSectionNames.ExceptionHandling });
             //BaseAdd(new TypeRegistrationProviderElement() { Name = TypeRegistrationProvidersConfigurationSection.InstrumentationTypeRegistrationProviderName, SectionName = BlockSectionNames.Instrumentation });

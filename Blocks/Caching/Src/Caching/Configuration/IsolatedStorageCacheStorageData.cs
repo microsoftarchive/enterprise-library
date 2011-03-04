@@ -25,19 +25,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
     [ResourceDescription(typeof(DesignResources), "IsolatedStorageCacheStorageDataDescription")]
     [ResourceDisplayName(typeof(DesignResources), "IsolatedStorageCacheStorageDataDisplayName")]
     [System.ComponentModel.Browsable(true)]
-	public class IsolatedStorageCacheStorageData : CacheStorageData
+    public class IsolatedStorageCacheStorageData : CacheStorageData
     {
-		private const string partitionNameProperty = "partitionName";
+        private const string partitionNameProperty = "partitionName";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="IsolatedStorageCacheStorageData"/> class.
         /// </summary>
-        public IsolatedStorageCacheStorageData() : base(typeof(IsolatedStorageBackingStore))
+        public IsolatedStorageCacheStorageData()
+            : base(typeof(IsolatedStorageBackingStore))
         {
-        }        
+        }
 
         /// <summary>
-		/// Initialize a new instance of the <see cref="IsolatedStorageCacheStorageData"/> class.
+        /// Initialize a new instance of the <see cref="IsolatedStorageCacheStorageData"/> class.
         /// </summary>
         /// <param name="name">
         /// The name of the <see cref="IsolatedStorageCacheStorageData"/>.
@@ -48,7 +49,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
         /// <param name="partitionName">
         /// Name of the Isolated Storage area to use.
         /// </param>
-        public IsolatedStorageCacheStorageData(string name, string storageEncryption, string partitionName) : base(name, typeof(IsolatedStorageBackingStore), storageEncryption)
+        public IsolatedStorageCacheStorageData(string name, string storageEncryption, string partitionName)
+            : base(name, typeof(IsolatedStorageBackingStore), storageEncryption)
         {
             PartitionName = partitionName;
         }
@@ -56,7 +58,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
         /// <summary>
         /// Name of the Isolated Storage area to use.
         /// </summary>
-        [ConfigurationProperty(partitionNameProperty, IsRequired= true)]
+        [ConfigurationProperty(partitionNameProperty, IsRequired = true)]
         [ResourceDescription(typeof(DesignResources), "IsolatedStorageCacheStorageDataPartitionNameDescription")]
         [ResourceDisplayName(typeof(DesignResources), "IsolatedStorageCacheStorageDataPartitionNameDisplayName")]
         public string PartitionName
@@ -72,8 +74,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
         public override IEnumerable<TypeRegistration> GetRegistrations()
         {
             yield return new TypeRegistration<IBackingStore>(
-                () => new IsolatedStorageBackingStore(PartitionName,
-                    Container.ResolvedIfNotNull<IStorageEncryptionProvider>(StorageEncryption)))
+                () =>
+                    new IsolatedStorageBackingStore(
+                        PartitionName,
+                        Container.ResolvedIfNotNull<IStorageEncryptionProvider>(StorageEncryption)))
                     {
                         Name = Name
                     };

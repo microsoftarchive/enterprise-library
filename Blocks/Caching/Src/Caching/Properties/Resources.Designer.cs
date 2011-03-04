@@ -412,6 +412,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This cache object does not support regions..
+        /// </summary>
+        internal static string RegionsNotSupported {
+            get {
+                return ResourceManager.GetString("RegionsNotSupported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Total Cache Expiries is the total number of items expired from the cache..
         /// </summary>
         internal static string TotalCacheExpiriesCounterHelpResource {

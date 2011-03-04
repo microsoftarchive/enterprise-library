@@ -115,5 +115,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             Assert.AreEqual(true, ((ContainsCharactersValidator)validator).Negated);
             Assert.AreEqual("message template override", validator.MessageTemplate);
         }
+
+        [TestMethod]
+        public void HasDefaultValuesForProperties()
+        {
+            var validatorData = new ContainsCharactersValidatorData();
+
+            Assert.AreEqual(ContainsCharacters.Any, validatorData.ContainsCharacters);
+        }
     }
 }

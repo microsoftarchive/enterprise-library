@@ -56,10 +56,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Database.Tests
         {
             firstCache.Add(new CacheItem("key1", "value1", CacheItemPriority.Low, null));
 
-            Hashtable firstDatabaseContents = firstCache.Load();
+            var firstDatabaseContents = firstCache.Load();
             Assert.AreEqual(1, firstDatabaseContents.Count);
 
-            Hashtable secondDatabaseContents = secondCache.Load();
+            var secondDatabaseContents = secondCache.Load();
             Assert.AreEqual(0, secondDatabaseContents.Count);
         }
 
@@ -97,14 +97,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Database.Tests
 
             secondCache.UpdateLastAccessedTime("key", DateTime.Now + TimeSpan.FromHours(1.0));
 
-            Hashtable firstCacheContents = firstCache.Load();
+            var firstCacheContents = firstCache.Load();
             CacheItem retrievedItem = firstCacheContents["key"] as CacheItem;
             Assert.AreEqual(originalTimeStamp.ToString(), retrievedItem.LastAccessedTime.ToString());
 
             DateTime newTimestamp = DateTime.Now + TimeSpan.FromMinutes(2.0);
             firstCache.UpdateLastAccessedTime("key", newTimestamp);
 
-            Hashtable afterChangeContents = firstCache.Load();
+            var afterChangeContents = firstCache.Load();
             CacheItem changedItem = afterChangeContents["key"] as CacheItem;
             Assert.AreEqual(newTimestamp.ToString(), changedItem.LastAccessedTime.ToString());
         }

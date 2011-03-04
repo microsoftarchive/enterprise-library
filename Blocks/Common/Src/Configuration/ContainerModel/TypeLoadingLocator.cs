@@ -11,6 +11,9 @@
 
 using System;
 using System.Collections.Generic;
+#if SILVERLIGHT
+using Microsoft.Practices.EnterpriseLibrary.Common.Utility;
+#endif
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel
 {
@@ -54,7 +57,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerMo
 
         private void OnContainerReconfiguring(object sender, ContainerReconfiguringEventArgs e)
         {
-            e.AddTypeRegistrations(GetUpdatedRegistrations(e.ConfigurationSource));   
+            e.AddTypeRegistrations(GetUpdatedRegistrations(e.ConfigurationSource));
         }
 
         /// <summary>
@@ -83,11 +86,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerMo
         private IEnumerable<TypeRegistration> GetRegistrationsInternal(IConfigurationSource configurationSource,
             Func<ITypeRegistrationsProvider, IConfigurationSource, IEnumerable<TypeRegistration>> registrationAccessor)
         {
+#if !SILVERLIGHT
             Type providerType = Type.GetType(Name);
             if (providerType == null) return new TypeRegistration[0];
 
             var provider = (ITypeRegistrationsProvider)Activator.CreateInstance(providerType);
+
             return registrationAccessor(provider, configurationSource);
+#else
+            var provider = XamlActivator.CreateInstance<ITypeRegistrationsProvider>(this.Name);
+
+            return provider != null ? registrationAccessor(provider, configurationSource) : new TypeRegistration[0];
+#endif
         }
     }
 }

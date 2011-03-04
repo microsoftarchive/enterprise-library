@@ -15,6 +15,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 {
     partial class PropertyComparisonValidatorData
     {
+        public PropertyComparisonValidatorData()
+        {
+            this.PropertyToCompare = string.Empty;
+        }
+
         /// <summary>
         /// Gets or sets the <see cref="ComparisonOperator"/> describing the comparison that the represented <see cref="PropertyComparisonValidator"/>.
         /// </summary>

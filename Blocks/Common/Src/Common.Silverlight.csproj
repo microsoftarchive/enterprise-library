@@ -63,6 +63,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Net" />
     <Reference Include="System.Windows.Browser" />
+    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Configuration\AssemblyQualifiedTypeNameConverter.cs" />
@@ -118,6 +119,7 @@
     <Compile Include="Utility\IStringResolver.cs" />
     <Compile Include="Utility\ResourceStringResolver.cs" />
     <Compile Include="Utility\ServiceLocatorExtensions.cs" />
+    <Compile Include="Utility\XamlActivator.Silverlight.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">

@@ -14,29 +14,31 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.TestSupport.BackingStoreImplementations
 {
-	[ConfigurationElementType(typeof(MockStorageEncryptionProviderData))]
-	public class MockStorageEncryptionProvider : IStorageEncryptionProvider
-	{
+#if !SILVERLIGHT
+    [ConfigurationElementType(typeof(MockStorageEncryptionProviderData))]
+#endif
+    public class MockStorageEncryptionProvider : IStorageEncryptionProvider
+    {
         public static bool Instantiated;
-		public static bool Encrypted;
-		public static bool Decrypted;
+        public static bool Encrypted;
+        public static bool Decrypted;
 
-		public MockStorageEncryptionProvider()
-		{
+        public MockStorageEncryptionProvider()
+        {
             Instantiated = true;
-		}
+        }
 
-		public byte[] Encrypt(byte[] plaintext)
-		{
-			Encrypted = true;
-			return plaintext;
-		}
+        public byte[] Encrypt(byte[] plaintext)
+        {
+            Encrypted = true;
+            return plaintext;
+        }
 
-		public byte[] Decrypt(byte[] ciphertext)
-		{
-			Decrypted = true;
-			return ciphertext;
-		}
-	}
+        public byte[] Decrypt(byte[] ciphertext)
+        {
+            Decrypted = true;
+            return ciphertext;
+        }
+    }
 }
 

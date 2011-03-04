@@ -80,7 +80,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 #if !SILVERLIGHT
             "Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.ValidationTypeRegistrationProvider, Microsoft.Practices.EnterpriseLibrary.Validation";
 #else
-            "Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.ValidationTypeRegistrationProvider, Microsoft.Practices.EnterpriseLibrary.Validation.Silverlight, Version=5.0.414.0, Culture=neutral, PublicKeyToken=null";
+            "{clr-namespace:Microsoft.Practices.EnterpriseLibrary.Validation.Configuration;assembly=Microsoft.Practices.EnterpriseLibrary.Validation.Silverlight}ValidationTypeRegistrationProvider";
 #endif
     }
 }

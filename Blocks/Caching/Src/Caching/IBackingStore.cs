@@ -92,6 +92,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
 		/// Other exceptions can be thrown, depending on what individual Backing Store implementations throw during Load
 		/// </p>
 		/// </remarks>
-		Hashtable Load();
+		IDictionary Load();
 	}
 }

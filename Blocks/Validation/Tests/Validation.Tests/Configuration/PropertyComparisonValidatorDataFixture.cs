@@ -128,6 +128,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             Assert.AreEqual(true, validator.Negated);
         }
 
+
+        [TestMethod]
+        public void HasDefaultValuesForProperties()
+        {
+            var validatorData = new PropertyComparisonValidatorData();
+
+            Assert.AreEqual("", validatorData.PropertyToCompare);
+        }
+
         public class PropertyComparisonValidatorDataFixtureTestClass
         {
             string property;

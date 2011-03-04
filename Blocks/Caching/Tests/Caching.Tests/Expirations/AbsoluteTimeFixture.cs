@@ -10,8 +10,6 @@
 //===============================================================================
 
 using System;
-using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -48,8 +46,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Expirations.Tests
         {
             AbsoluteTime absoluteTime = new AbsoluteTime(DateTime.Now.AddDays(2));
 
-            BinaryFormatter formatter = new BinaryFormatter();
-            MemoryStream stream = new MemoryStream();
+            var formatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+            var stream = new System.IO.MemoryStream();
             formatter.Serialize(stream, absoluteTime);
             stream.Position = 0;
             AbsoluteTime absoluteTime2 = (AbsoluteTime)formatter.Deserialize(stream);

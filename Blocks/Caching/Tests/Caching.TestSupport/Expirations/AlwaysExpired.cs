@@ -16,7 +16,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.TestSupport.Expirations
     /// <summary>
     /// This class reflects an expiration policy of always being expired.
     /// </summary>
+#if !SILVERLIGHT
     [Serializable]
+#endif
     public class AlwaysExpired : ICacheItemExpiration
     {
         /// <summary>

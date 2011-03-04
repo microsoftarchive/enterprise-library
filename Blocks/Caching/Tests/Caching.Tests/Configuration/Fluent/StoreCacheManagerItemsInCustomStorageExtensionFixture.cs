@@ -366,7 +366,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests.Configuration.Flue
             throw new NotImplementedException();
         }
 
-        public System.Collections.Hashtable Load()
+        public System.Collections.IDictionary Load()
         {
             throw new NotImplementedException();
         }

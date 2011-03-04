@@ -133,5 +133,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             Assert.AreEqual(RangeBoundaryType.Inclusive, ((DateTimeRangeValidator)validator).UpperBoundType);
             Assert.AreEqual("message template override", ((DateTimeRangeValidator)validator).MessageTemplate);
         }
+
+        [TestMethod]
+        public void HasDefaultValuesForProperties()
+        {
+            var validatorData = new DateTimeRangeValidatorData();
+
+            Assert.AreEqual(RangeBoundaryType.Ignore, validatorData.LowerBoundType);
+            Assert.AreEqual(RangeBoundaryType.Inclusive, validatorData.UpperBoundType);
+        }
     }
 }

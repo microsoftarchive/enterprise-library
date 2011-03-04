@@ -155,7 +155,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Database
         /// Loads data from persistence store.
         /// </summary>
         /// <returns>Unfiltered hashtable of cache items loaded from persistence store.</returns>
-        protected override Hashtable LoadDataFromStore()
+        protected override IDictionary LoadDataFromStore()
         {
             DbCommand loadDataCommand = database.GetStoredProcCommand("LoadItems");
             database.AddInParameter(loadDataCommand, "@partitionName", DbType.String, partitionName);

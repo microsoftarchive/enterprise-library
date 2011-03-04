@@ -10,8 +10,6 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
-using System.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
@@ -22,6 +20,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
     partial class RangeValidatorData<T>
         where T : IComparable<T>
     {
+        protected RangeValidatorData()
+        {
+            this.LowerBoundType = RangeBoundaryType.Ignore;
+            this.UpperBoundType = RangeBoundaryType.Inclusive;
+        }
+
         /// <summary>
         /// Gets or sets the lower bound for the represented validator.
         /// </summary>

@@ -147,7 +147,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.BackingStoreImplementati
 
             CacheItem restoredItem = item.Load();
 
-            Assert.AreEqual(restoredItem.LastAccessedTime, now);
+            Assert.AreEqual(now, restoredItem.LastAccessedTime);
         }
 
         [TestMethod]

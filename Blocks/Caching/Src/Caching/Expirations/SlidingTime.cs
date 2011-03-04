@@ -10,10 +10,6 @@
 //===============================================================================
 
 using System;
-using System.Globalization;
-using System.Runtime.InteropServices;
-using System.Runtime.Serialization;
-using System.Security.Permissions;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.Expirations
@@ -21,7 +17,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Expirations
     /// <summary>
     ///	This provider tests if a item was expired using a time slice schema.
     /// </summary>
-    [Serializable]    
+#if !SILVERLIGHT
+    [Serializable]
+#endif
     public class SlidingTime : ICacheItemExpiration
     {
         private DateTime timeLastUsed;
@@ -51,13 +49,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Expirations
         /// </summary>
         /// <param name="slidingExpiration"/>
         /// <param name="originalTimeStamp"/>
-		/// <remarks>
-		/// This constructor is for testing purposes only. Never, ever call it in a real program
-		/// </remarks>
-        public SlidingTime(TimeSpan slidingExpiration, DateTime originalTimeStamp) : this(slidingExpiration)
+        /// <remarks>
+        /// This constructor is for testing purposes only. Never, ever call it in a real program
+        /// </remarks>
+        public SlidingTime(TimeSpan slidingExpiration, DateTime originalTimeStamp)
+            : this(slidingExpiration)
         {
             timeLastUsed = originalTimeStamp;
-        }        
+        }
+
+#if SILVERLIGHT
+        public SlidingTime()
+        { }
+#endif
 
         /// <summary>
         /// Returns sliding time window that must be exceeded for expiration to occur
@@ -65,6 +69,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Expirations
         public TimeSpan ItemSlidingExpiration
         {
             get { return itemSlidingExpiration; }
+#if SILVERLIGHT
+            set { itemSlidingExpiration = value; }
+#endif
         }
 
         /// <summary>
@@ -73,9 +80,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Expirations
         public DateTime TimeLastUsed
         {
             get { return timeLastUsed; }
+#if SILVERLIGHT
+            set { timeLastUsed = value; }
+#endif
         }
-		
-		/// <summary>
+
+        /// <summary>
         ///	Specifies if item has expired or not.
         /// </summary>
         /// <returns>Returns true if the item has expired otherwise false.</returns>

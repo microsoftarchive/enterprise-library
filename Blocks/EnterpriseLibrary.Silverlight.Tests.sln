@@ -55,9 +55,23 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.TestSupport.Silverli
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Silverlight.Tests", "Common\Tests\Common\Common.Silverlight.Tests.csproj", "{79D204AF-A604-4685-8247-B97E9D1CF440}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Caching Application Block", "Caching Application Block", "{92CCB7ED-6B62-48E1-9C51-1EAA4B24269A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Caching", "Caching\Src\Caching\Caching.csproj", "{E725A5B4-A379-492F-89E3-3D8021376C3F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{C5E14E40-8E6F-458A-BDAB-CF2D5DF8FA6B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Caching.TestSupport", "Caching\Tests\Caching.TestSupport\Caching.TestSupport.csproj", "{D9E0815E-1687-4A2E-A2FD-86CE6D0AE2C4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Caching.Tests.VSTS", "Caching\Tests\Caching.Tests\Caching.Tests.VSTS.csproj", "{C2B20EFD-0147-4FF9-A7BD-86A40B78E83A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Caching.Silverlight", "Caching.Silverlight\Src\Caching\Caching.Silverlight.csproj", "{2C539874-C74C-4ADE-9E7F-F694CD038EA5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Caching.Silverlight.Tests", "Caching.Silverlight\Tests\Caching.Tests\Caching.Silverlight.Tests.csproj", "{7B0C08BE-DA84-4A89-9C80-5385BF31AAC2}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 64
+		SccNumberOfProjects = 66
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = http://pagtfs2008:8080/
 		SccLocalPath0 = .
@@ -313,6 +327,14 @@ Global
 		SccProjectTopLevelParentUniqueName63 = EnterpriseLibrary.Silverlight.Tests.sln
 		SccProjectName63 = Common/Tests/Common.ContainerInfrastructure.Tests.VSTS
 		SccLocalPath63 = Common\\Tests\\Common.ContainerInfrastructure.Tests.VSTS
+		SccProjectUniqueName64 = Caching.Silverlight\\Src\\Caching\\Caching.Silverlight.csproj
+		SccProjectTopLevelParentUniqueName64 = EnterpriseLibrary.Silverlight.Tests.sln
+		SccProjectName64 = Caching.Silverlight/Src/Caching
+		SccLocalPath64 = Caching.Silverlight\\Src\\Caching
+		SccProjectUniqueName65 = Caching.Silverlight\\Tests\\Caching.Tests\\Caching.Silverlight.Tests.csproj
+		SccProjectTopLevelParentUniqueName65 = EnterpriseLibrary.Silverlight.Tests.sln
+		SccProjectName65 = Caching.Silverlight/Tests/Caching.Tests
+		SccLocalPath65 = Caching.Silverlight\\Tests\\Caching.Tests
 	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = EnterpriseLibrary.Tests.vsmdi
@@ -446,6 +468,56 @@ Global
 		{79D204AF-A604-4685-8247-B97E9D1CF440}.Release|Any CPU.Build.0 = Release|Any CPU
 		{79D204AF-A604-4685-8247-B97E9D1CF440}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{79D204AF-A604-4685-8247-B97E9D1CF440}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{E725A5B4-A379-492F-89E3-3D8021376C3F}.Debug|.NET.ActiveCfg = Debug|Any CPU
+		{E725A5B4-A379-492F-89E3-3D8021376C3F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E725A5B4-A379-492F-89E3-3D8021376C3F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E725A5B4-A379-492F-89E3-3D8021376C3F}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{E725A5B4-A379-492F-89E3-3D8021376C3F}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{E725A5B4-A379-492F-89E3-3D8021376C3F}.Release|.NET.ActiveCfg = Release|Any CPU
+		{E725A5B4-A379-492F-89E3-3D8021376C3F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E725A5B4-A379-492F-89E3-3D8021376C3F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E725A5B4-A379-492F-89E3-3D8021376C3F}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{E725A5B4-A379-492F-89E3-3D8021376C3F}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{D9E0815E-1687-4A2E-A2FD-86CE6D0AE2C4}.Debug|.NET.ActiveCfg = Debug|Any CPU
+		{D9E0815E-1687-4A2E-A2FD-86CE6D0AE2C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D9E0815E-1687-4A2E-A2FD-86CE6D0AE2C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D9E0815E-1687-4A2E-A2FD-86CE6D0AE2C4}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{D9E0815E-1687-4A2E-A2FD-86CE6D0AE2C4}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{D9E0815E-1687-4A2E-A2FD-86CE6D0AE2C4}.Release|.NET.ActiveCfg = Release|Any CPU
+		{D9E0815E-1687-4A2E-A2FD-86CE6D0AE2C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D9E0815E-1687-4A2E-A2FD-86CE6D0AE2C4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D9E0815E-1687-4A2E-A2FD-86CE6D0AE2C4}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{D9E0815E-1687-4A2E-A2FD-86CE6D0AE2C4}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{C2B20EFD-0147-4FF9-A7BD-86A40B78E83A}.Debug|.NET.ActiveCfg = Debug|Any CPU
+		{C2B20EFD-0147-4FF9-A7BD-86A40B78E83A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C2B20EFD-0147-4FF9-A7BD-86A40B78E83A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C2B20EFD-0147-4FF9-A7BD-86A40B78E83A}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{C2B20EFD-0147-4FF9-A7BD-86A40B78E83A}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{C2B20EFD-0147-4FF9-A7BD-86A40B78E83A}.Release|.NET.ActiveCfg = Release|Any CPU
+		{C2B20EFD-0147-4FF9-A7BD-86A40B78E83A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C2B20EFD-0147-4FF9-A7BD-86A40B78E83A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C2B20EFD-0147-4FF9-A7BD-86A40B78E83A}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{C2B20EFD-0147-4FF9-A7BD-86A40B78E83A}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{2C539874-C74C-4ADE-9E7F-F694CD038EA5}.Debug|.NET.ActiveCfg = Debug|Any CPU
+		{2C539874-C74C-4ADE-9E7F-F694CD038EA5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C539874-C74C-4ADE-9E7F-F694CD038EA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C539874-C74C-4ADE-9E7F-F694CD038EA5}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{2C539874-C74C-4ADE-9E7F-F694CD038EA5}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{2C539874-C74C-4ADE-9E7F-F694CD038EA5}.Release|.NET.ActiveCfg = Release|Any CPU
+		{2C539874-C74C-4ADE-9E7F-F694CD038EA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C539874-C74C-4ADE-9E7F-F694CD038EA5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2C539874-C74C-4ADE-9E7F-F694CD038EA5}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{2C539874-C74C-4ADE-9E7F-F694CD038EA5}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{7B0C08BE-DA84-4A89-9C80-5385BF31AAC2}.Debug|.NET.ActiveCfg = Debug|Any CPU
+		{7B0C08BE-DA84-4A89-9C80-5385BF31AAC2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B0C08BE-DA84-4A89-9C80-5385BF31AAC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B0C08BE-DA84-4A89-9C80-5385BF31AAC2}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{7B0C08BE-DA84-4A89-9C80-5385BF31AAC2}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{7B0C08BE-DA84-4A89-9C80-5385BF31AAC2}.Release|.NET.ActiveCfg = Release|Any CPU
+		{7B0C08BE-DA84-4A89-9C80-5385BF31AAC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B0C08BE-DA84-4A89-9C80-5385BF31AAC2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7B0C08BE-DA84-4A89-9C80-5385BF31AAC2}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{7B0C08BE-DA84-4A89-9C80-5385BF31AAC2}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -465,6 +537,12 @@ Global
 		{3D3C0BEE-437E-487C-B9B3-46288AE933B9} = {A5AE3165-DDBE-4790-8F8B-DA42FBE1060A}
 		{3B448E8C-E3EB-4E5A-AAF3-0A0D1793D6F4} = {A5AE3165-DDBE-4790-8F8B-DA42FBE1060A}
 		{D44A04F1-98FA-48F4-B22C-925D4E47A051} = {A5AE3165-DDBE-4790-8F8B-DA42FBE1060A}
+		{E725A5B4-A379-492F-89E3-3D8021376C3F} = {92CCB7ED-6B62-48E1-9C51-1EAA4B24269A}
+		{C5E14E40-8E6F-458A-BDAB-CF2D5DF8FA6B} = {92CCB7ED-6B62-48E1-9C51-1EAA4B24269A}
+		{2C539874-C74C-4ADE-9E7F-F694CD038EA5} = {92CCB7ED-6B62-48E1-9C51-1EAA4B24269A}
+		{D9E0815E-1687-4A2E-A2FD-86CE6D0AE2C4} = {C5E14E40-8E6F-458A-BDAB-CF2D5DF8FA6B}
+		{C2B20EFD-0147-4FF9-A7BD-86A40B78E83A} = {C5E14E40-8E6F-458A-BDAB-CF2D5DF8FA6B}
+		{7B0C08BE-DA84-4A89-9C80-5385BF31AAC2} = {C5E14E40-8E6F-458A-BDAB-CF2D5DF8FA6B}
 	EndGlobalSection
 	GlobalSection(TextTemplating) = postSolution
 		TextTemplating = 1

@@ -10,9 +10,6 @@
 //===============================================================================
 
 using System;
-using System.Globalization;
-using System.Runtime.Serialization;
-using System.Security.Permissions;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.Expirations
@@ -21,10 +18,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Expirations
     ///	This class tests if a data item was expired using a absolute time 
     ///	schema.
     /// </summary>
+#if !SILVERLIGHT
     [Serializable]    
+#endif
     public class AbsoluteTime : ICacheItemExpiration
     {
-        private DateTime absoluteExpirationTime;        
+        private DateTime absoluteExpirationTime;
+
+#if SILVERLIGHT
+        public AbsoluteTime()
+        { }
+#endif
 
         /// <summary>
         ///	Create an instance of the class with a time value as input and 
@@ -46,25 +50,29 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Expirations
             }
         }
 
-		/// <summary>
-		/// Gets the absolute expiration time.
-		/// </summary>
-		/// <value>
-		/// The absolute expiration time.
-		/// </value>
-		public DateTime AbsoluteExpirationTime
-		{
-			get { return absoluteExpirationTime; }
-		}
+        /// <summary>
+        /// Gets the absolute expiration time.
+        /// </summary>
+        /// <value>
+        /// The absolute expiration time.
+        /// </value>
+        public DateTime AbsoluteExpirationTime
+        {
+            get { return absoluteExpirationTime; }
+#if SILVERLIGHT
+            set { absoluteExpirationTime = value; }
+#endif
+        }
 
         /// <summary>
         /// Creates an instance based on a time interval starting from now.
         /// </summary>
         /// <param name="timeFromNow">Time interval</param>
-        public AbsoluteTime(TimeSpan timeFromNow) : this(DateTime.Now + timeFromNow)
+        public AbsoluteTime(TimeSpan timeFromNow)
+            : this(DateTime.Now + timeFromNow)
         {
         }
-		
+
         /// <summary>
         ///	Specifies if item has expired or not.
         /// </summary>
@@ -97,6 +105,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Expirations
         /// <param name="owningCacheItem">CacheItem provided to read initialization information from. Will never be null.</param>
         public void Initialize(CacheItem owningCacheItem)
         {
-        }        
+        }
     }
 }

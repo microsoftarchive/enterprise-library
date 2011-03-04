@@ -172,5 +172,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             Assert.AreEqual("message template override", ((StringLengthValidator)validator).MessageTemplate);
             Assert.AreEqual(true, ((StringLengthValidator)validator).Negated);
         }
+
+        [TestMethod]
+        public void HasDefaultValuesForProperties()
+        {
+            var validatorData = new StringLengthValidatorData();
+
+            Assert.AreEqual(RangeBoundaryType.Ignore, validatorData.LowerBoundType);
+            Assert.AreEqual(RangeBoundaryType.Inclusive, validatorData.UpperBoundType);
+        }
     }
 }

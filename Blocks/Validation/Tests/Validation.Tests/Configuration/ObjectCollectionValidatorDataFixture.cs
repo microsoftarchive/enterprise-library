@@ -118,5 +118,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             Assert.AreEqual("ruleset", ((ObjectCollectionValidator)validator).TargetRuleset);
             Assert.AreEqual(null, ((ObjectCollectionValidator)validator).MessageTemplate);
         }
+
+        [TestMethod]
+        public void HasDefaultValuesForProperties()
+        {
+            var validatorData = new ObjectCollectionValidatorData();
+
+            Assert.AreEqual("", validatorData.TargetRuleset);
+        }
     }
 }

@@ -10,8 +10,6 @@
 //===============================================================================
 
 using System;
-using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.Expirations.Tests
@@ -38,8 +36,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Expirations.Tests
         {
             ExtendedFormatTime format = new ExtendedFormatTime("5 * * * *");
 
-            BinaryFormatter formatter = new BinaryFormatter();
-            MemoryStream stream = new MemoryStream();
+            var formatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+            var stream = new System.IO.MemoryStream();
             formatter.Serialize(stream, format);
             stream.Position = 0;
             ExtendedFormatTime format2 = (ExtendedFormatTime)formatter.Deserialize(stream);

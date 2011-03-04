@@ -106,6 +106,8 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="TransientPolicyBuildupExtensionFixture.cs" />
+    <Compile Include="Utility\StringResolverFixture.cs" />
+    <Compile Include="Utility\XamlActivatorFixture.cs" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">

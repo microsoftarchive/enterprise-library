@@ -15,53 +15,54 @@ using System.Collections.Specialized;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Configuration;
+using System.Collections.Generic;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.TestSupport.BackingStoreImplementations
 {
-	[ConfigurationElementType(typeof(CustomCacheStorageData))]
-	public class MockCustomStorageBackingStore : MockCustomProviderBase, IBackingStore
-	{
+    [ConfigurationElementType(typeof(CustomCacheStorageData))]
+    public class MockCustomStorageBackingStore : MockCustomProviderBase, IBackingStore
+    {
         public static bool Instantiated = false;
 
-		public MockCustomStorageBackingStore(NameValueCollection attributes)
-			: base(attributes)
-		{
+        public MockCustomStorageBackingStore(NameValueCollection attributes)
+            : base(attributes)
+        {
             Instantiated = true;
-		}
+        }
 
-		public int Count
-		{
-			get { throw new Exception("The method or operation is not implemented."); }
-		}
+        public int Count
+        {
+            get { throw new Exception("The method or operation is not implemented."); }
+        }
 
-		public void Add(CacheItem newCacheItem)
-		{
-			throw new Exception("The method or operation is not implemented.");
-		}
+        public void Add(CacheItem newCacheItem)
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
 
-		public void Remove(string key)
-		{
-			throw new Exception("The method or operation is not implemented.");
-		}
+        public void Remove(string key)
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
 
-		public void UpdateLastAccessedTime(string key, DateTime timestamp)
-		{
-			throw new Exception("The method or operation is not implemented.");
-		}
+        public void UpdateLastAccessedTime(string key, DateTime timestamp)
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
 
-		public void Flush()
-		{
-			throw new Exception("The method or operation is not implemented.");
-		}
+        public void Flush()
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
 
-		public Hashtable Load()
-		{
-            return new Hashtable();
-		}
+        public IDictionary Load()
+        {
+            return new Dictionary<object, object>();
+        }
 
-		public void Dispose()
-		{
-			throw new Exception("The method or operation is not implemented.");
-		}
-	}
+        public void Dispose()
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
+    }
 }

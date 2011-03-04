@@ -81,7 +81,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.BackingStoreImplementati
             backingStore.Add(oldItem);
             backingStore.Add(newItem);
 
-            Hashtable items = backingStore.Load();
+            var items = backingStore.Load();
 
             Assert.AreEqual(1, backingStore.Count, "New item should have replaced old item when New Item added.");
             Assert.AreEqual("value2", ((CacheItem)items["key"]).Value);
@@ -90,7 +90,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.BackingStoreImplementati
         [TestMethod]
         public void WillLoadNoItemsFromEmptyIsolatedStorage()
         {
-            Hashtable emptyHashTable = backingStore.Load();
+            var emptyHashTable = backingStore.Load();
             Assert.AreEqual(0, emptyHashTable.Count);
         }
 
@@ -101,7 +101,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.BackingStoreImplementati
             backingStore.Add(item);
 
             IsolatedStorageBackingStore loadingStore = new IsolatedStorageBackingStore("foo", null);
-            Hashtable items = loadingStore.Load();
+            var items = loadingStore.Load();
             Assert.AreEqual(1, items.Count);
             Assert.AreEqual("bar", ((CacheItem)items["foo"]).Value);
             Assert.AreEqual(item.Key, ((CacheItem)items["foo"]).Key);
@@ -129,7 +129,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.BackingStoreImplementati
             backingStore.Add(thirdItem);
 
             IsolatedStorageBackingStore loadingStore = new IsolatedStorageBackingStore("foo");
-            Hashtable items = loadingStore.Load();
+            var items = loadingStore.Load();
             Assert.AreEqual(3, items.Count);
             Assert.AreEqual("foo2", ((CacheItem)items["foo2"]).Key);
             Assert.AreEqual("foo1", ((CacheItem)items["foo1"]).Key);
@@ -167,7 +167,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.BackingStoreImplementati
             DateTime future = DateTime.Now + TimeSpan.FromHours(1.0);
             backingStore.UpdateLastAccessedTime(item.Key, future);
 
-            Hashtable items = backingStore.Load();
+            var items = backingStore.Load();
+
             Assert.AreEqual(future, ((CacheItem)items["first"]).LastAccessedTime);
         }
 
@@ -182,7 +183,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.BackingStoreImplementati
             }
             catch (Exception) { }
 
-            Hashtable shouldBeEmpty = backingStore.Load();
+            var shouldBeEmpty = backingStore.Load();
             Assert.AreEqual(0, shouldBeEmpty.Count, "Partially added item should be removed from cache on add failure");
         }
 
@@ -207,7 +208,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.BackingStoreImplementati
             CacheItem expiredItem = new CacheItem("key", "asdf", CacheItemPriority.Normal, null, new AlwaysExpired());
             backingStore.Add(expiredItem);
 
-            Hashtable cacheData = backingStore.Load();
+            var cacheData = backingStore.Load();
             Assert.AreEqual(1, cacheData.Count);
         }
 

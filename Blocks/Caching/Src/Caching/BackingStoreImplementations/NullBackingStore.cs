@@ -11,8 +11,7 @@
 
 using System;
 using System.Collections;
-using Microsoft.Practices.EnterpriseLibrary.Caching.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using System.Collections.Generic;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.BackingStoreImplementations
 {
@@ -21,9 +20,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.BackingStoreImplementati
     /// Its job is to provide an implementation of a backing store that does nothing, merely enabling
     /// the cache to provide a strictly in-memory cache.
     /// </summary>
-	[ConfigurationElementType(typeof(CacheStorageData))]
-	public class NullBackingStore : IBackingStore
-    {   
+#if !SILVERLIGHT
+    [Common.Configuration.ConfigurationElementType(typeof(Configuration.CacheStorageData))]
+#endif
+    public class NullBackingStore : IBackingStore
+    {
         /// <summary>
         /// Always returns 0
         /// </summary>
@@ -68,9 +69,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.BackingStoreImplementati
         /// Always returns an empty hash table.
         /// </summary>
         /// <returns>Empty hash table</returns>
-        public Hashtable Load()
+        public IDictionary Load()
         {
-            return new Hashtable();
+            return new Dictionary<object, object>();
         }
 
         /// <summary>
@@ -78,7 +79,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.BackingStoreImplementati
         /// </summary>
         public void Dispose()
         {
-            
+
         }
     }
 }

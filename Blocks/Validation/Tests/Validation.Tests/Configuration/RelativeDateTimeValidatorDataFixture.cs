@@ -140,5 +140,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             Assert.AreEqual(RangeBoundaryType.Ignore, ((RelativeDateTimeValidator)validator).UpperBoundType);
             Assert.AreEqual(DateTimeUnit.Month, ((RelativeDateTimeValidator)validator).UpperUnit);
         }
+
+        [TestMethod]
+        public void HasDefaultValuesForProperties()
+        {
+            var validatorData = new RelativeDateTimeValidatorData();
+
+            Assert.AreEqual(DateTimeUnit.None, validatorData.LowerUnit);
+            Assert.AreEqual(DateTimeUnit.None, validatorData.UpperUnit);
+            Assert.AreEqual(RangeBoundaryType.Ignore, validatorData.LowerBoundType);
+            Assert.AreEqual(RangeBoundaryType.Inclusive, validatorData.UpperBoundType);
+        }
     }
 }

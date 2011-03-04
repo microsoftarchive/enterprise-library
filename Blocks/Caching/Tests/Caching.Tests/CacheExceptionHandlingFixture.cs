@@ -14,138 +14,139 @@ using System.Collections;
 using Microsoft.Practices.EnterpriseLibrary.Caching.BackingStoreImplementations;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Instrumentation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests
 {
-	[TestClass]
-	public class CacheExceptionHandlingFixture
-	{
-		[TestMethod]
-		public void ExceptionThrownDuringAddResultsInObjectBeingRemovedFromCacheCompletely()
-		{
-			MockBackingStore backingStore = new MockBackingStore();
-			ICachingInstrumentationProvider instrumentationProvider = new NullCachingInstrumentationProvider();
+    [TestClass]
+    public class CacheExceptionHandlingFixture
+    {
+        [TestMethod]
+        public void ExceptionThrownDuringAddResultsInObjectBeingRemovedFromCacheCompletely()
+        {
+            MockBackingStore backingStore = new MockBackingStore();
+            ICachingInstrumentationProvider instrumentationProvider = new NullCachingInstrumentationProvider();
 
-			Cache cache = new Cache(backingStore, instrumentationProvider);
+            Cache cache = new Cache(backingStore, instrumentationProvider);
 
             try
-			{
-				cache.Add("foo", "bar");
-				Assert.Fail("Should have thrown exception thrown internally to Cache.Add");
-			}
-			catch (Exception)
-			{
-				Assert.IsFalse(cache.Contains("foo"));
-				Assert.AreEqual(1, backingStore.removalCount);
-			}
-		}
+            {
+                cache.Add("foo", "bar");
+                Assert.Fail("Should have thrown exception thrown internally to Cache.Add");
+            }
+            catch (Exception)
+            {
+                Assert.IsFalse(cache.Contains("foo"));
+                Assert.AreEqual(1, backingStore.removalCount);
+            }
+        }
 
-		[TestMethod]
-		public void ExceptionThrownDuringAddIntoIsolatedStorageAllowsItemToBeReaddedLater()
-		{
-			using (IsolatedStorageBackingStore backingStore = new IsolatedStorageBackingStore("foo", null))
-			{
-				ICachingInstrumentationProvider instrumentationProvider = new NullCachingInstrumentationProvider();
+        [TestMethod]
+        public void ExceptionThrownDuringAddIntoIsolatedStorageAllowsItemToBeReaddedLater()
+        {
+            using (IsolatedStorageBackingStore backingStore = new IsolatedStorageBackingStore("foo", null))
+            {
+                ICachingInstrumentationProvider instrumentationProvider = new NullCachingInstrumentationProvider();
 
-				Cache cache = new Cache(backingStore, instrumentationProvider);
+                Cache cache = new Cache(backingStore, instrumentationProvider);
 
-				try
-				{
-					try
-					{
-						cache.Add("my", new NonSerializableClass());
-						Assert.Fail("Should have thrown exception internally to Cache.Add");
-					}
-					catch (Exception)
-					{
-						cache.Add("my", new SerializableClass());
-						Assert.IsTrue(cache.Contains("my"));
-					}
-				}
-				finally
-				{
-					backingStore.Flush();
-				}
-			}
-		}
+                try
+                {
+                    try
+                    {
+                        cache.Add("my", new NonSerializableClass());
+                        Assert.Fail("Should have thrown exception internally to Cache.Add");
+                    }
+                    catch (Exception)
+                    {
+                        cache.Add("my", new SerializableClass());
+                        Assert.IsTrue(cache.Contains("my"));
+                    }
+                }
+                finally
+                {
+                    backingStore.Flush();
+                }
+            }
+        }
 
-		[TestMethod]
-		public void ItemAddedPreviousToFailedAddIsRemovedCompletelyIfSecondAddFails()
-		{
-			using (IsolatedStorageBackingStore backingStore = new IsolatedStorageBackingStore("foo", null))
-			{
-				ICachingInstrumentationProvider instrumentationProvider = new NullCachingInstrumentationProvider();
+        [TestMethod]
+        public void ItemAddedPreviousToFailedAddIsRemovedCompletelyIfSecondAddFails()
+        {
+            using (IsolatedStorageBackingStore backingStore = new IsolatedStorageBackingStore("foo", null))
+            {
+                ICachingInstrumentationProvider instrumentationProvider = new NullCachingInstrumentationProvider();
 
-				Cache cache = new Cache(backingStore, instrumentationProvider);
+                Cache cache = new Cache(backingStore, instrumentationProvider);
 
-				cache.Add("my", new SerializableClass());
+                cache.Add("my", new SerializableClass());
 
-				try
-				{
-					try
-					{
-						cache.Add("my", new NonSerializableClass());
-						Assert.Fail("Should have thrown exception internally to Cache.Add");
-					}
-					catch (Exception)
-					{
-						Assert.IsFalse(cache.Contains("my"));
-						Assert.AreEqual(0, backingStore.Count);
+                try
+                {
+                    try
+                    {
+                        cache.Add("my", new NonSerializableClass());
+                        Assert.Fail("Should have thrown exception internally to Cache.Add");
+                    }
+                    catch (Exception)
+                    {
+                        Assert.IsFalse(cache.Contains("my"));
+                        Assert.AreEqual(0, backingStore.Count);
 
-						Hashtable isolatedStorageContents = backingStore.Load();
-						Assert.AreEqual(0, isolatedStorageContents.Count);
-					}
-				}
-				finally
-				{
-					backingStore.Flush();
-				}
-			}
-		}
+                        var isolatedStorageContents = backingStore.Load();
+                        Assert.AreEqual(0, isolatedStorageContents.Count);
+                    }
+                }
+                finally
+                {
+                    backingStore.Flush();
+                }
+            }
+        }
 
-		class NonSerializableClass { }
+        class NonSerializableClass { }
 
-		[Serializable]
-		class SerializableClass { }
+        [Serializable]
+        class SerializableClass { }
 
-		public class MockBackingStore : IBackingStore
-		{
-			public int removalCount = 0;
+        public class MockBackingStore : IBackingStore
+        {
+            public int removalCount = 0;
 
-			public int Count
-			{
-				get { return 0; }
-			}
+            public int Count
+            {
+                get { return 0; }
+            }
 
-			public string CurrentCacheManager
-			{
-				get { return string.Empty; }
-				set { }
-			}
+            public string CurrentCacheManager
+            {
+                get { return string.Empty; }
+                set { }
+            }
 
-			public void Add(CacheItem newCacheItem)
-			{
-				throw new Exception();
-			}
+            public void Add(CacheItem newCacheItem)
+            {
+                throw new Exception();
+            }
 
-			public void Dispose() { }
+            public void Dispose() { }
 
-			public void Flush() { }
+            public void Flush() { }
 
-			public Hashtable Load()
-			{
-				return new Hashtable();
-			}
+            public IDictionary Load()
+            {
+                return new Dictionary<object, object>();
+            }
 
-			public void Remove(string key)
-			{
-				removalCount++;
-			}
+            public void Remove(string key)
+            {
+                removalCount++;
+            }
 
-			public void UpdateLastAccessedTime(string key,
-											   DateTime timestamp) { }
-		}
-	}
+            public void UpdateLastAccessedTime(string key,
+                                               DateTime timestamp) { }
+        }
+    }
 
     class NullCachingInstrumentationProvider : ICachingInstrumentationProvider
     {

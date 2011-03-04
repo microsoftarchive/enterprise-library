@@ -1,0 +1,204 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{7B0C08BE-DA84-4A89-9C80-5385BF31AAC2}</ProjectGuid>
+    <ProjectTypeGuids>{A1591282-1198-4647-A2B1-27E5FF5F6F3B};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Microsoft.Practices.EnterpriseLibrary.Caching.Tests</RootNamespace>
+    <AssemblyName>Microsoft.Practices.EnterpriseLibrary.Caching.Silverlight.Tests</AssemblyName>
+    <TargetFrameworkIdentifier>Silverlight</TargetFrameworkIdentifier>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <SilverlightVersion>$(TargetFrameworkVersion)</SilverlightVersion>
+    <SilverlightApplication>true</SilverlightApplication>
+    <SupportedCultures>
+    </SupportedCultures>
+    <XapOutputs>true</XapOutputs>
+    <GenerateSilverlightManifest>true</GenerateSilverlightManifest>
+    <XapFilename>Caching.Silverlight.Tests.xap</XapFilename>
+    <SilverlightManifestTemplate>Properties\AppManifest.xml</SilverlightManifestTemplate>
+    <SilverlightAppEntry>Microsoft.Practices.EnterpriseLibrary.Caching.Tests.App</SilverlightAppEntry>
+    <TestPageFileName>Validation.Silverlight.TestsTestPage.html</TestPageFileName>
+    <CreateTestPage>true</CreateTestPage>
+    <ValidateXaml>true</ValidateXaml>
+    <EnableOutOfBrowser>false</EnableOutOfBrowser>
+    <OutOfBrowserSettingsFile>Properties\OutOfBrowserSettings.xml</OutOfBrowserSettingsFile>
+    <UsePlatformExtensions>false</UsePlatformExtensions>
+    <ThrowErrorsInValidation>true</ThrowErrorsInValidation>
+    <LinkedServerProject>
+    </LinkedServerProject>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <!-- This property group is only here to support building this project using the 
+       MSBuild 3.5 toolset. In order to work correctly with this older toolset, it needs 
+       to set the TargetFrameworkVersion to v3.5 -->
+  <PropertyGroup Condition="'$(MSBuildToolsVersion)' == '3.5'">
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>Bin\DebugSL\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;SILVERLIGHT</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>Bin\ReleaseSL\</OutputPath>
+    <DefineConstants>TRACE;SILVERLIGHT</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Castle.Core">
+      <HintPath>..\..\..\..\Lib\Silverlight\ThirdParty\Moq\Castle.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\Lib\Silverlight\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity.Silverlight, Version=2.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\Lib\Silverlight\Microsoft.Practices.Unity.Silverlight.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Silverlight.Testing">
+      <HintPath>..\..\..\..\Lib\Silverlight\UnitTestFramework\Microsoft.Silverlight.Testing.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTesting.Silverlight">
+      <HintPath>..\..\..\..\Lib\Silverlight\UnitTestFramework\Microsoft.VisualStudio.QualityTools.UnitTesting.Silverlight.dll</HintPath>
+    </Reference>
+    <Reference Include="Moq.Silverlight">
+      <HintPath>..\..\..\..\Lib\Silverlight\ThirdParty\Moq\Moq.Silverlight.dll</HintPath>
+    </Reference>
+    <Reference Include="mscorlib" />
+    <Reference Include="System.ComponentModel.DataAnnotations, Version=2.0.5.0, Culture=neutral, PublicKeyToken=ddd0da4d3e678217, processorArchitecture=MSIL" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Windows" />
+    <Reference Include="system" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Net" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Windows.Browser" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App.Silverlight.xaml.cs">
+      <DependentUpon>App.Silverlight.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CacheItemPolicyScenarios\given_policy_with_absolute_expiration\Context.cs" />
+    <Compile Include="CacheItemPolicyScenarios\given_policy_with_absolute_expiration\when_time_is_after_expiration_time.cs" />
+    <Compile Include="CacheItemPolicyScenarios\given_policy_with_absolute_expiration\when_time_is_before_expiration_time.cs" />
+    <Compile Include="CacheItemPolicyScenarios\given_policy_with_nonremovable_priority_and_expiration\Context.cs" />
+    <Compile Include="CacheItemPolicyScenarios\given_policy_with_nonremovable_priority_and_expiration\when_expiring.cs" />
+    <Compile Include="CacheItemPolicyScenarios\given_policy_with_sliding_and_absolute_expirations\Context.cs" />
+    <Compile Include="CacheItemPolicyScenarios\given_policy_with_sliding_and_absolute_expirations\when_time_is_after_expiration_and_within_sliding_window.cs" />
+    <Compile Include="CacheItemPolicyScenarios\given_policy_with_sliding_and_absolute_expirations\when_time_is_within_expiration_and_last_usage_is_in_sliding_window.cs" />
+    <Compile Include="CacheItemPolicyScenarios\given_policy_with_sliding_and_absolute_expirations\when_time_is_within_expiration_but_outside_sliding_window.cs" />
+    <Compile Include="Configuration\CachingSettingsScenarios\given_settings_with_multiple_cache_data\Context.cs" />
+    <Compile Include="Configuration\CachingSettingsScenarios\given_settings_with_multiple_cache_data\when_requesting_type_registrations.cs" />
+    <Compile Include="Configuration\CachingSettingsScenarios\given_settings_with_default_name_not_matching_the_cache_data\Context.cs" />
+    <Compile Include="Configuration\CachingSettingsScenarios\given_settings_with_default_name_not_matching_the_cache_data\when_requesting_type_registrations.cs" />
+    <Compile Include="Configuration\CachingSettingsScenarios\given_empty_caching_settings\Context.cs" />
+    <Compile Include="Configuration\CachingSettingsScenarios\given_empty_caching_settings\when_requesting_type_registrations.cs" />
+    <Compile Include="Configuration\CachingSettingsScenarios\given_settings_with_default_name\Context.cs" />
+    <Compile Include="Configuration\CachingSettingsScenarios\given_settings_with_default_name\when_requesting_type_registrations.cs" />
+    <Compile Include="Configuration\CachingSettingsScenarios\given_settings_with_single_cache_data\Context.cs" />
+    <Compile Include="Configuration\CachingSettingsScenarios\given_settings_with_single_cache_data\when_requesting_type_registrations.cs" />
+    <Compile Include="Configuration\ContainerModelScenarios\given_configuration_source_with_cache_settings\Context.cs" />
+    <Compile Include="Configuration\ContainerModelScenarios\given_configuration_source_with_cache_settings\when_configuring_a_container.cs" />
+    <Compile Include="Configuration\InMemoryCacheDataScenarios\given_data\Context.cs" />
+    <Compile Include="Configuration\InMemoryCacheDataScenarios\given_data\when_requesting_type_registrations.cs" />
+    <Compile Include="Configuration\IsolatedStorageCacheDataScenarios\given_data\Context.cs" />
+    <Compile Include="Configuration\IsolatedStorageCacheDataScenarios\given_data\when_requesting_type_registrations.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="InMemoryCachingScenarios\given_an_empty_in_memory_cache\Context.cs" />
+    <Compile Include="InMemoryCachingScenarios\given_an_empty_in_memory_cache\when_adding_items_over_scavenging_limit.cs" />
+    <Compile Include="InMemoryCachingScenarios\given_an_empty_in_memory_cache\when_adding_one_item.cs" />
+    <Compile Include="InMemoryCachingScenarios\given_an_empty_in_memory_cache\when_initialized.cs" />
+    <Compile Include="InMemoryCachingScenarios\given_cache_containing_items_that_expire\Context.cs" />
+    <Compile Include="InMemoryCachingScenarios\given_cache_containing_items_that_expire\when_manually_running_expirations.cs" />
+    <Compile Include="IsolatedStorage\given_an_empty_iso_storage_cache\when_initialized.cs" />
+    <Compile Include="IsolatedStorage\given_an_iso_storage_with_data\Context.cs" />
+    <Compile Include="IsolatedStorage\given_an_iso_storage_with_data\when_adding_item_that_does_not_fit_cache_size.cs" />
+    <Compile Include="IsolatedStorage\given_an_iso_storage_with_data\when_adding_item_that_does_not_fit_storage.cs" />
+    <Compile Include="IsolatedStorage\given_an_iso_storage_with_data\when_initialized_with_corrupt_data.cs" />
+    <Compile Include="IsolatedStorage\given_an_iso_storage_with_data\when_reopening_cache.cs" />
+    <Compile Include="IsolatedStorage\given_an_iso_storage_with_data\when_removing_one_item.cs" />
+    <Compile Include="IsolatedStorage\IsolatedStorageSizeScavengingStrategyFixture.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="IsolatedStorage\BlockStorageFixture.cs" />
+    <Compile Include="IsolatedStorage\FatFixture.cs" />
+    <Compile Include="IsolatedStorage\given_an_empty_iso_storage_cache\Context.cs" />
+    <Compile Include="IsolatedStorage\given_an_empty_iso_storage_cache\when_adding_one_item.cs" />
+    <Compile Include="IsolatedStorage\IsolatedStorageCacheEntrySerializerFixture.cs" />
+    <Compile Include="SchedulingScenarios\given_a_scavenging_scheduler\Context.cs" />
+    <Compile Include="SchedulingScenarios\given_a_scavenging_scheduler\when_scheduling_work_more_than_once_that_does_not_overlap.cs" />
+    <Compile Include="SchedulingScenarios\given_a_scavenging_scheduler\when_scheduling_work_once.cs" />
+    <Compile Include="SchedulingScenarios\given_a_scavenging_scheduler\when_scheduling_work_that_does_overlap.cs" />
+    <Compile Include="SerializationUtilityFixture.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.Silverlight.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </ApplicationDefinition>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\AppManifest.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\Src\Common.Silverlight.csproj">
+      <Project>{453CC31C-5264-411F-96C7-84CB52298DE1}</Project>
+      <Name>Common.Silverlight</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Common\Tests\Common.TestSupport\Common.TestSupport.Silverlight.csproj">
+      <Project>{ACC8EC0A-83D2-442D-A418-739509C742D0}</Project>
+      <Name>Common.TestSupport.Silverlight</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Src\Caching\Caching.Silverlight.csproj">
+      <Project>{2C539874-C74C-4ADE-9E7F-F694CD038EA5}</Project>
+      <Name>Caching.Silverlight</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Runtime.Caching\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Silverlight\$(SilverlightVersion)\Microsoft.Silverlight.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{A1591282-1198-4647-A2B1-27E5FF5F6F3B}">
+        <SilverlightProjectProperties />
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>

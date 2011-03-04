@@ -9,8 +9,8 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Unity;
+using Microsoft.Practices.EnterpriseLibrary.Common.Utility;
 using Microsoft.Practices.Unity;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel.Unity
@@ -67,13 +67,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerMo
         private void AddValidationExtension()
         {
             // We load this by name so we don't have a hard dependency from common -> validation
-            const string fullExtensionTypeName =
-                "Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.Unity.ValidationBlockExtension, Microsoft.Practices.EnterpriseLibrary.Validation.Silverlight, Culture=neutral, Version=5.0.414.0, PublicKeyToken=null";
+            const string extensionElementName =
+                "{clr-namespace:Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.Unity;assembly=Microsoft.Practices.EnterpriseLibrary.Validation.Silverlight}ValidationBlockExtension";
 
-            var extensionType = Type.GetType(fullExtensionTypeName);
-            if (extensionType != null && container.Configure(extensionType) == null)
+            var vabExtension = XamlActivator.CreateInstance<UnityContainerExtension>(extensionElementName);
+
+            if (vabExtension != null && container.Configure(vabExtension.GetType()) == null)
             {
-                var vabExtension = (UnityContainerExtension)Activator.CreateInstance(extensionType);
                 container.AddExtension(vabExtension);
             }
         }

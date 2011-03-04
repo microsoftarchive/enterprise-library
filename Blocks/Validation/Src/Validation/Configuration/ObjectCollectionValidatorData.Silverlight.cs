@@ -18,6 +18,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
     {
         private AssemblyQualifiedTypeNameConverter typeConverter = new AssemblyQualifiedTypeNameConverter();
 
+        public ObjectCollectionValidatorData()
+        {
+            this.TargetRuleset = string.Empty;
+        }
+
         /// <summary>
         /// Gets or sets the target element type.
         /// </summary>

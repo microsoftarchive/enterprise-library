@@ -16,7 +16,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Expirations
     /// <summary>
     /// This class reflects an expiration policy of never being expired.
     /// </summary>
+#if !SILVERLIGHT
     [Serializable]
+#endif
     public class NeverExpired : ICacheItemExpiration
     {
         /// <summary>

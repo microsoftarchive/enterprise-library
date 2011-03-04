@@ -10,10 +10,6 @@
 //===============================================================================
 
 using System;
-using System.Globalization;
-using System.Runtime.InteropServices;
-using System.Runtime.Serialization;
-using System.Security.Permissions;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.Expirations
@@ -21,12 +17,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Expirations
     /// <summary>
     ///	This provider tests if a item was expired using a extended format.
     /// </summary>
+#if !SILVERLIGHT
     [Serializable]
-    [ComVisible(false)]
+    [System.Runtime.InteropServices.ComVisible(false)]
+#endif
     public class ExtendedFormatTime : ICacheItemExpiration
     {
         private string extendedFormat;
-        private DateTime lastUsedTime;       
+        private DateTime lastUsedTime;
 
         /// <summary>
         ///	Convert the input format to the extented time format.
@@ -39,9 +37,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Expirations
             // check arguments
             if (string.IsNullOrEmpty(timeFormat))
             {
-				throw new ArgumentException(Resources.ExceptionNullTimeFormat, "timeFormat");
+                throw new ArgumentException(Resources.ExceptionNullTimeFormat, "timeFormat");
             }
-            
+
             ExtendedFormat.Validate(timeFormat);
 
             // Get the modified extended format
@@ -49,18 +47,32 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Expirations
 
             // Convert to UTC in order to compensate for time zones		
             this.lastUsedTime = DateTime.Now.ToUniversalTime();
-        }       
+        }
 
-		/// <summary>
-		/// Gets the extended time format.
-		/// </summary>
-		/// <value>
-		/// The extended time format.
-		/// </value>
-		public string TimeFormat
-		{
-			get { return extendedFormat; }
-		}
+#if SILVERLIGHT
+        public ExtendedFormatTime()
+        { }
+
+        public DateTime LastUsedTime
+        {
+            get { return lastUsedTime; }
+            set { lastUsedTime = value; }
+        }
+#endif
+
+        /// <summary>
+        /// Gets the extended time format.
+        /// </summary>
+        /// <value>
+        /// The extended time format.
+        /// </value>
+        public string TimeFormat
+        {
+            get { return extendedFormat; }
+#if SILVERLIGHT
+            set { extendedFormat = value; }
+#endif
+        }
 
         /// <summary>
         ///	Specifies if item has expired or not.
@@ -98,6 +110,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Expirations
         /// <param name="owningCacheItem">Not used</param>
         public void Initialize(CacheItem owningCacheItem)
         {
-        } 
+        }
     }
 }

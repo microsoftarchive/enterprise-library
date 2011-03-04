@@ -114,5 +114,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         {
             get { return this.nestedValidationResults; }
         }
+
+        /// <summary>
+        /// Returns the message of the validation error
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return this.message;
+        }
     }
 }

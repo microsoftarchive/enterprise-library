@@ -64,7 +64,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Database.Tests
 
                 Assert.IsNotNull(cache.GetData("key"));
 
-                Hashtable oneEntryHashTable = backingStore.Load();
+                var oneEntryHashTable = backingStore.Load();
                 Assert.AreEqual(1, oneEntryHashTable.Count);
 
                 Monitor.Wait(callbackLock, 15000);
@@ -75,7 +75,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Database.Tests
             object removedItem = cache.GetData("key");
             Assert.IsNull(removedItem);
 
-            Hashtable emptyHashTable = backingStore.Load();
+            var emptyHashTable = backingStore.Load();
             Assert.AreEqual(0, emptyHashTable.Count);
         }
 
@@ -100,7 +100,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Database.Tests
             Assert.AreEqual("34567", o3);
 
             DataBackingStore backingStore = CreateDataBackingStore();
-            Hashtable inDatabaseItems = backingStore.Load();
+            var inDatabaseItems = backingStore.Load();
             Assert.AreEqual("12345", ((CacheItem)inDatabaseItems["AddM1"]).Value);
             Assert.AreEqual("23456", ((CacheItem)inDatabaseItems["AddM2"]).Value);
             Assert.AreEqual("34567", ((CacheItem)inDatabaseItems["AddM3"]).Value);
@@ -116,7 +116,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Database.Tests
             Assert.AreEqual("23456", o1);
 
             DataBackingStore backingStore = CreateDataBackingStore();
-            Hashtable inDatabaseItems = backingStore.Load();
+            var inDatabaseItems = backingStore.Load();
             Assert.AreEqual("23456", ((CacheItem)inDatabaseItems["Add1"]).Value);
         }
 
@@ -130,7 +130,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Database.Tests
 
             DataBackingStore backingStore = CreateDataBackingStore();
 
-            Hashtable inDatabaseItems = backingStore.Load();
+            var inDatabaseItems = backingStore.Load();
             Assert.AreEqual(0, inDatabaseItems.Count);
         }
 

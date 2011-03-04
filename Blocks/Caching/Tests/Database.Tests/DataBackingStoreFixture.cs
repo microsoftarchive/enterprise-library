@@ -127,7 +127,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Database.Tests
         [TestMethod]
         public void CanLoadEmptyTable()
         {
-            Hashtable emptyHashtable = backingStore.Load();
+            var emptyHashtable = backingStore.Load();
             Assert.AreEqual(0, emptyHashtable.Count);
         }
 
@@ -140,7 +140,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Database.Tests
                                                 new SlidingTime(TimeSpan.FromHours(1)), new AbsoluteTime(TimeSpan.FromHours(1.0)));
             backingStore.Add(addedItem);
 
-            Hashtable retrievedData = backingStore.Load();
+            var retrievedData = backingStore.Load();
             Assert.AreEqual(1, retrievedData.Count);
 
             CacheItem item = (CacheItem)retrievedData["key"];
@@ -161,7 +161,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Database.Tests
             CacheItem addedItem = new CacheItem("key", "value", CacheItemPriority.NotRemovable, refreshAction);
             backingStore.Add(addedItem);
 
-            Hashtable retrievedData = backingStore.Load();
+            var retrievedData = backingStore.Load();
             Assert.AreEqual(1, retrievedData.Count);
         }
 
@@ -171,7 +171,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Database.Tests
             CacheItem addedItem = new CacheItem("key", "value", CacheItemPriority.NotRemovable, null);
             backingStore.Add(addedItem);
 
-            Hashtable retrievedData = backingStore.Load();
+            var retrievedData = backingStore.Load();
             Assert.AreEqual(1, retrievedData.Count);
         }
 
@@ -181,7 +181,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Database.Tests
             CacheItem addedItem = new CacheItem("key", null, CacheItemPriority.Low, null);
             backingStore.Add(addedItem);
 
-            Hashtable retrievedData = backingStore.Load();
+            var retrievedData = backingStore.Load();
             Assert.AreEqual(1, retrievedData.Count);
         }
 
@@ -194,7 +194,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Database.Tests
             backingStore.Add(firstItem);
             backingStore.Add(secondItem);
 
-            Hashtable retrievedData = backingStore.Load();
+            var retrievedData = backingStore.Load();
             Assert.AreEqual(2, retrievedData.Count);
             Assert.IsNotNull("key1", ((CacheItem)retrievedData["key1"]).Key);
             Assert.IsNotNull("key2", ((CacheItem)retrievedData["key2"]).Key);
@@ -223,7 +223,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Database.Tests
 
             Assert.AreEqual(1, backingStore.Count);
 
-            Hashtable retrievedData = backingStore.Load();
+            var retrievedData = backingStore.Load();
             Assert.IsNotNull(retrievedData["key2"]);
         }
 
@@ -239,7 +239,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Database.Tests
             DateTime now = DateTime.Now;
             backingStore.UpdateLastAccessedTime("key", now);
 
-            Hashtable retrievedData = backingStore.Load();
+            var retrievedData = backingStore.Load();
             CacheItem retrievedItem = (CacheItem)retrievedData["key"];
 
             Assert.AreEqual(now.ToString(), retrievedItem.LastAccessedTime.ToString());
@@ -251,7 +251,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Database.Tests
             CacheItem item = new CacheItem("key", "value", CacheItemPriority.Low, null, new AlwaysExpired());
             backingStore.Add(item);
 
-            Hashtable cacheItems = backingStore.Load();
+            var cacheItems = backingStore.Load();
             Assert.AreEqual(1, cacheItems.Count, "Should not load expired item from store");
             Assert.AreEqual(1, backingStore.Count);
         }
@@ -283,7 +283,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Database.Tests
             backingStore.Add(lowerCase);
             backingStore.Add(upperCase);
 
-            Hashtable cacheItems = backingStore.Load();
+            var cacheItems = backingStore.Load();
             Assert.AreEqual(2, cacheItems.Count);
 
             CacheItem lowerCaseItem = cacheItems["key"] as CacheItem;

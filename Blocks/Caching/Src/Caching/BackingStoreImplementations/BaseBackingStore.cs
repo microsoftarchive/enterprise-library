@@ -152,7 +152,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.BackingStoreImplementati
         /// </summary>
         /// <returns>Hashtable containing all existing CacheItems.</returns>
         /// <remarks>Exceptions thrown depend on the implementation of the underlying database.</remarks>
-        public virtual Hashtable Load()
+        public virtual IDictionary Load()
         {
             return LoadDataFromStore();
         }
@@ -175,6 +175,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.BackingStoreImplementati
         /// no filtering to remove expired items.
         /// </summary>
         /// <returns>Hash table of all items loaded from persistence store</returns>
-        protected abstract Hashtable LoadDataFromStore();
+        protected abstract IDictionary LoadDataFromStore();
     }
 }

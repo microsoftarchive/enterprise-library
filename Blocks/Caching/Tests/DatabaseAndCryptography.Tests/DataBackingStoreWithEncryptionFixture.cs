@@ -62,7 +62,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.DatabaseAndCryptography.
         {
             unencryptedBackingStore.Add(new CacheItem("key", "value", CacheItemPriority.Normal, new MockRefreshAction(), new AlwaysExpired()));
 
-            Hashtable dataInCache = unencryptedBackingStore.Load();
+            var dataInCache = unencryptedBackingStore.Load();
 
             CacheItem retrievedItem = (CacheItem)dataInCache["key"];
             Assert.AreEqual("key", retrievedItem.Key);
@@ -81,7 +81,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.DatabaseAndCryptography.
             DataBackingStore encryptingBackingStore = new DataBackingStore(db, "encryptionTests", encryptionProvider);
 
             encryptingBackingStore.Add(new CacheItem("key", "value", CacheItemPriority.Normal, new MockRefreshAction(), new AlwaysExpired()));
-            Hashtable dataInCache = encryptingBackingStore.Load();
+            var dataInCache = encryptingBackingStore.Load();
 
             CacheItem retrievedItem = (CacheItem)dataInCache["key"];
             Assert.AreEqual("key", retrievedItem.Key);

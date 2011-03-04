@@ -27,7 +27,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.BackingStoreImplementati
             localStore.Dispose();
 
             IsolatedStorageBackingStore testStore = new IsolatedStorageBackingStore("Storage");
-            Hashtable loadedItems = testStore.Load();
+            var loadedItems = testStore.Load();
             testStore.Flush();
             testStore.Dispose();
 

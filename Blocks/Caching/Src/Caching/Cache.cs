@@ -22,64 +22,64 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
     /// resource contention among the different threads in the system. It also will act
     /// as the remoting gateway when that feature is added to the cache.
     /// </summary>	
-	public class Cache : ICacheOperations, IDisposable
+    public class Cache : ICacheOperations, IDisposable
     {
         private Hashtable inMemoryCache;
         private IBackingStore backingStore;
-		private ICachingInstrumentationProvider instrumentationProvider;
+        private ICachingInstrumentationProvider instrumentationProvider;
 
         private const string addInProgressFlag = "Dummy variable used to flag temp cache item added during Add";
 
-		/// <summary>
-		/// Initialzie a new instance of a <see cref="Cache"/> class with a backing store, and scavenging policy.
-		/// </summary>
-		/// <param name="backingStore">The cache backing store.</param>
-		/// <param name="instrumentationProvider">The instrumentation provider.</param>
-		public Cache(IBackingStore backingStore, ICachingInstrumentationProvider instrumentationProvider)
+        /// <summary>
+        /// Initialzie a new instance of a <see cref="Cache"/> class with a backing store, and scavenging policy.
+        /// </summary>
+        /// <param name="backingStore">The cache backing store.</param>
+        /// <param name="instrumentationProvider">The instrumentation provider.</param>
+        public Cache(IBackingStore backingStore, ICachingInstrumentationProvider instrumentationProvider)
         {
-		    if (backingStore == null) throw new ArgumentNullException("backingStore");
+            if (backingStore == null) throw new ArgumentNullException("backingStore");
             if (instrumentationProvider == null) throw new ArgumentNullException("instrumentationProvider");
 
             this.backingStore = backingStore;
             this.instrumentationProvider = instrumentationProvider;
 
-            Hashtable initialItems = backingStore.Load();
+            Hashtable initialItems = new Hashtable(backingStore.Load());
             inMemoryCache = Hashtable.Synchronized(initialItems);
 
-			this.instrumentationProvider.FireCacheUpdated(initialItems.Count, initialItems.Count);
+            this.instrumentationProvider.FireCacheUpdated(initialItems.Count, initialItems.Count);
 
-            
+
         }
-		
+
         /// <summary>
         /// Gets the count of <see cref="CacheItem"/> objects.
         /// </summary>
-		/// <value>
-		/// The count of <see cref="CacheItem"/> objects.
-		/// </value>
-		public int Count
+        /// <value>
+        /// The count of <see cref="CacheItem"/> objects.
+        /// </value>
+        public int Count
         {
             get { return inMemoryCache.Count; }
         }
 
-		/// <summary>
-		/// Gets the current cache.
-		/// </summary>
-		/// <returns>
-		/// The current cache.
-		/// </returns>
-		public Hashtable CurrentCacheState
-		{
-			get { return (Hashtable)inMemoryCache.Clone(); }
-		}
+        /// <summary>
+        /// Gets the current cache.
+        /// </summary>
+        /// <returns>
+        /// The current cache.
+        /// </returns>
+        public Hashtable CurrentCacheState
+        {
+            get { return (Hashtable)inMemoryCache.Clone(); }
+        }
 
-		/// <summary>
-		/// Determines if a particular key is contained in the cache.
-		/// </summary>
-		/// <param name="key">The key to locate.</param>
-		/// <returns>
-		/// <see langword="true"/> if the key is contained in the cache; otherwise, <see langword="false"/>.
-		/// </returns>
+        /// <summary>
+        /// Determines if a particular key is contained in the cache.
+        /// </summary>
+        /// <param name="key">The key to locate.</param>
+        /// <returns>
+        /// <see langword="true"/> if the key is contained in the cache; otherwise, <see langword="false"/>.
+        /// </returns>
         public bool Contains(string key)
         {
             ValidateKey(key);
@@ -87,24 +87,24 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
             return inMemoryCache.Contains(key);
         }
 
-		/// <summary>
-		/// Add a new keyed object to the cache.
-		/// </summary>
-		/// <param name="key">The key of the object.</param>
-		/// <param name="value">The object to add.</param>
+        /// <summary>
+        /// Add a new keyed object to the cache.
+        /// </summary>
+        /// <param name="key">The key of the object.</param>
+        /// <param name="value">The object to add.</param>
         public void Add(string key, object value)
         {
             Add(key, value, CacheItemPriority.Normal, null);
         }
 
-		/// <summary>
-		/// Add a new keyed object to the cache.
-		/// </summary>
-		/// <param name="key">The key of the object.</param>
-		/// <param name="value">The object to add.</param>
-		/// <param name="scavengingPriority">One of the <see cref="CacheItemPriority"/> values.</param>
-		/// <param name="refreshAction">An <see cref="ICacheItemRefreshAction"/> object.</param>
-		/// <param name="expirations">An array of <see cref="ICacheItemExpiration"/> objects.</param>
+        /// <summary>
+        /// Add a new keyed object to the cache.
+        /// </summary>
+        /// <param name="key">The key of the object.</param>
+        /// <param name="value">The object to add.</param>
+        /// <param name="scavengingPriority">One of the <see cref="CacheItemPriority"/> values.</param>
+        /// <param name="refreshAction">An <see cref="ICacheItemRefreshAction"/> object.</param>
+        /// <param name="expirations">An array of <see cref="ICacheItemExpiration"/> objects.</param>
         public void Add(string key, object value, CacheItemPriority scavengingPriority, ICacheItemRefreshAction refreshAction, params ICacheItemExpiration[] expirations)
         {
             ValidateKey(key);
@@ -152,29 +152,29 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
                     inMemoryCache.Remove(key);
                     throw;
                 }
-				instrumentationProvider.FireCacheUpdated(1, inMemoryCache.Count);
+                instrumentationProvider.FireCacheUpdated(1, inMemoryCache.Count);
             }
             finally
             {
                 Monitor.Exit(cacheItemBeforeLock);
-            }  
-        
+            }
+
         }
 
-		/// <summary>
-		/// Remove an item from the cache by key.
-		/// </summary>
-		/// <param name="key">The key of the item to remove.</param>
+        /// <summary>
+        /// Remove an item from the cache by key.
+        /// </summary>
+        /// <param name="key">The key of the item to remove.</param>
         public void Remove(string key)
         {
             Remove(key, CacheItemRemovedReason.Removed);
         }
 
-		/// <summary>
-		/// Remove an item from the cache by key.
-		/// </summary>
-		/// <param name="key">The key of the item to remove.</param>
-		/// <param name="removalReason">One of the <see cref="CacheItemRemovedReason"/> values.</param>
+        /// <summary>
+        /// Remove an item from the cache by key.
+        /// </summary>
+        /// <param name="key">The key of the item to remove.</param>
+        /// <param name="removalReason">One of the <see cref="CacheItemRemovedReason"/> values.</param>
         public void Remove(string key, CacheItemRemovedReason removalReason)
         {
             ValidateKey(key);
@@ -210,25 +210,25 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
 
                 RefreshActionInvoker.InvokeRefreshAction(cacheItemBeforeLock, removalReason, instrumentationProvider);
 
-				instrumentationProvider.FireCacheUpdated(1, inMemoryCache.Count);
-			}
+                instrumentationProvider.FireCacheUpdated(1, inMemoryCache.Count);
+            }
             finally
             {
                 Monitor.Exit(cacheItemBeforeLock);
             }
         }
 
-		
+
         /// <summary>
         /// Removes an item from the cache.
         /// </summary>
         /// <param name="key">The key to remove.</param>
-		/// <param name="removalReason">One of the <see cref="CacheItemRemovedReason"/> values.</param>
-		/// <remarks>
-		/// This seemingly redundant method is here to be called through the ICacheOperations 
-		/// interface. I put this in place to break any dependency from any other class onto 
-		/// the Cache class
-		/// </remarks>
+        /// <param name="removalReason">One of the <see cref="CacheItemRemovedReason"/> values.</param>
+        /// <remarks>
+        /// This seemingly redundant method is here to be called through the ICacheOperations 
+        /// interface. I put this in place to break any dependency from any other class onto 
+        /// the Cache class
+        /// </remarks>
         public void RemoveItemFromCache(string key, CacheItemRemovedReason removalReason)
         {
             Remove(key, removalReason);
@@ -238,12 +238,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
         /// Get the object from the cache for the key.
         /// </summary>
         /// <param name="key">
-		/// The key whose value to get.
-		/// </param>
+        /// The key whose value to get.
+        /// </param>
         /// <returns>
-		/// The value associated with the specified key. 
-		/// </returns>
-		public object GetData(string key)
+        /// The value associated with the specified key. 
+        /// </returns>
+        public object GetData(string key)
         {
             ValidateKey(key);
             CacheItem cacheItemBeforeLock = null;
@@ -256,7 +256,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
                     cacheItemBeforeLock = (CacheItem)inMemoryCache[key];
                     if (IsObjectInCache(cacheItemBeforeLock))
                     {
-						instrumentationProvider.FireCacheAccessed(key, false);
+                        instrumentationProvider.FireCacheAccessed(key, false);
                         return null;
                     }
 
@@ -280,17 +280,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
 
                     RefreshActionInvoker.InvokeRefreshAction(cacheItemBeforeLock, CacheItemRemovedReason.Expired, instrumentationProvider);
 
-					instrumentationProvider.FireCacheAccessed(key, false);
-					instrumentationProvider.FireCacheUpdated(1, inMemoryCache.Count);
-					instrumentationProvider.FireCacheExpired(1);
-					return null;
+                    instrumentationProvider.FireCacheAccessed(key, false);
+                    instrumentationProvider.FireCacheUpdated(1, inMemoryCache.Count);
+                    instrumentationProvider.FireCacheExpired(1);
+                    return null;
                 }
 
                 backingStore.UpdateLastAccessedTime(cacheItemBeforeLock.Key, DateTime.Now); // Does exception safety matter here?
                 cacheItemBeforeLock.TouchedByUserAction(false);
 
-				instrumentationProvider.FireCacheAccessed(key, true);
-				return cacheItemBeforeLock.Value;
+                instrumentationProvider.FireCacheAccessed(key, true);
+                return cacheItemBeforeLock.Value;
             }
             finally
             {
@@ -298,10 +298,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
             }
         }
 
-		/// <summary>
-		/// Flush the cache.
-		/// </summary>
-		/// <remarks>
+        /// <summary>
+        /// Flush the cache.
+        /// </summary>
+        /// <remarks>
         /// There may still be thread safety issues in this class with respect to cacheItemExpirations
         /// and scavenging, but I really doubt that either of those will be happening while
         /// a Flush is in progress. It seems that the most likely scenario for a flush
@@ -309,9 +309,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
         /// is going on. Calling flush in the middle of an application would seem to be
         /// an "interesting" thing to do in normal circumstances.
         /// </remarks>
-		public void Flush()
+        public void Flush()
         {
-            RestartFlushAlgorithm:
+        RestartFlushAlgorithm:
             lock (inMemoryCache.SyncRoot)
             {
                 foreach (string key in inMemoryCache.Keys)
@@ -320,18 +320,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
                     CacheItem itemToRemove = (CacheItem)inMemoryCache[key];
                     try
                     {
-                        if(lockWasSuccessful = Monitor.TryEnter(itemToRemove))
+                        if (lockWasSuccessful = Monitor.TryEnter(itemToRemove))
                         {
                             itemToRemove.TouchedByUserAction(true);
                         }
                         else
                         {
-                           goto RestartFlushAlgorithm;
+                            goto RestartFlushAlgorithm;
                         }
                     }
                     finally
                     {
-                        if(lockWasSuccessful) Monitor.Exit(itemToRemove);
+                        if (lockWasSuccessful) Monitor.Exit(itemToRemove);
                     }
                 }
 
@@ -340,7 +340,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
                 backingStore.Flush();
                 inMemoryCache.Clear();
 
-				instrumentationProvider.FireCacheUpdated(countBeforeFlushing, 0);
+                instrumentationProvider.FireCacheUpdated(countBeforeFlushing, 0);
             }
         }
 
@@ -348,8 +348,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
         {
             if (string.IsNullOrEmpty(key))
             {
-				throw new ArgumentException(Resources.EmptyParameterName, "key");
-            }            
+                throw new ArgumentException(Resources.EmptyParameterName, "key");
+            }
         }
 
         private static bool IsObjectInCache(CacheItem cacheItemBeforeLock)
@@ -358,32 +358,32 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
         }
 
 
-		/// <summary>
-		/// Dispose of the backing store before garbage collection.
-		/// </summary>
+        /// <summary>
+        /// Dispose of the backing store before garbage collection.
+        /// </summary>
         ~Cache()
         {
             Dispose(false);
         }
 
-		/// <summary>
-		/// Dispose of the backing store before garbage collection.
-		/// </summary>
+        /// <summary>
+        /// Dispose of the backing store before garbage collection.
+        /// </summary>
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
 
-		/// <summary>
-		/// Dispose of the backing store before garbage collection.
-		/// </summary>
+        /// <summary>
+        /// Dispose of the backing store before garbage collection.
+        /// </summary>
         /// <param name="disposing">
-		/// <see langword="true"/> if disposing; otherwise, <see langword="false"/>.
-		/// </param>
-		protected virtual void Dispose(bool disposing)
+        /// <see langword="true"/> if disposing; otherwise, <see langword="false"/>.
+        /// </param>
+        protected virtual void Dispose(bool disposing)
         {
-            if(disposing)
+            if (disposing)
             {
                 backingStore.Dispose();
                 backingStore = null;
