@@ -53,6 +53,9 @@
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\Lib\Silverlight\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Practices.Unity.Interception.Silverlight">
+      <HintPath>..\..\..\..\Lib\Silverlight\Microsoft.Practices.Unity.Interception.Silverlight.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Practices.Unity.Silverlight, Version=2.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\Lib\Silverlight\Microsoft.Practices.Unity.Silverlight.dll</HintPath>
     </Reference>
@@ -77,6 +80,8 @@
     <Compile Include="Configuration\AndCompositeValidatorData.Silverlight.cs" />
     <Compile Include="Configuration\ContainsCharactersValidatorData.cs" />
     <Compile Include="Configuration\ContainsCharactersValidatorData.Silverlight.cs" />
+    <Compile Include="Configuration\DateTimeRangeValidatorData.Silverlight.cs" />
+    <Compile Include="Configuration\ValidationCallHandlerData.Silverlight.cs" />
     <Compile Include="Configuration\CustomValidatorData.cs" />
     <Compile Include="Configuration\CustomValidatorData.Silverlight.cs" />
     <Compile Include="Configuration\DateTimeRangeValidatorData.cs" />
@@ -128,6 +133,7 @@
     <Compile Include="Configuration\ValidatedMethodReference.Silverlight.cs" />
     <Compile Include="Configuration\ValidatedPropertyReference.Silverlight.cs" />
     <Compile Include="Configuration\ValidatedTypeReference.Silverlight.cs" />
+    <Compile Include="Configuration\ValidationCallHandlerData.cs" />
     <Compile Include="Configuration\ValidationRulesetData.Silverlight.cs" />
     <Compile Include="Configuration\ValidationSettings.Silverlight.cs" />
     <Compile Include="DataErrorInfoHelper.cs" />
@@ -152,6 +158,10 @@
     <Compile Include="MetadataValidatedParameterElement.cs" />
     <Compile Include="MetadataValidatedType.cs" />
     <Compile Include="MetadataValidatorBuilder.cs" />
+    <Compile Include="ParameterValidatorFactory.cs" />
+    <Compile Include="PolicyInjection\ArgumentValidationException.cs" />
+    <Compile Include="PolicyInjection\ValidationCallHandler.cs" />
+    <Compile Include="PolicyInjection\ValidationCallHandlerAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.Silverlight.cs" />
     <Compile Include="Properties\Resources.Designer.cs">

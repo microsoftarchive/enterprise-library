@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Practices.EnterpriseLibrary.Caching.Runtime.Caching;
+using Microsoft.Practices.EnterpriseLibrary.Caching.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.InMemory
 {
@@ -18,6 +19,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.InMemory
 
         public NumberOfItemsScavengingStrategy(int maxItemsBeforeScavenging, int itemsLeftAfterScavenging)
         {
+            if (maxItemsBeforeScavenging <= 0)
+                throw new ArgumentException(Resources.MaxItemsBeforeScavengingMustBePositive, "maxItemsBeforeScavenging");
+            if (itemsLeftAfterScavenging <= 0)
+                throw new ArgumentException(Resources.ItemsLeftAfterScavengingMustBePositive, "itemsLeftAfterScavenging");
+            if (itemsLeftAfterScavenging >= maxItemsBeforeScavenging)
+                throw new ArgumentException(Resources.ItemsLeftMustBeLessThanMaxItemsBefore, "itemsLeftAfterScavenging");
+
             this.maxItemsBeforeScavenging = maxItemsBeforeScavenging;
             this.itemsLeftAfterScavenging = itemsLeftAfterScavenging;
         }
@@ -34,13 +42,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.InMemory
 
         public IEnumerable<TCacheEntry> EntriesToScavenge(IEnumerable<TCacheEntry> currentEntries)
         {
-            return currentEntries
-                .Where(entry => entry.Priority != CacheItemPriority.NotRemovable)
-                .OrderBy(entry => entry.LastAccessTime);
-        }
-
-        public void OnFinishingScavenging(IDictionary<string, TCacheEntry> entries)
-        {
+            return currentEntries.OrderBy(x => x.Priority).ThenBy(x => x.LastAccessTime);
         }
     }
 }

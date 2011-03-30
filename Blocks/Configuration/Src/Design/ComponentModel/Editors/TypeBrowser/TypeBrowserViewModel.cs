@@ -584,21 +584,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
                     this.namespaces = new ObservableCollection<NamespaceNode>();
 
                     IEnumerable<Type> types;
-                    try
-                    {
-                        types = this.assembly.GetTypes()
-                                    .Where(this.typeFilter)
-                                    .OrderBy(t => t.Namespace)
-                                    .ThenBy(t => t.FullName);
-                    }
-                    catch (FileLoadException)
-                    {
-                        types = Enumerable.Empty<Type>();
-                    }
-                    catch (TypeLoadException)
-                    {
-                        types = Enumerable.Empty<Type>();
-                    }
+
+                    types = this.GetAvailableTypes(this.assembly)
+                                .Where(this.typeFilter)
+                                .OrderBy(t => t.Namespace)
+                                .ThenBy(t => t.FullName);
 
                     NamespaceNode namespaceNode = null;
                     foreach (var type in types)
@@ -616,6 +606,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentMo
                 }
                 return this.namespaces;
             }
+        }
+
+        private IEnumerable<Type> GetAvailableTypes(Assembly assembly)
+        {
+            try
+            {
+                return assembly.GetTypes();
+            }
+            catch (FileLoadException) { }
+            catch (TypeLoadException) { }
+            catch (ReflectionTypeLoadException) { }
+
+            return MetadataTypesRetriever.GetAvailableTypes(assembly);
         }
     }
 

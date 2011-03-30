@@ -31,6 +31,22 @@
                 </el:ValidationRulesetData.Properties>
             </el:ValidationRulesetData>
         </el:ValidatedTypeReference>
+        <el:ValidatedTypeReference Name="Microsoft.Practices.EnterpriseLibrary.Validation.TestSupport.TestClasses.TestObjectWithMultiplePropertyTypes"  DefaultRuleset="Default">
+            <el:ValidationRulesetData Name="Default">
+                <el:ValidationRulesetData.Properties>
+                    <el:ValidatedPropertyReference Name="DateTimeProperty1">
+                        <el:DateTimeRangeValidatorData LowerBound="1969-12-31T23:59:59" MessageTemplate="Date must be valid" Name="Date Range Validator 1" />
+                        <el:DateTimeRangeValidatorData LowerBound="1969-12-31 23:59:59" MessageTemplate="Date must be valid" Name="Date Range Validator 2" />
+                        <el:DateTimeRangeValidatorData LowerBound="1969-12-31" MessageTemplate="Date must be valid" Name="Date Range Validator 3" />
+                        <el:DateTimeRangeValidatorData LowerBound="12-31-1969 23:59:59" MessageTemplate="Date must be valid" Name="Date Range Validator 5" />
+                        <el:DateTimeRangeValidatorData LowerBound="12-31-1969" MessageTemplate="Date must be valid" Name="Date Range Validator 6" />
+                        <el:DateTimeRangeValidatorData LowerBound="12-31-1969 " MessageTemplate="Date must be valid" Name="Date Range Validator 7" />
+                        <el:DateTimeRangeValidatorData LowerBound=" 12-31-1969" MessageTemplate="Date must be valid" Name="Date Range Validator 8" />
+                        <el:DateTimeRangeValidatorData LowerBound=" 12 - 31 - 1969 " MessageTemplate="Date must be valid" Name="Date Range Validator 9" />
+                    </el:ValidatedPropertyReference>
+                </el:ValidationRulesetData.Properties>
+            </el:ValidationRulesetData>
+        </el:ValidatedTypeReference>
     </el:ValidationSettings>
-    
+
 </ResourceDictionary>

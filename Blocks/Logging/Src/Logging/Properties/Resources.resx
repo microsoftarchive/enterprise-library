@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="EmailSinkMissingParameters" xml:space="preserve">
     <value>E-Mail Sink is missing one of these keys in the Distributor's XML file: ToAddress, FromAddress, and/or SmtpServer.</value>
@@ -531,5 +531,35 @@ Message:
   </data>
   <data name="DefaultLogEntryTitle" xml:space="preserve">
     <value>Call Logging</value>
+  </data>
+  <data name="DefaultTextFormatShort" xml:space="preserve">
+    <value>Timestamp: {timestamp}{newline}Message: {message}{newline}Category: {category}{newline}Priority: {priority}{newline}EventId: {eventid}{newline}Severity: {severity}{newline}Title:{title}{newline}App Domain: {localAppDomain}{newline}Thread Name: {threadName}{newline}Extended Properties: {dictionary({key} - {value}{newline})}</value>
+  </data>
+  <data name="ErrorEntryIsLargerThanTheEffectiveMaximumSize" xml:space="preserve">
+    <value>The entry is larger than the effective available space.</value>
+  </data>
+  <data name="ErrorRepositoryIsNotAvailable" xml:space="preserve">
+    <value>The repository is not available. The most likely cause is that the repository file is already being used by another instance.</value>
+  </data>
+  <data name="ErrorRepositoryFileAlreadyExists" xml:space="preserve">
+    <value>The repository file already exists.</value>
+  </data>
+  <data name="ErrorRepositoryNameNotSet" xml:space="preserve">
+    <value>The repository name was not set for listener {0}.</value>
+  </data>
+  <data name="ErrorHeaderMismatch" xml:space="preserve">
+    <value>Header mismatch found for header '{0}'.</value>
+  </data>
+  <data name="ErrorCannotReadIntegerFromStream" xml:space="preserve">
+    <value>Cannot read value for stream parameter {0}.</value>
+  </data>
+  <data name="ErrorInvalidStreamParameter" xml:space="preserve">
+    <value>Invalid stream parameter {0}.</value>
+  </data>
+  <data name="ErrorEntryDataInDiskIsInvalidLongerThanMaximum" xml:space="preserve">
+    <value>Invalid entry data found in stream: the size of the entry at position {0} is larger than the available size.</value>
+  </data>
+  <data name="ErrorEntryDataInDiskIsInvalidNegativeSize" xml:space="preserve">
+    <value>Invalid entry data found in stream: entry has negative size at position {0}.</value>
   </data>
 </root>

@@ -15,11 +15,12 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
 using System.Security;
-using System.Security.Permissions;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Properties;
 using Microsoft.Practices.ServiceLocation;
+#if SILVERLIGHT
+using Microsoft.Practices.EnterpriseLibrary.Logging.Diagnostics;
+#endif
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging
 {
@@ -37,7 +38,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
     /// You must configure the operation categories, or the catch-all categories, with desired log sinks to log 
     /// the trace messages.</para>
     /// </remarks>
-    public class Tracer : IDisposable
+    public partial class Tracer : IDisposable
     {
         /// <summary>
         /// Priority value for Trace messages
@@ -80,80 +81,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// If an existing activity id is already set, it will be kept. Otherwise, a new activity id will be created.
         /// </remarks>
         /// <param name="operation">The operation for the <see cref="Tracer"/></param>
-        public Tracer(string operation)
-            : this(operation, Logger.Writer, GetTracerInstrumentationProvider())
-        {
-        }
-
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Tracer"/> class with the given logical operation name and activity id.
-        /// </summary>
-        /// <remarks>
-        /// The activity id will override a previous activity id
-        /// </remarks>
-        /// <param name="operation">The operation for the <see cref="Tracer"/></param>
-        /// <param name="activityId">The activity id</param>
-        public Tracer(string operation, Guid activityId)
-            : this(operation, activityId, Logger.Writer, GetTracerInstrumentationProvider())
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Tracer"/> class with the given logical operation name.
-        /// </summary>
-        /// <remarks>
-        /// If an existing activity id is already set, it will be kept. Otherwise, a new activity id will be created.
-        /// </remarks>
-        /// <param name="operation">The operation for the <see cref="Tracer"/></param>
-        /// <param name="writer">The <see cref="LogWriter"/> that is used to write trace messages</param>
-        /// <param name="instrumentationConfiguration">The configuration source that is used to determine instrumentation should be enabled.</param>
-        public Tracer(string operation, LogWriter writer, IConfigurationSource instrumentationConfiguration) :
-            this(operation, writer, GetTracerInstrumentationProvider(instrumentationConfiguration))
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Tracer"/> class with the given logical operation name.
-        /// </summary>
-        /// <remarks>
-        /// If an existing activity id is already set, it will be kept. Otherwise, a new activity id will be created.
-        /// </remarks>
-        /// <param name="operation">The operation for the <see cref="Tracer"/></param>
         /// <param name="writer">The <see cref="LogWriter"/> that is used to write trace messages</param>
         /// <param name="serviceLocator"><see cref="IServiceLocator"/> used to retrieve the instrumentation provider for this tracer.</param>
         public Tracer(string operation, LogWriter writer, IServiceLocator serviceLocator) :
             this(operation, writer, GetTracerInstrumentationProvider(serviceLocator))
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Tracer"/> class with the given logical name.
-        /// It retrieves require dependent objects from the given <paramref name="container"/>.
-        /// </summary>
-        /// <remarks>
-        /// If an existing activity id is already set, it will be kept. Otherwise, a new activity id will be created.
-        /// </remarks>
-        /// <param name="operation">The operation for the <see cref="Tracer"/></param>
-        /// <param name="container"><see cref="IServiceLocator"/> used to retrieve dependent objects.</param>
-        public Tracer(string operation, IServiceLocator container)
-            : this(operation, container.GetInstance<LogWriter>(), container.GetInstance<ITracerInstrumentationProvider>())
-        {
-
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Tracer"/> class with the given logical operation name and activity id.
-        /// </summary>
-        /// <remarks>
-        /// The activity id will override a previous activity id
-        /// </remarks>
-        /// <param name="operation">The operation for the <see cref="Tracer"/></param>
-        /// <param name="activityId">The activity id</param>
-        /// <param name="writer">The <see cref="LogWriter"/> that is used to write trace messages</param>
-        /// <param name="instrumentationConfiguration">configuration source that is used to determine instrumentation should be enabled</param>
-        public Tracer(string operation, Guid activityId, LogWriter writer, IConfigurationSource instrumentationConfiguration) :
-            this(operation, activityId, writer, GetTracerInstrumentationProvider(instrumentationConfiguration))
         {
         }
 
@@ -234,7 +165,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
             }
         }
 
-
         /// <summary>
         /// Causes the <see cref="Tracer"/> to output its closing message.
         /// </summary>
@@ -277,44 +207,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
             return GetWriter().IsTracingEnabled();
         }
 
-        internal static bool IsTracingAvailable()
-        {
-            bool tracingAvailable = false;
-
-            try
-            {
-                tracingAvailable = SecurityManager.IsGranted(new SecurityPermission(SecurityPermissionFlag.UnmanagedCode));
-            }
-            catch (SecurityException)
-            { }
-
-            return tracingAvailable;
-        }
-
         private bool CheckTracingAvailable()
         {
             tracingAvailable = IsTracingAvailable();
 
             return tracingAvailable;
-        }
-
-        private static ITracerInstrumentationProvider GetTracerInstrumentationProvider()
-        {
-            return EnterpriseLibraryContainer.Current.GetInstance<ITracerInstrumentationProvider>();
-        }
-
-        private static ITracerInstrumentationProvider GetTracerInstrumentationProvider(IServiceLocator serviceLocator)
-        {
-            if (serviceLocator == null) throw new ArgumentNullException("serviceLocator");
-            return serviceLocator.GetInstance<ITracerInstrumentationProvider>();
-        }
-
-        private static ITracerInstrumentationProvider GetTracerInstrumentationProvider(IConfigurationSource configuration)
-        {
-            if (configuration == null) return new NullTracerInstrumentationProvider();
-
-            var container = EnterpriseLibraryContainer.CreateDefaultContainer(configuration);
-            return container.GetInstance<ITracerInstrumentationProvider>();
         }
 
         private void Initialize(string operation)
@@ -362,14 +259,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         private string GetExecutingMethodName()
         {
             string result = "Unknown";
-            StackTrace trace = new StackTrace(false);
+            StackTrace trace = new StackTrace();
 
             for (int index = 0; index < trace.FrameCount; ++index)
             {
                 StackFrame frame = trace.GetFrame(index);
                 MethodBase method = frame.GetMethod();
                 Type declaringType = method.DeclaringType;
+#if !SILVERLIGHT
                 if (declaringType != GetType() && declaringType != typeof(TraceManager))
+#else
+                if (declaringType != GetType())
+#endif
                 {
                     result = string.Concat(method.DeclaringType.FullName, ".", method.Name);
                     break;
@@ -383,11 +284,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         {
             decimal result = Convert.ToDecimal(milliseconds) / 1000m;
             return Math.Round(result, 6);
-        }
-
-        private LogWriter GetWriter()
-        {
-            return writer ?? Logger.Writer;
         }
 
         private static Guid GetOrCreateActivityId()

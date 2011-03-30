@@ -98,9 +98,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
                                               null, RangeBoundaryType.Ignore,
                                               "2006-01-10T00:00:00", RangeBoundaryType.Exclusive);
 
+            Assert.AreEqual(null, attribute.EffectiveLowerBound);
             Assert.AreEqual(null, attribute.LowerBound);
             Assert.AreEqual(RangeBoundaryType.Ignore, attribute.LowerBoundType);
-            Assert.AreEqual(new DateTime(2006, 1, 10), attribute.UpperBound);
+            Assert.AreEqual(new DateTime(2006, 1, 10), attribute.EffectiveUpperBound);
+            Assert.AreEqual("2006-01-10T00:00:00", attribute.UpperBound);
             Assert.AreEqual(RangeBoundaryType.Exclusive, attribute.UpperBoundType);
         }
 
@@ -121,9 +123,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Validators
                                               "0.0", RangeBoundaryType.Ignore,
                                               "1000.5", RangeBoundaryType.Exclusive);
 
-            Assert.AreEqual(new Decimal(0, 0, 0, false, 0), attribute.LowerBound);
+            Assert.AreEqual(new Decimal(0, 0, 0, false, 0), attribute.EffectiveLowerBound);
+            Assert.AreEqual("0.0", attribute.LowerBound);
             Assert.AreEqual(RangeBoundaryType.Ignore, attribute.LowerBoundType);
-            Assert.AreEqual(new Decimal(10005, 0, 0, false, 1), attribute.UpperBound);
+            Assert.AreEqual(new Decimal(10005, 0, 0, false, 1), attribute.EffectiveUpperBound);
+            Assert.AreEqual("1000.5", attribute.UpperBound);
             Assert.AreEqual(RangeBoundaryType.Exclusive, attribute.UpperBoundType);
         }
 

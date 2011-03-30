@@ -66,9 +66,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestAssembly3", "..\Tests\T
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Configuration.Design.TestSupport", "..\Tests\Configuration.Design.TestSupport\Configuration.Design.TestSupport.csproj", "{99053495-86CF-466C-92C0-79BBF686DDBC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeLoadTestAssembly", "..\Tests\TypeLoadTestAssembly\TypeLoadTestAssembly.csproj", "{FE4B56CF-A726-4768-81D0-97B83B9C4365}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeLoadTestMissingReferenceAssembly", "..\Tests\TypeLoadTestMissingReferenceAssembly\TypeLoadTestMissingReferenceAssembly.csproj", "{24837F51-2A96-4608-9E25-58BC7746F65E}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 28
+		SccNumberOfProjects = 30
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = http://pagtfs2008:8080/
 		SccLocalPath0 = .
@@ -178,6 +182,14 @@ Global
 		SccProjectTopLevelParentUniqueName27 = Console.sln
 		SccProjectName27 = ../Tests/Configuration.Design.TestSupport
 		SccLocalPath27 = ..\\Tests\\Configuration.Design.TestSupport
+		SccProjectUniqueName28 = ..\\Tests\\TypeLoadTestAssembly\\TypeLoadTestAssembly.csproj
+		SccProjectTopLevelParentUniqueName28 = Console.sln
+		SccProjectName28 = ../Tests/TypeLoadTestAssembly
+		SccLocalPath28 = ..\\Tests\\TypeLoadTestAssembly
+		SccProjectUniqueName29 = ..\\Tests\\TypeLoadTestMissingReferenceAssembly\\TypeLoadTestMissingReferenceAssembly.csproj
+		SccProjectTopLevelParentUniqueName29 = Console.sln
+		SccProjectName29 = ../Tests/TypeLoadTestMissingReferenceAssembly
+		SccLocalPath29 = ..\\Tests\\TypeLoadTestMissingReferenceAssembly
 	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = Console7.vsmdi
@@ -295,6 +307,14 @@ Global
 		{99053495-86CF-466C-92C0-79BBF686DDBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{99053495-86CF-466C-92C0-79BBF686DDBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{99053495-86CF-466C-92C0-79BBF686DDBC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE4B56CF-A726-4768-81D0-97B83B9C4365}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE4B56CF-A726-4768-81D0-97B83B9C4365}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE4B56CF-A726-4768-81D0-97B83B9C4365}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE4B56CF-A726-4768-81D0-97B83B9C4365}.Release|Any CPU.Build.0 = Release|Any CPU
+		{24837F51-2A96-4608-9E25-58BC7746F65E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{24837F51-2A96-4608-9E25-58BC7746F65E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{24837F51-2A96-4608-9E25-58BC7746F65E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{24837F51-2A96-4608-9E25-58BC7746F65E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -325,5 +345,7 @@ Global
 		{2A0F894F-20B9-497D-AB0B-7549E41AAF49} = {484A2325-DDBD-4AC1-827A-C8BFD11CDB73}
 		{18A388BB-41C8-47A3-AAC4-72343EE953CB} = {484A2325-DDBD-4AC1-827A-C8BFD11CDB73}
 		{99053495-86CF-466C-92C0-79BBF686DDBC} = {484A2325-DDBD-4AC1-827A-C8BFD11CDB73}
+		{FE4B56CF-A726-4768-81D0-97B83B9C4365} = {484A2325-DDBD-4AC1-827A-C8BFD11CDB73}
+		{24837F51-2A96-4608-9E25-58BC7746F65E} = {484A2325-DDBD-4AC1-827A-C8BFD11CDB73}
 	EndGlobalSection
 EndGlobal

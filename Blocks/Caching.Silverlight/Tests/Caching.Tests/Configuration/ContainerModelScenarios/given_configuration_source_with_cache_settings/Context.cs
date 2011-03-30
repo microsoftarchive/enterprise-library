@@ -28,12 +28,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests.Configuration.Cont
                             Name = "cache1",
                             ItemsLeftAfterScavenging = 400,
                             MaxItemsBeforeScavenging = 500,
-                            PollInterval = TimeSpan.FromMinutes(1)
+                            ExpirationPollingInterval = TimeSpan.FromMinutes(1)
                         },
                         new IsolatedStorageCacheData
                         {
                             Name = "cache2",
-                            MaxSize = 5000
+                            MaxSizeInKiloBytes = 5
                         }
                     }
                 });

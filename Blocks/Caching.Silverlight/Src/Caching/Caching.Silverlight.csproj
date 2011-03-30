@@ -69,31 +69,35 @@
     <Compile Include="Configuration\IsolatedStorageCacheData.cs" />
     <Compile Include="InMemoryCache.cs" />
     <Compile Include="InMemory\CacheEntry.cs" />
-    <Compile Include="InMemory\DefaultExtendedCacheItemPolicy.cs" />
-    <Compile Include="InMemory\IExtendedCacheItemPolicy.cs" />
+    <Compile Include="InMemory\CacheItemPolicyExtensions.cs" />
     <Compile Include="InMemory\IScavengingStrategy.cs" />
     <Compile Include="InMemory\MemoryBackedCacheBase.cs" />
     <Compile Include="InMemory\NumberOfItemsScavengingStrategy.cs" />
     <Compile Include="IsolatedStorage\AllocationException.cs" />
     <Compile Include="IsolatedStorage\CacheEntryStore.cs" />
     <Compile Include="IsolatedStorage\ICacheEntryStore.cs" />
+    <Compile Include="IsolatedStorage\IIsolatedStorageCacheEntrySerializer.cs" />
     <Compile Include="IsolatedStorage\IIsolatedStorageInfo.cs" />
     <Compile Include="IsolatedStorage\InvalidDataException.cs" />
     <Compile Include="IsolatedStorage\IsolatedStorageInfo.cs" />
     <Compile Include="IsolatedStorage\IsolatedStorageSizeScavengingStrategy.cs" />
+    <Compile Include="IsolatedStorage\StorageAccessor.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\AssemblyInfo.Silverlight.cs" />
+    <Compile Include="Runtime.Caching\CacheEntryRemovedReason.cs" />
     <Compile Include="Runtime.Caching\CacheItem.cs" />
     <Compile Include="Runtime.Caching\CacheEntryChangeMonitor.cs" />
     <Compile Include="Runtime.Caching\CacheItemPolicy.cs" />
     <Compile Include="Runtime.Caching\CacheItemPriority.cs" />
+    <Compile Include="Runtime.Caching\CacheEntryRemovedCallback.cs" />
     <Compile Include="Runtime.Caching\ChangeMonitor.cs" />
+    <Compile Include="Runtime.Caching\CacheEntryUpdateCallback.cs" />
     <Compile Include="Runtime.Caching\DefaultCacheCapabilities.cs" />
-    <Compile Include="IsolatedStorage\Blocks\BlockStorage.cs" />
-    <Compile Include="IsolatedStorage\Blocks\Fat.cs" />
-    <Compile Include="IsolatedStorage\IsolatedStorageCache.cs" />
+    <Compile Include="IsolatedStorageCache.cs" />
     <Compile Include="IsolatedStorage\IsolatedStorageCacheEntry.cs" />
     <Compile Include="IsolatedStorage\IsolatedStorageCacheEntrySerializer.cs" />
-    <Compile Include="IsolatedStorage\Blocks\MathHelper.cs" />
     <Compile Include="Runtime.Caching\ObjectCache.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>

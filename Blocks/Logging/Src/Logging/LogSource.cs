@@ -11,9 +11,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
+#if !SILVERLIGHT
+using System.Diagnostics;
+#else
+using Microsoft.Practices.EnterpriseLibrary.Logging.Diagnostics;
+#endif
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging
 {
@@ -83,10 +87,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// <param name="autoFlush">If Flush should be called on the Listeners after every write.</param>
         /// <param name="instrumentationProvider">The instrumentation provider to use.</param>
         public LogSource(
-            string name, 
-            IEnumerable<TraceListener> traceListeners, 
-            SourceLevels level, 
-            bool autoFlush, 
+            string name,
+            IEnumerable<TraceListener> traceListeners,
+            SourceLevels level,
+            bool autoFlush,
             ILoggingInstrumentationProvider instrumentationProvider)
         {
             this.name = name;
@@ -167,7 +171,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         {
             if (!ShouldTrace(eventType)) return;
 
+#if !SILVERLIGHT
             bool isTransfer = logEntry.Severity == TraceEventType.Transfer && logEntry.RelatedActivityId != null;
+#endif
 
             foreach (TraceListener listener in traceListenerFilter.GetAvailableTraceListeners(traceListeners))
             {
@@ -175,14 +181,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
                 {
                     if (!listener.IsThreadSafe) Monitor.Enter(listener);
 
+#if !SILVERLIGHT
                     if (!isTransfer)
+#endif
                     {
                         listener.TraceData(traceEventCache, Name, eventType, id, logEntry);
                     }
+#if !SILVERLIGHT
                     else
                     {
                         listener.TraceTransfer(traceEventCache, Name, id, logEntry.Message, logEntry.RelatedActivityId.Value);
                     }
+#endif
                     instrumentationProvider.FireTraceListenerEntryWrittenEvent();
 
                     if (this.AutoFlush)

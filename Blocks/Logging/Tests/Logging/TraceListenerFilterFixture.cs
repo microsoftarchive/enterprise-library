@@ -11,9 +11,13 @@
 
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport.TraceListeners;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+#if !SILVERLIGHT
+using System.Diagnostics;
+#else
+using Microsoft.Practices.EnterpriseLibrary.Logging.Diagnostics;
+#endif
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
 {

@@ -9,9 +9,13 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System.Diagnostics;
 using System.Collections.Generic;
 using System.Collections;
+#if !SILVERLIGHT
+using System.Diagnostics;
+#else
+using Microsoft.Practices.EnterpriseLibrary.Logging.Diagnostics;
+#endif
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging
 {

@@ -26,7 +26,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
             //BaseAdd(new TypeRegistrationProviderElement() { Name = TypeRegistrationProvidersConfigurationSection.CryptographyTypeRegistrationProviderName, SectionName = BlockSectionNames.Cryptography });
             //BaseAdd(new TypeRegistrationProviderElement() { Name = TypeRegistrationProvidersConfigurationSection.ExceptionHandlingTypeRegistrationProviderName, SectionName = BlockSectionNames.ExceptionHandling });
             //BaseAdd(new TypeRegistrationProviderElement() { Name = TypeRegistrationProvidersConfigurationSection.InstrumentationTypeRegistrationProviderName, SectionName = BlockSectionNames.Instrumentation });
-            //BaseAdd(new TypeRegistrationProviderElement() { Name = TypeRegistrationProvidersConfigurationSection.LoggingTypeRegistrationProviderName, SectionName = BlockSectionNames.Logging });
+            BaseAdd(new TypeRegistrationProviderElement() { Name = TypeRegistrationProvidersConfigurationSection.LoggingTypeRegistrationProviderName, SectionName = BlockSectionNames.Logging });
             //BaseAdd(new TypeRegistrationProviderElement() { Name = TypeRegistrationProvidersConfigurationSection.PolicyInjectionTypeRegistrationProviderName, SectionName = BlockSectionNames.PolicyInjection });
             //BaseAdd(new TypeRegistrationProviderElement() { Name = TypeRegistrationProvidersConfigurationSection.SecurityTypeRegistrationProviderName, SectionName = BlockSectionNames.Security });
             //BaseAdd(new TypeRegistrationProviderElement() { Name = TypeRegistrationProvidersConfigurationSection.DataAccessTypeRegistrationProviderName, ProviderTypeName = BlockSectionNames.DataRegistrationProviderLocatorType });

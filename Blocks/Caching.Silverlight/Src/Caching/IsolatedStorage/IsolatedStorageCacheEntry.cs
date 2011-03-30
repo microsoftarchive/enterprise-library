@@ -11,12 +11,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.IsolatedStorage
         {
         }
 
-        public IsolatedStorageCacheEntry(string key, object value, IExtendedCacheItemPolicy policy)
-            : base(key, value, policy)
-        {
-        }
-
-        public int? StorageId { get; set; }
+        public string StorageId { get; set; }
 
         public new DateTimeOffset LastAccessTime
         {

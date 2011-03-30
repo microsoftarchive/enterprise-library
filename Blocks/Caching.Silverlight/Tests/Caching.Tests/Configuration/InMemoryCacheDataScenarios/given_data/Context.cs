@@ -18,7 +18,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests.Configuration.InMe
                     Name = "test name",
                     MaxItemsBeforeScavenging = 500,
                     ItemsLeftAfterScavenging = 300,
-                    PollInterval = TimeSpan.FromSeconds(15)
+                    ExpirationPollingInterval = TimeSpan.FromSeconds(45)
                 };
         }
     }

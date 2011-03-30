@@ -80,9 +80,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Filters
         {
             foreach (ILogFilter filter in this.filters)
             {
-                if (filter is T)
+                var castFilter = filter as T;
+                if (castFilter != null)
                 {
-                    return filter as T;
+                    return castFilter;
                 }
             }
             return null;
@@ -102,9 +103,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Filters
 
             foreach (ILogFilter filter in this.filters)
             {
-                if (filter is T && name.Equals(filter.Name))
+                var castFilter = filter as T;
+                if (castFilter != null && name.Equals(castFilter.Name))
                 {
-                    return filter as T;
+                    return castFilter;
                 }
             }
             return null;

@@ -1,0 +1,237 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{EF011A0E-FE3C-4B95-90B2-0E56C4C88CED}</ProjectGuid>
+    <ProjectTypeGuids>{A1591282-1198-4647-A2B1-27E5FF5F6F3B};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Microsoft.Practices.EnterpriseLibrary.Logging.Tests</RootNamespace>
+    <AssemblyName>Microsoft.Practices.EnterpriseLibrary.Logging.Silverlight.Tests</AssemblyName>
+    <TargetFrameworkIdentifier>Silverlight</TargetFrameworkIdentifier>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <SilverlightVersion>$(TargetFrameworkVersion)</SilverlightVersion>
+    <SilverlightApplication>true</SilverlightApplication>
+    <SupportedCultures>
+    </SupportedCultures>
+    <XapOutputs>true</XapOutputs>
+    <GenerateSilverlightManifest>true</GenerateSilverlightManifest>
+    <XapFilename>Logging.Silverlight.Tests.xap</XapFilename>
+    <SilverlightManifestTemplate>Properties\AppManifest.xml</SilverlightManifestTemplate>
+    <SilverlightAppEntry>Microsoft.Practices.EnterpriseLibrary.Logging.Tests.App</SilverlightAppEntry>
+    <TestPageFileName>Validation.Silverlight.TestsTestPage.html</TestPageFileName>
+    <CreateTestPage>true</CreateTestPage>
+    <ValidateXaml>true</ValidateXaml>
+    <EnableOutOfBrowser>false</EnableOutOfBrowser>
+    <OutOfBrowserSettingsFile>Properties\OutOfBrowserSettings.xml</OutOfBrowserSettingsFile>
+    <UsePlatformExtensions>false</UsePlatformExtensions>
+    <ThrowErrorsInValidation>true</ThrowErrorsInValidation>
+    <LinkedServerProject>
+    </LinkedServerProject>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <!-- This property group is only here to support building this project using the 
+       MSBuild 3.5 toolset. In order to work correctly with this older toolset, it needs 
+       to set the TargetFrameworkVersion to v3.5 -->
+  <PropertyGroup Condition="'$(MSBuildToolsVersion)' == '3.5'">
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>Bin\DebugSL\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;SILVERLIGHT</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>Bin\ReleaseSL\</OutputPath>
+    <DefineConstants>TRACE;SILVERLIGHT</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\Lib\Silverlight\Microsoft.Practices.ServiceLocation.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity.Interception.Silverlight">
+      <HintPath>..\..\..\..\Lib\Silverlight\Microsoft.Practices.Unity.Interception.Silverlight.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity.Silverlight, Version=2.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\Lib\Silverlight\Microsoft.Practices.Unity.Silverlight.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Silverlight.Testing">
+      <HintPath>..\..\..\..\Lib\Silverlight\UnitTestFramework\Microsoft.Silverlight.Testing.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTesting.Silverlight">
+      <HintPath>..\..\..\..\Lib\Silverlight\UnitTestFramework\Microsoft.VisualStudio.QualityTools.UnitTesting.Silverlight.dll</HintPath>
+    </Reference>
+    <Reference Include="Moq.Silverlight">
+      <HintPath>..\..\..\..\Lib\Silverlight\ThirdParty\Moq\Moq.Silverlight.dll</HintPath>
+    </Reference>
+    <Reference Include="mscorlib" />
+    <Reference Include="System.ComponentModel.DataAnnotations, Version=2.0.5.0, Culture=neutral, PublicKeyToken=ddd0da4d3e678217, processorArchitecture=MSIL" />
+    <Reference Include="System.Windows" />
+    <Reference Include="system" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Net" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Windows.Browser" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App.Silverlight.xaml.cs">
+      <DependentUpon>App.Silverlight.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\NotificationTraceListenerDataFixture.Silverlight.cs" />
+    <Compile Include="Configuration\IsolatedStorageTraceListenerDataFixture.Silverlight.cs" />
+    <Compile Include="Configuration\LogFilterDataFixture.cs" />
+    <Compile Include="Configuration\LoggingSettingsTypeRegistrationFixture.Silverlight.cs" />
+    <Compile Include="Configuration\TextFormatterDataFixture.cs" />
+    <Compile Include="Configuration\TraceSourceDataFixture.cs" />
+    <Compile Include="TraceListeners\IsolatedStorage\given_empty_storage\when_adding_entries_of_size_exact_divisor_of_max_size.cs" />
+    <Compile Include="TraceListeners\IsolatedStorage\give_storage_with_wrapped_entries\Context.cs" />
+    <Compile Include="TraceListeners\IsolatedStorage\give_storage_with_wrapped_entries\when_adding_entry_equal_to_effective_max_size.cs" />
+    <Compile Include="TraceListeners\IsolatedStorage\InvalidInitializationFixture.cs" />
+    <Compile Include="PolicyInjection\CategoryFormatterFixture.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PolicyInjection\LogCallHandlerAttributeFixture.cs" />
+    <Compile Include="PolicyInjection\LogCallHandlerFixture.Silverlight.cs" />
+    <Compile Include="PolicyInjection\TraceLogEntryFixture.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TracerFixture.Silverlight.cs" />
+    <Compile Include="Filters\ExceptionThrowingLogFilter.cs" />
+    <Compile Include="Filters\LogFilterFixture.cs" />
+    <Compile Include="Filters\LogFilterHelperFixture.cs" />
+    <Compile Include="Filters\MockLogFilterErrorHandler.cs" />
+    <Compile Include="Formatters\ExceptionFormatterFixture.cs" />
+    <Compile Include="Formatters\LogFormatterFixture.cs" />
+    <Compile Include="LogWriterFixture.cs" />
+    <Compile Include="LogWriterInjectionFixture.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="TraceDispatcherScenarios\given_default_trace_dispatcher\Context.cs" />
+    <Compile Include="TraceDispatcherScenarios\given_default_trace_dispatcher\when_trace_data_is_received.cs" />
+    <Compile Include="TraceListenerFilterFixture.cs" />
+    <Compile Include="TraceListeners\IsolatedStorage\given_disposed_storage\Context.cs" />
+    <Compile Include="TraceListeners\IsolatedStorage\given_disposed_storage\when.cs" />
+    <Compile Include="TraceListeners\NetworkTraceListenerScenarios\given_trace_data\Context.cs" />
+    <Compile Include="TraceListeners\NetworkTraceListenerScenarios\given_trace_data\when.cs" />
+    <Compile Include="TraceListeners\NetworkTraceListenerScenarios\given_trace_data\when_data_is_traced.cs" />
+    <Compile Include="TraceListeners\NotificationTraceListenerScenarios\given_trace_data\Context.cs" />
+    <Compile Include="TraceListeners\NotificationTraceListenerScenarios\given_trace_data\when_data_is_traced.cs" />
+    <Compile Include="TraceListeners\NotificationTraceListenerScenarios\given_trace_data\when.cs" />
+    <Compile Include="TraceListeners\IsolatedStorage\given_repository\when.cs" />
+    <Compile Include="TraceListeners\IsolatedStorage\given_repository_on_existing_file\when.cs" />
+    <Compile Include="TraceListeners\IsolatedStorage\given_repository_on_existing_file\when_adding_single_log_entry.cs" />
+    <Compile Include="TraceListeners\IsolatedStorage\given_repository_on_existing_locked_file\Context.cs" />
+    <Compile Include="TraceListeners\IsolatedStorage\given_repository_on_existing_locked_file\when.cs" />
+    <Compile Include="TraceListeners\IsolatedStorage\given_repository_on_existing_locked_file\when_getting_entries.cs" />
+    <Compile Include="TraceListeners\IsolatedStorage\given_repository_on_existing_locked_file\when_adding_an_entry.cs" />
+    <Compile Include="TraceListeners\IsolatedStorage\EntryComparer.cs" />
+    <Compile Include="TraceListeners\IsolatedStorage\given_empty_storage\Context.cs" />
+    <Compile Include="TraceListeners\IsolatedStorage\given_empty_storage\when_adding_entry_equal_to_effective_max_size.cs" />
+    <Compile Include="TraceListeners\IsolatedStorage\given_empty_storage\when_adding_entry_over_effective_max_size.cs" />
+    <Compile Include="TraceListeners\IsolatedStorage\given_empty_storage\when_adding_multiple_entries_below_max_size.cs" />
+    <Compile Include="TraceListeners\IsolatedStorage\given_empty_storage\when_adding_single_entry.cs" />
+    <Compile Include="TraceListeners\IsolatedStorage\given_empty_storage\when_getting_entries.cs" />
+    <Compile Include="TraceListeners\IsolatedStorage\given_initialized_stream\Context.cs" />
+    <Compile Include="TraceListeners\IsolatedStorage\given_initialized_stream\when_storage_is_initialized.cs" />
+    <Compile Include="TraceListeners\IsolatedStorage\given_log_entry_serializer\Context.cs" />
+    <Compile Include="TraceListeners\IsolatedStorage\given_log_entry_serializer\when_serializing_log_entry_with_custom_extended_properties.cs" />
+    <Compile Include="TraceListeners\IsolatedStorage\given_log_entry_serializer\when_serializing_log_entry_with_extended_properties.cs" />
+    <Compile Include="TraceListeners\IsolatedStorage\given_log_entry_serializer\when_serializing_log_entry_with_simple_properties.cs" />
+    <Compile Include="TraceListeners\IsolatedStorage\given_log_entry_serializer\when_serializing_log_entry_with_categories.cs" />
+    <Compile Include="TraceListeners\IsolatedStorage\given_log_entry_serializer\when_serializing_empty_log_entry.cs" />
+    <Compile Include="TraceListeners\IsolatedStorage\given_repository\Context.cs" />
+    <Compile Include="TraceListeners\IsolatedStorage\given_repository\when_adding_multiple_log_entries.cs" />
+    <Compile Include="TraceListeners\IsolatedStorage\given_repository\when_adding_single_log_entry.cs" />
+    <Compile Include="TraceListeners\IsolatedStorage\given_repository_file_does_not_exist\Context.cs" />
+    <Compile Include="TraceListeners\IsolatedStorage\given_repository_file_does_not_exist\when_creating_repository_for_larger_than_available_size.cs" />
+    <Compile Include="TraceListeners\IsolatedStorage\given_repository_file_does_not_exist\when_creating_repository_for_available_size.cs" />
+    <Compile Include="TraceListeners\IsolatedStorage\given_repository_on_existing_file\Context.cs" />
+    <Compile Include="TraceListeners\IsolatedStorage\given_repository_on_existing_file\when_requesting_property_values.cs" />
+    <Compile Include="TraceListeners\IsolatedStorage\given_trace_listener\Context.cs" />
+    <Compile Include="TraceListeners\IsolatedStorage\given_trace_listener\when_flushing_the_listener.cs" />
+    <Compile Include="TraceListeners\IsolatedStorage\given_trace_listener\when.cs" />
+    <Compile Include="TraceListeners\IsolatedStorage\given_trace_listener\when_logging_an_arbitrary_object.cs" />
+    <Compile Include="TraceListeners\IsolatedStorage\given_trace_listener\when_disposing_the_listener.cs" />
+    <Compile Include="TraceListeners\IsolatedStorage\given_trace_listener\when_logging_an_entry.cs" />
+    <Compile Include="TraceListeners\IsolatedStorage\give_storage_with_entries\Context.cs" />
+    <Compile Include="TraceListeners\IsolatedStorage\give_storage_with_entries\when_adding_entry_equal_to_effective_max_size.cs" />
+    <Compile Include="TraceListeners\IsolatedStorage\give_storage_with_entries\when_adding_entry_over_effective_max_size.cs" />
+    <Compile Include="TraceListeners\IsolatedStorage\give_storage_with_entries\when_adding_entry_requiring_two_oldest_entries_to_be_removed.cs" />
+    <Compile Include="TraceListeners\IsolatedStorage\give_storage_with_entries\when_adding_entry_larger_than_remaining_space.cs" />
+    <Compile Include="TraceSourceFixture.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\AppManifest.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\Src\Common.Silverlight.csproj">
+      <Project>{453CC31C-5264-411F-96C7-84CB52298DE1}</Project>
+      <Name>Common.Silverlight</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Common\Tests\Common.TestSupport\Common.TestSupport.Silverlight.csproj">
+      <Project>{ACC8EC0A-83D2-442D-A418-739509C742D0}</Project>
+      <Name>Common.TestSupport.Silverlight</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Src\Logging\Logging.Silverlight.csproj">
+      <Project>{7195499F-52E7-403F-9244-67D752F3CCF7}</Project>
+      <Name>Logging.Silverlight</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Logging.TestSupport\Logging.TestSupport.Silverlight.csproj">
+      <Project>{5156E0A2-44CE-4FB7-8572-31CE7F5943F1}</Project>
+      <Name>Logging.TestSupport.Silverlight</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="App.Silverlight.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Diagnostics\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Silverlight\$(SilverlightVersion)\Microsoft.Silverlight.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{A1591282-1198-4647-A2B1-27E5FF5F6F3B}">
+        <SilverlightProjectProperties />
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>

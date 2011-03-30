@@ -12,19 +12,24 @@
 using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Diagnostics;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+#if !SILVERLIGHT
+using System.Diagnostics;
+#else
+using Microsoft.Practices.EnterpriseLibrary.Logging.Diagnostics;
+#endif
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Tests
 {
     [TestClass]
     public class TraceSourceDataFixture
     {
+#if !SILVERLIGHT
         [TestInitialize]
         public void TestInitialize()
         {
@@ -88,6 +93,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Tests
             Assert.IsNotNull(roSettigs.TraceSources.Get(name).TraceListeners.Get("listener1"));
             Assert.IsNotNull(roSettigs.TraceSources.Get(name).TraceListeners.Get("listener2"));
         }
+#endif
     }
 
     [TestClass]
@@ -98,7 +104,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Tests
         [TestInitialize]
         public void Setup()
         {
-            data = new TraceSourceData("source", SourceLevels.Error, true);
+            data = new TraceSourceData { Name = "source", DefaultLevel = SourceLevels.Error, AutoFlush = true };
         }
 
         [TestMethod]
@@ -133,12 +139,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Tests
         public void Setup()
         {
             data =
-                new TraceSourceData("source", SourceLevels.Error, true)
+                new TraceSourceData
                 {
+                    Name = "source",
+                    DefaultLevel = SourceLevels.Error,
+                    AutoFlush = true,
                     TraceListeners = 
                     { 
-                        new TraceListenerReferenceData("listener1"), 
-                        new TraceListenerReferenceData("listener2")
+                        new TraceListenerReferenceData{ Name = "listener1"}, 
+                        new TraceListenerReferenceData{ Name = "listener2"}
                     }
                 };
         }

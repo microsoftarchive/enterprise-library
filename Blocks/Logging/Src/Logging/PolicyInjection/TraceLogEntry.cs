@@ -12,15 +12,23 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Management.Instrumentation;
+
+#if SILVERLIGHT
+    using Microsoft.Practices.EnterpriseLibrary.Logging.Diagnostics;
+#else
+    using System.Management.Instrumentation;
+#endif
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.PolicyInjection
 {
+
     /// <summary>
     /// A <see cref="LogEntry"/> class that contains the extra information logged
     /// by the <see cref="LogCallHandler"/>.
     /// </summary>
+#if !SILVERLIGHT
     [Serializable]
+#endif
     public class TraceLogEntry : LogEntry
     {
         private string typeName;
@@ -49,7 +57,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.PolicyInjection
         /// <param name="properties">Extra properties. This contains the parameters to the call.</param>
         /// <param name="typeName">Name of type implementing the method being called.</param>
         /// <param name="methodName">Method name being called.</param>
-        public TraceLogEntry(object message, string category, int priority, int eventId, TraceEventType severity, string title, IDictionary<string, object> properties, string typeName, string methodName) 
+        public TraceLogEntry(object message, string category, int priority, int eventId, TraceEventType severity, string title, IDictionary<string, object> properties, string typeName, string methodName)
             : base(message, category, priority, eventId, severity, title, properties)
         {
             this.typeName = typeName;
@@ -129,7 +137,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.PolicyInjection
         /// Total time to call the target.
         /// </summary>
         /// <value>null if not logged, else the elapsed time.</value>
-        [IgnoreMember]
+#if !SILVERLIGHT
+    [IgnoreMember]
+#endif
         public TimeSpan? CallTime
         {
             get { return callTime; }
@@ -141,7 +151,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.PolicyInjection
         /// This is to support WMI instrumentation by returning
         /// the actual <see cref="CallTime"/> 
         /// </summary>
-        [ManagedName("CallTime")]
+#if !SILVERLIGHT
+    [ManagedName("CallTime")]
+#endif
         public TimeSpan ElapsedTime
         {
             get { return callTime.HasValue ? callTime.Value : TimeSpan.Zero; }

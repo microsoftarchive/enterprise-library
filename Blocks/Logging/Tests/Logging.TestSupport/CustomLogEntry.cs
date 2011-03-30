@@ -10,11 +10,15 @@
 //===============================================================================
 
 using System;
+#if !SILVERLIGHT
 using System.Management.Instrumentation;
+#endif
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport
 {
+#if !SILVERLIGHT
     [Serializable]
+#endif
     public class CustomLogEntry : LogEntry
     {
         public CustomLogEntry()
@@ -40,13 +44,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport
             set { }
         }
 
+#if !SILVERLIGHT
         [IgnoreMember]
+#endif
         public string PropertyNotReadable
         {
             set { }
         }
 
+#if !SILVERLIGHT
         [IgnoreMember]
+#endif
         public string this[int index]
         {
             get { return null; }

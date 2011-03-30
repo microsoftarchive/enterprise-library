@@ -11,15 +11,21 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Filters;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+#if !SILVERLIGHT
 using System.Diagnostics;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Instrumentation;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Filters;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+#else
+using System.Linq;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Diagnostics;
+using Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport.TraceListeners;
+#endif
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
 {
@@ -33,6 +39,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
         const string TotalTraceListenerEntriesWritten = "Total Trace Listener Entries Written";
         const string counterCategoryName = "Enterprise Library Logging Counters";
 
+        ILoggingInstrumentationProvider instrumentationProvider;
+
+#if !SILVERLIGHT
         const string applicationInstanceName = "applicationInstanceName";
         const string instanceName = "Foo";
         string formattedInstanceName;
@@ -41,14 +50,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
         EnterpriseLibraryPerformanceCounter totalTraceListenerEntriesWritten;
         EnterpriseLibraryPerformanceCounter totalTraceOperationsStartedCounter;
         AppDomainNameFormatter nameFormatter;
-        ILoggingInstrumentationProvider instrumentationProvider;
         ITracerInstrumentationProvider tracerInstrumentationProvider;
+#endif
 
         [TestInitialize]
         public void SetUp()
         {
-            nameFormatter = new AppDomainNameFormatter(applicationInstanceName);
+#if !SILVERLIGHT
             instrumentationProvider = new LoggingInstrumentationProvider(instanceName, true, true, applicationInstanceName);
+            nameFormatter = new AppDomainNameFormatter(applicationInstanceName);
             tracerInstrumentationProvider = new TracerInstrumentationProvider(true, false, string.Empty);
             formattedInstanceName = nameFormatter.CreateName(instanceName);
             totalLoggingEventsRaised = new EnterpriseLibraryPerformanceCounter(counterCategoryName, TotalLoggingEventsRaised, formattedInstanceName);
@@ -59,8 +69,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
             formattedInstanceName = nameFormatter.CreateName(instanceName);
 
             totalTraceOperationsStartedCounter = new EnterpriseLibraryPerformanceCounter(TracerInstrumentationProvider.counterCategoryName, TracerInstrumentationProvider.TotalTraceOperationsStartedCounterName, formattedInstanceName);
+#else
+            instrumentationProvider = new NullLoggingInstrumentationProvider();
+#endif
         }
 
+#if !SILVERLIGHT
         [TestMethod]
         public void TotalTraceOperationsStartedCounterIncremented()
         {
@@ -87,6 +101,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
             long expected = 1;
             Assert.AreEqual(expected, totalTraceListenerEntriesWritten.Value);
         }
+#endif
 
         [TestMethod]
         public void CanCreateLogWriterUsingConstructor()
@@ -115,12 +130,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
             LogWriter writer = new LogWriterImpl(new List<ILogFilter>(), new Dictionary<string, LogSource>(), null, "default");
         }
 
+#if !SILVERLIGHT    // TODO add when configuration support is available
         [TestMethod]
         public void CanCreateLogWriterUsingContainer()
         {
             LogWriter writer = EnterpriseLibraryContainer.Current.GetInstance<LogWriter>();
             Assert.IsNotNull(writer);
         }
+#endif
 
         [TestMethod]
         public void CanGetLogFiltersByType()
@@ -174,6 +191,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
             Assert.AreEqual(200, priorityFilter2.MinimumPriority);
         }
 
+#if !SILVERLIGHT
         [TestMethod]
         public void VerifyTraceListenerPerfCounter()
         {
@@ -229,6 +247,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
             string lastEventLogEntry = CommonUtil.GetLastEventLogEntry();
             Assert.IsTrue(-1 != lastEventLogEntry.IndexOf("test exception"));
         }
+#endif
 
         [TestMethod]
         public void CanGetLogFiltersByName()
@@ -254,8 +273,90 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
             Assert.IsNotNull(priorityFilter);
             Assert.AreEqual(typeof(PriorityFilter), priorityFilter.GetType());
         }
+
+#if SILVERLIGHT
+        [TestMethod]
+        public void CanInitiateTracingFromLogWriter()
+        {
+            MockTraceListener.Reset();
+
+            var sharedMockListener = new MockTraceListener();
+
+            using (var logWriter =
+                new LogWriterImpl(
+                    new ILogFilter[0],
+                    new LogSource[]
+                    {
+                        new LogSource("MockCategoryOne", new TraceListener[] { sharedMockListener }, SourceLevels.All),
+                        new LogSource("operation", new TraceListener[] { sharedMockListener }, SourceLevels.All),
+                    },
+                    new LogSource(""),
+                    new LogSource(""),
+                    new LogSource(""),
+                    "MockCategoryOne",
+                    true,
+                    false))
+            {
+
+                Guid currentActivityId = Guid.Empty;
+
+                using (logWriter.StartTrace("operation"))
+                {
+                    currentActivityId = Trace.CorrelationManager.ActivityId;
+                    Assert.AreEqual(1, MockTraceListener.Entries.Count);
+                    CollectionAssert.AreEqual(MockTraceListener.LastEntry.Categories.ToArray(), new string[] { "operation" });
+                    Assert.AreEqual(currentActivityId, MockTraceListener.LastEntry.ActivityId);
+                    MockTraceListener.Reset();
+                }
+
+                Assert.AreEqual(1, MockTraceListener.Entries.Count);
+                CollectionAssert.AreEqual(MockTraceListener.LastEntry.Categories.ToArray(), new string[] { "operation" });
+                Assert.AreEqual(currentActivityId, MockTraceListener.LastEntry.ActivityId);
+            }
+        }
+
+        [TestMethod]
+        public void CanInitiateTracingWithActivityIdFromLogWriter()
+        {
+            MockTraceListener.Reset();
+
+            var sharedMockListener = new MockTraceListener();
+
+            using (var logWriter =
+                new LogWriterImpl(
+                    new ILogFilter[0],
+                    new LogSource[]
+                    {
+                        new LogSource("MockCategoryOne", new TraceListener[] { sharedMockListener }, SourceLevels.All),
+                        new LogSource("operation", new TraceListener[] { sharedMockListener }, SourceLevels.All),
+                    },
+                    new LogSource(""),
+                    new LogSource(""),
+                    new LogSource(""),
+                    "MockCategoryOne",
+                    true,
+                    false))
+            {
+
+                Guid currentActivityId = Guid.NewGuid();
+
+                using (logWriter.StartTrace("operation", currentActivityId))
+                {
+                    Assert.AreEqual(1, MockTraceListener.Entries.Count);
+                    CollectionAssert.AreEqual(MockTraceListener.LastEntry.Categories.ToArray(), new string[] { "operation" });
+                    Assert.AreEqual(currentActivityId, MockTraceListener.LastEntry.ActivityId);
+                    MockTraceListener.Reset();
+                }
+
+                Assert.AreEqual(1, MockTraceListener.Entries.Count);
+                CollectionAssert.AreEqual(MockTraceListener.LastEntry.Categories.ToArray(), new string[] { "operation" });
+                Assert.AreEqual(currentActivityId, MockTraceListener.LastEntry.ActivityId);
+            }
+        }
+#endif
     }
 
+#if !SILVERLIGHT
     [TestClass]
     public class GivenALogWriter
     {
@@ -338,4 +439,5 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
             }
         }
     }
+#endif
 }

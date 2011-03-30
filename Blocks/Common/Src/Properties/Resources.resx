@@ -334,4 +334,10 @@ The local elements type '{0}' is  incompatible with the parent elements type '{1
   <data name="EntlibNotYetConfigured" xml:space="preserve">
     <value>Enterprise Library is in the process of downloading configuration information. It may not be used until this process is complete.</value>
   </data>
+  <data name="ExceptionCanNotConvertDateTime" xml:space="preserve">
+    <value>The DateTimeTypeConverter can only convert DateTime values.</value>
+  </data>
+  <data name="ExceptionUnsupportedDateTimeFormat" xml:space="preserve">
+    <value>The DateTime '{0}' cannot be parsed. Please verify the DateTime format is correct. Supported format are en-US and universal format (ex: "yyyy'-'MM'-'dd'T'HH':'mm':'ss"). The time part is optional.</value>
+  </data>
 </root>

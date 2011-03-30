@@ -28,6 +28,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests.SchedulingScenario
         [TestMethod]
         public void then_the_first_job_executed()
         {
+            Assert.IsNull(initializeException);
             Assert.IsTrue(firstJobCompleted);
         }
 

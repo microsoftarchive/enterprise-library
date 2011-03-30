@@ -32,10 +32,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         /// </summary>
         public const string ExceptionHandling = "exceptionHandling";
 
+        
+#if !SILVERLIGHT
         /// <summary>
         /// Caching Application Block section name
         /// </summary>
         public const string Caching = "cachingConfiguration";
+#else
+        /// <summary>
+        /// Caching Application Block section name
+        /// </summary>
+        public const string Caching = "cachingSilverlightConfiguration";
+#endif
 
         /// <summary>
         /// Security Application Block section name

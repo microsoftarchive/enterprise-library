@@ -65,8 +65,10 @@
     <Reference Include="System.Windows.Browser" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Asserts\DateTimeAssert.cs" />
     <Compile Include="Configuration\ContainerModel\TypeRegistrationExtension.cs" />
     <Compile Include="ContextBase\ArrangeActAssert.cs" />
+    <Compile Include="CrossThreadTestRunner.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

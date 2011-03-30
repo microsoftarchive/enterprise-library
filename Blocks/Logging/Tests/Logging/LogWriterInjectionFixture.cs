@@ -11,16 +11,20 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
+#if !SILVERLIGHT
 using System.Diagnostics;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Filters;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport.TraceListeners;
 using Microsoft.Practices.ServiceLocation;
 using Microsoft.Practices.Unity;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+#else
+#endif
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
 {
+#if !SILVERLIGHT
     [TestClass]
     public class GivenLoggingUpdateCoordinator
     {
@@ -230,7 +234,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
             throw new NotImplementedException();
         }
     }
-
+#endif
     public class MockLoggingInstrumentationProvider : ILoggingInstrumentationProvider
     {
         public int ConfigurationFailureEventCalls = 0;

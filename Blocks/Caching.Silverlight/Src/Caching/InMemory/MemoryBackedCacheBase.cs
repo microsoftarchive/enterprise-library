@@ -44,15 +44,25 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.InMemory
             GC.SuppressFinalize(this);
         }
 
+        private bool isDisposed;
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)
             {
-                if (expirationScheduler != null)
+                this.isDisposed = true;
+
+                if (this.expirationScheduler != null)
                 {
-                    expirationScheduler.Stop();
-                    expirationScheduler.Dispose();
-                    expirationScheduler = null;
+                    using (this.expirationScheduler as IDisposable)
+                    {
+                        this.expirationScheduler.Stop();
+                        this.expirationScheduler = null;
+                    }
+                }
+
+                using (this.scavengingStrategy as IDisposable)
+                {
+                    this.scavengingStrategy = null;
                 }
             }
         }
@@ -182,7 +192,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.InMemory
 
             lock (padlock)
             {
-                return DoRemove(key);
+                return DoRemove(key, CacheEntryRemovedReason.Removed);
             }
         }
 
@@ -231,8 +241,57 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.InMemory
             this.entries.Add(entry.Key, entry);
         }
 
-        protected virtual void OnItemRemoved(TCacheEntry entry)
+        protected virtual bool OnItemRemoving(TCacheEntry entry, CacheEntryRemovedReason reason)
         {
+            switch (reason)
+            {
+                case CacheEntryRemovedReason.Expired:
+                case CacheEntryRemovedReason.ChangeMonitorChanged:
+                    return !TryUpdateItem(entry, reason);
+
+                case CacheEntryRemovedReason.Removed:
+                case CacheEntryRemovedReason.CacheSpecificEviction:
+                case CacheEntryRemovedReason.Evicted:
+                default:
+                    break;
+            }
+
+            return true;
+        }
+
+        private bool TryUpdateItem(TCacheEntry entry, CacheEntryRemovedReason reason)
+        {
+            var callback = entry.Policy != null ? entry.Policy.UpdateCallback : null;
+            if (callback != null)
+            {
+                try
+                {
+                    var args = new CacheEntryUpdateArguments(this, reason, entry.Key, entry.RegionName);
+                    callback(args);
+
+                    if (args.UpdatedCacheItem != null && args.UpdatedCacheItem.Key == entry.Key && args.UpdatedCacheItem.RegionName == entry.RegionName)
+                    {
+                        var policy = args.UpdatedCacheItemPolicy ?? new CacheItemPolicy { AbsoluteExpiration = InfiniteAbsoluteExpiration };
+                        DoSet(entry.Key, args.UpdatedCacheItem.Value, policy);
+                    }
+
+                    return true;
+                }
+                catch { }  // best effor to update
+            }
+
+            return false;
+        }
+
+        protected virtual void OnItemRemoved(TCacheEntry entry, CacheEntryRemovedReason reason)
+        {
+            this.entries.Remove(entry.Key);
+
+            var callback = entry.Policy != null ? entry.Policy.RemovedCallback : null;
+            if (callback != null)
+            {
+                callback(new CacheEntryRemovedArguments(this, reason, new CacheItem(entry.Key, entry.Value, entry.RegionName)));
+            }
         }
 
         #endregion
@@ -247,9 +306,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.InMemory
             TCacheEntry entry;
             if (entries.TryGetValue(key, out entry))
             {
-                this.DoUpdateLastAccessTime(entry);
-                return entry.Value;
+                if (entry.Policy.IsExpired(entry.LastAccessTime))
+                {
+                    this.DoRemove(entry.Key, CacheEntryRemovedReason.Expired);
+                }
+                else
+                {
+                    this.DoUpdateLastAccessTime(entry);
+                    return entry.Value;
+                }
             }
+
             return null;
         }
 
@@ -270,36 +337,47 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.InMemory
 
         protected IEnumerator<KeyValuePair<string, object>> DoGetEnumerator()
         {
-            List<KeyValuePair<string, object>> snapshot = entries.Select(pair =>
-            {
-                this.DoUpdateLastAccessTime(pair.Value);
-                return new KeyValuePair<string, object>(pair.Key, pair.Value.Value);
-            }).ToList();
+           var snapshot = entries
+                .Where(pair => !pair.Value.Policy.IsExpired(pair.Value.LastAccessTime))
+                .Select(pair => new KeyValuePair<string, object>(pair.Key, pair.Value.Value))
+                .ToList();
             return snapshot.GetEnumerator();
         }
 
         protected IDictionary<string, object> DoGetValues(IEnumerable<string> keys)
         {
-            return keys.Where(k => entries.ContainsKey(k))
-                .ToDictionary(k => k, k => entries[k].Value);
+            var snapshot = new Dictionary<string, object>();
+            foreach (var key in keys.Distinct())
+            {
+                var item = DoGet(key);
+                if (item != null)
+                {
+                    snapshot.Add(key, item);
+                }
+            }
 
+            return snapshot;
         }
 
-        protected object DoRemove(string key)
+        protected object DoRemove(string key, CacheEntryRemovedReason reason)
         {
-            TCacheEntry cachedItem;
-            if (entries.TryGetValue(key, out cachedItem))
+            TCacheEntry entry;
+            if (entries.TryGetValue(key, out entry))
             {
-                entries.Remove(key);
-                OnItemRemoved(cachedItem);
-                return cachedItem.Value;
+                if (OnItemRemoving(entry, reason))
+                {
+                    OnItemRemoved(entry, reason);
+                    return entry.Value;
+                }
             }
             return null;
         }
 
         protected virtual void DoSet(string key, object value, CacheItemPolicy policy)
         {
+            policy.Validate();
             var entry = CreateCacheEntry(key, value, policy);
+            DoRemove(key, CacheEntryRemovedReason.Removed);
             entries[key] = entry;
             ScheduleScavengingIfNeeded();
         }
@@ -322,31 +400,47 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.InMemory
 
         protected void DoExpirations()
         {
+            if (this.isDisposed)
+                return;
+
             lock (padlock)
             {
-                List<string> removedKeys = entries.Where(e => e.Value.Policy.IsExpired(e.Value.LastAccessTime))
-                    .Select(pair => pair.Key).ToList();
+                if (this.isDisposed)
+                    return;
+
+                var removedKeys = entries.Where(e => e.Value.Policy.IsExpired(e.Value.LastAccessTime)).Select(pair => pair.Key).ToList();
                 foreach (string key in removedKeys)
                 {
-                    DoRemove(key);
+                    if (this.isDisposed)
+                        return;
+
+                    DoRemove(key, CacheEntryRemovedReason.Expired);
                 }
             }
         }
 
         protected void DoScavenging()
         {
+            if (this.isDisposed)
+                return;
+
             lock (padlock)
             {
+                if (this.isDisposed)
+                    return;
+
                 var scavengingCandidates = scavengingStrategy.EntriesToScavenge(this.entries.Values).ToList();
 
                 foreach (var itemToScavenge in scavengingCandidates)
                 {
+                    if (this.isDisposed)
+                        return;
+
                     if(!scavengingStrategy.ShouldScavengeMore(this.entries))
                         break;
-                    DoRemove(itemToScavenge.Key);
-                }
 
-                scavengingStrategy.OnFinishingScavenging(this.entries);
+                    DoRemove(itemToScavenge.Key, CacheEntryRemovedReason.Evicted);
+                }
             }
         }
     }

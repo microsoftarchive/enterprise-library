@@ -9,6 +9,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
 {
     public class InMemoryCacheData : CacheData
     {
+        public InMemoryCacheData()
+        {
+            this.MaxItemsBeforeScavenging = 200;
+            this.ItemsLeftAfterScavenging = 80;
+
+            this.ExpirationPollingInterval = TimeSpan.FromMinutes(2);
+        }
+
         public override IEnumerable<TypeRegistration> GetRegistrations(IConfigurationSource configurationSource)
         {
             var cacheManagerRegistration =
@@ -17,32 +25,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
                         this.Name,
                         this.MaxItemsBeforeScavenging,
                         this.ItemsLeftAfterScavenging,
-                        Container.Resolved<ScavengingScheduler>(),
-                        Container.Resolved<ExpirationScheduler>(GetRecurringSchedulerName())))
+                        this.ExpirationPollingInterval))
                 {
                     Name = this.Name,
                     IsPublicName = true
                 };
 
-            var expirationTimerRegistration =
-                new TypeRegistration<IRecurringScheduledWork>(() => new ExpirationScheduler(this.PollInterval))
-                {
-                    Name = this.GetRecurringSchedulerName(),
-                    IsPublicName = false
-                };
 
-            return new TypeRegistration[] { cacheManagerRegistration, expirationTimerRegistration };
-        }
-
-        private string GetRecurringSchedulerName()
-        {
-            return this.Name + "__scheduler__" + this.GetHashCode();
+            return new TypeRegistration[] { cacheManagerRegistration };
         }
 
         public int MaxItemsBeforeScavenging { get; set; }
 
         public int ItemsLeftAfterScavenging { get; set; }
 
-        public TimeSpan PollInterval { get; set; }
+        public TimeSpan ExpirationPollingInterval { get; set; }
     }
 }

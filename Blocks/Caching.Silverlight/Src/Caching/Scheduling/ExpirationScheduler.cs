@@ -12,7 +12,7 @@ using System.Windows.Shapes;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.Scheduling
 {
-    public class ExpirationScheduler : IRecurringScheduledWork
+    public class ExpirationScheduler : IRecurringScheduledWork, IDisposable
     {
         private Timer timer;
         private readonly TimeSpan pollInterval;
@@ -26,7 +26,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Scheduling
 
         public void Dispose()
         {
-
             if (timer != null)
             {
                 Stop();
@@ -42,18 +41,27 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Scheduling
 
         public void Start()
         {
-            timer.Change(pollInterval, TimeSpan.FromMilliseconds(-1));
+            if (timer != null)
+            {
+                timer.Change(pollInterval, TimeSpan.FromMilliseconds(-1));
+            }
         }
 
         public void Stop()
         {
-            timer.Change(Timeout.Infinite, Timeout.Infinite);
+            if (timer != null)
+            {
+                timer.Change(Timeout.Infinite, Timeout.Infinite);
+            }
         }
 
         private void OnTimerIntervalElapsed(object state)
         {
-            expirationAction();
-            Start();
+            if (timer != null)
+            {
+                expirationAction();
+                Start();
+            }
         }
     }
 }

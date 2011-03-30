@@ -23,7 +23,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection
     /// An <see cref="ICallHandler"/> that runs validation of a call's parameters
     /// before calling the target.
     /// </summary>
-    [ConfigurationElementType(typeof(ValidationCallHandlerData))]
+#if !SILVERLIGHT
+    [Common.Configuration.ConfigurationElementType(typeof(ValidationCallHandlerData))]
+#endif
     public class ValidationCallHandler : ICallHandler
     {
         private readonly string ruleSet;
@@ -137,7 +139,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection
             }
 
             var configurationSource = ConfigurationSourceFactory.Create();
+#if !SILVERLIGHT    // todo remove when including other sources
             var instrumentationProvider = ValidationInstrumentationProvider.FromConfigurationSource(configurationSource);
+#else
+            var instrumentationProvider = new NullValidationInstrumentationProvider();
+#endif
             switch (specificationSource)
             {
                 case SpecificationSource.Both:

@@ -28,10 +28,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         Justification = "Fields are used internally")]
     public sealed class RangeValidatorAttribute : ValueValidatorAttribute
     {
-
-        private IComparable lowerBound;
+        private Type boundType;
+        private object lowerBound;
+        private IComparable effectiveLowerBound;
         private RangeBoundaryType lowerBoundType;
-        private IComparable upperBound;
+        private object upperBound;
+        private IComparable effectiveUpperBound;
         private RangeBoundaryType upperBoundType;
 
         /// <summary>
@@ -130,18 +132,28 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         /// <seealso cref="RangeBoundaryType"/>
         public RangeValidatorAttribute(Type boundType, string lowerBound, RangeBoundaryType lowerBoundType,
             string upperBound, RangeBoundaryType upperBoundType)
-            : this(ConvertBound(boundType, lowerBound, "lowerBound"), lowerBoundType,
-                    ConvertBound(boundType, upperBound, "upperBound"), upperBoundType)
+            : this(boundType, lowerBound, ConvertBound(boundType, lowerBound, "lowerBound"), lowerBoundType,
+                    upperBound, ConvertBound(boundType, upperBound, "upperBound"), upperBoundType)
         { }
 
         private RangeValidatorAttribute(IComparable lowerBound, RangeBoundaryType lowerBoundType,
             IComparable upperBound, RangeBoundaryType upperBoundType)
-        {
-            ValidatorArgumentsValidatorHelper.ValidateRangeValidator(lowerBound, lowerBoundType, upperBound, upperBoundType);
+            : this(null, lowerBound, lowerBound, lowerBoundType, upperBound, upperBound, upperBoundType)
+        { }
 
+        private RangeValidatorAttribute(
+            Type boundType,
+            object lowerBound, IComparable effectiveLowerBound, RangeBoundaryType lowerBoundType,
+            object upperBound, IComparable effectiveUpperBound, RangeBoundaryType upperBoundType)
+        {
+            ValidatorArgumentsValidatorHelper.ValidateRangeValidator(effectiveLowerBound, lowerBoundType, effectiveUpperBound, upperBoundType);
+
+            this.boundType = boundType;
             this.lowerBound = lowerBound;
+            this.effectiveLowerBound = effectiveLowerBound;
             this.lowerBoundType = lowerBoundType;
             this.upperBound = upperBound;
+            this.effectiveUpperBound = effectiveUpperBound;
             this.upperBoundType = upperBoundType;
         }
 
@@ -193,13 +205,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         /// <returns>The created <see cref="RangeValidator"/>.</returns>
         protected override Validator DoCreateValidator(Type targetType)
         {
-            return new RangeValidator(this.LowerBound, this.LowerBoundType, this.UpperBound, this.UpperBoundType, this.Negated);
+            return new RangeValidator(this.effectiveLowerBound, this.lowerBoundType, this.effectiveUpperBound, this.upperBoundType, this.Negated);
         }
 
         /// <summary>
         /// The lower bound
         /// </summary>
-        public IComparable LowerBound { get { return this.lowerBound; } }
+        public object LowerBound { get { return this.lowerBound; } }
+
+        /// <summary>
+        /// The lower bound
+        /// </summary>
+        public IComparable EffectiveLowerBound { get { return this.effectiveLowerBound; } }
 
         /// <summary>
         /// The indication of how to perform the lower bound check.
@@ -209,11 +226,24 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         /// <summary>
         /// The upper bound, or <see langword="null"/>.
         /// </summary>
-        public IComparable UpperBound { get { return this.upperBound; } }
+        public object UpperBound { get { return this.upperBound; } }
+
+        /// <summary>
+        /// The upper bound
+        /// </summary>
+        public IComparable EffectiveUpperBound { get { return this.effectiveUpperBound; } }
 
         /// <summary>
         /// The indication of how to perform the upper bound check.
         /// </summary>
         public RangeBoundaryType UpperBoundType { get { return this.upperBoundType; } }
+
+        /// <summary>
+        /// The type of the validated range.
+        /// </summary>
+        public Type BoundType
+        {
+            get { return boundType; }
+        }
     }
 }

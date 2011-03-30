@@ -68,15 +68,15 @@
   <ItemGroup>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Lib\Microsoft.Practices.ServiceLocation.dll</HintPath>
+      <HintPath>..\..\..\..\Lib\Desktop\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.Unity, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Lib\Microsoft.Practices.Unity.dll</HintPath>
+      <HintPath>..\..\..\..\Lib\Desktop\Microsoft.Practices.Unity.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.Unity.Interception, Version=2.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Lib\Microsoft.Practices.Unity.Interception.dll</HintPath>
+      <HintPath>..\..\..\..\Lib\Desktop\Microsoft.Practices.Unity.Interception.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
@@ -101,6 +101,17 @@
     <Compile Include="Configuration\CategoryFilterData.cs" />
     <Compile Include="Configuration\CategoryFilterEntry.cs" />
     <Compile Include="Configuration\BasicCustomTraceListenerData.cs" />
+    <Compile Include="Configuration\CategoryFilterEntry.Desktop.cs" />
+    <Compile Include="Configuration\CategoryFilterData.Desktop.cs" />
+    <Compile Include="Configuration\TextFormatterData.Desktop.cs" />
+    <Compile Include="Configuration\PriorityFilterData.Desktop.cs" />
+    <Compile Include="Configuration\LogEnabledFilterData.Desktop.cs" />
+    <Compile Include="Configuration\TraceListenerReferenceData.Desktop.cs" />
+    <Compile Include="Configuration\FormatterData.Desktop.cs" />
+    <Compile Include="Configuration\LogFilterData.Desktop.cs" />
+    <Compile Include="Configuration\SpecialTraceSourcesData.Desktop.cs" />
+    <Compile Include="Configuration\TraceSourceData.Desktop.cs" />
+    <Compile Include="Configuration\LoggingSettings.Desktop.cs" />
     <Compile Include="Configuration\CustomFormatterData.cs" />
     <Compile Include="Configuration\CustomLogFilterData.cs" />
     <Compile Include="Configuration\CustomTraceListenerData.cs" />
@@ -147,10 +158,12 @@
     <Compile Include="Configuration\XmlTraceListenerData.cs" />
     <Compile Include="ContextItems.cs" />
     <Compile Include="Configuration\FormattedEventLogTraceListenerData.cs" />
-    <Compile Include="Configuration\TraceListenerData.cs" />
+    <Compile Include="Configuration\TraceListenerData.Desktop.cs" />
     <Compile Include="Configuration\TraceListenerDataCollection.cs" />
     <Compile Include="Configuration\TraceListenerReferenceData.cs" />
     <Compile Include="Configuration\TraceSourceData.cs" />
+    <Compile Include="Tracer.Desktop.cs" />
+    <Compile Include="LogWriterImpl.Desktop.cs" />
     <Compile Include="ExceptionFormatter.cs" />
     <Compile Include="ExtraInformation\ComPlusInformationProvider.cs" />
     <Compile Include="ExtraInformation\DebugInformationProvider.cs" />
@@ -171,12 +184,14 @@
     <Compile Include="LoggingException.cs" />
     <Compile Include="LogWriterStructureHolder.cs" />
     <Compile Include="LogWriterFactory.cs" />
+    <Compile Include="NameValueCollectionExtension.Desktop.cs" />
     <Compile Include="ProjectInstaller.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="ProjectInstaller.Designer.cs">
       <DependentUpon>ProjectInstaller.cs</DependentUpon>
     </Compile>
+    <Compile Include="Properties\AssemblyInfo.Desktop.cs" />
     <Compile Include="TraceListenerFilter.cs" />
     <Compile Include="TraceListeners\CustomTraceListener.cs" />
     <Compile Include="TraceListeners\EmailTraceListener.cs" />
@@ -314,7 +329,7 @@
     <Compile Include="Configuration\Fluent\LoggingConfigurationExtension.cs" />
     <Compile Include="Configuration\LoggingDesignTime.cs" />
     <Compile Include="ILoggingUpdateCoordinator.cs" />
-    <Compile Include="LoggingUpdateCoordinator.cs" />
+    <Compile Include="LoggingUpdateCoordinator.Desktop.cs" />
     <Compile Include="LogWriterImpl.cs" />
     <Compile Include="TraceListeners\AttributeSettingTraceListenerWrapper.cs" />
     <Compile Include="Formatters\GenericTextFormatter.cs" />

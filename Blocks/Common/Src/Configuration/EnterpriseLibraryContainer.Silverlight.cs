@@ -49,7 +49,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
                 {
                     if (e.Error != null)
                     {
-                        resultArgs = new EnterpriseLibraryConfigurationCompletedEventArgs(e.Error);
+                        resultArgs = new EnterpriseLibraryConfigurationCompletedEventArgs(e.Error, state);
                     }
                     else
                     {
@@ -62,7 +62,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
                 catch (Exception ex)
                 {
                     resultArgs = new EnterpriseLibraryConfigurationCompletedEventArgs(ex, state);
-                    Current = null;
                 }
 
                 Interlocked.Exchange(ref downloadInProgress, 0);
@@ -110,7 +109,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         public EnterpriseLibraryConfigurationCompletedEventArgs(object state)
             : this(null, state)
         {
-            Error = null;
         }
 
         /// <summary>

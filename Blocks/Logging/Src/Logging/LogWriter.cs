@@ -10,19 +10,15 @@
 //===============================================================================
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Diagnostics;
 using System.Linq;
-using System.Security;
-using System.Security.Principal;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Filters;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Properties;
-using Microsoft.Practices.ServiceLocation;
-using Microsoft.Practices.Unity.Utility;
+
+#if !SILVERLIGHT
+using System.Diagnostics;
+#else
+using Microsoft.Practices.EnterpriseLibrary.Logging.Diagnostics;
+#endif
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging
 {
@@ -48,7 +44,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
     /// is set to true, then the logEntry is logged to the "logging errors and warnings" special log source.
     /// </para>
     /// </remarks>
-    public abstract class LogWriter : IDisposable
+    public abstract partial class LogWriter : IDisposable
     {
         /// <summary>
         /// EventID used on LogEntries that occur when internal LogWriter mechanisms fail.
@@ -60,6 +56,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         private const int DefaultEventId = 1;
         private const string DefaultTitle = "";
         private static readonly ICollection<string> emptyCategoriesList = new string[0];
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LogWriter"/> class.
+        /// </summary>
+        protected LogWriter()
+        {
+        }
 
         /// <summary>
         /// Gets the <see cref="LogSource"/> mappings available for the <see cref="LogWriter"/>.
@@ -85,6 +88,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         {
         }
 
+#if !SILVERLIGHT
         /// <summary>
         /// Empties the context items dictionary.
         /// </summary>
@@ -93,6 +97,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
             ContextItems items = new ContextItems();
             items.FlushContextItems();
         }
+#endif
 
         /// <summary>
         /// Returns the filter of type <typeparamref name="T"/>.
@@ -147,6 +152,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         {
         }
 
+#if !SILVERLIGHT
         /// <summary>
         /// Adds a key/value pair to the <see cref="System.Runtime.Remoting.Messaging.CallContext"/> dictionary.  
         /// Context items will be recorded with every log entry.
@@ -170,6 +176,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
             ContextItems items = new ContextItems();
             items.SetContextItem(key, value);
         }
+#endif
 
         /// <summary>
         /// Queries whether a <see cref="LogEntry"/> shold be logged.

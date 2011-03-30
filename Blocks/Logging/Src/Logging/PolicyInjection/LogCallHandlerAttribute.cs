@@ -10,9 +10,14 @@
 //===============================================================================
 
 using System;
-using System.Diagnostics;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
+
+#if !SILVERLIGHT
+	using System.Diagnostics;
+#else
+    using Microsoft.Practices.EnterpriseLibrary.Logging.Diagnostics;
+#endif
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.PolicyInjection
 {

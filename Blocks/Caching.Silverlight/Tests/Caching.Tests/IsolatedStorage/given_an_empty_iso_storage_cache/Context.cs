@@ -8,6 +8,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests.IsolatedStorage.gi
     public class Context : ArrangeActAssert
     {
         protected ObjectCache Cache;
+        protected long MaxSize = 100;
+        protected const int QuotaUsedBeforeScavenging = 80;
+        protected const int QuotaUsedAfterScavenging = 80;
+        protected TimeSpan PollingInterval = TimeSpan.FromMinutes(1);
         protected const string CacheName = "sample_cache_name";
         protected override void Arrange()
         {
@@ -20,7 +24,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests.IsolatedStorage.gi
         protected virtual void RefreshCache()
         {
             using (Cache as IDisposable) { }
-            Cache = new IsolatedStorageCache(CacheName);
+            Cache = new IsolatedStorageCache(CacheName, MaxSize, QuotaUsedBeforeScavenging, QuotaUsedAfterScavenging, PollingInterval, new IsolatedStorageCacheEntrySerializer());
         }
 
         protected override void Teardown()

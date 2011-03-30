@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Runtime.Caching;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests.InMemoryCachingScenarios.given_an_empty_in_memory_cache
 {
@@ -8,9 +10,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests.InMemoryCachingSce
     public class when_adding_items_over_scavenging_limit : Context
     {
         private string lastKeyAdded;
+        private List<CacheEntryRemovedArguments> removedArgumentsList;
 
         protected override void Act()
         {
+            removedArgumentsList = new List<CacheEntryRemovedArguments>();
+
             base.Act();
 
             var currentTime = new DateTimeOffset(2011, 1, 2, 2, 3, 0, TimeSpan.Zero);
@@ -22,7 +27,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests.InMemoryCachingSce
 
                 DateTimeOffset timeItemAdded = currentTime;
                 CachingTimeProvider.SetTimeProviderForTests(() => timeItemAdded);
-                Cache.Add(key, value, ObjectCache.InfiniteAbsoluteExpiration);
+                Cache.Add(key, value, new CacheItemPolicy
+                {
+                    AbsoluteExpiration = ObjectCache.InfiniteAbsoluteExpiration,
+                    RemovedCallback = (args) => this.removedArgumentsList.Add(args)
+                });
                 currentTime += TimeSpan.FromMinutes(1);
                 lastKeyAdded = key;
             }
@@ -44,6 +53,21 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests.InMemoryCachingSce
         public void then_cache_contains_newest_item_only()
         {
             Assert.IsTrue(Cache.Contains(lastKeyAdded));
+        }
+
+        [TestMethod]
+        public void then_removed_callback_was_invoked_for_each_removed_item()
+        {
+            Assert.AreEqual(ItemsBeforeScavenging - ItemsAfterScavenging + 1, removedArgumentsList.Count);
+            foreach (var removedArguments in removedArgumentsList)
+            {
+                Assert.IsNotNull(removedArguments);
+                Assert.AreEqual(Cache, removedArguments.Source);
+                Assert.AreEqual(CacheEntryRemovedReason.Evicted, removedArguments.RemovedReason);
+            }
+
+            Assert.IsNotNull(removedArgumentsList.Single(x => x.CacheItem.Key == "key 1"));
+            Assert.IsNotNull(removedArgumentsList.Single(x => x.CacheItem.Key == "key 2"));
         }
     }
 }

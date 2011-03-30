@@ -68,6 +68,7 @@
     <Compile Include="TestClasses\BaseTestTypeWithValidatorAttributesOnMethods.cs" />
     <Compile Include="TestClasses\BaseTestTypeWithValidatorAttributesOnProperties.cs" />
     <Compile Include="TestClasses\BaseTypeWithSelfValidationAttributesOnMethods.cs" />
+    <Compile Include="TestClasses\TestObjectWithMultiplePropertyTypes.cs" />
     <Compile Include="TestClasses\MockCustomValidator.Silverlight.cs" />
     <Compile Include="TestClasses\DerivedTestDomainObject.cs" />
     <Compile Include="TestClasses\DerivedTestTypeWithValidatorAttributes.cs" />

@@ -11,17 +11,21 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
-using System.Management.Instrumentation;
-using System.Runtime.Serialization;
-using System.Security;
-using System.Security.Permissions;
 using System.Text;
 using System.Threading;
 using System.Xml.Serialization;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
+#if !SILVERLIGHT
+using System.Diagnostics;
+using System.Management.Instrumentation;
+using System.Runtime.Serialization;
+using System.Security;
+using System.Security.Permissions;
+#else
+using Microsoft.Practices.EnterpriseLibrary.Logging.Diagnostics;
+#endif
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging
 {
@@ -29,19 +33,27 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
     /// Represents a log message.  Contains the common properties that are required for all log messages.
     /// </summary>
     [XmlRoot("logEntry")]
+#if !SILVERLIGHT
     [Serializable]
     [InstrumentationClass(InstrumentationType.Event)]
     [ManagedName("LogEntryV20")]
     public class LogEntry : ICloneable
+#else
+    public class LogEntry
+#endif
     {
         private static readonly TextFormatter toStringFormatter = new TextFormatter();
 
         private string message = string.Empty;
         private string title = string.Empty;
 
+#if !SILVERLIGHT
         [NonSerialized]
+#endif
         private ICollection<string> categories = new List<string>(0);
+#if !SILVERLIGHT
         private string[] categoryStrings;
+#endif
 
         private int priority = -1;
         private int eventId = 0;
@@ -57,21 +69,25 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         private IDictionary<string, object> extendedProperties;
 
         private string appDomainName;
+        private string threadName;
+#if !SILVERLIGHT
         private string processId;
         private string processName;
-        private string threadName;
         private string win32ThreadId;
+#endif
 
         internal bool timeStampInitialized = false;
         internal bool appDomainNameInitialized = false;
+        internal bool threadNameInitialized = false;
+        internal bool activityIdInitialized = false;
+#if !SILVERLIGHT
         internal bool machineNameInitialized = false;
         internal bool processIdInitialized = false;
         internal bool processNameInitialized = false;
         internal bool win32ThreadIdInitialized = false;
-        internal bool threadNameInitialized = false;
-        internal bool activityIdInitialized = false;
         private bool unmanagedCodePermissionAvailable = false;
         private bool unmanagedCodePermissionAvailableInitialized = false;
+#endif
 
         /// <summary>
         /// Initialize a new instance of a <see cref="LogEntry"/> class.
@@ -116,7 +132,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
 
             this.Message = message.ToString();
             this.Priority = priority;
+#if !SILVERLIGHT
             this.Categories = categories;
+#else
+            this.Categories = categories.ToArray();
+#endif
             this.EventId = eventId;
             this.Severity = severity;
             this.Title = title;
@@ -135,7 +155,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// <summary>
         /// Category name used to route the log entry to a one or more trace listeners.
         /// </summary>
+#if !SILVERLIGHT
         [IgnoreMember]
+#endif
         public ICollection<string> Categories
         {
             get { return categories; }
@@ -164,7 +186,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// <summary>
         /// Log entry severity as a <see cref="Severity"/> enumeration. (Unspecified, Information, Warning or Error).
         /// </summary>
+#if !SILVERLIGHT
         [IgnoreMember]
+#endif
         public TraceEventType Severity
         {
             get { return this.severity; }
@@ -213,28 +237,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         }
 
         /// <summary>
-        /// Name of the computer.
-        /// </summary>
-        public string MachineName
-        {
-            get
-            {
-                if (!machineNameInitialized)
-                {
-                    InitializeMachineName();
-                }
-
-                return this.machineName;
-            }
-            set
-            {
-                this.machineName = value;
-                machineNameInitialized = true;
-            }
-        }
-
-
-        /// <summary>
         /// The <see cref="AppDomain"/> in which the program is running
         /// </summary>
         public string AppDomainName
@@ -252,6 +254,50 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
             {
                 this.appDomainName = value;
                 appDomainNameInitialized = true;
+            }
+        }
+
+        /// <summary>
+        /// The name of the .NET thread.
+        /// </summary>
+        ///  <seealso cref="Win32ThreadId"/>
+        public string ManagedThreadName
+        {
+            get
+            {
+                if (!threadNameInitialized)
+                {
+                    InitializeThreadName();
+                }
+
+                return this.threadName;
+            }
+            set
+            {
+                this.threadName = value;
+                threadNameInitialized = true;
+            }
+        }
+
+#if !SILVERLIGHT
+        /// <summary>
+        /// Name of the computer.
+        /// </summary>
+        public string MachineName
+        {
+            get
+            {
+                if (!machineNameInitialized)
+                {
+                    InitializeMachineName();
+                }
+
+                return this.machineName;
+            }
+            set
+            {
+                this.machineName = value;
+                machineNameInitialized = true;
             }
         }
 
@@ -298,28 +344,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         }
 
         /// <summary>
-        /// The name of the .NET thread.
-        /// </summary>
-        ///  <seealso cref="Win32ThreadId"/>
-        public string ManagedThreadName
-        {
-            get
-            {
-                if (!threadNameInitialized)
-                {
-                    InitializeThreadName();
-                }
-
-                return this.threadName;
-            }
-            set
-            {
-                this.threadName = value;
-                threadNameInitialized = true;
-            }
-        }
-
-        /// <summary>
         /// The Win32 Thread ID for the current thread.
         /// </summary>
         public string Win32ThreadId
@@ -339,11 +363,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
                 win32ThreadIdInitialized = true;
             }
         }
+#endif
 
         /// <summary>
         /// Dictionary of key/value pairs to record.
         /// </summary>
+#if !SILVERLIGHT
         [IgnoreMember]
+#endif
         public IDictionary<string, object> ExtendedProperties
         {
             get
@@ -391,14 +418,27 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
             }
         }
 
-        private void InitializeMachineName()
-        {
-            this.MachineName = LogEntryContext.GetMachineNameSafe();
-        }
-
         private void InitializeAppDomainName()
         {
             this.AppDomainName = LogEntryContext.GetAppDomainNameSafe();
+        }
+
+        private void InitializeThreadName()
+        {
+            try
+            {
+                this.ManagedThreadName = Thread.CurrentThread.Name;
+            }
+            catch (Exception e)
+            {
+                this.ManagedThreadName = string.Format(CultureInfo.CurrentCulture, Properties.Resources.IntrinsicPropertyError, e.Message);
+            }
+        }
+
+#if !SILVERLIGHT
+        private void InitializeMachineName()
+        {
+            this.MachineName = LogEntryContext.GetMachineNameSafe();
         }
 
         private void InitializeProcessId()
@@ -429,18 +469,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
             }
         }
 
-        private void InitializeThreadName()
-        {
-            try
-            {
-                this.ManagedThreadName = Thread.CurrentThread.Name;
-            }
-            catch (Exception e)
-            {
-                this.ManagedThreadName = string.Format(CultureInfo.CurrentCulture, Properties.Resources.IntrinsicPropertyError, e.Message);
-            }
-        }
-
         private void InitializeWin32ThreadId()
         {
             if (this.UnmanagedCodePermissionAvailable)
@@ -461,6 +489,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
                     Properties.Resources.LogEntryIntrinsicPropertyNoUnmanagedCodePermissionError);
             }
         }
+#endif
 
         #endregion
 
@@ -468,7 +497,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// <summary>
         /// Tracing activity id
         /// </summary>
+#if !SILVERLIGHT
         [IgnoreMember]
+#endif
         public Guid ActivityId
         {
             get
@@ -490,7 +521,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// <summary>
         /// Related activity id
         /// </summary>
+#if !SILVERLIGHT
         [IgnoreMember]
+#endif
         public Guid? RelatedActivityId
         {
             get { return this.relatedActivityId; }
@@ -518,12 +551,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
             result.Priority = this.Priority;
 
             result.TimeStamp = this.TimeStamp;
-            result.MachineName = this.MachineName;
             result.AppDomainName = this.AppDomainName;
-            result.ProcessId = this.ProcessId;
-            result.ProcessName = this.ProcessName;
             result.ManagedThreadName = this.ManagedThreadName;
             result.ActivityId = this.ActivityId;
+#if !SILVERLIGHT
+            result.MachineName = this.MachineName;
+            result.ProcessId = this.ProcessId;
+            result.ProcessName = this.ProcessName;
+#endif
 
             // clone categories
             result.Categories = new List<string>(this.Categories);
@@ -580,6 +615,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
             return toStringFormatter.Format(this);
         }
 
+#if !SILVERLIGHT
         private bool UnmanagedCodePermissionAvailable
         {
             get
@@ -613,6 +649,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
                 unmanagedCodePermissionAvailableInitialized = true;
             }
         }
+#endif
 
         /// <summary>
         /// Set the intrinsic properties such as MachineName and UserIdentity.
@@ -621,14 +658,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         {
             InitializeTimeStamp();
             InitializeActivityId();
-            InitializeMachineName();
             InitializeAppDomainName();
+            InitializeThreadName();
+#if !SILVERLIGHT
+            InitializeMachineName();
             InitializeProcessId();
             InitializeProcessName();
-            InitializeThreadName();
             InitializeWin32ThreadId();
+#endif
         }
 
+#if !SILVERLIGHT
         /// <summary>
         /// Gets the current process name.
         /// </summary>
@@ -637,6 +677,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         {
             return LogEntryContext.GetProcessName();
         }
+#endif
 
         private static ICollection<string> BuildCategoriesCollection(string category)
         {
@@ -654,6 +695,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
             get { return this.ActivityId.ToString(); }
         }
 
+#if !SILVERLIGHT
         /// <summary>
         /// Category names used to route the log entry to a one or more trace listeners.
         /// This readonly property is available to support WMI queries
@@ -687,6 +729,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
             // We've just be deserialized, stick in our categories collection.
             categories = categoryStrings;
         }
+#endif
     }
 
     internal static class LogEntryContext
@@ -703,6 +746,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
             }
         }
 
+#if !SILVERLIGHT
         internal static string GetMachineNameSafe()
         {
             try
@@ -738,12 +782,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
                 return string.Format(CultureInfo.CurrentCulture, Properties.Resources.IntrinsicPropertyError, e.Message);
             }
         }
+#endif
 
         internal static Guid GetActivityId()
         {
             return Trace.CorrelationManager.ActivityId;
         }
 
+#if !SILVERLIGHT
         internal static string GetProcessName()
         {
             StringBuilder buffer = new StringBuilder(1024);
@@ -760,5 +806,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         {
             return NativeMethods.GetCurrentThreadId().ToString(NumberFormatInfo.InvariantInfo);
         }
+#endif
     }
 }

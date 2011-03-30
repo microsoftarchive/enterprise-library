@@ -1,62 +1,57 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Caching.InMemory;
-using System.Globalization;
+using Microsoft.Practices.EnterpriseLibrary.Caching.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.IsolatedStorage
 {
-    public class IsolatedStorageSizeScavengingStrategy
-        : IScavengingStrategy<IsolatedStorageCacheEntry>
+    public class IsolatedStorageSizeScavengingStrategy : IScavengingStrategy<IsolatedStorageCacheEntry>
     {
-        private const int ShouldCompactThreshold = 4 * 1024;
-
-        private const float DefaultMaxPercentualUsedSizeBeforeScavenging = 0.8f;
-        private const float DefaultPercentualUsedSizeLeftAfterScavenging = 0.6f;
+        private const int DefaultMaxItemsBeforeScavengingWhenNotWritable = 20;
 
         private readonly ICacheEntryStore store;
         private readonly IIsolatedStorageInfo isoStorage;
-        private readonly float maxPercentualUsedSizeBeforeScavenging;
-        private readonly float percentualUsedSizeLeftAfterScavenging;
+        private readonly float percentOfQuotaUsedBeforeScavenging;
+        private readonly float percentOfQuotaUsedAfterScavenging;
 
-        public IsolatedStorageSizeScavengingStrategy(ICacheEntryStore store, IIsolatedStorageInfo isoStorage, float maxPercentualUsedSizeBeforeScavenging, float percentualUsedSizeLeftAfterScavenging)
+        private int maxItemsBeforeScavengingWhenNotWritable;
+
+        public IsolatedStorageSizeScavengingStrategy(ICacheEntryStore store, IIsolatedStorageInfo isoStorage, int percentOfQuotaUsedBeforeScavenging, int percentOfQuotaUsedAfterScavenging)
         {
-            if (maxPercentualUsedSizeBeforeScavenging < 0 || maxPercentualUsedSizeBeforeScavenging > 1)
-                throw new ArgumentException("maxPercentualUsedSizeBeforeScavenging");
+            if (percentOfQuotaUsedBeforeScavenging <= 0 || percentOfQuotaUsedBeforeScavenging > 100)
+                throw new ArgumentException("percentOfQuotaUsedBeforeScavenging");
 
-            if (percentualUsedSizeLeftAfterScavenging < 0 || percentualUsedSizeLeftAfterScavenging > 1)
-                throw new ArgumentException("percentualUsedSizeLeftAfterScavenging");
+            if (percentOfQuotaUsedAfterScavenging <= 0 || percentOfQuotaUsedAfterScavenging > 100)
+                throw new ArgumentException("percentOfQuotaUsedAfterScavenging");
 
-            if (maxPercentualUsedSizeBeforeScavenging == 0)
-                maxPercentualUsedSizeBeforeScavenging = DefaultMaxPercentualUsedSizeBeforeScavenging;
-
-            if (percentualUsedSizeLeftAfterScavenging == 0)
-                percentualUsedSizeLeftAfterScavenging = DefaultPercentualUsedSizeLeftAfterScavenging;
-
-            if (percentualUsedSizeLeftAfterScavenging > maxPercentualUsedSizeBeforeScavenging)
+            if (percentOfQuotaUsedAfterScavenging > percentOfQuotaUsedBeforeScavenging)
                 throw new ArgumentException(
-                    string.Format(CultureInfo.CurrentCulture, "Upper threshold ({0:F2}) cannot be lower than lower threshold ({1:F2}).", maxPercentualUsedSizeBeforeScavenging, percentualUsedSizeLeftAfterScavenging), 
-                    "percentualUsedSizeLeftAfterScavenging");
+                    string.Format(CultureInfo.CurrentCulture, Resources.ExceptionPercentOfQuotaRangeComparison, percentOfQuotaUsedBeforeScavenging, percentOfQuotaUsedAfterScavenging), 
+                    "percentOfQuotaUsedAfterScavenging");
 
             this.store = store;
             this.isoStorage = isoStorage;
-            this.maxPercentualUsedSizeBeforeScavenging = maxPercentualUsedSizeBeforeScavenging;
-            this.percentualUsedSizeLeftAfterScavenging = percentualUsedSizeLeftAfterScavenging;
+            this.percentOfQuotaUsedBeforeScavenging = percentOfQuotaUsedBeforeScavenging / 100f;
+            this.percentOfQuotaUsedAfterScavenging = percentOfQuotaUsedAfterScavenging / 100f;
         }
 
         public bool ShouldScavenge(IDictionary<string, IsolatedStorageCacheEntry> entries)
         {
-            if (this.store.IsEnabled && this.store.Quota > 0)
+            if (this.store.IsWritable)
             {
-                if (this.ShouldCompact())
+                if (this.store.Quota > 0)
                 {
-                    return true;
+                    if (this.store.UsedPhysicalSize > GetCurrentCacheMaxSize() * this.percentOfQuotaUsedBeforeScavenging)
+                    {
+                        return entries.Count > 0;
+                    }
                 }
-
-                if (this.store.UsedSize > GetCurrentCacheMaxSize() * this.maxPercentualUsedSizeBeforeScavenging)
-                {
-                    return entries.Count > 0;
-                }
+            }
+            else if (entries.Count > this.GetMaxItemsBeforeScavengingWhenNotWritable(entries.Count))
+            {
+                return true;
             }
 
             return false;
@@ -64,12 +59,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.IsolatedStorage
 
         public bool ShouldScavengeMore(IDictionary<string, IsolatedStorageCacheEntry> entries)
         {
-            if (this.store.IsEnabled && this.store.Quota > 0)
+            if (this.store.IsWritable)
             {
-                if (this.store.UsedSize > GetCurrentCacheMaxSize() * this.percentualUsedSizeLeftAfterScavenging)
+                if (this.store.Quota > 0)
                 {
-                    return entries.Count > 0;
+                    if (this.store.UsedPhysicalSize > GetCurrentCacheMaxSize() * this.percentOfQuotaUsedAfterScavenging)
+                    {
+                        return entries.Count > 0;
+                    }
                 }
+            }
+            else if (entries.Count > this.GetMaxItemsBeforeScavengingWhenNotWritable(entries.Count))
+            {
+                return true;
             }
 
             return false;
@@ -85,40 +87,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.IsolatedStorage
             return Math.Min(this.store.Quota, this.isoStorage.AvailableFreeSpace + this.store.UsedPhysicalSize);
         }
 
-        public void OnFinishingScavenging(IDictionary<string, IsolatedStorageCacheEntry> entries)
+        protected virtual int GetMaxItemsBeforeScavengingWhenNotWritable(int entriesCount)
         {
-            if (this.store.IsEnabled)
+            if (this.maxItemsBeforeScavengingWhenNotWritable == 0)
             {
-                if (this.ShouldCompact())
-                {
-                    var mappings = this.store.Compact();
-
-                    if (mappings != null)
-                    {
-                        foreach (var mapping in mappings)
-                        {
-                            var entry = entries.Values.FirstOrDefault(x => x.StorageId == mapping.Key);
-                            if (entry == null)
-                            {
-                                throw new InvalidDataException("Serialized cache does not correspond to the version that is in memory.");
-                            }
-
-                            entry.StorageId = mapping.Value;
-                        }
-                    }
-                }
-            }
-        }
-
-        private bool ShouldCompact()
-        {
-            var usedPhysicalSize = this.store.UsedPhysicalSize;
-            if (usedPhysicalSize > (this.isoStorage.AvailableFreeSpace + usedPhysicalSize) * this.maxPercentualUsedSizeBeforeScavenging)
-            {
-                return this.store.UsedSize + ShouldCompactThreshold < this.store.UsedPhysicalSize;
+                this.maxItemsBeforeScavengingWhenNotWritable = Math.Max(entriesCount, DefaultMaxItemsBeforeScavengingWhenNotWritable);
             }
 
-            return false;
+            return this.maxItemsBeforeScavengingWhenNotWritable;
         }
     }
 }

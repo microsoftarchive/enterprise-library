@@ -36,5 +36,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests.IsolatedStorage.gi
             Assert.IsNotNull(value);
             CollectionAssert.AreEquivalent(Enumerable.Range(0, 5000).ToList(), value);
         }
+
+        [TestMethod]
+        public void then_non_deserializable_object_is_skipped()
+        {
+            Assert.IsNull(Cache["notDeserializable"]);
+        }
     }
 }

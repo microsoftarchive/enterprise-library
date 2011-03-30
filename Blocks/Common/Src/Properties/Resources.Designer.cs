@@ -178,6 +178,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The DateTimeTypeConverter can only convert DateTime values..
+        /// </summary>
+        public static string ExceptionCanNotConvertDateTime {
+            get {
+                return ResourceManager.GetString("ExceptionCanNotConvertDateTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The AssemblyQualifiedTypeNameConverter can only convert values of type &apos;{0}&apos;..
         /// </summary>
         public static string ExceptionCanNotConvertType {
@@ -670,6 +679,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Properties {
         public static string ExceptionUnsupportedBindingExpressionType {
             get {
                 return ResourceManager.GetString("ExceptionUnsupportedBindingExpressionType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The DateTime &apos;{0}&apos; cannot be parsed. Please verify the DateTime format is correct. Supported format are en-US and universal format (ex: &quot;yyyy&apos;-&apos;MM&apos;-&apos;dd&apos;T&apos;HH&apos;:&apos;mm&apos;:&apos;ss&quot;). The time part is optional..
+        /// </summary>
+        public static string ExceptionUnsupportedDateTimeFormat {
+            get {
+                return ResourceManager.GetString("ExceptionUnsupportedDateTimeFormat", resourceCulture);
             }
         }
         

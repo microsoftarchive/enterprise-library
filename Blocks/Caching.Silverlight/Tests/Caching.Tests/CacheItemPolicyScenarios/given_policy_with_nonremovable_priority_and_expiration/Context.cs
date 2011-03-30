@@ -9,18 +9,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests.CacheItemPolicySce
     public abstract class Context : ArrangeActAssert
     {
         protected DateTimeOffset ExpirationTime = new DateTimeOffset(2011, 2, 25, 11, 44, 00, TimeSpan.Zero);
-        protected IExtendedCacheItemPolicy Policy;
+        protected CacheItemPolicy Policy;
 
         protected override void Arrange()
         {
             base.Arrange();
 
-            Policy = new DefaultExtendedCacheItemPolicy(
+            Policy = 
                 new CacheItemPolicy
                 {
                     AbsoluteExpiration = ExpirationTime,
                     Priority = CacheItemPriority.NotRemovable
-                });
+                };
         }
 
         protected override void Teardown()

@@ -1,127 +1,153 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
 using System.IO.IsolatedStorage;
 using System.Text;
+using System.Linq;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.IsolatedStorage
 {
     public class CacheEntryStore : ICacheEntryStore, IDisposable
     {
-        private const int BlockSize = 256;
-
         private readonly string name;
-        private readonly long maxSize;
+        private readonly long maxSizeInBytes;
 
-        private IsolatedStorageCacheEntrySerializer serializer;
-        private BlockStorage blockStorage;
+        private IIsolatedStorageCacheEntrySerializer serializer;
+        private StorageAccessor storage;
 
-        public CacheEntryStore(string name, long maxSize)
+        public CacheEntryStore(string name, long maxSizeInBytes, IIsolatedStorageCacheEntrySerializer serializer)
         {
-            if (maxSize < 0)
-                throw new ArgumentOutOfRangeException("maxSize");
+            if (maxSizeInBytes < 0)
+                throw new ArgumentOutOfRangeException("maxSizeInBytes");
 
             this.name = name;
-            this.maxSize = maxSize;
+            this.maxSizeInBytes = maxSizeInBytes;
+            this.serializer = serializer;
 
             try
             {
-                this.blockStorage = new BlockStorage(name, BlockSize, maxSize);
-                this.serializer = new IsolatedStorageCacheEntrySerializer(this.blockStorage, Encoding.UTF8);
+                this.storage = new StorageAccessor(name, maxSizeInBytes);
             }
             catch (IsolatedStorageException)
             {
                 // use in memory cache only
-                DisposeChildDependencies();
-            }
-            catch (InvalidDataException)
-            {
-                DisposeChildDependencies();
-
-                BlockStorage.DeleteStorage(name);
-
-                this.blockStorage = new BlockStorage(name, BlockSize, maxSize);
-                this.serializer = new IsolatedStorageCacheEntrySerializer(this.blockStorage, Encoding.UTF8);
+                this.DisposeChildDependencies();
             }
         }
 
-        public bool IsEnabled
+        public bool IsWritable
         {
-            get { return this.serializer != null; }
+            get { return this.storage != null && !this.storage.IsReadOnly; }
         }
 
         public void Add(IsolatedStorageCacheEntry entry)
         {
-            if (this.IsEnabled)
+            if (this.IsWritable)
             {
-                this.serializer.Add(entry);
+                var serialized = this.serializer.Serialize(entry);
+                entry.StorageId = this.storage.Save(serialized);
             }
         }
 
         public void Remove(IsolatedStorageCacheEntry entry)
         {
-            if (this.IsEnabled)
+            if (this.IsWritable)
             {
-                this.serializer.Remove(entry);
+                EnsurePersisted(entry);
+
+                this.storage.Remove(entry.StorageId);
+                entry.StorageId = null;
             }
         }
 
         public void UpdateLastUpdateTime(IsolatedStorageCacheEntry entry)
         {
-            if (this.IsEnabled)
+            if (this.IsWritable)
             {
-                this.serializer.UpdateLastUpdateTime(entry);
+                EnsurePersisted(entry);
+
+                var update = this.serializer.GetUpdateForLastUpdateTime(entry);
+                this.storage.Overwrite(entry.StorageId, update.Bytes, update.Offset);
             }
         }
 
         public IEnumerable<IsolatedStorageCacheEntry> GetSerializedEntries()
         {
-            if (this.IsEnabled)
+            if (this.storage != null)
             {
+                IDictionary<string, byte[]> serializedEntries = null;
+
                 try
                 {
-                    return this.serializer.GetSerializedEntries();
+                    serializedEntries = this.storage.ReadAll();
                 }
                 catch (InvalidDataException)
                 {
-                    DisposeChildDependencies();
+                    this.DisposeChildDependencies();
 
-                    BlockStorage.DeleteStorage(name);
+                    if (this.IsWritable)
+                    {
+                        try
+                        {
+                            StorageAccessor.DeleteStorage(name);
 
-                    this.blockStorage = new BlockStorage(name, BlockSize, maxSize);
-                    this.serializer = new IsolatedStorageCacheEntrySerializer(this.blockStorage, Encoding.UTF8);
+                            this.storage = new StorageAccessor(name, maxSizeInBytes);
+                            serializedEntries = this.storage.ReadAll();
+                        }
+                        catch
+                        {
+                            // best effort to remove storage
+                            this.DisposeChildDependencies();
+                        }
+                    }
+                }
 
-                    return this.serializer.GetSerializedEntries();
+                if (serializedEntries != null)
+                {
+                    var entries = new List<IsolatedStorageCacheEntry>();
+
+                    foreach (var serializedEntry in serializedEntries)
+                    {
+                        try
+                        {
+                            if (serializedEntry.Value != null)
+                            {
+                                var entry = this.serializer.Deserialize(serializedEntry.Value);
+                                entry.StorageId = serializedEntry.Key;
+                                entries.Add(entry);
+                            }
+                            else
+                            {
+                                this.TryRemove(serializedEntry.Key);
+                            }
+                        }
+                        catch
+                        {
+                            // if cannot deserialize entry for some reason, try to remove it, and skip it
+                            // TODO log about this deserialization exception
+                            this.TryRemove(serializedEntry.Key);
+                        }
+                    }
+
+                    return entries;
                 }
             }
 
-            return null;
+            return Enumerable.Empty<IsolatedStorageCacheEntry>();
         }
 
         public static void DeleteStore(string name)
         {
-            BlockStorage.DeleteStorage(name);
-        }
-
-        private void DisposeChildDependencies()
-        {
-            using (this.serializer as IDisposable) { this.serializer = null; }
-            using (this.blockStorage as IDisposable) { this.blockStorage = null; }
+            StorageAccessor.DeleteStorage(name);
         }
 
         public long Quota
         {
-            get { return this.IsEnabled ? this.blockStorage.MaxSize : 0; }
-        }
-
-        public long UsedSize
-        {
-            get { return this.IsEnabled ? this.blockStorage.UsedSize : 0; }
+            get { return this.IsWritable ? this.storage.MaxSize : 0; }
         }
 
         public long UsedPhysicalSize
         {
-            get { return this.IsEnabled ? this.blockStorage.UsedPhysicalSize : 0; }
+            get { return this.IsWritable ? this.storage.UsedPhysicalSize : 0; }
         }
 
         public void Dispose()
@@ -143,14 +169,27 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.IsolatedStorage
             Dispose(false);
         }
 
-        public IDictionary<int, int> Compact()
+        private static void EnsurePersisted(IsolatedStorageCacheEntry entry)
         {
-            if (this.IsEnabled)
-            {
-                return this.blockStorage.Compact();
-            }
+            if (entry.StorageId == null)
+                throw new ArgumentException("Entry is not persisted.");
+        }
 
-            return null;
+        private void DisposeChildDependencies()
+        {
+            using (this.storage as IDisposable) { this.storage = null; }
+        }
+
+        private void TryRemove(string id)
+        {
+            if (this.IsWritable)
+            {
+                try
+                {
+                    this.storage.Remove(id);
+                }
+                catch { } // best effort to remove
+            }
         }
     }
 }

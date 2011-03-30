@@ -1,81 +1,54 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Runtime.Caching;
-using Microsoft.Practices.EnterpriseLibrary.Caching.InMemory;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.IsolatedStorage
 {
-    public class IsolatedStorageCacheEntrySerializer
+    public class IsolatedStorageCacheEntrySerializer : IIsolatedStorageCacheEntrySerializer
     {
-        private readonly BlockStorage blockStorage;
         private readonly Encoding encoding;
 
-        public IsolatedStorageCacheEntrySerializer(BlockStorage blockStorage, Encoding encoding)
+        public IsolatedStorageCacheEntrySerializer()
+            : this (Encoding.UTF8)
         {
-            this.blockStorage = blockStorage;
+        }
+
+        public IsolatedStorageCacheEntrySerializer(Encoding encoding)
+        {
             this.encoding = encoding;
         }
 
-        public void Add(IsolatedStorageCacheEntry entry)
+        public EntryUpdate GetUpdateForLastUpdateTime(IsolatedStorageCacheEntry entry)
         {
-            var bytes = Serialize(entry);
-            entry.StorageId = this.blockStorage.Save(bytes);
-        }
+            EntryUpdate update = new EntryUpdate();
+            update.Bytes = GetDateTimeOffsetBytes(entry.LastAccessTime);
+            update.Offset = lastAccessTicksOffset;
 
-        public void Remove(IsolatedStorageCacheEntry entry)
-        {
-            this.blockStorage.Remove(entry.StorageId.Value);
-            entry.StorageId = null;
-        }
-
-        public void UpdateLastUpdateTime(IsolatedStorageCacheEntry entry)
-        {
-            if (!entry.StorageId.HasValue)
-            {
-                throw new ArgumentException("Entry is not persisted.");
-            }
-
-            var lastAccessTimeBytes = GetDateTimeOffsetBytes(entry.LastAccessTime);
-
-            this.blockStorage.Overwrite(entry.StorageId.Value, lastAccessTimeBytes, lastAccessTicksOffset);
-        }
-
-        public IEnumerable<IsolatedStorageCacheEntry> GetSerializedEntries()
-        {
-            var entries = new List<IsolatedStorageCacheEntry>();
-            foreach (var id in this.blockStorage.GetIds())
-            {
-                var entry = this.Deserialize(this.blockStorage.Read(id));
-                entry.StorageId = id;
-                entries.Add(entry);
-            }
-
-            return entries;
+            return update;
         }
 
         public byte[] Serialize(IsolatedStorageCacheEntry entry)
         {
-            var stream = new MemoryStream();
+            using (var stream = new MemoryStream())
+            {
+                var lastAccessTimeBytes = GetDateTimeOffsetBytes(entry.LastAccessTime);
 
-            var lastAccessTimeBytes = GetDateTimeOffsetBytes(entry.LastAccessTime);
+                stream.Write(lastAccessTimeBytes, 0, lastAccessTimeBytes.Length);
 
-            stream.Write(lastAccessTimeBytes, 0, lastAccessTimeBytes.Length);
+                var keyBytes = this.encoding.GetBytes(entry.Key);
+                var policyBytes = SerializeObject(entry.Policy) ?? new byte[0];
+                var valueBytes = SerializeObject(entry.Value);
 
-            var keyBytes = this.encoding.GetBytes(entry.Key);
-            var policyBytes = SerializationUtility.ToBytes(entry.Policy) ?? new byte[0];
-            var valueBytes = SerializationUtility.ToBytes(entry.Value);
+                stream.Write(BitConverter.GetBytes(keyBytes.Length), 0, sizeof(int));
+                stream.Write(BitConverter.GetBytes(policyBytes.Length), 0, sizeof(int));
+                stream.Write(BitConverter.GetBytes(valueBytes.Length), 0, sizeof(int));
+                stream.Write(keyBytes, 0, keyBytes.Length);
+                stream.Write(policyBytes, 0, policyBytes.Length);
+                stream.Write(valueBytes, 0, valueBytes.Length);
 
-            stream.Write(BitConverter.GetBytes(keyBytes.Length), 0, sizeof(int));
-            stream.Write(BitConverter.GetBytes(policyBytes.Length), 0, sizeof(int));
-            stream.Write(BitConverter.GetBytes(valueBytes.Length), 0, sizeof(int));
-            stream.Write(keyBytes, 0, keyBytes.Length);
-            stream.Write(policyBytes, 0, policyBytes.Length);
-            stream.Write(valueBytes, 0, valueBytes.Length);
-
-            return stream.ToArray();
+                return stream.ToArray();
+            }
         }
 
         private const int lastAccessTicksOffset = 0;
@@ -111,17 +84,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.IsolatedStorage
 
             var key = this.encoding.GetString(bytes, keyOffset, keyLength);
 
-            IExtendedCacheItemPolicy policy = null;
+            CacheItemPolicy policy = null;
             if (policyLength != 0)
             {
                 var policyBytes = new byte[policyLength];
                 Array.Copy(bytes, keyOffset + keyLength, policyBytes, 0, policyLength);
-                policy = (IExtendedCacheItemPolicy)SerializationUtility.ToObject(policyBytes);
+                policy = (CacheItemPolicy)DeserializeObject(policyBytes);
             }
 
             var valueBytes = new byte[valueLength];
             Array.Copy(bytes, keyOffset + keyLength + policyLength, valueBytes, 0, valueLength);
-            var value = SerializationUtility.ToObject(valueBytes);
+            var value = DeserializeObject(valueBytes);
 
             var entry =
                 new IsolatedStorageCacheEntry(key, value, policy)
@@ -140,6 +113,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.IsolatedStorage
             Array.Copy(BitConverter.GetBytes(dateTimeOffset.Offset.Ticks), 0, lastAccessTimeBytes, sizeof(long), sizeof(long));
 
             return lastAccessTimeBytes;
+        }
+
+        protected virtual byte[] SerializeObject(object value)
+        {
+            return SerializationUtility.ToBytes(value);
+        }
+
+        protected virtual object DeserializeObject(byte[] bytes)
+        {
+            return SerializationUtility.ToObject(bytes);
         }
     }
 }

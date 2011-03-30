@@ -8,13 +8,26 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests.IsolatedStorage.gi
 {
     public class Context : ArrangeActAssert
     {
+        public class NonDeserializable
+        {
+            public NonDeserializable(string property)
+            {
+                this.Property = property;
+            }
+
+            public string Property { get; set; }
+        }
+
         protected ObjectCache Cache;
         protected const string CacheName = "initialized_cache";
 
         protected virtual long MaxSize
         {
-            get { return 64 * 1024; }
+            get { return 64; }
         }
+        protected const int QuotaUsedBeforeScavenging =80;
+        protected const int QuotaUsedAfterScavenging = 80;
+        protected TimeSpan PollingInterval = TimeSpan.FromMinutes(1);
 
         protected override void Arrange()
         {
@@ -30,13 +43,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests.IsolatedStorage.gi
 
             Cache["largeData"] = Enumerable.Range(0, 5000).ToList();
 
+            Cache["notDeserializable"] = new NonDeserializable("value");
+
             this.RefreshCache();
         }
 
         protected virtual void RefreshCache()
         {
             using (Cache as IDisposable) { }
-            Cache = new IsolatedStorageCache(CacheName, MaxSize);
+            Cache = new IsolatedStorageCache(CacheName, MaxSize, QuotaUsedBeforeScavenging, QuotaUsedAfterScavenging, PollingInterval, new IsolatedStorageCacheEntrySerializer());
         }
 
         protected override void Teardown()

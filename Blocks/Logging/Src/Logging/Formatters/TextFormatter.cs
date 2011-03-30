@@ -11,13 +11,17 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
 using System.Text;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Properties;
+#if !SILVERLIGHT
+using System.Diagnostics;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Properties;
+#else
+using Microsoft.Practices.EnterpriseLibrary.Logging.Diagnostics;
+#endif
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Formatters
 {
@@ -32,7 +36,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Formatters
     /// <seealso cref="GenericTextFormatter{T}"/>
     /// <seealso cref="TokenHandler{T}"/>
     /// <seealso cref="Formatter{T}"/>
+#if !SILVERLIGHT
     [ConfigurationElementType(typeof(TextFormatterData))]
+#endif
     public class TextFormatter : LogFormatter
     {
         private const string TimestampLocalStartDelimiter = "local";
@@ -62,14 +68,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Formatters
                 = GenericTextFormatter<LogEntry>.CreateSimpleTokenHandler("\t");
 
             // cached values
+            defaultTokenHandlers["localAppDomain"]
+                            = GenericTextFormatter<LogEntry>.CreateSimpleTokenHandler(LogEntryContext.GetAppDomainNameSafe());
+#if !SILVERLIGHT
             defaultTokenHandlers["localMachine"]
                 = GenericTextFormatter<LogEntry>.CreateSimpleTokenHandler(LogEntryContext.GetMachineNameSafe());
             defaultTokenHandlers["localProcessName"]
                             = GenericTextFormatter<LogEntry>.CreateSimpleTokenHandler(LogEntryContext.GetProcessNameSafe());
-            defaultTokenHandlers["localAppDomain"]
-                            = GenericTextFormatter<LogEntry>.CreateSimpleTokenHandler(LogEntryContext.GetAppDomainNameSafe());
             defaultTokenHandlers["localProcessId"]
                             = GenericTextFormatter<LogEntry>.CreateSimpleTokenHandler(LogEntryContext.GetProcessIdSafe());
+#endif
 
             // simple properties on log entry
             defaultTokenHandlers["message"]
@@ -87,20 +95,22 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Formatters
             defaultTokenHandlers["errorMessages"]
                 = GenericTextFormatter<LogEntry>.CreateSimpleTokenHandler(le => le.ErrorMessages);
 
-            defaultTokenHandlers["machine"]
-                = GenericTextFormatter<LogEntry>.CreateSimpleTokenHandler(le => le.MachineName);
             defaultTokenHandlers["appDomain"]
                 = GenericTextFormatter<LogEntry>.CreateSimpleTokenHandler(le => le.AppDomainName);
+            defaultTokenHandlers["threadName"]
+                = GenericTextFormatter<LogEntry>.CreateSimpleTokenHandler(le => le.ManagedThreadName);
+            defaultTokenHandlers["activity"]
+                = GenericTextFormatter<LogEntry>.CreateSimpleTokenHandler(le => le.ActivityId.ToString("D", CultureInfo.CurrentCulture));
+#if !SILVERLIGHT
+            defaultTokenHandlers["machine"]
+                = GenericTextFormatter<LogEntry>.CreateSimpleTokenHandler(le => le.MachineName);
             defaultTokenHandlers["processId"]
                 = GenericTextFormatter<LogEntry>.CreateSimpleTokenHandler(le => le.ProcessId);
             defaultTokenHandlers["processName"]
                 = GenericTextFormatter<LogEntry>.CreateSimpleTokenHandler(le => le.ProcessName);
-            defaultTokenHandlers["threadName"]
-                = GenericTextFormatter<LogEntry>.CreateSimpleTokenHandler(le => le.ManagedThreadName);
             defaultTokenHandlers["win32ThreadId"]
                 = GenericTextFormatter<LogEntry>.CreateSimpleTokenHandler(le => le.Win32ThreadId);
-            defaultTokenHandlers["activity"]
-                = GenericTextFormatter<LogEntry>.CreateSimpleTokenHandler(le => le.ActivityId.ToString("D", CultureInfo.CurrentCulture));
+#endif
 
             // parameterized tokens
             defaultTokenHandlers["timestamp"]
@@ -480,7 +490,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Formatters
         /// </summary>
         public static string DefaultTextFormat
         {
+#if !SILVERLIGHT
             get { return Resources.DefaultTextFormat; }
+#else
+            get { return Resources.DefaultTextFormatShort; }
+#endif
         }
     }
 }

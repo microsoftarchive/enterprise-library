@@ -9,6 +9,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests.InMemoryCachingSce
     public class when_adding_one_item_via_add_method : Context
     {
         private bool added;
+        private CacheEntryRemovedArguments removedArguments;
 
         protected override void Act()
         {
@@ -16,7 +17,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests.InMemoryCachingSce
 
             added = Cache.Add("key", "value", new CacheItemPolicy
             {
-                SlidingExpiration = TimeSpan.FromMinutes(5)
+                SlidingExpiration = TimeSpan.FromMinutes(5),
+                RemovedCallback = args => removedArguments = args,
             });
         }
 
@@ -87,6 +89,39 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests.InMemoryCachingSce
             Assert.AreEqual("key", item.Key);
             Assert.AreEqual("value", item.Value);
             Assert.IsNull(item.RegionName);
+        }
+
+        [TestMethod]
+        public void then_can_remove_item()
+        {
+            var item = Cache.Remove("key");
+            Assert.AreEqual("value", item);
+
+            Assert.IsNull(Cache["key"]);
+        }
+
+        [TestMethod]
+        public void then_removing_item_invokes_removed_callback()
+        {
+            Cache.Remove("key");
+
+            Assert.IsNotNull(removedArguments);
+            Assert.AreEqual("key", removedArguments.CacheItem.Key);
+            Assert.AreEqual("value", removedArguments.CacheItem.Value);
+            Assert.AreEqual(Cache, removedArguments.Source);
+            Assert.AreEqual(CacheEntryRemovedReason.Removed, removedArguments.RemovedReason);
+        }
+
+        [TestMethod]
+        public void then_overwriting_item_invokes_removed_callback_for_old_one()
+        {
+            Cache["key"] = "new value";
+
+            Assert.IsNotNull(removedArguments);
+            Assert.AreEqual("key", removedArguments.CacheItem.Key);
+            Assert.AreEqual("value", removedArguments.CacheItem.Value);
+            Assert.AreEqual(Cache, removedArguments.Source);
+            Assert.AreEqual(CacheEntryRemovedReason.Removed, removedArguments.RemovedReason);
         }
     }
 }

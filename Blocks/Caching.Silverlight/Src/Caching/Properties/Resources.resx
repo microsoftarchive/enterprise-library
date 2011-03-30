@@ -261,4 +261,28 @@
   <data name="MaxItemsBeforeScavengingMustBePositive" xml:space="preserve">
     <value>The number of items allowed in the cache before scavenging happens must be greater than zero.</value>
   </data>
+  <data name="ExceptionAvailableSpaceNotEnough" xml:space="preserve">
+    <value>The available space is not enough to store the specified content.</value>
+  </data>
+  <data name="ExceptionOverwriteOverflow" xml:space="preserve">
+    <value>The content to overwrite overflows the current allocated disk space. Use overwrite method to overwrite a portion of the content that is of fixed size, otherwise remove the content and re-add it.</value>
+  </data>
+  <data name="ExceptionIdDoesNotExistInFileSystem" xml:space="preserve">
+    <value>The specified ID does not exist in the file system.</value>
+  </data>
+  <data name="ExceptionSizeIsNotCurrent" xml:space="preserve">
+    <value>This property cannot be queried until at least one ReadAll() call is made.</value>
+  </data>
+  <data name="ExceptionPercentOfQuotaRangeComparison" xml:space="preserve">
+    <value>The percentOfQuotaUsedBeforeScavenging threshold value ({0:F2}) cannot be lower than the percentOfQuotaUsedAfterScavenging threshold value ({1:F2}).</value>
+  </data>
+  <data name="ExceptionWriteNotSupportedInReadOnlyStorage" xml:space="preserve">
+    <value>The storage was opened in read-only mode because it was being used by another instance at creation time.</value>
+  </data>
+  <data name="ExceptionInvalidExpirationCombination" xml:space="preserve">
+    <value>AbsoluteExpiration must be DateTimeOffset.MaxValue or SlidingExpiration must be TimeSpan.Zero.</value>
+  </data>
+  <data name="ExceptionInvalidCallbackCombination" xml:space="preserve">
+    <value>Only one callback can be specified.  Either RemovedCallback or UpdateCallback must be null.</value>
+  </data>
 </root>

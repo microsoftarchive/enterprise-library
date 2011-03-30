@@ -11,11 +11,16 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Properties;
 using Microsoft.Practices.Unity.InterceptionExtension;
+
+#if !SILVERLIGHT
+	using System.Diagnostics;
+#else
+    using Microsoft.Practices.EnterpriseLibrary.Logging.Diagnostics;
+#endif
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.PolicyInjection
 {
@@ -24,7 +29,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.PolicyInjection
     /// Logging Application Block before and/or after the
     /// call to the target completes.
     /// </summary>
+#if !SILVERLIGHT
     [ConfigurationElementType(typeof(LogCallHandlerData))]
+#endif
     public class LogCallHandler : ICallHandler
     {
         private LogWriter logWriter;
@@ -42,13 +49,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.PolicyInjection
 
         private int order = 0;
 
+
         /// <summary>
         /// Creates a <see cref="LogCallHandler"/> with default settings that writes
         /// to the default log writer.
         /// </summary>
         /// <remarks>See the <see cref="LogCallHandlerDefaults"/> class for the default values.</remarks>
         public LogCallHandler()
+#if !SILVERLIGHT
             : this(Logger.Writer)
+#endif
         { }
 
         /// <summary>
@@ -347,7 +357,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.PolicyInjection
 
             if (includeCallStack)
             {
+#if !SILVERLIGHT
                 logEntry.CallStack = Environment.StackTrace;
+#else
+                logEntry.CallStack = new System.Diagnostics.StackTrace().ToString();
+#endif
             }
 
             logEntry.TypeName = input.Target.GetType().FullName;

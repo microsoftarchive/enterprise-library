@@ -9,8 +9,6 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
-
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Filters
 {
     /// <summary>
@@ -25,9 +23,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Filters
         /// <returns><b>true</b> if the message passes through the filter and should be distributed, <b>false</b> otherwise.</returns>
         bool Filter(LogEntry log);
 
-		/// <summary>
-		/// Gets the name of the log filter
-		/// </summary>
-		string Name { get; }
+        /// <summary>
+        /// Gets the name of the log filter
+        /// </summary>
+        string Name { get; }
     }
 }

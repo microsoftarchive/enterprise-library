@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+#if !SILVERLIGHT
 using System.Configuration;
 using System.Diagnostics;
 using System.Globalization;
@@ -24,6 +25,9 @@ using System.Xml.XPath;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+#else
+using Microsoft.Practices.EnterpriseLibrary.Logging.Diagnostics;
+#endif
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport
 {
@@ -50,6 +54,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport
         public const string ServiceModelCategory = "System.ServiceModel";
         public const string Xml = @"<data attr=""MyValue""/>";
         public static string[] Categories = { DefaultCategory, CustomCategory };
+
+#if !SILVERLIGHT
         static int eventLogEntryCounter = 0;
         static int eventLogEntryCounterCustom = 0;
 
@@ -221,6 +227,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport
             }
             return new EventLog(EventLogNameCustom);
         }
+#endif
 
         public static LogEntry GetDefaultLogEntry()
         {
@@ -237,11 +244,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport
             entry.Priority = 100;
 
             entry.TimeStamp = DateTime.MaxValue;
+#if !SILVERLIGHT
             entry.MachineName = "machine";
+#endif
 
             return entry;
         }
 
+#if !SILVERLIGHT
         static string GetFormattedMessage()
         {
             try
@@ -332,6 +342,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport
             Debug.Assert(length > 0);
             return buffer.ToString();
         }
+#endif
 
         public static Dictionary<string, object> GetPropertiesDictionary()
         {
@@ -343,6 +354,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport
             return hash;
         }
 
+#if !SILVERLIGHT
         public static string GetTimeZone()
         {
             int hours = TimeZone.CurrentTimeZone.GetUtcOffset(new DateTime(1999, 1, 1)).Hours;
@@ -396,5 +408,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport
 
             return new FileConfigurationSource(fileMap.ExeConfigFilename, false);
         }
+#endif
     }
 }

@@ -11,7 +11,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Common.Utility;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Filters;
 
@@ -101,10 +100,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
             bool logWarningsWhenNoCategoriesMatch,
             bool revertImpersonation)
             : this(
-                filters, 
-                traceSourceNames.ToDictionary(traceSources), 
-                allEventsTraceSource, 
-                notProcessedTraceSource, 
+                filters,
+                traceSourceNames.ToDictionary(traceSources),
+                allEventsTraceSource,
+                notProcessedTraceSource,
                 errorsTraceSource,
                 defaultCategory,
                 tracingEnabled,
@@ -198,6 +197,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
             DisposeSpecialLogSource(errorsTraceSource);
             DisposeSpecialLogSource(notProcessedTraceSource);
             DisposeSpecialLogSource(allEventsTraceSource);
+        }
+
+        internal void SetTracingEnabled(bool enabled)
+        {
+            this.tracingEnabled = enabled;
         }
 
         private void DisposeSpecialLogSource(LogSource specialLogSource)

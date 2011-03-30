@@ -66,6 +66,7 @@
   <ItemGroup>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\Lib\Silverlight\Microsoft.Practices.ServiceLocation.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Practices.Unity.Silverlight, Version=2.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\Lib\Silverlight\Microsoft.Practices.Unity.Silverlight.dll</HintPath>
@@ -91,6 +92,8 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Configuration\AsyncConfigurationScenarios\given_a_null_current_container\Context.cs" />
+    <Compile Include="Configuration\AsyncConfigurationScenarios\given_a_null_current_container\when_configuration_file_is_inexistent.cs" />
     <Compile Include="Configuration\ConfigurationModel\ConfigurationBasedTypeRegistrationsProviderFixture.cs" />
     <Compile Include="Configuration\ConfigurationModel\TypeRegistrationFixture.cs" />
     <Compile Include="Configuration\ConfigurationModel\Unity\UnityContainerConfiguratorFixture.cs">

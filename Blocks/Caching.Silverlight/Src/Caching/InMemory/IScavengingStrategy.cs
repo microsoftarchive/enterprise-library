@@ -15,7 +15,5 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.InMemory
         bool ShouldScavengeMore(IDictionary<string, TCacheEntry> entries);
 
         IEnumerable<TCacheEntry> EntriesToScavenge(IEnumerable<TCacheEntry> currentEntries);
-
-        void OnFinishingScavenging(IDictionary<string, TCacheEntry> entries);
     }
 }

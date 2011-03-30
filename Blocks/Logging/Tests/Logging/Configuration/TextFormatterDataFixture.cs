@@ -28,7 +28,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         [TestInitialize]
         public void Given()
         {
-            formatter = new TextFormatterData("formatterName", "someTemplate");
+            formatter = new TextFormatterData { Name = "formatterName", Template = "someTemplate" };
 
             registration = formatter.GetRegistrations().First();
         }
@@ -45,7 +45,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         public void ThenShouldProviderProperConstructorParameters()
         {
             registration.AssertConstructor()
-                .WithValueConstructorParameter<string>(formatter.Template);
+                .WithValueConstructorParameter<string>(formatter.Template)
+                .VerifyConstructorParameters();
         }
 
         [TestMethod]

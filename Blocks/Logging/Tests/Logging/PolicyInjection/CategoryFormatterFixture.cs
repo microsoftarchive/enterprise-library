@@ -61,7 +61,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.PolicyInjection
             CategoryFormatter formatter = new CategoryFormatter(GetTargetMethod());
             string formatted = formatter.FormatCategory(template);
 
-            Assert.IsTrue(formatted.StartsWith("Assembly Microsoft.Practices.EnterpriseLibrary.Logging.Tests"));
+#if !SILVERLIGHT
+	Assert.IsTrue(formatted.StartsWith("Assembly Microsoft.Practices.EnterpriseLibrary.Logging.Tests"));
+#else
+    Assert.IsTrue(formatted.StartsWith("Assembly Microsoft.Practices.EnterpriseLibrary.Logging.Silverlight.Tests"));
+#endif
         }
 
         [TestMethod]

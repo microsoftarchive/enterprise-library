@@ -21,8 +21,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection
     /// <summary>
     /// Exception thrown by the <see cref="ValidationCallHandler"/> if validation fails.
     /// </summary>
+#if !SILVERLIGHT
     [Serializable]
     public class ArgumentValidationException : ArgumentException, ISerializable
+#else
+    public class ArgumentValidationException : ArgumentException
+#endif
     {
         readonly private ValidationResults validationResults;
 
@@ -38,6 +42,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection
             this.validationResults = validationResults;
         }
 
+#if !SILVERLIGHT
         /// <summary>
         /// Supporting constructor for cross-appdomain exception handling.
         /// </summary>
@@ -70,6 +75,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection
             base.GetObjectData(info, context);
             info.AddValue("ArgumentValidationException.validationResults", validationResults);
         }
+#endif
 
         /// <summary>
         /// Creates and returns a string representation of the current exception.

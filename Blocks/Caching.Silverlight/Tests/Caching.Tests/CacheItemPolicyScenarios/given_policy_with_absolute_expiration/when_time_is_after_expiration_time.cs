@@ -1,5 +1,5 @@
 ﻿using System;
-
+using Microsoft.Practices.EnterpriseLibrary.Caching.InMemory;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests.CacheItemPolicyScenarios.given_policy_with_absolute_expiration

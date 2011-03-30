@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Practices.EnterpriseLibrary.Caching.InMemory;
 using Microsoft.Practices.EnterpriseLibrary.Caching.IsolatedStorage;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Runtime.Caching;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -12,17 +11,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests.IsolatedStorage
     [TestClass]
     public class IsolatedStorageSizeScavengingStrategyFixture
     {
-        private const float HighScavengeThreshold = 0.8f;
-        private const float LowScavengeThreshold = 0.6f;
+        private const int HighScavengeThreshold = 80;
+        private const int LowScavengeThreshold = 60;
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
-        public void WhenNegativeValueIsUsedForHighThreshold_ThenThrows()
+        public void WhenZeroIsUsedForHighThreshold_ThenThrows()
         {
             var store = Mock.Of<ICacheEntryStore>();
             var isoStore = Mock.Of<IIsolatedStorageInfo>();
 
-            var strategy = new IsolatedStorageSizeScavengingStrategy(store, isoStore, -1, LowScavengeThreshold);
+            var strategy = new IsolatedStorageSizeScavengingStrategy(store, isoStore, 0, LowScavengeThreshold);
         }
 
         [TestMethod]
@@ -32,17 +31,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests.IsolatedStorage
             var store = Mock.Of<ICacheEntryStore>();
             var isoStore = Mock.Of<IIsolatedStorageInfo>();
 
-            var strategy = new IsolatedStorageSizeScavengingStrategy(store, isoStore, 1.01f, LowScavengeThreshold);
+            var strategy = new IsolatedStorageSizeScavengingStrategy(store, isoStore, 101, LowScavengeThreshold);
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
-        public void WhenNegativeValueIsUsedForLowThreshold_ThenThrows()
+        public void WhenZeroIsUsedForLowThreshold_ThenThrows()
         {
             var store = Mock.Of<ICacheEntryStore>();
             var isoStore = Mock.Of<IIsolatedStorageInfo>();
 
-            var strategy = new IsolatedStorageSizeScavengingStrategy(store, isoStore, HighScavengeThreshold, -1);
+            var strategy = new IsolatedStorageSizeScavengingStrategy(store, isoStore, HighScavengeThreshold, 0);
         }
 
         [TestMethod]
@@ -52,13 +51,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests.IsolatedStorage
             var store = Mock.Of<ICacheEntryStore>();
             var isoStore = Mock.Of<IIsolatedStorageInfo>();
 
-            var strategy = new IsolatedStorageSizeScavengingStrategy(store, isoStore, 0.5f, 0.6f);
+            var strategy = new IsolatedStorageSizeScavengingStrategy(store, isoStore, 50, 60);
         }
 
         [TestMethod]
         public void WhenStoreIsEmpty_ThenShouldNotScavenge()
         {
-            var store = Mock.Of<ICacheEntryStore>(x => x.Quota == 10000 && x.UsedSize == 0 && x.IsEnabled == true);
+            var store = Mock.Of<ICacheEntryStore>(x => x.Quota == 10000 && x.UsedPhysicalSize == 0 && x.IsWritable == true);
             var isoStore = Mock.Of<IIsolatedStorageInfo>(x => x.AvailableFreeSpace == int.MaxValue);
 
             var strategy = new IsolatedStorageSizeScavengingStrategy(store, isoStore, HighScavengeThreshold, LowScavengeThreshold);
@@ -70,23 +69,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests.IsolatedStorage
         [TestMethod]
         public void WhenStoreIsFilledAboveThreshold_ThenShouldSuggestScavenge()
         {
-            var store = Mock.Of<ICacheEntryStore>(x => x.Quota == 10000 && x.UsedSize == 9000 && x.IsEnabled == true);
+            var store = Mock.Of<ICacheEntryStore>(x => x.Quota == 10000 && x.UsedPhysicalSize == 9000 && x.IsWritable == true);
             var isoStore = Mock.Of<IIsolatedStorageInfo>(x => x.AvailableFreeSpace == int.MaxValue);
 
             var strategy = new IsolatedStorageSizeScavengingStrategy(store, isoStore, HighScavengeThreshold, LowScavengeThreshold);
-            var entries = new Dictionary<string, IsolatedStorageCacheEntry>{ { "key", new IsolatedStorageCacheEntry("key", 4, Mock.Of<IExtendedCacheItemPolicy>()) }};
-
-            Assert.IsTrue(strategy.ShouldScavenge(entries));
-        }
-
-        [TestMethod]
-        public void WhenThresholdNotSpecified_ThenUsesDefault()
-        {
-            var store = Mock.Of<ICacheEntryStore>(x => x.Quota == 10000 && x.UsedSize == 9000 && x.IsEnabled == true);
-            var isoStore = Mock.Of<IIsolatedStorageInfo>(x => x.AvailableFreeSpace == int.MaxValue);
-
-            var strategy = new IsolatedStorageSizeScavengingStrategy(store, isoStore, 0, 0);
-            var entries = new Dictionary<string, IsolatedStorageCacheEntry> { { "key", new IsolatedStorageCacheEntry("key", 4, Mock.Of<IExtendedCacheItemPolicy>()) } };
+            var entries = new Dictionary<string, IsolatedStorageCacheEntry>{ { "key", new IsolatedStorageCacheEntry("key", 4, new CacheItemPolicy()) }};
 
             Assert.IsTrue(strategy.ShouldScavenge(entries));
         }
@@ -94,11 +81,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests.IsolatedStorage
         [TestMethod]
         public void WhenStoreIsFilledBelowHighThreshold_ThenShouldNotScavenge()
         {
-            var store = Mock.Of<ICacheEntryStore>(x => x.Quota == 10000 && x.UsedSize == 7000 && x.IsEnabled == true);
+            var store = Mock.Of<ICacheEntryStore>(x => x.Quota == 10000 && x.UsedPhysicalSize == 7000 && x.IsWritable == true);
             var isoStore = Mock.Of<IIsolatedStorageInfo>(x => x.AvailableFreeSpace == int.MaxValue);
 
             var strategy = new IsolatedStorageSizeScavengingStrategy(store, isoStore, HighScavengeThreshold, LowScavengeThreshold);
-            var entries = new Dictionary<string, IsolatedStorageCacheEntry> { { "key", new IsolatedStorageCacheEntry("key", 4, Mock.Of<IExtendedCacheItemPolicy>()) } };
+            var entries = new Dictionary<string, IsolatedStorageCacheEntry> { { "key", new IsolatedStorageCacheEntry("key", 4, new CacheItemPolicy()) } };
 
             Assert.IsFalse(strategy.ShouldScavenge(entries));
         }
@@ -106,11 +93,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests.IsolatedStorage
         [TestMethod]
         public void WhenStoreIsFilledAboveLowThreshold_ThenShouldSuggestScavengeMore()
         {
-            var store = Mock.Of<ICacheEntryStore>(x => x.Quota == 10000 && x.UsedSize == 7000 && x.IsEnabled == true);
+            var store = Mock.Of<ICacheEntryStore>(x => x.Quota == 10000 && x.UsedPhysicalSize == 7000 && x.IsWritable == true);
             var isoStore = Mock.Of<IIsolatedStorageInfo>(x => x.AvailableFreeSpace == int.MaxValue);
 
             var strategy = new IsolatedStorageSizeScavengingStrategy(store, isoStore, HighScavengeThreshold, LowScavengeThreshold);
-            var entries = new Dictionary<string, IsolatedStorageCacheEntry> { { "key", new IsolatedStorageCacheEntry("key", 4, Mock.Of<IExtendedCacheItemPolicy>()) } };
+            var entries = new Dictionary<string, IsolatedStorageCacheEntry> { { "key", new IsolatedStorageCacheEntry("key", 4, new CacheItemPolicy()) } };
 
             Assert.IsTrue(strategy.ShouldScavengeMore(entries));
         }
@@ -118,11 +105,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests.IsolatedStorage
         [TestMethod]
         public void WhenStoreIsFilledBelowLowThreshold_ThenShouldNotScavengeAnyMore()
         {
-            var store = Mock.Of<ICacheEntryStore>(x => x.Quota == 10000 && x.UsedSize == 5000 && x.IsEnabled == true);
+            var store = Mock.Of<ICacheEntryStore>(x => x.Quota == 10000 && x.UsedPhysicalSize == 5000 && x.IsWritable == true);
             var isoStore = Mock.Of<IIsolatedStorageInfo>(x => x.AvailableFreeSpace == int.MaxValue);
 
             var strategy = new IsolatedStorageSizeScavengingStrategy(store, isoStore, HighScavengeThreshold, LowScavengeThreshold);
-            var entries = new Dictionary<string, IsolatedStorageCacheEntry> { { "key", new IsolatedStorageCacheEntry("key", 4, Mock.Of<IExtendedCacheItemPolicy>()) } };
+            var entries = new Dictionary<string, IsolatedStorageCacheEntry> { { "key", new IsolatedStorageCacheEntry("key", 4, new CacheItemPolicy()) } };
 
             Assert.IsFalse(strategy.ShouldScavengeMore(entries));
         }
@@ -171,11 +158,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests.IsolatedStorage
         {
             var isoMaxSize = 10000;
             var cacheUsedSize = 9000;
-            var store = Mock.Of<ICacheEntryStore>(x => x.UsedSize == cacheUsedSize && x.UsedPhysicalSize == cacheUsedSize && x.Quota == int.MaxValue && x.IsEnabled == true);
+            var store = Mock.Of<ICacheEntryStore>(x => x.UsedPhysicalSize == cacheUsedSize && x.Quota == int.MaxValue && x.IsWritable == true);
             var isoStore = Mock.Of<IIsolatedStorageInfo>(x => x.AvailableFreeSpace == isoMaxSize - cacheUsedSize);
 
             var strategy = new IsolatedStorageSizeScavengingStrategy(store, isoStore, HighScavengeThreshold, LowScavengeThreshold);
-            var entries = new Dictionary<string, IsolatedStorageCacheEntry> { { "key", new IsolatedStorageCacheEntry("key", 4, Mock.Of<IExtendedCacheItemPolicy>()) } };
+            var entries = new Dictionary<string, IsolatedStorageCacheEntry> { { "key", new IsolatedStorageCacheEntry("key", 4, new CacheItemPolicy()) } };
 
             Assert.IsTrue(strategy.ShouldScavenge(entries));
         }
@@ -185,95 +172,106 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests.IsolatedStorage
         {
             var isoMaxSize = 10000;
             var cacheUsedSize = 7000;
-            var store = Mock.Of<ICacheEntryStore>(x => x.UsedSize == cacheUsedSize && x.UsedPhysicalSize == cacheUsedSize && x.Quota == int.MaxValue && x.IsEnabled == true);
+            var store = Mock.Of<ICacheEntryStore>(x => x.UsedPhysicalSize == cacheUsedSize && x.Quota == int.MaxValue && x.IsWritable == true);
             var isoStore = Mock.Of<IIsolatedStorageInfo>(x => x.AvailableFreeSpace == isoMaxSize - cacheUsedSize);
 
             var strategy = new IsolatedStorageSizeScavengingStrategy(store, isoStore, HighScavengeThreshold, LowScavengeThreshold);
-            var entries = new Dictionary<string, IsolatedStorageCacheEntry> { { "key", new IsolatedStorageCacheEntry("key", 4, Mock.Of<IExtendedCacheItemPolicy>()) } };
+            var entries = new Dictionary<string, IsolatedStorageCacheEntry> { { "key", new IsolatedStorageCacheEntry("key", 4, new CacheItemPolicy()) } };
 
             Assert.IsFalse(strategy.ShouldScavenge(entries));
         }
 
         [TestMethod]
-        public void WhenFinishingScavenging_ThenInvokesCompactOnStore()
+        public void WhenStoreIsReadOnlyAndThereAreLessThan20Items_ThenShouldNotScavenge()
         {
-            var isoMaxSize = 10000;
-            var cacheUsedPhysicalSize = 9000;
-            var cacheUsedLogicalSize = 1000;
-            var store = Mock.Of<ICacheEntryStore>(x => x.UsedSize == cacheUsedLogicalSize && x.UsedPhysicalSize == cacheUsedPhysicalSize && x.Quota == int.MaxValue && x.IsEnabled == true);
-            var isoStore = Mock.Of<IIsolatedStorageInfo>(x => x.AvailableFreeSpace == isoMaxSize - cacheUsedPhysicalSize);
+            var store = Mock.Of<ICacheEntryStore>(x => x.IsWritable == false);
 
-            var strategy = new IsolatedStorageSizeScavengingStrategy(store, isoStore, HighScavengeThreshold, LowScavengeThreshold);
-            var entries = new Dictionary<string, IsolatedStorageCacheEntry> { { "key", new IsolatedStorageCacheEntry("key", 4, Mock.Of<IExtendedCacheItemPolicy>()) } };
+            var strategy = new IsolatedStorageSizeScavengingStrategy(store, Mock.Of<IIsolatedStorageInfo>(), HighScavengeThreshold, LowScavengeThreshold);
+            var entries = new Dictionary<string, IsolatedStorageCacheEntry>();
+            Assert.IsFalse(strategy.ShouldScavenge(entries));
 
-            strategy.OnFinishingScavenging(entries);
+            for (int i = 0; i < 20; i++)
+            {
+                entries.Add(i.ToString(), new IsolatedStorageCacheEntry(i.ToString(), i, new CacheItemPolicy()));
+            }
 
-            Mock.Get(store).Verify(x => x.Compact(), Times.Once());
+            Assert.IsFalse(strategy.ShouldScavenge(entries));
         }
 
         [TestMethod]
-        public void WhenFinishingScavengingWithFreeSpaceAboveThreshold_ThenDoesNotCompactStore()
+        public void WhenStoreIsReadOnlyAndThereAreMoreThan20Items_ThenShouldScavenge()
         {
-            var isoMaxSize = 10000;
-            var cacheUsedPhysicalSize = 5000;
-            var cacheUsedLogicalSize = 1000;
-            var store = Mock.Of<ICacheEntryStore>(x => x.UsedSize == cacheUsedLogicalSize && x.UsedPhysicalSize == cacheUsedPhysicalSize && x.Quota == int.MaxValue && x.IsEnabled == true);
-            var isoStore = Mock.Of<IIsolatedStorageInfo>(x => x.AvailableFreeSpace == isoMaxSize - cacheUsedPhysicalSize);
+            var store = Mock.Of<ICacheEntryStore>(x => x.IsWritable == false);
 
-            var strategy = new IsolatedStorageSizeScavengingStrategy(store, isoStore, HighScavengeThreshold, LowScavengeThreshold);
-            var entries = new Dictionary<string, IsolatedStorageCacheEntry> { { "key", new IsolatedStorageCacheEntry("key", 4, Mock.Of<IExtendedCacheItemPolicy>()) } };
-
-            strategy.OnFinishingScavenging(entries);
-
-            Mock.Get(store).Verify(x => x.Compact(), Times.Never());
-        }
-
-        [TestMethod]
-        public void WhenFinishingScavengingAndCompactReturnsMappings_ThenUpdatesStorageIdOnEntries()
-        {
-            var isoMaxSize = 10000;
-            var cacheUsedPhysicalSize = 9000;
-            var cacheUsedLogicalSize = 1000;
-            var store = Mock.Of<ICacheEntryStore>(x => x.UsedSize == cacheUsedLogicalSize && x.UsedPhysicalSize == cacheUsedPhysicalSize && x.Quota == int.MaxValue && x.IsEnabled == true);
-            Mock.Get(store).Setup(x => x.Compact()).Returns(new Dictionary<int,int> { { 5, 1 } });
-            var isoStore = Mock.Of<IIsolatedStorageInfo>(x => x.AvailableFreeSpace == isoMaxSize - cacheUsedPhysicalSize);
-
-            var strategy = new IsolatedStorageSizeScavengingStrategy(store, isoStore, HighScavengeThreshold, LowScavengeThreshold);
-            var entries = new Dictionary<string, IsolatedStorageCacheEntry> { { "key", new IsolatedStorageCacheEntry("key", 4, Mock.Of<IExtendedCacheItemPolicy>()) { StorageId = 5 } } };
-
-            strategy.OnFinishingScavenging(entries);
-
-            Assert.AreEqual(1, entries.Values.First().StorageId);
-        }
-
-        [TestMethod]
-        public void WhenShouldCompact_ThenSuggestScavenge()
-        {
-            var isoMaxSize = 100000;
-            var cacheUsedPhysicalSize = 80100;
-            var cacheUsedLogicalSize = 10000;
-            var store = Mock.Of<ICacheEntryStore>(x => x.UsedSize == cacheUsedLogicalSize && x.UsedPhysicalSize == cacheUsedPhysicalSize && x.Quota == int.MaxValue && x.IsEnabled == true);
-            var isoStore = Mock.Of<IIsolatedStorageInfo>(x => x.AvailableFreeSpace == isoMaxSize - cacheUsedPhysicalSize);
-
-            var strategy = new IsolatedStorageSizeScavengingStrategy(store, isoStore, HighScavengeThreshold, LowScavengeThreshold);
-            var entries = new Dictionary<string, IsolatedStorageCacheEntry> { { "key", new IsolatedStorageCacheEntry("key", 4, Mock.Of<IExtendedCacheItemPolicy>()) } };
+            var strategy = new IsolatedStorageSizeScavengingStrategy(store, Mock.Of<IIsolatedStorageInfo>(), HighScavengeThreshold, LowScavengeThreshold);
+            var entries = new Dictionary<string, IsolatedStorageCacheEntry>();
+            Assert.IsFalse(strategy.ShouldScavenge(entries));
+            for (int i = 0; i < 21; i++)
+            {
+                entries.Add(i.ToString(), new IsolatedStorageCacheEntry(i.ToString(), i, new CacheItemPolicy()));
+            }
 
             Assert.IsTrue(strategy.ShouldScavenge(entries));
         }
 
         [TestMethod]
-        public void WhenUsedSizeCloseToPhysicalSize_ThenDoesNotSuggestScavenge()
+        public void WhenStoreIsReadOnlyAndThereAreLessThanTheAmountOfItemsThatWereInTheFirstCallAbove20_ThenShouldNotScavenge()
         {
-            var isoMaxSize = 100000;
-            var cacheUsedPhysicalSize = 80100;
-            var cacheUsedLogicalSize = 79900;
-            var store = Mock.Of<ICacheEntryStore>(x => x.UsedSize == cacheUsedLogicalSize && x.UsedPhysicalSize == cacheUsedPhysicalSize && x.Quota == int.MaxValue && x.IsEnabled == true);
-            var isoStore = Mock.Of<IIsolatedStorageInfo>(x => x.AvailableFreeSpace == isoMaxSize - cacheUsedPhysicalSize);
+            var store = Mock.Of<ICacheEntryStore>(x => x.IsWritable == false);
 
-            var strategy = new IsolatedStorageSizeScavengingStrategy(store, isoStore, HighScavengeThreshold, LowScavengeThreshold);
-            var entries = new Dictionary<string, IsolatedStorageCacheEntry> { { "key", new IsolatedStorageCacheEntry("key", 4, Mock.Of<IExtendedCacheItemPolicy>()) } };
+            var strategy = new IsolatedStorageSizeScavengingStrategy(store, Mock.Of<IIsolatedStorageInfo>(), HighScavengeThreshold, LowScavengeThreshold);
+            var entries = new Dictionary<string, IsolatedStorageCacheEntry>();
+
+            for (int i = 0; i < 25; i++)
+            {
+                entries.Add(i.ToString(), new IsolatedStorageCacheEntry(i.ToString(), i, new CacheItemPolicy()));
+            }
 
             Assert.IsFalse(strategy.ShouldScavenge(entries));
+            Assert.IsFalse(strategy.ShouldScavenge(entries));
+            entries.Remove("0");
+            Assert.IsFalse(strategy.ShouldScavenge(entries));
+            entries.Add("new", new IsolatedStorageCacheEntry("new", 25, new CacheItemPolicy()));
+            Assert.IsFalse(strategy.ShouldScavenge(entries));
+        }
+
+        [TestMethod]
+        public void WhenStoreIsReadOnlyAndThereAreMoreThanTheAmountOfItemsThatWereInTheFirstCallAbove20_ThenShouldScavenge()
+        {
+            var store = Mock.Of<ICacheEntryStore>(x => x.IsWritable == false);
+
+            var strategy = new IsolatedStorageSizeScavengingStrategy(store, Mock.Of<IIsolatedStorageInfo>(), HighScavengeThreshold, LowScavengeThreshold);
+            var entries = new Dictionary<string, IsolatedStorageCacheEntry>();
+            for (int i = 0; i < 25; i++)
+            {
+                entries.Add(i.ToString(), new IsolatedStorageCacheEntry(i.ToString(), i, new CacheItemPolicy()));
+            }
+
+            Assert.IsFalse(strategy.ShouldScavenge(entries));
+            entries.Add("new", new IsolatedStorageCacheEntry("new", 26, new CacheItemPolicy()));
+            Assert.IsTrue(strategy.ShouldScavenge(entries));
+            entries.Remove("0");
+            Assert.IsFalse(strategy.ShouldScavenge(entries));
+        }
+
+        [TestMethod]
+        public void WhenStoreIsReadOnlyAndThereAreMoreThanTheAmountOfItemsThatWereInTheFirstCallAbove20_ThenShouldScavengeMore()
+        {
+            var store = Mock.Of<ICacheEntryStore>(x => x.IsWritable == false);
+
+            var strategy = new IsolatedStorageSizeScavengingStrategy(store, Mock.Of<IIsolatedStorageInfo>(), HighScavengeThreshold, LowScavengeThreshold);
+            var entries = new Dictionary<string, IsolatedStorageCacheEntry>();
+            for (int i = 0; i < 25; i++)
+            {
+                entries.Add(i.ToString(), new IsolatedStorageCacheEntry(i.ToString(), i, new CacheItemPolicy()));
+            }
+
+            Assert.IsFalse(strategy.ShouldScavenge(entries));
+            entries.Add("new", new IsolatedStorageCacheEntry("new", 26, new CacheItemPolicy()));
+            Assert.IsTrue(strategy.ShouldScavenge(entries));
+            Assert.IsTrue(strategy.ShouldScavengeMore(entries));
+            entries.Remove("0");
+            Assert.IsFalse(strategy.ShouldScavengeMore(entries));
         }
     }
 }

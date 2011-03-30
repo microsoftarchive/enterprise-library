@@ -11,16 +11,21 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+#if !SILVERLIGHT
+using System.Diagnostics;
+#else
+using Microsoft.Practices.EnterpriseLibrary.Logging.Diagnostics;
+#endif
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
 {
     [TestClass]
     public class TraceSourceFixture
     {
+#if !SILVERLIGHT
         [TestMethod]
         public void LogSourceCallsFlushRegardlessOfAutoflushValue()
         {
@@ -46,6 +51,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
                 Trace.AutoFlush = currentAutoFlush;
             }
         }
+#endif
 
         [TestMethod]
         public void AutoFlushDefaultPropertyIsTrue()

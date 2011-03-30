@@ -396,11 +396,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
             IConfigurationSource configurationSource,
             ValidationSpecificationSource source)
         {
-            var instrumentationProvider =
 #if !SILVERLIGHT    // todo remove when including other sources
-                ValidationInstrumentationProvider.FromConfigurationSource(configurationSource);
+            var instrumentationProvider = ValidationInstrumentationProvider.FromConfigurationSource(configurationSource);
 #else
- new NullValidationInstrumentationProvider();
+            var instrumentationProvider = new NullValidationInstrumentationProvider();
 #endif
 
             List<ValidatorFactory> factories = new List<ValidatorFactory>();

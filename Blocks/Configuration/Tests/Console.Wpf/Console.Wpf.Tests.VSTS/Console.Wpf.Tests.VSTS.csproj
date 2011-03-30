@@ -61,24 +61,24 @@
   <ItemGroup>
     <Reference Include="Microsoft.Practices.EnterpriseLibrary.Configuration.Design.HostAdapter, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Lib\Microsoft.Practices.EnterpriseLibrary.Configuration.Design.HostAdapter.dll</HintPath>
+      <HintPath>..\..\..\..\..\Lib\Desktop\Microsoft.Practices.EnterpriseLibrary.Configuration.Design.HostAdapter.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.EnterpriseLibrary.Configuration.Design.HostAdapterV5, Version=5.0.414.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Lib\Microsoft.Practices.EnterpriseLibrary.Configuration.Design.HostAdapterV5.dll</HintPath>
+      <HintPath>..\..\..\..\..\Lib\Desktop\Microsoft.Practices.EnterpriseLibrary.Configuration.Design.HostAdapterV5.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.Unity, Version=2.0.414.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Lib\Microsoft.Practices.Unity.dll</HintPath>
+      <HintPath>..\..\..\..\..\Lib\Desktop\Microsoft.Practices.Unity.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.Unity.Interception, Version=2.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Lib\Microsoft.Practices.Unity.Interception.dll</HintPath>
+      <HintPath>..\..\..\..\..\Lib\Desktop\Microsoft.Practices.Unity.Interception.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Moq, Version=3.1.416.3, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Lib\ThirdParty\Moq\Moq.dll</HintPath>
+      <HintPath>..\..\..\..\..\Lib\Desktop\ThirdParty\Moq\Moq.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
@@ -116,6 +116,7 @@
     <Compile Include="Controls\given_a_notifying_context_menu_and_items\when_clearing_selection.cs" />
     <Compile Include="Controls\given_a_notifying_context_menu_and_items\when_setting_focus_to_a_menu_item.cs" />
     <Compile Include="Controls\given_context_menu_button\when_clicking_the_button.cs" />
+    <Compile Include="Controls\TypeBrowser\TypeLoadingFixture.cs" />
     <Compile Include="DevTests\given_application_model\when_creating_new_configuration_source.cs" />
     <Compile Include="DevTests\given_application_model\when_saving_configuration_source_as.cs" />
     <Compile Include="DevTests\given_app_settings_configuration\when_creating_app_settings_view_model.cs" />
@@ -282,6 +283,10 @@
     <ProjectReference Include="..\..\TestAssembly3\TestAssembly3.csproj">
       <Project>{18A388BB-41C8-47A3-AAC4-72343EE953CB}</Project>
       <Name>TestAssembly3</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\TypeLoadTestAssembly\TypeLoadTestAssembly.csproj">
+      <Project>{FE4B56CF-A726-4768-81D0-97B83B9C4365}</Project>
+      <Name>TypeLoadTestAssembly</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

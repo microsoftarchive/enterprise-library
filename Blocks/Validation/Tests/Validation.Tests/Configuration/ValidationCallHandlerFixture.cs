@@ -29,8 +29,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
         public void Setup()
         {
             callHandlerData =
-                new ValidationCallHandlerData("validation")
+                new ValidationCallHandlerData
                     {
+                        Name = "validation",
                         Order = 300,
                         SpecificationSource = SpecificationSource.Attributes,
                         RuleSet = "ruleset"
@@ -88,8 +89,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
         public void Setup()
         {
             callHandlerData =
-                new ValidationCallHandlerData("validation")
+                new ValidationCallHandlerData
                     {
+                        Name = "validation",
                         Order = 400,
                         SpecificationSource = SpecificationSource.Configuration,
                         RuleSet = "ruleset"
@@ -138,8 +140,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
         public void Setup()
         {
             callHandlerData =
-                new ValidationCallHandlerData("validation")
+                new ValidationCallHandlerData
                     {
+                        Name = "validation",
                         Order = 400,
                         SpecificationSource = SpecificationSource.Both,
                         RuleSet = "ruleset"
@@ -188,8 +191,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
         public void Setup()
         {
             callHandlerData =
-                new ValidationCallHandlerData("validation")
+                new ValidationCallHandlerData
                     {
+                        Name = "validation",
                         Order = 400,
                         SpecificationSource = SpecificationSource.ParameterAttributesOnly,
                         RuleSet = "ruleset"

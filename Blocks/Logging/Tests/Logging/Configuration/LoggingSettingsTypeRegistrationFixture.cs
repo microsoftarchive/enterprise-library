@@ -10,7 +10,6 @@
 //===============================================================================
 
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration.ContainerModel;
@@ -19,8 +18,13 @@ using Microsoft.Practices.EnterpriseLibrary.Logging.Filters;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters.Tests;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
-using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+#if !SILVERLIGHT
+using System.Diagnostics;
+using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
+#else
+using Microsoft.Practices.EnterpriseLibrary.Logging.Diagnostics;
+#endif
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
 {
@@ -366,8 +370,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         public void Setup()
         {
             LoggingSettings settings = new LoggingSettings();
-            settings.TraceSources.Add(new TraceSourceData("source 1", SourceLevels.Critical));
-            settings.TraceSources.Add(new TraceSourceData("source 2", SourceLevels.Critical));
+            settings.TraceSources.Add(new TraceSourceData { Name = "source 1", DefaultLevel = SourceLevels.Critical });
+            settings.TraceSources.Add(new TraceSourceData { Name = "source 2", DefaultLevel = SourceLevels.Critical });
 
             registrations = settings.GetRegistrations(null);
         }

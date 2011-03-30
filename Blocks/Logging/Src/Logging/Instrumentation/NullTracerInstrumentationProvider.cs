@@ -19,6 +19,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation
     /// <summary/>
     public class NullTracerInstrumentationProvider : ITracerInstrumentationProvider
     {
+        internal static readonly NullTracerInstrumentationProvider Default = new NullTracerInstrumentationProvider();
+
         /// <summary/>
         public void FireTraceOperationEnded(string operationName, long elapsedTimeInMilleseconds)
         {

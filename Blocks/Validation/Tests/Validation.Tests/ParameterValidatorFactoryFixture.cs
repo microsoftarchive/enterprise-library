@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -65,21 +66,21 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
             List<Validator> validators = new List<Validator>(((AndCompositeValidator)v).Validators);
             Assert.AreEqual(3, validators.Count);
             Assert.IsTrue(
-                validators.Exists(
+                validators.Any(
                     delegate(Validator v1)
                     {
                         return v1 is NotNullValidator;
                     }));
 
             Assert.IsTrue(
-                validators.Exists(
+                validators.Any(
                     delegate(Validator v1)
                     {
                         return v1 is StringLengthValidator;
                     }));
 
             Assert.IsTrue(
-                validators.Exists(
+                validators.Any(
                     delegate(Validator v1)
                     {
                         return v1 is RegexValidator;

@@ -12,7 +12,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
@@ -30,7 +29,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         [TestInitialize]
         public void Setup()
         {
-            filterData = new PriorityFilterData("filter", 100) { MaximumPriority = 200 };
+            filterData = new PriorityFilterData { Name = "filter", MinimumPriority = 100, MaximumPriority = 200 };
         }
 
         [TestMethod]
@@ -71,12 +70,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         public void Setup()
         {
             filterData =
-                new CategoryFilterData(
-                    "filter",
-                    new NamedElementCollection<CategoryFilterEntry> { 
-                        new CategoryFilterEntry("category 1"), 
-                        new CategoryFilterEntry("category 2") },
-                    CategoryFilterMode.DenyAllExceptAllowed);
+                new CategoryFilterData
+                {
+                    Name = "filter",
+                    CategoryFilters = 
+                    { 
+                        new CategoryFilterEntry{ Name = "category 1" }, 
+                        new CategoryFilterEntry{ Name = "category 2" } 
+                    },
+                    CategoryFilterMode = CategoryFilterMode.DenyAllExceptAllowed
+                };
         }
 
         [TestMethod]
@@ -120,7 +123,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         [TestInitialize]
         public void Setup()
         {
-            filterData = new LogEnabledFilterData("filter", true);
+            filterData = new LogEnabledFilterData { Name = "filter", Enabled = true };
         }
 
         [TestMethod]
@@ -151,6 +154,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         }
     }
 
+#if !SILVERLIGHT
     [TestClass]
     public class GivenCustomFilterDataForLogFilterType
     {
@@ -192,4 +196,5 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
                 filterData.GetRegistrations().Where(tr => tr.Lifetime != TypeRegistrationLifetime.Transient).Count());
         }
     }
+#endif
 }

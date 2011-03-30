@@ -10,12 +10,18 @@
 //===============================================================================
 
 using System;
-using System.Diagnostics;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Filters;
 using Microsoft.Practices.EnterpriseLibrary.Logging.PolicyInjection;
 using Microsoft.Practices.Unity;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+#if !SILVERLIGHT
+	using System.Diagnostics;
+#else
+	using Microsoft.Practices.EnterpriseLibrary.Logging.Diagnostics;
+#endif
+
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.PolicyInjection
 {
@@ -28,7 +34,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.PolicyInjection
         [TestInitialize]
         public void TestInitialize()
         {
+#if !SILVERLIGHT
             AppDomain.CurrentDomain.SetData("APPBASE", Environment.CurrentDirectory);
+#else
+#endif
 
             this.logWriter = new LogWriterImpl(new ILogFilter[0], new LogSource[0], new LogSource("name"), "default");
             this.container = new UnityContainer();
@@ -108,4 +117,4 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.PolicyInjection
             return (LogCallHandler)attribute.CreateHandler(this.container);
         }
     }
- }
+}

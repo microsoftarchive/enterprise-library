@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Practices.EnterpriseLibrary.Caching.IsolatedStorage;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Runtime.Caching;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -59,9 +59,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests.Configuration.Isol
         [TestMethod]
         public void then_registration_has_expected_parameters()
         {
-            Assert.AreEqual(2, this.registrations.First().ConstructorParameters.Count());
+            Assert.AreEqual(6, this.registrations.First().ConstructorParameters.Count());
             Assert.AreEqual("test name", ((ConstantParameterValue)this.registrations.First().ConstructorParameters.ElementAt(0)).Value);
             Assert.AreEqual(100L, ((ConstantParameterValue)this.registrations.First().ConstructorParameters.ElementAt(1)).Value);
+            Assert.AreEqual(75, ((ConstantParameterValue)this.registrations.First().ConstructorParameters.ElementAt(2)).Value);
+            Assert.AreEqual(65, ((ConstantParameterValue)this.registrations.First().ConstructorParameters.ElementAt(3)).Value);
+            Assert.AreEqual(TimeSpan.FromSeconds(45), ((ConstantParameterValue)this.registrations.First().ConstructorParameters.ElementAt(4)).Value);
+            Assert.IsInstanceOfType(((ConstantParameterValue)this.registrations.First().ConstructorParameters.ElementAt(5)).Value, typeof(MockSerializer));
         }
 
         [TestMethod]

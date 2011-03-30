@@ -73,7 +73,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests.IsolatedStorage.gi
         [TestMethod]
         public void then_can_create_new_instance_that_will_work_in_memory()
         {
-            using (var newCache = new IsolatedStorageCache(CacheName))
+            using (var newCache = new IsolatedStorageCache(CacheName, MaxSize, QuotaUsedBeforeScavenging, QuotaUsedAfterScavenging, PollingInterval, new IsolatedStorageCacheEntrySerializer()))
             {
                 newCache["new item"] = 37;
                 Assert.AreEqual(37, newCache.Get("new item"));

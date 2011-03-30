@@ -1,5 +1,4 @@
 ﻿using System;
-using Microsoft.Practices.EnterpriseLibrary.Caching.InMemory;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Runtime.Caching;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
 
@@ -7,7 +6,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests.CacheItemPolicySce
 {
     public abstract class Context : ArrangeActAssert
     {
-        protected IExtendedCacheItemPolicy CacheItemPolicy;
+        protected CacheItemPolicy CacheItemPolicy;
 
         protected DateTimeOffset AbsoluteItemExpiration = new DateTimeOffset(2011, 1, 1, 10, 10, 0,
             TimeSpan.FromHours(0));
@@ -18,13 +17,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests.CacheItemPolicySce
         {
             base.Arrange();
 
-            CacheItemPolicy = new DefaultExtendedCacheItemPolicy(
-                new CacheItemPolicy()
-                {
-                    AbsoluteExpiration = AbsoluteItemExpiration,
-                    SlidingExpiration = SlidingItemExpiration,
-                    Priority = Caching.Runtime.Caching.CacheItemPriority.Default
-                });
+            CacheItemPolicy = new CacheItemPolicy()
+                                {
+                                    AbsoluteExpiration = AbsoluteItemExpiration,
+                                    SlidingExpiration = SlidingItemExpiration,
+                                    Priority = CacheItemPriority.Default
+                                };
+        }
+
+        protected override void Teardown()
+        {
+            CachingTimeProvider.ResetTimeProvider();
+            base.Teardown();
         }
     }
 }

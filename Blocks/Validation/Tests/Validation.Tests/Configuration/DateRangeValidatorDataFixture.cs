@@ -22,7 +22,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
 {
     [TestClass]
-    public class DateRangeValidatorDataFixture
+    public partial class DateRangeValidatorDataFixture
     {
 #if !SILVERLIGHT
         [TestMethod]
@@ -142,5 +142,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
             Assert.AreEqual(RangeBoundaryType.Ignore, validatorData.LowerBoundType);
             Assert.AreEqual(RangeBoundaryType.Inclusive, validatorData.UpperBoundType);
         }
+
+       
     }
 }

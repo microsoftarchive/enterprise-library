@@ -11,7 +11,6 @@
 
 using System;
 using System.Reflection;
-using System.Security.Permissions;
 using System.Threading;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.TestSupport
@@ -39,7 +38,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.TestSupport
             }
         }
 
-        [ReflectionPermission(SecurityAction.Demand)]
+#if !SILVERLIGHT
+        [System.Security.Permissions.ReflectionPermission(System.Security.Permissions.SecurityAction.Demand)]
+#endif
         private static void ThrowExceptionPreservingStack(Exception exception)
         {
             FieldInfo remoteStackTraceString = typeof(Exception).GetField("_remoteStackTraceString", BindingFlags.Instance | BindingFlags.NonPublic);

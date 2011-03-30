@@ -5,7 +5,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Scheduling
     /// <summary>
     /// This interface represents a task that will be run at recurring intervals.
     /// </summary>
-    public interface IRecurringScheduledWork : IDisposable
+    public interface IRecurringScheduledWork
     {
         /// <summary>
         /// Set the delegate that will be run when the schedule
