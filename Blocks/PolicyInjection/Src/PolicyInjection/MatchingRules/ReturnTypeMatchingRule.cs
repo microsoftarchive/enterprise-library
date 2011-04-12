@@ -9,8 +9,11 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+#if !SILVERLIGHT
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
+#endif
+
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Properties;
 using Microsoft.Practices.Unity.InterceptionExtension;
 
@@ -19,7 +22,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.MatchingRules
     /// <summary>
     /// Placeholder for <see cref="Microsoft.Practices.Unity.InterceptionExtension.ReturnTypeMatchingRule"/>.
     /// </summary>
+#if !SILVERLIGHT
     [ConfigurationElementType(typeof(ReturnTypeMatchingRuleData))]
+#endif
     public class ReturnTypeMatchingRule : IMatchingRule
     {
         /// <summary>

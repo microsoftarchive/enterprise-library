@@ -189,6 +189,7 @@
     <Compile Include="Validators\TypeConversionValidatorAttributeFixture.cs" />
     <Compile Include="Validators\TypeConversionValidatorFixture.cs" />
     <Compile Include="Validators\UserBuiltValidatorsFixture.cs" />
+    <Compile Include="Validators\ValidationAttributeTypeIdFixture.Desktop.cs" />
     <Compile Include="Validators\ValidationAttributeValidatorFixture.cs" />
     <Compile Include="Validators\ValidatorFixture.cs" />
     <Compile Include="Validators\ValueAccessComparisonValidatorFixture.cs" />

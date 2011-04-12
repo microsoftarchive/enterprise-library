@@ -34,6 +34,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerMo
             this.container.AddNewExtensionIfNotPresent<LifetimeInspector>();
             this.container.AddNewExtensionIfNotPresent<PolicyListAccessor>();
             AddValidationExtension();
+            AddInterceptionExtension();
         }
 
         /// <summary>
@@ -75,6 +76,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerMo
             if (vabExtension != null && container.Configure(vabExtension.GetType()) == null)
             {
                 container.AddExtension(vabExtension);
+            }
+        }
+
+        private void AddInterceptionExtension()
+        {
+            // We load this by name so we don't have a hard dependency from common -> interception
+            const string extensionElementName =
+                "{clr-namespace:Microsoft.Practices.Unity.InterceptionExtension;assembly=Microsoft.Practices.Unity.Interception.Silverlight}Interception";
+
+            var interceptionExtension = XamlActivator.CreateInstance<UnityContainerExtension>(extensionElementName);
+
+            if (interceptionExtension != null && container.Configure(interceptionExtension.GetType()) == null)
+            {
+                container.AddExtension(interceptionExtension);
             }
         }
     }

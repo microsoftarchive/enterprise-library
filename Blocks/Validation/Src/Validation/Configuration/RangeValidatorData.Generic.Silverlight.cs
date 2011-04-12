@@ -20,6 +20,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
     partial class RangeValidatorData<T>
         where T : IComparable<T>
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RangeValidatorData&lt;T&gt;"/> class.
+        /// </summary>
         protected RangeValidatorData()
         {
             this.LowerBoundType = RangeBoundaryType.Ignore;

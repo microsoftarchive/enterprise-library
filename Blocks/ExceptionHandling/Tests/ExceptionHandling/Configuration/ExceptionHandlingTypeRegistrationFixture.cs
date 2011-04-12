@@ -52,21 +52,23 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
                 .IsPublicName();
         }
 
+#if !SILVERLIGHT
         [TestMethod]
         public void WhenRegistrationsRequested_ThenTheDefaultExceptionHandlingEventLoggerIsRegistered()
         {
             var registrations =
-                settings.GetRegistrations(null).Where(r => r.ServiceType == typeof (DefaultExceptionHandlingEventLogger));
+                settings.GetRegistrations(null).Where(r => r.ServiceType == typeof(DefaultExceptionHandlingEventLogger));
 
             Assert.AreEqual(1, registrations.Count());
 
             var registration = registrations.ElementAt(0);
-            registration.AssertForServiceType(typeof (DefaultExceptionHandlingEventLogger))
+            registration.AssertForServiceType(typeof(DefaultExceptionHandlingEventLogger))
                 .IsDefault()
-                .ForImplementationType(typeof (DefaultExceptionHandlingEventLogger))
+                .ForImplementationType(typeof(DefaultExceptionHandlingEventLogger))
                 .IsNotPublicName();
         }
-	}
+#endif
+    }
 
     [TestClass]
     public class GivenConfigurationSettingsWithASinglePolicy
@@ -77,14 +79,30 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
         public void Setup()
         {
             settings = new ExceptionHandlingSettings();
-            var exceptionPolicyData = new ExceptionPolicyData("aPolicy");
-            var exceptionType = new ExceptionTypeData("ExceptionType", typeof(ArgumentNullException),
-                                                      PostHandlingAction.None);
-            exceptionType.ExceptionHandlers.Add(
-                new WrapHandlerData("aWrapHandler", "exception", typeof(Exception).AssemblyQualifiedName)
-                );
+            var exceptionPolicyData =
+                new ExceptionPolicyData
+                {
+                    Name = "aPolicy",
+                    ExceptionTypes =
+                    {
+                        new ExceptionTypeData
+                        {
+                            Name = "ExceptionType", 
+                            Type = typeof(ArgumentNullException),
+                            PostHandlingAction = PostHandlingAction.None,
+                            ExceptionHandlers =
+                            {
+                                new WrapHandlerData
+                                {
+                                    Name = "aWrapHandler",
+                                    ExceptionMessage = "exception", 
+                                    WrapExceptionType = typeof(Exception)
+                                }
+                            }
+                        }
+                    }
+                };
 
-            exceptionPolicyData.ExceptionTypes.Add(exceptionType);
             settings.ExceptionPolicies.Add(exceptionPolicyData);
         }
 
@@ -109,7 +127,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
             Assert.AreEqual(TypeRegistrationLifetime.Transient, registration.Lifetime);
         }
 
-
+#if !SILVERLIGHT
         [TestMethod]
         public void WhenRegistrationsAreRequested_ThenExcpetionInstrumentationProviderHasTransientLifetime()
         {
@@ -118,6 +136,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
 
             Assert.AreEqual(TypeRegistrationLifetime.Transient, registration.Lifetime);
         }
+#else
+        [TestMethod]
+        public void WhenRegistrationsAreRequested_ThenExcpetionInstrumentationProviderHasTransientLifetime()
+        {
+            var registrations = settings.GetRegistrations(null);
+            TypeRegistration registration = registrations.First(r => r.ImplementationType == typeof(NullExceptionHandlingInstrumentationProvider));
+
+            Assert.AreEqual(TypeRegistrationLifetime.Transient, registration.Lifetime);
+        }
+#endif
 
         [TestMethod]
         public void WhenRegistrationsAreRequested_ThenReturnsExceptionTypeRegistrationEntryWithCorrectName()
@@ -148,9 +176,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
 
             TypeRegistration registration = registrations.First(r => r.ImplementationType == typeof(WrapHandler));
 
-            registration.AssertForServiceType(typeof (IExceptionHandler))
+            registration.AssertForServiceType(typeof(IExceptionHandler))
                 .ForName("aPolicy.ExceptionType.aWrapHandler")
-                .ForImplementationType(typeof (WrapHandler))
+                .ForImplementationType(typeof(WrapHandler))
                 .IsNotPublicName();
         }
 
@@ -175,21 +203,40 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
         public void Setup()
         {
             settings = new ExceptionHandlingSettings();
-            var exceptionPolicyData = new ExceptionPolicyData("aPolicy");
-            var exceptionType = new ExceptionTypeData("ExceptionType", typeof(ArgumentNullException),
-                                                      PostHandlingAction.None);
+            var exceptionPolicyData = new ExceptionPolicyData { Name = "aPolicy" };
+            var exceptionType =
+                new ExceptionTypeData
+                {
+                    Name = "ExceptionType",
+                    Type = typeof(ArgumentNullException),
+                    PostHandlingAction = PostHandlingAction.None
+                };
             exceptionType.ExceptionHandlers.Add(
-                new WrapHandlerData("aHandler", "exception", typeof(Exception).AssemblyQualifiedName)
-                );
+                new WrapHandlerData
+                {
+                    Name = "aHandler",
+                    ExceptionMessage = "exception",
+                    WrapExceptionType = typeof(Exception)
+                });
 
             exceptionPolicyData.ExceptionTypes.Add(exceptionType);
             settings.ExceptionPolicies.Add(exceptionPolicyData);
 
-            var exceptionType2 = new ExceptionTypeData("AnotherExceptionType", typeof(ArgumentNullException),
-                                                       PostHandlingAction.None);
+            var exceptionType2 =
+                new ExceptionTypeData
+                {
+                    Name = "AnotherExceptionType",
+                    Type = typeof(ArgumentNullException),
+                    PostHandlingAction = PostHandlingAction.None
+                };
 
             exceptionType2.ExceptionHandlers.Add(
-                new ReplaceHandlerData("aHandler", "exception", typeof(Exception).AssemblyQualifiedName)
+                new ReplaceHandlerData
+                {
+                    Name = "aHandler",
+                    ExceptionMessage = "exception",
+                    ReplaceExceptionType = typeof(Exception)
+                }
                 );
             exceptionPolicyData.ExceptionTypes.Add(exceptionType2);
         }
@@ -223,15 +270,25 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
         {
             settings = new ExceptionHandlingSettings();
 
-            var exceptionPolicyData = new ExceptionPolicyData("aPolicy");
-            var exceptionType = new ExceptionTypeData("ExceptionType", typeof(ArgumentNullException),
-                                                      PostHandlingAction.None);
+            var exceptionPolicyData = new ExceptionPolicyData { Name = "aPolicy" };
+            var exceptionType =
+                new ExceptionTypeData
+                {
+                    Name = "ExceptionType",
+                    Type = typeof(ArgumentNullException),
+                    PostHandlingAction = PostHandlingAction.None
+                };
             exceptionPolicyData.ExceptionTypes.Add(exceptionType);
             settings.ExceptionPolicies.Add(exceptionPolicyData);
 
-            var exceptionPolicyData2 = new ExceptionPolicyData("anotherPolicy");
-            var exceptionType2 = new ExceptionTypeData("ExceptionType", typeof(ArgumentNullException),
-                                                       PostHandlingAction.None);
+            var exceptionPolicyData2 = new ExceptionPolicyData { Name = "anotherPolicy" };
+            var exceptionType2 =
+                new ExceptionTypeData
+                {
+                    Name = "ExceptionType",
+                    Type = typeof(ArgumentNullException),
+                    PostHandlingAction = PostHandlingAction.None
+                };
             exceptionPolicyData2.ExceptionTypes.Add(exceptionType2);
             settings.ExceptionPolicies.Add(exceptionPolicyData2);
         }
@@ -257,31 +314,71 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
         {
             settings = new ExceptionHandlingSettings();
 
-            var exceptionPolicyData1 = new ExceptionPolicyData("policy1");
+            var exceptionPolicyData1 = new ExceptionPolicyData { Name = "policy1" };
             settings.ExceptionPolicies.Add(exceptionPolicyData1);
-            var exceptionType11 = new ExceptionTypeData("ExceptionType1", typeof(ArgumentNullException),
-                                                        PostHandlingAction.NotifyRethrow);
+            var exceptionType11 =
+                new ExceptionTypeData
+                {
+                    Name = "ExceptionType1",
+                    Type = typeof(ArgumentNullException),
+                    PostHandlingAction = PostHandlingAction.NotifyRethrow
+                };
             exceptionPolicyData1.ExceptionTypes.Add(exceptionType11);
             exceptionType11.ExceptionHandlers.Add(
-                new WrapHandlerData("handler1", "message", typeof(Exception).AssemblyQualifiedName));
-            var exceptionType12 = new ExceptionTypeData("ExceptionType2", typeof(ArgumentNullException),
-                                                        PostHandlingAction.NotifyRethrow);
+                new WrapHandlerData
+                {
+                    Name = "handler1",
+                    ExceptionMessage = "message",
+                    WrapExceptionType = typeof(Exception)
+                });
+            var exceptionType12 =
+                new ExceptionTypeData
+                {
+                    Name = "ExceptionType2",
+                    Type = typeof(ArgumentNullException),
+                    PostHandlingAction = PostHandlingAction.NotifyRethrow
+                };
             exceptionPolicyData1.ExceptionTypes.Add(exceptionType12);
             exceptionType12.ExceptionHandlers.Add(
-                new WrapHandlerData("handler1", "message", typeof(Exception).AssemblyQualifiedName));
+                new WrapHandlerData
+                {
+                    Name = "handler1",
+                    ExceptionMessage = "message",
+                    WrapExceptionType = typeof(Exception)
+                });
             exceptionType12.ExceptionHandlers.Add(
-                new WrapHandlerData("handler2", "message", typeof(Exception).AssemblyQualifiedName));
+                new WrapHandlerData
+                {
+                    Name = "handler2",
+                    ExceptionMessage = "message",
+                    WrapExceptionType = typeof(Exception)
+                });
 
 
-            var exceptionPolicyData2 = new ExceptionPolicyData("policy2");
+            var exceptionPolicyData2 = new ExceptionPolicyData { Name = "policy2" };
             settings.ExceptionPolicies.Add(exceptionPolicyData2);
-            var exceptionType21 = new ExceptionTypeData("ExceptionType1", typeof(ArgumentNullException),
-                                                        PostHandlingAction.NotifyRethrow);
+            var exceptionType21 =
+                new ExceptionTypeData
+                {
+                    Name = "ExceptionType1",
+                    Type = typeof(ArgumentNullException),
+                    PostHandlingAction = PostHandlingAction.NotifyRethrow
+                };
             exceptionPolicyData2.ExceptionTypes.Add(exceptionType21);
             exceptionType21.ExceptionHandlers.Add(
-                new WrapHandlerData("handler1", "message", typeof(Exception).AssemblyQualifiedName));
+                new WrapHandlerData
+                {
+                    Name = "handler1",
+                    ExceptionMessage = "message",
+                    WrapExceptionType = typeof(Exception)
+                });
             exceptionType21.ExceptionHandlers.Add(
-                new WrapHandlerData("handler3", "message", typeof(Exception).AssemblyQualifiedName));
+                new WrapHandlerData
+                {
+                    Name = "handler3",
+                    ExceptionMessage = "message",
+                    WrapExceptionType = typeof(Exception)
+                });
 
             registrations = settings.GetRegistrations(null);
         }
@@ -326,7 +423,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
         [TestInitialize]
         public void Setup()
         {
-            handlerData = new WrapHandlerData("wrap", "exception", typeof(Exception).AssemblyQualifiedName);
+            handlerData =
+                new WrapHandlerData
+                {
+                    Name = "wrap",
+                    ExceptionMessage = "exception",
+                    WrapExceptionType = typeof(Exception)
+                };
         }
 
         [TestMethod]
@@ -357,11 +460,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
         [TestInitialize]
         public void Setup()
         {
-            handlerData = new WrapHandlerData("wrap", "exception", typeof(Exception).AssemblyQualifiedName)
-                              {
-                                  ExceptionMessageResourceName = "ExceptionMessage",
-                                  ExceptionMessageResourceType = typeof(Resources).AssemblyQualifiedName
-                              };
+            handlerData =
+                new WrapHandlerData
+            {
+                Name = "wrap",
+                ExceptionMessage = "exception",
+                WrapExceptionType = typeof(Exception),
+                ExceptionMessageResourceName = "ExceptionMessage",
+                ExceptionMessageResourceType = typeof(Resources).AssemblyQualifiedName
+            };
         }
 
         [TestMethod]
@@ -392,10 +499,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
         [TestInitialize]
         public void Setup()
         {
-            handlerData = new ReplaceHandlerData(
-                "replace",
-                "exception",
-                typeof(Exception).AssemblyQualifiedName);
+            handlerData =
+                new ReplaceHandlerData
+                {
+                    Name = "replace",
+                    ExceptionMessage = "exception",
+                    ReplaceExceptionType = typeof(Exception)
+                };
         }
 
         [TestMethod]
@@ -416,9 +526,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
                 .VerifyConstructorParameters();
 
             Assert.AreEqual("exception", resolver.GetString());
-
         }
-
     }
 
     [TestClass]
@@ -430,11 +538,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
         public void Setup()
         {
             handlerData =
-                new ReplaceHandlerData("replace", "exception", typeof(Exception).AssemblyQualifiedName)
-                    {
-                        ExceptionMessageResourceType = typeof(Resources).AssemblyQualifiedName,
-                        ExceptionMessageResourceName = "ExceptionMessage"
-                    };
+                new ReplaceHandlerData
+                {
+                    Name = "replace",
+                    ExceptionMessage = "exception",
+                    ReplaceExceptionType = typeof(Exception),
+                    ExceptionMessageResourceType = typeof(Resources).AssemblyQualifiedName,
+                    ExceptionMessageResourceName = "ExceptionMessage"
+                };
         }
 
         [TestMethod]
@@ -457,6 +568,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
         }
     }
 
+#if !SILVERLIGHT
     [TestClass]
     public class GivenCustomHandlerConfigurationObjectForMockExceptionHandler
     {
@@ -486,7 +598,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
 
         }
 
-        
+
         [TestMethod]
         public void WhenRegistrationTypesRequested_ThenReturnsCustomHandlerWithTransientLifetime()
         {
@@ -495,6 +607,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
             Assert.AreEqual(TypeRegistrationLifetime.Transient, registration.Lifetime);
         }
     }
+#endif
 
     [TestClass]
     public class GivenExceptionPolicyTypeDataWithNoHandlers
@@ -505,7 +618,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
         [TestInitialize]
         public void Setup()
         {
-            exceptionTypeData = new ExceptionTypeData("name", typeof(ArgumentException), PostHandlingAction.ThrowNewException);
+            exceptionTypeData =
+                new ExceptionTypeData
+                {
+                    Name = "name",
+                    Type = typeof(ArgumentException),
+                    PostHandlingAction = PostHandlingAction.ThrowNewException
+                };
 
             registration = exceptionTypeData.GetRegistration("prefix");
         }
@@ -541,14 +660,28 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
         [TestInitialize]
         public void Setup()
         {
-            exceptionTypeData = new ExceptionTypeData("name", typeof(ArgumentNullException), PostHandlingAction.None);
+            exceptionTypeData =
+                new ExceptionTypeData
+                {
+                    Name = "name",
+                    Type = typeof(ArgumentNullException),
+                    PostHandlingAction = PostHandlingAction.None
+                };
             exceptionTypeData.ExceptionHandlers.Add(
-                new ReplaceHandlerData("replace", "except", typeof(Exception).AssemblyQualifiedName)
-                );
+                new ReplaceHandlerData
+                {
+                    Name = "replace",
+                    ExceptionMessage = "except",
+                    ReplaceExceptionType = typeof(Exception)
+                });
 
             exceptionTypeData.ExceptionHandlers.Add(
-                new WrapHandlerData("wrap", "except", typeof(Exception).AssemblyQualifiedName)
-                );
+                new WrapHandlerData
+                {
+                    Name = "wrap",
+                    ExceptionMessage = "except",
+                    WrapExceptionType = typeof(Exception)
+                });
 
             registration = exceptionTypeData.GetRegistration("prefix");
         }
@@ -584,7 +717,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
         [TestInitialize]
         public void Setup()
         {
-            exceptionPolicyData = new ExceptionPolicyData("policy");
+            exceptionPolicyData = new ExceptionPolicyData { Name = "policy" };
 
             registrations = exceptionPolicyData.GetRegistration(new DictionaryConfigurationSource()).ToList();
 
@@ -620,8 +753,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
         [TestInitialize]
         public void Setup()
         {
-            exceptionPolicyData = new ExceptionPolicyData("policy");
-            exceptionPolicyData.ExceptionTypes.Add(new ExceptionTypeData("type", typeof(ArgumentException), PostHandlingAction.None));
+            exceptionPolicyData = new ExceptionPolicyData { Name = "policy" };
+            exceptionPolicyData.ExceptionTypes.Add(
+                new ExceptionTypeData
+                {
+                    Name = "type",
+                    Type = typeof(ArgumentException),
+                    PostHandlingAction = PostHandlingAction.None
+                });
 
             registration = exceptionPolicyData.GetRegistration(new DictionaryConfigurationSource())
                 .Where(r => r.ServiceType == typeof(ExceptionPolicyImpl))

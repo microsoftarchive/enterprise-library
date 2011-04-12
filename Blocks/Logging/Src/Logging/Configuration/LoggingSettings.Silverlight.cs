@@ -15,6 +15,11 @@ using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
+#if !SILVERLIGHT
+using System.Diagnostics;
+#else
+using Microsoft.Practices.EnterpriseLibrary.Logging.Diagnostics;
+#endif
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 {
@@ -57,7 +62,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 
         /// <summary>
         /// Gets the collection of <see cref="TraceListenerData"/> configuration elements that define 
-        /// the available <see cref="System.Diagnostics.TraceListener"/>s.
+        /// the available <see cref="TraceListener"/>s.
         /// </summary>
         public NamedElementCollection<TraceListenerData> TraceListeners
         {
@@ -134,7 +139,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
                 new TypeRegistration<LogWriter>(() =>
                    new LogWriterImpl(
                        Container.Resolved<LogWriterStructureHolder>(),
-                       Container.Resolved<ILoggingInstrumentationProvider>()))
+                       Container.Resolved<ILoggingInstrumentationProvider>(),
+                       Container.Resolved<IAsyncTracingErrorReporter>()))
                 {
                     Lifetime = TypeRegistrationLifetime.Singleton,
                     IsDefault = true,
@@ -168,6 +174,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
                 };
         }
 
+        private static TypeRegistration CreateAsyncTracingErrorReporterRegistration()
+        {
+            return new TypeRegistration<IAsyncTracingErrorReporter>(() =>
+                    new AsyncTracingErrorReporter())
+            {
+                Lifetime = TypeRegistrationLifetime.Singleton,
+                IsDefault = true,
+                IsPublicName = true
+            };
+        }
+
         private IEnumerable<TypeRegistration> GetRegistrationsCore(IConfigurationSource configurationSource)
         {
             var registrations = new List<TypeRegistration>();
@@ -187,6 +204,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
             registrations.Add(CreateLogWriterStructureHolderRegistration());
 
             registrations.Add(CreateDefaultNotificationTraceRegistration());
+            registrations.Add(CreateAsyncTracingErrorReporterRegistration());
 
             return registrations.Where(r => r != null);
         }

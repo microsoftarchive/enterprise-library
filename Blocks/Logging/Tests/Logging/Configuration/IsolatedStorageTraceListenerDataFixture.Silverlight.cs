@@ -21,7 +21,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
                 new IsolatedStorageTraceListenerData
                 {
                     Name = "listener",
-                    MaxSizeInBytes = 1024,
+                    MaxSizeInKilobytes = 1,
                     RepositoryName = "test repository"
                 };
         }
@@ -90,7 +90,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
             listenerData.GetRegistrations().First(tr => tr.Name == "test repository")
                 .AssertConstructor()
                 .WithValueConstructorParameter("test repository")
-                .WithValueConstructorParameter(1024)
+                .WithValueConstructorParameter(1)
                 .VerifyConstructorParameters();
         }
     }
@@ -117,7 +117,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
             listenerData.GetRegistrations().First(tr => tr.Name == "test repository")
                 .AssertConstructor()
                 .WithValueConstructorParameter("test repository")
-                .WithValueConstructorParameter(1024 * 256)
+                .WithValueConstructorParameter(256)
                 .VerifyConstructorParameters();
         }
     }

@@ -30,6 +30,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
             timeProvider = newTimeProvider;
         }
 
+        /// <summary>
+        /// Resets the time provider to the default.
+        /// </summary>
         public static void ResetTimeProvider()
         {
             timeProvider = () => DateTimeOffset.Now;

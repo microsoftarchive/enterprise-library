@@ -353,6 +353,77 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
                 Assert.AreEqual(currentActivityId, MockTraceListener.LastEntry.ActivityId);
             }
         }
+
+        [TestMethod]
+        public void ExceptionsReportedToTheAsyncReportedAreNotifiedToTheLogWriter()
+        {
+            MockTraceListener.Reset();
+
+            var sharedMockListener = new MockTraceListener();
+            var reporter = new AsyncTracingErrorReporter();
+
+            using (var logWriter =
+                new LogWriterImpl(
+                    new ILogFilter[0],
+                    new Dictionary<string, LogSource> { },
+                    new LogSource(""),
+                    new LogSource(""),
+                    new LogSource("") { Listeners = { sharedMockListener } },
+                    "MockCategoryOne",
+                    true,
+                    false,
+                    false,
+                    new NullLoggingInstrumentationProvider(),
+                    reporter))
+            {
+
+                var exceptionMessage = Guid.NewGuid().ToString();
+                var entryMessage = Guid.NewGuid().ToString();
+                var sourceName = Guid.NewGuid().ToString();
+
+                var exception = new Exception(exceptionMessage);
+                var logEntry = new LogEntry { Message = entryMessage };
+
+                reporter.ReportExceptionDuringTracing(exception, logEntry, sourceName);
+
+                Assert.AreEqual(1, MockTraceListener.Entries.Count);
+                Assert.IsTrue(MockTraceListener.Entries[0].Message.Contains(exceptionMessage));
+                Assert.IsTrue(MockTraceListener.Entries[0].Message.Contains(entryMessage));
+                Assert.IsTrue(MockTraceListener.Entries[0].Message.Contains(sourceName));
+            }
+        }
+
+        [TestMethod]
+        public void ErrorMessagesReportedToTheAsyncReportedAreNotifiedToTheLogWriter()
+        {
+            MockTraceListener.Reset();
+
+            var sharedMockListener = new MockTraceListener();
+            var reporter = new AsyncTracingErrorReporter();
+
+            using (var logWriter =
+                new LogWriterImpl(
+                    new ILogFilter[0],
+                    new Dictionary<string, LogSource> { },
+                    new LogSource(""),
+                    new LogSource(""),
+                    new LogSource("") { Listeners = { sharedMockListener } },
+                    "MockCategoryOne",
+                    true,
+                    false,
+                    false,
+                    new NullLoggingInstrumentationProvider(),
+                    reporter))
+            {
+
+                var errorMessage = Guid.NewGuid().ToString();
+
+                reporter.ReportErrorDuringTracing(errorMessage);
+
+                Assert.AreEqual(1, MockTraceListener.Entries.Count);
+                Assert.IsTrue(MockTraceListener.Entries[0].Message.Contains(errorMessage));
+            }
+        }
 #endif
     }
 

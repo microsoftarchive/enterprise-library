@@ -10,11 +10,15 @@
 //===============================================================================
 
 using System;
-using System.Collections.Specialized;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Properties;
+#if !SILVERLIGHT
+using System.Collections.Specialized;
+#else
+using NameValueCollection = System.Collections.Generic.Dictionary<string, string>;
+#endif
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
 {
@@ -152,6 +156,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
             IndentAndWriteLine(Resources.Message, message);
         }
 
+#if !SILVERLIGHT
         /// <summary>
         /// Writes the value of the specified source taken
         /// from the value of the <see cref="Exception.Source"/>
@@ -173,6 +178,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
         {
             IndentAndWriteLine(Resources.HelpLink, helpLink);
         }
+#endif
 
         /// <summary>
         /// Writes the name and value of the specified property to the <see cref="TextWriter"/>.
@@ -238,7 +244,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
             this.Writer.WriteLine(Resources.AdditionalInfo);
             this.Writer.WriteLine();
 
+#if !SILVERLIGHT
             foreach (string name in additionalInformation.AllKeys)
+#else
+            foreach (string name in additionalInformation.Keys)
+#endif
             {
                 this.Writer.Write(name);
                 this.Writer.Write(" : ");

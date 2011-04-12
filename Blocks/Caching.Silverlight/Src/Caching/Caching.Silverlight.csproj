@@ -32,22 +32,26 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>Bin\Debug</OutputPath>
+    <OutputPath>..\..\..\bin\DebugSL\</OutputPath>
     <DefineConstants>DEBUG;TRACE;SILVERLIGHT</DefineConstants>
     <NoStdLib>true</NoStdLib>
     <NoConfig>true</NoConfig>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>..\..\..\bin\DebugSL\Microsoft.Practices.EnterpriseLibrary.Caching.Silverlight.XML</DocumentationFile>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>Bin\Release</OutputPath>
+    <OutputPath>..\..\..\bin\ReleaseSL\</OutputPath>
     <DefineConstants>TRACE;SILVERLIGHT</DefineConstants>
     <NoStdLib>true</NoStdLib>
     <NoConfig>true</NoConfig>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>..\..\..\bin\ReleaseSL\Microsoft.Practices.EnterpriseLibrary.Caching.Silverlight.XML</DocumentationFile>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
@@ -73,7 +77,6 @@
     <Compile Include="InMemory\IScavengingStrategy.cs" />
     <Compile Include="InMemory\MemoryBackedCacheBase.cs" />
     <Compile Include="InMemory\NumberOfItemsScavengingStrategy.cs" />
-    <Compile Include="IsolatedStorage\AllocationException.cs" />
     <Compile Include="IsolatedStorage\CacheEntryStore.cs" />
     <Compile Include="IsolatedStorage\ICacheEntryStore.cs" />
     <Compile Include="IsolatedStorage\IIsolatedStorageCacheEntrySerializer.cs" />
@@ -81,9 +84,6 @@
     <Compile Include="IsolatedStorage\InvalidDataException.cs" />
     <Compile Include="IsolatedStorage\IsolatedStorageInfo.cs" />
     <Compile Include="IsolatedStorage\IsolatedStorageSizeScavengingStrategy.cs" />
-    <Compile Include="IsolatedStorage\StorageAccessor.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.Silverlight.cs" />
     <Compile Include="Runtime.Caching\CacheEntryRemovedReason.cs" />
@@ -104,9 +104,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Scheduling\ExpirationScheduler.cs" />
     <Compile Include="Scheduling\IManuallyScheduledWork.cs" />
-    <Compile Include="Scheduling\IRecurringScheduledWork.cs" />
     <Compile Include="Scheduling\ScavengingScheduler.cs" />
     <Compile Include="SerializationUtility.Silverlight.cs" />
   </ItemGroup>

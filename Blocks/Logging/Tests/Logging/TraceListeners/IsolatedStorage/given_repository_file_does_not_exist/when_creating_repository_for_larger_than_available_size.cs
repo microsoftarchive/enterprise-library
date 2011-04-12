@@ -11,14 +11,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Iso
     public class when_creating_repository_for_larger_than_available_size : Context
     {
         private IsolatedStorageLogEntryRepository repository;
-        private int maxSizeInBytes;
+        private int maxSizeInKilobytes;
 
         protected override void Act()
         {
             base.Act();
 
-            this.maxSizeInBytes = (int)IsolatedStorageFile.GetUserStoreForApplication().AvailableFreeSpace * 11 / 10;
-            this.repository = new IsolatedStorageLogEntryRepository(this.repositoryName, maxSizeInBytes);
+            this.maxSizeInKilobytes = (int)IsolatedStorageFile.GetUserStoreForApplication().AvailableFreeSpace * 11 / 10 / 1024;
+            this.repository = new IsolatedStorageLogEntryRepository(this.repositoryName, maxSizeInKilobytes);
         }
 
         protected override void Teardown()
@@ -38,8 +38,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Iso
         [TestMethod]
         public void then_repository_has_lower_than_specified_max_size()
         {
-            Assert.AreEqual(this.maxSizeInBytes, this.repository.MaxSizeInBytes);
-            Assert.IsTrue(this.maxSizeInBytes > this.repository.ActualMaxSizeInBytes);
+            Assert.AreEqual(this.maxSizeInKilobytes, this.repository.MaxSizeInKilobytes);
+            Assert.IsTrue(this.maxSizeInKilobytes > this.repository.ActualMaxSizeInKilobytes);
         }
     }
 }

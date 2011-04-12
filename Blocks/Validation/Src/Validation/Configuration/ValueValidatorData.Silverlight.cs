@@ -9,15 +9,18 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
+using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 {
     /// <summary>
-    /// Configuration object to describe an instance of class <see cref="ValueValidatorData"/>.
+    /// Configuration object to describe an instance of class <see cref="ValueValidator"/>.
     /// </summary>
     public abstract partial class ValueValidatorData : ValidatorData
     {
+        /// <summary>
+        /// Gets or sets a value indicating whether the behavior of the represented validator should be negated.
+        /// </summary>
         public bool Negated { get; set; }
     }
 }

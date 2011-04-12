@@ -11,7 +11,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
+
 
 #if !SILVERLIGHT
 using System.Diagnostics;
@@ -23,7 +23,7 @@ using System.Runtime.Serialization;
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Service
 {
     /// <summary>
-    /// Represents a log message.  Contains the common properties that are required for all log messages.
+    /// Represents a log message contract.  Contains the common properties that are required for all log messages.
     /// </summary>
     [DataContract]
     public class LogEntryMessage
@@ -69,7 +69,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Service
         /// Date and time of the log entry message.
         /// </summary>
         [DataMember]
-        public DateTimeOffset TimeStamp { get; set; }
+        public string TimeStamp { get; set; }
 
         /// <summary>
         /// The <see cref="AppDomain"/> in which the program is running
@@ -80,15 +80,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Service
         /// <summary>
         /// The name of the .NET thread.
         /// </summary>
-        ///  <seealso cref="Win32ThreadId"/>
         [DataMember]
         public string ManagedThreadName { get; set; }
 
         /// <summary>
-        /// Dictionary of key/value pairs to record.
+        /// Together with <see cref="ExtendedPropertiesValues"/>, this property represent the keys for a Dictionary of extended properties.
         /// </summary>
         [DataMember]
-        public IDictionary<string, object> ExtendedProperties { get; set; }
+        public string[] ExtendedPropertiesKeys { get; set; }
+
+        /// <summary>
+        /// Together with <see cref="ExtendedPropertiesKeys"/>, this property represent the values for a Dictionary of extended properties.
+        /// </summary>
+        [DataMember]
+        public string[] ExtendedPropertiesValues { get; set; }
 
         /// <summary>
         /// Tracing activity id
@@ -101,5 +106,25 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Service
         /// </summary>
         [DataMember]
         public Guid? RelatedActivityId { get; set; }
+
+        /// <summary>
+        /// Name of the computer.
+        /// </summary>
+        public string MachineName { get; set; }
+
+        /// <summary>
+        /// The Win32 process ID for the current running process.
+        /// </summary>
+        public string ProcessId { get; set; }
+
+        /// <summary>
+        /// The name of the current running process.
+        /// </summary>
+        public string ProcessName { get; set; }
+
+        /// <summary>
+        /// The Win32 Thread ID for the current thread.
+        /// </summary>
+        public string Win32ThreadId { get; set; }
     }
 }

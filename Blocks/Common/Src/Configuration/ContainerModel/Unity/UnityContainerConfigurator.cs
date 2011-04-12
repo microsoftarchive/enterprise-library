@@ -119,6 +119,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerMo
 #if !SILVERLIGHT
         private class LifetimeInspector : UnityContainerExtension
 #else
+#pragma warning disable 1591
+        /// <summary>
+        /// This class belongs to the Enterprise Library infrastructure and is not
+        /// intended to be used directly from your code.
+        /// </summary>
         public class LifetimeInspector : UnityContainerExtension
 #endif
         {
@@ -142,6 +147,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerMo
 #if !SILVERLIGHT
         private class PolicyListAccessor : UnityContainerExtension
 #else
+        /// <summary>
+        /// This class belongs to the Enterprise Library infrastructure and is not
+        /// intended to be used directly from your code.
+        /// </summary>
         public class PolicyListAccessor : UnityContainerExtension
 #endif
         {
@@ -184,6 +193,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerMo
                 AddDefaultPolicy(serviceType, implementationType, name, Context.Policies);
             }
         }
+#if SILVERLIGHT
+#pragma warning restore 1591
+#endif
 
         private class UnityParameterVisitor : ParameterValueVisitor
         {

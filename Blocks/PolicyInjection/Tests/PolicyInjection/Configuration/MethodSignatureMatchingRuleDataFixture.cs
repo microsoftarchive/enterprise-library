@@ -20,6 +20,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
     [DeploymentItem("test.exe.config")]
     public class MethodSignatureMatchingRuleDataFixture : MatchingRuleDataFixtureBase
     {
+#if !SILVERLIGHT
         [TestMethod]
         public void CanSerializeTypeMatchingRule()
         {
@@ -52,7 +53,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
             Assert.IsNotNull(deserializedRule);
             AssertAreSame(ruleData, deserializedRule);
         }
-
+#else
+        [TestMethod]
+        public void HasDefaultCtor()
+        {
+            new MethodSignatureMatchingRuleData();
+            new ParameterTypeElement();
+        }
+#endif
 
         [TestMethod]
         public void MatchingRuleHasTransientLifetime()

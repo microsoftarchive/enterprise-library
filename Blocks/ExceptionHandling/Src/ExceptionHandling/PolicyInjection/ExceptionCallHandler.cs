@@ -11,8 +11,6 @@
 
 using System;
 using System.Reflection;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Properties;
 using Microsoft.Practices.Unity.InterceptionExtension;
 
@@ -26,7 +24,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.PolicyInjectio
     /// do not configure this call handler on a method with a non-void return value,
     /// as the handler doesn't know what value to return if the exception is swallowed.
     /// </remarks>
-    [ConfigurationElementType(typeof(ExceptionCallHandlerData))]
+#if !SILVERLIGHT
+    [Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ConfigurationElementType(typeof(Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.ExceptionCallHandlerData))]
+#endif
     public class ExceptionCallHandler : ICallHandler
     {
         private ExceptionPolicyImpl exceptionPolicy;

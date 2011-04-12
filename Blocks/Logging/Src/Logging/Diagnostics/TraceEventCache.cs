@@ -5,17 +5,22 @@ using System.Threading;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Diagnostics
 {
+    /// <summary>
+    /// Provides context information.
+    /// </summary>
     public class TraceEventCache
     {
         private DateTime dateTime = DateTime.MinValue;
         private string stackTrace;
-        private long timeStamp = -1L;
 
         internal static int GetThreadId()
         {
             return Thread.CurrentThread.ManagedThreadId;
         }
 
+        /// <summary>
+        /// Gets the call stack for the current thread.
+        /// </summary>
         public string Callstack
         {
             get
@@ -28,6 +33,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Diagnostics
             }
         }
 
+        /// <summary>
+        /// Gets the date and time at which the event trace occurred.
+        /// </summary>
         public DateTime DateTime
         {
             get
@@ -40,6 +48,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Diagnostics
             }
         }
 
+        /// <summary>
+        /// Gets a unique identifier for the current managed thread. 
+        /// </summary>
         public string ThreadId
         {
             get

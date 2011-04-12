@@ -1,18 +1,11 @@
-﻿using System;
-using System.Net;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Ink;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
-
+﻿
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.Runtime.Caching
 {
+    /// <summary>
+    /// Provides a base class for a derived custom type that monitors changes in the state of the data which a cache 
+    /// item depends on.
+    /// </summary>
     public abstract class ChangeMonitor
     {
-
     }
 }

@@ -34,7 +34,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests.Configuration.Isol
             this.data = new IsolatedStorageCacheData 
                 { 
                     Name = "test name", 
-                    MaxSizeInKiloBytes = 100, 
+                    MaxSizeInKilobytes = 100, 
                     PercentOfQuotaUsedBeforeScavenging = 75, 
                     PercentOfQuotaUsedAfterScavenging = 65, 
                     ExpirationPollingInterval = TimeSpan.FromSeconds(45),

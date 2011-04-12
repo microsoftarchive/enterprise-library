@@ -7,19 +7,32 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
 {
+    /// <summary>
+    /// Configuration object for an <see cref="IsolatedStorageCache"/>.
+    /// </summary>
     public class IsolatedStorageCacheData : CacheData
     {
         private readonly AssemblyQualifiedTypeNameConverter typeConverter = new AssemblyQualifiedTypeNameConverter();
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IsolatedStorageCacheData"/> class.
+        /// </summary>
         public IsolatedStorageCacheData()
         {
-            this.MaxSizeInKiloBytes = 1024;
+            this.MaxSizeInKilobytes = 1024;
             this.PercentOfQuotaUsedBeforeScavenging = 80;
             this.PercentOfQuotaUsedAfterScavenging = 60;
             this.ExpirationPollingInterval = TimeSpan.FromMinutes(2);
             this.SerializerType = typeof(IsolatedStorageCacheEntrySerializer);
         }
 
+        /// <summary>
+        /// Returns the <see cref="TypeRegistration"/> entries for this configuration object.
+        /// </summary>
+        /// <param name="configurationSource"></param>
+        /// <returns>
+        /// A set of registry entries.
+        /// </returns>
         public override IEnumerable<TypeRegistration> GetRegistrations(IConfigurationSource configurationSource)
         {
             var type = this.SerializerType;
@@ -30,7 +43,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
 
             var cacheManagerRegistration =
                 new TypeRegistration<ObjectCache>(() =>
-                    new IsolatedStorageCache(this.Name, this.MaxSizeInKiloBytes, this.PercentOfQuotaUsedBeforeScavenging, this.PercentOfQuotaUsedAfterScavenging, this.ExpirationPollingInterval, serializer))
+                    new IsolatedStorageCache(this.Name, this.MaxSizeInKilobytes, this.PercentOfQuotaUsedBeforeScavenging, this.PercentOfQuotaUsedAfterScavenging, this.ExpirationPollingInterval, serializer))
                 {
                     Name = this.Name,
                     IsPublicName = true
@@ -39,12 +52,24 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
             return new TypeRegistration[] { cacheManagerRegistration };
         }
 
-        public int MaxSizeInKiloBytes { get; set; }
+        /// <summary>
+        /// Gets or sets the maximum size in kilobytes for the cache.
+        /// </summary>
+        public int MaxSizeInKilobytes { get; set; }
 
+        /// <summary>
+        /// Gets or sets the percentage of quota before scavenging of entries needs to take place.
+        /// </summary>
         public int PercentOfQuotaUsedBeforeScavenging { get; set; }
 
+        /// <summary>
+        /// Gets or sets the percentage of quota after scavenging has taken place.
+        /// </summary>
         public int PercentOfQuotaUsedAfterScavenging { get; set; }
 
+        /// <summary>
+        /// Gets or sets the frequency of expiration polling cycle.
+        /// </summary>
         public TimeSpan ExpirationPollingInterval { get; set; }
 
         /// <summary>

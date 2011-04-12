@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Scheduling;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
+using Microsoft.Practices.EnterpriseLibrary.Common.Utility;
 using Moq;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests.InMemoryCachingScenarios.given_an_empty_in_memory_cache
@@ -14,7 +15,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests.InMemoryCachingSce
         protected const int ItemsBeforeScavenging = 5;
         protected const int ItemsAfterScavenging = 1;
 
-        protected Mock<IRecurringScheduledWork> ExpirationMock;
+        protected Mock<IRecurringWorkScheduler> ExpirationMock;
 
         private Action scavengingAction;
         
@@ -32,7 +33,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests.InMemoryCachingSce
                     scavengingAction();
                 });
 
-            ExpirationMock = new Mock<IRecurringScheduledWork>();
+            ExpirationMock = new Mock<IRecurringWorkScheduler>();
             ExpirationMock.Setup(e => e.SetAction(It.IsAny<Action>()))
                 .Verifiable();
             ExpirationMock.Setup(e => e.Start())

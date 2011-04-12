@@ -30,6 +30,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
             policyData = new PolicyData("policy");
         }
 
+#if SILVERLIGHT
+        [TestMethod]
+        public void HasDefaultCtor()
+        {
+            new PolicyData();
+        }
+#endif
+
         [TestMethod]
         public void WhenCreatesRegistrations_ThenReturnsSingleRegistration()
         {

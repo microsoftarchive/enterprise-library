@@ -14,10 +14,14 @@ using System.Collections.Specialized;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.TestSupport.ObjectsUnderTest
 {
+#if !SILVERLIGHT
     [ConfigurationElementType(typeof(CustomCallHandlerData))]
+#endif
     public class GlobalCountCallHandler : ICallHandler
     {
         public static Dictionary<string, int> Calls = new Dictionary<string, int>();
@@ -34,11 +38,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.TestSupport.Obje
             callHandlerName = name;
             this.counter = counter;
         }
-
+#if !SILVERLIGHT
         public GlobalCountCallHandler(NameValueCollection attributes)
             : this(attributes["callhandler"])
         { }
-
+#endif
         #region ICallHandler Members
         /// <summary>
         /// Gets or sets the order in which the handler will be executed
@@ -94,4 +98,44 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.TestSupport.Obje
             Calls[name]++;
         }
     }
+
+#if SILVERLIGHT
+    public class GlobalCountCallHandlerData : CallHandlerData
+    {
+        public GlobalCountCallHandlerData(string name)
+        {
+            Name = name;
+        }
+
+        public string Callhandler {get;set;}
+
+        public override IEnumerable<TypeRegistration> GetRegistrations(string suffix)
+        {
+            yield return
+                new TypeRegistration<ICallHandler>(() => new GlobalCountCallHandler(Callhandler))
+                {
+                    Name = this.Name + suffix ,
+                    Lifetime = TypeRegistrationLifetime.Transient
+                };
+        }
+    }
+
+    public class AlwaysMatchingRuleData : MatchingRuleData
+    {
+        public AlwaysMatchingRuleData(string name)
+        {
+            Name = name;
+        }
+
+        public override IEnumerable<TypeRegistration> GetRegistrations(string suffix)
+        {
+            yield return
+                new TypeRegistration<IMatchingRule>(() => new AlwaysMatchingRule())
+                {
+                    Name = this.Name + suffix,
+                    Lifetime = TypeRegistrationLifetime.Transient
+                };
+        }
+    }
+#endif
 }

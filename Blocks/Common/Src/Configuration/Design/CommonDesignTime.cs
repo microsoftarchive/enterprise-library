@@ -133,6 +133,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design
             /// Type name of the IEnvironmentalOverridesEditor interface, declared in the Configuration.DesignTime Assembly.
             /// </summary>
             public const string OverridesEditor = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.BlockSpecifics.IEnvironmentalOverridesEditor, Microsoft.Practices.EnterpriseLibrary.Configuration.DesignTime";
+
+            /// <summary>
+            /// Type name of the SaveFileEditor, declared class in the Configuration.DesignTime Assembly.
+            /// </summary>
+            public const string SaveFileEditor = "Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ComponentModel.Editors.SaveFileEditor, Microsoft.Practices.EnterpriseLibrary.Configuration.DesignTime";
         }
 
         /// <summary>

@@ -10,10 +10,13 @@
 //===============================================================================
 
 using System.Reflection;
+
+#if !SILVERLIGHT
 using System.Security.Permissions;
 using System.Runtime.ConstrainedExecution;
 using System.Runtime.CompilerServices;
 using System.Security;
+
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
 
@@ -34,3 +37,10 @@ using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
                 typeof(PolicyInjectionSettings),
                 TitleResourceName = "AddPolicyInjectionSettings",
                 TitleResourceType = typeof(DesignResources))]
+#else
+
+[assembly: AssemblyTitle("Enterprise Library Policy Injection Application Block for Silverlight")]
+[assembly: AssemblyDescription("Enterprise Library Policy Injection Application Block for Silverlight")]
+[assembly: AssemblyVersion("5.0.414.0")]
+
+#endif

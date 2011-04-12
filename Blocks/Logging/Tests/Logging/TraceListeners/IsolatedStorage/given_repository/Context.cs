@@ -16,7 +16,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Iso
 
             repositoryName = Guid.NewGuid().ToString();
 
-            this.repository = new IsolatedStorageLogEntryRepository(repositoryName, 2048);
+            this.repository = new IsolatedStorageLogEntryRepository(repositoryName, 2);
         }
 
         protected override void Teardown()

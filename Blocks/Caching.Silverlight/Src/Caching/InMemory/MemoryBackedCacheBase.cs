@@ -4,9 +4,14 @@ using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Runtime.Caching;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Scheduling;
+using Microsoft.Practices.EnterpriseLibrary.Common.Utility;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.InMemory
 {
+    /// <summary>
+    /// Base class for caches that keep items in memory.
+    /// </summary>
+    /// <typeparam name="TCacheEntry">The type of the cache entry specific for the concrete implementations.</typeparam>
     public abstract class MemoryBackedCacheBase<TCacheEntry> : ObjectCache, IDisposable
         where TCacheEntry : CacheEntry
     {
@@ -14,17 +19,24 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.InMemory
         private readonly string name;
         private readonly object padlock = new object();
         private readonly IManuallyScheduledWork scavengingScheduler;
-        private IRecurringScheduledWork expirationScheduler;
+        private IRecurringWorkScheduler expirationScheduler;
         private IScavengingStrategy<TCacheEntry> scavengingStrategy;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MemoryBackedCacheBase{TCacheEntry}"/> class.
+        /// </summary>
+        /// <param name="name">The name of the cache.</param>
+        /// <param name="scavengingStrategy">The scavenging strategy.</param>
+        /// <param name="scavengingScheduler">The scavenging scheduler.</param>
+        /// <param name="expirationScheduler">The expiration scheduler.</param>
         protected MemoryBackedCacheBase(string name,
             IScavengingStrategy<TCacheEntry> scavengingStrategy,
             IManuallyScheduledWork scavengingScheduler,
-            IRecurringScheduledWork expirationScheduler)
+            IRecurringWorkScheduler expirationScheduler)
         {
             if (scavengingScheduler == null) throw new ArgumentNullException("scavengingScheduler");
             if (expirationScheduler == null) throw new ArgumentNullException("expirationScheduler");
-            if(scavengingStrategy == null) throw new ArgumentNullException("scavengingStrategy");
+            if (scavengingStrategy == null) throw new ArgumentNullException("scavengingStrategy");
 
             this.name = name;
             this.scavengingStrategy = scavengingStrategy;
@@ -37,7 +49,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.InMemory
             expirationScheduler.Start();
         }
 
-
+        /// <summary>
+        /// Releases resources.
+        /// </summary>
         public void Dispose()
         {
             Dispose(true);
@@ -45,6 +59,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.InMemory
         }
 
         private bool isDisposed;
+
+        /// <summary>
+        /// Releases resources.
+        /// </summary>
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)
@@ -67,22 +85,40 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.InMemory
             }
         }
 
+        /// <summary>
+        /// Releases resources.
+        /// </summary>
         ~MemoryBackedCacheBase()
         {
             Dispose(false);
         }
 
+        /// <summary>
+        /// Gets the name of the cache instance.
+        /// </summary>
         public override string Name
         {
             get { return name; }
         }
 
+        /// <summary>
+        /// Gets or sets the default indexer for the ObjectCache class.
+        /// </summary>
         public override object this[string key]
         {
             get { return Get(key); }
             set { Set(key, value, InfiniteAbsoluteExpiration); }
         }
 
+        /// <summary>
+        /// Inserts the specified CacheItem object into the cache, specifying
+        /// information about how the entry will be evicted.
+        /// </summary>
+        /// <param name="value">The value to add.</param>
+        /// <param name="policy">An object that contains eviction details for the cache entry.</param>
+        /// <returns>
+        /// If a cache entry with the same key exists, the specified cache entry; otherwise, <see langword="null"/>.
+        /// </returns>
         public override CacheItem AddOrGetExisting(CacheItem value,
             CacheItemPolicy policy)
         {
@@ -95,6 +131,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.InMemory
             }
         }
 
+        /// <summary>
+        /// Inserts a cache entry into the cache, by using a key, an object for the
+        /// cache entry, an absolute expiration value, and an optional region to add the cache into.
+        /// </summary>
+        /// <param name="key">A unique identifier for the cache entry.</param>
+        /// <param name="value">The object to insert.</param>
+        /// <param name="absoluteExpiration">The absolute expiration.</param>
+        /// <param name="regionName">Optional. A named region in the cache to which the cache entry can be added, if
+        /// regions are implemented. Defaults to <see langword="null"/>.</param>
+        /// <returns>
+        /// If a cache entry with the same key exists, the specified cache entry's value; otherwise, <see langword="null"/>.
+        /// </returns>
         public override object AddOrGetExisting(string key, object value, DateTimeOffset absoluteExpiration,
             string regionName = null)
         {
@@ -105,6 +153,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.InMemory
             }
         }
 
+        /// <summary>
+        /// Inserts a cache entry into the cache, specifying a key and a value for
+        /// the cache entry, and information about how the entry will be evicted.
+        /// </summary>
+        /// <param name="key">A unique identifier for the cache entry.</param>
+        /// <param name="value">The object to insert.</param>
+        /// <param name="policy">An object that contains eviction details for the cache entry.</param>
+        /// <param name="regionName">Optional. A named region in the cache to which the cache entry can be added, if
+        /// regions are implemented. Defaults to <see langword="null"/>.</param>
+        /// <returns>
+        /// If a cache entry with the same key exists, the specified cache entry's value; otherwise, <see langword="null"/>.
+        /// </returns>
         public override object AddOrGetExisting(string key, object value, CacheItemPolicy policy,
             string regionName = null)
         {
@@ -116,6 +176,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.InMemory
             }
         }
 
+        /// <summary>
+        /// Checks whether the cache entry already exists in the cache.
+        /// </summary>
+        /// <param name="key">A unique identifier for the cache entry.</param>
+        /// <param name="regionName">Optional. A named region in the cache to which the cache entry can be added, if
+        /// regions are implemented. Defaults to <see langword="null"/>.</param>
+        /// <returns>
+        /// true if the cache contains a cache entry with the same key value as key; otherwise, false.
+        /// </returns>
         public override bool Contains(string key, string regionName = null)
         {
             GuardNoRegion(regionName);
@@ -126,6 +195,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.InMemory
             }
         }
 
+        /// <summary>
+        /// Creates a <see cref="CacheEntryChangeMonitor"/> object that can trigger
+        /// events in response to changes to specified cache entries.
+        /// </summary>
+        /// <param name="keys">The unique identifiers for cache entries to monitor.</param>
+        /// <param name="regionName">Optional. A named region in the cache to which the cache entry can be added, if
+        /// regions are implemented. Defaults to <see langword="null"/>.</param>
+        /// <returns>
+        /// A change monitor that monitors cache entries in the cache.
+        /// </returns>
         public override CacheEntryChangeMonitor CreateCacheEntryChangeMonitor(IEnumerable<string> keys,
             string regionName = null)
         {
@@ -133,6 +212,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.InMemory
             throw new NotSupportedException();
         }
 
+        /// <summary>
+        /// Gets the specified cache entry from the cache as an object.
+        /// </summary>
+        /// <param name="key">A unique identifier for the cache entry.</param>
+        /// <param name="regionName">Optional. A named region in the cache to which the cache entry was added, if
+        /// regions are implemented. Defaults to <see langword="null"/>.</param>
+        /// <returns>
+        /// The cache entry that is identified by key.
+        /// </returns>
         public override object Get(string key, string regionName = null)
         {
             GuardNoRegion(regionName);
@@ -143,6 +231,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.InMemory
             }
         }
 
+        /// <summary>
+        /// Gets the specified cache entry from the cache as a <see cref="CacheItem"/> instance.
+        /// </summary>
+        /// <param name="key">A unique identifier for the cache entry.</param>
+        /// <param name="regionName">Optional. A named region in the cache to which the cache entry was added, if
+        /// regions are implemented. Defaults to <see langword="null"/>.</param>
+        /// <returns>
+        /// The cache item.
+        /// </returns>
         public override CacheItem GetCacheItem(string key, string regionName = null)
         {
             GuardNoRegion(regionName);
@@ -158,6 +255,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.InMemory
             }
         }
 
+        /// <summary>
+        /// Gets the total number of cache entries in the cache.
+        /// </summary>
+        /// <param name="regionName">Optional. A named region in the cache for which the cache entry count should be computed, if
+        /// regions are implemented. Defaults to <see langword="null"/>.</param>
+        /// <returns>
+        /// The number of cache entries in the cache. If regionName is not Nothing, the count indicates the
+        /// number of entries that are in the specified cache region.
+        /// </returns>
         public override long GetCount(string regionName = null)
         {
             GuardNoRegion(regionName);
@@ -168,6 +274,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.InMemory
             }
         }
 
+        /// <summary>
+        /// Creates an enumerator that can be used to iterate through a collection
+        /// of cache entries.
+        /// </summary>
+        /// <returns>
+        /// The enumerator object that provides access to the cache entries in the cache.
+        /// </returns>
         protected override IEnumerator<KeyValuePair<string, object>> GetEnumerator()
         {
             lock (padlock)
@@ -176,6 +289,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.InMemory
             }
         }
 
+        /// <summary>
+        /// Gets a set of cache entries that correspond to the specified keys.
+        /// </summary>
+        /// <param name="keys">A collection of unique identifiers for the cache entries to get.</param>
+        /// <param name="regionName">Optional. A named region in the cache to which the cache entry or entries were
+        /// added, if regions are implemented. The default value for the optional parameter is <see langword="null"/>.</param>
+        /// <returns>
+        /// A dictionary of key/value pairs that represent cache entries.
+        /// </returns>
         public override IDictionary<string, object> GetValues(IEnumerable<string> keys, string regionName = null)
         {
             GuardNoRegion(regionName);
@@ -186,6 +308,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.InMemory
             }
         }
 
+        /// <summary>
+        /// Removes the cache entry from the cache.
+        /// </summary>
+        /// <param name="key">A unique identifier for the cache entry.</param>
+        /// <param name="regionName">Optional. A named region in the cache to which the cache entry was added, if
+        /// regions are implemented. Defaults to <see langword="null"/>.</param>
+        /// <returns>
+        /// An object that represents the value of the removed cache entry that was specified by the key,
+        /// or <see langword="null"/> if the specified entry was not found.
+        /// </returns>
         public override object Remove(string key, string regionName = null)
         {
             GuardNoRegion(regionName);
@@ -196,6 +328,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.InMemory
             }
         }
 
+        /// <summary>
+        /// Inserts the cache entry into the cache as a CacheItem instance,
+        /// specifying information about how the entry will be evicted.
+        /// </summary>
+        /// <param name="item">The cache item to add.</param>
+        /// <param name="policy">An object that contains eviction details for the cache entry. This object provides
+        /// more options for eviction than a simple absolute expiration.</param>
         public override void Set(CacheItem item, CacheItemPolicy policy)
         {
             GuardNoRegion(item.RegionName);
@@ -206,6 +345,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.InMemory
             }
         }
 
+        /// <summary>
+        /// Inserts a cache entry into the cache, specifying time-based expiration details.
+        /// </summary>
+        /// <param name="key">A unique identifier for the cache entry.</param>
+        /// <param name="value">The object to insert.</param>
+        /// <param name="absoluteExpiration">The fixed date and time at which the cache entry will expire.</param>
+        /// <param name="regionName">Optional. A named region in the cache to which the cache entry can be added, if
+        /// regions are implemented. Defaults to <see langword="null"/>.</param>
         public override void Set(string key, object value, DateTimeOffset absoluteExpiration, string regionName = null)
         {
             GuardNoRegion(regionName);
@@ -216,6 +363,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.InMemory
             }
         }
 
+        /// <summary>
+        /// Inserts a cache entry into the cache.
+        /// </summary>
+        /// <param name="key">A unique identifier for the cache entry.</param>
+        /// <param name="value">The object to insert.</param>
+        /// <param name="policy">An object that contains eviction details for the cache entry.</param>
+        /// <param name="regionName">Optional. A named region in the cache to which the cache entry can be added, if
+        /// regions are implemented. Defaults to <see langword="null"/>.</param>
         public override void Set(string key, object value, CacheItemPolicy policy, string regionName = null)
         {
             GuardNoRegion(regionName);
@@ -226,6 +381,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.InMemory
             }
         }
 
+        /// <summary>
+        /// Ensures that no region has been specified.
+        /// </summary>
+        /// <param name="regionName">Name of the region.</param>
         protected static void GuardNoRegion(string regionName)
         {
             if (!string.IsNullOrEmpty(regionName))
@@ -236,11 +395,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.InMemory
 
         #region Subclass hooks to add / remove / retrieve items from the store.
 
+        /// <summary>
+        /// Adds an entry to the dictionary in the cache object.
+        /// </summary>
+        /// <param name="entry">The entry to add.</param>
         protected void InnerAdd(TCacheEntry entry)
         {
             this.entries.Add(entry.Key, entry);
         }
 
+        /// <summary>
+        /// Invoked when an entry is being removed from the cache.
+        /// </summary>
+        /// <param name="entry">The entry that is being removed.</param>
+        /// <param name="reason">The reason for the removal.</param>
         protected virtual bool OnItemRemoving(TCacheEntry entry, CacheEntryRemovedReason reason)
         {
             switch (reason)
@@ -259,6 +427,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.InMemory
             return true;
         }
 
+        /// <summary>
+        /// Updates an entry in the cache.
+        /// </summary>
+        /// <param name="entry">The entry to update.</param>
+        /// <param name="reason">The reason for the update.</param>
         private bool TryUpdateItem(TCacheEntry entry, CacheEntryRemovedReason reason)
         {
             var callback = entry.Policy != null ? entry.Policy.UpdateCallback : null;
@@ -283,6 +456,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.InMemory
             return false;
         }
 
+        /// <summary>
+        /// Invoked when an entry was removed from the cache.
+        /// </summary>
+        /// <param name="entry">The entry that was removed.</param>
+        /// <param name="reason">The reason for the removal.</param>
         protected virtual void OnItemRemoved(TCacheEntry entry, CacheEntryRemovedReason reason)
         {
             this.entries.Remove(entry.Key);
@@ -296,11 +474,27 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.InMemory
 
         #endregion
 
+        /// <summary>
+        /// Actual implementation for adding or getting a cache item.
+        /// </summary>
+        /// <param name="key">A unique identifier for the cache entry.</param>
+        /// <param name="value">The object to insert.</param>
+        /// <param name="policy">An object that contains eviction details for the cache entry.</param>
+        /// <returns>
+        /// If a cache entry with the same key exists, the specified cache entry's value; otherwise, <see langword="null"/>.
+        /// </returns>
         protected object DoAddOrGetExisting(string key, object value, CacheItemPolicy policy)
         {
             return DoGet(key) ?? AddNew(key, value, policy);
         }
 
+        /// <summary>
+        /// Actual implementation for getting a cache item.
+        /// </summary>
+        /// <param name="key">A unique identifier for the cache entry.</param>
+        /// <returns>
+        /// The cache entry that is identified by key.
+        /// </returns>
         protected object DoGet(string key)
         {
             TCacheEntry entry;
@@ -320,30 +514,62 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.InMemory
             return null;
         }
 
+        /// <summary>
+        /// Updates the last access time on an entry.
+        /// </summary>
+        /// <param name="entry">The entry.</param>
         protected virtual void DoUpdateLastAccessTime(TCacheEntry entry)
         {
             entry.UpdateLastAccessTime();
         }
 
+        /// <summary>
+        /// Checks whether the entry identified by a key is stored in memory.
+        /// </summary>
+        /// <param name="key">A unique identifier for the cache entry.</param>
+        /// <returns>
+        /// true if the cache contains a cache entry with the same key value as key; otherwise, false.
+        /// </returns>
         protected bool DoContains(string key)
         {
             return entries.ContainsKey(key);
         }
 
+        /// <summary>
+        /// Gets the total number of cache entries in the cache.
+        /// </summary>
+        /// <returns>
+        /// The number of cache entries in the cache. If regionName is not Nothing, the count indicates the
+        /// number of entries that are in the specified cache region.
+        /// </returns>
         protected int DoGetCount()
         {
             return entries.Count;
         }
 
+        /// <summary>
+        /// Creates an enumerator that can be used to iterate through a collection
+        /// of cache entries.
+        /// </summary>
+        /// <returns>
+        /// The enumerator object that provides access to the cache entries in the cache.
+        /// </returns>
         protected IEnumerator<KeyValuePair<string, object>> DoGetEnumerator()
         {
-           var snapshot = entries
-                .Where(pair => !pair.Value.Policy.IsExpired(pair.Value.LastAccessTime))
-                .Select(pair => new KeyValuePair<string, object>(pair.Key, pair.Value.Value))
-                .ToList();
+            var snapshot = entries
+                 .Where(pair => !pair.Value.Policy.IsExpired(pair.Value.LastAccessTime))
+                 .Select(pair => new KeyValuePair<string, object>(pair.Key, pair.Value.Value))
+                 .ToList();
             return snapshot.GetEnumerator();
         }
 
+        /// <summary>
+        /// Gets a set of cache entries that correspond to the specified keys.
+        /// </summary>
+        /// <param name="keys">A collection of unique identifiers for the cache entries to get.</param>
+        /// <returns>
+        /// A dictionary of key/value pairs that represent cache entries.
+        /// </returns>
         protected IDictionary<string, object> DoGetValues(IEnumerable<string> keys)
         {
             var snapshot = new Dictionary<string, object>();
@@ -359,6 +585,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.InMemory
             return snapshot;
         }
 
+        /// <summary>
+        /// Removes a cache entry from the cache.
+        /// </summary>
+        /// <param name="key">A unique identifier for the cache entry to remove.</param>
+        /// <param name="reason">The reason for the removal.</param>
         protected object DoRemove(string key, CacheEntryRemovedReason reason)
         {
             TCacheEntry entry;
@@ -373,6 +604,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.InMemory
             return null;
         }
 
+        /// <summary>
+        /// Inserts a cache entry into the cache.
+        /// </summary>
+        /// <param name="key">A unique identifier for the cache entry.</param>
+        /// <param name="value">The object to insert.</param>
+        /// <param name="policy">An object that contains eviction details for the cache entry.</param>
         protected virtual void DoSet(string key, object value, CacheItemPolicy policy)
         {
             policy.Validate();
@@ -382,14 +619,30 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.InMemory
             ScheduleScavengingIfNeeded();
         }
 
+        /// <summary>
+        /// Creates a cache entry.
+        /// </summary>
+        /// <param name="key">A unique identifier for the cache entry.</param>
+        /// <param name="value">The object for the cache entry.</param>
+        /// <param name="policy">An object that contains eviction details for the cache entry.</param>
+        /// <returns>A new cache entry of type <typeparamref name="TCacheEntry"/>.</returns>
         protected abstract TCacheEntry CreateCacheEntry(string key, object value, CacheItemPolicy policy);
 
+        /// <summary>
+        /// Adds the new entry to the cache.
+        /// </summary>
+        /// <param name="key">A unique identifier for the cache entry.</param>
+        /// <param name="value">The object to insert.</param>
+        /// <param name="policy">An object that contains eviction details for the cache entry.</param>
         private object AddNew(string key, object value, CacheItemPolicy policy)
         {
             DoSet(key, value, policy);
             return null;
         }
 
+        /// <summary>
+        /// Schedules a scavenging operation if needed.
+        /// </summary>
         protected void ScheduleScavengingIfNeeded()
         {
             if (scavengingStrategy.ShouldScavenge(entries))
@@ -398,6 +651,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.InMemory
             }
         }
 
+        /// <summary>
+        /// Performs an expiration sweep.
+        /// </summary>
         protected void DoExpirations()
         {
             if (this.isDisposed)
@@ -419,6 +675,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.InMemory
             }
         }
 
+        /// <summary>
+        /// Performs a scavenging sweep.
+        /// </summary>
         protected void DoScavenging()
         {
             if (this.isDisposed)
@@ -436,7 +695,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.InMemory
                     if (this.isDisposed)
                         return;
 
-                    if(!scavengingStrategy.ShouldScavengeMore(this.entries))
+                    if (!scavengingStrategy.ShouldScavengeMore(this.entries))
                         break;
 
                     DoRemove(itemToScavenge.Key, CacheEntryRemovedReason.Evicted);

@@ -19,6 +19,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configuration
 {
+#if !SILVERLIGHT
     [TestClass]
     public class PolicyInjectionSettingsFixture
     {
@@ -36,6 +37,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
             }
         }
     }
+#endif
 
     [TestClass]
     public class GivenAnEmptySection
@@ -200,8 +202,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
             policyData.MatchingRules.Add(
                 new TypeMatchingRuleData("matching rule 1", typeof(object).AssemblyQualifiedName));
             policyData.Handlers.Add(
-                new CustomCallHandlerData("handler 1", typeof(CallCountHandler).AssemblyQualifiedName));
-
+#if !SILVERLIGHT
+                new CustomCallHandlerData("handler 1", typeof(CallCountHandler).AssemblyQualifiedName)
+#else
+                new CallCountHandlerData("handler 1")
+#endif
+            );
+            
             settings = new PolicyInjectionSettings();
             settings.Policies.Add(policyData);
         }

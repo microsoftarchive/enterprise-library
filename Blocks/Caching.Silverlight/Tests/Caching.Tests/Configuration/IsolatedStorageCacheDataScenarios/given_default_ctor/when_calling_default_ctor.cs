@@ -16,7 +16,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests.Configuration.Isol
         [TestMethod]
         public void then_default_values_are_setted_properly()
         {
-            Assert.AreNotEqual(0, Data.MaxSizeInKiloBytes);
+            Assert.AreNotEqual(0, Data.MaxSizeInKilobytes);
             Assert.AreNotEqual(0, Data.PercentOfQuotaUsedBeforeScavenging);
             Assert.AreNotEqual(0, Data.PercentOfQuotaUsedAfterScavenging);
             Assert.IsNotNull(Data.ExpirationPollingInterval);

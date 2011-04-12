@@ -32,23 +32,27 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>Bin\Debug</OutputPath>
+    <OutputPath>..\..\..\bin\DebugSL\</OutputPath>
     <DefineConstants>DEBUG;TRACE;SILVERLIGHT</DefineConstants>
     <NoStdLib>true</NoStdLib>
     <NoConfig>true</NoConfig>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <DocumentationFile>..\..\..\bin\DebugSL\Microsoft.Practices.EnterpriseLibrary.Logging.Silverlight.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>Bin\Release</OutputPath>
+    <OutputPath>..\..\..\bin\ReleaseSL\</OutputPath>
     <DefineConstants>TRACE;SILVERLIGHT</DefineConstants>
     <NoStdLib>true</NoStdLib>
     <NoConfig>true</NoConfig>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>..\..\..\bin\ReleaseSL\Microsoft.Practices.EnterpriseLibrary.Logging.Silverlight.XML</DocumentationFile>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -73,12 +77,19 @@
     <Reference Include="System.Windows.Browser" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AsyncTracingErrorReporter.Silverlight.cs" />
     <Compile Include="CategoryFilterMode.cs" />
     <Compile Include="Configuration\CategoryFilterData.cs" />
     <Compile Include="Configuration\CategoryFilterData.Silverlight.cs" />
     <Compile Include="Configuration\CategoryFilterEntry.cs" />
     <Compile Include="Configuration\CategoryFilterEntry.Silverlight.cs" />
-    <Compile Include="Configuration\NetworkTraceListenerData.Silverlight.cs" />
+    <Compile Include="Configuration\ILogSourceUpdateContext.Silverlight.cs" />
+    <Compile Include="Configuration\ILogWriterUpdateContext.Silverlight.cs" />
+    <Compile Include="Configuration\LogCallHandlerData.Silverlight.cs" />
+    <Compile Include="Configuration\LogCallHandlerCategoryEntry.Silverlight.cs" />
+    <Compile Include="Configuration\LogCallHandlerCategoryEntry.cs" />
+    <Compile Include="Configuration\LogCallHandlerData.cs" />
+    <Compile Include="Configuration\RemoteServiceTraceListenerData.Silverlight.cs" />
     <Compile Include="Configuration\IsolatedStorageTraceListenerData.Silverlight.cs" />
     <Compile Include="Configuration\LogEnabledFilterData.cs" />
     <Compile Include="Configuration\LogEnabledFilterData.Silverlight.cs" />
@@ -102,10 +113,17 @@
     <Compile Include="Configuration\TraceSourceData.cs" />
     <Compile Include="Diagnostics\CorrelationManager.Silverlight.cs" />
     <Compile Include="Diagnostics\Trace.Silverlight.cs" />
+    <Compile Include="IAsyncTracingErrorReporter.Silverlight.cs" />
+    <Compile Include="LogSource.Silverlight.cs" />
     <Compile Include="PolicyInjection\LogCallHandler.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="LogWriter.Silverlight.cs" />
+    <Compile Include="Service\ILogEntryMessageStore.cs" />
+    <Compile Include="Service\INetworkStatus.cs" />
+    <Compile Include="Service\LogEntryExtensions.cs" />
+    <Compile Include="Service\LogEntryMessageStore.cs" />
+    <Compile Include="Service\NetworkStatus.cs" />
     <Compile Include="Tracer.Silverlight.cs" />
     <Compile Include="Diagnostics\DefaultTraceListener.cs" />
     <Compile Include="Diagnostics\SourceLevels.cs" />
@@ -155,11 +173,13 @@
     <Compile Include="TraceListeners\IsolatedStorageTraceListener.Silverlight.cs" />
     <Compile Include="Service\LogEntryMessage.cs" />
     <Compile Include="Service\LoggingServiceProxy.Silverlight.cs" />
-    <Compile Include="TraceListeners\NetworkTraceListener.Silverlight.cs" />
+    <Compile Include="TraceListeners\RemoteServiceTraceListener.Silverlight.cs" />
     <Compile Include="TraceReceivedEventArgs.Silverlight.cs" />
     <Compile Include="TraceListeners\LogEntrySerializer.cs" />
     <Compile Include="Tracer.cs" />
     <Compile Include="TraceListeners\NotificationTraceListener.Silverlight.cs" />
+    <Compile Include="ICapturedTracingContext.Silverlight.cs" />
+    <Compile Include="Configuration\ICommitable.Silverlight.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">

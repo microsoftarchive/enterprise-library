@@ -13,8 +13,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
     /// </summary>
     public class BoundedStreamStorage : IDisposable
     {
-        private static byte[] streamHeaderBytes = new byte[] { 15, 16 };
-        private static byte[] entryHeaderBytes = new byte[] { 17, 18 };
+        private static readonly byte[] streamHeaderBytes = new byte[] { 15, 16 };
+        private static readonly byte[] entryHeaderBytes = new byte[] { 17, 18 };
         private const int streamFullHeaderSize = sizeof(byte) * 2 + sizeof(int) * 4;
         private const int headOffset = sizeof(byte) * 2 + sizeof(int) * 2;
         private const int tailOffset = headOffset + sizeof(int);

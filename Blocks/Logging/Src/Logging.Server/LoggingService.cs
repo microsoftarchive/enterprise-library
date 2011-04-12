@@ -1,14 +1,12 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.ServiceModel.Activation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Service
 {
     [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Allowed)]
-    [SilverlightFaultBehavior]
     public class LoggingService : ILoggingService
     {
-        private LogWriter logWriter;
+        private readonly LogWriter logWriter;
 
         public LoggingService()
             : this(Logger.Writer)
@@ -20,37 +18,39 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Service
             this.logWriter = logWriter;
         }
 
-        public void SendLogEntries(LogEntryMessage[] entries)
+        /// <summary>
+        /// Adds log entries into to the server log.
+        /// </summary>
+        /// <param name="entries">The client log entries to log in the server.</param>
+        public void Add(LogEntryMessage[] entries)
         {
             if (entries != null)
             {
                 foreach (var message in entries)
                 {
                     var entry = Translate(message);
+                    this.CollectInformation(entry);
                     this.logWriter.Write(entry);
                 }
             }
         }
 
-        private static LogEntry Translate(LogEntryMessage entry)
+        /// <summary>
+        /// Used to collect more information or customize the incoming log entry before logging it.
+        /// </summary>
+        /// <param name="entry">The log entry coming from the client.</param>
+        protected virtual void CollectInformation(LogEntry entry)
         {
-            var translated = new LogEntry
-            {
-                Message = entry.Message,
-                Categories = entry.Categories.ToArray(),
-                Priority = entry.Priority,
-                EventId = entry.EventId,
-                Severity = entry.Severity,
-                Title = entry.Title,
-                TimeStamp = entry.TimeStamp.DateTime,   // TODO is this conversion OK?
-                AppDomainName = entry.AppDomainName,
-                ManagedThreadName = entry.ManagedThreadName,
-                ExtendedProperties = entry.ExtendedProperties,
-                ActivityId = entry.ActivityId,
-                RelatedActivityId = entry.RelatedActivityId
-            };
+        }
 
-            return translated;
+        /// <summary>
+        /// Translates the incoming <see cref="LogEntryMessage"/> into a <see cref="LogEntry"/>.
+        /// </summary>
+        /// <param name="entry">The log entry coming from the client.</param>
+        /// <returns>A <see cref="LogEntry"/> instance that can be stored in the log.</returns>
+        protected virtual LogEntry Translate(LogEntryMessage entry)
+        {
+            return entry.ToLogEntry();
         }
     }
 }

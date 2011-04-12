@@ -8,63 +8,76 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
     public class LoggingServiceProxy : ILoggingService, IDisposable
     {
         private ILoggingService channel;
-        private ChannelFactory<ILoggingService> factory;
-
-        public LoggingServiceProxy(string endpointConfigurationName, EndpointAddress remoteAddress)
-            : this(new ChannelFactory<ILoggingService>(endpointConfigurationName, remoteAddress))
-        {
-        }
-
-        public LoggingServiceProxy(string endpointConfigurationName)
-            : this(new ChannelFactory<ILoggingService>(endpointConfigurationName))
-        {
-        }
-
-        public LoggingServiceProxy(Binding binding, EndpointAddress remoteAddress)
-            : this(new ChannelFactory<ILoggingService>(binding, remoteAddress))
-        {
-        }
 
         public LoggingServiceProxy(ChannelFactory<ILoggingService> factory)
         {
-            this.factory = factory;
             this.channel = factory.CreateChannel();
         }
 
-        public IAsyncResult BeginSendLogEntries(LogEntryMessage[] entries, AsyncCallback callback, object asyncState)
+        /// <summary>
+        /// Asynchronously submits log entries to the server log.
+        /// </summary>
+        /// <param name="entries">The log entries to send to the server.</param>
+        /// <param name="callback">The delegate to call when the operation finishes.</param>
+        /// <param name="asyncState">The user-defined state object used to pass context data to the callback method.</param>
+        /// <returns>An <see cref="IAsyncResult"/> that represents the status of the asynchronous operation.</returns>
+        public IAsyncResult BeginAdd(LogEntryMessage[] entries, AsyncCallback callback, object asyncState)
         {
-            return this.channel.BeginSendLogEntries(entries, callback, asyncState);
+            return this.channel.BeginAdd(entries, callback, asyncState);
         }
 
-        public void EndSendLogEntries(IAsyncResult asyncResult)
+        /// <summary>
+        /// Called to complete the <see cref="BeginAdd"/> operation.
+        /// </summary>
+        /// <param name="asyncResult">An <see cref="IAsyncResult"/> that represents the status of the asynchronous operation.</param>
+        public void EndAdd(IAsyncResult asyncResult)
         {
-            this.channel.EndSendLogEntries(asyncResult);
+            this.channel.EndAdd(asyncResult);
         }
 
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
         public void Dispose()
         {
-            var clientChannel = (IClientChannel)this.channel;
-            try
-            {
-                clientChannel.Close();
-                this.factory.Close();
-            }
-            catch (CommunicationException)
-            {
-                clientChannel.Abort();
-            }
-            catch (TimeoutException)
-            {
-                clientChannel.Abort();
-            }
-            catch (Exception)
-            {
-                clientChannel.Abort();
-                throw;
-            }
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
 
-            using (this.channel as IDisposable) this.channel = null;
-            using (this.factory as IDisposable) this.factory = null;
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        /// <param name="disposing">true if the method is being called from the <see cref="Dispose()"/> method. False if it is being called from withing the object finalizer.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                var clientChannel = (IClientChannel)this.channel;
+                try
+                {
+                    clientChannel.Close();
+                }
+                catch (CommunicationException)
+                {
+                    clientChannel.Abort();
+                }
+                catch (TimeoutException)
+                {
+                    clientChannel.Abort();
+                }
+                catch (Exception)
+                {
+                    clientChannel.Abort();
+                    throw;
+                }
+
+                using (this.channel as IDisposable) this.channel = null;
+            }
+        }
+
+        ~LoggingServiceProxy()
+        {
+            Dispose(false);
         }
     }
 }

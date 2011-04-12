@@ -36,7 +36,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration.Confi
 #if !SILVERLIGHT
             Assert.AreEqual(9, locators.Count());
 #else
-            Assert.AreEqual(3, locators.Count());
+            Assert.AreEqual(5, locators.Count());
 #endif
         }
 

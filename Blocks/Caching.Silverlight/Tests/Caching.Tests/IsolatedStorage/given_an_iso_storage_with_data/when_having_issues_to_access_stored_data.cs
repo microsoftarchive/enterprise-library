@@ -17,10 +17,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests.IsolatedStorage.gi
 
             using (var store = IsolatedStorageFile.GetUserStoreForApplication())
             {
-                // find the file representation for "largeData"
-                foreach (var fileName in store.GetFileNames("Cache_" + CacheName + Path.DirectorySeparatorChar + "*.cache"))
+                // find the file representation for "largeData" key
+                foreach (var fileName in store.GetFileNames("__Cache_" + CacheName + Path.DirectorySeparatorChar + "*.dat"))
                 {
-                    var path = Path.Combine("Cache_" + CacheName, fileName);
+                    var path = Path.Combine("__Cache_" + CacheName, fileName);
                     using (var file = store.OpenFile(path, FileMode.Open, FileAccess.Read))
                     {
                         if (file.Length > 5000)

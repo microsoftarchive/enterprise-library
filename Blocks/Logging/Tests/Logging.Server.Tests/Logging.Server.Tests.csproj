@@ -53,7 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="LoggingService\given_an_incoming_log_entry\Context.cs" />
-    <Compile Include="LoggingService\given_an_incoming_log_entry\when_data_is_traced.cs" />
+    <Compile Include="LoggingService\given_an_incoming_log_entry\when_adding.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

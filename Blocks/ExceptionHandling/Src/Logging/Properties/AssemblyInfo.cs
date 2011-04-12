@@ -10,15 +10,7 @@
 //===============================================================================
 
 using System.Reflection;
-using System.Security.Permissions;
-using System.Runtime.ConstrainedExecution;
-using System.Security;
 
-[assembly: ReliabilityContract(Consistency.WillNotCorruptState, Cer.None)]
-
-[assembly : AssemblyTitle("Enterprise Library Exception Handling Logging Provider")]
-[assembly : AssemblyDescription("Enterprise Library Exception Handling Logging Provider")]
+[assembly: AssemblyTitle("Enterprise Library Exception Handling Logging Provider")]
+[assembly: AssemblyDescription("Enterprise Library Exception Handling Logging Provider")]
 [assembly: AssemblyVersion("5.0.414.0")]
-
-[assembly: AllowPartiallyTrustedCallers]
-[assembly: SecurityTransparent]

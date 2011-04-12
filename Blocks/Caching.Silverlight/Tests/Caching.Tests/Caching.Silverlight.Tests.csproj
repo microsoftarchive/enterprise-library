@@ -147,7 +147,6 @@
     <Compile Include="InMemoryCachingScenarios\NumberOfItemsScavengingStrategyFixture.cs" />
     <Compile Include="IsolatedStorage\given_an_iso_storage_with_data\when_creating_second_instance_cache.cs" />
     <Compile Include="IsolatedStorage\given_an_iso_storage_with_data\when_having_issues_to_access_stored_data.cs" />
-    <Compile Include="IsolatedStorage\StorageAccessorFixture.cs" />
     <Compile Include="IsolatedStorage\given_an_empty_iso_storage_cache\when_initialized.cs" />
     <Compile Include="IsolatedStorage\given_an_iso_storage_with_data\Context.cs" />
     <Compile Include="IsolatedStorage\given_an_iso_storage_with_data\when_adding_item_that_does_not_fit_cache_size.cs" />

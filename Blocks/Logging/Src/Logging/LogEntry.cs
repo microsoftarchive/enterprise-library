@@ -257,10 +257,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
             }
         }
 
+#if !SILVERLIGHT
         /// <summary>
         /// The name of the .NET thread.
         /// </summary>
         ///  <seealso cref="Win32ThreadId"/>
+#else
+        /// <summary>
+        /// The name of the .NET thread.
+        /// </summary>
+#endif
         public string ManagedThreadName
         {
             get

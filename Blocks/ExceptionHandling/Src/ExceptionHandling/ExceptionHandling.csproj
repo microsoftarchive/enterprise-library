@@ -131,6 +131,13 @@
     <None Include="..\..\..\GlobalAssemblyInfo.2010.cs">
       <Link>GlobalAssemblyInfo.2010.cs</Link>
     </None>
+    <Compile Include="Configuration\ExceptionCallHandlerData.Desktop.cs" />
+    <Compile Include="Configuration\WrapHandlerData.Desktop.cs" />
+    <Compile Include="Configuration\ReplaceHandlerData.Desktop.cs" />
+    <Compile Include="Configuration\ExceptionHandlerData.Desktop.cs" />
+    <Compile Include="Configuration\ExceptionTypeData.Desktop.cs" />
+    <Compile Include="Configuration\ExceptionPolicyData.Desktop.cs" />
+    <Compile Include="Configuration\ExceptionHandlingSettings.Desktop.cs" />
     <Compile Include="Configuration\DesignResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -222,6 +229,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\AssemblyInfo.Desktop.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>

@@ -20,6 +20,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
     [DeploymentItem("test.exe.config")]
     public class TypeMatchingRuleDataFixture : MatchingRuleDataFixtureBase
     {
+#if !SILVERLIGHT
         [TestMethod]
         public void CanSerializeTypeMatchingRule()
         {
@@ -43,7 +44,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
                                      "The match at index {0} is incorrect", i);
             }
         }
-
+#else
+        [TestMethod]
+        public void HasDefaultCtor()
+        {
+            new TypeMatchingRuleData();
+        }
+#endif
         
         [TestMethod]
         public void MatchingRuleHasTransientLifetime()

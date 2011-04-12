@@ -33,10 +33,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
     /// </summary>
     /// <remarks>
     /// <para>
-    /// To write log messages to the default configuration, use the <see cref="Logger"/> facade.  
-    /// Only create an instance of a LogWriterImpl if you need to write log messages using a custom configuration.
-    /// </para>
-    /// <para>
     /// The LogWriterImpl works as an entry point to the <see cref="System.Diagnostics"/> trace listeners. 
     /// It will trace the <see cref="LogEntry"/> through the <see cref="TraceListeners"/>s associated with the <see cref="LogSource"/>s 
     /// for all the matching categories in the elements of the <see cref="LogEntry.Categories"/> property of the log entry. 
@@ -360,19 +356,36 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
                                           LogEntry log,
                                           LogSource traceSource)
         {
+            ReportExceptionDuringTracing(exception, log, traceSource.Name);
+        }
+
+        private void ReportExceptionDuringTracing(Exception exception, LogEntry log, string traceSourceName)
+        {
             try
             {
                 IDictionary<string, string> additionalInfo = new Dictionary<string, string>();
                 additionalInfo.Add(ExceptionFormatter.Header,
-                                   string.Format(CultureInfo.CurrentCulture, Resources.TraceSourceFailed, traceSource.Name));
+                                   string.Format(CultureInfo.CurrentCulture, Resources.TraceSourceFailed, traceSourceName));
                 additionalInfo.Add(Resources.TraceSourceFailed2,
                                    string.Format(CultureInfo.CurrentCulture, Resources.TraceSourceFailed3, log));
                 ExceptionFormatter formatter =
                     new ExceptionFormatter(additionalInfo, Resources.DistributorEventLoggerDefaultApplicationName);
 
+                ReportErrorDuringTracing(formatter.GetMessage(exception));
+            }
+            catch (Exception ex)
+            {
+                instrumentationProvider.FireFailureLoggingErrorEvent(Resources.FailureWhileTracing, ex);
+            }
+        }
+
+        private void ReportErrorDuringTracing(string message)
+        {
+            try
+            {
                 LogEntry reportingLogEntry = new LogEntry();
                 reportingLogEntry.Severity = TraceEventType.Error;
-                reportingLogEntry.Message = formatter.GetMessage(exception);
+                reportingLogEntry.Message = message;
                 reportingLogEntry.EventId = LogWriterFailureEventID;
 
                 structureHolder.ErrorsTraceSource.TraceData(reportingLogEntry.Severity, reportingLogEntry.EventId, reportingLogEntry);

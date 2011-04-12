@@ -34,16 +34,27 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
             }
         }
 
+        /// <summary>
+        /// Writes the specified message.
+        /// </summary>
+        /// <param name="message">The message.</param>
         public override void Write(string message)
         {
             throw new NotSupportedException();
         }
 
+        /// <summary>
+        /// Writes the specified message, followed by a line terminator.
+        /// </summary>
+        /// <param name="message">The message.</param>
         public override void WriteLine(string message)
         {
             throw new NotSupportedException();
         }
 
+        /// <summary>
+        /// Gets a value indicating whether this instance is thread safe.
+        /// </summary>
         public override bool IsThreadSafe
         {
             get

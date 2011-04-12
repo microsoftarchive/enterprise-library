@@ -9,105 +9,14 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
-using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Instrumentation;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
 {
-    /// <summary>
-    /// Represents the configuration for an <see cref="ExceptionPolicy"/>.
-    /// </summary> 
-    [ResourceDescription(typeof(DesignResources), "ExceptionPolicyDataDescription")]
-    [ResourceDisplayName(typeof(DesignResources), "ExceptionPolicyDataDisplayName")]
-    [ViewModel(ExceptionHandlingDesignTime.ViewModelTypeNames.ExceptionPolicyDataViewModel)]
-	public class ExceptionPolicyData : NamedConfigurationElement
+    partial class ExceptionPolicyData
     {
-		private const string exceptionTypesProperty = "exceptionTypes";
-
-		/// <summary>
-        /// Creates a new instance of ExceptionPolicyData.
-        /// </summary>
-        public ExceptionPolicyData() 
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ExceptionPolicyData"/> class with a name.
-        /// </summary>
-        /// <param name="name">
-        /// The name of the <see cref="ExceptionPolicyData"/>.
-        /// </param>
-        public ExceptionPolicyData(string name) : base(name)
-        {
-			this[exceptionTypesProperty] = new NamedElementCollection<ExceptionTypeData>();
-        }
-
-		/// <summary>
-		/// Gets a collection of <see cref="ExceptionTypeData"/> objects.
-		/// </summary>
-		/// <value>
-		/// A collection of <see cref="ExceptionTypeData"/> objects.
-		/// </value>
-		[ConfigurationProperty(exceptionTypesProperty)]
-        [ResourceDescription(typeof(DesignResources), "ExceptionPolicyDataExceptionTypesDescription")]
-        [ResourceDisplayName(typeof(DesignResources), "ExceptionPolicyDataExceptionTypesDisplayName")]
-        [ConfigurationCollection(typeof(ExceptionTypeData))]
-        [PromoteCommands]
-		public NamedElementCollection<ExceptionTypeData> ExceptionTypes
-		{
-			get
-			{
-				return (NamedElementCollection<ExceptionTypeData>)this[exceptionTypesProperty];
-			}
-		}
-
-        /// <summary>
-        /// Retrieves the <see cref="TypeRegistration"/> for registering a <see cref="ExceptionPolicyImpl"/> in the container.
-        /// </summary>
-        /// <returns>A completed <see cref="TypeRegistration"/></returns>
-        public IEnumerable<TypeRegistration> GetRegistration(IConfigurationSource configurationSource)
-        {
-            yield return new TypeRegistration<ExceptionPolicyImpl>(
-                () => new ExceptionPolicyImpl(
-                    Name, 
-                    Container.ResolvedEnumerable<ExceptionPolicyEntry>(
-                        from data in ExceptionTypes
-                            select BuildChildName(data.Name)
-                    
-                    )))
-                    {
-                        Name = Name,
-                        Lifetime = TypeRegistrationLifetime.Transient
-                    };
-
-            yield return GetInstrumentationRegistration(configurationSource);
-        }
-
         private string BuildChildName(string childName)
         {
             return string.Format("{0}.{1}", Name, childName);
-        }
-
-        private TypeRegistration GetInstrumentationRegistration(IConfigurationSource configurationSource)
-        {
-            var instrumentationSection = InstrumentationConfigurationSection.GetSection(configurationSource);
-
-            return new TypeRegistration<IExceptionHandlingInstrumentationProvider>(
-                () => new ExceptionHandlingInstrumentationProvider(Name,
-                                                                      instrumentationSection.PerformanceCountersEnabled,
-                                                                      instrumentationSection.EventLoggingEnabled,
-                                                                      instrumentationSection.ApplicationInstanceName))
-                       {
-                           Name = Name,
-                           Lifetime = TypeRegistrationLifetime.Transient
-                       };
         }
     }
 }

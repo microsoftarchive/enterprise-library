@@ -17,6 +17,7 @@ using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
 {
+#if !SILVERLIGHT
     /// <summary>
     /// Non-static entry point to the exception handling functionality.
     /// </summary>
@@ -25,6 +26,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
     /// facade.
     /// </remarks>
     /// <seealso cref="ExceptionPolicy"/>
+#else
+    /// <summary>
+    /// Non-static entry point to the exception handling functionality.
+    /// </summary>
+#endif
     public class ExceptionManagerImpl : ExceptionManager
     {
         private readonly IDictionary<string, ExceptionPolicyImpl> exceptionPolicies;
@@ -206,8 +212,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
         /// an exception occurs and the policy does not re-throw, returns <paramref name="defaultResult"/>.</returns>
         public override TResult Process<TResult>(Func<TResult> action, TResult defaultResult, string policyName)
         {
-            if(action == null) throw new ArgumentNullException("action");
-            if(policyName == null) throw new ArgumentNullException("policyName");
+            if (action == null) throw new ArgumentNullException("action");
+            if (policyName == null) throw new ArgumentNullException("policyName");
 
             try
             {
@@ -215,7 +221,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
             }
             catch (Exception e)
             {
-                if(HandleException(e, policyName))
+                if (HandleException(e, policyName))
                 {
                     throw;
                 }

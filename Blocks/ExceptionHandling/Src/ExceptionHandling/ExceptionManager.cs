@@ -13,7 +13,8 @@ using System;
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
 {
-	/// <summary>
+#if !SILVERLIGHT
+    /// <summary>
 	/// Non-static entry point to the exception handling functionality.
 	/// </summary>
 	/// <remarks>
@@ -21,6 +22,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
 	/// facade.
 	/// </remarks>
 	/// <seealso cref="ExceptionPolicy"/>
+#else
+    /// <summary>
+    /// Non-static entry point to the exception handling functionality.
+    /// </summary>
+#endif
     public abstract class ExceptionManager
     {
         /// <summary>
@@ -114,7 +120,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
         /// <param name="policyName">The name of the policy to handle.</param>
         /// <returns>If no exception occurs, returns the result from executing <paramref name="action"/>. If
         /// an exception occurs and the policy does not re-throw, returns <paramref name="defaultResult"/>.</returns>
-	    public abstract TResult Process<TResult>(Func<TResult> action, TResult defaultResult, string policyName);
+        public abstract TResult Process<TResult>(Func<TResult> action, TResult defaultResult, string policyName);
 
         /// <summary>
         /// Executes the supplied delegate <paramref name="action"/>, and handles

@@ -10,10 +10,14 @@
 //===============================================================================
 
 using System;
+using System.Collections;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Xml;
+using System.Xml.Linq;
+using System.Xml.XPath;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
@@ -25,7 +29,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
         public void CreateXmlWriterTest()
         {
             StringBuilder sb = new StringBuilder();
-            XmlTextWriter writer = new XmlTextWriter(new StringWriter(sb));
+            XmlWriter writer = XmlWriter.Create(new StringWriter(sb));
             Exception ex = new MockException();
             XmlExceptionFormatter formatter = new XmlExceptionFormatter(writer, ex, Guid.Empty);
 
@@ -52,7 +56,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
         public void CreateWithNullExceptionThrows()
         {
             StringBuilder sb = new StringBuilder();
-            XmlTextWriter writer = new XmlTextWriter(new StringWriter(sb));
+            XmlWriter writer = XmlWriter.Create(new StringWriter(sb));
             new XmlExceptionFormatter(writer, null, Guid.Empty);
         }
 
@@ -67,9 +71,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
             Assert.IsTrue(sb.Length == 0);
             formatter.Format();
 
-            XmlDocument doc = new XmlDocument();
-            doc.LoadXml(sb.ToString());
-            XmlNode element = doc.DocumentElement.SelectSingleNode("//InnerException");
+            var doc = XDocument.Load(new StringReader(sb.ToString()));
+            var element = doc.XPathSelectElement("//InnerException");
+
             Assert.IsNotNull(element);
         }
 
@@ -89,7 +93,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
         public void SimpleXmlWriterFormatterTest()
         {
             StringBuilder sb = new StringBuilder();
-            XmlTextWriter writer = new XmlTextWriter(new StringWriter(sb));
+            XmlWriter writer = XmlWriter.Create(new StringWriter(sb));
             Exception ex = new MockException();
             XmlExceptionFormatter formatter = new XmlExceptionFormatter(writer, ex, Guid.Empty);
 
@@ -124,8 +128,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
             XmlExceptionFormatter formatter = new XmlExceptionFormatter(writer, ex, Guid.Empty);
             formatter.Format();
 
-            XmlDocument doc = new XmlDocument();
-            doc.LoadXml(sb.ToString());
+            XDocument.Load(new StringReader(sb.ToString()));
         }
 
         [TestMethod]
@@ -140,11 +143,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
             Assert.IsTrue(sb.Length == 0);
             formatter.Format();
 
-            XmlDocument doc = new XmlDocument();
-            doc.LoadXml(sb.ToString());
-            XmlNode element = doc.DocumentElement.SelectSingleNode("/Exception/@handlingInstanceId");
+            var doc = XDocument.Load(new StringReader(sb.ToString()));
+            var element = ((IEnumerable)doc.XPathEvaluate("/Exception/@handlingInstanceId")).OfType<XAttribute>().FirstOrDefault();
             Assert.IsNotNull(element);
-            Assert.AreEqual(testGuid.ToString("D", CultureInfo.InvariantCulture), element.InnerText);
+            Assert.AreEqual(testGuid.ToString("D", CultureInfo.InvariantCulture), element.Value);
         }
 
         [TestMethod]
@@ -158,9 +160,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
             Assert.IsTrue(sb.Length == 0);
             formatter.Format();
 
-            XmlDocument doc = new XmlDocument();
-            doc.LoadXml(sb.ToString());
-            XmlNode element = doc.DocumentElement.SelectSingleNode("/Exception/@handlingInstanceId");
+            var doc = XDocument.Load(new StringReader(sb.ToString()));
+            var element = ((IEnumerable)doc.XPathEvaluate("/Exception/@handlingInstanceId")).OfType<XAttribute>().FirstOrDefault();
             Assert.IsNull(element);
         }
     }

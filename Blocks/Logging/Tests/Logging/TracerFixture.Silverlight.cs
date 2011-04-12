@@ -19,12 +19,13 @@ using Microsoft.Practices.EnterpriseLibrary.Logging.Filters;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport.TraceListeners;
 using Microsoft.Practices.ServiceLocation;
+using Microsoft.Silverlight.Testing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
 {
     [TestClass]
-    public class TracerFixture
+    public class TracerFixture : SilverlightTest
     {
         readonly Guid referenceGuid = new Guid("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
         readonly Guid overwriteGuid = new Guid("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB");
@@ -459,6 +460,157 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
 
             Assert.AreEqual(0, Trace.CorrelationManager.LogicalOperationStack.Count);
             Assert.IsFalse(testActivityId1 == Trace.CorrelationManager.ActivityId);
+        }
+
+        [TestMethod]
+        [Asynchronous]
+        [Timeout(5000)]
+        public void WorkeEnqueuedWhileTracingDoesNotInheritTracingContext()
+        {
+            object[] stack = null;
+            Guid guid = Guid.Empty;
+
+            using (new Tracer("operation", this.testActivityId1, this.logWriter))
+            {
+                ThreadPool.QueueUserWorkItem(_ =>
+                    {
+                        stack = Trace.CorrelationManager.LogicalOperationStack.ToArray();
+                        guid = Trace.CorrelationManager.ActivityId;
+                    });
+            }
+
+
+            this.EnqueueConditional(() => stack != null);
+            this.EnqueueCallback(() =>
+                {
+                    CollectionAssert.AreEqual(new object[0], stack);
+                    Assert.AreEqual(Guid.Empty, guid);
+                });
+            this.EnqueueTestComplete();
+        }
+
+        [TestMethod]
+        [Asynchronous]
+        [Timeout(5000)]
+        public void ResumingCapturedTracingContextRestoresTracingOperationOnEqueuedWork()
+        {
+            object[] stack = null;
+            Guid guid = Guid.Empty;
+
+            using (new Tracer("operation", this.testActivityId1, this.logWriter))
+            {
+                var context = Tracer.CaptureTracingContext();
+
+                ThreadPool.QueueUserWorkItem(_ =>
+                {
+                    using (new Tracer("nested", this.testActivityId2, this.logWriter))
+                    {
+                        using (context.Restore())
+                        {
+                            guid = Trace.CorrelationManager.ActivityId;
+                            stack = Trace.CorrelationManager.LogicalOperationStack.ToArray();
+                        }
+                    }
+                });
+            }
+
+            this.EnqueueConditional(() => stack != null);
+            this.EnqueueCallback(() =>
+            {
+                Assert.AreEqual(this.testActivityId1, guid);
+                CollectionAssert.AreEqual(new object[] { "operation" }, stack);
+            });
+            this.EnqueueTestComplete();
+        }
+
+        [TestMethod]
+        [Asynchronous]
+        [Timeout(5000)]
+        public void ResumingCapturedTracingContextWithMultipleOperationsRestoresTracingOperationsOnEqueuedWork()
+        {
+            object[] localStack = null;
+            object[] resumedStack = null;
+            Guid guid = Guid.Empty;
+
+            using (new Tracer("operation1", this.testActivityId1, this.logWriter))
+            using (new Tracer("operation1", this.testActivityId1, this.logWriter))
+            {
+                localStack = Trace.CorrelationManager.LogicalOperationStack.ToArray();
+
+                var context = Tracer.CaptureTracingContext();
+
+                ThreadPool.QueueUserWorkItem(_ =>
+                {
+                    using (new Tracer("enqueued", this.testActivityId2, this.logWriter))
+                    {
+                        using (context.Restore())
+                        {
+                            resumedStack = Trace.CorrelationManager.LogicalOperationStack.ToArray();
+                        }
+                    }
+                });
+            }
+
+            this.EnqueueConditional(() => localStack != null);
+            this.EnqueueCallback(() =>
+            {
+                CollectionAssert.AreEqual(localStack, resumedStack);
+            });
+            this.EnqueueTestComplete();
+        }
+
+        [TestMethod]
+        [Asynchronous]
+        [Timeout(5000)]
+        public void RestoredTracingContextIsRevertedAfterResumeOperationIsCompleted()
+        {
+            object[] stack = null;
+            Guid guid = Guid.Empty;
+
+            using (new Tracer("operation", this.testActivityId1, this.logWriter))
+            {
+                var context = Tracer.CaptureTracingContext();
+
+                ThreadPool.QueueUserWorkItem(_ =>
+                {
+                    using (new Tracer("nested", this.testActivityId2, this.logWriter))
+                    {
+                        using (context.Restore())
+                        {
+                        }
+
+                        guid = Trace.CorrelationManager.ActivityId;
+                        stack = Trace.CorrelationManager.LogicalOperationStack.ToArray();
+                    }
+                });
+            }
+
+
+            this.EnqueueConditional(() => stack != null);
+            this.EnqueueCallback(() =>
+            {
+                Assert.AreEqual(this.testActivityId2, guid);
+                CollectionAssert.AreEqual(new object[] { "nested" }, stack);
+            });
+            this.EnqueueTestComplete();
+        }
+
+        [TestMethod]
+        public void ResumingTracingContextTwiceThrows()
+        {
+            var context = Tracer.CaptureTracingContext();
+
+            using (context.Restore()) { }
+
+            try
+            {
+                context.Restore();
+                Assert.Fail("should have thrown InvalidOperationException");
+            }
+            catch (InvalidOperationException)
+            {
+                // expected
+            }
         }
 
         [TestMethod]

@@ -79,6 +79,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Management" />
     <Reference Include="System.XML" />
+    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
     <None Include="APTCAFixture.2008.cs" />
@@ -139,6 +140,7 @@
     </None>
     <None Include="Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests.dll.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </None>
     <None Include="test.exe.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

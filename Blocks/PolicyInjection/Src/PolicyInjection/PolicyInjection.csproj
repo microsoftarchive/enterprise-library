@@ -67,15 +67,12 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Lib\Desktop\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Practices.Unity, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Microsoft.Practices.Unity, Version=2.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\Lib\Desktop\Microsoft.Practices.Unity.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Practices.Unity.Interception, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Microsoft.Practices.Unity.Interception, Version=2.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\Lib\Desktop\Microsoft.Practices.Unity.Interception.dll</HintPath>
     </Reference>
     <Reference Include="System" />
@@ -97,7 +94,24 @@
     <Compile Include="CallHandlers\PerformanceCounterCallHandler.cs" />
     <Compile Include="CallHandlers\PerformanceCounterCallHandlerAttribute.cs" />
     <Compile Include="Configuration\AssemblyMatchingRuleData.cs" />
+    <Compile Include="Configuration\AssemblyMatchingRuleData.Desktop.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Configuration\ParameterTypeMatchingRuleData.Desktop.cs" />
+    <Compile Include="Configuration\TypeMatchingRuleData.Desktop.cs" />
+    <Compile Include="Configuration\TagAttributeMatchingRuleData.Desktop.cs" />
+    <Compile Include="Configuration\ReturnTypeMatchingRuleData.Desktop.cs" />
+    <Compile Include="Configuration\PropertyMatchingRuleData.Desktop.cs" />
+    <Compile Include="Configuration\PolicyInjectionSettings.Desktop.cs" />
+    <Compile Include="Configuration\PolicyData.Desktop.cs" />
+    <Compile Include="Configuration\NamespaceMatchingRuleData.Desktop.cs" />
+    <Compile Include="Configuration\StringBasedMatchingRuleData.Desktop.cs" />
+    <Compile Include="Configuration\MethodSignatureMatchingRuleData.Desktop.cs" />
+    <Compile Include="Configuration\MemberNameMatchingRuleData.Desktop.cs" />
+    <Compile Include="Configuration\MatchData.Desktop.cs" />
+    <Compile Include="Configuration\CustomMatchingRuleData.Desktop.cs" />
     <Compile Include="Configuration\CustomAttributeMatchingRuleData.cs" />
+    <Compile Include="Configuration\CustomAttributeMatchingRuleData.Desktop.cs" />
     <Compile Include="Configuration\CustomMatchingRuleData.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -110,6 +124,7 @@
     <Compile Include="Configuration\MatchingRuleData.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Configuration\MatchingRuleData.Desktop.cs" />
     <Compile Include="Configuration\MemberNameMatchingRuleData.cs" />
     <Compile Include="Configuration\MethodSignatureMatchingRuleData.cs" />
     <Compile Include="Configuration\NamespaceMatchingRuleData.cs" />

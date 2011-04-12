@@ -1,0 +1,63 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:el="http://entlib.codeplex.com/v5/configuration"
+    xmlns:test="clr-namespace:Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport.TraceListeners;assembly=Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport.Silverlight">
+
+    <el:ExceptionHandlingSettings x:Key="exceptionHandling">
+        <el:ExceptionHandlingSettings.ExceptionPolicies>
+
+            <el:ExceptionPolicyData Name="Logging Policy">
+                <el:ExceptionPolicyData.ExceptionTypes>
+                    <el:ExceptionTypeData Name="Exception" TypeName="System.Exception, mscorlib, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e"  PostHandlingAction="None">
+                        <el:ExceptionTypeData.ExceptionHandlers>
+                            <el:LoggingExceptionHandlerData
+								Name="LoggingExceptionHandler"
+                                LogCategory="TestCat" 
+								EventId="5" 
+								Severity="Error" 
+								Title="TestTitle"
+								Priority="-1"
+								FormatterTypeName="Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.TextExceptionFormatter, Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Silverlight, Version=5.0.414.0, Culture=neutral, PublicKeyToken=null"/>
+                        </el:ExceptionTypeData.ExceptionHandlers>
+                    </el:ExceptionTypeData>
+                </el:ExceptionPolicyData.ExceptionTypes>
+            </el:ExceptionPolicyData>
+
+            <el:ExceptionPolicyData Name="Bad Formatter Logging Policy">
+                <el:ExceptionPolicyData.ExceptionTypes>
+                    <el:ExceptionTypeData Name="Exception" TypeName="System.Exception, mscorlib, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e"  PostHandlingAction="None">
+                        <el:ExceptionTypeData.ExceptionHandlers>
+                            <el:LoggingExceptionHandlerData
+								Name="LoggingExceptionHandler"
+                                LogCategory="TestCat" 
+								EventId="5" 
+								Severity="Error" 
+								Title="TestTitle"
+								Priority="-1"
+								FormatterTypeName="Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Tests.BadExceptionFormatter, Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Silverlight.Tests, Version=5.0.414.0, Culture=neutral, PublicKeyToken=null"/>
+                        </el:ExceptionTypeData.ExceptionHandlers>
+                    </el:ExceptionTypeData>
+                </el:ExceptionPolicyData.ExceptionTypes>
+            </el:ExceptionPolicyData>
+        </el:ExceptionHandlingSettings.ExceptionPolicies>
+
+    </el:ExceptionHandlingSettings>
+
+    <el:LoggingSettings x:Key="loggingConfiguration" TracingEnabled="True" DefaultCategory="TestCat">
+        
+        <el:LoggingSettings.TraceSources>
+            <el:TraceSourceData Name="TestCat" DefaultLevel="All">
+                <el:TraceSourceData.TraceListeners>
+                    <el:TraceListenerReferenceData Name="MockListener"/>
+                </el:TraceSourceData.TraceListeners>
+            </el:TraceSourceData>
+        </el:LoggingSettings.TraceSources>
+        
+        <el:LoggingSettings.TraceListeners>
+            <test:MockTraceListenerData Name="MockListener"/>
+        </el:LoggingSettings.TraceListeners>
+        
+    </el:LoggingSettings>
+
+</ResourceDictionary>

@@ -18,6 +18,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
     {
         private AssemblyQualifiedTypeNameConverter typeConverter = new AssemblyQualifiedTypeNameConverter();
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ObjectCollectionValidatorData"/> class.
+        /// </summary>
         public ObjectCollectionValidatorData()
         {
             this.TargetRuleset = string.Empty;

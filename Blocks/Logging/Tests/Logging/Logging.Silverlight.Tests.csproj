@@ -22,7 +22,7 @@
     <XapFilename>Logging.Silverlight.Tests.xap</XapFilename>
     <SilverlightManifestTemplate>Properties\AppManifest.xml</SilverlightManifestTemplate>
     <SilverlightAppEntry>Microsoft.Practices.EnterpriseLibrary.Logging.Tests.App</SilverlightAppEntry>
-    <TestPageFileName>Validation.Silverlight.TestsTestPage.html</TestPageFileName>
+    <TestPageFileName>Logging.Silverlight.TestsTestPage.html</TestPageFileName>
     <CreateTestPage>true</CreateTestPage>
     <ValidateXaml>true</ValidateXaml>
     <EnableOutOfBrowser>false</EnableOutOfBrowser>
@@ -85,6 +85,7 @@
     </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="System.ComponentModel.DataAnnotations, Version=2.0.5.0, Culture=neutral, PublicKeyToken=ddd0da4d3e678217, processorArchitecture=MSIL" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Windows" />
     <Reference Include="system" />
     <Reference Include="System.Core" />
@@ -96,12 +97,15 @@
     <Compile Include="App.Silverlight.xaml.cs">
       <DependentUpon>App.Silverlight.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Configuration\LogHandlerDataFixture.cs" />
     <Compile Include="Configuration\NotificationTraceListenerDataFixture.Silverlight.cs" />
     <Compile Include="Configuration\IsolatedStorageTraceListenerDataFixture.Silverlight.cs" />
     <Compile Include="Configuration\LogFilterDataFixture.cs" />
     <Compile Include="Configuration\LoggingSettingsTypeRegistrationFixture.Silverlight.cs" />
     <Compile Include="Configuration\TextFormatterDataFixture.cs" />
     <Compile Include="Configuration\TraceSourceDataFixture.cs" />
+    <Compile Include="Configuration\UpdateContext\given_a_configured_log_writer_without_some_features.cs" />
+    <Compile Include="Configuration\UpdateContext\given_a_configured_log_writer.cs" />
     <Compile Include="TraceListeners\IsolatedStorage\given_empty_storage\when_adding_entries_of_size_exact_divisor_of_max_size.cs" />
     <Compile Include="TraceListeners\IsolatedStorage\give_storage_with_wrapped_entries\Context.cs" />
     <Compile Include="TraceListeners\IsolatedStorage\give_storage_with_wrapped_entries\when_adding_entry_equal_to_effective_max_size.cs" />
@@ -114,6 +118,19 @@
     <Compile Include="PolicyInjection\TraceLogEntryFixture.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="TraceListeners\RemoteServiceTraceListener\given_unavailable_network\Context.cs" />
+    <Compile Include="TraceListeners\RemoteServiceTraceListener\given_unavailable_network\when_network_becomes_available.cs" />
+    <Compile Include="TraceListeners\RemoteServiceTraceListener\given_unavailable_network\when_data_is_traced.cs" />
+    <Compile Include="TraceListeners\RemoteServiceTraceListener\given_unavailable_network\when.cs" />
+    <Compile Include="TraceListeners\RemoteServiceTraceListener\given_trace_data\when_there_is_an_unknown_proxy_error_on_begin.cs" />
+    <Compile Include="TraceListeners\RemoteServiceTraceListener\given_trace_data\when_there_is_an_unknown_proxy_error_on_end.cs" />
+    <Compile Include="TraceListeners\RemoteServiceTraceListener\given_trace_data\when_proxy_creation_fails.cs" />
+    <Compile Include="TraceListeners\RemoteServiceTraceListener\LogEntryMessageStoreFixture.cs" />
+    <Compile Include="TraceListeners\RemoteServiceTraceListener\given_available_network_but_unreachable_service\Context.cs" />
+    <Compile Include="TraceListeners\RemoteServiceTraceListener\given_available_network_but_unreachable_service\when_tracing_several_entries.cs" />
+    <Compile Include="TraceListeners\RemoteServiceTraceListener\given_available_network_but_unreachable_service\when_connectivity_is_restored_and_new_data_is_traced.cs" />
+    <Compile Include="TraceListeners\RemoteServiceTraceListener\given_available_network_but_unreachable_service\when_data_is_traced_and_connectivity_is_restored.cs" />
+    <Compile Include="TraceListeners\RemoteServiceTraceListener\given_available_network_but_unreachable_service\when_data_is_traced.cs" />
     <Compile Include="TracerFixture.Silverlight.cs" />
     <Compile Include="Filters\ExceptionThrowingLogFilter.cs" />
     <Compile Include="Filters\LogFilterFixture.cs" />
@@ -134,9 +151,9 @@
     <Compile Include="TraceListenerFilterFixture.cs" />
     <Compile Include="TraceListeners\IsolatedStorage\given_disposed_storage\Context.cs" />
     <Compile Include="TraceListeners\IsolatedStorage\given_disposed_storage\when.cs" />
-    <Compile Include="TraceListeners\NetworkTraceListenerScenarios\given_trace_data\Context.cs" />
-    <Compile Include="TraceListeners\NetworkTraceListenerScenarios\given_trace_data\when.cs" />
-    <Compile Include="TraceListeners\NetworkTraceListenerScenarios\given_trace_data\when_data_is_traced.cs" />
+    <Compile Include="TraceListeners\RemoteServiceTraceListener\given_trace_data\Context.cs" />
+    <Compile Include="TraceListeners\RemoteServiceTraceListener\given_trace_data\when.cs" />
+    <Compile Include="TraceListeners\RemoteServiceTraceListener\given_trace_data\when_data_is_traced.cs" />
     <Compile Include="TraceListeners\NotificationTraceListenerScenarios\given_trace_data\Context.cs" />
     <Compile Include="TraceListeners\NotificationTraceListenerScenarios\given_trace_data\when_data_is_traced.cs" />
     <Compile Include="TraceListeners\NotificationTraceListenerScenarios\given_trace_data\when.cs" />

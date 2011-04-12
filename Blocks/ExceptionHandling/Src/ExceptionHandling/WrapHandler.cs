@@ -10,18 +10,18 @@
 //===============================================================================
 
 using System;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Utility;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Properties;
 using System.Globalization;
+using Microsoft.Practices.EnterpriseLibrary.Common.Utility;
+using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
 {
     /// <summary>
     /// Wraps the current exception in the handling chain with a new exception of a specified type.
     /// </summary>
-    [ConfigurationElementType(typeof(WrapHandlerData))]
+#if !SILVERLIGHT
+    [Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ConfigurationElementType(typeof(Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.WrapHandlerData))]
+#endif
     public class WrapHandler : IExceptionHandler
     {
         private readonly IStringResolver exceptionMessageResolver;

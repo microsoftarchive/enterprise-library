@@ -9,10 +9,7 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration.ContainerModel;
@@ -23,7 +20,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests.Configuration
 {
-
     [TestClass]
     public class GivenAnExceptionCallHandlerData
     {
@@ -33,8 +29,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests.Configur
         public void Setup()
         {
             callHandlerData =
-                new ExceptionCallHandlerData("exception")
+                new ExceptionCallHandlerData
                 {
+                    Name = "exception",
                     Order = 400,
                     ExceptionPolicyName = "policy"
                 };

@@ -14,9 +14,15 @@ using System.Security.Permissions;
 using System.Runtime.ConstrainedExecution;
 using System.Runtime.CompilerServices;
 
+#if !SILVERLIGHT
 [assembly: SecurityPermission(SecurityAction.RequestMinimum)]
 [assembly: ReliabilityContract(Consistency.WillNotCorruptState, Cer.None)]
 
 [assembly: AssemblyTitle("Enterprise Library Policy Injection Application Block Test")]
 [assembly: AssemblyDescription("Enterprise Library Policy Injection Application Block Test")]
 [assembly: AssemblyVersion("5.0.414.0")]
+#else
+[assembly: AssemblyTitle("Enterprise Library Policy Injection Application Block Test for Silverlight")]
+[assembly: AssemblyDescription("Enterprise Library Policy Injection Application Block Test for Silverlight")]
+[assembly: AssemblyVersion("5.0.414.0")]
+#endif

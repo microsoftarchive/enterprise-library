@@ -20,12 +20,20 @@ using Microsoft.Practices.Unity.Utility;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 {
+    /// <summary>
+    /// A <see cref="IConfigurationSource"/> that uses a <see cref="ResourceDictionary"/> as its backing store.
+    /// </summary>
     public class ResourceDictionaryConfigurationSource : IConfigurationSource
     {
         private const string DefaultConfigurationSourceResource = "/{0};component/Configuration.xaml";
 
         private ResourceDictionary dictionary;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ResourceDictionaryConfigurationSource"/> class with a
+        /// resource dictionary.
+        /// </summary>
+        /// <param name="dictionary">The resource dictionary.</param>
         public ResourceDictionaryConfigurationSource(ResourceDictionary dictionary)
         {
             Guard.ArgumentNotNull(dictionary, "dictionary");
@@ -33,6 +41,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
             this.dictionary = dictionary;
         }
 
+        /// <summary>
+        /// Creates a new instance for the <see cref="ResourceDictionary"/> expressed in the XAML file located at 
+        /// <paramref name="sourceUri"/>.
+        /// </summary>
+        /// <param name="sourceUri">The source URI.</param>
+        /// <returns>A <see cref="ResourceDictionaryConfigurationSource"/>.</returns>
         public static ResourceDictionaryConfigurationSource FromXaml(Uri sourceUri)
         {
             Guard.ArgumentNotNull(sourceUri, "sourceUri");
@@ -47,6 +61,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
             return new ResourceDictionaryConfigurationSource(dictionary);
         }
 
+        /// <summary>
+        /// Creates a new instance for the <see cref="ResourceDictionary"/> expressed in the XAML file located at 
+        /// the default location.
+        /// </summary>
+        /// <remarks>The default location is a file named 'Configuration.xaml' in the XAP file for application.</remarks>
+        /// <returns>A <see cref="ResourceDictionaryConfigurationSource"/>.</returns>
         public static ResourceDictionaryConfigurationSource CreateDefault()
         {
             string assemblyName = GetAssemblyName(Application.Current.GetType().Assembly);
@@ -106,6 +126,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
             return content;
         }
 
+        /// <summary>
+        /// Retrieves the specified <see cref="ConfigurationSection"/>.
+        /// </summary>
+        /// <param name="sectionName">The name of the section to be retrieved.</param>
+        /// <returns>
+        /// The specified <see cref="ConfigurationSection"/>, or <see langword="null"/> (<b>Nothing</b> in Visual Basic)
+        /// if a section by that name is not found.
+        /// </returns>
         public ConfigurationSection GetSection(string sectionName)
         {
             return this.dictionary[sectionName] as ConfigurationSection;

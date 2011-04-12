@@ -35,6 +35,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
             Assert.AreEqual("ID : " + id.ToString(), formattedMessage);
         }
 
+#if !SILVERLIGHT
         [TestMethod]
         public void LogHandlingError()
         {
@@ -67,5 +68,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
                 Assert.AreEqual(EventLogSource, entry.Source);
             }
         }
+#endif
     }
 }

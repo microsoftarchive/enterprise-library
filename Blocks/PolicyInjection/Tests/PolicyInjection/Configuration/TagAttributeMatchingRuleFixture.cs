@@ -20,6 +20,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
     [DeploymentItem("test.exe.config")]
     public class TagAttributeMatchingRuleFixture : MatchingRuleDataFixtureBase
     {
+#if !SILVERLIGHT
         [TestMethod]
         public void CanSerializeTypeMatchingRule()
         {
@@ -33,7 +34,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
             Assert.AreEqual(tagAttributeMatchingRule.IgnoreCase, deserializedRule.IgnoreCase);
             Assert.AreEqual(tagAttributeMatchingRule.Match, deserializedRule.Match);
         }
-
+#else
+        [TestMethod]
+        public void HasDefaultCtor()
+        {
+            new TagAttributeMatchingRuleData();
+        }
+#endif
 
         [TestMethod]
         public void MatchingRuleHasTransientLifetime()

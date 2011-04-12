@@ -103,6 +103,10 @@
     <Compile Include="Configuration\BasicCustomTraceListenerData.cs" />
     <Compile Include="Configuration\CategoryFilterEntry.Desktop.cs" />
     <Compile Include="Configuration\CategoryFilterData.Desktop.cs" />
+    <Compile Include="Configuration\LogCallHandlerCategoryEntry.cs" />
+    <Compile Include="Configuration\LogCallHandlerCategoryEntry.Desktop.cs" />
+    <Compile Include="Configuration\LogCallHandlerData.cs" />
+    <Compile Include="Configuration\LogCallHandlerData.Desktop.cs" />
     <Compile Include="Configuration\TextFormatterData.Desktop.cs" />
     <Compile Include="Configuration\PriorityFilterData.Desktop.cs" />
     <Compile Include="Configuration\LogEnabledFilterData.Desktop.cs" />
@@ -267,8 +271,6 @@
     <None Include="..\..\..\GlobalAssemblyInfo.2010.cs">
       <Link>GlobalAssemblyInfo.2010.cs</Link>
     </None>
-    <Compile Include="Configuration\LogCallHandlerCategoryEntry.cs" />
-    <Compile Include="Configuration\LogCallHandlerData.cs" />
     <Compile Include="PolicyInjection\CategoryFormatter.cs" />
     <Compile Include="PolicyInjection\LogCallHandler.cs" />
     <Compile Include="PolicyInjection\LogCallHandlerAttribute.cs" />

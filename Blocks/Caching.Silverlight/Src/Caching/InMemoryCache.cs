@@ -1,8 +1,8 @@
 ﻿using System;
 using Microsoft.Practices.EnterpriseLibrary.Caching.InMemory;
-using Microsoft.Practices.EnterpriseLibrary.Caching.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Runtime.Caching;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Scheduling;
+using Microsoft.Practices.EnterpriseLibrary.Common.Utility;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching
 {
@@ -18,8 +18,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
     /// </para>
     /// <para> The <see cref="InMemoryCache"/> type does not implement cache regions. Therefore, when you call <see cref="InMemoryCache"/> methods that 
     /// implement base methods that contain a parameter for regions, do not pass a value for the parameter. The methods that use the region parameter 
-    /// all supply a default <see langword="null"/> value. For example, the <see cref="AddOrGetExisting"/> method overload has a regionName parameter whose
-    /// default value is <see langword="null"/>.</para>
+    /// all supply a default <see langword="null"/> value. For example, the <see cref="MemoryBackedCacheBase{CacheEntry}.AddOrGetExisting(string, object, CacheItemPolicy, string)"/> 
+    /// method overload has a regionName parameter whose default value is <see langword="null"/>.</para>
     /// </remarks>
     public class InMemoryCache : MemoryBackedCacheBase<CacheEntry>
     {
@@ -31,19 +31,30 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
         /// <param name="itemsLeftAfterScavenging">Number of items left in the cache after scavenging has taken place.</param>
         /// <param name="expirationPollingInterval">Frequency of expiration polling cycle.</param>
         public InMemoryCache(string name, int maxItemsBeforeScavenging, int itemsLeftAfterScavenging, TimeSpan expirationPollingInterval)
-            : this(name, maxItemsBeforeScavenging, itemsLeftAfterScavenging, new ScavengingScheduler(), new ExpirationScheduler(expirationPollingInterval))
+            : this(name, maxItemsBeforeScavenging, itemsLeftAfterScavenging, new ScavengingScheduler(), new RecurringWorkScheduler(expirationPollingInterval))
         {
         }
 
-        public InMemoryCache(string name, int maxItemsBeforeScavenging, int itemsLeftAfterScavenging, 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="InMemoryCache"/> class.
+        /// </summary>
+        /// <param name="name">The name to use to look up configuration information.</param>
+        /// <param name="maxItemsBeforeScavenging">Maximum number of items in cache before an add causes scavenging to take place.</param>
+        /// <param name="itemsLeftAfterScavenging">Number of items left in the cache after scavenging has taken place.</param>
+        /// <param name="scavengingScheduler">The scavenging scheduler.</param>
+        /// <param name="expirationScheduler">The expiration scheduler.</param>
+        public InMemoryCache(string name, int maxItemsBeforeScavenging, int itemsLeftAfterScavenging,
             IManuallyScheduledWork scavengingScheduler,
-            IRecurringScheduledWork expirationScheduler)
+            IRecurringWorkScheduler expirationScheduler)
             : base(name, 
                 new NumberOfItemsScavengingStrategy<CacheEntry>(maxItemsBeforeScavenging, itemsLeftAfterScavenging),
                 scavengingScheduler, expirationScheduler)
         {
         }
 
+        /// <summary>
+        /// Gets a description of the features that a cache implementation provides.
+        /// </summary>
         public override DefaultCacheCapabilities DefaultCacheCapabilities
         {
             get
@@ -56,6 +67,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
             }
         }
 
+        /// <summary>
+        /// Creates a cache entry.
+        /// </summary>
+        /// <param name="key">A unique identifier for the cache entry.</param>
+        /// <param name="value">The object for the cache entry.</param>
+        /// <param name="policy">An object that contains eviction details for the cache entry.</param>
+        /// <returns>A new cache entry of type <see cref="CacheEntry"/>.</returns>
         protected override CacheEntry CreateCacheEntry(string key, object value, CacheItemPolicy policy)
         {
             return new CacheEntry(key, value, policy);

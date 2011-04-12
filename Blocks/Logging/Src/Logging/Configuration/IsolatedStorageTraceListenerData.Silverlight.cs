@@ -15,20 +15,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
     /// </summary>
     public class IsolatedStorageTraceListenerData : TraceListenerData
     {
-        private const int defaultMaxSizeInBytes = 1024 * 256;
+        private const int defaultMaxSizeInKilobytes = 256;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="IsolatedStorageTraceListener"/> class.
         /// </summary>
         public IsolatedStorageTraceListenerData()
         {
-            this.MaxSizeInBytes = defaultMaxSizeInBytes;
+            this.MaxSizeInKilobytes = defaultMaxSizeInKilobytes;
         }
 
         /// <summary>
-        /// Gets or sets the maximum size in bytes to be used when storing entries.
+        /// Gets or sets the maximum size in kilobytes to be used when storing entries.
         /// </summary>
-        public int MaxSizeInBytes { get; set; }
+        public int MaxSizeInKilobytes { get; set; }
 
         /// <summary>
         /// Gets or sets the name of the repository for entries.
@@ -61,7 +61,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 
             var repositoryTypeRegistration =
                 new TypeRegistration<ILogEntryRepository>(
-                    () => new IsolatedStorageLogEntryRepository(this.RepositoryName, this.MaxSizeInBytes))
+                    () => new IsolatedStorageLogEntryRepository(this.RepositoryName, this.MaxSizeInKilobytes))
                     {
                         IsPublicName = true,
                         Lifetime = TypeRegistrationLifetime.Singleton,

@@ -1,0 +1,259 @@
+﻿//===============================================================================
+// Microsoft patterns & practices Enterprise Library
+// Policy Injection Application Block
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+
+using System;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel.Unity;
+using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
+using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.PolicyInjection;
+using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.TestSupport.ObjectsUnderTest;
+using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.InterceptionExtension;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tests
+{
+    [TestClass]
+    public class ExceptionCallHandlerFixture
+    {
+        [TestMethod]
+        [ExpectedException(typeof(NotImplementedException))]
+        public void ShouldThrowCorrectException()
+        {
+            IUnityContainer factory = new UnityContainer().AddNewExtension<Interception>();
+            factory.Configure<Interception>().SetDefaultInterceptorFor<TargetType>(new VirtualMethodInterceptor());
+            AddNoopPolicy(factory, new TypeMatchingRule("TargetType"));
+
+            TargetType target = factory.Resolve<TargetType>();
+
+            target.WillThrowException();
+        }
+
+        [TestMethod]
+        public void ShouldBeCreatable()
+        {
+            IUnityContainer factory = new UnityContainer().AddNewExtension<Interception>();
+            factory.Configure<Interception>().SetDefaultInterceptorFor<TargetType>(new VirtualMethodInterceptor());
+            AddExceptionHandlingConfiguration(factory);
+            AddExceptionPolicy(factory, "Swallow Exceptions", new TypeMatchingRule("TargetType"));
+
+            TargetType target = factory.Resolve<TargetType>();
+            target.WillThrowException();
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void ShouldTranslateException()
+        {
+            IUnityContainer factory = new UnityContainer().AddNewExtension<Interception>();
+            factory.Configure<Interception>().SetDefaultInterceptorFor<TargetType>(new VirtualMethodInterceptor());
+            AddExceptionHandlingConfiguration(factory);
+            AddExceptionPolicy(factory, "Translate Exceptions", new TypeMatchingRule("TargetType"));
+
+            TargetType target = factory.Resolve<TargetType>();
+            target.WillThrowException();
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(NotImplementedException))]
+        public void ShouldRethrowFromNoOpPolicy()
+        {
+            IUnityContainer factory = new UnityContainer().AddNewExtension<Interception>();
+            factory.Configure<Interception>().SetDefaultInterceptorFor<TargetType>(new VirtualMethodInterceptor());
+            AddExceptionHandlingConfiguration(factory);
+            AddExceptionPolicy(factory, "No-Op Policy", new TypeMatchingRule("TargetType"));
+
+            TargetType target = factory.Resolve<TargetType>();
+            target.ThrowFromFunctionWithReturnValue();
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void ShouldThrowWhenSwallowingExceptionFromNonVoidMethod()
+        {
+            IUnityContainer factory = new UnityContainer().AddNewExtension<Interception>();
+            factory.Configure<Interception>().SetDefaultInterceptorFor<TargetType>(new VirtualMethodInterceptor());
+            AddExceptionHandlingConfiguration(factory);
+            AddExceptionPolicy(factory, "Swallow Exceptions", new TypeMatchingRule("TargetType"));
+
+            TargetType target = factory.Resolve<TargetType>();
+            target.ThrowFromFunctionWithReturnValue();
+            Assert.Fail("An exception should have been thrown");
+        }
+
+        [TestMethod]
+        public void ShouldBeAbleToSwallowExceptionFromPropertySet()
+        {
+            IUnityContainer factory = new UnityContainer().AddNewExtension<Interception>();
+            factory.Configure<Interception>().SetDefaultInterceptorFor<TargetType>(new VirtualMethodInterceptor());
+            AddExceptionHandlingConfiguration(factory);
+            AddExceptionPolicy(factory, "Swallow Exceptions", new TypeMatchingRule("TargetType"));
+
+            TargetType target = factory.Resolve<TargetType>();
+            target.MyProperty = 5;
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void ShouldThrowWhenSwallowingExceptionFromPropertyGet()
+        {
+            IUnityContainer factory = new UnityContainer().AddNewExtension<Interception>();
+            factory.Configure<Interception>().SetDefaultInterceptorFor<TargetType>(new VirtualMethodInterceptor());
+            AddExceptionHandlingConfiguration(factory);
+            AddExceptionPolicy(factory, "Swallow Exceptions", new TypeMatchingRule("TargetType"));
+
+            TargetType target = factory.Resolve<TargetType>();
+            int foo = target.MyProperty;
+        }
+
+        //[TestMethod]
+        //public void CanCreateExceptionHandlerFromConfiguration()
+        //{
+        //    PolicyInjectionSettings settings = new PolicyInjectionSettings();
+        //    PolicyData policyData = new PolicyData("policy");
+        //    policyData.Handlers.Add(new ExceptionCallHandlerData { Name = "exceptionhandler", ExceptionPolicyName = "Swallow Exceptions" });
+        //    policyData.MatchingRules.Add(new AlwaysMatchingRuleData("matchesEverything"));
+        //    settings.Policies.Add(policyData);
+
+        //    ExceptionHandlingSettings ehabSettings = new ExceptionHandlingSettings();
+        //    ExceptionPolicyData swallowExceptions = new ExceptionPolicyData { Name = "Swallow Exceptions" };
+        //    swallowExceptions.ExceptionTypes.Add(
+        //        new ExceptionTypeData
+        //        {
+        //            Name = "Exception",
+        //            TypeName = typeof(Exception).AssemblyQualifiedName,
+        //            PostHandlingAction = PostHandlingAction.None
+        //        });
+        //    ehabSettings.ExceptionPolicies.Add(swallowExceptions);
+        //    DictionaryConfigurationSource dictConfigurationSource = new DictionaryConfigurationSource();
+        //    dictConfigurationSource.Add(PolicyInjectionSettings.SectionName, settings);
+        //    dictConfigurationSource.Add(ExceptionHandlingSettings.SectionName, ehabSettings);
+
+        //    using (PolicyInjector injector = new PolicyInjector(dictConfigurationSource))
+        //    {
+        //        TargetType target = injector.Create<TargetType>();
+        //        target.WillThrowException();
+        //    }
+        //}
+
+        //[TestMethod]
+        //public void TestCallHandlerCustomFactory()
+        //{
+        //    PolicyInjectionSettings settings = new PolicyInjectionSettings();
+        //    PolicyData policyData = new PolicyData("policy");
+        //    ExceptionCallHandlerData data = new ExceptionCallHandlerData("exceptionhandler", "Swallow Exceptions");
+        //    data.Order = 5;
+        //    policyData.Handlers.Add(data);
+        //    policyData.MatchingRules.Add(new CustomMatchingRuleData("matchesEverything", typeof(AlwaysMatchingRule)));
+        //    settings.Policies.Add(policyData);
+
+        //    ExceptionHandlingSettings ehabSettings = new ExceptionHandlingSettings();
+        //    ExceptionPolicyData swallowExceptions = new ExceptionPolicyData("Swallow Exceptions");
+        //    swallowExceptions.ExceptionTypes.Add(new ExceptionTypeData("Exception", typeof(Exception), PostHandlingAction.None));
+        //    ehabSettings.ExceptionPolicies.Add(swallowExceptions);
+
+        //    DictionaryConfigurationSource dictConfigurationSource = new DictionaryConfigurationSource();
+        //    dictConfigurationSource.Add(PolicyInjectionSettings.SectionName, settings);
+
+        //    IUnityContainer container = new UnityContainer().AddNewExtension<Interception>();
+        //    settings.ConfigureContainer(container, dictConfigurationSource);
+        //    new UnityContainerConfigurator(container).RegisterAll(dictConfigurationSource, ehabSettings);
+
+        //    InjectionFriendlyRuleDrivenPolicy policy = container.Resolve<InjectionFriendlyRuleDrivenPolicy>("policy");
+
+        //    ICallHandler handler
+        //        = (policy.GetHandlersFor(new MethodImplementationInfo(null, (MethodInfo)MethodBase.GetCurrentMethod()), container)).ElementAt(0);
+
+        //    Assert.IsNotNull(handler);
+        //    Assert.AreEqual(handler.Order, data.Order);
+        //}
+
+        void AddNoopPolicy(IUnityContainer factory,
+                           params IMatchingRule[] rules)
+        {
+            var policy = factory.Configure<Interception>().AddPolicy("Noop");
+            foreach (var rule in rules)
+            {
+                policy.AddMatchingRule(rule);
+            }
+            policy.AddCallHandler(new NoopCallHandler());
+        }
+
+        void AddExceptionPolicy(IUnityContainer factory,
+                                string exceptionPolicyName,
+                                params IMatchingRule[] rules)
+        {
+            var policy = factory.Configure<Interception>().AddPolicy("Noop");
+            foreach (var rule in rules)
+            {
+                policy.AddMatchingRule(rule);
+            }
+            policy.AddCallHandler(
+                typeof(ExceptionCallHandler),
+                new InjectionConstructor(new ResolvedParameter<ExceptionPolicyImpl>(exceptionPolicyName)));
+        }
+
+        private static void AddExceptionHandlingConfiguration(IUnityContainer factory)
+        {
+#if !SILVERLIGHT
+            var configSource = new SystemConfigurationSource(false);
+#else
+            var configSource =
+                ResourceDictionaryConfigurationSource.FromXaml(
+                    new Uri(
+                        "/Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Silverlight.Tests;component/Configuration.xaml",
+                        UriKind.Relative));
+#endif
+            new UnityContainerConfigurator(factory).RegisterAll(
+                configSource,
+                (ITypeRegistrationsProvider)configSource.GetSection(ExceptionHandlingSettings.SectionName));
+        }
+    }
+
+    public class TargetType
+    {
+        public virtual int MyProperty
+        {
+            get { throw new NotImplementedException("Exception from property getter"); }
+            set { throw new NotImplementedException("Exception from property setter"); }
+        }
+
+        public virtual int ThrowFromFunctionWithReturnValue()
+        {
+            throw new NotImplementedException("This is not implemented either");
+        }
+
+        public virtual void WillThrowException()
+        {
+            throw new NotImplementedException("This is not implemented");
+        }
+    }
+
+    public class NoopCallHandler : ICallHandler
+    {
+        int order;
+
+        public int Order
+        {
+            get { return order; }
+            set { order = value; }
+        }
+
+        public IMethodReturn Invoke(IMethodInvocation input,
+                                    GetNextHandlerDelegate getNext)
+        {
+            return getNext()(input, getNext);
+        }
+    }
+}

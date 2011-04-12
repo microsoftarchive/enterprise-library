@@ -10,8 +10,12 @@
 //===============================================================================
 
 using System;
-using System.Collections.Specialized;
 using System.Reflection;
+#if !SILVERLIGHT
+using System.Collections.Specialized;
+#else
+using NameValueCollection = System.Collections.Generic.Dictionary<string, string>;
+#endif
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Tests
 {
@@ -38,6 +42,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Tests
         {
         }
 
+#if !SILVERLIGHT
         protected override void WriteSource(string source)
         {
         }
@@ -45,6 +50,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Tests
         protected override void WriteHelpLink(string helpLink)
         {
         }
+#endif
 
         protected override void WriteStackTrace(string stackTrace)
         {

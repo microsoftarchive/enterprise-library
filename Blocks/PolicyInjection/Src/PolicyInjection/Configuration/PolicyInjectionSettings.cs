@@ -10,65 +10,23 @@
 //===============================================================================
 
 using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Xml;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel.Unity;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.Utility;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
 {
     /// <summary>
-    /// A <see cref="ConfigurationSection"/> that stores the policy set in configuration.
+    /// A configuration class that stores the policy set in configuration.
     /// </summary>
-    [ViewModel(PolicyInjectionDesignTime.ViewModelTypeNames.PolicyInjectionSectionViewModel)]
-    [ResourceDescription(typeof(DesignResources), "PolicyInjectionSettingsDescription")]
-    [ResourceDisplayName(typeof(DesignResources), "PolicyInjectionSettingsDisplayName")]
-    public class PolicyInjectionSettings : SerializableConfigurationSection, ITypeRegistrationsProvider
+    public partial class PolicyInjectionSettings : ITypeRegistrationsProvider
     {
-        //private const string InjectorsPropertyName = "injectors";
-        private const string PoliciesPropertyName = "policies";
-
         /// <summary>
         /// Section name as it appears in the configuration file.
         /// </summary>
         public const string SectionName = BlockSectionNames.PolicyInjection;
-
-        /// <summary>
-        /// Gets or sets the collection of Policies from configuration.
-        /// </summary>
-        /// <value>The <see cref="PolicyData"/> collection.</value>
-        [ConfigurationProperty(PoliciesPropertyName)]
-        [ConfigurationCollection(typeof(PolicyData))]
-        [ResourceDescription(typeof(DesignResources), "PolicyInjectionSettingsPoliciesDescription")]
-        [ResourceDisplayName(typeof(DesignResources), "PolicyInjectionSettingsPoliciesDisplayName")]
-        public NamedElementCollection<PolicyData> Policies
-        {
-            get { return (NamedElementCollection<PolicyData>)base[PoliciesPropertyName]; }
-            set { base[PoliciesPropertyName] = value; }
-        }
-
-        /// <summary>
-        /// Gets a value indicating whether an unknown element is encountered during deserialization.
-        /// </summary>
-        /// <param name="elementName">The name of the unknown subelement.</param>
-        /// <param name="reader">The <see cref="XmlReader"/> being used for deserialization.</param>
-        /// <returns>true when an unknown element is encountered while deserializing; otherwise, false.</returns>
-        /// <remarks>This class will ignore an element named "injectors".</remarks>
-        protected override bool OnDeserializeUnrecognizedElement(string elementName, XmlReader reader)
-        {
-            if (elementName == "injectors")
-            {
-                reader.Skip();
-                return true;
-            }
-
-            return base.OnDeserializeUnrecognizedElement(elementName, reader);
-        }
 
         /// <summary>
         /// Adds to the <paramref name="container"/> the policy definitions represented in the configuration file.

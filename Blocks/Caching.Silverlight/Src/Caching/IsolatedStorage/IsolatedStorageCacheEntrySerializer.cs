@@ -5,20 +5,44 @@ using Microsoft.Practices.EnterpriseLibrary.Caching.Runtime.Caching;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.IsolatedStorage
 {
+    /// <summary>
+    /// Manages the serialization and deserialization of entries.
+    /// </summary>
     public class IsolatedStorageCacheEntrySerializer : IIsolatedStorageCacheEntrySerializer
     {
+        private const int lastAccessTicksOffset = 0;
+        private const int lastAccessOffsetTicksOffset = sizeof(long);
+        private const int keyLengthOffset = lastAccessOffsetTicksOffset + sizeof(long);
+        private const int policyLengthOffset = keyLengthOffset + sizeof(int);
+        private const int valueLengthOffset = policyLengthOffset + sizeof(int);
+        private const int keyOffset = valueLengthOffset + sizeof(int);
+
         private readonly Encoding encoding;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IsolatedStorageCacheEntrySerializer"/> class.
+        /// </summary>
         public IsolatedStorageCacheEntrySerializer()
-            : this (Encoding.UTF8)
+            : this(Encoding.UTF8)
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IsolatedStorageCacheEntrySerializer"/> class.
+        /// </summary>
+        /// <param name="encoding">The encoding to use when serializing text.</param>
         public IsolatedStorageCacheEntrySerializer(Encoding encoding)
         {
             this.encoding = encoding;
         }
 
+        /// <summary>
+        /// Generates an <see cref="EntryUpdate"/> representing an update to the last access time in an entry.
+        /// </summary>
+        /// <param name="entry">The entry.</param>
+        /// <returns>
+        /// The update to the serialized bytes.
+        /// </returns>
         public EntryUpdate GetUpdateForLastUpdateTime(IsolatedStorageCacheEntry entry)
         {
             EntryUpdate update = new EntryUpdate();
@@ -28,6 +52,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.IsolatedStorage
             return update;
         }
 
+        /// <summary>
+        /// Serializes <paramref name="entry"/> as an array of bytes.
+        /// </summary>
+        /// <param name="entry">The entry to serialize.</param>
+        /// <returns>
+        /// An array of bytes.
+        /// </returns>
         public byte[] Serialize(IsolatedStorageCacheEntry entry)
         {
             using (var stream = new MemoryStream())
@@ -51,13 +82,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.IsolatedStorage
             }
         }
 
-        private const int lastAccessTicksOffset = 0;
-        private const int lastAccessOffsetTicksOffset = sizeof(long);
-        private const int keyLengthOffset = lastAccessOffsetTicksOffset + sizeof(long);
-        private const int policyLengthOffset = keyLengthOffset + sizeof(int);
-        private const int valueLengthOffset = policyLengthOffset + sizeof(int);
-        private const int keyOffset = valueLengthOffset + sizeof(int);
-
+        /// <summary>
+        /// Deserializes an entry from an array of bytes.
+        /// </summary>
+        /// <param name="bytes">An array of bytes representing an entry.</param>
+        /// <returns>
+        /// The represented entry.
+        /// </returns>
         public IsolatedStorageCacheEntry Deserialize(byte[] bytes)
         {
             if (bytes.Length < keyOffset)
@@ -115,11 +146,21 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.IsolatedStorage
             return lastAccessTimeBytes;
         }
 
+        /// <summary>
+        /// Serializes the object.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns>An array of bytes representing <paramref name="value"/>.</returns>
         protected virtual byte[] SerializeObject(object value)
         {
             return SerializationUtility.ToBytes(value);
         }
 
+        /// <summary>
+        /// Deserializes the object.
+        /// </summary>
+        /// <param name="bytes">The bytes representing the object.</param>
+        /// <returns>The represented object.</returns>
         protected virtual object DeserializeObject(byte[] bytes)
         {
             return SerializationUtility.ToObject(bytes);

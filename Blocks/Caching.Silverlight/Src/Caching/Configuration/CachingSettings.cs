@@ -34,9 +34,32 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
         /// </summary>
         public string DefaultCache { get; set; }
 
+        /// <summary>
+        /// Return the <see cref="TypeRegistration"/> objects needed to configure
+        /// the container.
+        /// </summary>
+        /// <param name="configurationSource">The <see cref="IConfigurationSource"/> containing
+        /// the configuration information.</param>
+        /// <returns>
+        /// The sequence of <see cref="TypeRegistration"/> objects.
+        /// </returns>
         public IEnumerable<TypeRegistration> GetRegistrations(IConfigurationSource configurationSource)
         {
             return SetDefaultCacheManagerRegistration(this.Caches.SelectMany(cd => cd.GetRegistrations(configurationSource)));
+        }
+
+        /// <summary>
+        /// Return the <see cref="TypeRegistration"/> objects needed to reconfigure
+        /// the container after a configuration source has changed.
+        /// </summary>
+        /// <param name="configurationSource">The <see cref="IConfigurationSource"/> containing
+        /// the configuration information.</param>
+        /// <returns>
+        /// The sequence of <see cref="TypeRegistration"/> objects.
+        /// </returns>
+        public IEnumerable<TypeRegistration> GetUpdatedRegistrations(IConfigurationSource configurationSource)
+        {
+            throw new System.NotImplementedException();
         }
 
         private IEnumerable<TypeRegistration> SetDefaultCacheManagerRegistration(IEnumerable<TypeRegistration> cacheManagerRegistrations)
@@ -53,11 +76,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
                     yield return registration;
                 }
             }
-        }
-
-        public IEnumerable<TypeRegistration> GetUpdatedRegistrations(IConfigurationSource configurationSource)
-        {
-            throw new System.NotImplementedException();
         }
     }
 }

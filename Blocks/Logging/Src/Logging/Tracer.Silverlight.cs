@@ -10,7 +10,10 @@
 //===============================================================================
 
 using System;
+using System.Collections.Generic;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Diagnostics;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Properties;
 using Microsoft.Practices.ServiceLocation;
 using Microsoft.Practices.Unity.Utility;
 
@@ -45,6 +48,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         {
         }
 
+        /// <summary>
+        /// Captures the tracing context on the current thread so tracing can be resumed in a different thread.
+        /// </summary>
+        /// <returns>A <see cref="ICapturedTracingContext"/> that can be used to restore the tracing context.</returns>
+        /// <seealso cref="ICapturedTracingContext.Restore()"/>
+        public static ICapturedTracingContext CaptureTracingContext()
+        {
+            return new CapturedTracingContext();
+        }
+
         internal static bool IsTracingAvailable()
         {
             return true;
@@ -60,6 +73,62 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         private LogWriter GetWriter()
         {
             return writer;
+        }
+
+        private class CapturedTracingContext : ICapturedTracingContext
+        {
+            private Guid capturedActivityId;
+            private object[] capturedLogicalOperationStackElements;
+
+            public CapturedTracingContext()
+            {
+                this.capturedActivityId = Trace.CorrelationManager.ActivityId;
+                this.capturedLogicalOperationStackElements = Trace.CorrelationManager.LogicalOperationStack.ToArray();
+            }
+
+            public IDisposable Restore()
+            {
+                if (this.capturedLogicalOperationStackElements == null)
+                {
+                    throw new InvalidOperationException(Resources.ErrorCanOnlyRestoreTracingContextOnce);
+                }
+
+                var cleanup = new RestoredTracingContext(this.capturedActivityId, this.capturedLogicalOperationStackElements);
+
+                this.capturedLogicalOperationStackElements = null;
+
+                return cleanup;
+            }
+
+            private class RestoredTracingContext : IDisposable
+            {
+                private Guid currentActivityId;
+                private object[] currentLogicalOperationStackElements;
+
+                public RestoredTracingContext(Guid newActivityId, object[] newLogicalOperationStackElements)
+                {
+                    this.currentActivityId = Trace.CorrelationManager.ActivityId;
+                    this.currentLogicalOperationStackElements = Trace.CorrelationManager.LogicalOperationStack.ToArray();
+
+                    Trace.CorrelationManager.ActivityId = newActivityId;
+                    ResetStack(Trace.CorrelationManager.LogicalOperationStack, newLogicalOperationStackElements);
+                }
+
+                public void Dispose()
+                {
+                    Trace.CorrelationManager.ActivityId = this.currentActivityId;
+                    ResetStack(Trace.CorrelationManager.LogicalOperationStack, this.currentLogicalOperationStackElements);
+                }
+
+                private static void ResetStack(Stack<object> stack, object[] newElements)
+                {
+                    stack.Clear();
+                    for (int i = 0; i < newElements.Length; i++)
+                    {
+                        stack.Push(newElements[i]);
+                    }
+                }
+            }
         }
     }
 }

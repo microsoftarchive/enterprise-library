@@ -24,12 +24,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests.Configuration
         [TestMethod]
         public void CanDeserializeIsolatedStorageCacheData()
         {
-            var xaml = @"<el:IsolatedStorageCacheData Name='isolated' MaxSizeInKiloBytes='25' PercentOfQuotaUsedBeforeScavenging='50' PercentOfQuotaUsedAfterScavenging='10' ExpirationPollingInterval='0:0:5' xmlns:el='http://entlib.codeplex.com/v5/configuration'/>";
+            var xaml = @"<el:IsolatedStorageCacheData Name='isolated' MaxSizeInKilobytes='25' PercentOfQuotaUsedBeforeScavenging='50' PercentOfQuotaUsedAfterScavenging='10' ExpirationPollingInterval='0:0:5' xmlns:el='http://entlib.codeplex.com/v5/configuration'/>";
 
             var data = (IsolatedStorageCacheData)XamlReader.Load(xaml);
 
             Assert.AreEqual("isolated", data.Name);
-            Assert.AreEqual(25, data.MaxSizeInKiloBytes);
+            Assert.AreEqual(25, data.MaxSizeInKilobytes);
             Assert.AreEqual(50, data.PercentOfQuotaUsedBeforeScavenging);
             Assert.AreEqual(10, data.PercentOfQuotaUsedAfterScavenging);
             Assert.AreEqual(TimeSpan.FromSeconds(5), data.ExpirationPollingInterval);

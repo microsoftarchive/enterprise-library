@@ -1,8 +1,9 @@
 ﻿using System;
+using Microsoft.Practices.EnterpriseLibrary.Caching.Runtime.Caching;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Scheduling;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
+using Microsoft.Practices.EnterpriseLibrary.Common.Utility;
 using Moq;
-using Microsoft.Practices.EnterpriseLibrary.Caching.Runtime.Caching;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests.InMemoryCachingScenarios.
     given_cache_containing_items_that_expire
@@ -15,7 +16,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests.InMemoryCachingSce
         protected const string ExpiredKey = "item that expires";
         protected const string ExpiredKeyWithCallback = "item that expires with callback";
         protected Action DoExpirations;
-        protected Mock<IRecurringScheduledWork> ExpirationMock;
+        protected Mock<IRecurringWorkScheduler> ExpirationMock;
         protected CacheEntryRemovedCallback RemovedCallback;
 
         protected override void Arrange()
@@ -24,7 +25,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests.InMemoryCachingSce
 
             var schedulerMock = new Mock<IManuallyScheduledWork>();
 
-            ExpirationMock = new Mock<IRecurringScheduledWork>();
+            ExpirationMock = new Mock<IRecurringWorkScheduler>();
             ExpirationMock.Setup(e => e.SetAction(It.IsAny<Action>()))
                 .Callback((Action a) => DoExpirations = a)
                 .Verifiable("Expiration action was not set");

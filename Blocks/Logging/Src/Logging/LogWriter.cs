@@ -28,10 +28,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
     /// </summary>
     /// <remarks>
     /// <para>
-    /// To write log messages to the default configuration, use the <see cref="Logger"/> facade.  
-    /// Only create an instance of a LogWriter if you need to write log messages using a custom configuration.
-    /// </para>
-    /// <para>
     /// The LogWriter works as an entry point to the <see cref="System.Diagnostics"/> trace listeners. 
     /// It will trace the <see cref="LogEntry"/> through the <see cref="TraceListeners"/>s associated with the <see cref="LogSource"/>s 
     /// for all the matching categories in the elements of the <see cref="LogEntry.Categories"/> property of the log entry. 

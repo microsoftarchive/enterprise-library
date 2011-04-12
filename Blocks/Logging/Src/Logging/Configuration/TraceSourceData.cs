@@ -26,7 +26,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
     partial class TraceSourceData
     {
         ///<summary>
-        /// Returns the type <see cref="TypeRegistration"/> entries describing the <see cref="TraceSource"/> represented
+        /// Returns the type <see cref="TypeRegistration"/> entries describing the <see cref="LogSource"/> represented
         /// by this configuration object.
         ///</summary>
         ///<returns>A set of registry entries.</returns>        

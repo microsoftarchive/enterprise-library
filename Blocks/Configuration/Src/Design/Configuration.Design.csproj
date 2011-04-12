@@ -394,6 +394,7 @@
     <Compile Include="ComponentModel\Editors\EditorUtility.cs" />
     <Compile Include="ComponentModel\Editors\KeyManager\KeyManagerUtilities.cs" />
     <Compile Include="ComponentModel\Editors\PopupTextEditor.cs" />
+    <Compile Include="ComponentModel\Editors\SaveFileEditor.cs" />
     <Compile Include="ComponentModel\Editors\TextEditDialog.xaml.cs">
       <DependentUpon>TextEditDialog.xaml</DependentUpon>
     </Compile>

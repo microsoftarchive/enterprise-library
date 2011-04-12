@@ -12,7 +12,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
     {
         /// <summary>
         /// Gets the creation expression used to produce a <see cref="TypeRegistration"/> during
-        /// <see cref="GetRegistrations"/>.
+        /// <see cref="TraceListenerData.GetRegistrations"/>.
         /// </summary>
         /// <returns>A <see cref="Expression"/> that creates an <see cref="NotificationTraceListener"/></returns>
         protected override Expression<Func<Diagnostics.TraceListener>> GetCreationExpression()

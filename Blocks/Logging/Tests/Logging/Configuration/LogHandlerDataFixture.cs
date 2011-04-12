@@ -22,6 +22,10 @@ using Microsoft.Practices.EnterpriseLibrary.Logging.PolicyInjection;
 using Microsoft.Practices.Unity.InterceptionExtension;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+#if SILVERLIGHT
+    using Microsoft.Practices.EnterpriseLibrary.Logging.Diagnostics;
+#endif
+
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
 {
     [TestClass]

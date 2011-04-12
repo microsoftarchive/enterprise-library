@@ -127,6 +127,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Configuration\ContainerModel\Unity\UnityContainerConfigurator.Desktop.cs" />
+    <Compile Include="Configuration\Design\SaveFileEditorAttribute.cs" />
     <Compile Include="Configuration\DictionaryConfigurationSource.Desktop.cs" />
     <Compile Include="Configuration\IConfigurationSource.Desktop.cs" />
     <Compile Include="Instrumentation\AppDomainNameFormatter.cs" />

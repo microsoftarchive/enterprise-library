@@ -10,8 +10,15 @@
 //===============================================================================
 
 using System;
+using System.Globalization;
+using System.Threading;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests.Properties;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+#if SILVERLIGHT
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel.Unity;
+using Microsoft.Practices.Unity;
+#endif
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
 {
@@ -19,6 +26,34 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
     public class ReplaceHandlerFixture
     {
         const string message = "message";
+
+#if SILVERLIGHT
+        private IUnityContainer container;
+        private ExceptionManager ExceptionPolicy;
+
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            this.container = new UnityContainer();
+
+            var configurationSource =
+                ResourceDictionaryConfigurationSource.FromXaml(
+                    new Uri(
+                        "/Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Silverlight.Tests;component/Configuration.xaml",
+                        UriKind.Relative));
+
+            EnterpriseLibraryContainer.ConfigureContainer(new UnityContainerConfigurator(this.container), configurationSource);
+
+            this.ExceptionPolicy = this.container.Resolve<ExceptionManager>();
+        }
+
+
+        [TestCleanup]
+        public void TestCleanup()
+        {
+            this.container.Dispose();
+        }
+#endif
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
@@ -36,7 +71,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
         }
 
         [TestMethod]
-        public void CanWrapException()
+        public void CanReplaceException()
         {
             ReplaceHandler handler = new ReplaceHandler(message, typeof(ApplicationException));
             Exception ex = handler.HandleException(new InvalidOperationException(), Guid.NewGuid());
@@ -55,6 +90,36 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
             ExceptionPolicy.HandleException(exceptionToWrap, "LocalizedReplacePolicy", out thrownException);
 
             Assert.AreEqual(Resources.ExceptionMessage, thrownException.Message);
+        }
+
+        [TestMethod]
+#if !SILVERLIGHT
+        [DeploymentItem(@"es\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests.resources.dll", "es")]
+#endif
+        public void ReplaceExceptionReturnsLocalizedMessageBasedOnCurentUICulture()
+        {
+            CultureInfo originalCultureInfo = Thread.CurrentThread.CurrentUICulture;
+            try
+            {
+                Exception exceptionToWrap = new Exception();
+                Exception thrownException;
+
+                Thread.CurrentThread.CurrentUICulture = new CultureInfo("es-es");
+
+                ExceptionPolicy.HandleException(exceptionToWrap, "LocalizedReplacePolicy", out thrownException);
+
+                Assert.AreEqual("caramba!", thrownException.Message);
+
+                Thread.CurrentThread.CurrentUICulture = new CultureInfo("en-us");
+
+                ExceptionPolicy.HandleException(exceptionToWrap, "LocalizedReplacePolicy", out thrownException);
+
+                Assert.AreEqual("ooops!", thrownException.Message);
+            }
+            finally
+            {
+                Thread.CurrentThread.CurrentUICulture = originalCultureInfo;
+            }
         }
     }
 }

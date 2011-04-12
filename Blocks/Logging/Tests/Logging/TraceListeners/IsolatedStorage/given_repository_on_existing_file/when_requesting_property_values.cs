@@ -15,13 +15,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Iso
         [TestMethod]
         public void then_max_size_is_read()
         {
-            Assert.AreEqual(1024, this.repository.MaxSizeInBytes);
+            Assert.AreEqual(1, this.repository.MaxSizeInKilobytes);
         }
 
         [TestMethod]
         public void then_effective_max_size_is_read()
         {
-            Assert.AreEqual(1024, this.repository.ActualMaxSizeInBytes);
+            Assert.AreEqual(1, this.repository.ActualMaxSizeInKilobytes);
         }
     }
 }

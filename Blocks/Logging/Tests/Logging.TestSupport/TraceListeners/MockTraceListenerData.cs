@@ -9,8 +9,12 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System.Diagnostics;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
+#if !SILVERLIGHT
+using System.Diagnostics;
+#else
+using Microsoft.Practices.EnterpriseLibrary.Logging.Diagnostics;
+#endif
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport.TraceListeners
 {
@@ -20,10 +24,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport.TraceListene
         {
         }
 
+#if !SILVERLIGHT
         public MockTraceListenerData(string name)
             : base(name, typeof(MockTraceListener), TraceOptions.None, SourceLevels.All)
         {
         }
+#else
+        public MockTraceListenerData(string name)
+        {
+            this.Name = name;
+        }
+#endif
 
         protected override System.Linq.Expressions.Expression<System.Func<TraceListener>> GetCreationExpression()
         {

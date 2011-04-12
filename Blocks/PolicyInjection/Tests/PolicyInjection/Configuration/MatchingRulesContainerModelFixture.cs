@@ -527,6 +527,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
         }
     }
 
+#if !SILVERLIGHT
     [TestClass]
     public class GivenACustomMatchingRuleData
     {
@@ -578,4 +579,5 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
             Assert.AreEqual("baz", attributes["bar"]);
         }
     }
+#endif
 }

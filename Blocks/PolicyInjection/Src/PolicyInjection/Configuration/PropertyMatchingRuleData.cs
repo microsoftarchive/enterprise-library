@@ -10,37 +10,18 @@
 //===============================================================================
 
 using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design.Validation;
-using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
-using FakeRules = Microsoft.Practices.EnterpriseLibrary.PolicyInjection.MatchingRules;
-using PropertyMatchingOption = Microsoft.Practices.Unity.InterceptionExtension.PropertyMatchingOption;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
-using System.ComponentModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
 {
     /// <summary>
-    /// A configuration element class that stores configuration information for instances
+    /// A class that stores configuration information for instances
     /// of <see cref="PropertyMatchingRule"/>.
     /// </summary>
-    [ResourceDescription(typeof(DesignResources), "PropertyMatchingRuleDataDescription")]
-    [ResourceDisplayName(typeof(DesignResources), "PropertyMatchingRuleDataDisplayName")]
-    public class PropertyMatchingRuleData : MatchingRuleData
+    public partial class PropertyMatchingRuleData : MatchingRuleData
     {
-        private const string MatchesPropertyName = "matches";
-
-        /// <summary>
-        /// Constructs a new <see cref="PropertyMatchingRuleData"/> instance.
-        /// </summary>
-        public PropertyMatchingRuleData()
-        {
-            Type = typeof(FakeRules.PropertyMatchingRule);
-        }
 
         /// <summary>
         /// Constructs a new <see cref="PropertyMatchingRuleData"/> instance.
@@ -49,37 +30,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         public PropertyMatchingRuleData(string matchingRuleName)
             : this(matchingRuleName, new List<PropertyMatchData>())
         {
-        }
-
-        /// <summary>
-        /// Constructs a new <see cref="PropertyMatchingRuleData"/> instance.
-        /// </summary>
-        /// <param name="matchingRuleName">Matching rule instance name in configuration.</param>
-        /// <param name="matches">Collection of <see cref="PropertyMatchData"/> containing
-        /// property patterns to match.</param>
-        public PropertyMatchingRuleData(string matchingRuleName, IEnumerable<PropertyMatchData> matches)
-            : base(matchingRuleName, typeof(FakeRules.PropertyMatchingRule))
-        {
-            foreach (PropertyMatchData match in matches)
-            {
-                Matches.Add(match);
-            }
-        }
-
-        /// <summary>
-        /// The collection of <see cref="PropertyMatchData"/> containing property names to match.
-        /// </summary>
-        /// <value>The "matches" config subelement.</value>
-        [ConfigurationProperty(MatchesPropertyName)]
-        [ConfigurationCollection(typeof(PropertyMatchData))]
-        [ResourceDescription(typeof(DesignResources), "PropertyMatchingRuleDataMatchesDescription")]
-        [ResourceDisplayName(typeof(DesignResources), "PropertyMatchingRuleDataMatchesDisplayName")]
-        [Editor(CommonDesignTime.EditorTypes.CollectionEditor, CommonDesignTime.EditorTypes.FrameworkElement)]
-        [Validation(PolicyInjectionDesignTime.Validators.MatchCollectionPopulatedValidationType)]
-        public MatchDataCollection<PropertyMatchData> Matches
-        {
-            get { return (MatchDataCollection<PropertyMatchData>)base[MatchesPropertyName]; }
-            set { base[MatchesPropertyName] = value; }
         }
 
         /// <summary>
@@ -106,12 +56,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
     /// A derived <see cref="MatchData"/> which adds storage for which methods
     /// on the property to match.
     /// </summary>
-    [ResourceDescription(typeof(DesignResources), "PropertyMatchDataDescription")]
-    [ResourceDisplayName(typeof(DesignResources), "PropertyMatchDataDisplayName")]
-    public class PropertyMatchData : MatchData
+    public partial class PropertyMatchData : MatchData
     {
-        private const string OptionPropertyName = "matchOption";
-
         /// <summary>
         /// Constructs a new <see cref="PropertyMatchData"/> instance.
         /// </summary>
@@ -153,20 +99,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
             : base(match, ignoreCase)
         {
             MatchOption = option;
-        }
-
-        /// <summary>
-        /// Which methods of the property to match. Default is to match both getters and setters.
-        /// </summary>
-        /// <value>The "matchOption" config attribute.</value>
-        [ConfigurationProperty(OptionPropertyName, DefaultValue = PropertyMatchingOption.GetOrSet, IsRequired = false)]
-        [ResourceDescription(typeof(DesignResources), "PropertyMatchDataMatchOptionDescription")]
-        [ResourceDisplayName(typeof(DesignResources), "PropertyMatchDataMatchOptionDisplayName")]
-        [ViewModel(CommonDesignTime.ViewModelTypeNames.CollectionEditorContainedElementProperty)]
-        public PropertyMatchingOption MatchOption
-        {
-            get { return (PropertyMatchingOption)base[OptionPropertyName]; }
-            set { base[OptionPropertyName] = value; }
         }
     }
 }

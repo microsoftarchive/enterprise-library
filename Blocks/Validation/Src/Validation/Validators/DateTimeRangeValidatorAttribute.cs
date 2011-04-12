@@ -177,5 +177,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
                 throw new ArgumentException(Resources.ExceptionInvalidDate, e);
             }
         }
+
+#if !SILVERLIGHT
+        private readonly Guid typeId = Guid.NewGuid();
+
+        /// <summary>
+        /// Gets a unique identifier for this attribute.
+        /// </summary>
+        public override object TypeId
+        {
+            get
+            {
+                return this.typeId;
+            }
+        }
+#endif
     }
 }

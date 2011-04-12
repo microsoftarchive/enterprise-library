@@ -10,32 +10,20 @@
 //===============================================================================
 
 using System;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
-using Microsoft.Practices.Unity.InterceptionExtension;
 using System.Collections.Generic;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
 {
     /// <summary>
     /// A configuration element base class that stores configuration information about a matching rule.
     /// </summary>
-    public class MatchingRuleData : NameTypeConfigurationElement
+    public partial class MatchingRuleData
     {
         /// <summary>
         /// Creates a new <see cref="MatchingRuleData"/> instance.
         /// </summary>
         public MatchingRuleData()
-        {
-        }
-
-        /// <summary>
-        /// Creates a new <see cref="MatchingRuleData"/> instance.
-        /// </summary>
-        /// <param name="matchingRuleName">Name of the rule in config.</param>
-        /// <param name="matchingRuleType">The underlying type of matching rule this object configures.</param>
-        public MatchingRuleData(string matchingRuleName, Type matchingRuleType)
-            : base(matchingRuleName, matchingRuleType)
         {
         }
 

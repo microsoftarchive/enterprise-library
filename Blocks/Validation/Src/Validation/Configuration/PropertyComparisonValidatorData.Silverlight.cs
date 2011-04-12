@@ -15,6 +15,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 {
     partial class PropertyComparisonValidatorData
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PropertyComparisonValidatorData"/> class.
+        /// </summary>
         public PropertyComparisonValidatorData()
         {
             this.PropertyToCompare = string.Empty;

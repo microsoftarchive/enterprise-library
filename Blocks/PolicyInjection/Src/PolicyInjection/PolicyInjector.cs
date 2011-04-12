@@ -94,7 +94,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection
             }
 
             this.instanceInterceptionPolicySettingInjectionMember =
-                new InstanceInterceptionPolicySettingInjectionMember(new TransparentProxyInterceptor());
+                new InstanceInterceptionPolicySettingInjectionMember(
+#if !SILVERLIGHT
+                    new TransparentProxyInterceptor()
+#else
+                    new InterfaceInterceptor()
+#endif
+                    );
         }
 
         private static IServiceLocator CreateServiceLocator(IConfigurationSource configurationSource)
@@ -142,6 +148,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection
                     this.instanceInterceptionPolicySettingInjectionMember);
         }
 
+#if !SILVERLIGHT
         /// <summary>
         /// Creates a new object of type <typeparamref name="TObject"/> and
         /// adds interception as needed to match the policies specified for the injector.
@@ -153,6 +160,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection
         {
             return (TObject)Create(typeof(TObject), args);
         }
+#endif
 
         /// <summary>
         /// Creates a new object of type <typeparamref name="TObject"/> and
@@ -168,6 +176,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection
             return (TInterface)Create(typeof(TObject), typeof(TInterface), args);
         }
 
+#if !SILVERLIGHT
         /// <summary>
         /// Creates a new object of type <paramref name="typeToCreate"/> and
         /// adds interception as needed to match the policies specified for the injector.
@@ -179,6 +188,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection
         {
             return Create(typeToCreate, typeToCreate, args);
         }
+#endif
 
         /// <summary>
         /// Creates a new object of type <paramref name="typeToCreate"/> and

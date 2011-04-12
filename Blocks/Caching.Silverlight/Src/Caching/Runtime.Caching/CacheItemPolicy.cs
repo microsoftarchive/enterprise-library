@@ -3,8 +3,14 @@ using System.Runtime.Serialization;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.Runtime.Caching
 {
+    /// <summary>
+    /// Represents a set of eviction and expiration details for a specific cache entry.
+    /// </summary>
     public class CacheItemPolicy
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CacheItemPolicy"/> class.
+        /// </summary>
         public CacheItemPolicy()
         {
             AbsoluteExpiration = ObjectCache.InfiniteAbsoluteExpiration;

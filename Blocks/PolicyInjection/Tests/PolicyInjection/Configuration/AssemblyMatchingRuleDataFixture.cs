@@ -21,6 +21,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
     [DeploymentItem("test.exe.config")]
     public class AssemblyNameMatchingRuleDataFixture : MatchingRuleDataFixtureBase
     {
+
+#if !SILVERLIGHT
         [TestInitialize]
         public void TestInitialize()
         {
@@ -38,7 +40,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
             Assert.AreEqual(asmMatchingRule.Name, deserializedRule.Name);
             Assert.AreEqual(asmMatchingRule.Match, deserializedRule.Match);
         }
-
+#else
+        [TestMethod]
+        public void HasDefaultCtor()
+        {
+            new AssemblyMatchingRuleData();
+        }
+#endif
         [TestMethod]
         public void MatchingRuleHasTransientLifetime()
         {

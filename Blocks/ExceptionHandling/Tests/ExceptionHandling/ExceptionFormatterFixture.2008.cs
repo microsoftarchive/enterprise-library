@@ -53,5 +53,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
             formatter.Format();
             Assert.AreEqual(exception.Demanded.ToString(), formatter.properties["Demanded"]);
         }
+
+        static void DemandException(SecurityPermission denyPermission)
+        {
+            denyPermission.Demand();
+        }
     }
 }

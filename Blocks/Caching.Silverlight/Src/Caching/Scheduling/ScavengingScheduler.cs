@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Threading;
 using System.Diagnostics;
+using System.Threading;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.Scheduling
 {
@@ -16,11 +16,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Scheduling
 
         #region IManuallyScheduledWork Members
 
+        /// <summary>
+        /// Set the action that will be run when work is scheduled.
+        /// </summary>
+        /// <param name="workToDo">The <see cref="Action"/> that will
+        /// be invoked when the action is scheduled.</param>
         public void SetAction(Action workToDo)
         {
             this.scavengingAction = workToDo;
         }
 
+        /// <summary>
+        /// Requests that the object perform its work
+        /// at some point in the future.
+        /// </summary>
         public void ScheduleWork()
         {
             if (Interlocked.Increment(ref scheduledScavenges) == 1)
@@ -58,6 +67,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Scheduling
 
         #endregion
 
+        /// <summary>
+        /// Releases resources.
+        /// </summary>
         public void Dispose()
         {
             if (this.scavengingAction != null)

@@ -38,7 +38,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
@@ -52,9 +51,9 @@
       <Link>LogEntryMessage.cs</Link>
     </Compile>
     <Compile Include="ILoggingService.cs" />
+    <Compile Include="LogEntryExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="LoggingService.cs" />
-    <Compile Include="SilverlightFaultBehavior.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

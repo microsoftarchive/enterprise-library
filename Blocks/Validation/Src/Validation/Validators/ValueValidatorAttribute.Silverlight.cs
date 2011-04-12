@@ -17,6 +17,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
 {
     partial class ValueValidatorAttribute
     {
+        /// <summary>
+        /// Determines whether the specified value is valid.
+        /// </summary>
+        /// <param name="value">The value to validated.</param>
+        /// <param name="context">The validation context.</param>
         protected override DAValidationResult IsValid(object value, ValidationContext context)
         {
             if (!string.IsNullOrEmpty(this.Ruleset))

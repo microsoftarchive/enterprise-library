@@ -332,6 +332,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Captured tracing context can only be restored once..
+        /// </summary>
+        internal static string ErrorCanOnlyRestoreTracingContextOnce {
+            get {
+                return ResourceManager.GetString("ErrorCanOnlyRestoreTracingContextOnce", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invalid entry data found in stream: the size of the entry at position {0} is larger than the available size..
         /// </summary>
         internal static string ErrorEntryDataInDiskIsInvalidLongerThanMaximum {
@@ -1100,6 +1109,52 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Properties {
         internal static string ReflectedPropertyTokenNotReadable {
             get {
                 return ResourceManager.GetString("ReflectedPropertyTokenNotReadable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tracing to LogSource &apos;{0}&apos; failed. Exception &apos;{1}&apos; (&quot;{2}&quot;) was thrown when trying to create the remote service&apos;s client proxy..
+        /// </summary>
+        internal static string RemoteServiceTraceListener_ReportProxyError_MessageFormat {
+            get {
+                return ResourceManager.GetString("RemoteServiceTraceListener_ReportProxyError_MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The following log entries failed to submit and will not be automatically resubmitted:
+        ///{0}.
+        /// </summary>
+        internal static string RemoteServiceTraceListener_ReportTracingError_EntriesSummaryMessageFormat {
+            get {
+                return ResourceManager.GetString("RemoteServiceTraceListener_ReportTracingError_EntriesSummaryMessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tracing to LogSource &apos;{0}&apos; failed. Exception &apos;{1}&apos; (&quot;{2}&quot;) was thrown when trying to submit log entries to the server..
+        /// </summary>
+        internal static string RemoteServiceTraceListener_ReportTracingError_GeneralExceptionMessageFormat {
+            get {
+                return ResourceManager.GetString("RemoteServiceTraceListener_ReportTracingError_GeneralExceptionMessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0}: {1}.
+        /// </summary>
+        internal static string RemoteServiceTraceListener_ReportTracingError_LogEntryFormat {
+            get {
+                return ResourceManager.GetString("RemoteServiceTraceListener_ReportTracingError_LogEntryFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0}....
+        /// </summary>
+        internal static string RemoteServiceTraceListener_ReportTracingError_ShortenedLongLogEntryMessageFormat {
+            get {
+                return ResourceManager.GetString("RemoteServiceTraceListener_ReportTracingError_ShortenedLongLogEntryMessageFormat", resourceCulture);
             }
         }
         

@@ -66,5 +66,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
 		{
 			return new DomainValidator<object>(Negated, Domain);
 		}
-	}
+
+#if !SILVERLIGHT
+        private readonly Guid typeId = Guid.NewGuid();
+
+        /// <summary>
+        /// Gets a unique identifier for this attribute.
+        /// </summary>
+        public override object TypeId
+        {
+            get
+            {
+                return this.typeId;
+            }
+        }
+#endif
+    }
 }

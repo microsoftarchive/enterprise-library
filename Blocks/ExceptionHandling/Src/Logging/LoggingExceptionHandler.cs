@@ -11,15 +11,19 @@
 
 using System;
 using System.Collections;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Text;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Logging;
+#if !SILVERLIGHT
+using System.Diagnostics;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Configuration;
+#else
+using Microsoft.Practices.EnterpriseLibrary.Logging.Diagnostics;
+#endif
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging
 {
@@ -28,7 +32,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging
     /// the exception into a log message and sends it to
     /// the Enterprise Library Logging Application Block.
     /// </summary>
+#if !SILVERLIGHT
     [ConfigurationElementType(typeof(LoggingExceptionHandlerData))]
+#endif
     public class LoggingExceptionHandler : IExceptionHandler
     {
         private readonly string logCategory;
@@ -89,7 +95,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging
 
         /// <summary>
         /// Writes the specified log message using 
-        /// the Logging Application Block's <see cref="Logger.Write(LogEntry)"/>
+        /// the Logging Application Block's <see cref="LogWriter.Write(LogEntry)"/>
         /// method.
         /// </summary>
         /// <param name="logMessage">The message to write to the log.</param>

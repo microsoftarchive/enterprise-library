@@ -11,12 +11,12 @@
 
 using System;
 using System.IO;
-using System.Security;
-using System.Security.Permissions;
-using System.Security.Principal;
 using System.Text;
-using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+#if !SILVERLIGHT
+using System.Security.Principal;
+using System.Threading;
+#endif
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
 {
@@ -45,15 +45,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
             StringBuilder sb = new StringBuilder();
             StringWriter writer = new StringWriter(sb);
 
-            Exception exception = new FileNotFoundException(fileNotFoundMessage, theFile);
+            Exception exception = new FileNotFoundException(fileNotFoundMessage);
             TextExceptionFormatter formatter = new TextExceptionFormatter(writer, exception);
 
             formatter.Format();
 
+#if !SILVERLIGHT
             if (string.Compare(permissionDenied, formatter.AdditionalInfo[machineName]) != 0)
             {
                 Assert.AreEqual(Environment.MachineName, formatter.AdditionalInfo[machineName]);
             }
+#endif
 
             DateTime minimumTime = DateTime.UtcNow.AddMinutes(-1);
             DateTime loggedTime = DateTime.Parse(formatter.AdditionalInfo[timeStamp]);
@@ -63,12 +65,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
             }
 
             Assert.AreEqual(AppDomain.CurrentDomain.FriendlyName, formatter.AdditionalInfo[appDomainName]);
+#if !SILVERLIGHT
             Assert.AreEqual(Thread.CurrentPrincipal.Identity.Name, formatter.AdditionalInfo[threadIdentity]);
 
             if (string.Compare(permissionDenied, formatter.AdditionalInfo[windowsIdentity]) != 0)
             {
                 Assert.AreEqual(WindowsIdentity.GetCurrent().Name, formatter.AdditionalInfo[windowsIdentity]);
             }
+#endif
         }
 
         [TestMethod]
@@ -84,13 +88,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
 
             Assert.AreEqual(formatter.fields[fieldString], mockFieldString);
             Assert.AreEqual(formatter.properties[propertyString], mockPropertyString);
-            // The message should be null because the reflection formatter should ignore this property
-            Assert.AreEqual(null, formatter.properties[message]);
-        }
-
-        static void DemandException(SecurityPermission denyPermission)
-        {
-            denyPermission.Demand();
+            Assert.IsFalse(formatter.properties.ContainsKey(message));
         }
 
         //[TestMethod]
@@ -140,10 +138,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
 
             formatter.Format();
 
+#if !SILVERLIGHT
             if (string.Compare(permissionDenied, formatter.AdditionalInfo[machineName]) != 0)
             {
                 Assert.AreEqual(Environment.MachineName, formatter.AdditionalInfo[machineName]);
             }
+#endif
 
             DateTime minimumTime = DateTime.UtcNow.AddMinutes(-1);
             DateTime loggedTime = DateTime.Parse(formatter.AdditionalInfo[timeStamp]);
@@ -153,19 +153,21 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
             }
 
             Assert.AreEqual(AppDomain.CurrentDomain.FriendlyName, formatter.AdditionalInfo[appDomainName]);
+#if !SILVERLIGHT
             Assert.AreEqual(Thread.CurrentPrincipal.Identity.Name, formatter.AdditionalInfo[threadIdentity]);
 
             if (string.Compare(permissionDenied, formatter.AdditionalInfo[windowsIdentity]) != 0)
             {
                 Assert.AreEqual(WindowsIdentity.GetCurrent().Name, formatter.AdditionalInfo[windowsIdentity]);
             }
+#endif
         }
 
         public class FileNotFoundExceptionWithIndexer : FileNotFoundException
         {
             public FileNotFoundExceptionWithIndexer(string message,
                                                     string fileName)
-                : base(message, fileName) { }
+                : base(message) { }
 
             public string this[int index]
             {

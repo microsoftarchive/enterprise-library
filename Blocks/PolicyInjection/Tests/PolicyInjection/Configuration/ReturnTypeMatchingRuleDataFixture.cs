@@ -20,6 +20,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
     [DeploymentItem("test.exe.config")]
     public class ReturnTypeMatchingRuleDataFixture : MatchingRuleDataFixtureBase
     {
+#if !SILVERLIGHT
         [TestMethod]
         public void CanSerializeTypeMatchingRule()
         {
@@ -33,7 +34,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
             Assert.IsTrue(deserializedRule.IgnoreCase);
             Assert.AreEqual(returnTypeMatchingRule.Match, deserializedRule.Match);
         }
-
+#else
+        [TestMethod]
+        public void HasDefaultCtor()
+        {
+            new PropertyMatchingRuleData();
+        }
+#endif
 
         [TestMethod]
         public void MatchingRuleHasTransientLifetime()

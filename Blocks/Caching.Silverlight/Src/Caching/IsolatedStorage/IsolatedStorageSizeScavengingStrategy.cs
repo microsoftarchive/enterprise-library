@@ -7,6 +7,9 @@ using Microsoft.Practices.EnterpriseLibrary.Caching.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.IsolatedStorage
 {
+    /// <summary>
+    /// Scavenging strategy for isolated storage, based on quota usage.
+    /// </summary>
     public class IsolatedStorageSizeScavengingStrategy : IScavengingStrategy<IsolatedStorageCacheEntry>
     {
         private const int DefaultMaxItemsBeforeScavengingWhenNotWritable = 20;
@@ -18,6 +21,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.IsolatedStorage
 
         private int maxItemsBeforeScavengingWhenNotWritable;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IsolatedStorageSizeScavengingStrategy"/> class.
+        /// </summary>
+        /// <param name="store">The cache entry store.</param>
+        /// <param name="isoStorage">The isolated storage information provider.</param>
+        /// <param name="percentOfQuotaUsedBeforeScavenging">The percentage of quota used before scavenging.</param>
+        /// <param name="percentOfQuotaUsedAfterScavenging">The percentage of quota used after scavenging.</param>
         public IsolatedStorageSizeScavengingStrategy(ICacheEntryStore store, IIsolatedStorageInfo isoStorage, int percentOfQuotaUsedBeforeScavenging, int percentOfQuotaUsedAfterScavenging)
         {
             if (percentOfQuotaUsedBeforeScavenging <= 0 || percentOfQuotaUsedBeforeScavenging > 100)
@@ -28,7 +38,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.IsolatedStorage
 
             if (percentOfQuotaUsedAfterScavenging > percentOfQuotaUsedBeforeScavenging)
                 throw new ArgumentException(
-                    string.Format(CultureInfo.CurrentCulture, Resources.ExceptionPercentOfQuotaRangeComparison, percentOfQuotaUsedBeforeScavenging, percentOfQuotaUsedAfterScavenging), 
+                    string.Format(CultureInfo.CurrentCulture, Resources.ExceptionPercentOfQuotaRangeComparison, percentOfQuotaUsedBeforeScavenging, percentOfQuotaUsedAfterScavenging),
                     "percentOfQuotaUsedAfterScavenging");
 
             this.store = store;
@@ -37,6 +47,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.IsolatedStorage
             this.percentOfQuotaUsedAfterScavenging = percentOfQuotaUsedAfterScavenging / 100f;
         }
 
+        /// <summary>
+        /// Determines whether scavenging is needed for <paramref name="entries"/>.
+        /// </summary>
+        /// <param name="entries">The entries.</param>
+        /// <returns><see langword="true"/> if scavenging is needed, otherwise <see langword="false"/>.</returns>
         public bool ShouldScavenge(IDictionary<string, IsolatedStorageCacheEntry> entries)
         {
             if (this.store.IsWritable)
@@ -57,6 +72,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.IsolatedStorage
             return false;
         }
 
+        /// <summary>
+        /// Determines whether additional scavenging is needed for <paramref name="entries"/>.
+        /// </summary>
+        /// <param name="entries">The entries.</param>
+        /// <returns><see langword="true"/> if additional scavenging is needed, otherwise <see langword="false"/>.</returns>
         public bool ShouldScavengeMore(IDictionary<string, IsolatedStorageCacheEntry> entries)
         {
             if (this.store.IsWritable)
@@ -77,6 +97,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.IsolatedStorage
             return false;
         }
 
+        /// <summary>
+        /// Determines the entries that should be scavenged from <paramref name="currentEntries"/>.
+        /// </summary>
+        /// <param name="currentEntries">The entries to scavenge.</param>
+        /// <returns>A set of the entries that should be scavenged.</returns>
         public IEnumerable<IsolatedStorageCacheEntry> EntriesToScavenge(IEnumerable<IsolatedStorageCacheEntry> currentEntries)
         {
             return currentEntries.OrderBy(x => x.Priority).ThenBy(x => x.LastAccessTime);
@@ -87,6 +112,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.IsolatedStorage
             return Math.Min(this.store.Quota, this.isoStorage.AvailableFreeSpace + this.store.UsedPhysicalSize);
         }
 
+        /// <summary>
+        /// Gets the maximum quantity of items allowed before scavenging when the cache is in-memory only.
+        /// </summary>
+        /// <param name="entriesCount">The entries count.</param>
+        /// <returns>The maximum quantity of items.</returns>
         protected virtual int GetMaxItemsBeforeScavengingWhenNotWritable(int entriesCount)
         {
             if (this.maxItemsBeforeScavengingWhenNotWritable == 0)

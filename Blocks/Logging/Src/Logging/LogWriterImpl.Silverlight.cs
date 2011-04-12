@@ -11,13 +11,57 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
+
+using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Filters;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
+using Microsoft.Practices.Unity.Utility;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging
 {
     public partial class LogWriterImpl : LogWriter, ILogFilterErrorHandler
     {
+        /// <summary>
+        /// Provides an update context for changing the <see cref="LogWriterImpl"/> settings.
+        /// </summary>
+        protected class LogWriterUpdateContext : ILogWriterUpdateContext
+        {
+            public LogWriterUpdateContext(LogWriterImpl logWriter)
+            {
+                this.LogWriter = logWriter;
+                this.IsLoggingEnabled = logWriter.IsLoggingEnabled();
+
+                var sources = logWriter.TraceSources.Select(x => x.Value.GetUpdateContext()).ToList().AsReadOnly();
+                this.TraceSources = sources;
+            }
+
+            public ICollection<ILogSourceUpdateContext> TraceSources { get; private set; }
+
+            public bool IsLoggingEnabled { get; set; }
+
+            protected LogWriterImpl LogWriter { get; private set; }
+
+            public virtual void ApplyChanges()
+            {
+                if (this.IsLoggingEnabled != this.LogWriter.IsLoggingEnabled())
+                {
+                    var enabledFilter = this.LogWriter.GetFilter<LogEnabledFilter>();
+                    if (enabledFilter == null)
+                    {
+                        throw new InvalidOperationException("Cannot apply IsLoggingEnabled value. LogEnabledFilter filter must be configured in the logger.");
+                    }
+
+                    enabledFilter.Enabled = this.IsLoggingEnabled;
+                }
+
+                foreach (var sourceUpdateContext in this.TraceSources.OfType<ICommitable>())
+                {
+                    sourceUpdateContext.Commit();
+                }
+            }
+        }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="LogWriterImpl"/> class.
         /// </summary>
@@ -45,7 +89,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
                          LogSource errorsTraceSource,
                          string defaultCategory,
                          ILoggingInstrumentationProvider instrumentationProvider)
-            : this(filters, traceSources, null, null, errorsTraceSource, defaultCategory, false, false, true, instrumentationProvider)
+            : this(filters, traceSources, null, null, errorsTraceSource, defaultCategory, false, false, true, instrumentationProvider, new AsyncTracingErrorReporter())
         { }
 
         /// <summary>
@@ -103,17 +147,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
             bool logWarningsWhenNoCategoriesMatch,
             bool revertImpersonation)
             : this(
-                CreateStructureHolder(
-                    filters,
-                    traceSources,
-                    allEventsTraceSource,
-                    notProcessedTraceSource,
-                    errorsTraceSource,
-                    defaultCategory,
-                    tracingEnabled,
-                    logWarningsWhenNoCategoriesMatch,
-                    revertImpersonation),
-                new NullLoggingInstrumentationProvider())
+                filters,
+                traceSources,
+                allEventsTraceSource,
+                notProcessedTraceSource,
+                errorsTraceSource,
+                defaultCategory,
+                tracingEnabled,
+                logWarningsWhenNoCategoriesMatch,
+                revertImpersonation,
+                new NullLoggingInstrumentationProvider(),
+                new AsyncTracingErrorReporter())
         { }
 
         /// <summary>
@@ -129,6 +173,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// <param name="logWarningsWhenNoCategoriesMatch">true if warnings should be logged when a non-matching category is found.</param>
         /// <param name="revertImpersonation">true if impersonation should be reverted while logging.</param>
         /// <param name="instrumentationProvider">The instrumentation provider to use.</param>
+        /// <param name="asyncTracingErrorReporter">The async tracing error reporter.</param>
         public LogWriterImpl(
             IEnumerable<ILogFilter> filters,
             IDictionary<string, LogSource> traceSources,
@@ -139,7 +184,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
             bool tracingEnabled,
             bool logWarningsWhenNoCategoriesMatch,
             bool revertImpersonation,
-            ILoggingInstrumentationProvider instrumentationProvider)
+            ILoggingInstrumentationProvider instrumentationProvider,
+            IAsyncTracingErrorReporter asyncTracingErrorReporter)
             : this(
                 CreateStructureHolder(
                     filters,
@@ -151,7 +197,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
                     tracingEnabled,
                     logWarningsWhenNoCategoriesMatch,
                     revertImpersonation),
-                instrumentationProvider)
+                instrumentationProvider,
+                asyncTracingErrorReporter)
         { }
 
         /// <summary>
@@ -227,8 +274,41 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
                    tracingEnabled,
                    logWarningsWhenNoCategoriesMatch,
                    true,
-                   instrumentationProvider)
+                   instrumentationProvider,
+                   new AsyncTracingErrorReporter())
         { }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LogWriterImpl"/> class.
+        /// </summary>
+        /// <param name="structureHolder">The initial implementation of the logging stack</param>
+        /// <param name="instrumentationProvider">The instrumentation provider to use.</param>
+        /// <param name="asyncTracingErrorReporter">The async tracing error reporter.</param>
+        public LogWriterImpl(
+            LogWriterStructureHolder structureHolder,
+            ILoggingInstrumentationProvider instrumentationProvider,
+            IAsyncTracingErrorReporter asyncTracingErrorReporter)
+            : this(structureHolder, instrumentationProvider)
+        {
+            Guard.ArgumentNotNull(asyncTracingErrorReporter, "asyncTracingErrorReporter");
+
+            var reporter = asyncTracingErrorReporter as AsyncTracingErrorReporter;
+            if (reporter != null)
+            {
+                reporter.SetLogEntryExceptionReportingAction(this.ReportExceptionDuringTracing);
+                reporter.SetErrorMessageReportingAction(this.ReportErrorDuringTracing);
+            }
+        }
+
+        /// <summary>
+        /// Provides an update context to batch change requests to the <see cref="LogWriterImpl"/> configuration,
+        /// and apply all the changes in a single call <see cref="ILogWriterUpdateContext.ApplyChanges"/>.
+        /// </summary>
+        /// <returns>Returns an <see cref="ILogWriterUpdateContext"/> instance that can be used to apply the configuration changes.</returns>
+        public override ILogWriterUpdateContext GetUpdateContext()
+        {
+            return new LogWriterUpdateContext(this);
+        }
 
         /// <summary>
         /// Starts a new tracing operation.

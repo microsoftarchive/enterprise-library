@@ -340,4 +340,19 @@ The local elements type '{0}' is  incompatible with the parent elements type '{1
   <data name="ExceptionUnsupportedDateTimeFormat" xml:space="preserve">
     <value>The DateTime '{0}' cannot be parsed. Please verify the DateTime format is correct. Supported format are en-US and universal format (ex: "yyyy'-'MM'-'dd'T'HH':'mm':'ss"). The time part is optional.</value>
   </data>
+  <data name="ExceptionAvailableSpaceNotEnough" xml:space="preserve">
+    <value>The available space is not enough to store the specified content.</value>
+  </data>
+  <data name="ExceptionIdDoesNotExistInFileSystem" xml:space="preserve">
+    <value>The specified ID does not exist in the file system.</value>
+  </data>
+  <data name="ExceptionOverwriteOverflow" xml:space="preserve">
+    <value>The content to overwrite overflows the current allocated disk space. Use overwrite method to overwrite a portion of the content that is of fixed size, otherwise remove the content and re-add it.</value>
+  </data>
+  <data name="ExceptionSizeIsNotCurrent" xml:space="preserve">
+    <value>This property cannot be queried until at least one ReadAll() call is made.</value>
+  </data>
+  <data name="ExceptionWriteNotSupportedInReadOnlyStorage" xml:space="preserve">
+    <value>The storage was opened in read-only mode because it was being used by another instance at creation time.</value>
+  </data>
 </root>

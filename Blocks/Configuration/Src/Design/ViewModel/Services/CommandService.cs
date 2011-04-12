@@ -75,7 +75,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel.S
                    .Select(x => builder.Resolve(x.CommandModelType, new DependencyOverride(x.GetType(), x)))
                    .Cast<CommandModel>();
 
-                this.globalCommands = globalAssemblyCommands.ToList();
+                this.globalCommands = globalAssemblyCommands.OrderBy(c => c.Title).ToList();
                 configurationSourceRefresh.Cleared += configurationSourceRefresh_Refresh;
             }
         }

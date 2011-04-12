@@ -18,10 +18,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Iso
             using (var stream =
                 IsolatedStorageLogEntryRepository.InitializeRepositoryStream(
                     IsolatedStorageLogEntryRepository.GetRepositoryFileName(repositoryName),
-                    1024))
+                    1))
             { }
 
-            this.repository = new IsolatedStorageLogEntryRepository(repositoryName, 1024);
+            this.repository = new IsolatedStorageLogEntryRepository(repositoryName, 1);
         }
 
         protected override void Teardown()

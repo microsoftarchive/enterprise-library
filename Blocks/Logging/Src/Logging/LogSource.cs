@@ -24,16 +24,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
     /// <summary>
     /// Provides tracing services through a set of <see cref="TraceListener"/>s.
     /// </summary>
-    public class LogSource : IDisposable
+    public partial class LogSource : IDisposable
     {
         /// <summary>
         /// Default Auto Flush property for the LogSource instance.
         /// </summary>
         public const bool DefaultAutoFlushProperty = true;
         private readonly ILoggingInstrumentationProvider instrumentationProvider;
-        private SourceLevels level;
-        private string name;
-        private IList<TraceListener> traceListeners;
+        private readonly string name;
         private bool autoFlush = DefaultAutoFlushProperty;
 
         /// <summary>
@@ -94,8 +92,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
             ILoggingInstrumentationProvider instrumentationProvider)
         {
             this.name = name;
-            this.traceListeners = new List<TraceListener>(traceListeners);
-            this.level = level;
+            this.Listeners = new List<TraceListener>(traceListeners);
+            this.Level = level;
             this.instrumentationProvider = instrumentationProvider;
             this.autoFlush = autoFlush;
         }
@@ -111,18 +109,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// <summary>
         /// Gets the collection of trace listeners for the <see cref="LogSource"/> instance.
         /// </summary>
-        public IList<TraceListener> Listeners
-        {
-            get { return traceListeners; }
-        }
+        public IList<TraceListener> Listeners { get; private set; }
 
         /// <summary>
         /// Gets the <see cref="SourceLevels"/> values at which to trace for the <see cref="LogSource"/> instance.
         /// </summary>
-        public SourceLevels Level
-        {
-            get { return level; }
-        }
+        public SourceLevels Level { get; protected set; }
 
         /// <summary>
         /// Gets or sets the <see cref="AutoFlush"/> values for the <see cref="LogSource"/> instance.
@@ -175,7 +167,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
             bool isTransfer = logEntry.Severity == TraceEventType.Transfer && logEntry.RelatedActivityId != null;
 #endif
 
-            foreach (TraceListener listener in traceListenerFilter.GetAvailableTraceListeners(traceListeners))
+            foreach (TraceListener listener in traceListenerFilter.GetAvailableTraceListeners(this.Listeners))
             {
                 try
                 {
@@ -212,7 +204,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// </summary>
         public void Dispose()
         {
-            foreach (TraceListener listener in traceListeners)
+            foreach (TraceListener listener in this.Listeners)
             {
                 listener.Dispose();
             }
@@ -220,7 +212,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
 
         private bool ShouldTrace(TraceEventType eventType)
         {
-            return ((((TraceEventType)level) & eventType) != (TraceEventType)0);
+            return ((((TraceEventType)this.Level) & eventType) != (TraceEventType)0);
         }
     }
 }

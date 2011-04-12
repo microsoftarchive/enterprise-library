@@ -33,7 +33,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests.Configuration.Cont
                         new IsolatedStorageCacheData
                         {
                             Name = "cache2",
-                            MaxSizeInKiloBytes = 5
+                            MaxSizeInKilobytes = 5
                         }
                     }
                 });

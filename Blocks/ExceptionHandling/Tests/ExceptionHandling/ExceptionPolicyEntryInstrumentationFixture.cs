@@ -11,7 +11,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Instrumentation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -30,7 +29,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
 
             public TestInstrumentationProvider(ExceptionPolicyEntryInstrumentationFixture outer)
             {
-                this.outer = outer;    
+                this.outer = outer;
             }
 
             public void FireExceptionHandledEvent()
@@ -54,7 +53,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
             exceptionHandlerExecutedCallbackCalled = false;
             exceptionHandledCallbackCalled = false;
 
-            var handlers = new List<IExceptionHandler> { new MockExceptionHandler(new NameValueCollection()) };
+            var handlers = new List<IExceptionHandler> { new MockExceptionHandler() };
 
             var instrumentationProvider = new TestInstrumentationProvider(this);
             policyEntry = new ExceptionPolicyEntry(typeof(Exception), PostHandlingAction.None, handlers, instrumentationProvider);
@@ -80,7 +79,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
         [ExpectedException(typeof(ExceptionHandlingException))]
         public void ExceptionHandlerInChainReturnsNullThrows()
         {
-            var handlers = new List<IExceptionHandler> {new MockReturnNullExceptionHandler()};
+            var handlers = new List<IExceptionHandler> { new MockReturnNullExceptionHandler() };
             var entry = new ExceptionPolicyEntry(
                 typeof(Exception),
                 PostHandlingAction.ThrowNewException,

@@ -26,8 +26,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         /// not be available and the operations will throw an <see cref="InvalidOperationException"/>.
         /// </remarks>
         /// <param name="storageName">The name of the storage file.</param>
-        /// <param name="maxSizeInBytes">The maximum size in bytes.</param>
-        public IsolatedStorageLogEntryRepository(string storageName, int maxSizeInBytes)
+        /// <param name="maxSizeInKilobytes">The maximum size in kilobytes.</param>
+        public IsolatedStorageLogEntryRepository(string storageName, int maxSizeInKilobytes)
         {
             Guard.ArgumentNotNullOrEmpty(storageName, "storageName");
 
@@ -49,7 +49,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
             }
             else
             {
-                storageStream = InitializeRepositoryStream(repositoryFileName, maxSizeInBytes);
+                storageStream = InitializeRepositoryStream(repositoryFileName, maxSizeInKilobytes);
             }
 
             if (storageStream != null)
@@ -63,24 +63,24 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         private readonly LogEntrySerializer serializer;
 
         /// <summary>
-        /// Gets the maximum size in bytes as originally requested.
+        /// Gets the maximum size in kilobytes as originally requested.
         /// </summary>
-        public int MaxSizeInBytes
+        public int MaxSizeInKilobytes
         {
             get
             {
-                return this.storage.MaxSizeInBytes;
+                return this.storage.MaxSizeInBytes / 1024;
             }
         }
 
         /// <summary>
-        /// Gets the maximum size in bytes as available when the storage was initialized.
+        /// Gets the maximum size in kilobytes as available when the storage was initialized.
         /// </summary>
-        public int ActualMaxSizeInBytes
+        public int ActualMaxSizeInKilobytes
         {
             get
             {
-                return this.storage.ActualMaxSizeInBytes;
+                return this.storage.ActualMaxSizeInBytes / 1024;
             }
         }
 
@@ -102,14 +102,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         /// Initializes file in isolated storage to be used as a repository.
         /// </summary>
         /// <param name="repositoryFileName">The name of the repository file name.</param>
-        /// <param name="maxSizeInBytes">The requested maximum size in bytes</param>
+        /// <param name="maxSizeInKilobytes">The requested maximum size in kilobytes</param>
         /// <returns>The initialized stream.</returns>
         /// <remarks>
-        /// Initialization will attempt to use the specified maximum size in bytes, but if not enough room is available
+        /// Initialization will attempt to use the specified maximum size in kilobytes, but if not enough room is available
         /// it will use the maximum available size as a fallback.
         /// </remarks>
         /// <exception cref="ArgumentException">when the specified file already exists.</exception>
-        public static IsolatedStorageFileStream InitializeRepositoryStream(string repositoryFileName, int maxSizeInBytes)
+        public static IsolatedStorageFileStream InitializeRepositoryStream(string repositoryFileName, int maxSizeInKilobytes)
         {
             var isolatedStorageFile = IsolatedStorageFile.GetUserStoreForApplication();
 
@@ -134,6 +134,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
             }
 
             var storageStream = isolatedStorageFile.CreateFile(repositoryFileName);
+
+            var maxSizeInBytes = maxSizeInKilobytes * 1024;
 
             var attempt = 1;
 

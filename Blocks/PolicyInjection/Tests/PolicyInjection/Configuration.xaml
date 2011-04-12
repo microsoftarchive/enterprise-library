@@ -1,0 +1,45 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:el="http://entlib.codeplex.com/v5/configuration">
+  <el:PolicyInjectionSettings x:Key="policyInjection">
+    <el:PolicyInjectionSettings.Policies>
+      <el:PolicyData Name="Policy">
+        <el:PolicyData.MatchingRules>
+          <el:AssemblyMatchingRuleData Match="Test" Name="Assembly Matching Rule" />
+          <el:CustomAttributeMatchingRuleData AttributeTypeName="Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.AuthorizationCallHandlerAttribute, Microsoft.Practices.EnterpriseLibrary.Security" Name="Custom Attribute Matching Rule" />
+          <el:MemberNameMatchingRuleData Name="Member Name Matching Rule">
+            <el:MemberNameMatchingRuleData.Matches>
+              <el:MatchData Match="Match" />
+              <el:MatchData Match="Match 2" />
+            </el:MemberNameMatchingRuleData.Matches>
+          </el:MemberNameMatchingRuleData>
+          <el:MethodSignatureMatchingRuleData Match="test" Name="Method Signature Matching Rule" />
+          <el:NamespaceMatchingRuleData Name="Namespace Matching Rule">
+            <el:NamespaceMatchingRuleData.Matches>
+              <el:MatchData Match="Match" />
+              <el:MatchData Match="Match 2" />
+            </el:NamespaceMatchingRuleData.Matches>
+          </el:NamespaceMatchingRuleData>
+          <el:ParameterTypeMatchingRuleData Name="Parameter Type Matching Rule">
+            <el:ParameterTypeMatchingRuleData.Matches>
+              <el:ParameterTypeMatchData Match="Parameter Type Match" />
+              <el:ParameterTypeMatchData Match="Parameter Type Match 2" />
+            </el:ParameterTypeMatchingRuleData.Matches>
+          </el:ParameterTypeMatchingRuleData>
+          <el:PropertyMatchingRuleData Name="Property Matching Rule">
+            <el:PropertyMatchingRuleData.Matches>
+              <el:PropertyMatchData Match="Property Match" />
+              <el:PropertyMatchData MatchOption="Set" Match="Property Match 2" />
+            </el:PropertyMatchingRuleData.Matches>
+          </el:PropertyMatchingRuleData>
+          <el:ReturnTypeMatchingRuleData Match="Microsoft.Practices.EnterpriseLibrary.Configuration.EnvironmentalOverrides.Console.Program, MergeConfiguration, Version=5.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" Name="Return Type Matching Rule" />
+          <el:TagAttributeMatchingRuleData Match="test" Name="Tag Attribute Matching Rule" />
+          <el:TypeMatchingRuleData Name="Type Matching Rule">
+            <el:TypeMatchingRuleData.Matches>
+              <el:MatchData Match="Match" />
+              <el:MatchData Match="Match 2" />
+            </el:TypeMatchingRuleData.Matches>
+          </el:TypeMatchingRuleData>
+        </el:PolicyData.MatchingRules>
+      </el:PolicyData>
+    </el:PolicyInjectionSettings.Policies>
+  </el:PolicyInjectionSettings>
+</ResourceDictionary>

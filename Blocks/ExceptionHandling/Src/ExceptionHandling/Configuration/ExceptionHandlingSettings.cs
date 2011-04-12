@@ -11,32 +11,19 @@
 
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
-using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Instrumentation;
-
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
 {
-    /// <summary>
-    /// Represents the Exception Handling Application Block configuration section in a configuration file.
-    /// </summary>
-    [ViewModel(ExceptionHandlingDesignTime.ViewModelTypeNames.ExceptionHandlingSectionViewModel)]
-    [ResourceDescription(typeof(DesignResources), "ExceptionHandlingSettingsDescription")]
-    [ResourceDisplayName(typeof(DesignResources), "ExceptionHandlingSettingsDisplayName")]
-    public class ExceptionHandlingSettings : SerializableConfigurationSection, ITypeRegistrationsProvider
+    partial class ExceptionHandlingSettings
     {
         /// <summary>
         /// Gets the configuration section name for the library.
         /// </summary>
         public const string SectionName = "exceptionHandling";
-
-
-        private const string policiesProperty = "exceptionPolicies";
 
         /// <summary>
         /// Gets the <see cref="ExceptionHandlingSettings"/> section in the configuration source.
@@ -45,32 +32,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
         /// <returns>The exception handling section.</returns>
         public static ExceptionHandlingSettings GetExceptionHandlingSettings(IConfigurationSource configurationSource)
         {
-            if(configurationSource == null) throw new ArgumentNullException("configurationSource");
+            if (configurationSource == null) throw new ArgumentNullException("configurationSource");
             return (ExceptionHandlingSettings)configurationSource.GetSection(SectionName);
-        }
-
-        /// <summary>
-        /// Initializes a new instance of an <see cref="ExceptionHandlingSettings"/> class.
-        /// </summary>
-        public ExceptionHandlingSettings()
-        {
-            this[policiesProperty] = new NamedElementCollection<ExceptionPolicyData>();
-        }
-
-        /// <summary>
-        /// Gets a collection of <see cref="ExceptionPolicyData"/> objects.
-        /// </summary>
-        /// <value>
-        /// A collection of <see cref="ExceptionPolicyData"/> objects.
-        /// </value>
-        [ConfigurationProperty(policiesProperty)]
-        [ResourceDescription(typeof(DesignResources), "ExceptionHandlingSettingsExceptionPoliciesDescription")]
-        [ResourceDisplayName(typeof(DesignResources), "ExceptionHandlingSettingsExceptionPoliciesDisplayName")]
-        [ConfigurationCollection(typeof(ExceptionPolicyData))]
-        [Command(ExceptionHandlingDesignTime.CommandTypeNames.AddExceptionPolicyCommand, CommandPlacement = CommandPlacement.ContextAdd, Replace = CommandReplacement.DefaultAddCommandReplacement)]
-        public NamedElementCollection<ExceptionPolicyData> ExceptionPolicies
-        {
-            get { return (NamedElementCollection<ExceptionPolicyData>)this[policiesProperty]; }
         }
 
         /// <summary>
@@ -118,29 +81,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
         public IEnumerable<TypeRegistration> GetUpdatedRegistrations(IConfigurationSource configurationSource)
         {
             return GetRegistrations(configurationSource);
-        }
-
-        private static IEnumerable<TypeRegistration> GetDefaultInstrumentationRegistrations(IConfigurationSource configurationSource)
-        {
-            var instrumentationSection = InstrumentationConfigurationSection.GetSection(configurationSource);
-
-            yield return new TypeRegistration<DefaultExceptionHandlingEventLogger>(
-                () => new DefaultExceptionHandlingEventLogger(instrumentationSection.EventLoggingEnabled))
-                {
-                    Lifetime = TypeRegistrationLifetime.Transient,
-                    IsDefault = true
-
-                };
-
-            yield return new TypeRegistration<IDefaultExceptionHandlingInstrumentationProvider>(
-                () => new DefaultExceptionHandlingEventLogger(
-                    instrumentationSection.PerformanceCountersEnabled,
-                    instrumentationSection.EventLoggingEnabled,
-                    instrumentationSection.ApplicationInstanceName))
-                {
-                    Lifetime = TypeRegistrationLifetime.Transient,
-                    IsDefault = true
-                };
         }
 
         private static TypeRegistration GetManagerRegistration(string[] policyNames)

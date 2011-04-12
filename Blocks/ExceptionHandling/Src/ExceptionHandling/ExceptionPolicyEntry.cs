@@ -11,14 +11,14 @@
 
 using System;
 using System.Collections.Generic;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Properties;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Instrumentation;
 using System.Globalization;
+using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Instrumentation;
+using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
 {
     /// <summary>
-    /// Represents an entry in an <see cref="ExceptionPolicy"/> containing
+    /// Represents an entry in an exception policy containing
     /// an exception type as the key and a list of 
     /// <see cref="IExceptionHandler"/> objects as the value.
     /// </summary>
@@ -30,8 +30,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
         private IExceptionHandlingInstrumentationProvider instrumentationProvider;
 
         /// <summary>
-		/// Initializes a new instance of the 
-		/// <see cref="ExceptionPolicyEntry"/> class.
+        /// Initializes a new instance of the 
+        /// <see cref="ExceptionPolicyEntry"/> class.
         /// </summary>
         /// <param name="exceptionType">Type of exception this policy refers to.</param>
         /// <param name="postHandlingAction">What to do after the exception is handled.</param>
@@ -49,14 +49,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
         /// <param name="handlers">Handlers to execute on the exception.</param>
         /// <param name="instrumentationProvider">Instrumentation provider</param>
         public ExceptionPolicyEntry(
-            Type exceptionType, 
-            PostHandlingAction postHandlingAction, 
-            IEnumerable<IExceptionHandler> handlers, 
+            Type exceptionType,
+            PostHandlingAction postHandlingAction,
+            IEnumerable<IExceptionHandler> handlers,
             IExceptionHandlingInstrumentationProvider instrumentationProvider)
         {
             if (exceptionType == null) throw new ArgumentNullException("exceptionType");
             if (handlers == null) throw new ArgumentNullException("handlers");
-            if(instrumentationProvider == null) throw new ArgumentNullException("instrumentationProvider");
+            if (instrumentationProvider == null) throw new ArgumentNullException("instrumentationProvider");
 
             ExceptionType = exceptionType;
             this.postHandlingAction = postHandlingAction;

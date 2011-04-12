@@ -9,10 +9,8 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Configuration;
@@ -39,7 +37,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Tests.
         [TestMethod]
         public void ThenLoggingExceptionHandlerHasTransientLifetime()
         {
-            TypeRegistration loggingExceptionHandlerRegistration = registrations.Where(x=>x.ServiceType == typeof(IExceptionHandler)).First();
+            TypeRegistration loggingExceptionHandlerRegistration = registrations.Where(x => x.ServiceType == typeof(IExceptionHandler)).First();
             Assert.AreEqual(TypeRegistrationLifetime.Transient, loggingExceptionHandlerRegistration.Lifetime);
         }
 

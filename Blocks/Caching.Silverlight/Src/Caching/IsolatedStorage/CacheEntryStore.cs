@@ -1,19 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO.IsolatedStorage;
-using System.Text;
 using System.Linq;
+using Microsoft.Practices.EnterpriseLibrary.Common.Utility;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.IsolatedStorage
 {
+    /// <summary>
+    /// Manages the storage and retrieval of cache entries in isolated storage.
+    /// </summary>
     public class CacheEntryStore : ICacheEntryStore, IDisposable
     {
+        private const string AccesorPreffix = "Cache_";
+
         private readonly string name;
         private readonly long maxSizeInBytes;
 
-        private IIsolatedStorageCacheEntrySerializer serializer;
+        private readonly IIsolatedStorageCacheEntrySerializer serializer;
         private StorageAccessor storage;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CacheEntryStore"/> class.
+        /// </summary>
+        /// <param name="name">The name of the store.</param>
+        /// <param name="maxSizeInBytes">The maximum size in bytes.</param>
+        /// <param name="serializer">An entry serializer.</param>
         public CacheEntryStore(string name, long maxSizeInBytes, IIsolatedStorageCacheEntrySerializer serializer)
         {
             if (maxSizeInBytes < 0)
@@ -25,7 +36,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.IsolatedStorage
 
             try
             {
-                this.storage = new StorageAccessor(name, maxSizeInBytes);
+                this.storage = new StorageAccessor(AccesorPreffix + name, maxSizeInBytes);
             }
             catch (IsolatedStorageException)
             {
@@ -34,11 +45,26 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.IsolatedStorage
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether this instance is writable.
+        /// </summary>
+        /// <remarks>
+        /// An instance is not writable if another instance of the same application is already using the
+        /// isolated storage with the same name.
+        /// </remarks>
         public bool IsWritable
         {
             get { return this.storage != null && !this.storage.IsReadOnly; }
         }
 
+        /// <summary>
+        /// Stores a new entry.
+        /// </summary>
+        /// <param name="entry">The entry to add.</param>
+        /// <remarks>
+        /// The <see cref="IsolatedStorageCacheEntry.StorageId"/> on the added entry is updated to match the physical
+        /// storage.
+        /// </remarks>
         public void Add(IsolatedStorageCacheEntry entry)
         {
             if (this.IsWritable)
@@ -48,6 +74,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.IsolatedStorage
             }
         }
 
+        /// <summary>
+        /// Removes an entry from storage.
+        /// </summary>
+        /// <param name="entry">The entry to remove.</param>
         public void Remove(IsolatedStorageCacheEntry entry)
         {
             if (this.IsWritable)
@@ -59,6 +89,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.IsolatedStorage
             }
         }
 
+        /// <summary>
+        /// Updates the last access time for the entry in storage.
+        /// </summary>
+        /// <param name="entry">The entry to update.</param>
         public void UpdateLastUpdateTime(IsolatedStorageCacheEntry entry)
         {
             if (this.IsWritable)
@@ -70,36 +104,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.IsolatedStorage
             }
         }
 
+        /// <summary>
+        /// Retrieves all the entries currently stored by the store.
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<IsolatedStorageCacheEntry> GetSerializedEntries()
         {
             if (this.storage != null)
             {
-                IDictionary<string, byte[]> serializedEntries = null;
-
-                try
-                {
-                    serializedEntries = this.storage.ReadAll();
-                }
-                catch (InvalidDataException)
-                {
-                    this.DisposeChildDependencies();
-
-                    if (this.IsWritable)
-                    {
-                        try
-                        {
-                            StorageAccessor.DeleteStorage(name);
-
-                            this.storage = new StorageAccessor(name, maxSizeInBytes);
-                            serializedEntries = this.storage.ReadAll();
-                        }
-                        catch
-                        {
-                            // best effort to remove storage
-                            this.DisposeChildDependencies();
-                        }
-                    }
-                }
+                var serializedEntries = this.storage.ReadAll();
 
                 if (serializedEntries != null)
                 {
@@ -135,27 +148,43 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.IsolatedStorage
             return Enumerable.Empty<IsolatedStorageCacheEntry>();
         }
 
+        /// <summary>
+        /// Deletes the store with the given name.
+        /// </summary>
+        /// <param name="name">The store name.</param>
         public static void DeleteStore(string name)
         {
-            StorageAccessor.DeleteStorage(name);
+            StorageAccessor.DeleteStorage(AccesorPreffix + name);
         }
 
+        /// <summary>
+        /// Gets the quota allowed for the store.
+        /// </summary>
         public long Quota
         {
             get { return this.IsWritable ? this.storage.MaxSize : 0; }
         }
 
+        /// <summary>
+        /// Gets an estimate of the physical size used by the store.
+        /// </summary>
         public long UsedPhysicalSize
         {
             get { return this.IsWritable ? this.storage.UsedPhysicalSize : 0; }
         }
 
+        /// <summary>
+        /// Releases resources.
+        /// </summary>
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
 
+        /// <summary>
+        /// Releases resources.
+        /// </summary>
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)
@@ -164,6 +193,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.IsolatedStorage
             }
         }
 
+        /// <summary>
+        /// Releases resources.
+        /// </summary>
         ~CacheEntryStore()
         {
             Dispose(false);

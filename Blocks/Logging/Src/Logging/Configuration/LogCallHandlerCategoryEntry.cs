@@ -9,22 +9,15 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 {
     /// <summary>
-    /// A configuration element that handles the entries for the &lt;categories&gt; element
+    /// A class that handles the entries for the &lt;categories&gt; element
     /// for the Log Call handler.
     /// </summary>
-    [ResourceDescription(typeof(DesignResources), "LogCallHandlerCategoryEntryDescription")]
-    [ResourceDisplayName(typeof(DesignResources), "LogCallHandlerCategoryEntryDisplayName")]
-    [AddSateliteProviderCommand(LoggingSettings.SectionName, typeof(LoggingSettings), "DefaultCategory", "Name")]
-    public class LogCallHandlerCategoryEntry : NamedConfigurationElement
+    public partial class LogCallHandlerCategoryEntry : NamedConfigurationElement
     {
         /// <summary>
         /// Construct an empty <see cref="LogCallHandlerCategoryEntry"/>.
@@ -40,25 +33,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// <param name="name">Category string.</param>
         public LogCallHandlerCategoryEntry(string name) : base(name)
         {
-        }
-
-        /// <summary>
-        /// Gets or sets the name of the element.
-        /// </summary>
-        /// <value>
-        /// The name of the element.
-        /// </value>
-        /// <remarks>
-        /// Overriden in order to annotate with designtime attribute.
-        /// </remarks>
-        [ResourceDescription(typeof(DesignResources), "LogCallHandlerCategoryEntryNameDescription")]
-        [ResourceDisplayName(typeof(DesignResources), "LogCallHandlerCategoryEntryNameDisplayName")]
-        [Reference(typeof(NamedElementCollection<TraceSourceData>), typeof(TraceSourceData))]
-        [ViewModel(CommonDesignTime.ViewModelTypeNames.CollectionEditorContainedElementReferenceProperty)]
-        public override string Name
-        {
-            get { return base.Name; }
-            set { base.Name = value; }
         }
     }
 }

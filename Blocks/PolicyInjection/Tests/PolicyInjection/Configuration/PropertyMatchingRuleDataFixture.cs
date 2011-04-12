@@ -22,6 +22,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
     [DeploymentItem("test.exe.config")]
     public class PropertyMatchingRuleDataFixture : MatchingRuleDataFixtureBase
     {
+#if !SILVERLIGHT
         [TestMethod]
         public void ShouldSerializeAndDeserializeCorrectly()
         {
@@ -46,7 +47,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
                                          "Match at index {0} is incorrect", i);
             }
         }
-
+#else
+        [TestMethod]
+        public void HasDefaultCtor()
+        {
+            new PropertyMatchingRuleData();
+            new PropertyMatchData();
+        }
+#endif
         [TestMethod]
         public void MatchingRuleHasTransientLifetime()
         {

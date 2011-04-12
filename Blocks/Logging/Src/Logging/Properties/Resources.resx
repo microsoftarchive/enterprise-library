@@ -562,4 +562,23 @@ Message:
   <data name="ErrorEntryDataInDiskIsInvalidNegativeSize" xml:space="preserve">
     <value>Invalid entry data found in stream: entry has negative size at position {0}.</value>
   </data>
+  <data name="ErrorCanOnlyRestoreTracingContextOnce" xml:space="preserve">
+    <value>Captured tracing context can only be restored once.</value>
+  </data>
+  <data name="RemoteServiceTraceListener_ReportTracingError_LogEntryFormat" xml:space="preserve">
+    <value>{0}: {1}</value>
+  </data>
+  <data name="RemoteServiceTraceListener_ReportTracingError_EntriesSummaryMessageFormat" xml:space="preserve">
+    <value>The following log entries failed to submit and will not be automatically resubmitted:
+{0}</value>
+  </data>
+  <data name="RemoteServiceTraceListener_ReportTracingError_ShortenedLongLogEntryMessageFormat" xml:space="preserve">
+    <value>{0}...</value>
+  </data>
+  <data name="RemoteServiceTraceListener_ReportProxyError_MessageFormat" xml:space="preserve">
+    <value>Tracing to LogSource '{0}' failed. Exception '{1}' ("{2}") was thrown when trying to create the remote service's client proxy.</value>
+  </data>
+  <data name="RemoteServiceTraceListener_ReportTracingError_GeneralExceptionMessageFormat" xml:space="preserve">
+    <value>Tracing to LogSource '{0}' failed. Exception '{1}' ("{2}") was thrown when trying to submit log entries to the server.</value>
+  </data>
 </root>

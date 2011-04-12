@@ -10,12 +10,14 @@
 //===============================================================================
 
 using System;
-using System.ComponentModel.DataAnnotations;
 using System.Globalization;
-using System.Linq;
 using System.Reflection;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
+#if !SILVERLIGHT
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+#endif
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation
 {
@@ -164,6 +166,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
             return null;
         }
 
+#if !SILVERLIGHT
         /// <summary>
         /// Retrieves an array of the custom attributes applied to a member of a type, looking for the existence
         /// of a metadata type where the attributes are actually specified.
@@ -178,6 +181,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         /// <returns>An <see cref="Attribute"/> array that contains the custom attributes of type type applied to 
         /// element, or an empty array if no such custom attributes exist.</returns>
         /// <seealso cref="MetadataTypeAttribute"/>
+#else
+        /// <summary>
+        /// Retrieves an array of the custom attributes applied to a member of a type.
+        /// Parameters specify the member, the type of the custom attribute to search
+        /// for, and whether to search ancestors of the member.
+        /// </summary>
+        /// <param name="element">An object derived from the <see cref="MemberInfo"/> class that describes a 
+        /// constructor, event, field, method, or property member of a class.</param>
+        /// <param name="attributeType">The type, or a base type, of the custom attribute to search for.</param>
+        /// <param name="inherit">If <see langword="true"/>, specifies to also search the ancestors of element for 
+        /// custom attributes.</param>
+        /// <returns>An <see cref="Attribute"/> array that contains the custom attributes of type type applied to 
+        /// element, or an empty array if no such custom attributes exist.</returns>
+#endif
         public static Attribute[] GetCustomAttributes(MemberInfo element, Type attributeType, bool inherit)
         {
             MemberInfo matchingElement = GetMatchingElement(element);

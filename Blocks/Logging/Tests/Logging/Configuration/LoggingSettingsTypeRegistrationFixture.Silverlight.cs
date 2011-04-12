@@ -86,6 +86,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
                 .AssertConstructor()
                 .WithContainerResolvedParameter<LogWriterStructureHolder>(null)
                 .WithContainerResolvedParameter<ILoggingInstrumentationProvider>(null)
+                .WithContainerResolvedParameter<IAsyncTracingErrorReporter>(null)
                 .VerifyConstructorParameters();
         }
 
@@ -94,36 +95,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         {
             Assert.AreEqual(1, registrations.Where(tr => tr.ServiceType == typeof(ILoggingInstrumentationProvider)).Count());
         }
-
-        //[TestMethod]
-        //public void ThenHasRegistrationForTraceManager()
-        //{
-        //    Assert.AreEqual(1, registrations.Where(tr => tr.ServiceType == typeof(TraceManager)).Count());
-        //}
-
-        //[TestMethod]
-        //public void TheRegistrationForTraceManagerIsForNullName()
-        //{
-        //    TypeRegistration registration = registrations.First(tr => tr.ServiceType == typeof(TraceManager));
-
-        //    registration
-        //        .AssertForServiceType(typeof(TraceManager))
-        //        .IsDefault()
-        //        .IsNotPublicName()
-        //        .ForImplementationType(typeof(TraceManager));
-        //}
-
-        //[TestMethod]
-        //public void TheRegistrationForTraceManagerHasExpectedConstructorParameters()
-        //{
-        //    TypeRegistration registration = registrations.First(tr => tr.ServiceType == typeof(TraceManager));
-
-        //    registration
-        //        .AssertConstructor()
-        //        .WithContainerResolvedParameter<LogWriter>(null)
-        //        .WithContainerResolvedParameter<ITracerInstrumentationProvider>(null)
-        //        .VerifyConstructorParameters();
-        //}
 
         [TestMethod]
         public void ThenHasRegistrationForLogWriterStructureHolder()
@@ -183,6 +154,29 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         public void TheRegistrationForDefaultNotificationTraceHasExpectedConstructorParameters()
         {
             TypeRegistration registration = registrations.First(tr => tr.ServiceType == typeof(ITraceDispatcher));
+
+            registration
+                .AssertConstructor()
+                .VerifyConstructorParameters();
+        }
+
+        [TestMethod]
+        public void TheRegistrationForAsyncTracingErrorReporterIsDefaultAndSingletonAndPublicName()
+        {
+            TypeRegistration registration = registrations.First(tr => tr.ServiceType == typeof(IAsyncTracingErrorReporter));
+
+            registration
+                .AssertForServiceType(typeof(IAsyncTracingErrorReporter))
+                .IsDefault()
+                .IsSingleton()
+                .IsPublicName()
+                .ForImplementationType(typeof(AsyncTracingErrorReporter));
+        }
+
+        [TestMethod]
+        public void TheRegistrationForAsyncTracingErrorReporterHasExpectedConstructorParameters()
+        {
+            TypeRegistration registration = registrations.First(tr => tr.ServiceType == typeof(IAsyncTracingErrorReporter));
 
             registration
                 .AssertConstructor()

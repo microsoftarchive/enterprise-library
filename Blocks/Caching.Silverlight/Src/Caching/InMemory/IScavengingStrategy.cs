@@ -10,10 +10,25 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.InMemory
     public interface IScavengingStrategy<TCacheEntry>
         where TCacheEntry : CacheEntry
     {
+        /// <summary>
+        /// Determines whether scavenging is needed for <paramref name="entries"/>.
+        /// </summary>
+        /// <param name="entries">The entries.</param>
+        /// <returns><see langword="true"/> if scavenging is needed, otherwise <see langword="false"/>.</returns>
         bool ShouldScavenge(IDictionary<string, TCacheEntry> entries);
 
+        /// <summary>
+        /// Determines whether additional scavenging is needed for <paramref name="entries"/>.
+        /// </summary>
+        /// <param name="entries">The entries.</param>
+        /// <returns><see langword="true"/> if additional scavenging is needed, otherwise <see langword="false"/>.</returns>
         bool ShouldScavengeMore(IDictionary<string, TCacheEntry> entries);
 
+        /// <summary>
+        /// Determines the entries that should be scavenged from <paramref name="currentEntries"/>.
+        /// </summary>
+        /// <param name="currentEntries">The entries to scavenge.</param>
+        /// <returns>A set of the entries that should be scavenged.</returns>
         IEnumerable<TCacheEntry> EntriesToScavenge(IEnumerable<TCacheEntry> currentEntries);
     }
 }

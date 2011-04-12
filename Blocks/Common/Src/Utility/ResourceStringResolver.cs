@@ -52,7 +52,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Utility
 
         private static Type LoadType(string resourceTypeName)
         {
-            return Type.GetType(resourceTypeName, false);
+            return Type.GetType(resourceTypeName ?? string.Empty, false);
         }
 
         private readonly Type resourceType;

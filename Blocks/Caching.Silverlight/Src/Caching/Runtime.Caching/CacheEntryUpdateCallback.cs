@@ -13,7 +13,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Runtime.Caching
     /// The updated cache entry replaces the cache item that is about to be removed.
     /// </remarks>
     public delegate void CacheEntryUpdateCallback(CacheEntryUpdateArguments arguments);
-        
+
     /// <summary>
     /// Provides information about a cache entry that will be removed from the cache.
     /// </summary>
@@ -40,7 +40,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Runtime.Caching
         /// Initializes a new instance of the <see cref="CacheEntryUpdateArguments"/> class.
         /// </summary>
         /// <param name="source">The <see cref="ObjectCache"/> instance from which cacheItem was removed.</param>
-        /// <param name="reason">One of the enumeration values that indicate why <paramref name="cacheItem"/> was removed.</param>
+        /// <param name="reason">One of the enumeration values that indicate why the item was removed.</param>
         /// <param name="key">The key of the cache entry that will be removed.</param>
         /// <param name="regionName">The name of the region in the cache to remove the cache entry from. This
         ///    parameter is optional. If cache regions are not defined, <paramref name="regionName"/> must be <see langword="null"/>.</param>
@@ -66,11 +66,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Runtime.Caching
         /// <summary>Gets the unique identifier for a cache entry that is about to be removed.</summary>
         /// <returns>The unique identifier for the cache entry.</returns>
         public string Key { get; private set; }
-        
+
         /// <summary>Gets a value that indicates why a cache entry was removed.</summary>
         /// <returns>One of the enumeration values that indicates why the entry was removed.</returns>
         public CacheEntryRemovedReason RemovedReason { get; private set; }
-        
+
         /// <summary>Gets a reference to the source <see cref="ObjectCache"/> instance that originally contained the removed cache entry.</summary>
         /// <returns>A reference to the cache that originally contained the removed cache entry.</returns>
         public ObjectCache Source { get; private set; }

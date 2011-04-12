@@ -232,29 +232,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The available space is not enough to store the specified content..
-        /// </summary>
-        internal static string ExceptionAvailableSpaceNotEnough {
-            get {
-                return ResourceManager.GetString("ExceptionAvailableSpaceNotEnough", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Backing Stores with non-default constructors should override GetRegistrations()..
         /// </summary>
         internal static string ExceptionBackingStoresWithNonDefaultConstructorsShouldOverrideGetRegistrations {
             get {
                 return ResourceManager.GetString("ExceptionBackingStoresWithNonDefaultConstructorsShouldOverrideGetRegistrations", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The specified ID does not exist in the file system..
-        /// </summary>
-        internal static string ExceptionIdDoesNotExistInFileSystem {
-            get {
-                return ResourceManager.GetString("ExceptionIdDoesNotExistInFileSystem", resourceCulture);
             }
         }
         
@@ -318,15 +300,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Properties {
         internal static string ExceptionNullTimeFormat {
             get {
                 return ResourceManager.GetString("ExceptionNullTimeFormat", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The content to overwrite overflows the current allocated disk space. Use overwrite method to overwrite a portion of the content that is of fixed size, otherwise remove the content and re-add it..
-        /// </summary>
-        internal static string ExceptionOverwriteOverflow {
-            get {
-                return ResourceManager.GetString("ExceptionOverwriteOverflow", resourceCulture);
             }
         }
         
@@ -403,15 +376,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This property cannot be queried until at least one ReadAll() call is made..
-        /// </summary>
-        internal static string ExceptionSizeIsNotCurrent {
-            get {
-                return ResourceManager.GetString("ExceptionSizeIsNotCurrent", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The storage are name for the Isolated Storage Backing Store can not be null or an empty string..
         /// </summary>
         internal static string ExceptionStorageAreaNullOrEmpty {
@@ -435,15 +399,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Properties {
         internal static string ExceptionTypeForCustomCacheManagerMustDeriveFrom {
             get {
                 return ResourceManager.GetString("ExceptionTypeForCustomCacheManagerMustDeriveFrom", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The storage was opened in read-only mode because it was being used by another instance at creation time..
-        /// </summary>
-        internal static string ExceptionWriteNotSupportedInReadOnlyStorage {
-            get {
-                return ResourceManager.GetString("ExceptionWriteNotSupportedInReadOnlyStorage", resourceCulture);
             }
         }
         
