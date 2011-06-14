@@ -39,7 +39,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 
             if (configurationSourceSection == null)
             {
-                throw new ConfigurationErrorsException(Resources.ExceptionConfigurationSourceSectionNotFound);
+                throw new ConfigurationErrorsException(Resources_Desktop.ExceptionConfigurationSourceSectionNotFound);
             }
 
             ConfigurationSourceElement objectConfiguration
@@ -50,7 +50,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
                 throw new ConfigurationErrorsException(
                     string.Format(
                         CultureInfo.CurrentCulture,
-                        Resources.ExceptionNamedConfigurationNotFound,
+                        Resources_Desktop.ExceptionNamedConfigurationNotFound,
                         name,
                         "ConfigurationSourceFactory"));
             }
@@ -82,7 +82,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
                 }
                 else
                 {
-                    throw new ConfigurationErrorsException(Resources.ExceptionSystemSourceNotDefined);
+                    throw new ConfigurationErrorsException(Resources_Desktop.ExceptionSystemSourceNotDefined);
                 }
             }
 

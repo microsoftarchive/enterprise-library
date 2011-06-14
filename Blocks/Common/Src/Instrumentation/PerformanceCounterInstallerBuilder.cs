@@ -62,7 +62,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation
                             throw new InvalidOperationException(
                                 string.Format(
                                     CultureInfo.CurrentCulture,
-                                    Resources.ExceptionPerformanceCounterRedefined,
+                                    Resources_Desktop.ExceptionPerformanceCounterRedefined,
                                     counter.CounterName,
                                     installer.CategoryName,
                                     instrumentedType.FullName));

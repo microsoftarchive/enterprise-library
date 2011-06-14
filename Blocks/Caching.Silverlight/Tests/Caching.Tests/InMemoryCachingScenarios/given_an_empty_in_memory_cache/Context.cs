@@ -1,4 +1,15 @@
-﻿using System;
+﻿//===============================================================================
+// Microsoft patterns & practices Enterprise Library
+// Caching Application Block
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+
+using System;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Scheduling;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
 using Microsoft.Practices.EnterpriseLibrary.Common.Utility;
@@ -9,7 +20,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests.InMemoryCachingSce
     public abstract class Context : ArrangeActAssert
     {
         protected InMemoryCache Cache;
-        protected const string CacheName = "sample cache name";
+        protected const string CacheName = "sample cacheData name";
         protected int NumberOfScavengesScheduled = 0;
 
         protected const int ItemsBeforeScavenging = 5;

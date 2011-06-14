@@ -1,4 +1,16 @@
-﻿using System.Collections.Generic;
+﻿//===============================================================================
+// Microsoft patterns & practices Enterprise Library
+// Caching Application Block
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.IsolatedStorage
 {
@@ -43,7 +55,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.IsolatedStorage
         /// <summary>
         /// Retrieves all the entries currently stored by the store.
         /// </summary>
-        /// <returns></returns>
+        [SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate", Justification = "Method is time-consuming as has side-effects.")]
         IEnumerable<IsolatedStorageCacheEntry> GetSerializedEntries();
     }
 }

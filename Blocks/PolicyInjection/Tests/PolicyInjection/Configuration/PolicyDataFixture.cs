@@ -27,16 +27,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
         [TestInitialize]
         public void Setup()
         {
-            policyData = new PolicyData("policy");
+            policyData = new PolicyData { Name = "policy" };
         }
-
-#if SILVERLIGHT
-        [TestMethod]
-        public void HasDefaultCtor()
-        {
-            new PolicyData();
-        }
-#endif
 
         [TestMethod]
         public void WhenCreatesRegistrations_ThenReturnsSingleRegistration()
@@ -83,8 +75,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
         [TestInitialize]
         public void Setup()
         {
-            policyData = new PolicyData("policy");
-            policyData.MatchingRules.Add(new TypeMatchingRuleData("type", typeof(object).AssemblyQualifiedName));
+            policyData = new PolicyData { Name = "policy" };
+            policyData.MatchingRules.Add(new TypeMatchingRuleData
+                {
+                    Name = "type",
+                    Matches = { new MatchData { Match = typeof(object).AssemblyQualifiedName }
+                }
+            });
         }
 
         [TestMethod]

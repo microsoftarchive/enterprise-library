@@ -429,7 +429,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         [TestMethod]
         public void CreateValidatorForExistingTypeReturnsNonEmptyValidatorBasedOnRuleDefinition()
         {
-            ValidatedTypeReference typeReference = new ValidatedTypeReference(typeof(TestClass));
+            ValidatedTypeReference typeReference = ValidatedTypeReference.Create(typeof(TestClass));
             ValidationRulesetData ruleData = new ValidationRulesetData { Name = "ruleset1" };
             typeReference.Rulesets.Add(ruleData);
             ValidatedMethodReference methodReference1 = new ValidatedMethodReference { Name = "PublicMethod" };
@@ -453,7 +453,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         [TestMethod]
         public void CreateValidatorForDefaultRuleForExistingTypeReturnsNonEmptyValidatorBasedOnDefaultRuleDefinition()
         {
-            ValidatedTypeReference typeReference = new ValidatedTypeReference(typeof(TestClass));
+            ValidatedTypeReference typeReference = ValidatedTypeReference.Create(typeof(TestClass));
             typeReference.DefaultRuleset = "ruleset1";
             ValidationRulesetData ruleData = new ValidationRulesetData { Name = "ruleset1" };
             typeReference.Rulesets.Add(ruleData);
@@ -478,7 +478,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         [TestMethod]
         public void CreateValidatorForDefaultRuleForExistingTypeWithoutDefaultRuleSetReturnsEmptyValidator()
         {
-            ValidatedTypeReference typeReference = new ValidatedTypeReference(typeof(TestClass));
+            ValidatedTypeReference typeReference = ValidatedTypeReference.Create(typeof(TestClass));
             ValidationRulesetData ruleData = new ValidationRulesetData { Name = "ruleset1" };
             typeReference.Rulesets.Add(ruleData);
             ValidatedMethodReference methodReference1 = new ValidatedMethodReference { Name = "PublicMethod" };
@@ -502,7 +502,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         [TestMethod]
         public void CreateValidatorForDefaultRuleForExistingTypeNonExistingDefaultRuleSetReturnsEmptyValidator()
         {
-            ValidatedTypeReference typeReference = new ValidatedTypeReference(typeof(TestClass));
+            ValidatedTypeReference typeReference = ValidatedTypeReference.Create(typeof(TestClass));
             typeReference.DefaultRuleset = "ruleset2";
             ValidationRulesetData ruleData = new ValidationRulesetData { Name = "ruleset1" };
             typeReference.Rulesets.Add(ruleData);
@@ -571,7 +571,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         {
             ValidationSettings settings = new ValidationSettings();
             configurationSource.Add(ValidationSettings.SectionName, settings);
-            ValidatedTypeReference typeReference = new ValidatedTypeReference(typeof(TestClass));
+            ValidatedTypeReference typeReference = ValidatedTypeReference.Create(typeof(TestClass));
             settings.Types.Add(typeReference);
             ValidationRulesetData ruleData = new ValidationRulesetData { Name = "ruleset1" };
             typeReference.Rulesets.Add(ruleData);
@@ -605,7 +605,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         {
             ValidationSettings settings = new ValidationSettings();
             configurationSource.Add(ValidationSettings.SectionName, settings);
-            ValidatedTypeReference typeReference = new ValidatedTypeReference(typeof(TestClass));
+            ValidatedTypeReference typeReference = ValidatedTypeReference.Create(typeof(TestClass));
             settings.Types.Add(typeReference);
             typeReference.DefaultRuleset = "ruleset1";
             ValidationRulesetData ruleData = new ValidationRulesetData { Name = "ruleset1" };
@@ -640,7 +640,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         {
             ValidationSettings settings = new ValidationSettings();
             configurationSource.Add(ValidationSettings.SectionName, settings);
-            ValidatedTypeReference typeReference = new ValidatedTypeReference(typeof(TestClass));
+            ValidatedTypeReference typeReference = ValidatedTypeReference.Create(typeof(TestClass));
             settings.Types.Add(typeReference);
             ValidationRulesetData ruleData = new ValidationRulesetData { Name = "ruleset1" };
             typeReference.Rulesets.Add(ruleData);
@@ -708,7 +708,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         {
             ValidationSettings settings = new ValidationSettings();
             configurationSource.Add(ValidationSettings.SectionName, settings);
-            ValidatedTypeReference typeReference = new ValidatedTypeReference(typeof(TestClass));
+            ValidatedTypeReference typeReference = ValidatedTypeReference.Create(typeof(TestClass));
             settings.Types.Add(typeReference);
             typeReference.DefaultRuleset = "RuleB";
             ValidationRulesetData ruleDataA = new ValidationRulesetData { Name = "RuleA" };

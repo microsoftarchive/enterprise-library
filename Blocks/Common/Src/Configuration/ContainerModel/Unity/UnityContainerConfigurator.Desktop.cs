@@ -95,6 +95,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerMo
             }
         }
 
+        private void FixupDefaultRegistration(TypeRegistration updatedRegistration)
+        {
+            var policyListAccessor = this.container.Configure<PolicyListAccessor>();
+            policyListAccessor.AddDefaultRegistration(updatedRegistration.ServiceType,
+                                                      updatedRegistration.ImplementationType,
+                                                      updatedRegistration.Name);
+        }
+
         private bool ShouldReRegister(TypeRegistration updatedRegistration)
         {
             LifetimeInspector lifetimeInspector = container.Configure<LifetimeInspector>();
@@ -130,7 +138,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerMo
             // We load this by name so we don't have a hard dependency from common -> validation
             const string partialExtensionTypeName = "Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.Unity.ValidationBlockExtension, Microsoft.Practices.EnterpriseLibrary.Validation";
             const string fullExtensionTypeName =
-                "Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.Unity.ValidationBlockExtension, Microsoft.Practices.EnterpriseLibrary.Validation, Culture=neutral, Version=5.0.414.0, PublicKeyToken=31bf3856ad364e35";
+                "Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.Unity.ValidationBlockExtension, Microsoft.Practices.EnterpriseLibrary.Validation, Culture=neutral, Version=5.0.505.0, PublicKeyToken=31bf3856ad364e35";
 
             Type extensionType = Type.GetType(partialExtensionTypeName) ?? Type.GetType(fullExtensionTypeName);
             if (extensionType != null && container.Configure(extensionType) == null)

@@ -9,6 +9,7 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using System.Globalization;
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
 {
@@ -16,7 +17,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
     {
         private string BuildChildName(string childName)
         {
-            return string.Format("{0}.{1}", Name, childName);
+            return string.Format(CultureInfo.InvariantCulture, "{0}.{1}", Name, childName);
         }
     }
 }

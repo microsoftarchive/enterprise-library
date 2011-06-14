@@ -43,23 +43,23 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration
 			validatedType = integrationProxy.ValidatedType;
 			if (validatedType == null)
 			{
-				throw new InvalidOperationException(Resources.ExceptionIntegrationValidatedTypeNotAvailable);
+                throw new InvalidOperationException(Resources_Desktop.ExceptionIntegrationValidatedTypeNotAvailable);
 			}
 
 			string validatedPropertyName = integrationProxy.ValidatedPropertyName;
 			if (string.IsNullOrEmpty(validatedPropertyName))
 			{
-				throw new InvalidOperationException(Resources.ExceptionIntegrationValidatedPropertyNameNotAvailable);
+                throw new InvalidOperationException(Resources_Desktop.ExceptionIntegrationValidatedPropertyNameNotAvailable);
 			}
 
 			this.validatedProperty = validatedType.GetProperty(validatedPropertyName, BindingFlags.Public | BindingFlags.Instance);
 			if (this.validatedProperty == null)
 			{
-				throw new InvalidOperationException(Resources.ExceptionIntegrationValidatedPropertyNotExists);
+                throw new InvalidOperationException(Resources_Desktop.ExceptionIntegrationValidatedPropertyNotExists);
 			}
 			if (!this.validatedProperty.CanRead)
 			{
-				throw new InvalidOperationException(Resources.ExceptionIntegrationValidatedPropertyNotReadable);
+                throw new InvalidOperationException(Resources_Desktop.ExceptionIntegrationValidatedPropertyNotReadable);
 			}
 
 			this.integrationProxy = integrationProxy;
@@ -136,7 +136,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Integration
 							value = null;
 							valueRetrievalFailureMessage = string.Format(
 								CultureInfo.CurrentCulture,
-								Resources.ErrorCannotPerfomDefaultConversion,
+								Resources_Desktop.ErrorCannotPerfomDefaultConversion,
 								value,
 								this.validatedProperty.PropertyType.FullName);
 						}

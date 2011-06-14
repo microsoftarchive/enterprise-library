@@ -1,4 +1,15 @@
-﻿using System;
+﻿//===============================================================================
+// Microsoft patterns & practices Enterprise Library
+// Core
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+
+using System;
 using System.IO.IsolatedStorage;
 using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Common.Utility;
@@ -30,6 +41,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Utility
         public void WhenInitializingWithEmptyName_ThenThrows()
         {
             new StorageAccessor(" ", 10240);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void WhenInitializingSmallSize_ThenThrows()
+        {
+            new StorageAccessor(TestStorageName, 2047);
         }
 
         [TestMethod]
@@ -561,6 +579,88 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Utility
                         // expected exception thrown
                     }
                 }
+            }
+        }
+
+        [TestMethod]
+        public void WhenReopeningWithDifferentSize_ThenRemembersPreviousOne()
+        {
+            using (var storage = new StorageAccessor(TestStorageName, 10240))
+            {
+                Assert.AreEqual(10240, storage.MaxSize);
+            }
+
+            using (var storage = new StorageAccessor(TestStorageName, 20480))
+            {
+                Assert.AreEqual(10240, storage.MaxSize);
+            }
+        }
+
+        [TestMethod]
+        public void WhenChangingMaxSize_ThenItsPreserved()
+        {
+            using (var storage = new StorageAccessor(TestStorageName, 10240))
+            {
+                storage.Save(new byte[2]);
+                Assert.AreEqual(10240, storage.MaxSize);
+                storage.ChangeMaxSize(20480);
+                Assert.AreEqual(20480, storage.MaxSize);
+            }
+
+            using (var storage = new StorageAccessor(TestStorageName, 10240))
+            {
+                Assert.AreEqual(20480, storage.MaxSize);
+                Assert.AreEqual(2, storage.ReadAll().Single().Value.Length);
+            }
+        }
+
+        [TestMethod]
+        public void WhenChangingMaxSizeToSmaller_ThenDoesNotTrimAutomatically()
+        {
+            using (var storage = new StorageAccessor(TestStorageName, 10240))
+            {
+                storage.Save(new byte[7000]);
+                Assert.AreEqual(10240, storage.MaxSize);
+                storage.ChangeMaxSize(2048);
+                Assert.AreEqual(2048, storage.MaxSize);
+            }
+
+            using (var storage = new StorageAccessor(TestStorageName, 10240))
+            {
+                Assert.AreEqual(2048, storage.MaxSize);
+                Assert.AreEqual(7000, storage.ReadAll().Single().Value.Length);
+            }
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void WhenChangingMaxSizeToVerySmall_ThenThrows()
+        {
+            using (var storage = new StorageAccessor(TestStorageName, 10240))
+            {
+                storage.ChangeMaxSize(2047);
+            }
+        }
+
+        [TestMethod]
+        public void WhenOpeningExistingStore_ThenGetsIt()
+        {
+            using (var storage = new StorageAccessor(TestStorageName, 10240))
+            {
+            }
+
+            using (var storage = StorageAccessor.TryOpen(TestStorageName))
+            {
+                Assert.AreEqual(10240, storage.MaxSize);
+            }
+        }
+
+        [TestMethod]
+        public void WhenOpeningInexistantStore_ThenGetsNull()
+        {
+            using (var storage = StorageAccessor.TryOpen("Inexistent"))
+            {
+                Assert.IsNull(storage);
             }
         }
     }

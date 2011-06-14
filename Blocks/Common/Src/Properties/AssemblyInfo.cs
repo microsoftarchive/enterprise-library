@@ -9,12 +9,8 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System.Configuration;
 using System.Reflection;
-using System.Runtime.ConstrainedExecution;
-using System.Security;
-using System.Security.Permissions;
 
 [assembly: AssemblyTitle("Enterprise Library Shared Library")]
 [assembly: AssemblyDescription("Enterprise Library Shared Library")]
-[assembly: AssemblyVersion("5.0.414.0")]
+[assembly: AssemblyVersion("5.0.505.0")]

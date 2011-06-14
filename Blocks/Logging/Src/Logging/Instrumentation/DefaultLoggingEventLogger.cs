@@ -33,7 +33,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation
         public DefaultLoggingEventLogger(bool eventLoggingEnabled)
             : base((string)null, false, eventLoggingEnabled, null)
         {
-            this.eventLogEntryFormatter = new EventLogEntryFormatter(Resources.BlockName);
+            this.eventLogEntryFormatter = new EventLogEntryFormatter(Resources_Desktop.BlockName);
         }
 
         /// <summary>
@@ -47,7 +47,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation
 
             if (EventLoggingEnabled)
             {
-                string entryText = eventLogEntryFormatter.GetEntryText(Resources.ConfigurationFailureLogging, exception);
+                string entryText = eventLogEntryFormatter.GetEntryText(Resources_Desktop.ConfigurationFailureLogging, exception);
                 EventLog.WriteEntry(GetEventSourceName(), entryText, EventLogEntryType.Error);
             }
         }

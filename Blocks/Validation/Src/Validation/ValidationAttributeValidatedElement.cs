@@ -46,7 +46,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         { }
 
         /// <summary>
-        /// Initializes a new instance of hte <see cref="ValidationAttributeValidatedElement"/> class for a 
+        /// Initializes a new instance of the <see cref="ValidationAttributeValidatedElement"/> class for a 
         /// <see cref="MemberInfo"/> of a target <see cref="Type"/>.
         /// </summary>
         /// <param name="memberInfo">The member info to represent.</param>

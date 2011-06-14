@@ -40,11 +40,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.ExtraInformation
         /// <param name="dict">Dictionary used to populate the <see cref="ComPlusInformationProvider"></see></param>
         public void PopulateDictionary(IDictionary<string, object> dict)
         {
-            dict.Add(Properties.Resources.ComPlusInfo_ActivityId, ActivityId);
-            dict.Add(Properties.Resources.ComPlusInfo_ApplicationId, ApplicationId);
-            dict.Add(Properties.Resources.ComPlusInfo_TransactionID, TransactionId);
-            dict.Add(Properties.Resources.ComPlusInfo_DirectCallerAccountName, DirectCallerAccountName);
-            dict.Add(Properties.Resources.ComPlusInfo_OriginalCallerAccountName, OriginalCallerAccountName);
+            dict.Add(Properties.Resources_Desktop.ComPlusInfo_ActivityId, ActivityId);
+            dict.Add(Properties.Resources_Desktop.ComPlusInfo_ApplicationId, ApplicationId);
+            dict.Add(Properties.Resources_Desktop.ComPlusInfo_TransactionID, TransactionId);
+            dict.Add(Properties.Resources_Desktop.ComPlusInfo_DirectCallerAccountName, DirectCallerAccountName);
+            dict.Add(Properties.Resources_Desktop.ComPlusInfo_OriginalCallerAccountName, OriginalCallerAccountName);
         }
 
         /// <summary>
@@ -96,7 +96,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.ExtraInformation
             }
             catch (Exception e)
             {
-                result = String.Format(CultureInfo.CurrentCulture, Properties.Resources.ExtendedPropertyError, e.Message);
+                result = String.Format(CultureInfo.CurrentCulture, Properties.Resources_Desktop.ExtendedPropertyError, e.Message);
             }            
             return result;
         }

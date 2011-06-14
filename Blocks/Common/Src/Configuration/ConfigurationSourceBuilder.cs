@@ -9,18 +9,13 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Configuration;
-using System.Configuration;
 using System.ComponentModel;
+using System.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 {
     /// <summary>
-    /// Entry point that is used for programatically building up a configution source.
+    /// Entry point that is used for programmatically building up a configuration source.
     /// </summary>
     public class ConfigurationSourceBuilder : IConfigurationSourceBuilder, IFluentInterface
     {

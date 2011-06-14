@@ -137,7 +137,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerMo
         /// </summary>
         /// <remarks>Some containers have restrictions on the allowed names (for example,
         /// many require names to be globally unique). Some object names need to be
-        /// left alone (for example, Database or Exception policies) becuase that is
+        /// left alone (for example, Database or Exception policies) because that is
         /// what the user will use to get those objects. Other names (like for instrumentation
         /// providers) are internal and can be freely changed by the configurator as
         /// needed to fit into the container.</remarks>

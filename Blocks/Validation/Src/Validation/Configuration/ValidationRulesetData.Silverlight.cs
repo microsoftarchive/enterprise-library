@@ -19,7 +19,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
     /// </summary>
     /// <seealso cref="ValidatedTypeReference"/>
     /// <remarks>
-    /// Self validation is not supported thorugh configuration.
+    /// Self validation is not supported through configuration.
     /// </remarks>
     /// <seealso cref="ValidatedTypeReference"/>
     [ContentProperty("Validators")]

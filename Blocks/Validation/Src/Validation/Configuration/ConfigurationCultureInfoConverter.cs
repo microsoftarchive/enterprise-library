@@ -49,7 +49,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
         /// <summary/>
         public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
         {
-            if (value == CultureInfo.InvariantCulture) throw new ArgumentException(Resources.InvariantCultureCannotBeUsedToDeserializeConfiguration, "culture");
+            if (value == CultureInfo.InvariantCulture) throw new ArgumentException(Resources_Desktop.InvariantCultureCannotBeUsedToDeserializeConfiguration, "culture");
 
             if (value is CultureInfo && destinationType == typeof(string))
             {

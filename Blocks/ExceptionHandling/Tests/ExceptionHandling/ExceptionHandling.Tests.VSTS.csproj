@@ -65,7 +65,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Lib\Desktop\Microsoft.Practices.Unity.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Practices.Unity.Interception, Version=2.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.Practices.Unity.Interception, Version=2.1.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Lib\Desktop\Microsoft.Practices.Unity.Interception.dll</HintPath>
     </Reference>
@@ -83,6 +83,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="APTCAFixture.2008.cs" />
+    <Compile Include="Configuration\CustomHandlerLoggingConfigurationBuilderExtensionsFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.2010.cs" />
     <Compile Include="Configuration\ConfigurationSerializationFixture.cs" />
     <Compile Include="Configuration\ConfigurationSourceBuilderExtensionsFixture.cs" />

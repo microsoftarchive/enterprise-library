@@ -12,56 +12,17 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Diagnostics;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Filters;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Properties;
 using Microsoft.Practices.Unity.Utility;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging
 {
     public partial class LogWriterImpl : LogWriter, ILogFilterErrorHandler
     {
-        /// <summary>
-        /// Provides an update context for changing the <see cref="LogWriterImpl"/> settings.
-        /// </summary>
-        protected class LogWriterUpdateContext : ILogWriterUpdateContext
-        {
-            public LogWriterUpdateContext(LogWriterImpl logWriter)
-            {
-                this.LogWriter = logWriter;
-                this.IsLoggingEnabled = logWriter.IsLoggingEnabled();
-
-                var sources = logWriter.TraceSources.Select(x => x.Value.GetUpdateContext()).ToList().AsReadOnly();
-                this.TraceSources = sources;
-            }
-
-            public ICollection<ILogSourceUpdateContext> TraceSources { get; private set; }
-
-            public bool IsLoggingEnabled { get; set; }
-
-            protected LogWriterImpl LogWriter { get; private set; }
-
-            public virtual void ApplyChanges()
-            {
-                if (this.IsLoggingEnabled != this.LogWriter.IsLoggingEnabled())
-                {
-                    var enabledFilter = this.LogWriter.GetFilter<LogEnabledFilter>();
-                    if (enabledFilter == null)
-                    {
-                        throw new InvalidOperationException("Cannot apply IsLoggingEnabled value. LogEnabledFilter filter must be configured in the logger.");
-                    }
-
-                    enabledFilter.Enabled = this.IsLoggingEnabled;
-                }
-
-                foreach (var sourceUpdateContext in this.TraceSources.OfType<ICommitable>())
-                {
-                    sourceUpdateContext.Commit();
-                }
-            }
-        }
-
         /// <summary>
         /// Initializes a new instance of the <see cref="LogWriterImpl"/> class.
         /// </summary>
@@ -174,6 +135,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// <param name="revertImpersonation">true if impersonation should be reverted while logging.</param>
         /// <param name="instrumentationProvider">The instrumentation provider to use.</param>
         /// <param name="asyncTracingErrorReporter">The async tracing error reporter.</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
         public LogWriterImpl(
             IEnumerable<ILogFilter> filters,
             IDictionary<string, LogSource> traceSources,
@@ -301,16 +263,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         }
 
         /// <summary>
-        /// Provides an update context to batch change requests to the <see cref="LogWriterImpl"/> configuration,
-        /// and apply all the changes in a single call <see cref="ILogWriterUpdateContext.ApplyChanges"/>.
-        /// </summary>
-        /// <returns>Returns an <see cref="ILogWriterUpdateContext"/> instance that can be used to apply the configuration changes.</returns>
-        public override ILogWriterUpdateContext GetUpdateContext()
-        {
-            return new LogWriterUpdateContext(this);
-        }
-
-        /// <summary>
         /// Starts a new tracing operation.
         /// </summary>
         /// <param name="operation">The operation id.</param>
@@ -339,6 +291,186 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         {
             this.structureHolder.SetTracingEnabled(enabled);
         }
+
+        #region LogWriter Update API
+        private readonly object updateContextLockObject = new object();
+        private ILogWriterUpdateContext activeUpdateContext;
+
+        /// <summary>
+        /// Provides an update context to batch change requests to the <see cref="LogWriterImpl"/> configuration,
+        /// and apply all the changes in a single call <see cref="ILogWriterUpdateContext.ApplyChanges"/>.
+        /// </summary>
+        /// <returns>Returns an <see cref="ILogWriterUpdateContext"/> instance that can be used to apply the configuration changes.</returns>
+        public override ILogWriterUpdateContext GetUpdateContext()
+        {
+            lock (this.updateContextLockObject)
+            {
+                this.activeUpdateContext = new LogWriterUpdateContext(this);
+                return this.activeUpdateContext;
+            }
+        }
+
+        /// <summary>
+        /// Gets all the available <see cref="TraceListener"/>s in the application.
+        /// </summary>
+        /// <returns>A collection of all the available <see cref="TraceListener"/>s in the application.</returns>
+        protected ICollection<TraceListener> GetTraceListeners()
+        {
+            return this.TraceSources.SelectMany(x => x.Value.Listeners).Distinct().ToList().AsReadOnly();
+        }
+
+        /// <summary>
+        /// Provides an update context for changing the <see cref="LogWriterImpl"/> settings.
+        /// </summary>
+        protected class LogWriterUpdateContext : ILogWriterUpdateContext
+        {
+            /// <summary>
+            /// Initializes a new instance of <see cref="LogWriterUpdateContext"/>.
+            /// </summary>
+            /// <param name="logWriter">The <see cref="LogWriterImpl"/> being configured.</param>
+            public LogWriterUpdateContext(LogWriterImpl logWriter)
+            {
+                this.LogWriter = logWriter;
+                this.IsLoggingEnabled = logWriter.IsLoggingEnabled();
+
+                var traceListeners = logWriter.GetTraceListeners();
+                this.Categories = logWriter.TraceSources
+                    .Select(x => x.Value.GetUpdateContext(traceListeners))
+                    .Where(c => c != null)
+                    .ToList()
+                    .AsReadOnly();
+                this.Listeners = traceListeners
+                    .Select(x => x.GetUpdateContext())
+                    .Where(c => c != null)
+                    .ToList()
+                    .AsReadOnly();
+
+                if (logWriter.structureHolder.AllEventsTraceSource != null)
+                {
+                    this.AllEventsCategory = logWriter.structureHolder.AllEventsTraceSource.GetUpdateContext(traceListeners);
+                }
+
+                if (logWriter.structureHolder.NotProcessedTraceSource != null)
+                {
+                    this.NotProcessedCategory = logWriter.structureHolder.NotProcessedTraceSource.GetUpdateContext(traceListeners);
+                }
+
+                if (logWriter.structureHolder.ErrorsTraceSource != null)
+                {
+                    this.ErrorsCategory = logWriter.structureHolder.ErrorsTraceSource.GetUpdateContext(traceListeners);
+                }
+            }
+
+            /// <summary>
+            /// Gets the update contexts for all the configured categories.
+            /// </summary>
+            /// <seealso cref="LogSource"/>
+            public ICollection<ILogSourceUpdateContext> Categories { get; private set; }
+
+            /// <summary>
+            /// Gets or sets if logging is enabled.
+            /// </summary>
+            /// <returns><see langword="true"/> if logging is enabled.</returns>
+            public bool IsLoggingEnabled { get; set; }
+
+            /// <summary>
+            /// The <see cref="LogWriterImpl"/> being configured.
+            /// </summary>
+            protected LogWriterImpl LogWriter { get; private set; }
+
+            /// <summary>
+            /// Gets the update contexts for all the configured <see cref="TraceListener"/>s.
+            /// </summary>
+            public ICollection<ITraceListenerUpdateContext> Listeners { get; private set; }
+
+            /// <summary>
+            /// Gets the update context for configured 'All Events' special category.
+            /// </summary>
+            /// <seealso cref="LogSource"/>
+            public ILogSourceUpdateContext AllEventsCategory { get; private set; }
+
+            /// <summary>
+            /// Gets the update context for configured 'Not Processed' special category.
+            /// </summary>
+            /// <seealso cref="LogSource"/>
+            public ILogSourceUpdateContext NotProcessedCategory { get; private set; }
+
+            /// <summary>
+            /// Gets the update context for configured 'Errors' special category.
+            /// </summary>
+            /// <seealso cref="LogSource"/>
+            public ILogSourceUpdateContext ErrorsCategory { get; private set; }
+
+            /// <summary>
+            /// Commits the changes.
+            /// </summary>
+            public virtual void ApplyChanges()
+            {
+                lock (this.LogWriter.updateContextLockObject)
+                {
+                    if (this.LogWriter.activeUpdateContext != this)
+                    {
+                        throw new InvalidOperationException(Resources.LogWriterUpdateContext_IsNotCurrent);
+                    }
+
+                    if (this.IsLoggingEnabled != this.LogWriter.IsLoggingEnabled())
+                    {
+                        var enabledFilter = this.LogWriter.GetFilter<LogEnabledFilter>();
+                        if (enabledFilter == null)
+                        {
+                            enabledFilter = new LogEnabledFilter("LogWriterUpdateContext_IsLoggingEnabled", this.IsLoggingEnabled);
+                            var previousHolder = this.LogWriter.structureHolder;
+                            var filters = previousHolder.Filters.ToList();
+                            filters.Add(enabledFilter);
+                            var newHolder = new LogWriterStructureHolder(
+                                filters,
+                                previousHolder.TraceSources,
+                                previousHolder.AllEventsTraceSource,
+                                previousHolder.NotProcessedTraceSource,
+                                previousHolder.ErrorsTraceSource,
+                                previousHolder.DefaultCategory,
+                                previousHolder.TracingEnabled,
+                                previousHolder.LogWarningsWhenNoCategoriesMatch,
+                                previousHolder.RevertImpersonation);
+
+                            this.LogWriter.ReplaceStructureHolder(newHolder);
+                        }
+                        else
+                        {
+                            enabledFilter.Enabled = this.IsLoggingEnabled;
+                        }
+                    }
+
+                    foreach (var sourceUpdateContext in this.Categories.OfType<ICommitable>())
+                    {
+                        sourceUpdateContext.Commit();
+                    }
+
+                    foreach (var listenerUpdateContext in this.Listeners.OfType<ICommitable>())
+                    {
+                        listenerUpdateContext.Commit();
+                    }
+
+                    if(this.AllEventsCategory != null)
+                    {
+                        ((ICommitable)this.AllEventsCategory).Commit();
+                    }
+
+                    if (this.NotProcessedCategory != null)
+                    {
+                        ((ICommitable)this.NotProcessedCategory).Commit();
+                    }
+
+                    if (this.ErrorsCategory != null)
+                    {
+                        ((ICommitable) this.ErrorsCategory).Commit();
+                    }
+
+                    this.LogWriter.activeUpdateContext = null;
+                }
+            }
+        }
+        #endregion LogWriter Update API
 
         /// <summary>
         /// Releases the resources used by the <see cref="LogWriter"/>.

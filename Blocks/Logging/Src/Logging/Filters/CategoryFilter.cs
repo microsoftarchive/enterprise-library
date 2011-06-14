@@ -80,7 +80,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Filters
 		/// <param name="category">The category.</param>
 		/// <returns><b>true</b> if the category passes through the category filter, <b>false</b> otherwise.</returns>
 		/// <remarks>A log entry for an allowed category may be rejected if the log entry has other denied categories
-		/// in its categories liset.</remarks>
+		/// in its categories list.</remarks>
 		public bool ShouldLog(string category)
 		{
 			return ShouldLog(new string[] { category });

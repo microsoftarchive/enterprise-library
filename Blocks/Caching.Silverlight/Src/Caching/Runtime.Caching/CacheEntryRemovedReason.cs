@@ -1,4 +1,15 @@
-﻿using System;
+﻿//===============================================================================
+// Microsoft patterns & practices Enterprise Library
+// Caching Application Block
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+
+using System;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.Runtime.Caching
 {
@@ -23,16 +34,5 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Runtime.Caching
         /// or cache instance approaches computer-wide memory limits.
         /// </summary>
         Evicted = 2,
-
-        /// <summary>
-        /// A cache entry was removed because a related dependency (such as a file or
-        /// another cache entry) triggered eviction of the cache entry.
-        /// </summary>
-        ChangeMonitorChanged = 3,
-
-        /// <summary>
-        /// A cache entry was evicted for as reason that is defined by a particular cache implementation.
-        /// </summary>
-        CacheSpecificEviction = 4,
     }
 }

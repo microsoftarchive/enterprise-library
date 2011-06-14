@@ -33,7 +33,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.PolicyInjectio
         private int order = 0;
 
         /// <summary>
-        /// Creates a new <see cref="ExceptionCallHandler"/> that processses exceptions
+        /// Creates a new <see cref="ExceptionCallHandler"/> that processes exceptions
         /// using the given exception policy.
         /// </summary>
         /// <param name="exceptionPolicy">Exception policy.</param>
@@ -43,7 +43,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.PolicyInjectio
         }
 
         /// <summary>
-        /// Creates a new <see cref="ExceptionCallHandler"/> that processses exceptions
+        /// Creates a new <see cref="ExceptionCallHandler"/> that processes exceptions
         /// using the given exception policy.
         /// </summary>
         /// <param name="exceptionPolicy">Exception policy.</param>

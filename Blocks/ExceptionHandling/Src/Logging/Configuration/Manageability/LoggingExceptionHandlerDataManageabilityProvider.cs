@@ -110,27 +110,27 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Config
             String elementPolicyKeyName)
         {
             contentBuilder.AddTextPart(String.Format(CultureInfo.CurrentCulture,
-                                                    Resources.HandlerPartNameTemplate,
+                                                    Resources_Desktop.HandlerPartNameTemplate,
                                                     configurationObject.Name));
 
-            contentBuilder.AddEditTextPart(Resources.LoggingHandlerTitlePartName,
+            contentBuilder.AddEditTextPart(Resources_Desktop.LoggingHandlerTitlePartName,
                 elementPolicyKeyName,
                 TitlePropertyName,
                 configurationObject.Title,
                 255,
                 true);
 
-            contentBuilder.AddNumericPart(Resources.LoggingHandlerEventIdPartName,
+            contentBuilder.AddNumericPart(Resources_Desktop.LoggingHandlerEventIdPartName,
                 elementPolicyKeyName,
                 EventIdPropertyName,
                 configurationObject.EventId);
 
-            contentBuilder.AddDropDownListPartForEnumeration<TraceEventType>(Resources.LoggingHandlerSeverityPartName,
+            contentBuilder.AddDropDownListPartForEnumeration<TraceEventType>(Resources_Desktop.LoggingHandlerSeverityPartName,
                 elementPolicyKeyName,
                 SeverityPropertyName,
                 configurationObject.Severity);
 
-            contentBuilder.AddNumericPart(Resources.LoggingHandlerPriorityPartName,
+            contentBuilder.AddNumericPart(Resources_Desktop.LoggingHandlerPriorityPartName,
                 elementPolicyKeyName,
                 PriorityPropertyName,
                 configurationObject.Priority);
@@ -138,14 +138,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Config
             LoggingSettings loggingConfigurationSection
                 = configurationSource.GetSection(LoggingSettings.SectionName) as LoggingSettings;
 
-            contentBuilder.AddDropDownListPartForNamedElementCollection<TraceSourceData>(Resources.LoggingHandlerCategoryPartName,
+            contentBuilder.AddDropDownListPartForNamedElementCollection<TraceSourceData>(Resources_Desktop.LoggingHandlerCategoryPartName,
                 elementPolicyKeyName,
                 LogCategoryPropertyName,
                 loggingConfigurationSection.TraceSources,
                 configurationObject.LogCategory,
                 false);
 
-            contentBuilder.AddComboBoxPart(Resources.LoggingHandlerFormatterPartName,
+            contentBuilder.AddComboBoxPart(Resources_Desktop.LoggingHandlerFormatterPartName,
                 elementPolicyKeyName,
                 FormatterTypePropertyName,
                 configurationObject.FormatterType.AssemblyQualifiedName,

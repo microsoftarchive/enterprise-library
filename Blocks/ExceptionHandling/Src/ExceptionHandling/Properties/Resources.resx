@@ -112,28 +112,43 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="PermissionDenied" xml:space="preserve">
-    <value>Permission Denied</value>
+  <data name="AdditionalInfo" xml:space="preserve">
+    <value>Additional Info:</value>
   </data>
-  <data name="UnableToHandleException" xml:space="preserve">
-    <value>Unable to handle exception: '{0}'.</value>
+  <data name="CantSwallowNonVoidReturnMessage" xml:space="preserve">
+    <value>Cannot swallow exceptions for methods with non-null return type.</value>
+  </data>
+  <data name="ChainException" xml:space="preserve">
+    <value>HANDLING CHAIN EXCEPTION:</value>
+  </data>
+  <data name="ExceptionNullException" xml:space="preserve">
+    <value>Unable to rethrow exception: The exception to throw is null.</value>
+  </data>
+  <data name="ExceptionPolicyNotFound" xml:space="preserve">
+    <value>The policy with name '{0}' cannot be found. Exception handling aborted.</value>
+  </data>
+  <data name="ExceptionStringNullOrEmpty" xml:space="preserve">
+    <value>The value cannot be an empty string or null.</value>
+  </data>
+  <data name="ExceptionTypeNotException" xml:space="preserve">
+    <value>The type must be of type Exception.</value>
   </data>
   <data name="ExceptionWasCaught" xml:space="preserve">
     <value>An exception of type '{0}' occurred and was caught.</value>
   </data>
-  <data name="StackTraceUnavailable" xml:space="preserve">
-    <value>The stack trace is unavailable.</value>
+  <data name="FieldAccessFailed" xml:space="preserve">
+    <value>Access failed</value>
   </data>
-  <data name="UndefinedValue" xml:space="preserve">
-    <value>&lt;undefined value&gt;</value>
+  <data name="InnerException" xml:space="preserve">
+    <value>Inner Exception</value>
   </data>
-  <data name="AdditionalInfo" xml:space="preserve">
-    <value>Additional Info:</value>
+  <data name="Message" xml:space="preserve">
+    <value>Message : {0}</value>
   </data>
   <data name="OffendingException" xml:space="preserve">
     <value>OFFENDING EXCEPTION:</value>
@@ -141,169 +156,25 @@
   <data name="OriginalException" xml:space="preserve">
     <value>ORIGINAL EXCEPTION:</value>
   </data>
-  <data name="ChainException" xml:space="preserve">
-    <value>HANDLING CHAIN EXCEPTION:</value>
-  </data>
   <data name="PolicyName" xml:space="preserve">
     <value>POLICY NAME: {0}</value>
-  </data>
-  <data name="Message" xml:space="preserve">
-    <value>Message : {0}</value>
-  </data>
-  <data name="Source" xml:space="preserve">
-    <value>Source : {0}</value>
-  </data>
-  <data name="StackTrace" xml:space="preserve">
-    <value>Stack Trace</value>
-  </data>
-  <data name="HelpLink" xml:space="preserve">
-    <value>Help link : {0}</value>
-  </data>
-  <data name="TypeString" xml:space="preserve">
-    <value>Type : {0}</value>
-  </data>
-  <data name="InnerException" xml:space="preserve">
-    <value>Inner Exception</value>
-  </data>
-  <data name="ExceptionNullException" xml:space="preserve">
-    <value>Unable to rethrow exception: The exception to throw is null.</value>
-  </data>
-  <data name="ExceptionTypeNotException" xml:space="preserve">
-    <value>The type must be of type Exception.</value>
-  </data>
-  <data name="ExceptionStringNullOrEmpty" xml:space="preserve">
-    <value>The value can not be an empty string or null.</value>
-  </data>
-  <data name="ConfigurationFailureCreatingPolicy" xml:space="preserve">
-    <value>A configuration failure occurred while creating policy ‘{0}’.</value>
-  </data>
-  <data name="BlockName" xml:space="preserve">
-    <value>Enterprise Library Exception Handling Application Block</value>
-  </data>
-  <data name="ErrorHandlingExceptionMessage" xml:space="preserve">
-    <value>The error occurred while handling an exception for policy "{0}".</value>
-  </data>
-  <data name="ExceptionHandledHelpResource" xml:space="preserve">
-    <value>Exceptions Handled/sec is the rate at which exceptions were handled.</value>
-  </data>
-  <data name="ExceptionHandlerExecutedHelpResource" xml:space="preserve">
-    <value>Exception Handlers Executed/sec is the rate at which exception handlers were executed.</value>
-  </data>
-  <data name="FieldAccessFailed" xml:space="preserve">
-    <value>Access failed</value>
   </data>
   <data name="PropertyAccessFailed" xml:space="preserve">
     <value>Access failed</value>
   </data>
-  <data name="TotalExceptionHandlersExecutedHelpResource" xml:space="preserve">
-    <value>Total Exceptions Handlers Executed is the total number which exception handlers were executed.</value>
+  <data name="StackTrace" xml:space="preserve">
+    <value>Stack Trace</value>
   </data>
-  <data name="TotalExceptionsHandledHelpResource" xml:space="preserve">
-    <value>Total Exceptions Handled is the total number of exceptions handled.</value>
+  <data name="StackTraceUnavailable" xml:space="preserve">
+    <value>The stack trace is unavailable.</value>
   </data>
-  <data name="ExceptionPolicyNotFound" xml:space="preserve">
-    <value>The policy with name '{0}' cannot be found. Exception handling aborted.</value>
+  <data name="TypeString" xml:space="preserve">
+    <value>Type : {0}</value>
   </data>
-  <data name="SectionDisplayName" xml:space="preserve">
-    <value>Exception Handling Settings</value>
+  <data name="UnableToHandleException" xml:space="preserve">
+    <value>Unable to handle exception: '{0}'.</value>
   </data>
-  <data name="AddExceptionTypeDisplayName" xml:space="preserve">
-    <value>Exception Type</value>
-  </data>
-  <data name="AddExceptionTypeHelpText" xml:space="preserve">
-    <value>Add a new exception type that is handled by this exception policy.</value>
-  </data>
-  <data name="ExceptionHandlersDisplayName" xml:space="preserve">
-    <value>Handlers</value>
-  </data>
-  <data name="ExceptionPoliciesDisplayName" xml:space="preserve">
-    <value>Policies</value>
-  </data>
-  <data name="ExceptionTypesDisplayName" xml:space="preserve">
-    <value>Exception Types</value>
-  </data>
-  <data name="AddPolicyDisplayDescription" xml:space="preserve">
-    <value>Add a new policy.</value>
-  </data>
-  <data name="AddPolicyDisplayName" xml:space="preserve">
-    <value>Policy</value>
-  </data>
-  <data name="AddReplaceHandlerData" xml:space="preserve">
-    <value>Replace Handler</value>
-  </data>
-  <data name="AddReplaceHandlerDataDescription" xml:space="preserve">
-    <value>Replace the exception with another exception.</value>
-  </data>
-  <data name="AddWrapHandlerData" xml:space="preserve">
-    <value>Wrap Handler</value>
-  </data>
-  <data name="AddWrapHandlerDataDescription" xml:space="preserve">
-    <value>Wrap the exception within another exception.</value>
-  </data>
-  <data name="AddCustomHandlerData" xml:space="preserve">
-    <value>Custom</value>
-  </data>
-  <data name="AuthorizationProviderTypeDescription" xml:space="preserve">
-    <value>AuthorizationProviderTypeDescription</value>
-  </data>
-  <data name="AttributesDescription" xml:space="preserve">
-    <value>Attributes</value>
-  </data>
-  <data name="AttributesDisplayName" xml:space="preserve">
-    <value>Attributes</value>
-  </data>
-  <data name="EventIdDisplayName" xml:space="preserve">
-    <value>Event id</value>
-  </data>
-  <data name="ExceptionHandlerTypeDescription" xml:space="preserve">
-    <value>Custom Handler Type</value>
-  </data>
-  <data name="ExceptionHandlerTypeDisplayName" xml:space="preserve">
-    <value>Custom Handler Type</value>
-  </data>
-  <data name="ExceptionMessageDisplayName" xml:space="preserve">
-    <value>Exception message</value>
-  </data>
-  <data name="ExceptionMessageResourceNameDisplayName" xml:space="preserve">
-    <value>Exception message resource name</value>
-  </data>
-  <data name="ExceptionMessageResourceTypeDisplayName" xml:space="preserve">
-    <value>Exception message resource type</value>
-  </data>
-  <data name="FormatterTypeNameDisplayName" xml:space="preserve">
-    <value>Formatter type name</value>
-  </data>
-  <data name="LogCategoryDisplayName" xml:space="preserve">
-    <value>Log category</value>
-  </data>
-  <data name="NameDisplayName" xml:space="preserve">
-    <value>Name</value>
-  </data>
-  <data name="PostHandlingActionDisplayName" xml:space="preserve">
-    <value>Post handling action</value>
-  </data>
-  <data name="PriorityDisplayName" xml:space="preserve">
-    <value>Priority</value>
-  </data>
-  <data name="ReplaceExceptionTypeNameDisplayName" xml:space="preserve">
-    <value>Replace exception type </value>
-  </data>
-  <data name="SeverityDisplayName" xml:space="preserve">
-    <value>Severity</value>
-  </data>
-  <data name="TitleDisplayName" xml:space="preserve">
-    <value>Title</value>
-  </data>
-  <data name="TypeNameDisplayName" xml:space="preserve">
-    <value>Type name</value>
-  </data>
-  <data name="UseDefaultLoggerDisplayName" xml:space="preserve">
-    <value>Use default logger</value>
-  </data>
-  <data name="WrapExceptionTypeNameDisplayName" xml:space="preserve">
-    <value>Wrap exception type</value>
-  </data>
-  <data name="CantSwallowNonVoidReturnMessage" xml:space="preserve">
-    <value>Cannot swallow exceptions for methods with non-null return type.</value>
+  <data name="UndefinedValue" xml:space="preserve">
+    <value>&lt;undefined value&gt;</value>
   </data>
 </root>

@@ -14,7 +14,13 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 
 [assembly: CLSCompliant(true)]
+
+#if !SILVERLIGHT
 [assembly: AssemblyProduct("Microsoft Enterprise Library for .NET")]
+#else
+[assembly: AssemblyProduct("Microsoft Enterprise Library Silverlight Integration Pack")]
+#endif
+
 [assembly: AssemblyCompany("Microsoft Corporation")]
 
 #if DEBUG

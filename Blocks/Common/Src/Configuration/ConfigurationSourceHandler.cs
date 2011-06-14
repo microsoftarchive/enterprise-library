@@ -417,8 +417,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
                 {
                     if (throwWhenNotFound)
                     {
-                        string message = string.Format(CultureInfo.CurrentCulture, 
-                            Resources.ExceptionConfigurationSourceNotFound, 
+                        string message = string.Format(CultureInfo.CurrentCulture,
+                            Resources_Desktop.ExceptionConfigurationSourceNotFound, 
                             sourceName, 
                             ConfigurationSourceSection.SectionName);
 

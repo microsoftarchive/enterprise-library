@@ -16,7 +16,6 @@ using System.Timers;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Storage;
 using Microsoft.Practices.EnterpriseLibrary.Common.Properties;
 
-
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Storage
 {
     /// <summary>
@@ -231,7 +230,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Storage
         {
             try
             {
-                EventLog.WriteEntry(GetEventSourceName(), Resources.ExceptionEventRaisingFailed + GetType().FullName + " :" + e.Message, EventLogEntryType.Error);
+                EventLog.WriteEntry(GetEventSourceName(), Resources_Desktop.ExceptionEventRaisingFailed + GetType().FullName + " :" + e.Message, EventLogEntryType.Error);
             }
             catch
             {

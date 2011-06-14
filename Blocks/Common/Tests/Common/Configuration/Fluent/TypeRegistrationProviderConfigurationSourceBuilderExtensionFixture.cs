@@ -44,7 +44,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
 
             TypeRegistrationProvidersConfigurationSection section = (TypeRegistrationProvidersConfigurationSection)source.GetSection(TypeRegistrationProvidersConfigurationSection.SectionName);
 
+#if !SILVERLIGHT
             Assert.AreEqual(9, section.TypeRegistrationProviders.Count);
+#else
+            Assert.AreEqual(5, section.TypeRegistrationProviders.Count);
+#endif
         }
     }
 

@@ -190,13 +190,34 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// </summary>
         public void Dispose()
         {
-            foreach (LogSource source in traceSources.Values)
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        /// <param name="disposing"><see langword="true"/> if the method is being called from the <see cref="Dispose()"/> method. <see langword="false"/> if it is being called from within the object finalizer.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
             {
-                source.Dispose();
+                foreach (LogSource source in traceSources.Values)
+                {
+                    source.Dispose();
+                }
+                DisposeSpecialLogSource(errorsTraceSource);
+                DisposeSpecialLogSource(notProcessedTraceSource);
+                DisposeSpecialLogSource(allEventsTraceSource);
             }
-            DisposeSpecialLogSource(errorsTraceSource);
-            DisposeSpecialLogSource(notProcessedTraceSource);
-            DisposeSpecialLogSource(allEventsTraceSource);
+        }
+
+        /// <summary>
+        /// Releases resources for the <see cref="LogWriterStructureHolder"/> instance before garbage collection.
+        /// </summary>
+        ~LogWriterStructureHolder()
+        {
+            this.Dispose(false);
         }
 
         internal void SetTracingEnabled(bool enabled)

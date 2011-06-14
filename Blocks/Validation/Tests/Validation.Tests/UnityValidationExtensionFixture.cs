@@ -41,7 +41,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
 #if !SILVERLIGHT
                 new SystemConfigurationSource();
 #else
-                ResourceDictionaryConfigurationSource.FromXaml(new Uri("/Microsoft.Practices.EnterpriseLibrary.Validation.Silverlight.Tests;component/Configuration.xaml", UriKind.Relative));
+                DictionaryConfigurationSource.FromXaml(new Uri("/Microsoft.Practices.EnterpriseLibrary.Validation.Silverlight.Tests;component/Configuration.xaml", UriKind.Relative));
 #endif
             EnterpriseLibraryContainer.ConfigureContainer(new UnityContainerConfigurator(container), configurationSource);
         }

@@ -139,7 +139,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.PolicyInjection
             }
 
             var configurationSource = ConfigurationSourceFactory.Create();
-#if !SILVERLIGHT    // todo remove when including other sources
+#if !SILVERLIGHT
             var instrumentationProvider = ValidationInstrumentationProvider.FromConfigurationSource(configurationSource);
 #else
             var instrumentationProvider = new NullValidationInstrumentationProvider();

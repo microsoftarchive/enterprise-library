@@ -20,11 +20,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
     [TestClass]
     public class ExceptionUtilityFixture
     {
+        const string idMessage = "ID : {handlingInstanceID}";
+#if !SILVERLIGHT
         const string EventLogName = "Application";
         static readonly string EventLogSource = "Enterprise Library Exception Handling";
-        const string idMessage = "ID : {handlingInstanceID}";
         const string exceptionMessage = "Unable to handle exception";
         const string policy = "policy";
+#endif
 
         [TestMethod]
         public void FormatTokenInMessage()

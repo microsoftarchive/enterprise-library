@@ -11,9 +11,9 @@
 
 using System;
 using System.Collections.Generic;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Practices.EnterpriseLibrary.Logging.PolicyInjection;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Globalization;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.PolicyInjection
 {
@@ -27,34 +27,42 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.PolicyInjection
             logEntry.TypeName = typeof(TraceLogEntryFixture).FullName;
             logEntry.MethodName = typeof(TraceLogEntryFixture).GetMethod("ShouldBeCreatable").Name;
             logEntry.ReturnValue = "Foo";
+            logEntry.CallTime = TimeSpan.FromMinutes(5);
+
+            Assert.AreEqual(typeof(TraceLogEntryFixture).GetMethod("ShouldBeCreatable").Name, logEntry.MethodName);
+            Assert.AreEqual(TimeSpan.FromMinutes(5), logEntry.CallTime);
+        }
+
+        [TestMethod]
+        public void NotAssignedPropertiesShouldNotThrow()
+        {
+            TraceLogEntry logEntry = new TraceLogEntry();
+
+            Assert.IsNull(logEntry.MethodName);
+            Assert.IsNull(logEntry.CallTime);
         }
 
         [TestMethod]
         public void ShouldBeAbleToAddParameterValues()
         {
-            Dictionary<string, object> parameterValues = new Dictionary<string, object>();
-            parameterValues["x"] = 12;
-            parameterValues["y"] = 43;
-
             TraceLogEntry logEntry = new TraceLogEntry();
-            logEntry.ExtendedProperties = parameterValues;
+            logEntry.ExtendedProperties["x"] = 12;
+            logEntry.ExtendedProperties["y"] = 43;
 
             Assert.AreEqual(12, logEntry.ExtendedProperties["x"]);
             Assert.AreEqual(43, logEntry.ExtendedProperties["y"]);
         }
 
+#if !SILVERLIGHT
         [TestMethod]
         public void ShouldBeAbleToFormatLogWithExtraProperties()
         {
-            Dictionary<string, object> parameterValues = new Dictionary<string, object>();
-            parameterValues["one"] = 1;
-            parameterValues["two"] = "two";
-
             TraceLogEntry logEntry = new TraceLogEntry();
             logEntry.Categories.Add("General");
             logEntry.Categories.Add("Callhandler");
             logEntry.Message = "Logging call";
-            logEntry.ExtendedProperties = parameterValues;
+            logEntry.ExtendedProperties["one"] = 1;
+            logEntry.ExtendedProperties["two"] = "two";
             logEntry.TypeName = GetType().Name;
             logEntry.MethodName = "SomeMethod";
             logEntry.ReturnValue = 42.ToString();
@@ -66,7 +74,7 @@ Parameter values:{newline}
 {dictionary({key} = {value}{newline})}{newline}
 Return value: {property(ReturnValue)}{newline}";
 
-            TextFormatter formatter = new TextFormatter(template);
+            var formatter = new Logging.Formatters.TextFormatter(template);
 
             string formatted = formatter.Format(logEntry);
 
@@ -77,6 +85,7 @@ Return value: {property(ReturnValue)}{newline}";
             Assert.IsTrue(formatted.Contains("two = two\r\n"));
             Assert.IsTrue(formatted.Contains("Return value: 42\r\n"));
         }
+#endif
 
         [TestMethod]
         public void ShouldReturnElapsedTimeZeroIfCallTimeNull()
@@ -95,5 +104,42 @@ Return value: {property(ReturnValue)}{newline}";
             logEntry.CallTime = timespan;
             Assert.AreEqual(timespan, logEntry.ElapsedTime);
         }
+
+#if SILVERLIGHT
+        [TestMethod]
+        public void ShouldBeSerializableByLogEntrySerializer()
+        {
+            TraceLogEntry logEntry = new TraceLogEntry();
+            logEntry.Message = "Foo";
+            logEntry.TypeName = typeof(TraceLogEntryFixture).FullName;
+            logEntry.MethodName = typeof(TraceLogEntryFixture).GetMethod("ShouldBeCreatable").Name;
+            logEntry.ReturnValue = "Foo";
+            logEntry.ExtendedProperties["x"] = 12.ToString();
+
+            var serializer = new Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners.LogEntrySerializer();
+            var bytes = serializer.Serialize(logEntry);
+
+            var actual = serializer.Deserialize(bytes);
+
+            Assert.AreEqual(logEntry.Message, actual.Message);
+        }
+
+        [TestMethod]
+        public void ShouldStoreExtraPropertiesInExtendedProperties()
+        {
+            TraceLogEntry logEntry = new TraceLogEntry();
+            logEntry.TypeName = typeof(TraceLogEntryFixture).FullName;
+            logEntry.MethodName = typeof(TraceLogEntryFixture).GetMethod("ShouldBeCreatable").Name;
+            logEntry.ReturnValue = "Foo";
+            logEntry.CallTime = TimeSpan.FromMinutes(5);
+            logEntry.ExtendedProperties["x"] = 12.ToString();
+
+            Assert.AreEqual(typeof(TraceLogEntryFixture).FullName, logEntry.ExtendedProperties["TypeName"]);
+            Assert.AreEqual(typeof(TraceLogEntryFixture).GetMethod("ShouldBeCreatable").Name, logEntry.ExtendedProperties["MethodName"]);
+            Assert.AreEqual("Foo", logEntry.ExtendedProperties["ReturnValue"]);
+            Assert.AreEqual(TimeSpan.FromMinutes(5).ToString(null, CultureInfo.InvariantCulture), logEntry.ExtendedProperties["CallTime"]);
+            Assert.AreEqual(12.ToString(), logEntry.ExtendedProperties["x"]);
+        }
+#endif
     }
 }

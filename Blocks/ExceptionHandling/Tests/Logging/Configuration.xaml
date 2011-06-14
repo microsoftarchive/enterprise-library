@@ -1,7 +1,7 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:el="http://entlib.codeplex.com/v5/configuration"
+    xmlns:el="http://schemas.microsoft.com/practices/2011/entlib"
     xmlns:test="clr-namespace:Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport.TraceListeners;assembly=Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport.Silverlight">
 
     <el:ExceptionHandlingSettings x:Key="exceptionHandling">
@@ -18,7 +18,7 @@
 								Severity="Error" 
 								Title="TestTitle"
 								Priority="-1"
-								FormatterTypeName="Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.TextExceptionFormatter, Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Silverlight, Version=5.0.414.0, Culture=neutral, PublicKeyToken=null"/>
+								FormatterTypeName="Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.TextExceptionFormatter, Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Silverlight, Version=5.0.505.0, Culture=neutral, PublicKeyToken=null"/>
                         </el:ExceptionTypeData.ExceptionHandlers>
                     </el:ExceptionTypeData>
                 </el:ExceptionPolicyData.ExceptionTypes>
@@ -35,7 +35,7 @@
 								Severity="Error" 
 								Title="TestTitle"
 								Priority="-1"
-								FormatterTypeName="Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Tests.BadExceptionFormatter, Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Silverlight.Tests, Version=5.0.414.0, Culture=neutral, PublicKeyToken=null"/>
+								FormatterTypeName="Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Tests.BadExceptionFormatter, Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Silverlight.Tests, Version=5.0.505.0, Culture=neutral, PublicKeyToken=null"/>
                         </el:ExceptionTypeData.ExceptionHandlers>
                     </el:ExceptionTypeData>
                 </el:ExceptionPolicyData.ExceptionTypes>

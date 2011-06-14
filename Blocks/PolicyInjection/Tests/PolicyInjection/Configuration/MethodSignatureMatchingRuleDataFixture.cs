@@ -24,9 +24,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
         [TestMethod]
         public void CanSerializeTypeMatchingRule()
         {
-            MethodSignatureMatchingRuleData sigMatchingRule = new MethodSignatureMatchingRuleData("RuleName", "Contains");
-            sigMatchingRule.IgnoreCase = true;
-            sigMatchingRule.Parameters.Add(new ParameterTypeElement("p1", "String"));
+            MethodSignatureMatchingRuleData sigMatchingRule =
+                new MethodSignatureMatchingRuleData
+                    {
+                        Name = "RuleName",
+                        Match = "Contains",
+                        IgnoreCase = true,
+                        Parameters =
+                            {
+                                new ParameterTypeElement { Name = "p1", ParameterTypeName = "String" },
+                            }
+                    };
 
             MethodSignatureMatchingRuleData deserializedRule = SerializeAndDeserializeMatchingRule(sigMatchingRule) as MethodSignatureMatchingRuleData;
 
@@ -41,10 +49,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
         public void CanSerializeMethodSignatureContainingDuplicatedTypes()
         {
             MethodSignatureMatchingRuleData ruleData =
-                new MethodSignatureMatchingRuleData("ruleName", "Foo");
-            ruleData.Parameters.Add(new ParameterTypeElement("p1", "System.String"));
-            ruleData.Parameters.Add(new ParameterTypeElement("p2", "System.Int"));
-            ruleData.Parameters.Add(new ParameterTypeElement("p3", "System.String"));
+                new MethodSignatureMatchingRuleData
+                    {
+                        Name = "ruleName",
+                        Match = "Foo",
+                        Parameters =
+                            {
+                                new ParameterTypeElement { Name = "p1", ParameterTypeName = "System.String" },
+                                new ParameterTypeElement { Name = "p2", ParameterTypeName = "System.Int" },
+                                new ParameterTypeElement { Name = "p3", ParameterTypeName = "System.String" },
+                            }
+                    };
 
             Assert.AreEqual(3, ruleData.Parameters.Count);
 
@@ -53,19 +68,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
             Assert.IsNotNull(deserializedRule);
             AssertAreSame(ruleData, deserializedRule);
         }
-#else
-        [TestMethod]
-        public void HasDefaultCtor()
-        {
-            new MethodSignatureMatchingRuleData();
-            new ParameterTypeElement();
-        }
 #endif
 
         [TestMethod]
         public void MatchingRuleHasTransientLifetime()
         {
-            MethodSignatureMatchingRuleData ruleData = new MethodSignatureMatchingRuleData("ruleName", "Foo");
+            MethodSignatureMatchingRuleData ruleData = new MethodSignatureMatchingRuleData
+                {
+                    Name = "ruleName",
+                    Match = "Foo",
+                };
             TypeRegistration registration = ruleData.GetRegistrations("").First();
 
             Assert.AreEqual(TypeRegistrationLifetime.Transient, registration.Lifetime);

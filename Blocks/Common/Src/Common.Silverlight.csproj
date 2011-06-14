@@ -40,6 +40,7 @@
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <DocumentationFile>..\..\bin\DebugSL\Microsoft.Practices.EnterpriseLibrary.Common.Silverlight.XML</DocumentationFile>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -57,11 +58,13 @@
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\..\Lib\Silverlight\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Practices.Unity.Interception.Silverlight">
+    <Reference Include="Microsoft.Practices.Unity.Interception.Silverlight, Version=2.1.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\..\Lib\Silverlight\Microsoft.Practices.Unity.Interception.Silverlight.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="Microsoft.Practices.Unity.Silverlight, Version=2.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.Practices.Unity.Silverlight, Version=2.1.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\..\Lib\Silverlight\Microsoft.Practices.Unity.Silverlight.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="System.Windows" />
@@ -73,10 +76,15 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\GlobalAssemblyInfo.cs">
+      <Link>GlobalAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="Configuration\AssemblyQualifiedTypeNameConverter.cs" />
     <Compile Include="Configuration\BlockSectionNames.cs" />
+    <Compile Include="Configuration\Collections\ConfigurationDictionary.Silverlight.cs" />
     <Compile Include="Configuration\ConfigurationErrorsException.Silverlight.cs" />
     <Compile Include="Configuration\ConfigurationSection.Silverlight.cs" />
+    <Compile Include="Configuration\ConfigurationSourceBuilder.cs" />
     <Compile Include="Configuration\ConfigurationSourceFactory.Silverlight.cs" />
     <Compile Include="Configuration\ContainerModel\ConfigSectionLocator.cs" />
     <Compile Include="Configuration\ContainerModel\ConfigurationBasedTypeRegistrationsProviderFactory.Silverlight.cs" />
@@ -98,9 +106,12 @@
     <Compile Include="Configuration\ContainerModel\Unity\UnityContainerConfigurator.Silverlight.cs" />
     <Compile Include="Configuration\ContainerModel\Unity\UnityContainerConfigurator.cs" />
     <Compile Include="Configuration\CallHandlerData.Silverlight.cs" />
+    <Compile Include="Configuration\ConfigurationElementCollection.Silverlight.cs" />
     <Compile Include="Configuration\DateTimeTypeConverter.cs" />
     <Compile Include="Configuration\DictionaryConfigurationSource.cs" />
     <Compile Include="Configuration\EnterpriseLibraryContainer.Silverlight.cs" />
+    <Compile Include="Configuration\Fluent\IConfigureTypeRegistrations.cs" />
+    <Compile Include="Configuration\Fluent\TypeRegistrationProviderConfigurationSourceBuilderExtension.cs" />
     <Compile Include="Configuration\IObjectWithNameAndType.cs" />
     <Compile Include="Configuration\TypeRegistrationProviderElement.Silverlight.cs" />
     <Compile Include="Configuration\TypeRegistrationProviderElementCollection.Silverlight.cs" />
@@ -114,8 +125,11 @@
     <Compile Include="Configuration\Unity\EnterpriseLibraryCoreExtension.cs" />
     <Compile Include="Configuration\Unity\TransientPolicyBuildUpExtension.cs" />
     <Compile Include="Configuration\Unity\UnityContainerExtensions.cs" />
-    <Compile Include="Configuration\ResourceDictionaryConfigurationSource.Silverlight.cs" />
+    <Compile Include="Configuration\DictionaryConfigurationSource.Silverlight.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="IFluentInterface.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\AssemblyInfo.Silverlight.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -139,8 +153,10 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Silverlight\$(SilverlightVersion)\Microsoft.Silverlight.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>

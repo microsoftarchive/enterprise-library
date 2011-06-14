@@ -311,7 +311,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
             }
             catch (SecurityException e)
             {
-                instrumentationProvider.FireFailureLoggingErrorEvent(Resources.ExceptionCannotCheckImpersonatedIdentity, e);
+                instrumentationProvider.FireFailureLoggingErrorEvent(Resources_Desktop.ExceptionCannotCheckImpersonatedIdentity, e);
                 return null;
             }
 
@@ -322,12 +322,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
             catch (SecurityException e)
             {
                 // this shouldn't happen, as GetCurrent() and Impersonate() demand the same CAS permissions.
-                instrumentationProvider.FireFailureLoggingErrorEvent(Resources.ExceptionCannotRevertImpersonatedIdentity, e);
+                instrumentationProvider.FireFailureLoggingErrorEvent(Resources_Desktop.ExceptionCannotRevertImpersonatedIdentity, e);
                 return null;
             }
             catch (UnauthorizedAccessException e)
             {
-                instrumentationProvider.FireFailureLoggingErrorEvent(Resources.ExceptionCannotRevertImpersonatedIdentity, e);
+                instrumentationProvider.FireFailureLoggingErrorEvent(Resources_Desktop.ExceptionCannotRevertImpersonatedIdentity, e);
                 return null;
             }
         }

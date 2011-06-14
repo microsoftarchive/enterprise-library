@@ -34,18 +34,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
             Assert.IsTrue(deserializedRule.IgnoreCase);
             Assert.AreEqual(returnTypeMatchingRule.Match, deserializedRule.Match);
         }
-#else
-        [TestMethod]
-        public void HasDefaultCtor()
-        {
-            new PropertyMatchingRuleData();
-        }
 #endif
 
         [TestMethod]
         public void MatchingRuleHasTransientLifetime()
         {
-            ReturnTypeMatchingRuleData ruleData = new ReturnTypeMatchingRuleData("RuleName", "System.Int32");
+            ReturnTypeMatchingRuleData ruleData = new ReturnTypeMatchingRuleData
+                {
+                    Name = "RuleName", 
+                    Match = "System.Int32"
+                };
             TypeRegistration registration = ruleData.GetRegistrations("").First();
 
             Assert.AreEqual(TypeRegistrationLifetime.Transient, registration.Lifetime);

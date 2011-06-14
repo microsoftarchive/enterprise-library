@@ -9,19 +9,16 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
-using System.Diagnostics;
-using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
-using System.Messaging;
-using System.Collections.Specialized;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
+#if SILVERLIGHT
+using Microsoft.Practices.EnterpriseLibrary.Logging.Diagnostics;
+#else
+using System.Diagnostics;
+#endif
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
 {
@@ -147,7 +144,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
             ConfigureLogging.WithOptions
                                 .FilterEnableOrDisable("enabled")
                                 .FilterOnCategory("cat filter").AllowAllCategoriesExcept("cat1", "cat2")
-                                .FilterCustom("custom", typeof(object))
                                 .FilterOnPriority("prio filter").StartingWithPriority(12).UpToPriority(21);
         }
 
@@ -155,13 +151,32 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         {
             var loggingConfig = GetLoggingConfiguration();
 
-            Assert.AreEqual(4, loggingConfig.LogFilters.Count);
+            Assert.AreEqual(3, loggingConfig.LogFilters.Count);
             Assert.IsTrue(loggingConfig.LogFilters.OfType<PriorityFilterData>().Any());
-            Assert.IsTrue(loggingConfig.LogFilters.OfType<CustomLogFilterData>().Any());
             Assert.IsTrue(loggingConfig.LogFilters.OfType<LogEnabledFilterData>().Any());
             Assert.IsTrue(loggingConfig.LogFilters.OfType<CategoryFilterData>().Any());
         }
     }
+
+#if !SILVERLIGHT
+    [TestClass]
+    public class When_AddingCustomLogFiltersToLoggingConfigurationBuilder : Given_LoggingSettingsInConfigurationSourceBuilder
+    {
+        protected override void Act()
+        {
+            ConfigureLogging.WithOptions
+                                .FilterCustom("custom", typeof(object));
+        }
+
+        public void Then_LoggingConfigurationContainsFilters()
+        {
+            var loggingConfig = GetLoggingConfiguration();
+
+            Assert.AreEqual(1, loggingConfig.LogFilters.Count);
+            Assert.IsTrue(loggingConfig.LogFilters.OfType<CustomLogFilterData>().Any());
+        }
+    }
+#endif
 
     [TestClass]
     public class When_DisablingTracingOnLoggingSettings : Given_LoggingSettingsInConfigurationSourceBuilder
@@ -179,6 +194,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         }
     }
 
+#if !SILVERLIGHT
     [TestClass]
     public class When_CallingDoNotRevertImpersonationOnLoggginSettings : Given_LoggingSettingsInConfigurationSourceBuilder
     {
@@ -193,6 +209,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
             Assert.IsFalse(GetLoggingConfiguration().RevertImpersonation);
         }
     }
+#endif
 
     [TestClass]
     public class When_CallingDoNotLogWarningsWhenNoCategoryExists : Given_LoggingSettingsInConfigurationSourceBuilder
@@ -246,8 +263,5 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
             TraceSourceData data = GetLoggingConfiguration().TraceSources.Where(x => x.Name == categoryName).First();
             Assert.AreEqual(true, data.AutoFlush);
         }
-
     }
-
-
 }

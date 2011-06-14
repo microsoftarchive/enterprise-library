@@ -70,209 +70,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Avg. Trace Execution Time Base is the base for the average execution time for traced operations..
-        /// </summary>
-        internal static string AverageTraceExecutionTimeBaseHelpResource {
-            get {
-                return ResourceManager.GetString("AverageTraceExecutionTimeBaseHelpResource", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Avg. Trace Execution Time is the average execution time for traced operations..
-        /// </summary>
-        internal static string AverageTraceExecutionTimeHelpResource {
-            get {
-                return ResourceManager.GetString("AverageTraceExecutionTimeHelpResource", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Enterprise Library Logging Application Block.
-        /// </summary>
-        internal static string BlockName {
-            get {
-                return ResourceManager.GetString("BlockName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to ActivityId.
-        /// </summary>
-        internal static string ComPlusInfo_ActivityId {
-            get {
-                return ResourceManager.GetString("ComPlusInfo_ActivityId", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to ApplicationId.
-        /// </summary>
-        internal static string ComPlusInfo_ApplicationId {
-            get {
-                return ResourceManager.GetString("ComPlusInfo_ApplicationId", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to DirectCallerAccountName.
-        /// </summary>
-        internal static string ComPlusInfo_DirectCallerAccountName {
-            get {
-                return ResourceManager.GetString("ComPlusInfo_DirectCallerAccountName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to OriginalCallerAccountName.
-        /// </summary>
-        internal static string ComPlusInfo_OriginalCallerAccountName {
-            get {
-                return ResourceManager.GetString("ComPlusInfo_OriginalCallerAccountName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to TransactionID.
-        /// </summary>
-        internal static string ComPlusInfo_TransactionID {
-            get {
-                return ResourceManager.GetString("ComPlusInfo_TransactionID", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to A configuration failure occurred while logging..
-        /// </summary>
-        internal static string ConfigurationFailureLogging {
-            get {
-                return ResourceManager.GetString("ConfigurationFailureLogging", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The error occurred while refreshing the logging configuration. The configuration will not be updated..
-        /// </summary>
-        internal static string ConfigurationFailureUpdating {
-            get {
-                return ResourceManager.GetString("ConfigurationFailureUpdating", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Unable to create object -- configuration section {0} not found in configuration file..
-        /// </summary>
-        internal static string ConfigurationSectionNotFound {
-            get {
-                return ResourceManager.GetString("ConfigurationSectionNotFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to LookupAccountSid was not successful.
-        /// </summary>
-        internal static string CouldNotLookupAccountSid {
-            get {
-                return ResourceManager.GetString("CouldNotLookupAccountSid", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to 	at .
-        /// </summary>
-        internal static string DebugInfo_SchemaHelperAtString {
-            get {
-                return ResourceManager.GetString("DebugInfo_SchemaHelperAtString", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to 	in {0}: line {1}.
-        /// </summary>
-        internal static string DebugInfo_SchemaHelperLine {
-            get {
-                return ResourceManager.GetString("DebugInfo_SchemaHelperLine", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to &lt;UnknownType&gt;.
-        /// </summary>
-        internal static string DebugInfo_SchemaHelperUnknownType {
-            get {
-                return ResourceManager.GetString("DebugInfo_SchemaHelperUnknownType", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to StackTrace.
-        /// </summary>
-        internal static string DebugInfo_StackTrace {
-            get {
-                return ResourceManager.GetString("DebugInfo_StackTrace", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Unable to process stack trace..
-        /// </summary>
-        internal static string DebugInfo_StackTraceException {
-            get {
-                return ResourceManager.GetString("DebugInfo_StackTraceException", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Insufficient privilege to generate stack trace..
-        /// </summary>
-        internal static string DebugInfo_StackTraceSecurityException {
-            get {
-                return ResourceManager.GetString("DebugInfo_StackTraceSecurityException", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Failed to log message to the default log destination..
-        /// </summary>
-        internal static string DefaultLogDestinationFailed {
-            get {
-                return ResourceManager.GetString("DefaultLogDestinationFailed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to An error occurred while the Distributor was processing the message.  Please check your configuration files for errors or typos.  Verify that your sinks are reachable (queues exist, permissions are set, database exists, and so forth...).
-        /// </summary>
-        internal static string DefaultLogDestinationMessage {
-            get {
-                return ResourceManager.GetString("DefaultLogDestinationMessage", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Enterprise Library Backup Sink.
-        /// </summary>
-        internal static string DefaultLogDestinationSinkName {
-            get {
-                return ResourceManager.GetString("DefaultLogDestinationSinkName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Call Logging.
         /// </summary>
         internal static string DefaultLogEntryTitle {
             get {
                 return ResourceManager.GetString("DefaultLogEntryTitle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Timestamp: {timestamp}{newline}Message: {message}{newline}Category: {category}{newline}Priority: {priority}{newline}EventId: {eventid}{newline}Severity: {severity}{newline}Title:{title}{newline}Machine: {localMachine}{newline}App Domain: {localAppDomain}{newline}ProcessId: {localProcessId}{newline}Process Name: {localProcessName}{newline}Thread Name: {threadName}{newline}Win32 ThreadId:{win32ThreadId}{newline}Extended Properties: {dictionary({key} - {value}{newline})}.
-        /// </summary>
-        internal static string DefaultTextFormat {
-            get {
-                return ResourceManager.GetString("DefaultTextFormat", resourceCulture);
             }
         }
         
@@ -286,39 +88,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Message: 
-        ///.
-        /// </summary>
-        internal static string DistEventLoggerMessagePrefix {
-            get {
-                return ResourceManager.GetString("DistEventLoggerMessagePrefix", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Summary for.
-        /// </summary>
-        internal static string DistEventLoggerSummary {
-            get {
-                return ResourceManager.GetString("DistEventLoggerSummary", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Enterprise Library Distributor Service.
         /// </summary>
         internal static string DistributorEventLoggerDefaultApplicationName {
             get {
                 return ResourceManager.GetString("DistributorEventLoggerDefaultApplicationName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to E-Mail Sink is missing one of these keys in the Distributor&apos;s XML file: ToAddress, FromAddress, and/or SmtpServer..
-        /// </summary>
-        internal static string EmailSinkMissingParameters {
-            get {
-                return ResourceManager.GetString("EmailSinkMissingParameters", resourceCulture);
             }
         }
         
@@ -386,6 +160,24 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Isolated storage is not available for this application. It might be disabled or in an invalid state..
+        /// </summary>
+        internal static string ErrorIsolatedStorageIsNotAvailable {
+            get {
+                return ResourceManager.GetString("ErrorIsolatedStorageIsNotAvailable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Logging service factory is required for the listener &apos;{0}&apos;..
+        /// </summary>
+        internal static string ErrorLoggingServiceFactoryNotSet {
+            get {
+                return ResourceManager.GetString("ErrorLoggingServiceFactoryNotSet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The repository file already exists..
         /// </summary>
         internal static string ErrorRepositoryFileAlreadyExists {
@@ -422,101 +214,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The message {0} could not be written..
+        ///   Looks up a localized string similar to The submit interval is less than 0 for the listener &apos;{0}&apos;..
         /// </summary>
-        internal static string ErrorWritingData {
+        internal static string ErrorSubmitIntervalInvalidRange {
             get {
-                return ResourceManager.GetString("ErrorWritingData", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Access denied to the event log &apos;{0}&apos;..
-        /// </summary>
-        internal static string EventLogAccessDenied {
-            get {
-                return ResourceManager.GetString("EventLogAccessDenied", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Event Log Sink is missing the key -EventSourceName- in the Distributor&apos;s configuration file..
-        /// </summary>
-        internal static string EventLogSinkMissingEventSource {
-            get {
-                return ResourceManager.GetString("EventLogSinkMissingEventSource", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Cannot check for impersonation; assuming not impersonating..
-        /// </summary>
-        internal static string ExceptionCannotCheckImpersonatedIdentity {
-            get {
-                return ResourceManager.GetString("ExceptionCannotCheckImpersonatedIdentity", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Unable to find appropriate {1} argument constructor for {0}.
-        /// </summary>
-        internal static string ExceptionCannotFindAppropriateConstructor {
-            get {
-                return ResourceManager.GetString("ExceptionCannotFindAppropriateConstructor", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The default category &apos;{0}&apos; is not defined in Logging Distributor configuration..
-        /// </summary>
-        internal static string ExceptionCannotLoadDefaultCategory {
-            get {
-                return ResourceManager.GetString("ExceptionCannotLoadDefaultCategory", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The default formatter &apos;{0}&apos; is not defined in Logging Distributor configuration..
-        /// </summary>
-        internal static string ExceptionCannotLoadDefaultFormatter {
-            get {
-                return ResourceManager.GetString("ExceptionCannotLoadDefaultFormatter", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Cannot revert impersonation..
-        /// </summary>
-        internal static string ExceptionCannotRevertImpersonatedIdentity {
-            get {
-                return ResourceManager.GetString("ExceptionCannotRevertImpersonatedIdentity", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The name for the CategoryFilterData can not be null..
-        /// </summary>
-        internal static string ExceptionCategoryFilterDataName {
-            get {
-                return ResourceManager.GetString("ExceptionCategoryFilterDataName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The category &apos;{0}&apos; is not defined in the Logging Distributor configuration..
-        /// </summary>
-        internal static string ExceptionCategoryNotDefined {
-            get {
-                return ResourceManager.GetString("ExceptionCategoryNotDefined", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The configuration object for type &apos;{0}&apos; with name &apos;{1}&apos; has type &apos;{2}&apos; instead of CustomTraceListenerData which is required for custom providers..
-        /// </summary>
-        internal static string ExceptionConfigurationObjectIsNotCustomTraceListenerData {
-            get {
-                return ResourceManager.GetString("ExceptionConfigurationObjectIsNotCustomTraceListenerData", resourceCulture);
+                return ResourceManager.GetString("ErrorSubmitIntervalInvalidRange", resourceCulture);
             }
         }
         
@@ -530,65 +232,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The type &apos;{1}&apos; specified for custom trace listener named &apos;{0}&apos; does not a default constructor, which is required when no InitData is specified in the configuration..
-        /// </summary>
-        internal static string ExceptionCustomListenerTypeDoesNotHaveDefaultConstructor {
-            get {
-                return ResourceManager.GetString("ExceptionCustomListenerTypeDoesNotHaveDefaultConstructor", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The type &apos;{1}&apos; specified for custom trace listener named &apos;{0}&apos; does not a constructor with the required signature {2}..
-        /// </summary>
-        internal static string ExceptionCustomListenerTypeDoesNotHaveRequiredConstructorSignature {
-            get {
-                return ResourceManager.GetString("ExceptionCustomListenerTypeDoesNotHaveRequiredConstructorSignature", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Custom TraceListener type {1} for name {0} does not have the required constructor .ctor(string)..
-        /// </summary>
-        internal static string ExceptionCustomTraceListenerTypeDoesNotHaveRequiredConstructor {
-            get {
-                return ResourceManager.GetString("ExceptionCustomTraceListenerTypeDoesNotHaveRequiredConstructor", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Exception Information Details:.
         /// </summary>
         internal static string ExceptionDetails {
             get {
                 return ResourceManager.GetString("ExceptionDetails", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to An error occurred while formatting the log entry for reporting {0}..
-        /// </summary>
-        internal static string ExceptionDuringFormattingOriginalEntryForReporting {
-            get {
-                return ResourceManager.GetString("ExceptionDuringFormattingOriginalEntryForReporting", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Log writer failed to acquire lock while updating configuration..
-        /// </summary>
-        internal static string ExceptionFailedToAcquireLockToUpdate {
-            get {
-                return ResourceManager.GetString("ExceptionFailedToAcquireLockToUpdate", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Log writer failed to acquire lock while writing log entry..
-        /// </summary>
-        internal static string ExceptionFailedToAcquireLockToWriteLog {
-            get {
-                return ResourceManager.GetString("ExceptionFailedToAcquireLockToWriteLog", resourceCulture);
             }
         }
         
@@ -602,74 +250,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The formatter &apos;{0}&apos; is not defined in the Logging Distributor configuration..
-        /// </summary>
-        internal static string ExceptionFormatterNotDefined {
-            get {
-                return ResourceManager.GetString("ExceptionFormatterNotDefined", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The factory {0} was created to use {1} objects to inject data into {2} objects. The type {3} was supplied to the Create method which is not compatible..
-        /// </summary>
-        internal static string ExceptionIncompatibleConfigurationType {
-            get {
-                return ResourceManager.GetString("ExceptionIncompatibleConfigurationType", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The configuration section for Logging cannot be found in the configuration source..
-        /// </summary>
-        internal static string ExceptionLoggingSectionNotFound {
-            get {
-                return ResourceManager.GetString("ExceptionLoggingSectionNotFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Must be implemented by subclasses..
-        /// </summary>
-        internal static string ExceptionMethodMustBeImplementedBySubclasses {
-            get {
-                return ResourceManager.GetString("ExceptionMethodMustBeImplementedBySubclasses", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The requested log sink &apos;{0}&apos; is not defined in the current configuration..
-        /// </summary>
-        internal static string ExceptionNoSinkDefined {
-            get {
-                return ResourceManager.GetString("ExceptionNoSinkDefined", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The Distributor Settings does not have any log sinks defined in configuration..
-        /// </summary>
-        internal static string ExceptionNoSinksDefined {
-            get {
-                return ResourceManager.GetString("ExceptionNoSinksDefined", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The value can not be a null or empty string..
+        ///   Looks up a localized string similar to The value cannot be a null or empty string..
         /// </summary>
         internal static string ExceptionNullOrEmptyString {
             get {
                 return ResourceManager.GetString("ExceptionNullOrEmptyString", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Environment Variables access denied..
-        /// </summary>
-        internal static string ExceptionReadEnvironmentVariablesDenied {
-            get {
-                return ResourceManager.GetString("ExceptionReadEnvironmentVariablesDenied", resourceCulture);
             }
         }
         
@@ -692,33 +277,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Missing TraceListenerData type in configuration &apos;{0}&apos;..
-        /// </summary>
-        internal static string ExceptionTraceListenerConfigurationElementMissingTypeAttribute {
-            get {
-                return ResourceManager.GetString("ExceptionTraceListenerConfigurationElementMissingTypeAttribute", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Invalid TraceListenerData type in configuration &apos;{0}&apos;..
-        /// </summary>
-        internal static string ExceptionTraceListenerConfigurationElementTypeNotFound {
-            get {
-                return ResourceManager.GetString("ExceptionTraceListenerConfigurationElementTypeNotFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The configuration for TraceListener named {0} is missing from configuration..
-        /// </summary>
-        internal static string ExceptionTraceListenerConfigurationNotFound {
-            get {
-                return ResourceManager.GetString("ExceptionTraceListenerConfigurationNotFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Exception Type.
         /// </summary>
         internal static string ExceptionType {
@@ -733,15 +291,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Properties {
         internal static string ExceptionWriterShouldNotBeNull {
             get {
                 return ResourceManager.GetString("ExceptionWriterShouldNotBeNull", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Unable to read system property. Error message: {0}.
-        /// </summary>
-        internal static string ExtendedPropertyError {
-            get {
-                return ResourceManager.GetString("ExtendedPropertyError", resourceCulture);
             }
         }
         
@@ -769,15 +318,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Properties {
         internal static string FailureWhileTracing {
             get {
                 return ResourceManager.GetString("FailureWhileTracing", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Flat File Sink is missing one of these keys in the Distributor&apos;s configuration file: FilePath and/or FileName.
-        /// </summary>
-        internal static string FileSinkMissingConfiguration {
-            get {
-                return ResourceManager.GetString("FileSinkMissingConfiguration", resourceCulture);
             }
         }
         
@@ -811,51 +351,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Log Formatter Factory.
-        /// </summary>
-        internal static string FormatterFactoryName {
-            get {
-                return ResourceManager.GetString("FormatterFactoryName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Unable to find instance  name &apos;{0}&apos; for &apos;{1}&apos;..
-        /// </summary>
-        internal static string InstanceNameNotFoundForSpecifiedType {
-            get {
-                return ResourceManager.GetString("InstanceNameNotFoundForSpecifiedType", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Enterprise Library Logging Service.
-        /// </summary>
-        internal static string InstrumentationCounterCategory {
-            get {
-                return ResourceManager.GetString("InstrumentationCounterCategory", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Enterprise Library Logging Service application performance counters..
-        /// </summary>
-        internal static string InstrumentationCounterCategoryHelp {
-            get {
-                return ResourceManager.GetString("InstrumentationCounterCategoryHelp", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Enterprise Library Logging Service.
-        /// </summary>
-        internal static string InstrumentationEventSource {
-            get {
-                return ResourceManager.GetString("InstrumentationEventSource", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Unable to read intrinsic property.  Error message: {0}.
         /// </summary>
         internal static string IntrinsicPropertyError {
@@ -865,76 +360,50 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Error logging with &apos;{0}&apos; sink from configuration. The default log sink will be used instead to process the message..
+        ///   Looks up a localized string similar to Timestamp: {0}
+        ///Message: {1}
+        ///Category: {2}
+        ///Severity: {3}.
         /// </summary>
-        internal static string InvalidSink {
+        internal static string LogEntry_SimplifiedToString {
             get {
-                return ResourceManager.GetString("InvalidSink", resourceCulture);
+                return ResourceManager.GetString("LogEntry_SimplifiedToString", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 
-        ///Message: 
-        ///{0}.
+        ///   Looks up a localized string similar to The value must be either 0, or larger than {0} KB..
         /// </summary>
-        internal static string InvalidSinkMessage {
+        internal static string LogEntryMessageStoreMaxSizeMustBeEitherZeroOrLargerThanZero {
             get {
-                return ResourceManager.GetString("InvalidSinkMessage", resourceCulture);
+                return ResourceManager.GetString("LogEntryMessageStoreMaxSizeMustBeEitherZeroOrLargerThanZero", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Permission for UnmanagedCode is not available..
+        ///   Looks up a localized string similar to LoggingServiceFactory is not correctly initialized. EndpointConfigurationName must be set prior to usage..
         /// </summary>
-        internal static string LogEntryIntrinsicPropertyNoUnmanagedCodePermissionError {
+        internal static string LoggingServiceFactory_EndpointConfigurationNameNotSet {
             get {
-                return ResourceManager.GetString("LogEntryIntrinsicPropertyNoUnmanagedCodePermissionError", resourceCulture);
+                return ResourceManager.GetString("LoggingServiceFactory_EndpointConfigurationNameNotSet", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Logging Events Raised/sec is the rate at which logging events were raised..
+        ///   Looks up a localized string similar to The instance of ILogWriterUpdateContext used to apply changes is not current..
         /// </summary>
-        internal static string LoggingEventRaisedHelpResource {
+        internal static string LogWriterUpdateContext_IsNotCurrent {
             get {
-                return ResourceManager.GetString("LoggingEventRaisedHelpResource", resourceCulture);
+                return ResourceManager.GetString("LogWriterUpdateContext_IsNotCurrent", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to AuthenticationType.
+        ///   Looks up a localized string similar to MaxSizeInKilobytes cannot be changed. The current running instance does not have write access to the repository..
         /// </summary>
-        internal static string ManagedSecurity_AuthenticationType {
+        internal static string MaxSizeInKilobytesCannotBeChanged {
             get {
-                return ResourceManager.GetString("ManagedSecurity_AuthenticationType", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to IdentityName.
-        /// </summary>
-        internal static string ManagedSecurity_IdentityName {
-            get {
-                return ResourceManager.GetString("ManagedSecurity_IdentityName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to IsAuthenticated.
-        /// </summary>
-        internal static string ManagedSecurity_IsAuthenticated {
-            get {
-                return ResourceManager.GetString("ManagedSecurity_IsAuthenticated", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The method {0}::{1} is not implemented..
-        /// </summary>
-        internal static string MethodNotImplemented {
-            get {
-                return ResourceManager.GetString("MethodNotImplemented", resourceCulture);
+                return ResourceManager.GetString("MaxSizeInKilobytesCannotBeChanged", resourceCulture);
             }
         }
         
@@ -949,74 +418,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The default formatter is missing from the configuration file.  The entry will be written using a TextFormatter and an embedded template..
-        /// </summary>
-        internal static string MissingDefaultFormatter {
-            get {
-                return ResourceManager.GetString("MissingDefaultFormatter", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Unprocessed Category.
         /// </summary>
         internal static string NotProcessedTraceSourceName {
             get {
                 return ResourceManager.GetString("NotProcessedTraceSourceName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Distributor: # of Logs to Default Sink/Sec.
-        /// </summary>
-        internal static string NumLogsDefaultSinkSec {
-            get {
-                return ResourceManager.GetString("NumLogsDefaultSinkSec", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Number of logs per second distributed by the Log Distributor to the Default Log Sink (EventLog)..
-        /// </summary>
-        internal static string NumLogsDefaultSinkSecMsg {
-            get {
-                return ResourceManager.GetString("NumLogsDefaultSinkSecMsg", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Distributor: # of Logs Distributed/Sec.
-        /// </summary>
-        internal static string NumLogsDistributedSec {
-            get {
-                return ResourceManager.GetString("NumLogsDistributedSec", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Number of logs distributed per second by the Log Distributor..
-        /// </summary>
-        internal static string NumLogsDistributedSecMsg {
-            get {
-                return ResourceManager.GetString("NumLogsDistributedSecMsg", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Client: # of Logs Written/Sec.
-        /// </summary>
-        internal static string NumLogsWrittenSec {
-            get {
-                return ResourceManager.GetString("NumLogsWrittenSec", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Number of logs per second written by client using the Enterprise Library Logging Application Block..
-        /// </summary>
-        internal static string NumLogsWrittenSecMsg {
-            get {
-                return ResourceManager.GetString("NumLogsWrittenSecMsg", resourceCulture);
             }
         }
         
@@ -1064,15 +470,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Properties {
         internal static string PropertyAccessFailed {
             get {
                 return ResourceManager.GetString("PropertyAccessFailed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to An unknown error occurred reconfiguring the Logging Application Block. Reconfiguration will not take place..
-        /// </summary>
-        internal static string ReconfigurationFailure {
-            get {
-                return ResourceManager.GetString("ReconfigurationFailure", resourceCulture);
             }
         }
         
@@ -1159,74 +556,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Log Sink Factory.
+        ///   Looks up a localized string similar to Resize failed. Could not grab a file lock on the isolated storage after it has been removed and prior to re-initialization. Data loss may have occurred..
         /// </summary>
-        internal static string SinkFactoryName {
+        internal static string ResizeRepositoryFailed {
             get {
-                return ResourceManager.GetString("SinkFactoryName", resourceCulture);
+                return ResourceManager.GetString("ResizeRepositoryFailed", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Sink failed because: {0}..
+        ///   Looks up a localized string similar to TraceListener with name &apos;{0}&apos; is not defined in configuration or not active..
         /// </summary>
-        internal static string SinkFailure {
+        internal static string TraceListenersReferenceCollection_InvalidName {
             get {
-                return ResourceManager.GetString("SinkFailure", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {timestamp}: {title} - {message}.
-        /// </summary>
-        internal static string TemplateForFailedLogEntry {
-            get {
-                return ResourceManager.GetString("TemplateForFailedLogEntry", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Total Logging Events Raised is the total number of logging events raised..
-        /// </summary>
-        internal static string TotalLoggingEventsRaisedHelpResource {
-            get {
-                return ResourceManager.GetString("TotalLoggingEventsRaisedHelpResource", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Total Trace Listener Entries Written is the total number of entries that were traced by individual trace listeners..
-        /// </summary>
-        internal static string TotalTraceListenerEntriesWrittenHelpResource {
-            get {
-                return ResourceManager.GetString("TotalTraceListenerEntriesWrittenHelpResource", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Total Trace Operations Started is the total number of tracing operations started..
-        /// </summary>
-        internal static string TotalTraceOperationsStartedHelpResource {
-            get {
-                return ResourceManager.GetString("TotalTraceOperationsStartedHelpResource", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Trace Listener Entries Written/sec is the rate at which entries were traced by individual trace listeners..
-        /// </summary>
-        internal static string TraceListenerEntryWrittenHelpResource {
-            get {
-                return ResourceManager.GetString("TraceListenerEntryWrittenHelpResource", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Trace Operations Started/sec is the rate at which tracing operations were started..
-        /// </summary>
-        internal static string TraceOperationStartedHelpResource {
-            get {
-                return ResourceManager.GetString("TraceOperationStartedHelpResource", resourceCulture);
+                return ResourceManager.GetString("TraceListenersReferenceCollection_InvalidName", resourceCulture);
             }
         }
         
@@ -1278,38 +621,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to An unknown error has occurred..
-        /// </summary>
-        internal static string UnknownError {
-            get {
-                return ResourceManager.GetString("UnknownError", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Unknwon failure..
+        ///   Looks up a localized string similar to Unknown failure..
         /// </summary>
         internal static string UnknownFailure {
             get {
                 return ResourceManager.GetString("UnknownFailure", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to CurrentUser.
-        /// </summary>
-        internal static string UnmanagedSecurity_CurrentUser {
-            get {
-                return ResourceManager.GetString("UnmanagedSecurity_CurrentUser", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to ProcessAccountName.
-        /// </summary>
-        internal static string UnmanagedSecurity_ProcessAccountName {
-            get {
-                return ResourceManager.GetString("UnmanagedSecurity_ProcessAccountName", resourceCulture);
             }
         }
     }

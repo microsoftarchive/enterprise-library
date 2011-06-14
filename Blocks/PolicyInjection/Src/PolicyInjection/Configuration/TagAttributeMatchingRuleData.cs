@@ -9,8 +9,11 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Properties;
 using Microsoft.Practices.Unity.InterceptionExtension;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
@@ -29,6 +32,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// <returns>The set of <see cref="TypeRegistration"/> objects.</returns>
         public override IEnumerable<TypeRegistration> GetRegistrations(string nameSuffix)
         {
+            if (string.IsNullOrEmpty(this.Match))
+            {
+                throw new InvalidOperationException(
+                    string.Format(CultureInfo.CurrentCulture, Resources.ErrorTagAttributeMatchingRuleMatchNotSet, this.Name));
+            }
+
             yield return
                 new TypeRegistration<IMatchingRule>(() => new TagAttributeMatchingRule(this.Match, this.IgnoreCase))
                 {

@@ -9,10 +9,13 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Globalization;
 using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Properties;
 using Microsoft.Practices.Unity.InterceptionExtension;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
@@ -39,6 +42,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
         public IEnumerable<TypeRegistration> GetRegistrations()
         {
+            if (string.IsNullOrEmpty(this.Name))
+            {
+                throw new InvalidOperationException(Resources.ErrorPolicyNameNotSet);
+            }
+
             List<TypeRegistration> registrations = new List<TypeRegistration>();
             List<string> matchingRuleNames = new List<string>();
             List<string> callHandlerNames = new List<string>();
@@ -62,7 +70,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
                 callHandlerNames.AddRange(
                     callHandlerRegistrations.Where(tr => tr.ServiceType == typeof(ICallHandler)).Select(tr => tr.Name));
             }
-
+            
             registrations.Add(
                 new TypeRegistration<InjectionPolicy>(
                     () =>

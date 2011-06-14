@@ -1,7 +1,21 @@
-﻿using System;
+﻿//===============================================================================
+// Microsoft patterns & practices Enterprise Library
+// Caching Application Block
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+
+using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO.IsolatedStorage;
 using System.Linq;
+
+using Microsoft.Practices.EnterpriseLibrary.Caching.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Common.Utility;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.IsolatedStorage
@@ -13,9 +27,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.IsolatedStorage
     {
         private const string AccesorPreffix = "Cache_";
 
-        private readonly string name;
-        private readonly long maxSizeInBytes;
-
         private readonly IIsolatedStorageCacheEntrySerializer serializer;
         private StorageAccessor storage;
 
@@ -23,20 +34,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.IsolatedStorage
         /// Initializes a new instance of the <see cref="CacheEntryStore"/> class.
         /// </summary>
         /// <param name="name">The name of the store.</param>
-        /// <param name="maxSizeInBytes">The maximum size in bytes.</param>
+        /// <param name="maxSizeInKilobytes">The maximum size in bytes.</param>
         /// <param name="serializer">An entry serializer.</param>
-        public CacheEntryStore(string name, long maxSizeInBytes, IIsolatedStorageCacheEntrySerializer serializer)
+        public CacheEntryStore(string name, int maxSizeInKilobytes, IIsolatedStorageCacheEntrySerializer serializer)
         {
-            if (maxSizeInBytes < 0)
-                throw new ArgumentOutOfRangeException("maxSizeInBytes");
+            if (maxSizeInKilobytes < 0) throw new ArgumentOutOfRangeException("maxSizeInKilobytes");
 
-            this.name = name;
-            this.maxSizeInBytes = maxSizeInBytes;
             this.serializer = serializer;
 
             try
             {
-                this.storage = new StorageAccessor(AccesorPreffix + name, maxSizeInBytes);
+                this.storage = new StorageAccessor(AccesorPreffix + name, maxSizeInKilobytes * 1024);
             }
             catch (IsolatedStorageException)
             {
@@ -67,6 +75,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.IsolatedStorage
         /// </remarks>
         public void Add(IsolatedStorageCacheEntry entry)
         {
+            if (entry == null) throw new ArgumentNullException("entry");
+
             if (this.IsWritable)
             {
                 var serialized = this.serializer.Serialize(entry);
@@ -80,6 +90,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.IsolatedStorage
         /// <param name="entry">The entry to remove.</param>
         public void Remove(IsolatedStorageCacheEntry entry)
         {
+            if (entry == null) throw new ArgumentNullException("entry");
+
             if (this.IsWritable)
             {
                 EnsurePersisted(entry);
@@ -95,12 +107,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.IsolatedStorage
         /// <param name="entry">The entry to update.</param>
         public void UpdateLastUpdateTime(IsolatedStorageCacheEntry entry)
         {
+            if (entry == null) throw new ArgumentNullException("entry");
+
             if (this.IsWritable)
             {
                 EnsurePersisted(entry);
 
                 var update = this.serializer.GetUpdateForLastUpdateTime(entry);
-                this.storage.Overwrite(entry.StorageId, update.Bytes, update.Offset);
+                this.storage.Overwrite(entry.StorageId, update.GetValue(), update.Offset);
             }
         }
 
@@ -108,6 +122,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.IsolatedStorage
         /// Retrieves all the entries currently stored by the store.
         /// </summary>
         /// <returns></returns>
+        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "Best effor to deserialize. If there is any problem with the storage, ignore and continue.")]
         public IEnumerable<IsolatedStorageCacheEntry> GetSerializedEntries()
         {
             if (this.storage != null)
@@ -135,7 +150,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.IsolatedStorage
                         }
                         catch
                         {
-                            // if cannot deserialize entry for some reason, try to remove it, and skip it
+                            // if cannot deserialize entry for any reason, try to remove it, and skip it
                             // TODO log about this deserialization exception
                             this.TryRemove(serializedEntry.Key);
                         }
@@ -204,7 +219,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.IsolatedStorage
         private static void EnsurePersisted(IsolatedStorageCacheEntry entry)
         {
             if (entry.StorageId == null)
-                throw new ArgumentException("Entry is not persisted.");
+                throw new InvalidOperationException(Resources.ExceptionEntryNotPersisted);
         }
 
         private void DisposeChildDependencies()
@@ -212,6 +227,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.IsolatedStorage
             using (this.storage as IDisposable) { this.storage = null; }
         }
 
+        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "Best effor to update. If there is any problem with the storage, ignore and continue.")]
         private void TryRemove(string id)
         {
             if (this.IsWritable)

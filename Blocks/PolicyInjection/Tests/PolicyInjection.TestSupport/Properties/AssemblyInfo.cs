@@ -10,20 +10,15 @@
 //===============================================================================
 
 using System.Reflection;
+#if !SILVERLIGHT
 using System.Security.Permissions;
 using System.Runtime.ConstrainedExecution;
 using System.Runtime.CompilerServices;
 
-#if !SILVERLIGHT
 [assembly: SecurityPermission(SecurityAction.RequestMinimum)]
 [assembly: ReliabilityContract(Consistency.WillNotCorruptState, Cer.None)]
+#endif
 
 [assembly: AssemblyTitle("Enterprise Library Policy Injection Application Block Test Support")]
 [assembly: AssemblyDescription("Enterprise Library Policy Injection Application Block Test Support")]
-[assembly: AssemblyVersion("5.0.414.0")]
-#else
-[assembly: AssemblyTitle("Enterprise Library Policy Injection Application Block Test Support for Silverlight")]
-[assembly: AssemblyDescription("Enterprise Library Policy Injection Application Block Test Support for Silverlight")]
-[assembly: AssemblyVersion("5.0.414.0")]
-#endif
-
+[assembly: AssemblyVersion("5.0.505.0")]

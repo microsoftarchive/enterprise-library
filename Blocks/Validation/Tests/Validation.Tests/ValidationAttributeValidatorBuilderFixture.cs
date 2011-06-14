@@ -11,6 +11,9 @@
 
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+#if SILVERLIGHT
+using Microsoft.Practices.EnterpriseLibrary.Validation.DataAnnotations;
+#endif
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
@@ -90,7 +93,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         }
     }
 
-#if !SILVERLIGHT
     [TestClass]
     public class GivenValidatorCreatedByValidationAttributeValidatorBuilderForTypeWithValidationAttributesOnMetadataType
     {
@@ -173,5 +175,4 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
             public string MyField;
         }
     }
-#endif
 }

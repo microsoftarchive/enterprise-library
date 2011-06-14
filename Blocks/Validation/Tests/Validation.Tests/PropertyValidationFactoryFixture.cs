@@ -273,7 +273,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
         [TestInitialize]
         public void Setup()
         {
-            var configurationSource = ResourceDictionaryConfigurationSource.FromXaml(new Uri("/Microsoft.Practices.EnterpriseLibrary.Validation.Silverlight.Tests;component/Configuration.xaml", UriKind.Relative));
+            var configurationSource = DictionaryConfigurationSource.FromXaml(new Uri("/Microsoft.Practices.EnterpriseLibrary.Validation.Silverlight.Tests;component/Configuration.xaml", UriKind.Relative));
             EnterpriseLibraryContainer.Current = EnterpriseLibraryContainer.CreateDefaultContainer(configurationSource);
         }
 #endif

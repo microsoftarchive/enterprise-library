@@ -51,12 +51,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
 
             return deserializedPolicy.MatchingRules.Get(0);
         }
-#else
-        [TestMethod]
-        public void HasDefaultCtor()
-        {
-            new MatchingRuleData();
-        }
 #endif
     }
 }

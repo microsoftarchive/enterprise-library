@@ -24,8 +24,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
         [TestMethod]
         public void CanSerializeTypeMatchingRule()
         {
-            TagAttributeMatchingRuleData tagAttributeMatchingRule = new TagAttributeMatchingRuleData("RuleName", "Tag");
-            tagAttributeMatchingRule.IgnoreCase = true;
+            TagAttributeMatchingRuleData tagAttributeMatchingRule = new TagAttributeMatchingRuleData
+            { 
+                Name = "RuleName", 
+                Match = "Tag",
+                IgnoreCase = true
+            };
 
             TagAttributeMatchingRuleData deserializedRule = SerializeAndDeserializeMatchingRule(tagAttributeMatchingRule) as TagAttributeMatchingRuleData;
 
@@ -34,18 +38,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
             Assert.AreEqual(tagAttributeMatchingRule.IgnoreCase, deserializedRule.IgnoreCase);
             Assert.AreEqual(tagAttributeMatchingRule.Match, deserializedRule.Match);
         }
-#else
-        [TestMethod]
-        public void HasDefaultCtor()
-        {
-            new TagAttributeMatchingRuleData();
-        }
 #endif
 
         [TestMethod]
         public void MatchingRuleHasTransientLifetime()
         {
-            TagAttributeMatchingRuleData ruleData = new TagAttributeMatchingRuleData("RuleName", "TAg");
+            TagAttributeMatchingRuleData ruleData = new TagAttributeMatchingRuleData
+            { 
+                Name = "RuleName", 
+                Match = "TAg",
+            };
             TypeRegistration registration = ruleData.GetRegistrations("").First();
 
             Assert.AreEqual(TypeRegistrationLifetime.Transient, registration.Lifetime);

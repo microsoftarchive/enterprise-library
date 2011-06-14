@@ -61,128 +61,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Custom.
-        /// </summary>
-        public static string AddCustomHandlerData {
-            get {
-                return ResourceManager.GetString("AddCustomHandlerData", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Exception Type.
-        /// </summary>
-        public static string AddExceptionTypeDisplayName {
-            get {
-                return ResourceManager.GetString("AddExceptionTypeDisplayName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Add a new exception type that is handled by this exception policy..
-        /// </summary>
-        public static string AddExceptionTypeHelpText {
-            get {
-                return ResourceManager.GetString("AddExceptionTypeHelpText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Additional Info:.
         /// </summary>
         public static string AdditionalInfo {
             get {
                 return ResourceManager.GetString("AdditionalInfo", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Add a new policy..
-        /// </summary>
-        public static string AddPolicyDisplayDescription {
-            get {
-                return ResourceManager.GetString("AddPolicyDisplayDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Policy.
-        /// </summary>
-        public static string AddPolicyDisplayName {
-            get {
-                return ResourceManager.GetString("AddPolicyDisplayName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Replace Handler.
-        /// </summary>
-        public static string AddReplaceHandlerData {
-            get {
-                return ResourceManager.GetString("AddReplaceHandlerData", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Replace the exception with another exception..
-        /// </summary>
-        public static string AddReplaceHandlerDataDescription {
-            get {
-                return ResourceManager.GetString("AddReplaceHandlerDataDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Wrap Handler.
-        /// </summary>
-        public static string AddWrapHandlerData {
-            get {
-                return ResourceManager.GetString("AddWrapHandlerData", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Wrap the exception within another exception..
-        /// </summary>
-        public static string AddWrapHandlerDataDescription {
-            get {
-                return ResourceManager.GetString("AddWrapHandlerDataDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Attributes.
-        /// </summary>
-        public static string AttributesDescription {
-            get {
-                return ResourceManager.GetString("AttributesDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Attributes.
-        /// </summary>
-        public static string AttributesDisplayName {
-            get {
-                return ResourceManager.GetString("AttributesDisplayName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to AuthorizationProviderTypeDescription.
-        /// </summary>
-        public static string AuthorizationProviderTypeDescription {
-            get {
-                return ResourceManager.GetString("AuthorizationProviderTypeDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Enterprise Library Exception Handling Application Block.
-        /// </summary>
-        public static string BlockName {
-            get {
-                return ResourceManager.GetString("BlockName", resourceCulture);
             }
         }
         
@@ -205,119 +88,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A configuration failure occurred while creating policy ‘{0}’..
-        /// </summary>
-        public static string ConfigurationFailureCreatingPolicy {
-            get {
-                return ResourceManager.GetString("ConfigurationFailureCreatingPolicy", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The error occurred while handling an exception for policy &quot;{0}&quot;..
-        /// </summary>
-        public static string ErrorHandlingExceptionMessage {
-            get {
-                return ResourceManager.GetString("ErrorHandlingExceptionMessage", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Event id.
-        /// </summary>
-        public static string EventIdDisplayName {
-            get {
-                return ResourceManager.GetString("EventIdDisplayName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Exceptions Handled/sec is the rate at which exceptions were handled..
-        /// </summary>
-        public static string ExceptionHandledHelpResource {
-            get {
-                return ResourceManager.GetString("ExceptionHandledHelpResource", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Exception Handlers Executed/sec is the rate at which exception handlers were executed..
-        /// </summary>
-        public static string ExceptionHandlerExecutedHelpResource {
-            get {
-                return ResourceManager.GetString("ExceptionHandlerExecutedHelpResource", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Handlers.
-        /// </summary>
-        public static string ExceptionHandlersDisplayName {
-            get {
-                return ResourceManager.GetString("ExceptionHandlersDisplayName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Custom Handler Type.
-        /// </summary>
-        public static string ExceptionHandlerTypeDescription {
-            get {
-                return ResourceManager.GetString("ExceptionHandlerTypeDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Custom Handler Type.
-        /// </summary>
-        public static string ExceptionHandlerTypeDisplayName {
-            get {
-                return ResourceManager.GetString("ExceptionHandlerTypeDisplayName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Exception message.
-        /// </summary>
-        public static string ExceptionMessageDisplayName {
-            get {
-                return ResourceManager.GetString("ExceptionMessageDisplayName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Exception message resource name.
-        /// </summary>
-        public static string ExceptionMessageResourceNameDisplayName {
-            get {
-                return ResourceManager.GetString("ExceptionMessageResourceNameDisplayName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Exception message resource type.
-        /// </summary>
-        public static string ExceptionMessageResourceTypeDisplayName {
-            get {
-                return ResourceManager.GetString("ExceptionMessageResourceTypeDisplayName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Unable to rethrow exception: The exception to throw is null..
         /// </summary>
         public static string ExceptionNullException {
             get {
                 return ResourceManager.GetString("ExceptionNullException", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Policies.
-        /// </summary>
-        public static string ExceptionPoliciesDisplayName {
-            get {
-                return ResourceManager.GetString("ExceptionPoliciesDisplayName", resourceCulture);
             }
         }
         
@@ -331,7 +106,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The value can not be an empty string or null..
+        ///   Looks up a localized string similar to The value cannot be an empty string or null..
         /// </summary>
         public static string ExceptionStringNullOrEmpty {
             get {
@@ -345,15 +120,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Properties {
         public static string ExceptionTypeNotException {
             get {
                 return ResourceManager.GetString("ExceptionTypeNotException", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Exception Types.
-        /// </summary>
-        public static string ExceptionTypesDisplayName {
-            get {
-                return ResourceManager.GetString("ExceptionTypesDisplayName", resourceCulture);
             }
         }
         
@@ -376,24 +142,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Formatter type name.
-        /// </summary>
-        public static string FormatterTypeNameDisplayName {
-            get {
-                return ResourceManager.GetString("FormatterTypeNameDisplayName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Help link : {0}.
-        /// </summary>
-        public static string HelpLink {
-            get {
-                return ResourceManager.GetString("HelpLink", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Inner Exception.
         /// </summary>
         public static string InnerException {
@@ -403,29 +151,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Log category.
-        /// </summary>
-        public static string LogCategoryDisplayName {
-            get {
-                return ResourceManager.GetString("LogCategoryDisplayName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Message : {0}.
         /// </summary>
         public static string Message {
             get {
                 return ResourceManager.GetString("Message", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Name.
-        /// </summary>
-        public static string NameDisplayName {
-            get {
-                return ResourceManager.GetString("NameDisplayName", resourceCulture);
             }
         }
         
@@ -448,15 +178,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Permission Denied.
-        /// </summary>
-        public static string PermissionDenied {
-            get {
-                return ResourceManager.GetString("PermissionDenied", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to POLICY NAME: {0}.
         /// </summary>
         public static string PolicyName {
@@ -466,65 +187,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Post handling action.
-        /// </summary>
-        public static string PostHandlingActionDisplayName {
-            get {
-                return ResourceManager.GetString("PostHandlingActionDisplayName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Priority.
-        /// </summary>
-        public static string PriorityDisplayName {
-            get {
-                return ResourceManager.GetString("PriorityDisplayName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Access failed.
         /// </summary>
         public static string PropertyAccessFailed {
             get {
                 return ResourceManager.GetString("PropertyAccessFailed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Replace exception type .
-        /// </summary>
-        public static string ReplaceExceptionTypeNameDisplayName {
-            get {
-                return ResourceManager.GetString("ReplaceExceptionTypeNameDisplayName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Exception Handling Settings.
-        /// </summary>
-        public static string SectionDisplayName {
-            get {
-                return ResourceManager.GetString("SectionDisplayName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Severity.
-        /// </summary>
-        public static string SeverityDisplayName {
-            get {
-                return ResourceManager.GetString("SeverityDisplayName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Source : {0}.
-        /// </summary>
-        public static string Source {
-            get {
-                return ResourceManager.GetString("Source", resourceCulture);
             }
         }
         
@@ -543,42 +210,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Properties {
         public static string StackTraceUnavailable {
             get {
                 return ResourceManager.GetString("StackTraceUnavailable", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Title.
-        /// </summary>
-        public static string TitleDisplayName {
-            get {
-                return ResourceManager.GetString("TitleDisplayName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Total Exceptions Handlers Executed is the total number which exception handlers were executed..
-        /// </summary>
-        public static string TotalExceptionHandlersExecutedHelpResource {
-            get {
-                return ResourceManager.GetString("TotalExceptionHandlersExecutedHelpResource", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Total Exceptions Handled is the total number of exceptions handled..
-        /// </summary>
-        public static string TotalExceptionsHandledHelpResource {
-            get {
-                return ResourceManager.GetString("TotalExceptionsHandledHelpResource", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Type name.
-        /// </summary>
-        public static string TypeNameDisplayName {
-            get {
-                return ResourceManager.GetString("TypeNameDisplayName", resourceCulture);
             }
         }
         
@@ -606,24 +237,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Properties {
         public static string UndefinedValue {
             get {
                 return ResourceManager.GetString("UndefinedValue", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Use default logger.
-        /// </summary>
-        public static string UseDefaultLoggerDisplayName {
-            get {
-                return ResourceManager.GetString("UseDefaultLoggerDisplayName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Wrap exception type.
-        /// </summary>
-        public static string WrapExceptionTypeNameDisplayName {
-            get {
-                return ResourceManager.GetString("WrapExceptionTypeNameDisplayName", resourceCulture);
             }
         }
     }

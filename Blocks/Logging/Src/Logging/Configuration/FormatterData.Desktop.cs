@@ -45,7 +45,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 	    /// <returns>The type registration for this data section</returns>
 	    public virtual IEnumerable<TypeRegistration> GetRegistrations()
 	    {
-            throw new NotImplementedException(Resources.ExceptionMethodMustBeImplementedBySubclasses);
+            throw new NotImplementedException(Resources_Desktop.ExceptionMethodMustBeImplementedBySubclasses);
 	    }
 	}
 }

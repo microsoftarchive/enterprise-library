@@ -22,7 +22,7 @@
     <XapFilename>Caching.Silverlight.Tests.xap</XapFilename>
     <SilverlightManifestTemplate>Properties\AppManifest.xml</SilverlightManifestTemplate>
     <SilverlightAppEntry>Microsoft.Practices.EnterpriseLibrary.Caching.Tests.App</SilverlightAppEntry>
-    <TestPageFileName>Validation.Silverlight.TestsTestPage.html</TestPageFileName>
+    <TestPageFileName>Caching.Silverlight.TestsTestPage.html</TestPageFileName>
     <CreateTestPage>true</CreateTestPage>
     <ValidateXaml>true</ValidateXaml>
     <EnableOutOfBrowser>false</EnableOutOfBrowser>
@@ -64,16 +64,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Castle.Core">
-      <HintPath>..\..\..\..\Lib\Silverlight\ThirdParty\Moq\Castle.Core.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\Lib\Silverlight\Microsoft.Practices.ServiceLocation.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Practices.Unity.Silverlight, Version=2.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.Practices.Unity.Silverlight, Version=2.1.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\Lib\Silverlight\Microsoft.Practices.Unity.Silverlight.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Silverlight.Testing">
@@ -107,14 +104,14 @@
     <Compile Include="CacheItemPolicyScenarios\given_policy_with_nonremovable_priority_and_expiration\Context.cs" />
     <Compile Include="CacheItemPolicyScenarios\given_policy_with_nonremovable_priority_and_expiration\when_expiring.cs" />
     <Compile Include="CacheItemPolicyScenarios\given_policy_with_sliding_and_absolute_expirations\Context.cs" />
-    <Compile Include="CacheItemPolicyScenarios\given_policy_with_sliding_and_absolute_expirations\when_time_is_after_expiration_and_within_sliding_window.cs" />
-    <Compile Include="CacheItemPolicyScenarios\given_policy_with_sliding_and_absolute_expirations\when_time_is_within_expiration_and_last_usage_is_in_sliding_window.cs" />
-    <Compile Include="CacheItemPolicyScenarios\given_policy_with_sliding_and_absolute_expirations\when_time_is_within_expiration_but_outside_sliding_window.cs" />
+    <Compile Include="CacheItemPolicyScenarios\given_policy_with_sliding_and_absolute_expirations\when_time_is_after_and_within_window.cs" />
+    <Compile Include="CacheItemPolicyScenarios\given_policy_with_sliding_and_absolute_expirations\when_time_is_within_and_in_window.cs" />
+    <Compile Include="CacheItemPolicyScenarios\given_policy_with_sliding_and_absolute_expirations\when_time_is_within_but_outside_window.cs" />
     <Compile Include="CacheItemPolicyScenarios\ValidPoliciesFixture.cs" />
     <Compile Include="Configuration\CachingSettingsScenarios\given_settings_with_multiple_cache_data\Context.cs" />
     <Compile Include="Configuration\CachingSettingsScenarios\given_settings_with_multiple_cache_data\when_requesting_type_registrations.cs" />
-    <Compile Include="Configuration\CachingSettingsScenarios\given_settings_with_default_name_not_matching_the_cache_data\Context.cs" />
-    <Compile Include="Configuration\CachingSettingsScenarios\given_settings_with_default_name_not_matching_the_cache_data\when_requesting_type_registrations.cs" />
+    <Compile Include="Configuration\CachingSettingsScenarios\given_settings_with_default_name_no_match\Context.cs" />
+    <Compile Include="Configuration\CachingSettingsScenarios\given_settings_with_default_name_no_match\when_requesting_type_registrations.cs" />
     <Compile Include="Configuration\CachingSettingsScenarios\given_empty_caching_settings\Context.cs" />
     <Compile Include="Configuration\CachingSettingsScenarios\given_empty_caching_settings\when_requesting_type_registrations.cs" />
     <Compile Include="Configuration\CachingSettingsScenarios\given_settings_with_default_name\Context.cs" />
@@ -123,6 +120,9 @@
     <Compile Include="Configuration\CachingSettingsScenarios\given_settings_with_single_cache_data\when_requesting_type_registrations.cs" />
     <Compile Include="Configuration\ContainerModelScenarios\given_configuration_source_with_cache_settings\Context.cs" />
     <Compile Include="Configuration\ContainerModelScenarios\given_configuration_source_with_cache_settings\when_configuring_a_container.cs" />
+    <Compile Include="Configuration\Fluent\CachingConfigurationSourceBuilderExtensionFixture.cs" />
+    <Compile Include="Configuration\Fluent\SetupIsolatedStorageCacheNamedExtensionFixture.cs" />
+    <Compile Include="Configuration\Fluent\SetupInMemoryCacheNamedExtensionFixture.cs" />
     <Compile Include="Configuration\InMemoryCacheDataScenarios\given_default_ctor\Context.cs" />
     <Compile Include="Configuration\InMemoryCacheDataScenarios\given_default_ctor\when_calling_default_ctor.cs" />
     <Compile Include="Configuration\InMemoryCacheDataScenarios\given_data\Context.cs" />
@@ -141,10 +141,13 @@
     <Compile Include="InMemoryCachingScenarios\given_an_empty_in_memory_cache\when_adding_one_item.cs" />
     <Compile Include="InMemoryCachingScenarios\given_an_empty_in_memory_cache\when_initialized.cs" />
     <Compile Include="InMemoryCachingScenarios\given_cache_containing_items_that_expire\Context.cs" />
+    <Compile Include="InMemoryCachingScenarios\given_cache_containing_items_that_expire\when_update_callback_does_not_update.cs" />
     <Compile Include="InMemoryCachingScenarios\given_cache_containing_items_that_expire\when_expiration_scheduler_has_not_executed.cs" />
     <Compile Include="InMemoryCachingScenarios\given_cache_containing_items_that_expire\when_manually_running_expirations.cs" />
     <Compile Include="InMemoryCachingScenarios\given_cache_containing_items_that_expire\when_specifying_an_update_callback.cs" />
     <Compile Include="InMemoryCachingScenarios\NumberOfItemsScavengingStrategyFixture.cs" />
+    <Compile Include="IsolatedStorage\CacheEntryStoreFixture.cs" />
+    <Compile Include="IsolatedStorage\given_an_empty_iso_storage_cache\when_adding_over_scavenging_limit.cs" />
     <Compile Include="IsolatedStorage\given_an_iso_storage_with_data\when_creating_second_instance_cache.cs" />
     <Compile Include="IsolatedStorage\given_an_iso_storage_with_data\when_having_issues_to_access_stored_data.cs" />
     <Compile Include="IsolatedStorage\given_an_empty_iso_storage_cache\when_initialized.cs" />

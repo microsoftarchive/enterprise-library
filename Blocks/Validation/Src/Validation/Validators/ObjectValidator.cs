@@ -138,7 +138,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         /// <remarks>
         /// If <paramref name="objectToValidate"/> is <see langword="null"/> validation is ignored.
         /// <para/>
-        /// A referece to an instance of a type not compatible with the configured target type
+        /// A reference to an instance of a type not compatible with the configured target type
         /// causes a validation failure.
         /// </remarks>
         public override void DoValidate(object objectToValidate,

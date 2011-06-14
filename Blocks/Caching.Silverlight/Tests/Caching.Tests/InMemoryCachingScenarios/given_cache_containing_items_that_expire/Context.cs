@@ -1,4 +1,15 @@
-﻿using System;
+﻿//===============================================================================
+// Microsoft patterns & practices Enterprise Library
+// Caching Application Block
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+
+using System;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Runtime.Caching;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Scheduling;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
@@ -32,7 +43,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests.InMemoryCachingSce
             ExpirationMock.Setup(e => e.Start())
                 .Verifiable("Expiration timer was not started");
 
-            Cache = new InMemoryCache("test cache", 100, 50, schedulerMock.Object, ExpirationMock.Object)
+            Cache = new InMemoryCache("test cacheData", 100, 50, schedulerMock.Object, ExpirationMock.Object)
             {
                 { UnexpiredKey, "value that stays", NowForTest + TimeSpan.FromHours(2) },
                 { ExpiredKey, "value that expires", NowForTest - TimeSpan.FromHours(2) },

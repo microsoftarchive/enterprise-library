@@ -74,7 +74,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Lib\Desktop\Microsoft.Practices.Unity.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Practices.Unity.Interception, Version=2.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.Practices.Unity.Interception, Version=2.1.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Lib\Desktop\Microsoft.Practices.Unity.Interception.dll</HintPath>
     </Reference>
@@ -166,6 +166,11 @@
     <Compile Include="Configuration\TraceListenerDataCollection.cs" />
     <Compile Include="Configuration\TraceListenerReferenceData.cs" />
     <Compile Include="Configuration\TraceSourceData.cs" />
+    <Compile Include="Properties\Resources.Desktop.Designer.cs">
+      <DependentUpon>Resources.Desktop.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
     <Compile Include="Tracer.Desktop.cs" />
     <Compile Include="LogWriterImpl.Desktop.cs" />
     <Compile Include="ExceptionFormatter.cs" />
@@ -246,15 +251,20 @@
     <EmbeddedResource Include="Configuration\DesignResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>DesignResources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Configuration\Manageability\Properties\Resources.resx">
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.Desktop.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Desktop.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
@@ -274,7 +284,7 @@
     <Compile Include="PolicyInjection\CategoryFormatter.cs" />
     <Compile Include="PolicyInjection\LogCallHandler.cs" />
     <Compile Include="PolicyInjection\LogCallHandlerAttribute.cs" />
-    <Compile Include="PolicyInjection\TraceLogEntry.cs" />
+    <Compile Include="PolicyInjection\TraceLogEntry.Desktop.cs" />
     <Compile Include="Configuration\DesignResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -311,7 +321,7 @@
     <Compile Include="Configuration\Fluent\CustomFormatterBuilderExtensions.cs" />
     <Compile Include="Configuration\Fluent\FormatterBuilder.cs" />
     <Compile Include="Configuration\Fluent\ILoggingConfigurationCategoryContd.cs" />
-    <Compile Include="Configuration\Fluent\ILoggingConfigurationSendToExtention.cs" />
+    <Compile Include="Configuration\Fluent\ILoggingConfigurationSendToExtension.cs" />
     <Compile Include="Configuration\Fluent\ILoggingConfigurationContd.cs" />
     <Compile Include="Configuration\Fluent\ILoggingConfigurationSendTo.cs" />
     <Compile Include="Configuration\Fluent\SendToCustomTraceListenerExtensions.cs" />

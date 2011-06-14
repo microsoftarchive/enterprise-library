@@ -13,6 +13,9 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
+#if SILVERLIGHT
+using Microsoft.Practices.EnterpriseLibrary.Validation.DataAnnotations;
+#endif
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests

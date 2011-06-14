@@ -27,7 +27,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
     /// </summary>
     [ResourceDescription(typeof(DesignResources), "CustomAttributeMatchingRuleDataDescription")]
     [ResourceDisplayName(typeof(DesignResources), "CustomAttributeMatchingRuleDataDisplayName")]
-    public partial class CustomAttributeMatchingRuleData : MatchingRuleData
+    partial class CustomAttributeMatchingRuleData
     {
         private const string SearchInheritanceChainPropertyName = "searchInheritanceChain";
         private const string AttributeTypePropertyName = "attributeType";

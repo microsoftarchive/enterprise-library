@@ -32,7 +32,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
         [TestMethod]
         public void CanSerializeTypeMatchingRule()
         {
-            AssemblyMatchingRuleData asmMatchingRule = new AssemblyMatchingRuleData("RuleName", "mscorlib");
+            var asmMatchingRule = new AssemblyMatchingRuleData
+                {
+                    Name = "RuleName",
+                    Match = typeof(object).Assembly.FullName
+                };
 
             AssemblyMatchingRuleData deserializedRule = SerializeAndDeserializeMatchingRule(asmMatchingRule) as AssemblyMatchingRuleData;
 
@@ -40,17 +44,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
             Assert.AreEqual(asmMatchingRule.Name, deserializedRule.Name);
             Assert.AreEqual(asmMatchingRule.Match, deserializedRule.Match);
         }
-#else
-        [TestMethod]
-        public void HasDefaultCtor()
-        {
-            new AssemblyMatchingRuleData();
-        }
 #endif
         [TestMethod]
         public void MatchingRuleHasTransientLifetime()
         {
-            AssemblyMatchingRuleData asmMatchingRule = new AssemblyMatchingRuleData("RuleName", "mscorlib");
+            var asmMatchingRule = new AssemblyMatchingRuleData
+                {
+                    Name = "RuleName",
+                    Match = typeof(object).Assembly.FullName
+                };
             TypeRegistration registration = asmMatchingRule.GetRegistrations("").First();
 
             Assert.AreEqual(TypeRegistrationLifetime.Transient, registration.Lifetime);

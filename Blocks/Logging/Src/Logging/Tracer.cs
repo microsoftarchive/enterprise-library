@@ -269,7 +269,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
 #if !SILVERLIGHT
                 if (declaringType != GetType() && declaringType != typeof(TraceManager))
 #else
-                if (declaringType != GetType())
+                if (declaringType != GetType() && declaringType != typeof(LogWriterImpl))
 #endif
                 {
                     result = string.Concat(method.DeclaringType.FullName, ".", method.Name);

@@ -20,24 +20,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
     public partial class ReturnTypeMatchingRuleData
     {
         /// <summary>
-        /// Constructs a new <see cref="ReturnTypeMatchingRuleData"/> instance.
-        /// </summary>
-        public ReturnTypeMatchingRuleData()
-            :base()
-        {
-        }
-
-        /// <summary>
-        /// Constructs a new <see cref="ReturnTypeMatchingRuleData"/> instance.
-        /// </summary>
-        /// <param name="matchingRuleName">Matching rule instance name in configuration.</param>
-        /// <param name="returnTypeName">Return type to match.</param>
-        public ReturnTypeMatchingRuleData(string matchingRuleName, string returnTypeName)
-            : base(matchingRuleName, returnTypeName)
-        {
-        }
-
-        /// <summary>
         /// The pattern to match.
         /// </summary>
         public override string Match

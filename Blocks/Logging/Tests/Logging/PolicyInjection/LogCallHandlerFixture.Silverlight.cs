@@ -11,10 +11,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
-using System.Text.RegularExpressions;
 using System.Threading;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Diagnostics;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Filters;
@@ -82,8 +80,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.PolicyInjection
         {
             TestTarget.DoSomething(3, "Not two", 6.02e23);
 
-            AssertContains(beforeMessage);
-            AssertContains(afterMessage);
+            Assert.IsTrue(LogEntriesMessagesSent.Any(x => x.Message == beforeMessage));
+            Assert.IsTrue(LogEntriesMessagesSent.Any(x => x.Message == afterMessage));
         }
 
         [TestMethod]
@@ -93,8 +91,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.PolicyInjection
 
             TestTarget.DoSomething(5, "Why", 42.0);
 
-            AssertContains(beforeMessage);
-            AssertDoesNotContain(afterMessage);
+            Assert.IsTrue(LogEntriesMessagesSent.Any(x => x.Message == beforeMessage));
+            Assert.IsFalse(LogEntriesMessagesSent.Any(x => x.Message == afterMessage));
         }
 
         [TestMethod]
@@ -104,8 +102,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.PolicyInjection
 
             TestTarget.DoSomething(5, "Why", 42.0);
 
-            AssertDoesNotContain(beforeMessage);
-            AssertContains(afterMessage);
+            Assert.IsFalse(LogEntriesMessagesSent.Any(x => x.Message == beforeMessage));
+            Assert.IsTrue(LogEntriesMessagesSent.Any(x => x.Message == afterMessage));
         }
 
         [TestMethod]
@@ -132,9 +130,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.PolicyInjection
 
             TestTarget.DoSomething(one, two, three);
 
+#if SILVERLIGHT
+            Assert.IsTrue(LogEntriesMessagesSent.All(x => x.ExtendedProperties["param-one"].Equals(5.ToString())));
+            Assert.IsTrue(LogEntriesMessagesSent.All(x => x.ExtendedProperties["param-two"].Equals("xy")));
+            Assert.IsTrue(LogEntriesMessagesSent.All(x => x.ExtendedProperties["param-three"].Equals(8.0.ToString())));
+#else
             Assert.IsTrue(LogEntriesMessagesSent.All(x => x.ExtendedProperties["one"].Equals(5)));
             Assert.IsTrue(LogEntriesMessagesSent.All(x => x.ExtendedProperties["two"].Equals("xy")));
             Assert.IsTrue(LogEntriesMessagesSent.All(x => x.ExtendedProperties["three"].Equals(8.0)));
+#endif
         }
 
         [TestMethod]
@@ -148,9 +152,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.PolicyInjection
 
             TestTarget.DoSomething(one, two, three);
 
-            AssertDoesNotContain(string.Format("one = {0}{1}", one, Environment.NewLine));
-            AssertDoesNotContain(string.Format("two = {0}{1}", two, Environment.NewLine));
-            AssertDoesNotContain(string.Format("three = {0}{1}", three, Environment.NewLine));
+#if SILVERLIGHT
+            Assert.IsFalse(LogEntriesMessagesSent.Any(x => x.ExtendedProperties.ContainsKey("param-one")));
+            Assert.IsFalse(LogEntriesMessagesSent.Any(x => x.ExtendedProperties.ContainsKey("param-two")));
+            Assert.IsFalse(LogEntriesMessagesSent.Any(x => x.ExtendedProperties.ContainsKey("param-three")));
+#else
+            Assert.IsFalse(LogEntriesMessagesSent.Any(x => x.ExtendedProperties.ContainsKey("one")));
+            Assert.IsFalse(LogEntriesMessagesSent.Any(x => x.ExtendedProperties.ContainsKey("two")));
+            Assert.IsFalse(LogEntriesMessagesSent.Any(x => x.ExtendedProperties.ContainsKey("three")));
+#endif
         }
 
         [TestMethod]
@@ -310,7 +320,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.PolicyInjection
         public void ShouldDefaultTo0ForEventId()
         {
             TestTarget.DoSomethingElse("boo!");
-            AssertContains("EventId: 0\r\n");
+            Assert.IsTrue(LogEntriesMessagesSent.Any(x => x.EventId == 0));
         }
 
         [TestMethod]
@@ -318,27 +328,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.PolicyInjection
         {
             callHandler.EventId = 42;
             TestTarget.DoSomething(2, "three", 4.0);
-            AssertContains("EventId: 42\r\n");
-        }
-
-        void AssertContains(string contained)
-        {
-            Assert.IsTrue(LogEntriesMessagesSent.Any(x => x.ToString().Contains(contained)));
-        }
-
-        void AssertDoesNotContain(string contained)
-        {
-            Assert.IsFalse(LogEntriesMessagesSent.Any(x => x.ToString().Contains(contained)));
-        }
-
-        void AssertIsMatch(string pattern)
-        {
-            Assert.IsTrue(LogEntriesMessagesSent.Any(x => Regex.IsMatch(x.ToString(), pattern, RegexOptions.Singleline)));
-        }
-
-        void AssertIsNotMatch(string pattern)
-        {
-            Assert.IsFalse(LogEntriesMessagesSent.Any(x => Regex.IsMatch(x.Message, pattern, RegexOptions.Singleline)));
+            Assert.IsTrue(LogEntriesMessagesSent.Any(x => x.EventId == 42));
         }
 
         [TestMethod]

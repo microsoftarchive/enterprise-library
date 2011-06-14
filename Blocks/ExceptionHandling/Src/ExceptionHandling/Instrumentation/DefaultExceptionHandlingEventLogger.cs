@@ -37,7 +37,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Instrumentatio
             string applicationInstanceName)
             : base(performanceCountersEnabled, eventLoggingEnabled, new AppDomainNameFormatter(applicationInstanceName))
         {
-            eventLogEntryFormatter = new EventLogEntryFormatter(Resources.BlockName);
+            eventLogEntryFormatter = new EventLogEntryFormatter(Resources_Desktop.BlockName);
         }
 
         /// <summary>
@@ -63,7 +63,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Instrumentatio
                 string eventLogMessage
                     = string.Format(
                         CultureInfo.CurrentCulture,
-                        Resources.ConfigurationFailureCreatingPolicy,
+                        Resources_Desktop.ConfigurationFailureCreatingPolicy,
                         policyName);
                 string entryText = eventLogEntryFormatter.GetEntryText(eventLogMessage, exception);
                 EventLog.WriteEntry(GetEventSourceName(), entryText, EventLogEntryType.Error);

@@ -23,27 +23,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
     public class ValidatedTypeReference : NamedConfigurationElement
     {
         /// <summary>
-        /// <para>Initializes a new instance of the <see cref="ValidatedTypeReference"/> class.</para>
-        /// </summary>
-        public ValidatedTypeReference()
-        { }
-
-        /// <summary>
-        /// <para>Initializes a new instance of the <see cref="ValidatedTypeReference"/> class with a type.</para>
+        /// <para>Creates a new instance of the <see cref="ValidatedTypeReference"/> class with a type.</para>
         /// </summary>
         /// <param name="type">The represented type.</param>
-        public ValidatedTypeReference(Type type)
-            : base(GetFullName(type))
-        { }
-
-        private static string GetFullName(Type type)
+        public static ValidatedTypeReference Create(Type type)
         {
             if (type == null) throw new ArgumentNullException("type");
-
-            return type.FullName;
+            return new ValidatedTypeReference { Name = type.FullName };
         }
 
-        private NamedElementCollection<ValidationRulesetData> rulesets = new NamedElementCollection<ValidationRulesetData>();
+        private readonly NamedElementCollection<ValidationRulesetData> rulesets = new NamedElementCollection<ValidationRulesetData>();
         /// <summary>
         /// Gets the collection with the validation rulesets configured the represented type.
         /// </summary>

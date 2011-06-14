@@ -30,8 +30,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
         [TestMethod]
         public void ShouldCreateCorrectMatchingRule()
         {
-            PolicyData policyData = new PolicyData("Validate Parameters");
-            policyData.Handlers.Add(new ValidationCallHandlerData());
+            PolicyData policyData = new PolicyData { Name = "Validate Parameters" };
+            policyData.Handlers.Add(new ValidationCallHandlerData { Name = "Foo" });
             ParameterTypeMatchingRuleData matchingRuleData = GetParameterTypeMatchingRuleData();
             policyData.MatchingRules.Add(matchingRuleData);
 
@@ -55,13 +55,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
         }
 
         [TestMethod]
-        public void HasDefaultCtor()
-        {
-            new ParameterTypeMatchingRuleData();
-            new ParameterTypeMatchData();
-        }
-
-        [TestMethod]
         public void MatchingRuleHasTransientLifetime()
         {
             ParameterTypeMatchingRuleData ruleData = GetParameterTypeMatchingRuleData();
@@ -72,15 +65,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
 
         ParameterTypeMatchingRuleData GetParameterTypeMatchingRuleData()
         {
-            return new ParameterTypeMatchingRuleData(
-                "Parameter Matching Rule",
-                new ParameterTypeMatchData[]
+            return new ParameterTypeMatchingRuleData
+            {
+                Name = "Parameter Matching Rule",
+                Matches = 
                     {
-                        new ParameterTypeMatchData("System.String", ParameterKind.Input),
-                        new ParameterTypeMatchData("int32", ParameterKind.InputOrOutput, true),
-                        new ParameterTypeMatchData("DateTime", ParameterKind.ReturnValue, false)
+                        new ParameterTypeMatchData{ Match ="System.String", ParameterKind = ParameterKind.Input },
+                        new ParameterTypeMatchData{ Match ="int32", ParameterKind = ParameterKind.InputOrOutput, IgnoreCase = true},
+                        new ParameterTypeMatchData{ Match ="DateTime", ParameterKind = ParameterKind.ReturnValue, IgnoreCase = false},
                     }
-                );
+            };
         }
 
         public class MockObjectWithCustomMethods

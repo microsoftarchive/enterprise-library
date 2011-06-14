@@ -28,6 +28,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// <summary>
         /// Constructs a new <see cref="StringBasedMatchingRuleData"/> instance.
         /// </summary>
+        public StringBasedMatchingRuleData()
+            :base()
+        {
+        }
+
+        /// <summary>
+        /// Constructs a new <see cref="StringBasedMatchingRuleData"/> instance.
+        /// </summary>
         /// <param name="matchingRuleName">Name of the matching rule</param>
         /// <param name="matches">String to match.</param>
         /// <param name="matchingRuleType">Type of the underlying matching rule.</param>

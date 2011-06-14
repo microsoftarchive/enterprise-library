@@ -69,7 +69,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
         /// Creates the <see cref="Validator"/> described by the configuration object.
         /// </summary>
         /// <param name="targetType">The type of object that will be validated by the validator.</param>
-        /// <remarks>This operation must be overriden by subclasses.</remarks>
+        /// <remarks>This operation must be overridden by subclasses.</remarks>
         /// <returns>The created <see cref="Validator"/>.</returns>
         protected virtual Validator DoCreateValidator(Type targetType)
         {

@@ -142,7 +142,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         /// <remarks>
         /// If <paramref name="objectToValidate"/> is <see langword="null"/> validation is ignored.
         /// <para/>
-        /// A referece to a non collection object causes a validation failure and the validation rules
+        /// A reference to a non collection object causes a validation failure and the validation rules
         /// for the configured target type will not be applied.
         /// <para/>
         /// Elements in the collection of a type not compatible with the configured target type causes a validation failure but

@@ -269,7 +269,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// <returns>A <see cref="Expression"/> that creates a <see cref="TraceListener"/></returns>
         protected virtual Expression<Func<TraceListener>> GetCreationExpression()
         {
-            throw new NotImplementedException(Logging.Properties.Resources.ExceptionMethodMustBeImplementedBySubclasses);
+            throw new NotImplementedException(Logging.Properties.Resources_Desktop.ExceptionMethodMustBeImplementedBySubclasses);
         }
 
         /// <summary>

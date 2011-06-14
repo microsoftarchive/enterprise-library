@@ -9,8 +9,6 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System.Collections.Generic;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.Unity.InterceptionExtension;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
@@ -21,35 +19,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
     /// </summary>
     public partial class TypeMatchingRuleData
     {
-        private NamedElementCollection<MatchData> matches = new NamedElementCollection<MatchData>();
+        private readonly MatchDataCollection<MatchData> matches = new MatchDataCollection<MatchData>();
         
-        /// <summary>
-        /// Constructs a new <see cref="TypeMatchingRuleData"/> instance.
-        /// </summary>
-        public TypeMatchingRuleData()
-            : base()
-        {
-        }
-
-        /// <summary>
-        /// Constructs a new <see cref="TypeMatchingRuleData"/> instance.
-        /// </summary>
-        /// <param name="matchingRuleName">Matching rule instance name in configuration.</param>
-        /// <param name="matches">Collection of <see cref="MatchData"/> containing
-        /// types to match. If any one matches, the rule matches.</param>
-        public TypeMatchingRuleData(string matchingRuleName, IEnumerable<MatchData> matches)
-            : base(matchingRuleName)
-        {
-            foreach (MatchData match in matches)
-            {
-                Matches.Add(match);
-            }
-        }
-
         /// <summary>
         /// The collection of patterns to match.
         /// </summary>
-        public NamedElementCollection<MatchData> Matches
+        public MatchDataCollection<MatchData> Matches
         {
             get { return this.matches; }
         }

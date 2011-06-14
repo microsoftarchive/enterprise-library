@@ -15,7 +15,7 @@ using System.ComponentModel;
 using System.Configuration;
 using System.Globalization;
 using System.IO;
-using Microsoft.Practices.EnterpriseLibrary.Common.Properties;
+using  Microsoft.Practices.EnterpriseLibrary.Common.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 {
@@ -570,7 +570,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
             if (!File.Exists(fileName))
             {
                 throw new FileNotFoundException(
-                    string.Format(CultureInfo.CurrentCulture, Resources.ExceptionConfigurationFileNotFound, section),
+                    string.Format(CultureInfo.CurrentCulture, Resources_Desktop.ExceptionConfigurationFileNotFound, section),
                     fileName);
             }
         }

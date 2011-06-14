@@ -55,14 +55,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.ExtraInformation
             }
             catch (SecurityException)
             {
-                value = String.Format(CultureInfo.CurrentCulture, Resources.ExtendedPropertyError, Resources.DebugInfo_StackTraceSecurityException);
+                value = String.Format(CultureInfo.CurrentCulture, Resources_Desktop.ExtendedPropertyError, Resources_Desktop.DebugInfo_StackTraceSecurityException);
             }
             catch
             {
-                value = String.Format(CultureInfo.CurrentCulture, Resources.ExtendedPropertyError, Resources.DebugInfo_StackTraceException);
+                value = String.Format(CultureInfo.CurrentCulture, Resources_Desktop.ExtendedPropertyError, Resources_Desktop.DebugInfo_StackTraceException);
             }
 
-            dict.Add(Resources.DebugInfo_StackTrace, value);
+            dict.Add(Resources_Desktop.DebugInfo_StackTrace, value);
         }
     }
 }

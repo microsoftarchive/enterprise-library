@@ -9,27 +9,17 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System.Collections.Generic;
 using System.Linq;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 {
     /// <summary>
-    /// Represents a collection of <see cref="IObjectWithName"/> objects.
+    /// Represents a collection of <see cref="IObjectWithName"/> objects with unique names.
     /// </summary>
     /// <typeparam name="T">A type that implements <see cref="IObjectWithName"/>.</typeparam>
-    public class NamedElementCollection<T> : List<T>
+    public class NamedElementCollection<T> : ConfigurationElementCollection<T>
         where T : IObjectWithName
     {
-        /// <summary>
-        /// Adds <paramref name="element"/> to the collection.
-        /// </summary>
-        /// <param name="element">The element to add.</param>
-        protected void BaseAdd(T element)
-        {
-            Add(element);
-        }
-
         /// <summary>
         /// Gets the configuration element at the specified index location. 
         /// </summary>
@@ -37,7 +27,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         /// <returns>The <see name="T"/> at the specified index. </returns>
         public T Get(int index)
         {
-            return (T)this[index];
+            return this[index];
         }
 
         /// <summary>
@@ -48,6 +38,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         public T Get(string name)
         {
             return this.FirstOrDefault(x => x.Name == name);
+        }
+
+        /// <summary>
+        /// Determines if the item can be inserted into the collection.
+        /// </summary>
+        /// <param name="item">The item to check.</param>
+        /// <returns><see langword="true" /> if the item has a name that is unique in the collection.</returns>
+        protected override bool CanInsert(T item)
+        {
+            string name = item.Name;
+            return !string.IsNullOrEmpty(name) && !this.Any(x => x.Name == name);
         }
     }
 }

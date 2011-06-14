@@ -25,7 +25,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Unity
         /// Initializes the container with this extension's functionality.
         /// </summary>
         /// <remarks>
-        /// This extension does not permfom any initialization.
+        /// This extension does not perform any initialization.
         /// </remarks>
         protected override void Initialize()
         {

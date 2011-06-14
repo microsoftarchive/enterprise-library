@@ -29,7 +29,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
         [TestInitialize]
         public void Setup()
         {
-            matchingRuleData = new AssemblyMatchingRuleData("assembly", typeof(object).Assembly.FullName);
+            matchingRuleData = new AssemblyMatchingRuleData
+            {
+                Name = "assembly",
+                Match = typeof(object).Assembly.FullName
+            };
         }
 
         [TestMethod]
@@ -61,6 +65,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
                 .WithValueConstructorParameter(typeof(object).Assembly.FullName)
                 .VerifyConstructorParameters();
         }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void WhenCreatesRegistrations_ThenThrowInvalidOperationExceptionIfRequiredAttributesAreMissing()
+        {
+            new AssemblyMatchingRuleData().GetRegistrations("").ToArray();
+        }
     }
 
     [TestClass]
@@ -72,10 +83,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
         public void Setup()
         {
             matchingRuleData =
-                new CustomAttributeMatchingRuleData(
-                    "custom attribute",
-                    typeof(CLSCompliantAttribute).AssemblyQualifiedName,
-                    true);
+                 new CustomAttributeMatchingRuleData
+                {
+                    Name = "custom attribute",
+                    AttributeTypeName = typeof(CLSCompliantAttribute).AssemblyQualifiedName,
+                    SearchInheritanceChain = true
+                };
         }
 
         [TestMethod]
@@ -108,6 +121,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
                 .WithValueConstructorParameter(true)
                 .VerifyConstructorParameters();
         }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void WhenCreatesRegistrations_ThenThrowInvalidOperationExceptionIfRequiredAttributesAreMissing()
+        {
+            new CustomAttributeMatchingRuleData().GetRegistrations("").ToArray();
+        }
     }
 
     [TestClass]
@@ -119,9 +139,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
         public void Setup()
         {
             matchingRuleData =
-                new MemberNameMatchingRuleData(
-                    "member",
-                    new[] { new MatchData("foo", true), new MatchData("bar", false) });
+                new MemberNameMatchingRuleData
+                {
+                    Name = "member",
+                    Matches =
+                        {
+                            new MatchData { Match = "foo", IgnoreCase = true },
+                            new MatchData { Match = "bar", IgnoreCase = false }
+                        }
+                };
         }
 
         [TestMethod]
@@ -161,6 +187,21 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
             Assert.AreEqual("bar", matches.ElementAt(1).Match);
             Assert.AreEqual(false, matches.ElementAt(1).IgnoreCase);
         }
+
+#if SILVERLIGHT
+        [Ignore]
+#endif
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void WhenCreatesRegistrations_ThenThrowInvalidOperationExceptionIfRequiredAttributesAreMissing()
+        {
+            new MemberNameMatchingRuleData
+            {
+                Name = "member",
+                Matches = { new MatchData() }
+            }
+            .GetRegistrations("").ToArray();
+        }
     }
 
     [TestClass]
@@ -172,13 +213,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
         public void Setup()
         {
             matchingRuleData =
-                new MethodSignatureMatchingRuleData("signature", "pattern")
-                {
-                    IgnoreCase = true,
-                    Parameters = { 
-                        new ParameterTypeElement("foo", typeof(object).FullName), 
-                        new ParameterTypeElement("bar", typeof(int).FullName) }
-                };
+                new MethodSignatureMatchingRuleData
+                    {
+                        Name = "signature",
+                        Match = "pattern",
+                        IgnoreCase = true,
+                        Parameters =
+                            {
+                                new ParameterTypeElement { Name = "foo", ParameterTypeName = typeof(object).FullName },
+                                new ParameterTypeElement { Name = "bar", ParameterTypeName = typeof(int).FullName },
+                            }
+                    };
         }
 
         [TestMethod]
@@ -218,6 +263,30 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
             Assert.AreEqual(typeof(object).FullName, matches.ElementAt(0));
             Assert.AreEqual(typeof(int).FullName, matches.ElementAt(1));
         }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void WhenCreatesRegistrations_ThenThrowInvalidOperationExceptionIfRequiredAttributesAreMissing()
+        {
+            new MethodSignatureMatchingRuleData().GetRegistrations("").ToArray();
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void WhenCreatesRegistrations_ThenThrowInvalidOperationExceptionIfRequiredChildAttributesAreMissing()
+        {
+            new MethodSignatureMatchingRuleData
+            {
+                Name = "signature",
+                Match = "pattern",
+                IgnoreCase = true,
+                Parameters =
+                            {
+                                new ParameterTypeElement { Name = "foo" },
+                            }
+            }
+            .GetRegistrations("").ToArray();
+        }
     }
 
     [TestClass]
@@ -229,11 +298,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
         public void Setup()
         {
             matchingRuleData =
-                new NamespaceMatchingRuleData("namespace")
+                new NamespaceMatchingRuleData()
                 {
-                    Matches = { 
-                        new MatchData("foo", true), 
-                        new MatchData("bar", false) }
+                    Name = "namespace",
+                    Matches =
+                    { 
+                        new MatchData { Match = "foo", IgnoreCase = true }, 
+                        new MatchData { Match = "bar", IgnoreCase = false }, 
+                    }
                 };
         }
 
@@ -274,6 +346,23 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
             Assert.AreEqual("bar", matches.ElementAt(1).Match);
             Assert.AreEqual(false, matches.ElementAt(1).IgnoreCase);
         }
+
+#if SILVERLIGHT
+        [Ignore]
+#endif
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void WhenCreatesRegistrations_ThenThrowInvalidOperationExceptionIfRequiredChildAttributesAreMissing()
+        {
+            new NamespaceMatchingRuleData
+                {
+                    Name = "namespace",
+                    Matches = 
+                    { 
+                        new MatchData() 
+                    }
+                }.GetRegistrations("").ToArray();
+        }
     }
 
     [TestClass]
@@ -284,12 +373,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
         [TestInitialize]
         public void Setup()
         {
-            matchingRuleData =
-                new ParameterTypeMatchingRuleData("parameters")
+            matchingRuleData = new ParameterTypeMatchingRuleData
                 {
-                    Matches = { 
-                        new ParameterTypeMatchData("foo", ParameterKind.Input, true), 
-                        new ParameterTypeMatchData("bar", ParameterKind.ReturnValue,  false) }
+                    Name = "parameters",
+                    Matches =
+                        {
+                            new ParameterTypeMatchData { Match = "foo", ParameterKind = ParameterKind.Input, IgnoreCase = true },
+                            new ParameterTypeMatchData { Match = "bar", ParameterKind = ParameterKind.ReturnValue, IgnoreCase = false },
+                        }
                 };
         }
 
@@ -332,6 +423,23 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
             Assert.AreEqual(ParameterKind.ReturnValue, matches.ElementAt(1).Kind);
             Assert.AreEqual(false, matches.ElementAt(1).IgnoreCase);
         }
+
+#if SILVERLIGHT
+        [Ignore]
+#endif
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void WhenCreatesRegistrations_ThenThrowInvalidOperationExceptionIfRequiredChildAttributesAreMissing()
+        {
+            new ParameterTypeMatchingRuleData
+                {
+                    Name = "parameters",
+                    Matches =
+                        {
+                            new ParameterTypeMatchData { }
+                        }
+                }.GetRegistrations("").ToArray();
+        }
     }
 
     [TestClass]
@@ -343,11 +451,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
         public void Setup()
         {
             matchingRuleData =
-                new PropertyMatchingRuleData("properties")
+                new PropertyMatchingRuleData
                 {
-                    Matches = { 
-                        new PropertyMatchData("foo", PropertyMatchingOption.Get, true), 
-                        new PropertyMatchData("bar", PropertyMatchingOption.Set,  false) }
+                    Name = "properties",
+                    Matches = 
+                    { 
+                        new PropertyMatchData { Match = "foo", MatchOption = PropertyMatchingOption.Get, IgnoreCase = true }, 
+                        new PropertyMatchData { Match = "bar", MatchOption = PropertyMatchingOption.Set, IgnoreCase = false },
+                    }
                 };
         }
 
@@ -390,6 +501,21 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
             Assert.AreEqual(PropertyMatchingOption.Set, matches.ElementAt(1).Option);
             Assert.AreEqual(false, matches.ElementAt(1).IgnoreCase);
         }
+
+#if SILVERLIGHT
+        [Ignore]
+#endif
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void WhenCreatesRegistrations_ThenThrowInvalidOperationExceptionIfRequiredChildAttributesAreMissing()
+        {
+            new PropertyMatchingRuleData
+            {
+                Name = "properties",
+                Matches = { new PropertyMatchData() }
+            }
+            .GetRegistrations("").ToArray();
+        }
     }
 
     [TestClass]
@@ -401,7 +527,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
         public void Setup()
         {
             matchingRuleData =
-                new ReturnTypeMatchingRuleData("returnType", typeof(object).FullName) { IgnoreCase = true };
+                new ReturnTypeMatchingRuleData
+                {
+                    Name = "returnType",
+                    Match = typeof(object).FullName,
+                    IgnoreCase = true
+                };
         }
 
         [TestMethod]
@@ -434,6 +565,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
                 .WithValueConstructorParameter(true)
                 .VerifyConstructorParameters();
         }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void WhenCreatesRegistrations_ThenThrowInvalidOperationExceptionIfRequiredChildAttributesAreMissing()
+        {
+            new ReturnTypeMatchingRuleData().GetRegistrations("").ToArray();
+        }
     }
 
     [TestClass]
@@ -445,7 +583,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
         public void Setup()
         {
             matchingRuleData =
-                new TagAttributeMatchingRuleData("tag", "match") { IgnoreCase = true };
+                new TagAttributeMatchingRuleData
+                {
+                    Name = "tag",
+                    Match = "match",
+                    IgnoreCase = true
+                };
         }
 
         [TestMethod]
@@ -478,6 +621,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
                 .WithValueConstructorParameter(true)
                 .VerifyConstructorParameters();
         }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void WhenCreatesRegistrations_ThenThrowInvalidOperationExceptionIfRequiredChildAttributesAreMissing()
+        {
+            new TagAttributeMatchingRuleData().GetRegistrations("").ToArray();
+        }
     }
 
     [TestClass]
@@ -488,7 +638,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
         [TestInitialize]
         public void Setup()
         {
-            matchingRuleData = new TypeMatchingRuleData("type", typeof(object).FullName);
+            matchingRuleData = new TypeMatchingRuleData
+            {
+                Name = "type",
+                Matches = { new MatchData { Match = typeof(object).FullName } }
+            };
         }
 
         [TestMethod]
@@ -524,6 +678,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
 
             Assert.AreEqual(1, matches.Count());
             Assert.AreEqual(typeof(object).FullName, matches.ElementAt(0).Match);
+        }
+
+#if SILVERLIGHT
+        [Ignore]
+#endif
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void WhenCreatesRegistrations_ThenThrowInvalidOperationExceptionIfRequiredChildAttributesAreMissing()
+        {
+            new TypeMatchingRuleData { Matches = { new MatchData() } }.GetRegistrations("").ToArray();
         }
     }
 

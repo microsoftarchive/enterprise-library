@@ -27,7 +27,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         /// Initializes a new instance of the <see cref="SystemConfigurationSourceElement"/> class with default values.
         /// </summary>
         public SystemConfigurationSourceElement()
-            : this(Resources.SystemConfigurationSourceName)
+            : this(Resources_Desktop.SystemConfigurationSourceName)
         { }
 
         /// <summary>

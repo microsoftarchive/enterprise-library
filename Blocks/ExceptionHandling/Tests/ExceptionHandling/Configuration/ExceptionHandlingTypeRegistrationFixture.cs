@@ -36,7 +36,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration.
         {
             settings = new ExceptionHandlingSettings();
         }
-
+        
         [TestMethod]
         public void WhenRegistrationsRequested_ResultsInExceptionManagerImplementationRegistration()
         {

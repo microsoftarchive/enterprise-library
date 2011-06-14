@@ -80,7 +80,29 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
             return sections.ContainsKey(name);
         }
 
-        void IDisposable.Dispose()
-        { }
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        public void Dispose()
+        {
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        /// <param name="disposing"><see langword="true"/> if the method is being called from the <see cref="Dispose()"/> method. <see langword="false"/> if it is being called from within the object finalizer.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+        }
+
+        /// <summary>
+        /// Releases resources for the <see cref="DictionaryConfigurationSource"/> instance before garbage collection.
+        /// </summary>
+        ~DictionaryConfigurationSource()
+        {
+            this.Dispose(false);
+        }
     }
 }

@@ -128,6 +128,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration.Tests
                 .WithContainerResolvedParameter<ILoggingInstrumentationProvider>(null)
                 .VerifyConstructorParameters();
         }
+
+        [TestMethod]
+        public void WhenUsingDefaultCtor_ThenDefaultValueAreProperlySetted()
+        {
+            var data = new TraceSourceData();
+            Assert.AreEqual(SourceLevels.All, data.DefaultLevel);
+            Assert.IsTrue(data.AutoFlush);
+        }
     }
 
     [TestClass]

@@ -19,26 +19,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
     public partial class AssemblyMatchingRuleData
     {
         /// <summary>
-        /// Constructs an <see cref="AssemblyMatchingRuleData"/> with default settings.
-        /// </summary>
-        public AssemblyMatchingRuleData()
-            : base()
-        {
-        }
-
-        /// <summary>
-        /// Constructs an <see cref="AssemblyMatchingRuleData"/> instance with the given
-        /// rule name and assembly name pattern to match.
-        /// </summary>
-        /// <param name="matchingRuleName">Name of rule from the configuration file.</param>
-        /// <param name="assemblyName">Assembly name to match.</param>
-        public AssemblyMatchingRuleData(string matchingRuleName, string assemblyName)
-        {
-            Name = matchingRuleName;
-            Match = assemblyName;
-        }
-
-        /// <summary>
         /// The assembly name to match.
         /// </summary>
         /// <value>Assembly name to match.</value>

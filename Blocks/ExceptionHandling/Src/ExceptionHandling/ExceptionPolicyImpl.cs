@@ -107,7 +107,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
         }
 
         /// <devDoc>
-        /// Traverses the specified type's inheritance hiearchy
+        /// Traverses the specified type's inheritance hierarchy
         /// </devDoc>
         private ExceptionPolicyEntry FindExceptionPolicyEntry(Type exceptionType)
         {

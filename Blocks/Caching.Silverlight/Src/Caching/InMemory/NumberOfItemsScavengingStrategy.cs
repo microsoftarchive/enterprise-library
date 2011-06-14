@@ -1,4 +1,15 @@
-﻿using System;
+﻿//===============================================================================
+// Microsoft patterns & practices Enterprise Library
+// Caching Application Block
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Properties;
@@ -28,7 +39,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.InMemory
                 throw new ArgumentException(Resources.MaxItemsBeforeScavengingMustBePositive, "maxItemsBeforeScavenging");
             if (itemsLeftAfterScavenging <= 0)
                 throw new ArgumentException(Resources.ItemsLeftAfterScavengingMustBePositive, "itemsLeftAfterScavenging");
-            if (itemsLeftAfterScavenging >= maxItemsBeforeScavenging)
+            if (itemsLeftAfterScavenging > maxItemsBeforeScavenging)
                 throw new ArgumentException(Resources.ItemsLeftMustBeLessThanMaxItemsBefore, "itemsLeftAfterScavenging");
 
             this.maxItemsBeforeScavenging = maxItemsBeforeScavenging;
@@ -42,6 +53,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.InMemory
         /// <returns><see langword="true"/> if scavenging is needed, otherwise <see langword="false"/>.</returns>
         public bool ShouldScavenge(IDictionary<string, TCacheEntry> entries)
         {
+            if (entries == null) throw new ArgumentNullException("entries");
+
             return entries.Count > maxItemsBeforeScavenging;
         }
 
@@ -52,6 +65,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.InMemory
         /// <returns><see langword="true"/> if additional scavenging is needed, otherwise <see langword="false"/>.</returns>
         public bool ShouldScavengeMore(IDictionary<string, TCacheEntry> entries)
         {
+            if (entries == null) throw new ArgumentNullException("entries");
+
             return entries.Count > itemsLeftAfterScavenging;
         }
 
@@ -62,6 +77,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.InMemory
         /// <returns>A set of the entries that should be scavenged.</returns>
         public IEnumerable<TCacheEntry> EntriesToScavenge(IEnumerable<TCacheEntry> currentEntries)
         {
+            if (currentEntries == null) throw new ArgumentNullException("currentEntries");
+
             return currentEntries.OrderBy(x => x.Priority).ThenBy(x => x.LastAccessTime);
         }
     }

@@ -68,11 +68,13 @@
       <HintPath>..\..\..\..\Lib\Silverlight\Microsoft.Practices.ServiceLocation.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Practices.Unity.Interception.Silverlight">
+    <Reference Include="Microsoft.Practices.Unity.Interception.Silverlight, Version=2.1.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\Lib\Silverlight\Microsoft.Practices.Unity.Interception.Silverlight.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="Microsoft.Practices.Unity.Silverlight, Version=2.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.Practices.Unity.Silverlight, Version=2.1.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\Lib\Silverlight\Microsoft.Practices.Unity.Silverlight.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="Microsoft.Silverlight.Testing">
       <HintPath>..\..\..\..\Lib\Silverlight\UnitTestFramework\Microsoft.Silverlight.Testing.dll</HintPath>
@@ -97,18 +99,38 @@
     <Compile Include="App.Silverlight.xaml.cs">
       <DependentUpon>App.Silverlight.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Configuration\RemoteServiceTraceListenerDataFixture.Silverlight.cs" />
+    <Compile Include="Configuration\Fluent\CategoryFilterBuilderFixture.cs" />
+    <Compile Include="Configuration\Fluent\ConfigurationSourceBuilderFixture.cs" />
+    <Compile Include="Configuration\Fluent\NotificationListenerInConfigurationSourceBuilderFixture.Silverlight.cs" />
+    <Compile Include="Configuration\Fluent\IsolatedStorageListenerInConfigurationSourceBuilderFixture.Silverlight.cs" />
+    <Compile Include="Configuration\Fluent\LogEnabledFilterBuilderFixture.cs" />
+    <Compile Include="Configuration\Fluent\LoggingCategorySourceInConfigurationSourceBuilderFixture.cs" />
+    <Compile Include="Configuration\Fluent\LoggingSettingsInConfigurationSourceBuilderFixture.cs" />
+    <Compile Include="Configuration\Fluent\PriorityFilterBuilderFixture.cs" />
+    <Compile Include="Configuration\Fluent\RemoteServiceListenerInConfigurationSourceBuilderFixture.Silverlight.cs" />
+    <Compile Include="Configuration\LoggingSettingsFixture.Silverlight.cs" />
     <Compile Include="Configuration\LogHandlerDataFixture.cs" />
     <Compile Include="Configuration\NotificationTraceListenerDataFixture.Silverlight.cs" />
     <Compile Include="Configuration\IsolatedStorageTraceListenerDataFixture.Silverlight.cs" />
     <Compile Include="Configuration\LogFilterDataFixture.cs" />
     <Compile Include="Configuration\LoggingSettingsTypeRegistrationFixture.Silverlight.cs" />
-    <Compile Include="Configuration\TextFormatterDataFixture.cs" />
     <Compile Include="Configuration\TraceSourceDataFixture.cs" />
+    <Compile Include="Configuration\UpdateContext\given_a_log_writer_with_null_values.cs" />
+    <Compile Include="Configuration\UpdateContext\given_a_configured_remote_service_tracelistener.cs" />
+    <Compile Include="Configuration\UpdateContext\given_a_configured_iso_storage_tracelistener.cs" />
+    <Compile Include="Configuration\UpdateContext\given_a_configured_trace_listener.cs" />
     <Compile Include="Configuration\UpdateContext\given_a_configured_log_writer_without_some_features.cs" />
     <Compile Include="Configuration\UpdateContext\given_a_configured_log_writer.cs" />
+    <Compile Include="LogEntryFixture.cs" />
+    <Compile Include="LoggerFixture.cs" />
+    <Compile Include="TraceListeners\IsolatedStorage\given_repository_with_entries\Context.cs" />
+    <Compile Include="TraceListeners\IsolatedStorage\given_repository_with_entries\when_resizing_and_reopening.cs" />
+    <Compile Include="TraceListeners\IsolatedStorage\given_repository_with_entries\when.cs" />
+    <Compile Include="TraceListeners\IsolatedStorage\given_repository_with_entries\when_resizing.cs" />
     <Compile Include="TraceListeners\IsolatedStorage\given_empty_storage\when_adding_entries_of_size_exact_divisor_of_max_size.cs" />
-    <Compile Include="TraceListeners\IsolatedStorage\give_storage_with_wrapped_entries\Context.cs" />
-    <Compile Include="TraceListeners\IsolatedStorage\give_storage_with_wrapped_entries\when_adding_entry_equal_to_effective_max_size.cs" />
+    <Compile Include="TraceListeners\IsolatedStorage\given_storage_with_wrapped_entries\Context.cs" />
+    <Compile Include="TraceListeners\IsolatedStorage\given_storage_with_wrapped_entries\when_adding_entry_equal_to_effective_max_size.cs" />
     <Compile Include="TraceListeners\IsolatedStorage\InvalidInitializationFixture.cs" />
     <Compile Include="PolicyInjection\CategoryFormatterFixture.cs">
       <SubType>Code</SubType>
@@ -137,7 +159,6 @@
     <Compile Include="Filters\LogFilterHelperFixture.cs" />
     <Compile Include="Filters\MockLogFilterErrorHandler.cs" />
     <Compile Include="Formatters\ExceptionFormatterFixture.cs" />
-    <Compile Include="Formatters\LogFormatterFixture.cs" />
     <Compile Include="LogWriterFixture.cs" />
     <Compile Include="LogWriterInjectionFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -193,11 +214,11 @@
     <Compile Include="TraceListeners\IsolatedStorage\given_trace_listener\when_logging_an_arbitrary_object.cs" />
     <Compile Include="TraceListeners\IsolatedStorage\given_trace_listener\when_disposing_the_listener.cs" />
     <Compile Include="TraceListeners\IsolatedStorage\given_trace_listener\when_logging_an_entry.cs" />
-    <Compile Include="TraceListeners\IsolatedStorage\give_storage_with_entries\Context.cs" />
-    <Compile Include="TraceListeners\IsolatedStorage\give_storage_with_entries\when_adding_entry_equal_to_effective_max_size.cs" />
-    <Compile Include="TraceListeners\IsolatedStorage\give_storage_with_entries\when_adding_entry_over_effective_max_size.cs" />
-    <Compile Include="TraceListeners\IsolatedStorage\give_storage_with_entries\when_adding_entry_requiring_two_oldest_entries_to_be_removed.cs" />
-    <Compile Include="TraceListeners\IsolatedStorage\give_storage_with_entries\when_adding_entry_larger_than_remaining_space.cs" />
+    <Compile Include="TraceListeners\IsolatedStorage\given_storage_with_entries\Context.cs" />
+    <Compile Include="TraceListeners\IsolatedStorage\given_storage_with_entries\when_adding_entry_equal_to_effective_max_size.cs" />
+    <Compile Include="TraceListeners\IsolatedStorage\given_storage_with_entries\when_adding_entry_over_effective_max_size.cs" />
+    <Compile Include="TraceListeners\IsolatedStorage\given_storage_with_entries\when_adding_entry_requiring_two_oldest_entries_to_be_removed.cs" />
+    <Compile Include="TraceListeners\IsolatedStorage\given_storage_with_entries\when_adding_entry_larger_than_remaining_space.cs" />
     <Compile Include="TraceSourceFixture.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -232,6 +253,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Resource Include="Configuration.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Resource>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Diagnostics\" />

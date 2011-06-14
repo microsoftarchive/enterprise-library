@@ -26,6 +26,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
         public ExceptionTypeData()
         {
             this.ExceptionHandlers = new NamedElementCollection<ExceptionHandlerData>();
+            this.PostHandlingAction = PostHandlingAction.NotifyRethrow;
         }
 
         /// <summary>

@@ -54,5 +54,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         {
             Assert.AreEqual(TypeRegistrationLifetime.Transient, registration.Lifetime);
         }
+
+        [TestMethod]
+        public void ThenDefaultPropertyValuesShouldBeSettedInDefaultCtor()
+        {
+            Assert.AreEqual(TextFormatterData.DefaultTemplate, new TextFormatterData().Template);
+        }
     }
 }

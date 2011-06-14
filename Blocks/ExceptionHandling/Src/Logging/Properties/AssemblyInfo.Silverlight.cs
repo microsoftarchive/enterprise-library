@@ -9,7 +9,10 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using System.Runtime.InteropServices;
 using System.Windows.Markup;
 
-[assembly: XmlnsDefinition("http://entlib.codeplex.com/v5/configuration", "Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Configuration")]
-[assembly: XmlnsPrefix("http://entlib.codeplex.com/v5/configuration", "el")]
+[assembly: XmlnsDefinition("http://schemas.microsoft.com/practices/2011/entlib", "Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Configuration")]
+[assembly: XmlnsPrefix("http://schemas.microsoft.com/practices/2011/entlib", "el")]
+
+[assembly: ComVisible(false)]

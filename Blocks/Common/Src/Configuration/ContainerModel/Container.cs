@@ -55,7 +55,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerMo
         }
 
         /// <summary>
-        /// Indicates an enumberable set to be resolved from a container using the names supplied
+        /// Indicates an enumerable set to be resolved from a container using the names supplied
         /// in <paramref name="names"/>.
         /// </summary>
         /// <typeparam name="T">The type to resolve from the container.</typeparam>

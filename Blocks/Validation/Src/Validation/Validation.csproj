@@ -71,15 +71,15 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Lib\Desktop\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Practices.Unity, Version=2.0.414.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.Practices.Unity, Version=2.1.505.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Lib\Desktop\Microsoft.Practices.Unity.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Practices.Unity.Configuration, Version=2.0.414.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.Practices.Unity.Configuration, Version=2.1.505.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Lib\Desktop\Microsoft.Practices.Unity.Configuration.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Practices.Unity.Interception, Version=2.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.Practices.Unity.Interception, Version=2.1.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Lib\Desktop\Microsoft.Practices.Unity.Interception.dll</HintPath>
     </Reference>
@@ -148,6 +148,11 @@
     <Compile Include="PolicyInjection\ValidationCallHandler.cs" />
     <Compile Include="PolicyInjection\ValidationCallHandlerAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.Desktop.cs" />
+    <Compile Include="Properties\Resources.Desktop.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.Desktop.resx</DependentUpon>
+    </Compile>
     <Compile Include="ValidationAttributeValidatedElement.cs" />
     <Compile Include="ValidationAttributeValidatedType.cs" />
     <Compile Include="ValidationAttributeValidatorBuilder.cs" />
@@ -203,7 +208,7 @@
     <Compile Include="Configuration\ValidationRulesetData.cs" />
     <Compile Include="Configuration\ValidationRulesetDataCollection.cs" />
     <Compile Include="Configuration\ValidationSettings.cs" />
-    <Compile Include="Configuration\ValidatedTypeReference.cs" />
+    <Compile Include="Configuration\ValidatedTypeReference.Desktop.cs" />
     <Compile Include="Configuration\ValidatedTypeReferenceCollection.cs" />
     <Compile Include="Configuration\ValidatorData.cs" />
     <Compile Include="Configuration\ValidatorDataCollection.cs" />
@@ -300,6 +305,10 @@
     <EmbeddedResource Include="Configuration\DesignResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>DesignResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.Desktop.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Desktop.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <SubType>Designer</SubType>

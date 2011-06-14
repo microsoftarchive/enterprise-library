@@ -1,12 +1,25 @@
-﻿using System;
+﻿//===============================================================================
+// Microsoft patterns & practices Enterprise Library
+// Caching Application Block
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.Runtime.Caching
 {
     /// <summary>
     /// Represents an object cache and provides the base methods and properties for accessing the object cache.
     /// </summary>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
     public abstract class ObjectCache : IEnumerable<KeyValuePair<string, object>>
     {
         /// <summary>
@@ -18,13 +31,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Runtime.Caching
         /// Indicates that a cache entry has no sliding expiration time.
         /// </summary>
         public static readonly TimeSpan NoSlidingExpiration = TimeSpan.Zero;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ObjectCache"/> class.
-        /// </summary>
-        protected ObjectCache()
-        {
-        }
 
         /// <summary>
         /// When overridden in a derived class, tries to insert a cache entry into the cache as a <see cref="CacheItem"/> 
@@ -47,6 +53,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Runtime.Caching
         /// <param name="regionName">Optional. A named region in the cache to which the cache entry can be added, if 
         /// regions are implemented. Defaults to <see langword="null"/>.</param>
         /// <returns>true if insertion succeeded, or false if there is an already an entry in the cache that has the same key as item.</returns>
+        [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed", Justification = "Similar API as System.Runtime.Caching in the .NET Framework.")]
         public virtual bool Add(string key, object value, DateTimeOffset absoluteExpiration, string regionName = null)
         {
             return AddOrGetExisting(key, value, absoluteExpiration, regionName) == null;
@@ -61,6 +68,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Runtime.Caching
         /// <param name="regionName">Optional. A named region in the cache to which the cache entry can be added, if 
         /// regions are implemented. Defaults to <see langword="null"/>.</param>
         /// <returns>true if insertion succeeded, or false if there is an already an entry in the cache that has the same key as item.</returns>
+        [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed", Justification = "Similar API as System.Runtime.Caching in the .NET Framework.")]
         public virtual bool Add(string key, object value, CacheItemPolicy policy, string regionName = null)
         {
             return AddOrGetExisting(key, value, policy, regionName) == null;
@@ -85,6 +93,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Runtime.Caching
         /// <param name="regionName">Optional. A named region in the cache to which the cache entry can be added, if 
         /// regions are implemented. Defaults to <see langword="null"/>.</param>
         /// <returns>If a cache entry with the same key exists, the specified cache entry's value; otherwise, <see langword="null"/>.</returns>
+        [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed", Justification = "Similar API as System.Runtime.Caching in the .NET Framework.")]
         public abstract object AddOrGetExisting(string key, object value, DateTimeOffset absoluteExpiration, string regionName = null);
 
         /// <summary>
@@ -97,6 +106,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Runtime.Caching
         /// <param name="regionName">Optional. A named region in the cache to which the cache entry can be added, if 
         /// regions are implemented. Defaults to <see langword="null"/>.</param>
         /// <returns>If a cache entry with the same key exists, the specified cache entry's value; otherwise, <see langword="null"/>.</returns>
+        [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed", Justification = "Similar API as System.Runtime.Caching in the .NET Framework.")]
         public abstract object AddOrGetExisting(string key, object value, CacheItemPolicy policy, string regionName = null);
 
         /// <summary>
@@ -106,17 +116,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Runtime.Caching
         /// <param name="regionName">Optional. A named region in the cache to which the cache entry can be added, if
         /// regions are implemented. Defaults to <see langword="null"/>.</param>
         /// <returns>true if the cache contains a cache entry with the same key value as key; otherwise, false.</returns>
+        [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed", Justification = "Similar API as System.Runtime.Caching in the .NET Framework.")]
         public abstract bool Contains(string key, string regionName = null);
-
-        /// <summary>
-        /// When overridden in a derived class, creates a <see cref="CacheEntryChangeMonitor"/> object that can trigger 
-        /// events in response to changes to specified cache entries. 
-        /// </summary>
-        /// <param name="keys">The unique identifiers for cache entries to monitor.</param>
-        /// <param name="regionName">Optional. A named region in the cache to which the cache entry can be added, if
-        /// regions are implemented. Defaults to <see langword="null"/>.</param>
-        /// <returns>A change monitor that monitors cache entries in the cache.</returns>
-        public abstract CacheEntryChangeMonitor CreateCacheEntryChangeMonitor(IEnumerable<string> keys, string regionName = null);
 
         /// <summary>
         /// When overridden in a derived class, gets the specified cache entry from the cache as an object.
@@ -125,6 +126,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Runtime.Caching
         /// <param name="regionName">Optional. A named region in the cache to which the cache entry was added, if
         /// regions are implemented. Defaults to <see langword="null"/>.</param>
         /// <returns>The cache entry that is identified by key.</returns>
+        [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed", Justification = "Similar API as System.Runtime.Caching in the .NET Framework."), SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords", MessageId = "Get", Justification = "Similar API as System.Runtime.Caching in the .NET Framework.")]
         public abstract object Get(string key, string regionName = null);
 
         /// <summary>
@@ -134,6 +136,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Runtime.Caching
         /// <param name="regionName">Optional. A named region in the cache to which the cache entry was added, if
         /// regions are implemented. Defaults to <see langword="null"/>.</param>
         /// <returns>The cache item.</returns>
+        [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed", Justification = "Similar API as System.Runtime.Caching in the .NET Framework.")]
         public abstract CacheItem GetCacheItem(string key, string regionName = null);
 
         /// <summary>
@@ -143,6 +146,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Runtime.Caching
         /// regions are implemented. Defaults to <see langword="null"/>.</param>
         /// <returns>The number of cache entries in the cache. If regionName is not Nothing, the count indicates the 
         /// number of entries that are in the specified cache region. </returns>
+        [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed", Justification = "Similar API as System.Runtime.Caching in the .NET Framework.")]
         public abstract long GetCount(string regionName = null);
 
         /// <summary>
@@ -150,6 +154,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Runtime.Caching
         /// of cache entries. 
         /// </summary>
         /// <returns>The enumerator object that provides access to the cache entries in the cache.</returns>
+        [SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures", Justification = "Similar API as System.Runtime.Caching in the .NET Framework.")]
         protected abstract IEnumerator<KeyValuePair<string, object>> GetEnumerator();
 
         /// <summary>
@@ -159,6 +164,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Runtime.Caching
         /// <param name="regionName">Optional. A named region in the cache to which the cache entry or entries were 
         /// added, if regions are implemented. The default value for the optional parameter is <see langword="null"/>.</param>
         /// <returns>A dictionary of key/value pairs that represent cache entries.</returns>
+        [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed", Justification = "Similar API as System.Runtime.Caching in the .NET Framework.")]
         public abstract IDictionary<string, object> GetValues(IEnumerable<string> keys, string regionName = null);
 
         /// <summary>
@@ -168,6 +174,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Runtime.Caching
         /// added, if regions are implemented. The default value for the optional parameter is <see langword="null"/>.</param>
         /// <param name="keys">A collection of unique identifiers for the cache entries to get.</param>
         /// <returns>A dictionary of key/value pairs that represent cache entries.</returns>
+        [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed", Justification = "Similar API as System.Runtime.Caching in the .NET Framework.")]
         public virtual IDictionary<string, object> GetValues(string regionName = null, params string[] keys)
         {
             return GetValues(keys, regionName);
@@ -182,6 +189,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Runtime.Caching
         /// <returns>An object that represents the value of the removed cache entry that was specified by the key, 
         /// or <see langword="null"/> if the specified entry was not found.
         /// </returns>
+        [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed", Justification = "Similar API as System.Runtime.Caching in the .NET Framework.")]
         public abstract object Remove(string key, string regionName = null);
 
         /// <summary>
@@ -191,6 +199,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Runtime.Caching
         /// <param name="item">The cache item to add.</param>
         /// <param name="policy">An object that contains eviction details for the cache entry. This object provides 
         /// more options for eviction than a simple absolute expiration.</param>
+        [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords", MessageId = "Set", Justification = "Similar API as System.Runtime.Caching in the .NET Framework.")]
         public abstract void Set(CacheItem item, CacheItemPolicy policy);
 
         /// <summary>
@@ -201,6 +210,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Runtime.Caching
         /// <param name="absoluteExpiration">The fixed date and time at which the cache entry will expire.</param>
         /// <param name="regionName">Optional. A named region in the cache to which the cache entry can be added, if 
         /// regions are implemented. Defaults to <see langword="null"/>.</param>
+        [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed", Justification = "Similar API as System.Runtime.Caching in the .NET Framework."), SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords", MessageId = "Set", Justification = "Similar API as System.Runtime.Caching in the .NET Framework.")]
         public abstract void Set(string key, object value, DateTimeOffset absoluteExpiration, string regionName = null);
 
         /// <summary>
@@ -211,6 +221,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Runtime.Caching
         /// <param name="policy">An object that contains eviction details for the cache entry.</param>
         /// <param name="regionName">Optional. A named region in the cache to which the cache entry can be added, if 
         /// regions are implemented. Defaults to <see langword="null"/>.</param>
+        [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed", Justification = "Similar API as System.Runtime.Caching in the .NET Framework."), SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords", MessageId = "Set", Justification = "Similar API as System.Runtime.Caching in the .NET Framework.")]
         public abstract void Set(string key, object value, CacheItemPolicy policy, string regionName = null);
 
         IEnumerator<KeyValuePair<string, object>> IEnumerable<KeyValuePair<string, object>>.GetEnumerator()

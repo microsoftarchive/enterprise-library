@@ -34,7 +34,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         /// Initializes a new instance of the <see cref="FileConfigurationSourceElement"/> class with a default name and an empty path.
         /// </summary>
         public FileConfigurationSourceElement()
-            : this(Resources.FileConfigurationSourceName, string.Empty)
+            : this(Resources_Desktop.FileConfigurationSourceName, string.Empty)
         {
         }
 

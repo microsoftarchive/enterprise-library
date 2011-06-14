@@ -23,7 +23,7 @@ namespace Console.Wpf.Tests.VSTS.DevTests.given_type_name_parser
     [TestClass]
     public class when_parsing_generic_type_name : ContainerContext
     {
-        string typeToParse = "System.Collections.Generic.Dictionary`2[[Microsoft.Practices.EnterpriseLibrary.Caching.Cache, Microsoft.Practices.EnterpriseLibrary.Caching, Version=5.0.414.0, Culture=neutral, PublicKeyToken=null],[Microsoft.Practices.EnterpriseLibrary.Caching.Configuration.CacheStorageData, Microsoft.Practices.EnterpriseLibrary.Caching, Version=5.0.414.0, Culture=neutral, PublicKeyToken=null]]";
+        string typeToParse = "System.Collections.Generic.Dictionary`2[[Microsoft.Practices.EnterpriseLibrary.Caching.Cache, Microsoft.Practices.EnterpriseLibrary.Caching, Version=5.0.505.0, Culture=neutral, PublicKeyToken=null],[Microsoft.Practices.EnterpriseLibrary.Caching.Configuration.CacheStorageData, Microsoft.Practices.EnterpriseLibrary.Caching, Version=5.0.505.0, Culture=neutral, PublicKeyToken=null]]";
         string parsedName;
 
         protected override void Act()

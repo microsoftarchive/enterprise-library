@@ -232,4 +232,22 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Configuration
                 .VerifyConstructorParameters();
         }
     }
+
+    [TestClass]
+    public class GivenAValidationCallHandlerData
+    {
+        private ValidationCallHandlerData callHandlerData;
+
+        [TestInitialize]
+        public void Setup()
+        {
+            callHandlerData = new ValidationCallHandlerData();
+        }
+
+        [TestMethod]
+        public void WhenUsingDefaultCtor_ThenDefaultValuesAreSettedProperly()
+        {
+            Assert.AreEqual(SpecificationSource.Both, callHandlerData.SpecificationSource);
+        }
+    }
 }

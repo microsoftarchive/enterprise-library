@@ -29,6 +29,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// </summary>
         public TraceSourceData()
         {
+            DefaultLevel = SourceLevels.All;
+            AutoFlush = true;
         }
 
         /// <summary>

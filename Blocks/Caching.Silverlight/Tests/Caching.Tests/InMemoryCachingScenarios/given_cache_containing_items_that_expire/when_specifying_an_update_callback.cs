@@ -1,4 +1,15 @@
-﻿using System;
+﻿//===============================================================================
+// Microsoft patterns & practices Enterprise Library
+// Caching Application Block
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Runtime.Caching;
@@ -54,7 +65,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests.InMemoryCachingSce
         [TestMethod]
         public void then_update_reason_is_because_item_expired()
         {
-            Assert.AreEqual(CacheEntryRemovedReason.Expired, this.updateArgumentsList.First(x => x.Key == KeyWithUpdateAndExpired).RemovedReason);
+            Assert.AreEqual(CacheEntryRemovedReason.Expired, this.updateArgumentsList.Single(x => x.Key == KeyWithUpdateAndExpired).RemovedReason);
         }
 
         [TestMethod]

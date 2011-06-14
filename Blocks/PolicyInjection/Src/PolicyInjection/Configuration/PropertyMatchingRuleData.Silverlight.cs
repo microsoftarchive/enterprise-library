@@ -10,10 +10,7 @@
 //===============================================================================
 
 using System.Collections.Generic;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.Unity.InterceptionExtension;
-using FakeRules = Microsoft.Practices.EnterpriseLibrary.PolicyInjection.MatchingRules;
-using PropertyMatchingOption = Microsoft.Practices.Unity.InterceptionExtension.PropertyMatchingOption;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
 {
@@ -23,35 +20,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
     /// </summary>
     public partial class PropertyMatchingRuleData
     {
-        private NamedElementCollection<PropertyMatchData> matches = new NamedElementCollection<PropertyMatchData>();
-
-        /// <summary>
-        /// Constructs a new <see cref="PropertyMatchingRuleData"/> instance.
-        /// </summary>
-        public PropertyMatchingRuleData()
-            : base()
-        {
-        }
-
-        /// <summary>
-        /// Constructs a new <see cref="PropertyMatchingRuleData"/> instance.
-        /// </summary>
-        /// <param name="matchingRuleName">Matching rule instance name in configuration.</param>
-        /// <param name="matches">Collection of <see cref="PropertyMatchData"/> containing
-        /// property patterns to match.</param>
-        public PropertyMatchingRuleData(string matchingRuleName, IEnumerable<PropertyMatchData> matches)
-            : base(matchingRuleName)
-        {
-            foreach (PropertyMatchData match in matches)
-            {
-                Matches.Add(match);
-            }
-        }
+        private readonly MatchDataCollection<PropertyMatchData> matches = new MatchDataCollection<PropertyMatchData>();
 
         /// <summary>
         /// The collection of patterns to match.
         /// </summary>
-        public NamedElementCollection<PropertyMatchData> Matches
+        public MatchDataCollection<PropertyMatchData> Matches
         {
             get { return this.matches; }
         }
@@ -63,13 +37,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
     /// </summary>
     public partial class PropertyMatchData
     {
+        private PropertyMatchingOption matchOption = PropertyMatchingOption.GetOrSet;
+
         /// <summary>
         /// Which methods of the property to match. Default is to match both getters and setters.
         /// </summary>
         public PropertyMatchingOption MatchOption
         {
-            get; 
-            set; 
+            get { return this.matchOption; }
+            set { this.matchOption = value; }
         }
     }
 }

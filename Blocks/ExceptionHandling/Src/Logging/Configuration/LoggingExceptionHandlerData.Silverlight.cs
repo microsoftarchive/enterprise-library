@@ -21,6 +21,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Config
     partial class LoggingExceptionHandlerData
     {
         /// <summary>
+        /// Initializes with default values.
+        /// </summary>
+        public LoggingExceptionHandlerData()
+        {
+            EventId = 100;
+            Severity = TraceEventType.Error;
+            Title = "Enterprise Library Exception Handling";
+            FormatterTypeName =
+                "Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.TextExceptionFormatter, Microsoft.Practices.EnterpriseLibrary.ExceptionHandling";
+        }
+
+        /// <summary>
         /// Gets or sets the default log category.
         /// </summary>
         public string LogCategory

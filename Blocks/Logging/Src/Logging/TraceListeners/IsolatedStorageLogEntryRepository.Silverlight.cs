@@ -1,4 +1,15 @@
-﻿using System;
+﻿//===============================================================================
+// Microsoft patterns & practices Enterprise Library
+// Logging Application Block
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.IsolatedStorage;
@@ -11,11 +22,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
     /// <summary>
     /// Stores log entries in isolated storage, keeping the file size under a specified maximum.
     /// </summary>
+    /// <remarks>
+    /// Older entries will be discarded by new ones if the specified maximum size is reached.
+    /// </remarks> 
     public class IsolatedStorageLogEntryRepository : ILogEntryRepository
     {
         private const string RepositoryDirectory = "__logging";
         private const float sizeScalingFactor = 0.9F;
         private const int sizeScalingRetries = 3;
+
+        private BoundedStreamStorage storage;
+        private readonly LogEntrySerializer serializer;
+        private IsolatedStorageFile isolatedStorageFile;
+        private readonly string repositoryFileName;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="IsolatedStorageLogEntryRepository"/> with a name and a
@@ -31,16 +50,34 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         {
             Guard.ArgumentNotNullOrEmpty(storageName, "storageName");
 
-            var repositoryFileName = Path.Combine(RepositoryDirectory, storageName);
+            repositoryFileName = GetRepositoryFileName(storageName);
 
-            var isolatedStorageFile = IsolatedStorageFile.GetUserStoreForApplication();
+            try
+            {
+                this.isolatedStorageFile = IsolatedStorageFile.GetUserStoreForApplication();
+            }
+            catch (IsolatedStorageException)
+            {
+                // just return - isolated storage will not be available
+                return;
+            }
+
+            this.OpenStorageStream(maxSizeInKilobytes);
+
+            if (this.storage != null)
+            {
+                this.serializer = new LogEntrySerializer();
+            }
+        }
+
+        private void OpenStorageStream(int maxSizeInKilobytes)
+        {
             IsolatedStorageFileStream storageStream;
-
-            if (isolatedStorageFile.FileExists(repositoryFileName))
+            if (this.isolatedStorageFile.FileExists(this.repositoryFileName))
             {
                 try
                 {
-                    storageStream = isolatedStorageFile.OpenFile(repositoryFileName, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
+                    storageStream = this.isolatedStorageFile.OpenFile(this.repositoryFileName, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
                 }
                 catch (IsolatedStorageException)
                 {
@@ -49,18 +86,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
             }
             else
             {
-                storageStream = InitializeRepositoryStream(repositoryFileName, maxSizeInKilobytes);
+                storageStream = InitializeRepositoryStream(this.isolatedStorageFile, this.repositoryFileName, maxSizeInKilobytes);
             }
-
             if (storageStream != null)
             {
                 this.storage = new BoundedStreamStorage(storageStream);
-                this.serializer = new LogEntrySerializer();
             }
         }
-
-        private readonly BoundedStreamStorage storage;
-        private readonly LogEntrySerializer serializer;
 
         /// <summary>
         /// Gets the maximum size in kilobytes as originally requested.
@@ -69,6 +101,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         {
             get
             {
+                this.CheckAvailable();
+
                 return this.storage.MaxSizeInBytes / 1024;
             }
         }
@@ -80,6 +114,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         {
             get
             {
+                this.CheckAvailable();
+
                 return this.storage.ActualMaxSizeInBytes / 1024;
             }
         }
@@ -113,6 +149,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         {
             var isolatedStorageFile = IsolatedStorageFile.GetUserStoreForApplication();
 
+            return InitializeRepositoryStream(isolatedStorageFile, repositoryFileName, maxSizeInKilobytes);
+        }
+
+        private static IsolatedStorageFileStream InitializeRepositoryStream(IsolatedStorageFile isolatedStorageFile, string repositoryFileName, int maxSizeInKilobytes)
+        {
             if (isolatedStorageFile.FileExists(repositoryFileName))
             {
                 throw new ArgumentException(Resources.ErrorRepositoryFileAlreadyExists, "repositoryFileName");
@@ -216,7 +257,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
 
         private void CheckAvailable()
         {
-            if (!this.IsAvailable)
+            if (this.isolatedStorageFile == null)
+            {
+                throw new InvalidOperationException(Resources.ErrorIsolatedStorageIsNotAvailable);
+            }
+
+            if (this.storage == null)
             {
                 throw new InvalidOperationException(Resources.ErrorRepositoryIsNotAvailable);
             }
@@ -252,7 +298,44 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
                 if (this.storage != null)
                 {
                     this.storage.Dispose();
+                    this.storage = null;
                 }
+                if (this.isolatedStorageFile != null)
+                {
+                    this.isolatedStorageFile.Dispose();
+                    this.isolatedStorageFile = null;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Resizes the isolated storage backing size, trying to preserve all the entries.
+        /// </summary>
+        /// <param name="maxSizeInKilobytes">The maximum size in kilobytes.</param>
+        /// <remarks>
+        /// If the instance cannot be re-initialized (e.g. the storage file cannot be opened) then the instance will
+        /// not be available and the operations will throw an <see cref="IOException"/>.
+        /// If the new maximum size is smaller than the previous, the oldest entries can be potentially removed.
+        /// </remarks>
+        public void Resize(int maxSizeInKilobytes)
+        {
+            this.CheckAvailable();
+
+            var entries = this.storage.RetrieveEntries().ToList();
+            this.storage.Dispose();
+            this.storage = null;
+
+            this.isolatedStorageFile.DeleteFile(repositoryFileName);
+            this.OpenStorageStream(maxSizeInKilobytes);
+
+            if (this.storage == null)
+            {
+                throw new IOException(Resources.ResizeRepositoryFailed);
+            }
+
+            foreach (var entry in entries)
+            {
+                this.storage.Add(entry);
             }
         }
     }

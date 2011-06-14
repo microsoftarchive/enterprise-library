@@ -96,7 +96,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Instrumentation
                                               IPerformanceCounterNameFormatter nameFormatter)
             : base(performanceCountersEnabled, eventLoggingEnabled, nameFormatter)
         {
-            this.eventLogEntryFormatter = new EventLogEntryFormatter(Resources.BlockName);
+            this.eventLogEntryFormatter = new EventLogEntryFormatter(Resources_Desktop.BlockName);
         }
 
         /// <summary>
@@ -165,7 +165,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Instrumentation
         {
             if (EventLoggingEnabled)
             {
-                string entryText = eventLogEntryFormatter.GetEntryText(Resources.ConfigurationErrorMessage, configurationException);
+                string entryText = eventLogEntryFormatter.GetEntryText(Resources_Desktop.ConfigurationErrorMessage, configurationException);
                 EventLog.WriteEntry(GetEventSourceName(), entryText, EventLogEntryType.Error);
             }
         }

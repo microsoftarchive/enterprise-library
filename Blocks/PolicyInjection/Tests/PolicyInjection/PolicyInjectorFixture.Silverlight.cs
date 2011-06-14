@@ -405,8 +405,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests
                 {
                     Policies =
                     {
-                        new PolicyData("policy")
+                        new PolicyData()
                         {
+                            Name = "policy",
                             MatchingRules =
                             {
                                 new AlwaysMatchingRuleData("always")

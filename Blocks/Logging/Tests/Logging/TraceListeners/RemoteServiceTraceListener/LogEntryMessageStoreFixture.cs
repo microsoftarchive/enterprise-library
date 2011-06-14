@@ -1,4 +1,15 @@
-﻿using System;
+﻿//===============================================================================
+// Microsoft patterns & practices Enterprise Library
+// Logging Application Block
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -99,9 +110,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Rem
                 LogEntryMessageStore.DeleteStore(TestStoreName);
             }
 
-            private LogEntryMessageStore CreateInstance()
+            private LogEntryMessageStore CreateInstance(int maxSizeInKilobytes = MaxSizeInKilobytes)
             {
-                return new LogEntryMessageStore(TestStoreName, MemoryBufferLimit, MaxSizeInKilobytes);
+                return new LogEntryMessageStore(TestStoreName, MemoryBufferLimit, maxSizeInKilobytes);
             }
 
             [TestMethod]
@@ -272,6 +283,142 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Rem
                     Assert.AreEqual("key2", actual[0].ExtendedPropertiesKeys[1]);
                     Assert.AreEqual("value1", actual[0].ExtendedPropertiesValues[0]);
                     Assert.AreEqual("value2", actual[0].ExtendedPropertiesValues[1]);
+                }
+            }
+
+            [TestMethod]
+            public void then_resizing_to_larger_keeps_the_entries()
+            {
+                using (var store = CreateInstance())
+                {
+                    store.Add(TestEntry1);
+                    store.Add(TestEntry2);
+                    Assert.AreEqual(MaxSizeInKilobytes, store.Quota);
+                    store.ResizeBackingStore(20);
+                    Assert.AreEqual(20, store.Quota);
+
+                    var actual = store.GetEntries();
+                    Assert.AreEqual(2, actual.Length);
+                    Assert.AreEqual(TestEntry1.Message, actual[0].Message);
+                    Assert.AreEqual(TestEntry2.Message, actual[1].Message);
+                }
+
+                using (var store = CreateInstance())
+                {
+                    Assert.AreEqual(20, store.Quota);
+                    var actual = store.GetEntries();
+                    Assert.AreEqual(2, actual.Length);
+                    Assert.AreEqual(TestEntry1.Message, actual[0].Message);
+                    Assert.AreEqual(TestEntry2.Message, actual[1].Message);
+                }
+            }
+
+            [TestMethod]
+            public void then_resizing_to_larger_keeps_the_entries_that_would_overflow_on_open()
+            {
+                var largeEntry = new LogEntryMessage { Message = new string('1', MaxSizeInKilobytes * 1024), Severity = TraceEventType.Error, TimeStamp = TestTimeStamp.AddDays(30).ToString("o", CultureInfo.InvariantCulture) };
+                using (var store = CreateInstance())
+                {
+                    store.Add(TestEntry1);
+                    store.Add(TestEntry2);
+                    store.ResizeBackingStore(MaxSizeInKilobytes * 2);
+                    store.Add(largeEntry);
+
+                    var actual = store.GetEntries();
+                    Assert.AreEqual(3, actual.Length);
+                    Assert.AreEqual(TestEntry1.Message, actual[0].Message);
+                    Assert.AreEqual(TestEntry2.Message, actual[1].Message);
+                    Assert.AreEqual(largeEntry.Message, actual[2].Message);
+                }
+
+                using (var store = CreateInstance())
+                {
+                    var actual = store.GetEntries();
+                    Assert.AreEqual(3, actual.Length);
+                    Assert.AreEqual(TestEntry1.Message, actual[0].Message);
+                    Assert.AreEqual(TestEntry2.Message, actual[1].Message);
+                    Assert.AreEqual(largeEntry.Message, actual[2].Message);
+                }
+            }
+
+            [TestMethod]
+            public void then_resizing_from_zero_keeps_entries_on_next_run()
+            {
+                using (var store = CreateInstance(0))
+                {
+                    store.ResizeBackingStore(MaxSizeInKilobytes);
+                    Assert.AreEqual(MaxSizeInKilobytes, store.Quota);
+                    store.Add(TestEntry1);
+                    store.Add(TestEntry2);
+
+                    var actual = store.GetEntries();
+                    Assert.AreEqual(2, actual.Length);
+                    Assert.AreEqual(TestEntry1.Message, actual[0].Message);
+                    Assert.AreEqual(TestEntry2.Message, actual[1].Message);
+                }
+
+                using (var store = CreateInstance(0))
+                {
+                    Assert.AreEqual(0, store.Quota);
+                    var actual = store.GetEntries();
+                    Assert.AreEqual(2, actual.Length);
+                    Assert.AreEqual(TestEntry1.Message, actual[0].Message);
+                    Assert.AreEqual(TestEntry2.Message, actual[1].Message);
+                }
+            }
+
+            [TestMethod]
+            public void then_resizing_from_zero_keeps_entries_on_next_run_and_they_can_be_removed()
+            {
+                using (var store = CreateInstance(0))
+                {
+                    store.ResizeBackingStore(MaxSizeInKilobytes);
+                    store.Add(TestEntry1);
+                    store.Add(TestEntry2);
+
+                    var actual = store.GetEntries();
+                    Assert.AreEqual(2, actual.Length);
+                    Assert.AreEqual(TestEntry1.Message, actual[0].Message);
+                    Assert.AreEqual(TestEntry2.Message, actual[1].Message);
+                }
+
+                using (var store = CreateInstance(0))
+                {
+                    Assert.AreEqual(0, store.Quota);
+                    var actual = store.GetEntries();
+                    Assert.AreEqual(2, actual.Length);
+                    store.RemoveUntil(actual[1]);
+                }
+
+                using (var store = CreateInstance(0))
+                {
+                    Assert.AreEqual(0, store.Quota);
+                    var actual = store.GetEntries();
+                    Assert.AreEqual(0, actual.Length);
+                }
+            }
+
+            [TestMethod]
+            public void then_resizing_from_zero_does_not_allow_adding_persistently_on_next_run()
+            {
+                using (var store = CreateInstance(0))
+                {
+                    store.ResizeBackingStore(MaxSizeInKilobytes);
+                }
+
+                using (var store = CreateInstance(0))
+                {
+                    Assert.AreEqual(0, store.Quota);
+                    var actual = store.GetEntries();
+                    Assert.AreEqual(0, actual.Length);
+                    store.Add(TestEntry1);
+                }
+
+                using (var store = CreateInstance(0))
+                {
+                    Assert.AreEqual(0, store.Quota);
+                    var actual = store.GetEntries();
+                    Assert.AreEqual(0, actual.Length);
                 }
             }
         }

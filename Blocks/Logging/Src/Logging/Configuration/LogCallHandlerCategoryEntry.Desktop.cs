@@ -27,6 +27,23 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
     public partial class LogCallHandlerCategoryEntry 
     {
         /// <summary>
+        /// Construct an empty <see cref="LogCallHandlerCategoryEntry"/>.
+        /// </summary>
+        public LogCallHandlerCategoryEntry()
+        {
+        }
+
+        /// <summary>
+        /// Construct a <see cref="LogCallHandlerCategoryEntry"/> with the given
+        /// category string.
+        /// </summary>
+        /// <param name="name">Category string.</param>
+        public LogCallHandlerCategoryEntry(string name)
+            : base(name)
+        {
+        }
+
+        /// <summary>
         /// Gets or sets the name of the element.
         /// </summary>
         /// <value>

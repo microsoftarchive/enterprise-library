@@ -1,9 +1,22 @@
-﻿using System;
+﻿//===============================================================================
+// Microsoft patterns & practices Enterprise Library
+// Logging Application Block
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+
+using System;
+using System.ComponentModel;
+using System.Globalization;
 using System.Linq.Expressions;
-using System.ServiceModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.Utility;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Diagnostics;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Service;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
 
@@ -20,7 +33,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         public RemoteServiceTraceListenerData()
         {
             this.SubmitInterval = TimeSpan.FromMinutes(1);
-            this.MemoryBufferItemsLimit = 100;
+            this.MaxElementsInBuffer = 100;
         }
 
         /// <summary>
@@ -31,37 +44,31 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         protected override Expression<Func<TraceListener>> GetCreationExpression()
         {
             if (this.SubmitInterval <= TimeSpan.Zero)
-                throw new ArgumentException("SubmitInterval");
+                throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, Resources.ErrorSubmitIntervalInvalidRange, this.Name));
 
-            if (string.IsNullOrEmpty(EndpointConfigurationName))
-                throw new ArgumentException("EndpointConfigurationName");
+            if (this.LoggingServiceFactory == null)
+                throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, Resources.ErrorLoggingServiceFactoryNotSet, this.Name));
 
-            // TODO verify if we want to provide default binding config for usability reasons (no need to have a separate ServiceReferences.ClientConfig file)
-            var channelFactory = new ChannelFactory<ILoggingService>(this.EndpointConfigurationName);
+            LogEntryMessageStore.GuardMaxSizeInKilobytes(IsolatedStorageBufferMaxSizeInKilobytes);
+
             return () => new RemoteServiceTraceListener(
                 this.SendImmediately,
-                () => new LoggingServiceProxy(channelFactory), 
+                this.LoggingServiceFactory,
                 new RecurringWorkScheduler(this.SubmitInterval),
-                new LogEntryMessageStore(this.Name, this.MemoryBufferItemsLimit, this.IsolatedStorageBufferMaxSizeInKilobytes),
+                new LogEntryMessageStore(this.Name, this.MaxElementsInBuffer, this.IsolatedStorageBufferMaxSizeInKilobytes),
                 Container.Resolved<IAsyncTracingErrorReporter>(),
                 new NetworkStatus());
         }
 
         /// <summary>
-        /// Gets or sets the WCF endpoint configuration name. This configuration must be present in the
-        /// ServiceReferences.ClientConfig file of the main application.
-        /// </summary>
-        public string EndpointConfigurationName { get; set; }
-
-        /// <summary>
-        /// Gets or sets the time interval that will be used for submiting the log entries to the server.
+        /// Gets or sets the time interval that will be used for submitting the log entries to the server.
         /// </summary>
         public TimeSpan SubmitInterval { get; set; }
 
         /// <summary>
-        /// Gets or sets the maximum amount of items that will be buffered in memory for when there are connectivity issues that prevent the listener from submiting the log entries.
+        /// Gets or sets the maximum amount of elements that will be buffered in memory for when there are connectivity issues that prevent the listener from submitting the log entries.
         /// </summary>
-        public int MemoryBufferItemsLimit { get; set; }
+        public int MaxElementsInBuffer { get; set; }
 
         /// <summary>
         /// Gets or sets the maximum size in kilobytes to be used when storing entries into the isolated storage as a backup strategy.
@@ -79,5 +86,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         /// entries per server call.
         /// </remarks>
         public bool SendImmediately { get; set; }
+
+        /// <summary>
+        /// Gets or set a factory for creating transient <see cref="ILoggingService"/> type instances.
+        /// In XAML, you can set this property value to a string that represents the WCF endpoint configuration name, which
+        /// must be present in the ServiceReferences.ClientConfig file of the main application. </summary>
+        /// <remarks>
+        /// Set this property to an instance of <see cref="ILoggingServiceFactory"/> if supplying an endpoint configuration
+        /// name is not enough to configure how you connect to the server. 
+        /// </remarks>
+        [TypeConverter(typeof(LoggingServiceFactoryEndpointConfigurationNameConverter))]
+        public ILoggingServiceFactory LoggingServiceFactory { get; set; }
     }
 }

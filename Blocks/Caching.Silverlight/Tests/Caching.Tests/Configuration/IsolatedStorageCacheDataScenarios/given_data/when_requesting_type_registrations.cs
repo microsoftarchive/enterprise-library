@@ -1,4 +1,15 @@
-﻿using System;
+﻿//===============================================================================
+// Microsoft patterns & practices Enterprise Library
+// Caching Application Block
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Runtime.Caching;
@@ -61,7 +72,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests.Configuration.Isol
         {
             Assert.AreEqual(6, this.registrations.First().ConstructorParameters.Count());
             Assert.AreEqual("test name", ((ConstantParameterValue)this.registrations.First().ConstructorParameters.ElementAt(0)).Value);
-            Assert.AreEqual(100L, ((ConstantParameterValue)this.registrations.First().ConstructorParameters.ElementAt(1)).Value);
+            Assert.AreEqual(100, ((ConstantParameterValue)this.registrations.First().ConstructorParameters.ElementAt(1)).Value);
             Assert.AreEqual(75, ((ConstantParameterValue)this.registrations.First().ConstructorParameters.ElementAt(2)).Value);
             Assert.AreEqual(65, ((ConstantParameterValue)this.registrations.First().ConstructorParameters.ElementAt(3)).Value);
             Assert.AreEqual(TimeSpan.FromSeconds(45), ((ConstantParameterValue)this.registrations.First().ConstructorParameters.ElementAt(4)).Value);

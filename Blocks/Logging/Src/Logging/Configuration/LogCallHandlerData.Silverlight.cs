@@ -11,40 +11,27 @@
 
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Diagnostics;
-
+using Microsoft.Practices.EnterpriseLibrary.Logging.PolicyInjection;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 {
     /// <summary>
-    /// A class with the data for the LogCallHandler.
+    /// A class with the data for the <see cref="LogCallHandler"/>.
     /// </summary>
-    public partial class LogCallHandlerData 
+    public partial class LogCallHandlerData
     {
         /// <summary>
         /// Construct a new <see cref="LogCallHandlerData"/> instance.
         /// </summary>
         public LogCallHandlerData()
         {
-        }
-
-        /// <summary>
-        /// Construct a new <see cref="LogCallHandlerData"/> instance.
-        /// </summary>
-        /// <param name="handlerName">Handler name</param>
-        public LogCallHandlerData(string handlerName)
-        {
-            Name = handlerName;
-        }
-
-        /// <summary>
-        /// Construct a new <see cref="LogCallHandlerData"/> instance.
-        /// </summary>
-        /// <param name="handlerName">Handler name</param>
-        /// <param name="handlerOrder">Handler order</param>
-        public LogCallHandlerData(string handlerName, int handlerOrder)
-            : this(handlerName)
-        {
-            this.Order = handlerOrder;
+            LogBehavior = HandlerLogBehavior.BeforeAndAfter;
+            BeforeMessage = string.Empty;
+            AfterMessage = string.Empty;
+            IncludeParameterValues = true;
+            IncludeCallTime = true;
+            Priority = -1;
+            Severity = TraceEventType.Information;
         }
 
         /// <summary>
@@ -57,7 +44,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
             set;
         }
 
-        NamedElementCollection<LogCallHandlerCategoryEntry> categories = new NamedElementCollection<LogCallHandlerCategoryEntry>();
+        readonly NamedElementCollection<LogCallHandlerCategoryEntry> categories = new NamedElementCollection<LogCallHandlerCategoryEntry>();
 
         /// <summary>
         /// Collection of log categories to use in the log message.

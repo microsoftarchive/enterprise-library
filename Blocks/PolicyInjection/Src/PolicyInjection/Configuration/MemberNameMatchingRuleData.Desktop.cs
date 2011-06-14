@@ -39,6 +39,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// Constructs a new <see cref="MemberNameMatchingRuleData"/> instance.
         /// </summary>
         /// <param name="matchingRuleName">Matching rule name in configuration file.</param>
+        /// <param name="match">Member name pattern to match.</param>
+        public MemberNameMatchingRuleData(string matchingRuleName, string match)
+            : this(matchingRuleName, new MatchData[] { new MatchData(match) })
+        {
+
+        }
+
+        /// <summary>
+        /// Constructs a new <see cref="MemberNameMatchingRuleData"/> instance.
+        /// </summary>
+        /// <param name="matchingRuleName">Matching rule name in configuration file.</param>
         public MemberNameMatchingRuleData(string matchingRuleName)
             : base(matchingRuleName, typeof(FakeRules.MemberNameMatchingRule))
         {

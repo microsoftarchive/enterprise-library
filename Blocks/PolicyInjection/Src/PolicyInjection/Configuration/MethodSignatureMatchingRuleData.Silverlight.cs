@@ -20,25 +20,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
     /// </summary>
     public partial class MethodSignatureMatchingRuleData
     {
-        private NamedElementCollection<ParameterTypeElement> parameters = new NamedElementCollection<ParameterTypeElement>();
-
-        /// <summary>
-        /// Constructs a new <see cref="MethodSignatureMatchingRuleData"/> instance.
-        /// </summary>
-        public MethodSignatureMatchingRuleData()
-            : base()
-        {
-        }
-
-        /// <summary>
-        /// Constructs a new <see cref="MethodSignatureMatchingRuleData"/> instance.
-        /// </summary>
-        /// <param name="matchingRuleName">Name of matching rule in config.</param>
-        /// <param name="memberName">Method name pattern to match.</param>
-        public MethodSignatureMatchingRuleData(string matchingRuleName, string memberName)
-            : base(matchingRuleName, memberName)
-        {
-        }
+        private readonly NamedElementCollection<ParameterTypeElement> parameters = new NamedElementCollection<ParameterTypeElement>();
 
         /// <summary>
         /// The collection of parameters that make up the matching method signature.

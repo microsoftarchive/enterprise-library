@@ -9,9 +9,12 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Properties;
 using Microsoft.Practices.Unity.InterceptionExtension;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
@@ -22,17 +25,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
     public partial class MemberNameMatchingRuleData : MatchingRuleData
     {
         /// <summary>
-        /// Constructs a new <see cref="MemberNameMatchingRuleData"/> instance.
-        /// </summary>
-        /// <param name="matchingRuleName">Matching rule name in configuration file.</param>
-        /// <param name="match">Member name pattern to match.</param>
-        public MemberNameMatchingRuleData(string matchingRuleName, string match)
-            : this(matchingRuleName, new MatchData[] { new MatchData(match) })
-        {
-
-        }
-
-        /// <summary>
         /// Get the set of <see cref="TypeRegistration"/> objects needed to
         /// register the matching rule represented by this config element and its associated objects.
         /// </summary>
@@ -40,6 +32,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// <returns>The set of <see cref="TypeRegistration"/> objects.</returns>
         public override IEnumerable<TypeRegistration> GetRegistrations(string nameSuffix)
         {
+            if (this.Matches.Any(matche => string.IsNullOrEmpty(matche.Match)))
+            {
+                throw new InvalidOperationException(
+                    string.Format(CultureInfo.CurrentCulture, Resources.ErrorMemberNameMatchingRuleMatchNotSet, this.Name));
+            }
+
             yield return
                 new TypeRegistration<IMatchingRule>(() =>
                     new MemberNameMatchingRule(

@@ -16,6 +16,8 @@ using System.Collections.Generic;
 #if !SILVERLIGHT
 using System.Diagnostics;
 #else
+using System.Globalization;
+
 using Microsoft.Practices.EnterpriseLibrary.Logging.Diagnostics;
 #endif
 using System.Runtime.Serialization;
@@ -56,7 +58,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Service
         /// <summary>
         /// Log entry severity as a <see cref="Severity"/> enumeration. (Unspecified, Information, Warning or Error).
         /// </summary>
-        [DataMember]
+        [DataMember(IsRequired = true)]
         public TraceEventType Severity { get; set; }
 
         /// <summary>
@@ -66,9 +68,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Service
         public string Title { get; set; }
 
         /// <summary>
-        /// Date and time of the log entry message.
+        /// Date and time of the log entry message. This timestamp must use the <see cref="System.Globalization.DateTimeStyles.RoundtripKind"/> format.
         /// </summary>
-        [DataMember]
+        /// <example>entry.TimeStamp = DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture);</example>
+        [DataMember(IsRequired = true)]
         public string TimeStamp { get; set; }
 
         /// <summary>

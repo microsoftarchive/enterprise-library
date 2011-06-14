@@ -1,4 +1,15 @@
-﻿using System;
+﻿//===============================================================================
+// Microsoft patterns & practices Enterprise Library
+// Caching Application Block
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -31,10 +42,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.IsolatedStorage
         public IsolatedStorageSizeScavengingStrategy(ICacheEntryStore store, IIsolatedStorageInfo isoStorage, int percentOfQuotaUsedBeforeScavenging, int percentOfQuotaUsedAfterScavenging)
         {
             if (percentOfQuotaUsedBeforeScavenging <= 0 || percentOfQuotaUsedBeforeScavenging > 100)
-                throw new ArgumentException("percentOfQuotaUsedBeforeScavenging");
+                throw new ArgumentOutOfRangeException("percentOfQuotaUsedBeforeScavenging");
 
             if (percentOfQuotaUsedAfterScavenging <= 0 || percentOfQuotaUsedAfterScavenging > 100)
-                throw new ArgumentException("percentOfQuotaUsedAfterScavenging");
+                throw new ArgumentOutOfRangeException("percentOfQuotaUsedAfterScavenging");
 
             if (percentOfQuotaUsedAfterScavenging > percentOfQuotaUsedBeforeScavenging)
                 throw new ArgumentException(
@@ -54,6 +65,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.IsolatedStorage
         /// <returns><see langword="true"/> if scavenging is needed, otherwise <see langword="false"/>.</returns>
         public bool ShouldScavenge(IDictionary<string, IsolatedStorageCacheEntry> entries)
         {
+            if (entries == null) throw new ArgumentNullException("entries");
+
             if (this.store.IsWritable)
             {
                 if (this.store.Quota > 0)
@@ -79,6 +92,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.IsolatedStorage
         /// <returns><see langword="true"/> if additional scavenging is needed, otherwise <see langword="false"/>.</returns>
         public bool ShouldScavengeMore(IDictionary<string, IsolatedStorageCacheEntry> entries)
         {
+            if (entries == null) throw new ArgumentNullException("entries");
+
             if (this.store.IsWritable)
             {
                 if (this.store.Quota > 0)

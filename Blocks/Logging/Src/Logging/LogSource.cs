@@ -200,14 +200,35 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         }
 
         /// <summary>
-        /// Releases the resources used by the <see cref="LogSource"/>.
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
         public void Dispose()
         {
-            foreach (TraceListener listener in this.Listeners)
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        /// <param name="disposing"><see langword="true"/> if the method is being called from the <see cref="Dispose()"/> method. <see langword="false"/> if it is being called from within the object finalizer.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
             {
-                listener.Dispose();
+                foreach (TraceListener listener in this.Listeners)
+                {
+                    listener.Dispose();
+                }
             }
+        }
+
+        /// <summary>
+        /// Releases resources for the <see cref="LogSource"/> instance before garbage collection.
+        /// </summary>
+        ~LogSource()
+        {
+            this.Dispose(false);
         }
 
         private bool ShouldTrace(TraceEventType eventType)

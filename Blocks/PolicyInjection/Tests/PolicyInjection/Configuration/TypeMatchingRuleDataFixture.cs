@@ -24,13 +24,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
         [TestMethod]
         public void CanSerializeTypeMatchingRule()
         {
-            TypeMatchingRuleData typeMatchingRule = new TypeMatchingRuleData("RuleName",
-                                                                             new MatchData[]
-                                                                                 {
-                                                                                     new MatchData("System.String"),
-                                                                                     new MatchData("mydataobject", true),
-                                                                                     new MatchData("Foo")
-                                                                                 });
+            TypeMatchingRuleData typeMatchingRule = new TypeMatchingRuleData
+                {
+                    Name = "RuleName",
+                    Matches =
+                        {
+                            new MatchData { Match = "System.String" },
+                            new MatchData { Match = "mydataobject", IgnoreCase = true },
+                            new MatchData { Match = "Foo" },
+                        }
+                };
 
             TypeMatchingRuleData deserializedRule = SerializeAndDeserializeMatchingRule(typeMatchingRule) as TypeMatchingRuleData;
 
@@ -44,18 +47,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
                                      "The match at index {0} is incorrect", i);
             }
         }
-#else
-        [TestMethod]
-        public void HasDefaultCtor()
-        {
-            new TypeMatchingRuleData();
-        }
 #endif
-        
+
         [TestMethod]
         public void MatchingRuleHasTransientLifetime()
         {
-            TypeMatchingRuleData ruleData = new TypeMatchingRuleData("RuleName", "System.Int32");
+            TypeMatchingRuleData ruleData = new TypeMatchingRuleData
+            {
+                Name = "RuleName",
+                Matches =
+                    {
+                        new MatchData { Match ="System.Int32" }
+                    }
+            };
             TypeRegistration registration = ruleData.GetRegistrations("").First();
 
             Assert.AreEqual(TypeRegistrationLifetime.Transient, registration.Lifetime);

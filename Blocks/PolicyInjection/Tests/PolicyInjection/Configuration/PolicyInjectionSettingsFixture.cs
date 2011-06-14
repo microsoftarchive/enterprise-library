@@ -51,11 +51,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
         }
 
         [TestMethod]
-        public void WhenCreatingRegistration_ThenReturnsNoRegistrations()
+        public void WhenCreatingRegistration_ThenReturnsOnlyPolicyInjectorRegistration()
         {
             var registrations = settings.GetRegistrations(null);
+            
+            Assert.AreEqual(1, registrations.Count());
 
-            Assert.AreEqual(0, registrations.Count());
+            var registration = registrations.ElementAt(0);
+
+            registration.AssertForServiceType(typeof(PolicyInjector))
+                .IsDefault()
+                .ForImplementationType(typeof(PolicyInjector))
+                .IsPublicName();
         }
     }
 
@@ -68,7 +75,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
         public void Setup()
         {
             settings = new PolicyInjectionSettings();
-            settings.Policies.Add(new PolicyData("policy 1") { });
+            settings.Policies.Add(new PolicyData { Name = "policy 1" });
         }
 
         [TestMethod]
@@ -84,7 +91,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
         {
             var registrations = settings.GetRegistrations(null);
 
-            Assert.AreEqual(0, registrations.Where(tr => tr.ServiceType != typeof(InjectionPolicy)).Count());
+            Assert.AreEqual(0, registrations.Where(tr => tr.ServiceType != typeof(InjectionPolicy) && tr.ServiceType != typeof(PolicyInjector)).Count());
         }
 
         [TestMethod]
@@ -124,9 +131,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
         [TestInitialize]
         public void Setup()
         {
-            var policyData = new PolicyData("policy 1");
+            var policyData = new PolicyData { Name = "policy 1" };
             policyData.MatchingRules.Add(
-                new TypeMatchingRuleData("matching rule 1", typeof(object).AssemblyQualifiedName));
+                new TypeMatchingRuleData
+                {
+                    Name = "matching rule 1", 
+                    Matches = { new MatchData { Match = typeof(object).AssemblyQualifiedName } }
+                });
 
             settings = new PolicyInjectionSettings();
             settings.Policies.Add(policyData);
@@ -198,9 +209,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
         [TestInitialize]
         public void Setup()
         {
-            var policyData = new PolicyData("policy 1");
+            var policyData = new PolicyData { Name = "policy 1" };
             policyData.MatchingRules.Add(
-                new TypeMatchingRuleData("matching rule 1", typeof(object).AssemblyQualifiedName));
+                new TypeMatchingRuleData
+                {
+                    Name = "matching rule 1",
+                    Matches = { new MatchData { Match = typeof(object).AssemblyQualifiedName } }
+                });
             policyData.Handlers.Add(
 #if !SILVERLIGHT
                 new CustomCallHandlerData("handler 1", typeof(CallCountHandler).AssemblyQualifiedName)

@@ -17,6 +17,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
     partial class PriorityFilterData
     {
         /// <summary>
+        /// Initializes a new <see cref="PriorityFilterData"/>.
+        /// </summary>
+        public PriorityFilterData()
+        {
+            MaximumPriority = 2147483647;
+        }
+
+        /// <summary>
         /// Gets or sets the minimum value for messages to be processed.  Messages with a priority
         /// below the minimum are dropped immediately on the client.
         /// </summary>

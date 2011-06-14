@@ -11,8 +11,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Properties;
 using Microsoft.Practices.Unity.InterceptionExtension;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
@@ -42,6 +44,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// <returns>The set of <see cref="TypeRegistration"/> objects.</returns>
         public override IEnumerable<TypeRegistration> GetRegistrations(string nameSuffix)
         {
+            if (string.IsNullOrEmpty(this.AttributeTypeName))
+            {
+                throw new InvalidOperationException(
+                    string.Format(CultureInfo.CurrentCulture, Resources.ErrorAttributeTypeNameNotSet, this.Name));
+            }
+
             yield return
                 new TypeRegistration<IMatchingRule>(
                     () => new CustomAttributeMatchingRule(this.AttributeType, this.SearchInheritanceChain))

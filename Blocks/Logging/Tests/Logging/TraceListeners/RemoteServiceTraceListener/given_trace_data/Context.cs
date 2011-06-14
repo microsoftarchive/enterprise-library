@@ -1,4 +1,15 @@
-﻿using System;
+﻿//===============================================================================
+// Microsoft patterns & practices Enterprise Library
+// Logging Application Block
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+
+using System;
 using System.Collections.Generic;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
 using Microsoft.Practices.EnterpriseLibrary.Common.Utility;
@@ -17,6 +28,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Rem
         protected LogEntry TestLogEntry;
         protected Logging.TraceListeners.RemoteServiceTraceListener Listener;
         protected Mock<ILoggingService> LoggingServiceMock;
+        protected Mock<ILoggingServiceFactory> LoggingServiceFactoryMock;
         protected Mock<IAsyncTracingErrorReporter> AsyncTracingErrorReporterMock;
         protected Mock<IRecurringWorkScheduler> TimerMock;
         protected IList<LogEntryMessage[]> SendLogEntriesMessages;
@@ -33,8 +45,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Rem
             {
                 { "integer", "5" }, { "string", "test" }, { "long", 4L }, { "datetime", DateTimeOffset.UtcNow }, { "bool[]", new[] { true } }
             };
-
-        protected bool ThrowOnCreateProxy;
 
         protected override void Arrange()
         {
@@ -54,17 +64,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.TraceListeners.Rem
                     return result;
                 });
             LoggingServiceMock.As<IDisposable>();
-            Func<ILoggingService> loggingServiceFactory = () =>
-                {
-                    if (ThrowOnCreateProxy) throw new ProxyCreationException();
-                    else return this.LoggingServiceMock.Object;
-                };
+
+            LoggingServiceFactoryMock = new Mock<ILoggingServiceFactory>();
+            LoggingServiceFactoryMock.Setup(x => x.CreateChannel()).Returns(this.LoggingServiceMock.Object);
+
             TimerMock = new Mock<IRecurringWorkScheduler>();
             TimerMock.Setup(x => x.SetAction(It.IsAny<Action>())).Callback<Action>(x => DoWork = x);
             AsyncTracingErrorReporterMock = new Mock<IAsyncTracingErrorReporter>();
             Listener = new Logging.TraceListeners.RemoteServiceTraceListener(
                 true,
-                loggingServiceFactory,
+                LoggingServiceFactoryMock.Object,
                 this.TimerMock.Object,
                 new LogEntryMessageStore(TestListenerName, 15, 0),
                 this.AsyncTracingErrorReporterMock.Object,

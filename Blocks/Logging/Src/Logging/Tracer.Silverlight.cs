@@ -19,7 +19,7 @@ using Microsoft.Practices.Unity.Utility;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging
 {
-    partial class Tracer
+    sealed partial class Tracer
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Tracer"/> class with the given logical operation name.

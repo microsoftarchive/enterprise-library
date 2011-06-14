@@ -349,19 +349,21 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
             if (string.IsNullOrEmpty(configurationFile))
                 throw new ArgumentException(Resources.ExceptionStringNullOrEmpty, "configurationFile");
 
+            if (!Path.IsPathRooted(configurationFile))
+            {
+                configurationFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, configurationFile);
+            }
+
             if (!File.Exists(configurationFile))
             {
                 throw new FileNotFoundException(
                     string.Format(
                         CultureInfo.CurrentCulture,
-                        Resources.ExceptionConfigurationLoadFileNotFound,
+                        Resources_Desktop.ExceptionConfigurationLoadFileNotFound,
                         configurationFile));
             }
 
-            return
-                Path.IsPathRooted(configurationFile)
-                    ? configurationFile
-                    : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, configurationFile);
+            return configurationFile;
         }
 
         private System.Configuration.Configuration GetConfiguration()

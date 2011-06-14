@@ -172,7 +172,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
             DictionaryConfigurationSource configurationSource = new DictionaryConfigurationSource();
             ValidationSettings settings = new ValidationSettings();
             configurationSource.Add(ValidationSettings.SectionName, settings);
-            ValidatedTypeReference typeReference = new ValidatedTypeReference(typeof(BaseTestDomainObject));
+            ValidatedTypeReference typeReference = ValidatedTypeReference.Create(typeof(BaseTestDomainObject));
             settings.Types.Add(typeReference);
             typeReference.DefaultRuleset = "RuleA";
             ValidationRulesetData ruleData = new ValidationRulesetData { Name = "RuleA" };
@@ -292,7 +292,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
             DictionaryConfigurationSource configurationSource = new DictionaryConfigurationSource();
             ValidationSettings settings = new ValidationSettings();
             configurationSource.Add(ValidationSettings.SectionName, settings);
-            ValidatedTypeReference typeReference = new ValidatedTypeReference(typeof(TestObjectWithFailingAttributesOnProperties));
+            ValidatedTypeReference typeReference = ValidatedTypeReference.Create(typeof(TestObjectWithFailingAttributesOnProperties));
             settings.Types.Add(typeReference);
             typeReference.DefaultRuleset = "RuleA";
             ValidationRulesetData ruleData = new ValidationRulesetData { Name = "RuleA" };
@@ -420,7 +420,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
 #if !SILVERLIGHT
                 ConfigurationSourceFactory.Create();
 #else
-                ResourceDictionaryConfigurationSource.FromXaml(new Uri("/Microsoft.Practices.EnterpriseLibrary.Validation.Silverlight.Tests;component/Configuration.xaml", UriKind.Relative));
+                DictionaryConfigurationSource.FromXaml(new Uri("/Microsoft.Practices.EnterpriseLibrary.Validation.Silverlight.Tests;component/Configuration.xaml", UriKind.Relative));
 #endif
             validationFactory = new CompositeValidatorFactory(
                 instrumentationProvider,

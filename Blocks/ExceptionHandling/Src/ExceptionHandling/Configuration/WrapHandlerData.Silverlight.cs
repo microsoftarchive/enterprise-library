@@ -15,6 +15,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
     partial class WrapHandlerData
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="WrapHandlerData"/> class.
+        /// </summary>
+        public WrapHandlerData()
+        {
+            ExceptionMessage = "";
+        }
+
+        /// <summary>
         /// Gets or sets the message for the replacement exception.
         /// </summary>
         public string ExceptionMessage

@@ -20,19 +20,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TestSupport.TraceListene
 {
     public class MockTraceListenerData : TraceListenerData
     {
+#if !SILVERLIGHT
         public MockTraceListenerData()
         {
         }
 
-#if !SILVERLIGHT
         public MockTraceListenerData(string name)
             : base(name, typeof(MockTraceListener), TraceOptions.None, SourceLevels.All)
         {
-        }
-#else
-        public MockTraceListenerData(string name)
-        {
-            this.Name = name;
         }
 #endif
 

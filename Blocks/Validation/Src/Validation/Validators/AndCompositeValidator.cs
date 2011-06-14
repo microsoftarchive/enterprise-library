@@ -69,7 +69,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         }
 
         /// <summary>
-        /// The children of this validator that are run with tthe results anded together.
+        /// Gets the validators composed by this instance.
         /// </summary>
         public IEnumerable<Validator> Validators
         {

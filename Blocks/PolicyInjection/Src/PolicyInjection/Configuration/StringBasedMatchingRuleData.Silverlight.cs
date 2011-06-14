@@ -20,17 +20,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
     public abstract partial class StringBasedMatchingRuleData 
     {
         /// <summary>
-        /// Constructs a new <see cref="StringBasedMatchingRuleData"/> instance.
-        /// </summary>
-        /// <param name="matchingRuleName">Name of the matching rule</param>
-        /// <param name="matches">String to match.</param>
-        public StringBasedMatchingRuleData(string matchingRuleName, string matches)
-            : base(matchingRuleName)
-        {
-            Match = matches;
-        }
-
-        /// <summary>
         /// The string to match.
         /// </summary>
         public virtual string Match

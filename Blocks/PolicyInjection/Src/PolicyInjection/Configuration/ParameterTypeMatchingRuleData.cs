@@ -9,9 +9,12 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Properties;
 using Microsoft.Practices.Unity.InterceptionExtension;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
@@ -40,6 +43,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// <returns>The set of <see cref="TypeRegistration"/> objects.</returns>
         public override IEnumerable<TypeRegistration> GetRegistrations(string nameSuffix)
         {
+            if (this.Matches.Any(matche => string.IsNullOrEmpty(matche.Match)))
+            {
+                throw new InvalidOperationException(
+                    string.Format(CultureInfo.CurrentCulture, Resources.ErrorParameterTypeMatchingRuleMatchNotSet, this.Name));
+            }
+
             yield return
                 new TypeRegistration<IMatchingRule>(
                     () => new ParameterTypeMatchingRule(ConvertFromConfigToRuntimeInfo(this).ToArray()))
@@ -56,44 +65,5 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
     /// </summary>
     public partial class ParameterTypeMatchData : MatchData
     {
-        /// <summary>
-        /// Constructs a new <see cref="ParameterTypeMatchData"/> instance.
-        /// </summary>
-        public ParameterTypeMatchData()
-        {
-        }
-
-        /// <summary>
-        /// Constructs a new <see cref="ParameterTypeMatchData"/> instance.
-        /// </summary>
-        /// <param name="match">Parameter type to match. Kind is InputOrOutput.</param>
-        public ParameterTypeMatchData(string match)
-            : base(match)
-        {
-        }
-
-        /// <summary>
-        /// Constructs a new <see cref="ParameterTypeMatchData"/> instance.
-        /// </summary>
-        /// <param name="match">Parameter type to match.</param>
-        /// <param name="kind"><see cref="ParameterKind"/> to match.</param>
-        public ParameterTypeMatchData(string match, ParameterKind kind)
-            : base(match)
-        {
-            ParameterKind = kind;
-        }
-
-        /// <summary>
-        /// Constructs a new <see cref="ParameterTypeMatchData"/> instance.
-        /// </summary>
-        /// <param name="match">Parameter type to match.</param>
-        /// <param name="kind"><see cref="ParameterKind"/> to match.</param>
-        /// <param name="ignoreCase">If false, type name comparisons are case sensitive. If true, 
-        /// comparisons are case insensitive.</param>
-        public ParameterTypeMatchData(string match, ParameterKind kind, bool ignoreCase)
-            : base(match, ignoreCase)
-        {
-            ParameterKind = kind;
-        }
     }
 }

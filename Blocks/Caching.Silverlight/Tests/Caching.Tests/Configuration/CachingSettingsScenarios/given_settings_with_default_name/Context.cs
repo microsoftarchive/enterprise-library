@@ -1,4 +1,15 @@
-﻿using System;
+﻿//===============================================================================
+// Microsoft patterns & practices Enterprise Library
+// Caching Application Block
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+
+using System;
 using System.Linq.Expressions;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Runtime.Caching;
@@ -18,17 +29,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests.Configuration.Cach
         {
             base.Arrange();
 
-            this.expectedRegistration = new TypeRegistration<ObjectCache>((Expression<Func<ObjectCache>>)(() => new InMemoryCache(null, 0, 0, null, null))) { Name = "cache" };
+            this.expectedRegistration = new TypeRegistration<ObjectCache>((Expression<Func<ObjectCache>>)(() => new InMemoryCache(null, 0, 0, null, null))) { Name = "cacheData" };
 
             var dataMock = new Mock<CacheData>();
             dataMock
                 .Setup(d => d.GetRegistrations(It.IsAny<IConfigurationSource>()))
                 .Returns(new[] { this.expectedRegistration });
+            dataMock.Setup(x => x.Name).Returns("cacheData");
 
             this.settings =
                 new CachingSettings
                 {
-                    DefaultCache = "cache",
+                    DefaultCache = "cacheData",
                     Caches = { dataMock.Object }
                 };
         }

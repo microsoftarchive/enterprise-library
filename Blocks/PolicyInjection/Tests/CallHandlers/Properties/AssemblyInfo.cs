@@ -19,4 +19,4 @@ using System.Runtime.CompilerServices;
 
 [assembly: AssemblyTitle("Enterprise Library Handlers for Policy Injection Application Block Tests")]
 [assembly: AssemblyDescription("Enterprise Library Handlers for Policy Injection Application Block Tests")]
-[assembly: AssemblyVersion("5.0.414.0")]
+[assembly: AssemblyVersion("5.0.505.0")]

@@ -1,4 +1,15 @@
-﻿using System;
+﻿//===============================================================================
+// Microsoft patterns & practices Enterprise Library
+// Logging Application Block
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+
+using System;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Diagnostics;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging
@@ -21,7 +32,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// <param name="eventType">The type of event.</param>
         /// <param name="id">The id of the event.</param>
         /// <param name="data">The data to trace.</param>
-        /// <param name="tag">A tag containing additionnal information about the trace event.</param>
+        /// <param name="tag">A tag containing additional information about the trace event.</param>
         void ReceiveTrace(TraceEventCache traceEventCache, string source, TraceEventType eventType, int id, object data,
                       string tag);
     }

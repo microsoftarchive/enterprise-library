@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel.Unity;
+using Microsoft.Practices.ServiceLocation;
 using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.Utility;
 
@@ -58,6 +59,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
                 registrations.AddRange(policyData.GetRegistrations());
             }
 
+            registrations.Add(GetPolicyInjectorRegistration());
+
             return registrations;
         }
 
@@ -72,6 +75,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         public IEnumerable<TypeRegistration> GetUpdatedRegistrations(IConfigurationSource configurationSource)
         {
             return GetRegistrations(configurationSource);
+        }
+
+        private static TypeRegistration GetPolicyInjectorRegistration()
+        {
+            return new TypeRegistration<PolicyInjector>(() => new PolicyInjector(Container.Resolved<IServiceLocator>()))
+                       {
+                           IsDefault = true,
+                           IsPublicName =  true
+                       };
         }
     }
 }

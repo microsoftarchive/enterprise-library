@@ -42,6 +42,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         private const string revertImpersonationProperty = "revertImpersonation";
 
         /// <summary>
+        /// Initialize a new instance of the <see cref="LoggingSettings"/> with default values.
+        /// </summary>
+        public LoggingSettings()
+            : this(string.Empty)
+        {
+        }
+
+        /// <summary>
         /// Enable or disable trace logging.
         /// </summary>
         [ConfigurationProperty(tracingEnabledProperty, DefaultValue = true)]

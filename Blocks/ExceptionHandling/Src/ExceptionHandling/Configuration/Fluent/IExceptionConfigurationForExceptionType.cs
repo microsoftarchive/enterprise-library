@@ -15,23 +15,22 @@ using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent
 {
     /// <summary>
-    /// Fluent interface extensions for configuring an exception type on a <see cref="ExceptionPolicy"/>
+    /// Fluent interface extensions for configuring an exception type on an exception policy.
     /// </summary>
     public interface IExceptionConfigurationForExceptionType : IExceptionConfigurationGivenPolicyWithName
     {
         /// <summary>
-        /// The <see cref="Exception"/> handled under the <see cref="ExceptionPolicy"/>.
+        /// The <see cref="Exception"/> handled under the exception policy.
         /// </summary>
         /// <param name="exceptionType">The type of <see cref="Exception"/> handled for this policy.</param>
         /// <returns></returns>
         IExceptionConfigurationAddExceptionHandlers ForExceptionType(Type exceptionType);
-
+        
         /// <summary>
-        /// The <see cref="Exception"/> handled under the <see cref="ExceptionPolicy"/>.
+        /// The <see cref="Exception"/> handled under the exception policy.
         /// </summary>
         /// <typeparam name="T">The type of <see cref="Exception"/> handled for this policy.</typeparam>
         /// <returns></returns>
         IExceptionConfigurationAddExceptionHandlers ForExceptionType<T>() where T : Exception;
-
     }
 }

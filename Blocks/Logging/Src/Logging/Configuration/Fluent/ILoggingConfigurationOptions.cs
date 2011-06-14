@@ -9,17 +9,6 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
-using System.Diagnostics;
-using System.Messaging;
-using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
-using System.Collections.Specialized;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
-
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent
 {
 
@@ -30,19 +19,21 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent
     {
         /// <summary>
         /// Disables tracing in the configuration schema. <br/>
-        /// Tracing is enabled by deault.
+        /// Tracing is enabled by default.
         /// </summary>
         ILoggingConfigurationOptions DisableTracing();
 
+#if !SILVERLIGHT
         /// <summary>
         /// Disables temporarily reverting impersonation when logging. <br/>
         /// Impersonation is temporarily reverted by default.
         /// </summary>
         ILoggingConfigurationOptions DoNotRevertImpersonation();
+#endif
 
         /// <summary>
-        /// Specifies that no warnings should be logged for non-existant categories. <br/>
-        /// Warnings are logged for non-existant categories by default.
+        /// Specifies that no warnings should be logged for non-existent categories. <br/>
+        /// Warnings are logged for non-existent categories by default.
         /// </summary>
         ILoggingConfigurationOptions DoNotLogWarningsWhenNoCategoryExists();
     }

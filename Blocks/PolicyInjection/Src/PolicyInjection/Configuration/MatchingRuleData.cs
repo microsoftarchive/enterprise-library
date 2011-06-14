@@ -21,13 +21,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
     public partial class MatchingRuleData
     {
         /// <summary>
-        /// Creates a new <see cref="MatchingRuleData"/> instance.
-        /// </summary>
-        public MatchingRuleData()
-        {
-        }
-
-        /// <summary>
         /// Get the set of <see cref="TypeRegistration"/> objects needed to
         /// register the matching rule represented by this config element and its associated objects.
         /// </summary>

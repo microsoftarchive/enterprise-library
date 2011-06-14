@@ -10,10 +10,7 @@
 //===============================================================================
 
 using System.Reflection;
-using System.Security;
 
 [assembly: AssemblyTitle("Enterprise Library Validation Application Block")]
 [assembly: AssemblyDescription("Enterprise Library Validation Application Block")]
-[assembly: AssemblyVersion("5.0.414.0")]
-
-[assembly: SecurityTransparent]
+[assembly: AssemblyVersion("5.0.505.0")]

@@ -220,7 +220,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
 #pragma warning restore 649
         }
 
-#if !SILVERLIGHT        // TODO remove after adding top level facade
         [TestMethod]
         public void NotNullValidatorWorksInIsolation_Bug4295()
         {
@@ -230,7 +229,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
             ValidationResults results = Validation.Validate(target);
             Assert.IsFalse(results.IsValid);
         }
-#endif
 
         [TestMethod]
         public void NotNullValidatorWorksInIsolationFromConfig_Bug4295()
@@ -268,7 +266,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
             var rulesetData = new ValidationRulesetData { Name = "default" };
             rulesetData.Fields.Add(fieldRef);
 
-            var typeData = new ValidatedTypeReference(typeof (TargetAddress));
+            var typeData = ValidatedTypeReference.Create(typeof (TargetAddress));
             typeData.Rulesets.Add(rulesetData);
             typeData.DefaultRuleset = rulesetData.Name;
 

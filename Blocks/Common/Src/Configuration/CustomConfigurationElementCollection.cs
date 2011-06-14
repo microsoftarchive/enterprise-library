@@ -47,13 +47,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
                         Type providerType = Type.GetType(reader.Value, false);
                         if (providerType == null)
                         {
-                            throw new ConfigurationErrorsException(string.Format(CultureInfo.CurrentCulture, Resources.ConfigurationSourceInvalidTypeErrorMessage, reader.Value, reader[0]));
+                            throw new ConfigurationErrorsException(string.Format(CultureInfo.CurrentCulture, Resources_Desktop.ConfigurationSourceInvalidTypeErrorMessage, reader.Value, reader[0]));
                         }
 
                         Attribute attribute = Attribute.GetCustomAttribute(providerType, typeof(ConfigurationElementTypeAttribute));
                         if (attribute == null)
                         {
-                            throw new ConfigurationErrorsException(string.Format(CultureInfo.CurrentCulture, Resources.ExceptionNoConfigurationElementAttribute, providerType.Name));
+                            throw new ConfigurationErrorsException(string.Format(CultureInfo.CurrentCulture, Resources_Desktop.ExceptionNoConfigurationElementAttribute, providerType.Name));
                         }
 
                         configurationElementType = ((ConfigurationElementTypeAttribute)attribute).ConfigurationType;
@@ -63,7 +63,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 
                 if (configurationElementType == null)
                 {
-                    throw new ConfigurationErrorsException(string.Format(CultureInfo.CurrentCulture, Resources.ExceptionNoTypeAttribute, reader.Name));
+                    throw new ConfigurationErrorsException(string.Format(CultureInfo.CurrentCulture, Resources_Desktop.ExceptionNoTypeAttribute, reader.Name));
                 }
 
                 // cover the traces ;)

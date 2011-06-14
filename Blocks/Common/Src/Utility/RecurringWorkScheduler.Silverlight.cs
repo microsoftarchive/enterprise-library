@@ -1,4 +1,15 @@
-﻿using System;
+﻿//===============================================================================
+// Microsoft patterns & practices Enterprise Library
+// Core
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+
+using System;
 using System.Threading;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Utility
@@ -6,11 +17,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Utility
     /// <summary>
     /// Scheduler that wraps a timer.
     /// </summary>
-    public class RecurringWorkScheduler : IRecurringWorkScheduler, IDisposable
+    public sealed class RecurringWorkScheduler : IRecurringWorkScheduler, IDisposable
     {
         private Timer timer;
         private readonly TimeSpan pollInterval;
-        private Action expirationAction;
+        private Action recurringWork;
         private bool started;
 
         /// <summary>
@@ -20,7 +31,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Utility
         public RecurringWorkScheduler(TimeSpan pollInterval)
         {
             if (pollInterval <= TimeSpan.Zero)
-                throw new ArgumentException("pollInterval");
+                throw new ArgumentOutOfRangeException("pollInterval");
 
             this.timer = new Timer(OnTimerIntervalElapsed);
             this.pollInterval = pollInterval;
@@ -43,10 +54,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Utility
         /// Set the delegate that will be run when the schedule
         /// determines it should run.
         /// </summary>
-        /// <param name="workToDo"></param>
-        public void SetAction(Action workToDo)
+        /// <param name="recurringWork"></param>
+        public void SetAction(Action recurringWork)
         {
-            this.expirationAction = workToDo;
+            this.recurringWork = recurringWork;
         }
 
         /// <summary>
@@ -88,7 +99,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Utility
         {
             if (timer != null)
             {
-                this.expirationAction.Invoke();
+                this.recurringWork.Invoke();
                 if (this.started)
                 {
                     this.Start();

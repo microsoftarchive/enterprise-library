@@ -30,7 +30,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
         public static ConfigurationValidatorFactory FromConfigurationSource(IConfigurationSource configurationSource)
         {
             var instrumentationProvider =
-#if !SILVERLIGHT    // todo remove when including other sources
+#if !SILVERLIGHT
                 ValidationInstrumentationProvider.FromConfigurationSource(configurationSource);
 #else
                 new NullValidationInstrumentationProvider();

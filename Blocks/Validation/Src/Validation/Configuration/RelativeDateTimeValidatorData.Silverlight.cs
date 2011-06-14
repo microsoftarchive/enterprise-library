@@ -16,6 +16,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
     partial class RelativeDateTimeValidatorData
     {
         /// <summary>
+        /// <para>Initializes a new instance of the <see cref="RelativeDateTimeValidatorData"/> class.</para>
+        /// </summary>
+        public RelativeDateTimeValidatorData()
+        {
+            LowerUnit = DateTimeUnit.None;
+            UpperUnit = DateTimeUnit.None;
+        }
+
+        /// <summary>
         /// Gets or sets the unit to use when calculating the relative lower bound for the represented <see cref="RelativeDateTimeValidator"/>.
         /// </summary>
         public DateTimeUnit LowerUnit { get; set; }

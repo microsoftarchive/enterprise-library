@@ -21,6 +21,7 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design.Validation;
 using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
 {
@@ -304,7 +305,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
             if (constructor == null)
             {
                 throw new ArgumentException(string.Format(CultureInfo.CurrentCulture,
-                                                          Logging.Properties.Resources.ExceptionCannotFindAppropriateConstructor,
+                                                          Resources_Desktop.ExceptionCannotFindAppropriateConstructor,
                                                           Type.Name,
                                                           constructorParameters.Length));
             }

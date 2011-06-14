@@ -491,7 +491,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Formatters
         public static string DefaultTextFormat
         {
 #if !SILVERLIGHT
-            get { return Resources.DefaultTextFormat; }
+            get { return Resources_Desktop.DefaultTextFormat; }
 #else
             get { return Resources.DefaultTextFormatShort; }
 #endif

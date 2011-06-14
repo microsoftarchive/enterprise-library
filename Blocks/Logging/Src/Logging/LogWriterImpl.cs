@@ -13,12 +13,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Filters;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Properties;
 using Microsoft.Practices.Unity.Utility;
 using System.Globalization;
 #if !SILVERLIGHT
+using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 using System.Diagnostics;
 #else
 using Microsoft.Practices.EnterpriseLibrary.Logging.Diagnostics;
@@ -36,7 +36,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
     /// The LogWriterImpl works as an entry point to the <see cref="System.Diagnostics"/> trace listeners. 
     /// It will trace the <see cref="LogEntry"/> through the <see cref="TraceListeners"/>s associated with the <see cref="LogSource"/>s 
     /// for all the matching categories in the elements of the <see cref="LogEntry.Categories"/> property of the log entry. 
-    /// If the "all events" special log source is configured, the log entry will be traced through the log source regardles of other categories 
+    /// If the "all events" special log source is configured, the log entry will be traced through the log source regardless of other categories 
     /// that might have matched.
     /// If the "all events" special log source is not configured and the "unprocessed categories" special log source is configured,
     /// and the category specified in the logEntry being logged is not defined, then the logEntry will be logged to the "unprocessed categories"
@@ -190,7 +190,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// </summary>
         /// <param name="ex">The exception raised during filter evaluation.</param>
         /// <param name="logEntry">The log entry being evaluated.</param>
-        /// <param name="filter">The fiter that raised the exception.</param>
+        /// <param name="filter">The filter that raised the exception.</param>
         /// <returns>True signaling processing should continue.</returns>
         public bool FilterCheckingFailed(Exception ex,
                                          LogEntry logEntry,
@@ -203,7 +203,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// <summary>
         /// Returns the filter of type <typeparamref name="T"/>.
         /// </summary>
-        /// <typeparam name="T">The type of filter requiered.</typeparam>
+        /// <typeparam name="T">The type of filter required.</typeparam>
         /// <returns>The instance of <typeparamref name="T"/> in the filters collection, or <see langword="null"/> 
         /// if there is no such instance.</returns>
         public override T GetFilter<T>()
@@ -403,7 +403,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
             {
                 LogEntry reportingLogEntry = new LogEntry();
                 reportingLogEntry.Severity = TraceEventType.Error;
-                reportingLogEntry.Message = string.Format(CultureInfo.CurrentCulture, Resources.MissingCategories, TextFormatter.FormatCategoriesCollection(missingCategories), logEntry);
+                reportingLogEntry.Message = string.Format(
+                    CultureInfo.CurrentCulture, 
+                    Resources.MissingCategories, 
+#if !SILVERLIGHT
+                    TextFormatter.FormatCategoriesCollection(missingCategories),
+#else
+                    string.Join(", ", missingCategories),
+#endif
+                    logEntry);
                 reportingLogEntry.EventId = LogWriterFailureEventID;
 
                 structureHolder.ErrorsTraceSource.TraceData(reportingLogEntry.Severity, reportingLogEntry.EventId, reportingLogEntry);
@@ -440,18 +448,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         }
 
         /// <summary>
-        /// Queries whether a <see cref="LogEntry"/> shold be logged.
+        /// Queries whether a <see cref="LogEntry"/> should be logged.
         /// </summary>
         /// <param name="log">The log entry to check.</param>
         /// <returns><b>true</b> if the entry should be logged.</returns>
         public override bool ShouldLog(LogEntry log)
         {
             return filter.CheckFilters(log);
-        }
-
-        void TryLogLockAcquisitionFailure(string message)
-        {
-            instrumentationProvider.FireLockAcquisitionError(message);
         }
 
         /// <summary>

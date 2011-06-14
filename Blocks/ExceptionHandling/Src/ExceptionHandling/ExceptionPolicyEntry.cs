@@ -92,7 +92,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
         }
 
         /// <devdoc>
-        /// Rethrows the given exception.  Placed in a seperate method for
+        /// Rethrows the given exception.  Placed in a separate method for
         /// easier viewing in the stack trace.
         /// </devdoc>
         private Exception IntentionalRethrow(Exception chainException, Exception originalException)

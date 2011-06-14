@@ -57,11 +57,13 @@
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\Lib\Silverlight\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Practices.Unity.Interception.Silverlight">
+    <Reference Include="Microsoft.Practices.Unity.Interception.Silverlight, Version=2.1.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\Lib\Silverlight\Microsoft.Practices.Unity.Interception.Silverlight.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="Microsoft.Practices.Unity.Silverlight, Version=2.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.Practices.Unity.Silverlight, Version=2.1.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\Lib\Silverlight\Microsoft.Practices.Unity.Silverlight.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="System.ComponentModel.DataAnnotations, Version=2.0.5.0, Culture=neutral, PublicKeyToken=ddd0da4d3e678217, processorArchitecture=MSIL" />
@@ -73,6 +75,9 @@
     <Reference Include="System.Windows.Browser" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\..\GlobalAssemblyInfo.cs">
+      <Link>GlobalAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="AttributeValidatorFactory.cs" />
     <Compile Include="CompositeValidatorBuilder.cs" />
     <Compile Include="CompositeValidatorFactory.cs" />
@@ -140,8 +145,9 @@
     <Compile Include="Configuration\ValidationCallHandlerData.cs" />
     <Compile Include="Configuration\ValidationRulesetData.Silverlight.cs" />
     <Compile Include="Configuration\ValidationSettings.Silverlight.cs" />
+    <Compile Include="DataAnnotations\MetadataTypeAttribute.Silverlight.cs" />
     <Compile Include="DataErrorInfoHelper.cs" />
-    <Compile Include="Instrumentation\NullValidationInstrumentationProvider.cs" />
+    <Compile Include="Instrumentation\NullValidationInstrumentationProvider.Silverlight.cs" />
     <Compile Include="Configuration\ValidationTypeRegistrationProvider.Silverlight.cs">
       <SubType>Code</SubType>
     </Compile>

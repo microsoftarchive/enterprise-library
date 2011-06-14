@@ -1,6 +1,6 @@
 ﻿//===============================================================================
 // Microsoft patterns & practices Enterprise Library
-// Caching Application Block
+// Silverlight Design-Time Configuration
 //===============================================================================
 // Copyright © Microsoft Corporation.  All rights reserved.
 // THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
@@ -14,5 +14,5 @@ using System.Reflection;
 
 [assembly: AssemblyTitle("Enterprise Library Silverlight Configuration Tests")]
 [assembly: AssemblyDescription("Enterprise Library Silverlight Configuration Tests")]
-[assembly: AssemblyVersion("5.0.414.0")]
+[assembly: AssemblyVersion("5.0.505.0")]
 [assembly: CLSCompliant(false)]

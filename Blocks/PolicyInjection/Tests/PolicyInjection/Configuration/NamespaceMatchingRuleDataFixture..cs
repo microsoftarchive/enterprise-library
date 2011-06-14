@@ -46,17 +46,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
                                      "Match data at index {0} is incorrect", i);
             }
         }
-#else
-        [TestMethod]
-        public void HasDefaultCtor()
-        {
-            new NamespaceMatchingRuleData();
-        }
 #endif
         [TestMethod]
         public void MatchingRuleHasTransientLifetime()
         {
-            NamespaceMatchingRuleData ruleData = new NamespaceMatchingRuleData("ruleName", "Foo");
+            NamespaceMatchingRuleData ruleData = new NamespaceMatchingRuleData { Name = "ruleName", Matches = { new MatchData { Match = "Foo" } }};
             TypeRegistration registration = ruleData.GetRegistrations("").First();
 
             Assert.AreEqual(TypeRegistrationLifetime.Transient, registration.Lifetime);

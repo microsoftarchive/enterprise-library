@@ -20,7 +20,7 @@ using System.Security;
 // associated with an assembly.
 [assembly: AssemblyTitle("Enterprise Library Logging Application Block Database Provider")]
 [assembly: AssemblyDescription("Enterprise Library Logging Application Block Database Provider")]
-[assembly: AssemblyVersion("5.0.414.0")]
+[assembly: AssemblyVersion("5.0.505.0")]
 
 [assembly: SecurityPermission(SecurityAction.RequestMinimum)]
 [assembly: ReflectionPermission(SecurityAction.RequestMinimum)]

@@ -19,7 +19,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
     /// matchable item. Specifically, the string to match, and whether it is case
     /// sensitive or not.
     /// </summary>
-    public partial class MatchData : NamedConfigurationElement
+    public partial class MatchData
     {
         /// <summary>
         /// Gets or sets the string to match against.

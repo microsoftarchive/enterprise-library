@@ -1,5 +1,15 @@
-﻿using System.Linq;
-using Console.Wpf.Tests.VSTS.TestSupport;
+﻿//===============================================================================
+// Microsoft patterns & practices Enterprise Library
+// Silverlight Design-Time Configuration
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+
+using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel;
@@ -33,11 +43,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Silverlight.Configuration.Tests.
 
             // Create the cache from the command
             AddNewInMemoryCache =
-                (DefaultCollectionElementAddCommand)
-                TestCachesViewModel.Commands.SelectMany(x => x.ChildCommands).ElementAt(0);
+                TestCachesViewModel.Commands
+                    .SelectMany(x => x.ChildCommands)
+                    .Cast<DefaultCollectionElementAddCommand>()
+                    .First(x => x.ConfigurationElementType == typeof(InMemoryCacheData));
+
             AddNewIsolatedStorageCache =
-                (DefaultCollectionElementAddCommand)
-                TestCachesViewModel.Commands.SelectMany(x => x.ChildCommands).ElementAt(1);
+                TestCachesViewModel.Commands
+                    .SelectMany(x => x.ChildCommands)
+                    .Cast<DefaultCollectionElementAddCommand>()
+                    .First(x => x.ConfigurationElementType == typeof(IsolatedStorageCacheData));
         }
     }
 }

@@ -31,7 +31,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
     /// The LogWriter works as an entry point to the <see cref="System.Diagnostics"/> trace listeners. 
     /// It will trace the <see cref="LogEntry"/> through the <see cref="TraceListeners"/>s associated with the <see cref="LogSource"/>s 
     /// for all the matching categories in the elements of the <see cref="LogEntry.Categories"/> property of the log entry. 
-    /// If the "all events" special log source is configured, the log entry will be traced through the log source regardles of other categories 
+    /// If the "all events" special log source is configured, the log entry will be traced through the log source regardless of other categories 
     /// that might have matched.
     /// If the "all events" special log source is not configured and the "unprocessed categories" special log source is configured,
     /// and the category specified in the logEntry being logged is not defined, then the logEntry will be logged to the "unprocessed categories"
@@ -98,7 +98,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// <summary>
         /// Returns the filter of type <typeparamref name="T"/>.
         /// </summary>
-        /// <typeparam name="T">The type of filter requiered.</typeparam>
+        /// <typeparam name="T">The type of filter required.</typeparam>
         /// <returns>The instance of <typeparamref name="T"/> in the filters collection, or <see langword="null"/> 
         /// if there is no such instance.</returns>
         public abstract T GetFilter<T>()
@@ -142,7 +142,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         public abstract bool IsTracingEnabled();
 
         /// <summary>
-        /// Reset lock timeouts to thier original values.
+        /// Reset lock timeouts to their original values.
         /// </summary>
         public static void ResetLockTimeouts()
         {
@@ -175,7 +175,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
 #endif
 
         /// <summary>
-        /// Queries whether a <see cref="LogEntry"/> shold be logged.
+        /// Queries whether a <see cref="LogEntry"/> should be logged.
         /// </summary>
         /// <param name="log">The log entry to check.</param>
         /// <returns><b>true</b> if the entry should be logged.</returns>

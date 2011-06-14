@@ -19,7 +19,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Unity
     /// </summary>
     /// <remarks>
     /// This extension configures its container to resolve all Enterprise Library
-    /// objects. It's a convienence method to save having to manually create a 
+    /// objects. It's a convenient method to save having to manually create a 
     /// <see cref="UnityContainerConfigurator"/> object and configure it yourself.
     /// </remarks>
     public class EnterpriseLibraryCoreExtension : UnityContainerExtension
@@ -36,7 +36,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Unity
         { }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="EnterpriseLibraryCoreExtension"/> class with the
+        /// Initializes a new instance of the <see cref="EnterpriseLibraryCoreExtension"/> class with 
         /// the specified <see cref="IConfigurationSource"/>.
         /// </summary>
         /// <param name="configurationSource">The <see cref="IConfigurationSource"/> to use when retrieving

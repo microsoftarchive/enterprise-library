@@ -40,6 +40,25 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// Constructs a new <see cref="TypeMatchingRuleData"/> instance.
         /// </summary>
         /// <param name="matchingRuleName">Matching rule instance name in configuration.</param>
+        public TypeMatchingRuleData(string matchingRuleName)
+            : this(matchingRuleName, new MatchData[0])
+        {
+        }
+
+        /// <summary>
+        /// Constructs a new <see cref="TypeMatchingRuleData"/> instance.
+        /// </summary>
+        /// <param name="matchingRuleName">Matching rule instance name in configuration.</param>
+        /// <param name="typeName">Type name to match.</param>
+        public TypeMatchingRuleData(string matchingRuleName, string typeName)
+            : this(matchingRuleName, new MatchData[] { new MatchData(typeName) })
+        {
+        }
+
+        /// <summary>
+        /// Constructs a new <see cref="TypeMatchingRuleData"/> instance.
+        /// </summary>
+        /// <param name="matchingRuleName">Matching rule instance name in configuration.</param>
         /// <param name="matches">Collection of <see cref="MatchData"/> containing
         /// types to match. If any one matches, the rule matches.</param>
         public TypeMatchingRuleData(string matchingRuleName, IEnumerable<MatchData> matches)

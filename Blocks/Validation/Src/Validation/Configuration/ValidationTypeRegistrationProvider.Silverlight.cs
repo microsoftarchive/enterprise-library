@@ -18,7 +18,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 {
     ///<summary>
     /// Provides <see cref="TypeRegistration"/> entries used by 
-    /// a <see cref="IContainerConfigurator"/> for the validtion block.
+    /// a <see cref="IContainerConfigurator"/> for the validation block.
     ///</summary>
     public class ValidationTypeRegistrationProvider : ITypeRegistrationsProvider
     {

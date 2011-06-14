@@ -18,4 +18,4 @@ using System.Runtime.ConstrainedExecution;
 
 [assembly: AssemblyTitle("Enterprise Library Validation Application Block WinForms Integration Tests")]
 [assembly: AssemblyDescription("Enterprise Library Validation Application Block WinForms Integration Tests")]
-[assembly: AssemblyVersion("5.0.414.0")]
+[assembly: AssemblyVersion("5.0.505.0")]

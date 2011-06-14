@@ -1,0 +1,10 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:config="clr-namespace:Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration;assembly=Microsoft.Practices.EnterpriseLibrary.Common.Silverlight.Tests"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <config:MockConfigurationSection x:Key="section1" TestProperty="DummyText" />
+    <sys:String x:Key="string">Not a configuration object.</sys:String>
+
+</ResourceDictionary>

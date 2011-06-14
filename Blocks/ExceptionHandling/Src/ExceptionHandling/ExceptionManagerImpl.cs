@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Instrumentation;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Properties;
@@ -107,7 +108,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
             ExceptionPolicyImpl exceptionPolicy;
             if (!exceptionPolicies.TryGetValue(policyName, out exceptionPolicy))
             {
-                string message = string.Format(Resources.ExceptionPolicyNotFound, policyName);
+                string message = string.Format(CultureInfo.CurrentCulture, Resources.ExceptionPolicyNotFound, policyName);
                 instrumentationProvider.FireExceptionHandlingErrorOccurred(policyName, message);
                 throw new ExceptionHandlingException(message);
             }

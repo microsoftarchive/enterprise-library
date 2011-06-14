@@ -16,28 +16,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
     /// <summary>
     /// Configuration element for the <see cref="CustomAttributeMatchingRule"/> configuration.
     /// </summary>
-    public partial class CustomAttributeMatchingRuleData : MatchingRuleData
+    partial class CustomAttributeMatchingRuleData
     {
-        /// <summary>
-        /// Creates a new <see cref="CustomAttributeMatchingRuleData"/>.
-        /// </summary>
-        public CustomAttributeMatchingRuleData()
-        {
-        }
-
-        /// <summary>
-        /// Creates a new <see cref="CustomAttributeMatchingRuleData"/> instance.
-        /// </summary>
-        /// <param name="name">Name of the matching rule.</param>
-        /// <param name="attributeTypeName">Name of the attribute type to match on the target.</param>
-        /// <param name="searchInheritanceChain">Should we search the inheritance chain to find the attribute?</param>
-        public CustomAttributeMatchingRuleData(string name, string attributeTypeName, bool searchInheritanceChain)
-        {
-            Name = name;
-            SearchInheritanceChain = searchInheritanceChain;
-            AttributeTypeName = attributeTypeName;
-        }
-
         /// <summary>
         /// Should we search the inheritance chain to find the attribute?
         /// </summary>

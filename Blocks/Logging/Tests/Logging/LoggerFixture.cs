@@ -11,7 +11,11 @@
 
 using System;
 using System.Configuration;
+#if !SILVERLIGHT
 using System.Diagnostics;
+#else
+using Microsoft.Practices.EnterpriseLibrary.Logging.Diagnostics;
+#endif
 using System.IO;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
@@ -32,7 +36,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
         const int eventId = 421;
         const string title = "bar";
         const TraceEventType severity = TraceEventType.Information;
-
+#if !SILVERLIGHT
         [TestInitialize]
         public void SetUp()
         {
@@ -47,6 +51,25 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
             Logger.Reset();
             MockTraceListener.Reset();
         }
+#else
+        protected LogWriter Logger;
+
+        [TestInitialize]
+        public void SetUp()
+        {
+            var configurationSource = DictionaryConfigurationSource.FromXaml(new Uri("/Microsoft.Practices.EnterpriseLibrary.Logging.Silverlight.Tests;component/Configuration.xaml", UriKind.Relative));
+            EnterpriseLibraryContainer.Current = EnterpriseLibraryContainer.CreateDefaultContainer(configurationSource);
+            Logger = EnterpriseLibraryContainer.Current.GetInstance<LogWriter>();
+            MockTraceListener.Reset();
+        }
+
+        [TestCleanup]
+        public void TearDown()
+        {
+            EnterpriseLibraryContainer.Current = null;
+            MockTraceListener.Reset();
+        }
+#endif
 
         [TestMethod]
         public void WriteMessageOnlyOverload()
@@ -244,8 +267,53 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
                             MockTraceListener.LastEntry.ExtendedProperties.Count, "hash count");
         }
 
-        // -----------------------
+        [TestMethod]
+        public void MessageLoggedWithSufficientPriorityShouldGetLogged()
+        {
+            LogEntry logEntry = CommonUtil.GetDefaultLogEntry();
+            logEntry.Categories = new string[] { "MockCategoryOne" };
+            logEntry.Priority = Logger.GetFilter<PriorityFilter>().MinimumPriority + 1;
+            logEntry.Severity = TraceEventType.Information;
 
+            bool shouldLog = Logger.ShouldLog(logEntry);
+            Logger.Write(logEntry);
+
+            LogEntry resultLog = MockTraceListener.LastEntry;
+
+            Assert.IsNotNull(resultLog, "confirm that the message got logged by the strategy");
+            Assert.AreEqual(logEntry.Message, resultLog.Message);
+            Assert.IsTrue(shouldLog);
+        }
+
+        [TestMethod]
+        public void MessageLoggedWithPriorityBelowMinimumWillNotBeLogged()
+        {
+            LogEntry logEntry = CommonUtil.GetDefaultLogEntry();
+            logEntry.Categories = new string[] { "MockCategoryOne" };
+            logEntry.Priority = Logger.GetFilter<PriorityFilter>().MinimumPriority - 1;
+            logEntry.Severity = TraceEventType.Information;
+
+            bool shouldLog = Logger.ShouldLog(logEntry);
+            Logger.Write(logEntry);
+
+            LogEntry resultLog = MockTraceListener.LastEntry;
+
+            Assert.IsNull(resultLog, "confirm that the message did NOT get logged by the strategy");
+            Assert.IsFalse(shouldLog);
+        }
+
+        [TestMethod]
+        public void CanWritetoListenerWithDefaultConstructor()
+        {
+            LogEntry log = new LogEntry();
+            log.EventId = 1;
+            log.Message = "test";
+            log.Categories = new string[] { "ConsoleCategory" };
+            log.Severity = TraceEventType.Error;
+            Logger.Write(log);
+        }
+
+#if !SILVERLIGHT
         [TestMethod]
         public void WriteDictionary()
         {
@@ -318,41 +386,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
         }
 
         [TestMethod]
-        public void MessageLoggedWithSufficientPriorityShouldGetLogged()
-        {
-            LogEntry logEntry = CommonUtil.GetDefaultLogEntry();
-            logEntry.Categories = new string[] { "MockCategoryOne" };
-            logEntry.Priority = Logger.GetFilter<PriorityFilter>().MinimumPriority + 1;
-            logEntry.Severity = TraceEventType.Information;
-
-            bool shouldLog = Logger.ShouldLog(logEntry);
-            Logger.Write(logEntry);
-
-            LogEntry resultLog = MockTraceListener.LastEntry;
-
-            Assert.IsNotNull(resultLog, "confirm that the message got logged by the strategy");
-            Assert.AreEqual(logEntry.Message, resultLog.Message);
-            Assert.IsTrue(shouldLog);
-        }
-
-        [TestMethod]
-        public void MessageLoggedWithPriorityBelowMinimumWillNotBeLogged()
-        {
-            LogEntry logEntry = CommonUtil.GetDefaultLogEntry();
-            logEntry.Categories = new string[] { "MockCategoryOne" };
-            logEntry.Priority = Logger.GetFilter<PriorityFilter>().MinimumPriority - 1;
-            logEntry.Severity = TraceEventType.Information;
-
-            bool shouldLog = Logger.ShouldLog(logEntry);
-            Logger.Write(logEntry);
-
-            LogEntry resultLog = MockTraceListener.LastEntry;
-
-            Assert.IsNull(resultLog, "confirm that the message did NOT get logged by the strategy");
-            Assert.IsFalse(shouldLog);
-        }
-
-        [TestMethod]
         public void EmptyCategoriesRevertToDefaultCategory()
         {
             MockTraceListener.Reset();
@@ -372,17 +405,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
                 Assert.AreEqual(1, MockTraceListener.LastEntry.Categories.Count);
                 Assert.IsTrue(MockTraceListener.LastEntry.Categories.Contains(settings.DefaultCategory));
             }
-        }
-
-        [TestMethod]
-        public void CanWritetoListenerWithDefaultConstructor()
-        {
-            LogEntry log = new LogEntry();
-            log.EventId = 1;
-            log.Message = "test";
-            log.Categories = new string[] { "ConsoleCategory" };
-            log.Severity = TraceEventType.Error;
-            Logger.Write(log);
         }
 
         [TestMethod]
@@ -432,5 +454,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests
             }
             return strFileContents;
         }
+#endif
     }
 }

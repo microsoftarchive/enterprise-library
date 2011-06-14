@@ -103,7 +103,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
             if (section == null)
                 throw new ConfigurationSourceErrorsException(
                     string.Format(CultureInfo.CurrentCulture, 
-                    Resources.ExceptionRedirectedConfigurationSectionNotFound, 
+                    Resources_Desktop.ExceptionRedirectedConfigurationSectionNotFound, 
                     sectionName, 
                     sourceNameForSection));
 

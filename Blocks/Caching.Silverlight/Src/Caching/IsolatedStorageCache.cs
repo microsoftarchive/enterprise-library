@@ -1,4 +1,16 @@
-﻿using System;
+﻿//===============================================================================
+// Microsoft patterns & practices Enterprise Library
+// Caching Application Block
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+
+using System;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Practices.EnterpriseLibrary.Caching.InMemory;
 using Microsoft.Practices.EnterpriseLibrary.Caching.IsolatedStorage;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Runtime.Caching;
@@ -14,6 +26,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
     /// If a second instance of an application using this cache is started, the cache on the second instance will
     /// only load the items in isolated storage but will not save them.
     /// </remarks>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
     public class IsolatedStorageCache : MemoryBackedCacheBase<IsolatedStorageCacheEntry>
     {
         private readonly ICacheEntryStore store;
@@ -22,12 +35,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
         /// Initializes a new instance of the <see cref="IsolatedStorageCache"/> class.
         /// </summary>
         /// <param name="name">The name for the cache.</param>
-        /// <param name="maxSizeInKiloBytes">The maximum size in kilobytes.</param>
+        /// <param name="maxSizeInKilobytes">The maximum size in kilobytes.</param>
         /// <param name="percentOfQuotaUsedBeforeScavenging">The percentage of quota used before scavenging.</param>
         /// <param name="percentOfQuotaUsedAfterScavenging">The percentage of quota used after scavenging.</param>
         /// <param name="expirationPollingInterval">The expiration polling interval.</param>
-        public IsolatedStorageCache(string name, long maxSizeInKiloBytes, int percentOfQuotaUsedBeforeScavenging, int percentOfQuotaUsedAfterScavenging, TimeSpan expirationPollingInterval)
-            : this(name, maxSizeInKiloBytes, percentOfQuotaUsedBeforeScavenging, percentOfQuotaUsedAfterScavenging, expirationPollingInterval, new IsolatedStorageCacheEntrySerializer())
+        public IsolatedStorageCache(string name, int maxSizeInKilobytes, int percentOfQuotaUsedBeforeScavenging, int percentOfQuotaUsedAfterScavenging, TimeSpan expirationPollingInterval)
+            : this(name, maxSizeInKilobytes, percentOfQuotaUsedBeforeScavenging, percentOfQuotaUsedAfterScavenging, expirationPollingInterval, new IsolatedStorageCacheEntrySerializer())
         {
         }
 
@@ -35,13 +48,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
         /// Initializes a new instance of the <see cref="IsolatedStorageCache"/> class.
         /// </summary>
         /// <param name="name">The name for the cache.</param>
-        /// <param name="maxSizeInKiloBytes">The maximum size in kilobytes.</param>
+        /// <param name="maxSizeInKilobytes">The maximum size in kilobytes.</param>
         /// <param name="percentOfQuotaUsedBeforeScavenging">The percentage of quota used before scavenging.</param>
         /// <param name="percentOfQuotaUsedAfterScavenging">The percentage of quota used after scavenging.</param>
         /// <param name="expirationPollingInterval">The expiration polling interval.</param>
         /// <param name="serializer">An entry serializer.</param>
-        public IsolatedStorageCache(string name, long maxSizeInKiloBytes, int percentOfQuotaUsedBeforeScavenging, int percentOfQuotaUsedAfterScavenging, TimeSpan expirationPollingInterval, IIsolatedStorageCacheEntrySerializer serializer)
-            : this(name, new CacheEntryStore(name, maxSizeInKiloBytes * 1024, serializer), percentOfQuotaUsedBeforeScavenging, percentOfQuotaUsedAfterScavenging, expirationPollingInterval)
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Explicitly checked that exceptions cannot be thrown by current implementations and/or objects are disposed correctly.")]
+        public IsolatedStorageCache(string name, int maxSizeInKilobytes, int percentOfQuotaUsedBeforeScavenging, int percentOfQuotaUsedAfterScavenging, TimeSpan expirationPollingInterval, IIsolatedStorageCacheEntrySerializer serializer)
+            : this(name, new CacheEntryStore(name, maxSizeInKilobytes, serializer), percentOfQuotaUsedBeforeScavenging, percentOfQuotaUsedAfterScavenging, expirationPollingInterval)
         {
         }
 
@@ -53,13 +67,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
         /// <param name="percentOfQuotaUsedBeforeScavenging">The percentage of quota used before scavenging.</param>
         /// <param name="percentOfQuotaUsedAfterScavenging">The percentage of quota used after scavenging.</param>
         /// <param name="expirationPollingInterval">The expiration polling interval.</param>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Explicitly checked that exceptions cannot be thrown by current implementations and/or objects are disposed correctly.")]
         protected IsolatedStorageCache(string name, ICacheEntryStore store, int percentOfQuotaUsedBeforeScavenging, int percentOfQuotaUsedAfterScavenging, TimeSpan expirationPollingInterval)
             : base(
                 name,
-                new IsolatedStorageSizeScavengingStrategy(store, new IsolatedStorageInfo(), percentOfQuotaUsedBeforeScavenging, percentOfQuotaUsedAfterScavenging),
+                SafeGetScavengingStrategyOrDisposeStore(store, percentOfQuotaUsedBeforeScavenging, percentOfQuotaUsedAfterScavenging),
                 new ScavengingScheduler(),
                 new RecurringWorkScheduler(expirationPollingInterval))
         {
+            if (store == null) throw new ArgumentNullException("store");
+
             this.store = store;
 
             foreach (var entry in this.store.GetSerializedEntries())
@@ -104,7 +121,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
         /// <summary>
         /// Gets a value indicating if this instance of the cache is using the isolated storage to persist the cache entries. 
         /// </summary>
-        /// <remarks>There might be occassions where the cache is working just in memory, so any changes to the cache will not be reflected 
+        /// <remarks>There might be occasions where the cache is working just in memory, so any changes to the cache will not be reflected 
         /// in future instances of the same cache.</remarks>
         public bool IsPersisting
         {
@@ -138,6 +155,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
         /// <param name="key">A unique identifier for the cache entry.</param>
         /// <param name="value">The object to insert.</param>
         /// <param name="policy">An object that contains eviction details for the cache entry.</param>
+        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "Best effor to add. If there is any problem with the storage, schedule scavenging, ignore and continue.")]
         protected override void DoSet(string key, object value, CacheItemPolicy policy)
         {
             DoRemove(key, CacheEntryRemovedReason.Removed);
@@ -154,6 +172,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
                 {
                     // Iso Storage is full
                     add = false;
+                    ScheduleScavenging();
                 }
             }
 
@@ -170,6 +189,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
         /// </summary>
         /// <param name="entry">The entry that was removed.</param>
         /// <param name="reason">The reason for the removal.</param>
+        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "Best effor to remove. Cannot notify because this happens typically in a background thread.")]
         protected override void OnItemRemoved(IsolatedStorageCacheEntry entry, CacheEntryRemovedReason reason)
         {
             base.OnItemRemoved(entry, reason);
@@ -188,6 +208,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
         /// Updates the last access time on an entry.
         /// </summary>
         /// <param name="entry">The entry.</param>
+        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "Best effor to update. If there is any problem with the storage, ignore and continue.")]
         protected override void DoUpdateLastAccessTime(IsolatedStorageCacheEntry entry)
         {
             base.DoUpdateLastAccessTime(entry);
@@ -212,6 +233,19 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
             }
 
             base.Dispose(disposing);
+        }
+
+        private static IsolatedStorageSizeScavengingStrategy SafeGetScavengingStrategyOrDisposeStore(ICacheEntryStore store, int percentOfQuotaUsedBeforeScavenging, int percentOfQuotaUsedAfterScavenging)
+        {
+            try
+            {
+                return new IsolatedStorageSizeScavengingStrategy(store, new IsolatedStorageInfo(), percentOfQuotaUsedBeforeScavenging, percentOfQuotaUsedAfterScavenging);
+            }
+            catch
+            {
+                using (store as IDisposable) { }
+                throw;
+            }
         }
     }
 }

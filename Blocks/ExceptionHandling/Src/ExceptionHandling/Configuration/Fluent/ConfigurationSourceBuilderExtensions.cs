@@ -10,11 +10,11 @@
 //===============================================================================
 
 using System;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
-using Microsoft.Practices.EnterpriseLibrary.Common.Properties;
 using System.Globalization;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent;
+using Microsoft.Practices.EnterpriseLibrary.Common.Properties;
+using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
+using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 {
@@ -23,7 +23,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
     /// </summary>
     public static class ExceptionHandlingConfigurationSourceBuilderExtensions
     {
-
         /// <summary>
         /// Main entry point to configuration a <see cref="ExceptionHandlingSettings"/> section.
         /// </summary>
@@ -33,7 +32,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         {
             return new ExceptionPolicyBuilder(configurationSourceBuilder);
         }
-
 
         private class ExceptionPolicyBuilder :
             IExceptionConfigurationGivenPolicyWithName,
@@ -57,11 +55,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
                 if (string.IsNullOrEmpty(name)) 
                     throw new ArgumentException(Resources.ExceptionStringNullOrEmpty, "name");
 
-                currentPolicy = new ExceptionPolicyData(name);
+                currentPolicy = new ExceptionPolicyData { Name = name };
                 section.ExceptionPolicies.Add(currentPolicy);
                 return this;
             }
-
             
             IExceptionConfigurationAddExceptionHandlers IExceptionConfigurationForExceptionType.ForExceptionType(Type exceptionType)
             {

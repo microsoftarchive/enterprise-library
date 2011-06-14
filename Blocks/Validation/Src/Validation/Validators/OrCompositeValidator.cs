@@ -96,7 +96,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         }
 
         /// <summary>
-        /// Child validators that are being Or'red together.
+        /// Child validators that are being OR'red together.
         /// </summary>
         public IEnumerable<Validator> Validators
         {

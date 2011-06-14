@@ -74,7 +74,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
 
         /// <summary>
         /// Gets additional information related to the <see cref="Exception"/> but not
-        /// stored in the exception (eg: the time in which the <see cref="Exception"/> was 
+        /// stored in the exception (for example, the time in which the <see cref="Exception"/> was 
         /// thrown).
         /// </summary>
         /// <value>
@@ -341,7 +341,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
             }
             catch (SecurityException)
             {
-                machineName = Resources.PermissionDenied;
+                machineName = Resources_Desktop.PermissionDenied;
             }
 
             return machineName;
@@ -356,7 +356,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
             }
             catch (SecurityException)
             {
-                windowsIdentity = Resources.PermissionDenied;
+                windowsIdentity = Resources_Desktop.PermissionDenied;
             }
 
             return windowsIdentity;

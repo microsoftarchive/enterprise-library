@@ -17,22 +17,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
     partial interface IConfigurationSource
     {
         /// <summary>
-        /// Adds a <see cref="ConfigurationSection"/> to the configuration source and saves the configuration source.
-        /// </summary>
-        /// <remarks>
-        /// If a configuration section with the specified name already exists it will be replaced.
-        /// </remarks>
-        /// <param name="sectionName">The name by which the <paramref name="configurationSection"/> should be added.</param>
-        /// <param name="configurationSection">The configuration section to add.</param>
-        void Add(string sectionName, ConfigurationSection configurationSection);
-
-        /// <summary>
-        /// Removes a <see cref="ConfigurationSection"/> from the configuration source.
-        /// </summary>
-        /// <param name="sectionName">The name of the section to remove.</param>
-        void Remove(string sectionName);
-
-        /// <summary>
         /// Event raised when any section in this configuration source changes.
         /// </summary>
         event EventHandler<ConfigurationSourceChangedEventArgs> SourceChanged;

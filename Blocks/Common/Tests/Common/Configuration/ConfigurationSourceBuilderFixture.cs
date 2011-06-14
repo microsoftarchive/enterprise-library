@@ -9,15 +9,9 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation.Configuration;
-using System.ComponentModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
 {
@@ -38,7 +32,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
         }
     }
 
-
     [TestClass]
     public class When_AccessingConfigurationSourceBuilderMembers : ArrangeActAssert
     {
@@ -49,43 +42,28 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
         }
     }
 
-
-    [TestClass]
-    public class When_AddingInstrumentationSettingsToConfigurationSourceBuilder : Given_EmptyConfigurationSourceBuilder
-    {
-        protected override void Arrange()
-        {
-            base.Arrange();
-
-            ConfigurationSourceBuilder = new ConfigurationSourceBuilder();
-        }
-
-        [TestMethod]
-        public void Then_ConfigurationSourceContainsNoInstrumentationSection()
-        {
-            var configurationSource = GetConfigurationSource();
-            var instrumentationSettings = (InstrumentationConfigurationSection)configurationSource.GetSection(InstrumentationConfigurationSection.SectionName);
-
-            Assert.IsNull(instrumentationSettings);
-        }
-    }
-
     [TestClass]
     public class When_AddingSectionsToSourceBuilder : Given_EmptyConfigurationSourceBuilder
     {
-        private InstrumentationConfigurationSection section;
+        private MockConfigurationSection section;
+        private const string sectionName = "MockSection";
 
         protected override void Act()
         {
-            section = new InstrumentationConfigurationSection();
-            base.ConfigurationSourceBuilder.AddSection(InstrumentationConfigurationSection.SectionName,
-                                                       section);
+            section = new MockConfigurationSection();
+            base.ConfigurationSourceBuilder.AddSection(sectionName, section);
         }
 
         [TestMethod]
         public void Then_CanRetrieveAddedSection()
         {
-            Assert.AreSame(section, ConfigurationSourceBuilder.Get(InstrumentationConfigurationSection.SectionName));
+            Assert.AreSame(section, ConfigurationSourceBuilder.Get(sectionName));
+        }
+
+        [TestMethod]
+        public void Then_CanRetrieveAddedSectionViaGeneric()
+        {
+            Assert.AreSame(section, ConfigurationSourceBuilder.Get<MockConfigurationSection>(sectionName));
         }
 
         [TestMethod]
@@ -97,43 +75,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests.Configuration
         [TestMethod]
         public void Then_ReturnsNullIfCannotFindViaGeneric()
         {
-            Assert.IsNull(ConfigurationSourceBuilder.Get<InstrumentationConfigurationSection>("unknown section name"));
+            Assert.IsNull(ConfigurationSourceBuilder.Get<MockConfigurationSection>("unknown section name"));
         }
     }
-
-    [TestClass]
-    public class When_AddingInstrumentationSettingsWithApplicationInstanceNameToConfigurationSourceBuilder : Given_EmptyConfigurationSourceBuilder
-    {
-        protected override void Act()
-        {
-            ConfigurationSourceBuilder.ConfigureInstrumentation()
-                .EnableLogging()
-                .ForApplicationInstance("appInstanceName");
-        }
-
-        [TestMethod]
-        public void Then_ConfigurationSourceContainsInstrumentationSection()
-        {
-            var configurationSource = GetConfigurationSource();
-            var instrumentationSettings = (InstrumentationConfigurationSection)configurationSource.GetSection(InstrumentationConfigurationSection.SectionName);
-
-            Assert.IsNotNull(instrumentationSettings);
-            Assert.IsTrue(instrumentationSettings.EventLoggingEnabled);
-            Assert.IsFalse(instrumentationSettings.PerformanceCountersEnabled);
-            Assert.AreEqual("appInstanceName", instrumentationSettings.ApplicationInstanceName);
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(InvalidOperationException))]
-        public void Then_AddingInstrumentationSettingsAgainThrows()
-        {
-            ConfigurationSourceBuilder.ConfigureInstrumentation()
-                .EnableLogging()
-                .EnablePerformanceCounters();
-        }
-    }
-
-
-
-
 }

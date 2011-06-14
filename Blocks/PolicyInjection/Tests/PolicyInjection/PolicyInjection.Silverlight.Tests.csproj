@@ -81,8 +81,9 @@
       <HintPath>..\..\..\..\Lib\Silverlight\Microsoft.Practices.ServiceLocation.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Practices.Unity.Interception.Silverlight">
+    <Reference Include="Microsoft.Practices.Unity.Interception.Silverlight, Version=2.1.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\Lib\Silverlight\Microsoft.Practices.Unity.Interception.Silverlight.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="Microsoft.Practices.Unity.Silverlight">
       <HintPath>..\..\..\..\Lib\Silverlight\Microsoft.Practices.Unity.Silverlight.dll</HintPath>
@@ -110,6 +111,7 @@
     </Compile>
     <Compile Include="Configuration\AssemblyMatchingRuleDataFixture.cs" />
     <Compile Include="Configuration\ConfigurationStructureFixture.Silverlight.cs" />
+    <Compile Include="Configuration\DefaultConfigurationFixture.cs" />
     <Compile Include="Configuration\CustomAttributeMatchingRuleDataFixture.cs" />
     <Compile Include="Configuration\MethodSignatureMatchingRuleDataFixture.cs" />
     <Compile Include="Configuration\ParameterTypeMatchingRuleDataFixture.Silverlight.cs" />

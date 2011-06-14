@@ -50,7 +50,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.PolicyInjection
         }
 
         /// <summary>
-        /// Perform the formatting operation, replaceing tokens in the template.
+        /// Perform the formatting operation, replacing tokens in the template.
         /// </summary>
         /// <param name="template">Template string to do token replacement in.</param>
         /// <returns>The template, with tokens replaced.</returns>

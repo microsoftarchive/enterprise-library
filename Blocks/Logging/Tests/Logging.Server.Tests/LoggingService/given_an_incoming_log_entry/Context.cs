@@ -1,14 +1,24 @@
-﻿using System;
+﻿//===============================================================================
+// Microsoft patterns & practices Enterprise Library
+// Logging Application Block
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
-
-using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Service.Tests.LoggingService.given_an_incoming_log_entry
 {
-    public abstract class Context : ArrangeActAssert
+    public abstract class Context
     {
         protected LogEntryMessage TestLogEntry;
         protected Service.LoggingService LoggingService;
@@ -24,10 +34,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Service.Tests.LoggingSer
         protected readonly string[] TestExtendedPropertiesValues = new[] { "value1", "value2" };
         protected readonly DateTime TestTimeStamp = new DateTime(2000, 2, 3, 5, 6, 7, 8, DateTimeKind.Utc);
 
-        protected override void Arrange()
+        /// <summary>
+        /// When overridden in a derived class, this method is used to
+        /// set up the current state of the specs context.
+        /// </summary>
+        /// <remarks>This method is called automatically before every test,
+        /// before the <see cref="Act"/> method.</remarks>
+        protected virtual void Arrange()
         {
-            base.Arrange();
-
             LogWriterEntries = new List<LogEntry>();
             TestLogEntry = new LogEntryMessage
             {
@@ -42,6 +56,38 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Service.Tests.LoggingSer
             loggerMock.Setup(x => x.Write(It.IsAny<LogEntry>())).Callback<LogEntry>(e => LogWriterEntries.Add(e));
 
             LoggingService = new Service.LoggingService(loggerMock.Object);
+        }
+
+        [TestInitialize]
+        public void MainSetup()
+        {
+            Arrange();
+            Act();
+        }
+
+        [TestCleanup]
+        public void MainTeardown()
+        {
+            Teardown();
+        }
+
+        /// <summary>
+        /// When overridden in a derived class, this method is used to
+        /// perform interactions against the system under test.
+        /// </summary>
+        /// <remarks>This method is called automatically after <see cref="Arrange"/>
+        /// and before each test method runs.</remarks>
+        protected virtual void Act()
+        {
+        }
+
+        /// <summary>
+        /// When overridden in a derived class, this method is used to
+        /// reset the state of the system after a test method has completed.
+        /// </summary>
+        /// <remarks>This method is called automatically after each TestMethod has run.</remarks>
+        protected virtual void Teardown()
+        {
         }
     }
 }

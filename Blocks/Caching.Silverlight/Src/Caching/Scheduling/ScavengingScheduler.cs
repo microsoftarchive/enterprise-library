@@ -1,5 +1,15 @@
-﻿using System;
-using System.Diagnostics;
+﻿//===============================================================================
+// Microsoft patterns & practices Enterprise Library
+// Caching Application Block
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+
+using System;
 using System.Threading;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.Scheduling
@@ -9,7 +19,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Scheduling
     /// thread in the thread pool. Only one scavenging request will
     /// be queued at a time.
     /// </summary>
-    public class ScavengingScheduler : IManuallyScheduledWork, IDisposable
+    public sealed class ScavengingScheduler : IManuallyScheduledWork, IDisposable
     {
         private Action scavengingAction;
         private int scheduledScavenges;
@@ -35,7 +45,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Scheduling
             if (Interlocked.Increment(ref scheduledScavenges) == 1)
             {
                 // only the 1st scheduled scanging at a time actually enqueues a scavenge
-                bool enqueued = ThreadPool.QueueUserWorkItem(_ =>
+                ThreadPool.QueueUserWorkItem(_ =>
                 {
                     var action = this.scavengingAction;
 
@@ -60,8 +70,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Scheduling
                         }
                     }
                 });
-
-                Debug.Assert(enqueued);
             }
         }
 
@@ -72,10 +80,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Scheduling
         /// </summary>
         public void Dispose()
         {
-            if (this.scavengingAction != null)
-            {
-                this.scavengingAction = null;
-            }
+            this.scavengingAction = null;
         }
     }
 }

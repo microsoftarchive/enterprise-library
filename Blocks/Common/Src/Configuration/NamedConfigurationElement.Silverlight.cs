@@ -20,21 +20,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
     public class NamedConfigurationElement : IObjectWithName
     {
         /// <summary>
-        /// Initialize a new instance of a <see cref="NamedConfigurationElement"/> class.
-        /// </summary>
-        public NamedConfigurationElement()
-        { }
-
-        /// <summary>
-        /// Intialize a new instance of a <see cref="NamedConfigurationElement"/> class with a name.
-        /// </summary>
-        /// <param name="name">The name of the element.</param>
-        public NamedConfigurationElement(string name)
-        {
-            Name = name;
-        }
-
-        /// <summary>
         /// Gets or sets the name of the element.
         /// </summary>
         /// <value>

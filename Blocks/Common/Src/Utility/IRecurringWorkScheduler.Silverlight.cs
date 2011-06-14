@@ -1,4 +1,15 @@
-﻿using System;
+﻿//===============================================================================
+// Microsoft patterns & practices Enterprise Library
+// Core
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+
+using System;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Utility
 {
@@ -11,8 +22,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Utility
         /// Set the delegate that will be run when the schedule
         /// determines it should run.
         /// </summary>
-        /// <param name="workToDo"></param>
-        void SetAction(Action workToDo);
+        /// <param name="recurringWork"></param>
+        void SetAction(Action recurringWork);
 
         /// <summary>
         /// Start the scheduler running.

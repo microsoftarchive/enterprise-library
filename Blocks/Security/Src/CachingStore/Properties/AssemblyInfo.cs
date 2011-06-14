@@ -14,7 +14,7 @@ using System.Security;
 
 [assembly: AssemblyTitle("Enterprise Library Security Application Block Caching Store Provider")]
 [assembly: AssemblyDescription("Enterprise Library Security Application Block Caching Store Provider")]
-[assembly: AssemblyVersion("5.0.414.0")]
+[assembly: AssemblyVersion("5.0.505.0")]
 
 [assembly: AllowPartiallyTrustedCallers]
 [assembly: SecurityTransparent]

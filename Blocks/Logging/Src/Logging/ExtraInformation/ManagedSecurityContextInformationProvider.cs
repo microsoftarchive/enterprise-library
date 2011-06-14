@@ -25,9 +25,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.ExtraInformation
         /// <param name="dict">Dictionary used to populate the <see cref="ManagedSecurityContextInformationProvider"></see></param>
         public void PopulateDictionary(IDictionary<string, object> dict)
         {
-            dict.Add(Properties.Resources.ManagedSecurity_AuthenticationType, AuthenticationType);
-            dict.Add(Properties.Resources.ManagedSecurity_IdentityName, IdentityName);
-            dict.Add(Properties.Resources.ManagedSecurity_IsAuthenticated, IsAuthenticated.ToString());
+            dict.Add(Properties.Resources_Desktop.ManagedSecurity_AuthenticationType, AuthenticationType);
+            dict.Add(Properties.Resources_Desktop.ManagedSecurity_IdentityName, IdentityName);
+            dict.Add(Properties.Resources_Desktop.ManagedSecurity_IsAuthenticated, IsAuthenticated.ToString());
         }
 
         /// <summary>

@@ -30,23 +30,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerMo
         /// This method performs the registration of the <see cref="IConfigurationSource"/> with the container.
         /// </summary>
         /// <param name="configurationSource">Configuration source to read registrations from.</param>
-        protected
 #if !SILVERLIGHT
-            override
+        protected override void RegisterConfigurationSource(IConfigurationSource configurationSource)
 #else
-            virtual
+        protected virtual void RegisterConfigurationSource(IConfigurationSource configurationSource)
 #endif
-                     void RegisterConfigurationSource(IConfigurationSource configurationSource)
         {
             this.container.RegisterInstance<IConfigurationSource>(configurationSource, new ExternallyControlledLifetimeManager());
-        }
-
-        private void FixupDefaultRegistration(TypeRegistration updatedRegistration)
-        {
-            var policyListAccessor = this.container.Configure<PolicyListAccessor>();
-            policyListAccessor.AddDefaultRegistration(updatedRegistration.ServiceType,
-                                                      updatedRegistration.ImplementationType,
-                                                      updatedRegistration.Name);
         }
 
         /// <summary>

@@ -1,16 +1,35 @@
-﻿using System;
-using System.ServiceModel;
-using System.ServiceModel.Channels;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Service;
+﻿//===============================================================================
+// Microsoft patterns & practices Enterprise Library
+// Logging Application Block
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
 
-namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
+using System;
+using System.ServiceModel;
+using Microsoft.Practices.Unity.Utility;
+
+namespace Microsoft.Practices.EnterpriseLibrary.Logging.Service
 {
+    /// <summary>
+    /// Proxy to the WCF logging service.
+    /// </summary>
     public class LoggingServiceProxy : ILoggingService, IDisposable
     {
         private ILoggingService channel;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LoggingServiceProxy"/> class.
+        /// </summary>
+        /// <param name="factory">The channel factory for the logging service.</param>
         public LoggingServiceProxy(ChannelFactory<ILoggingService> factory)
         {
+            Guard.ArgumentNotNull(factory, "factory");
+
             this.channel = factory.CreateChannel();
         }
 
@@ -47,7 +66,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
-        /// <param name="disposing">true if the method is being called from the <see cref="Dispose()"/> method. False if it is being called from withing the object finalizer.</param>
+        /// <param name="disposing"><see langword="true"/> if the method is being called from the <see cref="Dispose()"/> method. <see langword="false"/> if it is being called from within the object finalizer.</param>
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)
@@ -75,6 +94,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
             }
         }
 
+        /// <summary>
+        /// Releases resources for a <see cref="LoggingServiceProxy"/> before garbage collection.
+        /// </summary>
         ~LoggingServiceProxy()
         {
             Dispose(false);

@@ -14,4 +14,4 @@ using System.Security.Permissions;
 
 [assembly: AssemblyTitle("Enterprise Library Logging Application Block Configuration Manageability Tests")]
 [assembly: AssemblyDescription("Enterprise Library Logging Application Block Configuration Manageability Tests")]
-[assembly: AssemblyVersion("5.0.414.0")]
+[assembly: AssemblyVersion("5.0.505.0")]

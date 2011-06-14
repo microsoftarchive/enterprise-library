@@ -88,7 +88,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
 
         /// <summary>
         /// Returns a validator representing the validation criteria specified for type <paramref name="targetType"/>
-        /// through configuration and aatributes on type <paramref name="targetType"/> and its ancestors for the default ruleset.
+        /// through configuration and attributes on type <paramref name="targetType"/> and its ancestors for the default ruleset.
         /// </summary>
         /// <param name="targetType">The type to get the validator for.</param>
         /// <returns>The validator.</returns>
@@ -186,7 +186,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
 
         /// <summary>
         /// Returns a validator representing the validation criteria specified for type <paramref name="targetType"/>
-        /// through configuration and aatributes on type <paramref name="targetType"/> and its ancestors for the default ruleset.
+        /// through configuration and attributes on type <paramref name="targetType"/> and its ancestors for the default ruleset.
         /// </summary>
         /// <param name="targetType">The type to get the validator for.</param>
         /// <param name="source">The source of validation information.</param>
@@ -396,7 +396,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
             IConfigurationSource configurationSource,
             ValidationSpecificationSource source)
         {
-#if !SILVERLIGHT    // todo remove when including other sources
+#if !SILVERLIGHT
             var instrumentationProvider = ValidationInstrumentationProvider.FromConfigurationSource(configurationSource);
 #else
             var instrumentationProvider = new NullValidationInstrumentationProvider();

@@ -113,9 +113,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Instrumentatio
                 string message
                     = string.Format(
                         CultureInfo.CurrentCulture,
-                        Resources.ErrorHandlingExceptionMessage,
+                        Resources_Desktop.ErrorHandlingExceptionMessage,
                         instanceName);
-                string entryText = new EventLogEntryFormatter(Resources.BlockName).GetEntryText(message, errorMessage);
+                string entryText = new EventLogEntryFormatter(Resources_Desktop.BlockName).GetEntryText(message, errorMessage);
 
                 EventLog.WriteEntry(GetEventSourceName(), entryText, EventLogEntryType.Error);
             }

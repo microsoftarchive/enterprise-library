@@ -148,7 +148,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
 
         /// <summary>
         /// Writes the value of the <see cref="Exception.Message"/>
-        /// property to the underyling <see cref="TextWriter"/>.
+        /// property to the underlying <see cref="TextWriter"/>.
         /// </summary>
         /// <param name="message">The message to write.</param>
         protected override void WriteMessage(string message)
@@ -165,7 +165,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
         /// <param name="source">The source of the exception.</param>
         protected override void WriteSource(string source)
         {
-            IndentAndWriteLine(Resources.Source, source);
+            IndentAndWriteLine(Resources_Desktop.Source, source);
         }
 
         /// <summary>
@@ -176,7 +176,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling
         /// <param name="helpLink">The exception's help link.</param>
         protected override void WriteHelpLink(string helpLink)
         {
-            IndentAndWriteLine(Resources.HelpLink, helpLink);
+            IndentAndWriteLine(Resources_Desktop.HelpLink, helpLink);
         }
 #endif
 

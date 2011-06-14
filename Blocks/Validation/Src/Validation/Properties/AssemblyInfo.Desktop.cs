@@ -16,6 +16,7 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration;
 
 [assembly: SecurityRules(SecurityRuleSet.Level1)]
+[assembly: SecurityTransparent]
 
 [assembly: AllowPartiallyTrustedCallers]
 

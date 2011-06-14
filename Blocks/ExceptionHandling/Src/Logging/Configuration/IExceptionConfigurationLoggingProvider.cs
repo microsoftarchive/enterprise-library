@@ -10,7 +10,11 @@
 //===============================================================================
 
 using System;
+#if !SILVERLIGHT
 using System.Diagnostics;
+#else
+using Microsoft.Practices.EnterpriseLibrary.Logging.Diagnostics;
+#endif
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent
 {

@@ -1,18 +1,39 @@
-﻿using System.Linq;
+﻿//===============================================================================
+// Microsoft patterns & practices Enterprise Library
+// Logging Application Block
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+
+using System.Linq;
 using System.ServiceModel.Activation;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Service
 {
+    /// <summary>
+    /// Allows clients to submit log entries into the server log.
+    /// </summary>
     [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Allowed)]
     public class LoggingService : ILoggingService
     {
         private readonly LogWriter logWriter;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LoggingService"/> class.
+        /// </summary>
         public LoggingService()
             : this(Logger.Writer)
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LoggingService"/> class.
+        /// </summary>
+        /// <param name="logWriter">The log sink where to store incoming entries.</param>
         public LoggingService(LogWriter logWriter)
         {
             this.logWriter = logWriter;
@@ -28,9 +49,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Service
             {
                 foreach (var message in entries)
                 {
-                    var entry = Translate(message);
-                    this.CollectInformation(entry);
-                    this.logWriter.Write(entry);
+                    if (message != null)
+                    {
+                        var entry = Translate(message);
+                        if (entry != null)
+                        {
+                            this.CollectInformation(entry);
+                            this.logWriter.Write(entry);
+                        }
+                    }
                 }
             }
         }

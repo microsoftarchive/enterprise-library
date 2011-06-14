@@ -35,14 +35,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         public const string SectionName = BlockSectionNames.Logging;
 
         /// <summary>
-        /// Initialize a new instance of the <see cref="LoggingSettings"/> with default values.
-        /// </summary>
-        public LoggingSettings()
-            : this(string.Empty)
-        {
-        }
-
-        /// <summary>
         /// Initialize a new instance of the <see cref="LoggingSettings"/> using the given name.
         /// </summary>
         /// <param name="name">The name to use for this instance</param>

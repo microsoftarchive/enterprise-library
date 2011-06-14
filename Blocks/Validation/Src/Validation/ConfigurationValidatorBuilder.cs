@@ -41,7 +41,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
             ValidatorFactory validatorFactory)
         {
             var instrumentationProvider =
-#if !SILVERLIGHT    // todo remove when including other sources
+#if !SILVERLIGHT
                 ValidationInstrumentationProvider.FromConfigurationSource(configurationSource);
 #else
                 new NullValidationInstrumentationProvider();

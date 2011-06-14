@@ -9,11 +9,8 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration.ContainerModel;
@@ -22,8 +19,10 @@ using Microsoft.Practices.EnterpriseLibrary.Logging.PolicyInjection;
 using Microsoft.Practices.Unity.InterceptionExtension;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-#if SILVERLIGHT
-    using Microsoft.Practices.EnterpriseLibrary.Logging.Diagnostics;
+#if !SILVERLIGHT
+using System.Diagnostics;
+#else
+using Microsoft.Practices.EnterpriseLibrary.Logging.Diagnostics;
 #endif
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
@@ -37,8 +36,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         public void Setup()
         {
             callHandlerData =
-                new LogCallHandlerData("logging")
+                new LogCallHandlerData
                 {
+                    Name = "logging",
                     Order = 400,
 
                     LogBehavior = HandlerLogBehavior.BeforeAndAfter,
@@ -52,9 +52,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
                     Severity = TraceEventType.Warning,
                     Categories = 
                     { 
-                        new LogCallHandlerCategoryEntry("cat1"), 
-                        new LogCallHandlerCategoryEntry("cat2"), 
-                        new LogCallHandlerCategoryEntry("cat3")
+                        new LogCallHandlerCategoryEntry { Name = "cat1" }, 
+                        new LogCallHandlerCategoryEntry { Name = "cat2" }, 
+                        new LogCallHandlerCategoryEntry { Name = "cat3" }
                     }
                 };
         }
@@ -135,8 +135,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         public void Setup()
         {
             callHandlerData =
-                new LogCallHandlerData("logging")
+                new LogCallHandlerData
                 {
+                    Name = "logging",
                     Order = 400,
 
                     LogBehavior = HandlerLogBehavior.Before,
@@ -150,9 +151,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
                     Severity = TraceEventType.Warning,
                     Categories = 
                     { 
-                        new LogCallHandlerCategoryEntry("cat1"), 
-                        new LogCallHandlerCategoryEntry("cat2"), 
-                        new LogCallHandlerCategoryEntry("cat3")
+                        new LogCallHandlerCategoryEntry { Name = "cat1" }, 
+                        new LogCallHandlerCategoryEntry { Name = "cat2" }, 
+                        new LogCallHandlerCategoryEntry { Name = "cat3" }
                     }
                 };
         }
@@ -195,8 +196,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         public void Setup()
         {
             callHandlerData =
-                new LogCallHandlerData("logging")
+                new LogCallHandlerData
                 {
+                    Name = "logging",
                     Order = 400,
 
                     LogBehavior = HandlerLogBehavior.After,
@@ -210,9 +212,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
                     Severity = TraceEventType.Warning,
                     Categories = 
                     { 
-                        new LogCallHandlerCategoryEntry("cat1"), 
-                        new LogCallHandlerCategoryEntry("cat2"), 
-                        new LogCallHandlerCategoryEntry("cat3")
+                        new LogCallHandlerCategoryEntry { Name = "cat1" }, 
+                        new LogCallHandlerCategoryEntry { Name = "cat2" }, 
+                        new LogCallHandlerCategoryEntry { Name = "cat3" }
                     }
                 };
         }
@@ -243,6 +245,31 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
             CollectionAssert.AreEqual(
                 new[] { "cat1", "cat2", "cat3" },
                 categories);
+        }
+    }
+    [TestClass]
+    public class GivenALogCallHandlerData
+    {
+        private LogCallHandlerData data;
+
+        [TestInitialize]
+        public void Setup()
+        {
+            data = new LogCallHandlerData();
+        }
+
+        [TestMethod]
+        public void WhenUsingDefaultCtor_ThenDefaultValuesAreProperlySetted()
+        {
+            Assert.AreEqual(HandlerLogBehavior.BeforeAndAfter, data.LogBehavior);
+            Assert.IsTrue(data.IncludeParameterValues);
+            Assert.IsFalse(data.IncludeCallStack);
+            Assert.IsTrue(data.IncludeCallTime);
+            Assert.AreEqual(TraceEventType.Information, data.Severity);
+            Assert.AreEqual(string.Empty, data.BeforeMessage);
+            Assert.AreEqual(string.Empty, data.AfterMessage);
+            Assert.AreEqual(0, data.EventId);
+            Assert.AreEqual(-1, data.Priority);
         }
     }
 }

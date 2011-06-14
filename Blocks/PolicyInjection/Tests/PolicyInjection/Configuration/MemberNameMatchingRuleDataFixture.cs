@@ -17,20 +17,23 @@ using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configuration
 {
     [TestClass]
-    [DeploymentItem("test.exe.config")]
     public class MemberNameMatchingRuleDataFixture : MatchingRuleDataFixtureBase
     {
 #if !SILVERLIGHT
         [TestMethod]
+        [DeploymentItem("test.exe.config")]
         public void CanSerializeTypeMatchingRule()
         {
-            MemberNameMatchingRuleData memberNameMatchingRule =
-                new MemberNameMatchingRuleData("MatchThis", new MatchData[]
-                                                                {
-                                                                    new MatchData("ToString"),
-                                                                    new MatchData("GetHashCode", true),
-                                                                    new MatchData("Get*", false)
-                                                                });
+            MemberNameMatchingRuleData memberNameMatchingRule = new MemberNameMatchingRuleData
+                {
+                    Name = "MatchThis",
+                    Matches =
+                        {
+                            new MatchData { Match =  "ToString" }, 
+                            new MatchData { Match =  "GetHashCode", IgnoreCase = true }, 
+                            new MatchData { Match =  "Get*", IgnoreCase = false }, 
+                        }
+                };
 
             MemberNameMatchingRuleData deserializedRule = SerializeAndDeserializeMatchingRule(memberNameMatchingRule) as MemberNameMatchingRuleData;
 
@@ -44,17 +47,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
                                      "Match item {0} is incorrect", i);
             }
         }
-#else
-        [TestMethod]
-        public void HasDefaultCtor()
-        {
-            new MemberNameMatchingRuleData();
-        }
 #endif
         [TestMethod]
         public void MatchingRuleHasTransientLifetime()
         {
-            MemberNameMatchingRuleData memberNameMatchingRule = new MemberNameMatchingRuleData("MatchThis");
+            MemberNameMatchingRuleData memberNameMatchingRule = new MemberNameMatchingRuleData
+                {
+                    Name = "MatchThis",
+                    Matches =
+                        {
+                            new MatchData { Match =  "ToString" }, 
+                            new MatchData { Match =  "GetHashCode", IgnoreCase = true }, 
+                            new MatchData { Match =  "Get*", IgnoreCase = false }, 
+                        }
+                };
             TypeRegistration registration = memberNameMatchingRule.GetRegistrations("").First();
 
             Assert.AreEqual(TypeRegistrationLifetime.Transient, registration.Lifetime);

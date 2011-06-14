@@ -11,7 +11,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Properties;
 using Microsoft.Practices.Unity.InterceptionExtension;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
@@ -30,9 +32,21 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// <returns>The set of <see cref="TypeRegistration"/> objects.</returns>
         public override IEnumerable<TypeRegistration> GetRegistrations(string nameSuffix)
         {
+            if (string.IsNullOrEmpty(this.Match))
+            {
+                throw new InvalidOperationException(
+                    string.Format(CultureInfo.CurrentCulture, Resources.ErrorMethodSignatureMatchingRuleMatchNotSet, this.Name));
+            }
+
             List<string> parameterTypes = new List<string>();
             foreach (ParameterTypeElement parameterType in this.Parameters)
             {
+                if (string.IsNullOrEmpty(parameterType.ParameterTypeName))
+                {
+                    throw new InvalidOperationException(
+                        string.Format(CultureInfo.CurrentCulture, Resources.ErrorParameterTypeNameNotSet, parameterType.Name, this.Name));
+                }
+
                 parameterTypes.Add(parameterType.ParameterTypeName);
             }
 
@@ -43,31 +57,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
                     Name = this.Name + nameSuffix,
                     Lifetime = TypeRegistrationLifetime.Transient
                 };
-        }
-    }
-    
-    /// <summary>
-    /// A configuration element representing a single parameter in a method signature.
-    /// </summary>
-    public partial class ParameterTypeElement 
-    {
-        /// <summary>
-        /// Constructs a new <see cref="ParameterTypeElement"/> instance.
-        /// </summary>
-        public ParameterTypeElement()
-        {
-        }
-
-        /// <summary>
-        /// Constructs a new <see cref="ParameterTypeElement"/> instance.
-        /// </summary>
-        /// <param name="name">unique identifier for this parameter. The name does
-        /// NOT need to match the target's parameter name.</param>
-        /// <param name="parameterType">Expected type of parameter</param>
-        public ParameterTypeElement(string name, string parameterType)
-        {
-            Name = name;
-            ParameterTypeName = parameterType;
         }
     }
 }

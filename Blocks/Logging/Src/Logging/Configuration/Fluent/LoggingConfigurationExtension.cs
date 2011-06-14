@@ -10,17 +10,9 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
-using System.Diagnostics;
-using System.Messaging;
-using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
-using System.Collections.Specialized;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Properties;
 using System.Globalization;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent
 {
@@ -57,10 +49,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent
             return LoggingOptions.DisableTracing();
         }
 
+#if !SILVERLIGHT
         ILoggingConfigurationOptions ILoggingConfigurationOptions.DoNotRevertImpersonation()
         {
             return LoggingOptions.DoNotRevertImpersonation();
         }
+#endif
 
         ILoggingConfigurationOptions ILoggingConfigurationOptions.DoNotLogWarningsWhenNoCategoryExists()
         {

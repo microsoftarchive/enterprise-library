@@ -161,7 +161,7 @@
                                 </Grid.ColumnDefinitions>
                                 <ToggleButton Template="{DynamicResource ExpanderToggleButton}"
                                     x:Name="expanderToggle"
-                                    Focusable="False"
+                                    Focusable="True"
 									Background="{DynamicResource NormalBrush}"
 									IsChecked="{Binding IsExpanded, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
                                     Visibility="{Binding Bindable, Mode=OneWay, Converter={StaticResource NullToHiddenConverter}}"

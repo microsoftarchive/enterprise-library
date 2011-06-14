@@ -19,4 +19,4 @@ using System.Security.Permissions;
 
 [assembly: AssemblyTitle("Enterprise Library Logging Application Block MSMQ Distributor")]
 [assembly: AssemblyDescription("Enterprise Library Logging Application Block MSMQ Distributor")]
-[assembly: AssemblyVersion("5.0.414.0")]
+[assembly: AssemblyVersion("5.0.505.0")]

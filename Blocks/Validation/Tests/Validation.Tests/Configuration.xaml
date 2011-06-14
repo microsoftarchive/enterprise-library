@@ -1,7 +1,7 @@
-﻿<ResourceDictionary
+﻿<el:ConfigurationDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:el="http://entlib.codeplex.com/v5/configuration"
+    xmlns:el="http://schemas.microsoft.com/practices/2011/entlib"
     xmlns:testConfig="clr-namespace:Microsoft.Practices.EnterpriseLibrary.Validation.TestSupport.Configuration;assembly=Microsoft.Practices.EnterpriseLibrary.Validation.TestSupport.Silverlight">
 
     <el:ValidationSettings x:Key="validation">
@@ -47,6 +47,18 @@
                 </el:ValidationRulesetData.Properties>
             </el:ValidationRulesetData>
         </el:ValidatedTypeReference>
-    </el:ValidationSettings>
 
-</ResourceDictionary>
+        <el:ValidatedTypeReference Name="Microsoft.Practices.EnterpriseLibrary.Validation.TestSupport.TestClasses.TestObjectWithMultipleSourceValidationAttributesOnProperties" DefaultRuleset="rule">
+            <el:ValidationRulesetData Name="rule">
+                <el:ValidationRulesetData.Properties>
+                    <el:ValidatedPropertyReference Name="PropertyWithDataAnnotationsAttributes">
+                            <testConfig:MockValidatorData Name="validator" ReturnFailure="true" MessageTemplate="configuration1"/>
+                    </el:ValidatedPropertyReference>
+                    <el:ValidatedPropertyReference Name="PropertyWithVABOnlyAttributes">
+                            <testConfig:MockValidatorData Name="validator" ReturnFailure="true" MessageTemplate="configuration2"/>
+                    </el:ValidatedPropertyReference>
+                </el:ValidationRulesetData.Properties>
+            </el:ValidationRulesetData>
+        </el:ValidatedTypeReference>
+    </el:ValidationSettings>
+</el:ConfigurationDictionary>

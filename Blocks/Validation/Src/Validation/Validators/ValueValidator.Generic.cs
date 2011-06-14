@@ -36,7 +36,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
         /// <summary>
         /// Gets the indication of negated validation logic.
         /// </summary>
-        /// <value><see langword="true"/> if the default validation logic should be used; othwerise <see langword="false"/>.</value>
+        /// <value><see langword="true"/> if the default validation logic should be used; otherwise <see langword="false"/>.</value>
         public bool Negated
         {
             get { return negated; }

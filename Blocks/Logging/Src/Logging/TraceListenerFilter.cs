@@ -36,9 +36,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         }
 
         /// <summary>
-        /// Gets the availiable trace listners from a list of all the trace listners.
+        /// Gets the available trace listeners from a list of all the trace listeners.
         /// </summary>
-        /// <param name="traceListeners">The list of all the trace listners.</param>
+        /// <param name="traceListeners">The list of all the trace listeners.</param>
         /// <returns>A filtered list of trace listeners.</returns>
         public IEnumerable<TraceListener> GetAvailableTraceListeners(IEnumerable<TraceListener> traceListeners)
         {

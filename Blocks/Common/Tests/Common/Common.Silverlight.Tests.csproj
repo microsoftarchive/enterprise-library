@@ -68,8 +68,9 @@
       <HintPath>..\..\..\..\Lib\Silverlight\Microsoft.Practices.ServiceLocation.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Practices.Unity.Silverlight, Version=2.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.Practices.Unity.Silverlight, Version=2.1.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\Lib\Silverlight\Microsoft.Practices.Unity.Silverlight.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="Microsoft.Silverlight.Testing">
       <HintPath>..\..\..\..\Lib\Silverlight\UnitTestFramework\Microsoft.Silverlight.Testing.dll</HintPath>
@@ -93,14 +94,17 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Configuration\AsyncConfigurationScenarios\given_a_null_current_container\Context.cs" />
+    <Compile Include="Configuration\AsyncConfigurationScenarios\given_a_null_current_container\when_providing_credentials_or_state.cs" />
     <Compile Include="Configuration\AsyncConfigurationScenarios\given_a_null_current_container\when_configuration_file_is_inexistent.cs" />
     <Compile Include="Configuration\ConfigurationModel\ConfigurationBasedTypeRegistrationsProviderFixture.cs" />
     <Compile Include="Configuration\ConfigurationModel\TypeRegistrationFixture.cs" />
     <Compile Include="Configuration\ConfigurationModel\Unity\UnityContainerConfiguratorFixture.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Configuration\MockConfigurationSection.Silverlight.cs" />
-    <Compile Include="Configuration\ResourceDictionaryConfigurationSourceFixture.Silverlight.cs" />
+    <Compile Include="Configuration\ConfigurationSourceBuilderFixture.cs" />
+    <Compile Include="Configuration\Fluent\TypeRegistrationProviderConfigurationSourceBuilderExtensionFixture.cs" />
+    <Compile Include="Configuration\MockConfigurationSection.cs" />
+    <Compile Include="Configuration\DictionaryConfigurationSourceFixture.Silverlight.cs" />
     <Compile Include="Configuration\TypeRegistrationProviderElementCollectionFixture.Silverlight.cs" />
     <Compile Include="EnterpriseLibraryContainerFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -138,6 +142,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Resource>
+    <Page Include="Configuration\TestResourceDictionary.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Configuration\InvalidRootElementConfiguration.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

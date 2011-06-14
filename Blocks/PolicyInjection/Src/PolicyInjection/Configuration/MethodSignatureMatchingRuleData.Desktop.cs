@@ -163,6 +163,25 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         private const string ParameterTypeNamePropertyName = "typeName";
 
         /// <summary>
+        /// Constructs a new <see cref="ParameterTypeElement"/> instance.
+        /// </summary>
+        public ParameterTypeElement()
+        {
+        }
+
+        /// <summary>
+        /// Constructs a new <see cref="ParameterTypeElement"/> instance.
+        /// </summary>
+        /// <param name="name">unique identifier for this parameter. The name does
+        /// NOT need to match the target's parameter name.</param>
+        /// <param name="parameterType">Expected type of parameter</param>
+        public ParameterTypeElement(string name, string parameterType)
+        {
+            Name = name;
+            ParameterTypeName = parameterType;
+        }
+
+        /// <summary>
         /// A unique ID for this parameter. This name does not need to match
         /// the corresponding parameter in the target types; only the type is
         /// used.

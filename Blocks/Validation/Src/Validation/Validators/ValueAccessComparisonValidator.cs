@@ -96,7 +96,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Validators
 
         /// <summary>
         /// Validates by comparing <paramref name="objectToValidate"/> with the result of extracting a value from
-        /// <paramref name="currentTarget"/> usign the configured <see cref="ValueAccess"/> using
+        /// <paramref name="currentTarget"/> using the configured <see cref="ValueAccess"/> using
         /// the configured <see cref="ComparisonOperator"/>.
         /// </summary>
         /// <param name="objectToValidate">The object to validate.</param>

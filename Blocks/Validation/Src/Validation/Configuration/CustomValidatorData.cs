@@ -17,7 +17,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
 	/// Configuration object to describe an instance of custom <see cref="Validator"/> class.
 	/// </summary>
 	/// <remarks>
-	/// Custom <see cref="Validator"/> classes must implement a constructor with with name and value collection parameters.
+	/// Custom <see cref="Validator"/> classes must implement a constructor with name and value collection parameters.
 	/// </remarks>
 	public partial class CustomValidatorData : ValidatorData
 	{

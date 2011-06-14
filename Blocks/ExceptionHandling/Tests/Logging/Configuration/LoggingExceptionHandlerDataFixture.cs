@@ -9,12 +9,19 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.ContextBase;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+#if !SILVERLIGHT
+    using System.Diagnostics;
+#else
+    using Microsoft.Practices.EnterpriseLibrary.Logging.Diagnostics;
+#endif
+
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Tests.Configuration
 {
@@ -26,7 +33,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Tests.
 
         protected override void Arrange()
         {
-            configuration = new LoggingExceptionHandlerData();
+            configuration = new LoggingExceptionHandlerData() { LogCategory = "General" };
         }
 
         protected override void Act()
@@ -40,6 +47,29 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Tests.
             TypeRegistration loggingExceptionHandlerRegistration = registrations.Where(x => x.ServiceType == typeof(IExceptionHandler)).First();
             Assert.AreEqual(TypeRegistrationLifetime.Transient, loggingExceptionHandlerRegistration.Lifetime);
         }
+        
+        [TestMethod]
+        public void ThenDefaultPropertyAreProperlySetted()
+        {
+            Assert.AreEqual(100, configuration.EventId);
+            Assert.AreEqual(TraceEventType.Error, configuration.Severity);
+            Assert.AreEqual("Enterprise Library Exception Handling", configuration.Title);
+        }
 
+        [TestMethod]
+        public void ThenThrowsIfRequiredValueAreMissing()
+        {
+            try { new LoggingExceptionHandlerData { Title = null }.GetRegistrations("").ToArray(); Assert.Fail(); }
+            catch (InvalidOperationException) { }
+            catch (Exception) { Assert.Fail();}
+
+            try { new LoggingExceptionHandlerData { LogCategory = null }.GetRegistrations("").ToArray(); Assert.Fail(); }
+            catch (InvalidOperationException) { }
+            catch (Exception) { Assert.Fail(); }
+
+            try { new LoggingExceptionHandlerData { FormatterTypeName = null }.GetRegistrations("").ToArray(); Assert.Fail(); }
+            catch (InvalidOperationException) { }
+            catch (Exception) { Assert.Fail(); }
+        }
     }
 }

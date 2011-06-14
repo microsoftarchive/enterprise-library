@@ -21,7 +21,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration.Unity
 {
     /// <summary>
     /// An object that can be passed to <see cref="IUnityContainer.RegisterType"/> in order
-    /// to specify where validation comes from: config, attribute, data annotations,or
+    /// to specify where validation comes from: config, attribute, data annotations, or
     /// some combination thereof.
     /// </summary>
     public class InjectionValidationSource : InjectionMember

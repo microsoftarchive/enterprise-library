@@ -59,6 +59,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
                 0,
                 filterData.GetRegistrations().Where(tr => tr.Lifetime != TypeRegistrationLifetime.Transient).Count());
         }
+
+        [TestMethod]
+        public void WhenUsingDefaultCtor_ThenDefaultValuesAreSettedProperly()
+        {
+            Assert.AreEqual(2147483647, new PriorityFilterData().MaximumPriority);
+        }
     }
 
     [TestClass]

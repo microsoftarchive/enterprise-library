@@ -54,6 +54,36 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
         }
 
         [TestMethod]
+        public void CanUseRelativePathToBaseDirectory()
+        {
+            var currentDirectory = Environment.CurrentDirectory;
+            Environment.CurrentDirectory = Path.GetTempPath();
+
+            string fullConfigurationFilepath = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile;
+            string otherConfigurationFilepath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Other.config");
+            File.Copy(fullConfigurationFilepath, otherConfigurationFilepath);
+
+            try
+            {
+                using (FileConfigurationSource otherConfiguration =
+                    new FileConfigurationSource("Other.config", false))
+                {
+                    DummySection dummySection = otherConfiguration.GetSection(localSection) as DummySection;
+
+                    Assert.IsNotNull(dummySection);
+                }
+            }
+            finally
+            {
+                Environment.CurrentDirectory = currentDirectory;
+                if (File.Exists(otherConfigurationFilepath))
+                {
+                    File.Delete(otherConfigurationFilepath);
+                }
+            }
+        }
+
+        [TestMethod]
         public void NonExistentSectionReturnsNullThroughFileConfigurationSource()
         {
             string fullConfigurationFilepath = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile;
@@ -83,14 +113,21 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Tests
         [ExpectedException(typeof(ArgumentException))]
         public void CreatingFileConfigurationSourceWithNullArgumentThrows()
         {
-            FileConfigurationSource source = new FileConfigurationSource(null);
+            new FileConfigurationSource(null);
         }
 
         [TestMethod]
         [ExpectedException(typeof(FileNotFoundException))]
-        public void CreatingFileConfigurationSourceForNonExistingFileThrows()
+        public void CreatingFileConfigurationSourceForNonExistingRelativeFileThrows()
         {
-            FileConfigurationSource source = new FileConfigurationSource("this.config.file.doesnt.exist.config");
+            new FileConfigurationSource("this.config.file.doesnt.exist.config");
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(FileNotFoundException))]
+        public void CreatingFileConfigurationSourceForNonExistingRootedFileThrows()
+        {
+            new FileConfigurationSource(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "this.config.file.doesnt.exist.config"));
         }
 
         [TestMethod]

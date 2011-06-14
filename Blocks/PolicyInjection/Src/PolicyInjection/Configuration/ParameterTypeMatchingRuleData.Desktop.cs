@@ -90,6 +90,46 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         private const string kindPropertyName = "parameterKind";
 
         /// <summary>
+        /// Constructs a new <see cref="ParameterTypeMatchData"/> instance.
+        /// </summary>
+        public ParameterTypeMatchData()
+        {
+        }
+
+        /// <summary>
+        /// Constructs a new <see cref="ParameterTypeMatchData"/> instance.
+        /// </summary>
+        /// <param name="match">Parameter type to match. Kind is InputOrOutput.</param>
+        public ParameterTypeMatchData(string match)
+            : base(match)
+        {
+        }
+
+        /// <summary>
+        /// Constructs a new <see cref="ParameterTypeMatchData"/> instance.
+        /// </summary>
+        /// <param name="match">Parameter type to match.</param>
+        /// <param name="kind"><see cref="ParameterKind"/> to match.</param>
+        public ParameterTypeMatchData(string match, ParameterKind kind)
+            : base(match)
+        {
+            ParameterKind = kind;
+        }
+
+        /// <summary>
+        /// Constructs a new <see cref="ParameterTypeMatchData"/> instance.
+        /// </summary>
+        /// <param name="match">Parameter type to match.</param>
+        /// <param name="kind"><see cref="ParameterKind"/> to match.</param>
+        /// <param name="ignoreCase">If false, type name comparisons are case sensitive. If true, 
+        /// comparisons are case insensitive.</param>
+        public ParameterTypeMatchData(string match, ParameterKind kind, bool ignoreCase)
+            : base(match, ignoreCase)
+        {
+            ParameterKind = kind;
+        }
+
+        /// <summary>
         /// What kind of parameter is this? See <see cref="ParameterKind"/> for available values.
         /// </summary>
         /// <value>The "parameterKind" config attribute.</value>

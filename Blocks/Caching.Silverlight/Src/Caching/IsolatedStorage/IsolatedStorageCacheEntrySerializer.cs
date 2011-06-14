@@ -1,6 +1,19 @@
-﻿using System;
+﻿//===============================================================================
+// Microsoft patterns & practices Enterprise Library
+// Caching Application Block
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+
+using System;
 using System.IO;
 using System.Text;
+
+using Microsoft.Practices.EnterpriseLibrary.Caching.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Runtime.Caching;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.IsolatedStorage
@@ -45,11 +58,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.IsolatedStorage
         /// </returns>
         public EntryUpdate GetUpdateForLastUpdateTime(IsolatedStorageCacheEntry entry)
         {
-            EntryUpdate update = new EntryUpdate();
-            update.Bytes = GetDateTimeOffsetBytes(entry.LastAccessTime);
-            update.Offset = lastAccessTicksOffset;
+            if (entry == null) throw new ArgumentNullException("entry"); 
 
-            return update;
+            return new EntryUpdate(GetDateTimeOffsetBytes(entry.LastAccessTime), lastAccessTicksOffset);
         }
 
         /// <summary>
@@ -61,6 +72,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.IsolatedStorage
         /// </returns>
         public byte[] Serialize(IsolatedStorageCacheEntry entry)
         {
+            if (entry == null) throw new ArgumentNullException("entry");
+
             using (var stream = new MemoryStream())
             {
                 var lastAccessTimeBytes = GetDateTimeOffsetBytes(entry.LastAccessTime);
@@ -85,46 +98,48 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.IsolatedStorage
         /// <summary>
         /// Deserializes an entry from an array of bytes.
         /// </summary>
-        /// <param name="bytes">An array of bytes representing an entry.</param>
+        /// <param name="serializedEntry">An array of bytes representing an entry.</param>
         /// <returns>
         /// The represented entry.
         /// </returns>
-        public IsolatedStorageCacheEntry Deserialize(byte[] bytes)
+        public IsolatedStorageCacheEntry Deserialize(byte[] serializedEntry)
         {
-            if (bytes.Length < keyOffset)
+            if (serializedEntry == null) throw new ArgumentNullException("serializedEntry");
+
+            if (serializedEntry.Length < keyOffset)
             {
-                throw new InvalidDataException("Serialized value is too short.");
+                throw new InvalidDataException(Resources.Serializer_ValueTooShort);
             }
 
-            var lastAccessTicks = BitConverter.ToInt64(bytes, lastAccessTicksOffset);
-            var lastAccessOffsetTicks = BitConverter.ToInt64(bytes, lastAccessOffsetTicksOffset);
-            var keyLength = BitConverter.ToInt32(bytes, keyLengthOffset);
-            var policyLength = BitConverter.ToInt32(bytes, policyLengthOffset);
-            var valueLength = BitConverter.ToInt32(bytes, valueLengthOffset);
+            var lastAccessTicks = BitConverter.ToInt64(serializedEntry, lastAccessTicksOffset);
+            var lastAccessOffsetTicks = BitConverter.ToInt64(serializedEntry, lastAccessOffsetTicksOffset);
+            var keyLength = BitConverter.ToInt32(serializedEntry, keyLengthOffset);
+            var policyLength = BitConverter.ToInt32(serializedEntry, policyLengthOffset);
+            var valueLength = BitConverter.ToInt32(serializedEntry, valueLengthOffset);
 
             var expectedSize = keyOffset + keyLength + policyLength + valueLength;
 
-            if (bytes.Length < expectedSize)
+            if (serializedEntry.Length < expectedSize)
             {
-                throw new InvalidDataException("Serialized value is shorter than the size expected from its metadata.");
+                throw new InvalidDataException(Resources.Serializer_ValueLengthDoesNotMatchMetadata);
             }
-            else if (bytes.Length > expectedSize)
+            else if (serializedEntry.Length > expectedSize)
             {
-                throw new InvalidDataException("Serialized value is longer than the size expected from its metadata.");
+                throw new InvalidDataException(Resources.Serializer_ValueLengthDoesNotMatchMetadata);
             }
 
-            var key = this.encoding.GetString(bytes, keyOffset, keyLength);
+            var key = this.encoding.GetString(serializedEntry, keyOffset, keyLength);
 
             CacheItemPolicy policy = null;
             if (policyLength != 0)
             {
                 var policyBytes = new byte[policyLength];
-                Array.Copy(bytes, keyOffset + keyLength, policyBytes, 0, policyLength);
+                Array.Copy(serializedEntry, keyOffset + keyLength, policyBytes, 0, policyLength);
                 policy = (CacheItemPolicy)DeserializeObject(policyBytes);
             }
 
             var valueBytes = new byte[valueLength];
-            Array.Copy(bytes, keyOffset + keyLength + policyLength, valueBytes, 0, valueLength);
+            Array.Copy(serializedEntry, keyOffset + keyLength + policyLength, valueBytes, 0, valueLength);
             var value = DeserializeObject(valueBytes);
 
             var entry =
@@ -159,11 +174,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.IsolatedStorage
         /// <summary>
         /// Deserializes the object.
         /// </summary>
-        /// <param name="bytes">The bytes representing the object.</param>
+        /// <param name="serializedObject">The bytes representing the object.</param>
         /// <returns>The represented object.</returns>
-        protected virtual object DeserializeObject(byte[] bytes)
+        protected virtual object DeserializeObject(byte[] serializedObject)
         {
-            return SerializationUtility.ToObject(bytes);
+            return SerializationUtility.ToObject(serializedObject);
         }
     }
 }

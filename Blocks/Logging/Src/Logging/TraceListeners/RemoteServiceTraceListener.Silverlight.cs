@@ -1,14 +1,25 @@
-﻿using System;
+﻿//===============================================================================
+// Microsoft patterns & practices Enterprise Library
+// Logging Application Block
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+
+using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.ServiceModel;
 using System.Text;
 using System.Threading;
 using Microsoft.Practices.EnterpriseLibrary.Common.Utility;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Diagnostics;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Service;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Properties;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Service;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
 {
@@ -17,9 +28,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
     /// </summary>
     public class RemoteServiceTraceListener : TraceListener
     {
-        private readonly bool sendImmediately;
-
-        private readonly Func<ILoggingService> loggingServiceFactory;
+        private readonly ILoggingServiceFactory loggingServiceFactory;
         private readonly IRecurringWorkScheduler timer;
         private readonly ILogEntryMessageStore store;
         private readonly IAsyncTracingErrorReporter asyncTracingErrorReporter;
@@ -32,13 +41,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         /// </summary>
         /// <param name="sendImmediately">Value indicating if the log entries should be sent shortly after they have been logged, or else 
         ///   wait until the <paramref name="timer"/> interval has elapsed.</param>
-        /// <param name="loggingServiceFactory">The ffactory to create new channel instances to submit the entries to the server.</param>
+        /// <param name="loggingServiceFactory">The factory to create new channel instances to submit the entries to the server.</param>
         /// <param name="timer">A scheduler to retry sending the log entries when there are connectivity issues.</param>
         /// <param name="store">The store used for buffering entries.</param>
         /// <param name="asyncTracingErrorReporter"></param>
         /// <param name="networkStatus">Provides notifications for when there is a network connection to try to send the entries.</param>
-        public RemoteServiceTraceListener(bool sendImmediately, 
-                                          Func<ILoggingService> loggingServiceFactory,
+        public RemoteServiceTraceListener(bool sendImmediately,
+                                          ILoggingServiceFactory loggingServiceFactory,
                                           IRecurringWorkScheduler timer,
                                           ILogEntryMessageStore store,
                                           IAsyncTracingErrorReporter asyncTracingErrorReporter,
@@ -50,7 +59,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
             if (asyncTracingErrorReporter == null) throw new ArgumentNullException("asyncTracingErrorReporter");
             if (networkStatus == null) throw new ArgumentNullException("networkStatus");
 
-            this.sendImmediately = sendImmediately;
+            this.SendImmediately = sendImmediately;
             this.loggingServiceFactory = loggingServiceFactory;
             this.timer = timer;
             this.store = store;
@@ -61,6 +70,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
             this.networkStatus.NetworkStatusUpdated += (s, a) => this.UpdateTimerStatus();
             this.UpdateTimerStatus();
         }
+
+        /// <summary>
+        /// Gets or sets a value indicating if the log entries should be sent shortly after they have been logged, or else 
+        /// wait until the submit interval value has elapsed.
+        /// </summary>
+        /// <remarks>
+        /// Set this value to <see langword="false"/> in order to buffer as many entries as possible during the submit interval time,
+        /// and have potentially fewer and larger requests to the server.
+        /// Set this value to <see langword="true"/> if you prefer to try to submit the entries as soon as possible, potentially sending only one or few log 
+        /// entries per server call.
+        /// </remarks>
+        public bool SendImmediately { get; private set; }
 
         private void UpdateTimerStatus()
         {
@@ -84,6 +105,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
         }
 
         /// <summary>
+        /// The store used for buffering entries.
+        /// </summary>
+        protected ILogEntryMessageStore Store
+        {
+            get { return this.store; }
+        }
+
+        /// <summary>
         /// Writes trace information, a data object and event information to the listener specific output.
         /// </summary>
         /// <param name="traceEventCache">A <see cref="TraceEventCache"/> object that contains context information.</param>
@@ -104,9 +133,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
             logEntry.CollectIntrinsicProperties();
 
             var translatedEntry = Translate(logEntry);
-            this.store.Add(translatedEntry);
+            this.Store.Add(translatedEntry);
 
-            if (this.sendImmediately)
+            if (this.SendImmediately)
             {
                 this.timer.ForceDoWork();
             }
@@ -114,7 +143,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
 
         private void DispatchEntries()
         {
-            LogEntryMessage[] entriesToSend = this.store.GetEntries();
+            var entriesToSend = this.GetEntriesToSend();
 
             if (entriesToSend.Length == 0)
                 return;
@@ -128,7 +157,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
             ILoggingService channel = null;
             try
             {
-                channel = this.loggingServiceFactory.Invoke();
+                channel = this.loggingServiceFactory.CreateChannel();
             }
             catch (Exception ex)
             {
@@ -146,7 +175,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
                     {
                         channel.EndAdd(r);
 
-                        this.store.RemoveUntil(entriesToSend[entriesToSend.Length - 1]);
+                        this.Store.RemoveUntil(entriesToSend[entriesToSend.Length - 1]);
                     }
                     catch (CommunicationException)
                     {
@@ -158,7 +187,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
                     }
                     catch (Exception ex)
                     {
-                        this.store.RemoveUntil(entriesToSend[entriesToSend.Length - 1]);
+                        this.Store.RemoveUntil(entriesToSend[entriesToSend.Length - 1]);
                         this.ReportTracingError(ex, entriesToSend);
                     }
                     finally
@@ -179,6 +208,43 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
                 using (channel as IDisposable) { }
                 this.ReportTracingError(ex);
             }
+        }
+
+        /// <summary>
+        /// Gets the log entries to send to the server.
+        /// </summary>
+        /// <returns>The entries to send.</returns>
+        protected virtual LogEntryMessage[] GetEntriesToSend()
+        {
+            return this.Store.GetEntries();
+        }
+
+        /// <summary>
+        /// Translates a <see cref="LogEntry"/> instance into a <see cref="LogEntryMessage"/> instance.
+        /// </summary>
+        /// <param name="entry">The source object to translate.</param>
+        /// <returns>The translated log entry.</returns>
+        protected virtual LogEntryMessage Translate(LogEntry entry)
+        {
+            return entry.ToLogEntryMessage();
+        }
+
+        /// <summary>
+        /// This method is not supported.
+        /// </summary>
+        /// <param name="message">The message.</param>
+        public override void Write(string message)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// This method is not supported.
+        /// </summary>
+        /// <param name="message">The message.</param>
+        public override void WriteLine(string message)
+        {
+            throw new NotImplementedException();
         }
 
         private void ReportProxyError(Exception exception)
@@ -239,29 +305,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
             return entriesSummary.ToString();
         }
 
-        protected virtual LogEntryMessage Translate(LogEntry entry)
-        {
-            return entry.ToLogEntryMessage();
-        }
-
         /// <summary>
-        /// This method is not supported.
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
-        /// <param name="message">The message.</param>
-        public override void Write(string message)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// This method is not supported.
-        /// </summary>
-        /// <param name="message">The message.</param>
-        public override void WriteLine(string message)
-        {
-            throw new NotImplementedException();
-        }
-
+        /// <param name="disposing"><see langword="true"/> if the method is being called from the <see cref="TraceListener.Dispose()"/> method. <see langword="false"/> if it is being called from within the object finalizer.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -269,7 +316,75 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners
                 this.timer.Stop();
                 using (this.timer as IDisposable) { }
                 using (this.networkStatus as IDisposable) { }
-                using (this.store as IDisposable) { }
+                using (this.Store as IDisposable) { }
+            }
+        }
+
+        /// <summary>
+        /// Provides an update context to batch change requests to the <see cref="TraceListener"/> configuration.
+        /// </summary>
+        /// <returns>Returns an <see cref="ITraceListenerUpdateContext"/> instance that can be used to apply the configuration changes.</returns>
+        protected internal override ITraceListenerUpdateContext GetUpdateContext()
+        {
+            return new RemoteServiceTraceListenerUpdateContext(this);
+        }
+
+        /// <summary>
+        /// Provides an update context for changing the <see cref="RemoteServiceTraceListener"/> settings.
+        /// </summary>
+        protected class RemoteServiceTraceListenerUpdateContext : TraceListenerUpdateContext, IRemoteServiceTraceListenerUpdateContext
+        {
+            /// <summary>
+            /// Initializes a new instance of <see cref="RemoteServiceTraceListenerUpdateContext"/>.
+            /// </summary>
+            /// <param name="traceListener">The <see cref="TraceListener"/> being configured.</param>
+            public RemoteServiceTraceListenerUpdateContext(RemoteServiceTraceListener traceListener)
+                : base(traceListener)
+            {
+                this.SendImmediately = traceListener.SendImmediately;
+                this.isolatedStorageBufferMaxSizeInKilobytes = (int)traceListener.Store.Quota;
+            }
+
+            /// <summary>
+            /// Applies the changes.
+            /// </summary>
+            protected internal override void ApplyChanges()
+            {
+                base.ApplyChanges();
+
+                var listener = (RemoteServiceTraceListener)this.TraceListener;
+                listener.SendImmediately = this.SendImmediately;
+                if ((int)listener.Store.Quota != this.IsolatedStorageBufferMaxSizeInKilobytes)
+                {
+                     listener.Store.ResizeBackingStore(this.IsolatedStorageBufferMaxSizeInKilobytes);
+                }
+            }
+
+            /// <summary>
+            /// Gets or sets a value indicating if the log entries should be sent shortly after they have been logged, or else 
+            /// wait until the submit interval value has elapsed.
+            /// </summary>
+            /// <remarks>
+            /// Set this value to <see langword="false"/> in order to buffer as many entries as possible during the submit interval time,
+            /// and have potentially fewer and larger requests to the server.
+            /// Set this value to <see langword="true"/> if you prefer to try to submit the entries as soon as possible, potentially sending only one or few log 
+            /// entries per server call.
+            /// </remarks>
+            public bool SendImmediately { get; set; }
+
+            private int isolatedStorageBufferMaxSizeInKilobytes;
+
+            /// <summary>
+            /// Gets or sets the maximum size in kilobytes to be used when storing entries into the isolated storage as a backup strategy.
+            /// </summary>
+            public int IsolatedStorageBufferMaxSizeInKilobytes
+            {
+                get { return this.isolatedStorageBufferMaxSizeInKilobytes; }
+                set
+                {
+                    LogEntryMessageStore.GuardMaxSizeInKilobytes(value);
+                    this.isolatedStorageBufferMaxSizeInKilobytes = value;
+                }
             }
         }
     }

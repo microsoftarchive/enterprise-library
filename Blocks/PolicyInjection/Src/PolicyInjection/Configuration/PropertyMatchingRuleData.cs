@@ -9,9 +9,12 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Properties;
 using Microsoft.Practices.Unity.InterceptionExtension;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
@@ -22,16 +25,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
     /// </summary>
     public partial class PropertyMatchingRuleData : MatchingRuleData
     {
-
-        /// <summary>
-        /// Constructs a new <see cref="PropertyMatchingRuleData"/> instance.
-        /// </summary>
-        /// <param name="matchingRuleName">Matching rule instance name in configuration.</param>
-        public PropertyMatchingRuleData(string matchingRuleName)
-            : this(matchingRuleName, new List<PropertyMatchData>())
-        {
-        }
-
         /// <summary>
         /// Get the set of <see cref="TypeRegistration"/> objects needed to
         /// register the matching rule represented by this config element and its associated objects.
@@ -40,6 +33,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// <returns>The set of <see cref="TypeRegistration"/> objects.</returns>
         public override IEnumerable<TypeRegistration> GetRegistrations(string nameSuffix)
         {
+            if (this.Matches.Any(matche => string.IsNullOrEmpty(matche.Match)))
+            {
+                throw new InvalidOperationException(
+                    string.Format(CultureInfo.CurrentCulture, Resources.ErrorPropertyMatchingRuleMatchNotSet, this.Name));
+            }
+
             yield return
                 new TypeRegistration<IMatchingRule>(() =>
                     new PropertyMatchingRule(
@@ -58,47 +57,5 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
     /// </summary>
     public partial class PropertyMatchData : MatchData
     {
-        /// <summary>
-        /// Constructs a new <see cref="PropertyMatchData"/> instance.
-        /// </summary>
-        public PropertyMatchData()
-        {
-        }
-
-        /// <summary>
-        /// Constructs a new <see cref="PropertyMatchData"/> instance.
-        /// </summary>
-        /// <param name="match">Property name pattern to match. The rule will match both getter and setter methods of a property.</param>
-        public PropertyMatchData(string match)
-            : base(match)
-        {
-        }
-
-        /// <summary>
-        /// Construct a new <see cref="PropertyMatchData"/> instance.
-        /// </summary>
-        /// <param name="match">Property name pattern to match.</param>
-        /// <param name="option">Which of the property methods to match. See <see cref="PropertyMatchingOption"/>
-        /// for the valid options.</param>
-        public PropertyMatchData(string match, PropertyMatchingOption option)
-            : base(match)
-        {
-            MatchOption = option;
-
-        }
-
-        /// <summary>
-        /// Construct a new <see cref="PropertyMatchData"/> instance.
-        /// </summary>
-        /// <param name="match">Property name pattern to match.</param>
-        /// <param name="option">Which of the property methods to match. See <see cref="PropertyMatchingOption"/>
-        /// for the valid options.</param>
-        /// <param name="ignoreCase">If false, type name comparisons are case sensitive. If true, 
-        /// comparisons are case insensitive.</param>
-        public PropertyMatchData(string match, PropertyMatchingOption option, bool ignoreCase)
-            : base(match, ignoreCase)
-        {
-            MatchOption = option;
-        }
     }
 }

@@ -1,6 +1,6 @@
 ﻿//===============================================================================
 // Microsoft patterns & practices Enterprise Library
-// Policy Injection Application Block
+// Exception Handling Application Block
 //===============================================================================
 // Copyright © Microsoft Corporation.  All rights reserved.
 // THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
@@ -210,7 +210,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.CallHandlers.Tes
             var configSource = new SystemConfigurationSource(false);
 #else
             var configSource =
-                ResourceDictionaryConfigurationSource.FromXaml(
+                DictionaryConfigurationSource.FromXaml(
                     new Uri(
                         "/Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Silverlight.Tests;component/Configuration.xaml",
                         UriKind.Relative));

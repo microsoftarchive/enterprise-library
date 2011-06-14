@@ -16,6 +16,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
     partial class ContainsCharactersValidatorData
     {
         /// <summary>
+        /// <para>Initializes a new instance of the <see cref="ContainsCharactersValidatorData"/> class.</para>
+        /// </summary>
+        public ContainsCharactersValidatorData()
+        {
+            ContainsCharacters = ContainsCharacters.Any;
+        }
+
+        /// <summary>
         /// Gets or sets the string containing the characters to use by the represented 
         /// <see cref="ContainsCharactersValidator"/>.
         /// </summary>

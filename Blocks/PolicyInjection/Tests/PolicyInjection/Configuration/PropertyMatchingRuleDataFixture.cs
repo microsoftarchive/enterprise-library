@@ -27,13 +27,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
         public void ShouldSerializeAndDeserializeCorrectly()
         {
             PropertyMatchingRuleData original =
-                new PropertyMatchingRuleData("MatchMyProperty",
-                                             new PropertyMatchData[]
-                                                 {
-                                                     new PropertyMatchData("MyProperty", PropertyMatchingOption.Set, true),
-                                                     new PropertyMatchData("*Name"),
-                                                     new PropertyMatchData("Foo??", PropertyMatchingOption.Get)
-                                                 });
+                new PropertyMatchingRuleData
+                {
+                    Name = "MatchMyProperty",
+                    Matches = 
+                        {
+                            new PropertyMatchData { Match = "MyProperty", MatchOption = PropertyMatchingOption.Set, IgnoreCase = true },
+                            new PropertyMatchData { Match = "*Name" },
+                            new PropertyMatchData { Match = "Foo??", MatchOption = PropertyMatchingOption.Get },
+                        }
+                };
 
             PropertyMatchingRuleData rehydrated =
                 (PropertyMatchingRuleData)SerializeAndDeserializeMatchingRule(original);
@@ -47,18 +50,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
                                          "Match at index {0} is incorrect", i);
             }
         }
-#else
-        [TestMethod]
-        public void HasDefaultCtor()
-        {
-            new PropertyMatchingRuleData();
-            new PropertyMatchData();
-        }
 #endif
         [TestMethod]
         public void MatchingRuleHasTransientLifetime()
         {
-            PropertyMatchingRuleData ruleData = new PropertyMatchingRuleData("Foo");
+            PropertyMatchingRuleData ruleData = new PropertyMatchingRuleData { Name ="Foo" };
             TypeRegistration registration = ruleData.GetRegistrations("").First();
 
             Assert.AreEqual(TypeRegistrationLifetime.Transient, registration.Lifetime);

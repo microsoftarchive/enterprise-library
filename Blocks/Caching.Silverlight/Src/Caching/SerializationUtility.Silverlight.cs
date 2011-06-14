@@ -40,8 +40,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
             }
 
             using (var inMemoryData = new MemoryStream())
-            using (var writer = new StreamWriter(inMemoryData, encoding))
             {
+                var writer = new StreamWriter(inMemoryData, encoding);
                 var typesBuilder = new StringBuilder();
                 typesBuilder.Append(value.GetType().AssemblyQualifiedName);
                 typesBuilder.Append(separator);
@@ -93,8 +93,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
             int position;
 
             using (var inMemoryData = new MemoryStream(serializedObject))
-            using (var reader = new StreamReader(inMemoryData, encoding))
             {
+                var reader = new StreamReader(inMemoryData, encoding);
                 var knownTypeNames = reader.ReadLine();
                 var splitTypeNames = knownTypeNames.Split(separator, StringSplitOptions.RemoveEmptyEntries);
 

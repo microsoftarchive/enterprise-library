@@ -14,5 +14,5 @@ using System.Reflection;
 
 [assembly: AssemblyTitle("Enterprise Library Caching Application Block Test Support")]
 [assembly: AssemblyDescription("Enterprise Library Caching Application Block Test Support")]
-[assembly: AssemblyVersion("5.0.414.0")]
+[assembly: AssemblyVersion("5.0.505.0")]
 [assembly: CLSCompliant(false)]

@@ -54,7 +54,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation
                                               string applicationInstanceName)
             : base(performanceCountersEnabled, eventLoggingEnabled, new AppDomainNameFormatter(applicationInstanceName))
         {
-            this.eventLogEntryFormatter = new EventLogEntryFormatter(Resources.BlockName);
+            this.eventLogEntryFormatter = new EventLogEntryFormatter(Resources_Desktop.BlockName);
         }
 
         /// <summary>
@@ -70,7 +70,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation
                                               string applicationInstanceName)
             : base(instanceName, performanceCountersEnabled, eventLoggingEnabled, new AppDomainNameFormatter(applicationInstanceName))
         {
-            this.eventLogEntryFormatter = new EventLogEntryFormatter(Resources.BlockName);
+            this.eventLogEntryFormatter = new EventLogEntryFormatter(Resources_Desktop.BlockName);
         }
 
         /// <summary>
@@ -94,7 +94,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation
             if(exception == null) throw new ArgumentNullException("exception");
             if (EventLoggingEnabled)
             {
-                string entryText = eventLogEntryFormatter.GetEntryText(Resources.ReconfigurationFailure, exception);
+                string entryText = eventLogEntryFormatter.GetEntryText(Resources_Desktop.ReconfigurationFailure, exception);
                 EventLog.WriteEntry(GetEventSourceName(), entryText, EventLogEntryType.Error);
             }
         }
@@ -122,7 +122,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation
             if(configurationException == null) throw new ArgumentNullException("configurationException");
             if (EventLoggingEnabled)
             {
-                string entryText = eventLogEntryFormatter.GetEntryText(Resources.ConfigurationFailureUpdating, configurationException);
+                string entryText = eventLogEntryFormatter.GetEntryText(Resources_Desktop.ConfigurationFailureUpdating, configurationException);
                 EventLog.WriteEntry(GetEventSourceName(), entryText, EventLogEntryType.Error);
             }
         }

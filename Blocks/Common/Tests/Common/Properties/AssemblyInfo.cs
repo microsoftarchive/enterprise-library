@@ -13,4 +13,4 @@ using System.Reflection;
 
 [assembly: AssemblyTitle("Enterprise Library Shared Library Tests")]
 [assembly: AssemblyDescription("Enterprise Library Shared Library Tests")]
-[assembly: AssemblyVersion("5.0.414.0")]
+[assembly: AssemblyVersion("5.0.505.0")]

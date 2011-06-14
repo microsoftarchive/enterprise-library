@@ -101,7 +101,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Installers
                 }
                 else
                 {
-                    throw new ArgumentException(Resources.NoCategoryErrorMessage, "category");
+                    throw new ArgumentException(Resources_Desktop.NoCategoryErrorMessage, "category");
                 }
             }
         }
@@ -113,7 +113,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Installers
             {
                 PerformanceCounterInstaller installer = new PerformanceCounterInstaller();
                 installer.CategoryName = categoryName;
-                installer.CategoryHelp = Resources.PerformanceCounterCategoryHelp;
+                installer.CategoryHelp = Resources_Desktop.PerformanceCounterCategoryHelp;
                 installer.CategoryType = PerformanceCounterCategoryType.MultiInstance;
 
                 installer.Counters.Add(GetNumberOfCallsCreationData());
@@ -145,7 +145,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Installers
         {
             return new CounterCreationData(
                 PerformanceCounterCallHandler.NumberOfCallsCounterName,
-                Resources.NumberOfCallsCounterHelp,
+                Resources_Desktop.NumberOfCallsCounterHelp,
                 PerformanceCounterType.NumberOfItems32);
 
         }
@@ -154,7 +154,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Installers
         {
             return new CounterCreationData(
                 PerformanceCounterCallHandler.CallsPerSecondCounterName,
-                Resources.CallsPerSecondCounterHelp,
+                Resources_Desktop.CallsPerSecondCounterHelp,
                 PerformanceCounterType.RateOfCountsPerSecond32);
         }
 
@@ -162,7 +162,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Installers
         {
             return new CounterCreationData(
                 PerformanceCounterCallHandler.TotalExceptionsCounterName,
-                Resources.NumberOfExceptionsCounterHelp,
+                Resources_Desktop.NumberOfExceptionsCounterHelp,
                 PerformanceCounterType.NumberOfItems32);
         }
 
@@ -170,7 +170,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Installers
         {
             return new CounterCreationData(
                 PerformanceCounterCallHandler.ExceptionsPerSecondCounterName,
-                Resources.ExceptionsPerSecondCounterHelp,
+                Resources_Desktop.ExceptionsPerSecondCounterHelp,
                 PerformanceCounterType.RateOfCountsPerSecond32);
         }
 
@@ -178,7 +178,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Installers
         {
             return new CounterCreationData(
                 PerformanceCounterCallHandler.AverageCallDurationCounterName,
-                Resources.AverageCallDurationCounterHelp,
+                Resources_Desktop.AverageCallDurationCounterHelp,
                 PerformanceCounterType.AverageTimer32);
         }
 
@@ -186,7 +186,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Installers
         {
             return new CounterCreationData(
                 PerformanceCounterCallHandler.AverageCallDurationBaseCounterName,
-                Resources.AverageCallDurationBaseCounterHelp,
+                Resources_Desktop.AverageCallDurationBaseCounterHelp,
                 PerformanceCounterType.AverageBase);
         }
 

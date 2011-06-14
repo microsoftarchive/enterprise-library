@@ -1,4 +1,15 @@
-﻿using System;
+﻿//===============================================================================
+// Microsoft patterns & practices Enterprise Library
+// Caching Application Block
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+
+using System;
 using System.Linq;
 using System.Text;
 using Microsoft.Practices.EnterpriseLibrary.Caching.InMemory;
@@ -94,6 +105,24 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests.IsolatedStorage
         }
 
         [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void WhenSerializedNullEntry_ThenThrows()
+        {
+            var serializer = new IsolatedStorageCacheEntrySerializer();
+
+            serializer.Serialize(null);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void WhenDeserializedNullData_ThenThrows()
+        {
+            var serializer = new IsolatedStorageCacheEntrySerializer();
+
+            serializer.Deserialize(null);
+        }
+
+        [TestMethod]
         public void WhenSerializesEntryWithNoPolicy_ThenCanDeserializeEntry()
         {
             var lastAccessTime = DateTimeOffset.UtcNow;
@@ -119,6 +148,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests.IsolatedStorage
             Assert.AreEqual(21, ((Customer)actualEntry.Value).Age);
         }
 
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void WhenGettingUpdateForLastAccessTimeForNullEntry_ThenThrows()
+        {
+            var serializer = new IsolatedStorageCacheEntrySerializer();
+
+            serializer.GetUpdateForLastUpdateTime(null);
+        }
+
+
         [TestMethod]
         public void WhenGettingUpdateForLastAccessTime_ThenCanApplyUpdateAndDeserialize()
         {
@@ -132,7 +172,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests.IsolatedStorage
             
             var update = serializer.GetUpdateForLastUpdateTime(entry);
 
-            Array.Copy(update.Bytes, 0, serializedEntry, update.Offset, update.Bytes.Length);
+            Array.Copy(update.GetValue(), 0, serializedEntry, update.Offset, update.GetValue().Length);
 
             var actualEntry = serializer.Deserialize(serializedEntry);
 

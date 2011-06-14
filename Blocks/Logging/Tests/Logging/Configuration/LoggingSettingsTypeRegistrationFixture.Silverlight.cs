@@ -16,7 +16,6 @@ using Microsoft.Practices.EnterpriseLibrary.Common.TestSupport.Configuration.Con
 using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Diagnostics;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Filters;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Instrumentation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -44,12 +43,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
         public void ThenHasNoRegistrationsForLogFilters()
         {
             Assert.AreEqual(0, registrations.Where(tr => tr.ServiceType == typeof(ILogFilter)).Count());
-        }
-
-        [TestMethod]
-        public void ThenHasNoRegistrationsForLogFormatters()
-        {
-            Assert.AreEqual(0, registrations.Where(tr => tr.ServiceType == typeof(ILogFormatter)).Count());
         }
 
         [TestMethod]
@@ -130,8 +123,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
                 .WithContainerResolvedParameter<LogSource>("___ERRORS")
                 .WithValueConstructorParameter("")
                 .WithValueConstructorParameter(true)
-                .WithValueConstructorParameter(false)
-                .WithValueConstructorParameter(false)
+                .WithValueConstructorParameter(true)
+                .WithValueConstructorParameter(true)
                 .VerifyConstructorParameters();
 
             Assert.AreEqual(0, traceSourceNames.Count());
@@ -303,40 +296,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration
                 .WithContainerResolvedParameter<LogSource>("___ERRORS")
                 .WithValueConstructorParameter("")
                 .WithValueConstructorParameter(true)
-                .WithValueConstructorParameter(false)
-                .WithValueConstructorParameter(false)
+                .WithValueConstructorParameter(true)
+                .WithValueConstructorParameter(true)
                 .VerifyConstructorParameters();
-        }
-    }
-
-    [TestClass]
-    public class GivenRegistrationsForLoggingSettingsWithFormatters
-    {
-        private IEnumerable<TypeRegistration> registrations;
-
-        [TestInitialize]
-        public void Setup()
-        {
-            LoggingSettings settings = new LoggingSettings();
-            settings.Formatters.Add(new TextFormatterData { Name = "text", Template = "template" });
-
-            registrations = settings.GetRegistrations(null);
-        }
-
-        [TestMethod]
-        public void ThenHasRegistrationsForTheFormattersInTheSettings()
-        {
-            Assert.IsTrue(
-                registrations.Any(tr =>
-                    tr.ServiceType == typeof(ILogFormatter)
-                    && tr.ImplementationType == typeof(TextFormatter)
-                    && tr.Name == "text"));
-        }
-
-        [TestMethod]
-        public void ThenHasNoRegistrationsForOtherFormatters()
-        {
-            Assert.AreEqual(1, registrations.Where(tr => tr.ServiceType == typeof(ILogFormatter)).Count());
         }
     }
 

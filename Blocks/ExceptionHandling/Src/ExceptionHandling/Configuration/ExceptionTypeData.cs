@@ -10,6 +10,7 @@
 //===============================================================================
 
 using System;
+using System.Globalization;
 using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
@@ -58,7 +59,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
 
         private static string BuildChildName(string name, string childName)
         {
-            return string.Format("{0}.{1}", name, childName);
+            return string.Format(CultureInfo.InvariantCulture, "{0}.{1}", name, childName);
         }
     }
 }

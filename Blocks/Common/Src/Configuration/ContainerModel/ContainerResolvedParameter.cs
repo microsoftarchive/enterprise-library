@@ -21,7 +21,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerMo
     {
         /// <summary>
         /// Initializes the construction parameter from the <see cref="MethodCallExpression"/>.  This method call expression 
-        /// expected to be respresented through the <see cref="Container"/> static marker class.
+        /// expected to be represented through the <see cref="Container"/> static marker class.
         /// </summary>
         /// <remarks>
         /// 

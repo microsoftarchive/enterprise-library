@@ -13,4 +13,4 @@ using System.Reflection;
 
 [assembly: AssemblyTitle("Enterprise Library Exception Handling Logging Provider")]
 [assembly: AssemblyDescription("Enterprise Library Exception Handling Logging Provider")]
-[assembly: AssemblyVersion("5.0.414.0")]
+[assembly: AssemblyVersion("5.0.505.0")]

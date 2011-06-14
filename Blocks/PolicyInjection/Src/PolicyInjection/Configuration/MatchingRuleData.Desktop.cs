@@ -25,6 +25,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// <summary>
         /// Creates a new <see cref="MatchingRuleData"/> instance.
         /// </summary>
+        public MatchingRuleData()
+        {
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="MatchingRuleData"/> instance.
+        /// </summary>
         /// <param name="matchingRuleName">Name of the rule in config.</param>
         /// <param name="matchingRuleType">The underlying type of matching rule this object configures.</param>
         public MatchingRuleData(string matchingRuleName, Type matchingRuleType)

@@ -1,4 +1,15 @@
-﻿using System;
+﻿//===============================================================================
+// Microsoft patterns & practices Enterprise Library
+// Caching Application Block
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+
+using System;
 using System.Linq.Expressions;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Runtime.Caching;
@@ -27,10 +38,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests.Configuration.Cach
 
             var data1Mock = new Mock<CacheData>();
             data1Mock.Setup(d => d.GetRegistrations(It.IsAny<IConfigurationSource>())).Returns(new[] { this.expectedRegistration1 });
+            data1Mock.Setup(d => d.Name).Returns("cache1");
             var data2Mock = new Mock<CacheData>();
             data2Mock.Setup(d => d.GetRegistrations(It.IsAny<IConfigurationSource>())).Returns(new[] { this.expectedRegistration2 });
+            data2Mock.Setup(d => d.Name).Returns("cache2");
             var data3Mock = new Mock<CacheData>();
             data3Mock.Setup(d => d.GetRegistrations(It.IsAny<IConfigurationSource>())).Returns(new[] { this.expectedRegistration3 });
+            data3Mock.Setup(d => d.Name).Returns("cache3");
 
             this.settings =
                 new CachingSettings

@@ -67,11 +67,13 @@
       <HintPath>..\..\..\..\Lib\Silverlight\Microsoft.Practices.ServiceLocation.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Practices.Unity.Interception.Silverlight">
+    <Reference Include="Microsoft.Practices.Unity.Interception.Silverlight, Version=2.1.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\Lib\Silverlight\Microsoft.Practices.Unity.Interception.Silverlight.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="Microsoft.Practices.Unity.Silverlight, Version=2.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.Practices.Unity.Silverlight, Version=2.1.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\Lib\Silverlight\Microsoft.Practices.Unity.Silverlight.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="Microsoft.Silverlight.Testing">
       <HintPath>..\..\..\..\Lib\Silverlight\UnitTestFramework\Microsoft.Silverlight.Testing.dll</HintPath>
@@ -99,6 +101,8 @@
       <DependentUpon>App.Silverlight.xaml</DependentUpon>
     </Compile>
     <Compile Include="ApplicationException.Silverlight.cs" />
+    <Compile Include="Configuration\ConfigurationSourceBuilderExtensionsFixture.cs" />
+    <Compile Include="Configuration\ExceptionTypeDataFixture.cs" />
     <Compile Include="Configuration\ExceptionCallHandlerDataFixture.cs" />
     <Compile Include="Configuration\ExceptionHandlingTypeRegistrationFixture.cs" />
     <Compile Include="ExceptionFormatterFixture.cs" />

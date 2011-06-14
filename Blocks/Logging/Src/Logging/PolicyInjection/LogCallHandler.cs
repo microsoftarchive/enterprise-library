@@ -346,13 +346,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.PolicyInjection
 
             if (includeParameters)
             {
-                Dictionary<string, object> parameters = new Dictionary<string, object>();
                 for (int i = 0; i < input.Arguments.Count; ++i)
                 {
-                    parameters[input.Arguments.GetParameterInfo(i).Name] = input.Arguments[i];
+#if !SILVERLIGHT
+                    logEntry.ExtendedProperties[input.Arguments.GetParameterInfo(i).Name] = input.Arguments[i];
+#else
+                    var argument = input.Arguments[i];
+                    logEntry.ExtendedProperties["param-" + input.Arguments.GetParameterInfo(i).Name] = argument != null ? argument.ToString() : null;
+#endif
                 }
-
-                logEntry.ExtendedProperties = parameters;
             }
 
             if (includeCallStack)

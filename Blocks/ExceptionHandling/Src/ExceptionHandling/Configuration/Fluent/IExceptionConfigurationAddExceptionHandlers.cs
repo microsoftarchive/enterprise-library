@@ -29,7 +29,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent
     /// </example>
     /// 
     /// The context implementer offers additional interfaces that are useful in continuing the configuration of Exception Handling (<see cref="IExceptionConfigurationForExceptionTypeOrPostHandling"/>
-    /// or in adding your custom handler information to the currently building exception type (<see cref="IExceptionHandlerExtension"/>).  In lieu of casting to these
+    /// or in adding your custom handler information to the currently building exception type (<see cref="IExceptionHandlerExtension"/>). Instead of casting to these
     /// interfaces directly, consider using the <see cref="ExceptionHandlerConfigurationExtension"/> as a base class for your custom handler builder.
     /// </remarks>
     public interface IExceptionConfigurationAddExceptionHandlers : IExceptionConfigurationThenDoPostHandlingAction

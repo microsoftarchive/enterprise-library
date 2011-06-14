@@ -132,7 +132,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
 
         /// <summary>
         /// Returns a validator representing the validation criteria specified for type <paramref name="targetType"/>
-        /// through configuration and aatributes on type <paramref name="targetType"/> and its ancestors for the default ruleset.
+        /// through configuration and attributes on type <paramref name="targetType"/> and its ancestors for the default ruleset.
         /// </summary>
         /// <param name="targetType">The type to get the validator for.</param>
         /// <returns>The validator.</returns>

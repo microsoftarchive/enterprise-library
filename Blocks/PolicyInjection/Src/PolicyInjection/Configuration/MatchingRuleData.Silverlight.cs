@@ -9,11 +9,7 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
-using Microsoft.Practices.Unity.InterceptionExtension;
-using System.Collections.Generic;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
 {
@@ -22,14 +18,5 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
     /// </summary>
     public partial class MatchingRuleData : NamedConfigurationElement
     {
-        /// <summary>
-        /// Creates a new <see cref="MatchingRuleData"/> instance.
-        /// </summary>
-        /// <param name="matchingRuleName">Name of the rule in config.</param>
-        public MatchingRuleData(string matchingRuleName)
-            : base(matchingRuleName)
-        {
-            Name = matchingRuleName;
-        }
     }
 }

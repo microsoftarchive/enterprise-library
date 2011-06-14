@@ -1,4 +1,15 @@
-﻿using System.Windows.Markup;
+﻿//===============================================================================
+// Microsoft patterns & practices Enterprise Library
+// Caching Application Block
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+
+using System.Windows.Markup;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -11,7 +22,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests.Configuration
         [TestMethod]
         public void CanDeserializeInMemoryCacheData()
         {
-            var xaml = @"<el:InMemoryCacheData Name='memory' MaxItemsBeforeScavenging='10' ItemsLeftAfterScavenging='5' ExpirationPollingInterval='0:0:5' xmlns:el='http://entlib.codeplex.com/v5/configuration'/>";
+            var xaml = @"<el:InMemoryCacheData Name='memory' MaxItemsBeforeScavenging='10' ItemsLeftAfterScavenging='5' ExpirationPollingInterval='0:0:5' xmlns:el='http://schemas.microsoft.com/practices/2011/entlib'/>";
 
             var data = (InMemoryCacheData)XamlReader.Load(xaml);
 
@@ -24,7 +35,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests.Configuration
         [TestMethod]
         public void CanDeserializeIsolatedStorageCacheData()
         {
-            var xaml = @"<el:IsolatedStorageCacheData Name='isolated' MaxSizeInKilobytes='25' PercentOfQuotaUsedBeforeScavenging='50' PercentOfQuotaUsedAfterScavenging='10' ExpirationPollingInterval='0:0:5' xmlns:el='http://entlib.codeplex.com/v5/configuration'/>";
+            var xaml = @"<el:IsolatedStorageCacheData Name='isolated' MaxSizeInKilobytes='25' PercentOfQuotaUsedBeforeScavenging='50' PercentOfQuotaUsedAfterScavenging='10' ExpirationPollingInterval='0:0:5' xmlns:el='http://schemas.microsoft.com/practices/2011/entlib'/>";
 
             var data = (IsolatedStorageCacheData)XamlReader.Load(xaml);
 

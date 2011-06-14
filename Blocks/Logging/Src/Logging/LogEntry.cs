@@ -16,8 +16,8 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Xml.Serialization;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 #if !SILVERLIGHT
+using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
 using System.Diagnostics;
 using System.Management.Instrumentation;
 using System.Runtime.Serialization;
@@ -25,6 +25,7 @@ using System.Security;
 using System.Security.Permissions;
 #else
 using Microsoft.Practices.EnterpriseLibrary.Logging.Diagnostics;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Properties;
 #endif
 
 namespace Microsoft.Practices.EnterpriseLibrary.Logging
@@ -42,8 +43,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
     public class LogEntry
 #endif
     {
-        private static readonly TextFormatter toStringFormatter = new TextFormatter();
-
         private string message = string.Empty;
         private string title = string.Empty;
 
@@ -52,6 +51,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
 #endif
         private ICollection<string> categories = new List<string>(0);
 #if !SILVERLIGHT
+        private static readonly TextFormatter toStringFormatter = new TextFormatter();
         private string[] categoryStrings;
 #endif
 
@@ -457,7 +457,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
             {
                 this.ProcessId = string.Format(CultureInfo.CurrentCulture,
                     Properties.Resources.IntrinsicPropertyError,
-                    Properties.Resources.LogEntryIntrinsicPropertyNoUnmanagedCodePermissionError);
+                    Properties.Resources_Desktop.LogEntryIntrinsicPropertyNoUnmanagedCodePermissionError);
             }
         }
 
@@ -471,7 +471,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
             {
                 this.ProcessName = string.Format(CultureInfo.CurrentCulture,
                     Properties.Resources.IntrinsicPropertyError,
-                    Properties.Resources.LogEntryIntrinsicPropertyNoUnmanagedCodePermissionError);
+                    Properties.Resources_Desktop.LogEntryIntrinsicPropertyNoUnmanagedCodePermissionError);
             }
         }
 
@@ -492,7 +492,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
             {
                 this.Win32ThreadId = string.Format(CultureInfo.CurrentCulture,
                     Properties.Resources.IntrinsicPropertyError,
-                    Properties.Resources.LogEntryIntrinsicPropertyNoUnmanagedCodePermissionError);
+                    Properties.Resources_Desktop.LogEntryIntrinsicPropertyNoUnmanagedCodePermissionError);
             }
         }
 #endif
@@ -618,7 +618,16 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// <returns>A <see cref="String"/> that represents the current <see cref="LogEntry"/>.</returns>
         public override string ToString()
         {
+#if !SILVERLIGHT
             return toStringFormatter.Format(this);
+#else
+            return string.Format(CultureInfo.CurrentCulture,
+                Resources.LogEntry_SimplifiedToString,
+                this.TimeStampString,
+                this.Message,
+                string.Join(", ", this.Categories),
+                this.Severity);
+#endif
         }
 
 #if !SILVERLIGHT
@@ -662,15 +671,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging
         /// </summary>
         internal void CollectIntrinsicProperties()
         {
-            InitializeTimeStamp();
-            InitializeActivityId();
-            InitializeAppDomainName();
-            InitializeThreadName();
+            if (!this.timeStampInitialized) InitializeTimeStamp();
+            if (!this.activityIdInitialized) InitializeActivityId();
+            if (!this.appDomainNameInitialized) InitializeAppDomainName();
+            if (!this.threadNameInitialized) InitializeThreadName();
 #if !SILVERLIGHT
-            InitializeMachineName();
-            InitializeProcessId();
-            InitializeProcessName();
-            InitializeWin32ThreadId();
+            if (!this.machineNameInitialized) InitializeMachineName();
+            if (!this.processIdInitialized) InitializeProcessId();
+            if (!this.processNameInitialized) InitializeProcessName();
+            if (!this.win32ThreadIdInitialized) InitializeWin32ThreadId();
 #endif
         }
 

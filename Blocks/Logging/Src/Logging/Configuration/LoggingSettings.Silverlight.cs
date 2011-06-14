@@ -28,6 +28,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
     /// </summary>
     public partial class LoggingSettings : ConfigurationSection, ITypeRegistrationsProvider
     {
+
+        /// <summary>
+        /// Initialize a new instance of the <see cref="LoggingSettings"/> with default values.
+        /// </summary>
+        public LoggingSettings()
+            : this(string.Empty)
+        {
+            LogWarningWhenNoCategoriesMatch = true;
+            RevertImpersonation = true;
+            TracingEnabled = true;
+        }
+
         /// <summary>
         /// Enable or disable trace logging.
         /// </summary>
@@ -67,17 +79,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
         public NamedElementCollection<TraceListenerData> TraceListeners
         {
             get { return this.traceListeners; }
-        }
-
-        private readonly NamedElementCollection<FormatterData> formatters = new NamedElementCollection<FormatterData>();
-
-        /// <summary>
-        /// Gets the collection of <see cref="FormatterData"/> configuration elements that define 
-        /// the available <see cref="Microsoft.Practices.EnterpriseLibrary.Logging.Formatters.ILogFormatter"/>s.
-        /// </summary>
-        public NamedElementCollection<FormatterData> Formatters
-        {
-            get { return this.formatters; }
         }
 
         private readonly NamedElementCollection<LogFilterData> logFilters = new NamedElementCollection<LogFilterData>();
@@ -193,7 +194,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Configuration
             registrations.Add(CreateLogWriterRegistration());
             registrations.AddRange(TraceListeners.SelectMany(tld => tld.GetRegistrations()));
             registrations.AddRange(LogFilters.SelectMany(lfd => lfd.GetRegistrations()));
-            registrations.AddRange(Formatters.SelectMany(fd => fd.GetRegistrations()));
             registrations.AddRange(TraceSources.Select(tsd => tsd.GetRegistrations()));
             registrations.Add(
                 CreateLogSourceRegistration(SpecialTraceSources.AllEventsTraceSource, AllTraceSourceKey));

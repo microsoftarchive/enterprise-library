@@ -20,23 +20,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
     public partial class TagAttributeMatchingRuleData
     {
         /// <summary>
-        /// Constructs a new <see cref="TagAttributeMatchingRuleData"/> instance.
-        /// </summary>
-        public TagAttributeMatchingRuleData()
-        {
-        }
-
-        /// <summary>
-        /// Constructs a new <see cref="TagAttributeMatchingRuleData"/> instance.
-        /// </summary>
-        /// <param name="matchingRuleName">Matching rule instance name in configuration.</param>
-        /// <param name="tagToMatch">Tag string to match.</param>
-        public TagAttributeMatchingRuleData(string matchingRuleName, string tagToMatch)
-            : base(matchingRuleName, tagToMatch)
-        {
-        }
-
-        /// <summary>
         /// The pattern to match.
         /// </summary>
         public override string Match

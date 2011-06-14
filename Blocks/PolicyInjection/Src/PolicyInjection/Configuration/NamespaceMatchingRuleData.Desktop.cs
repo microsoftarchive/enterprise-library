@@ -11,15 +11,10 @@
 
 using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design.Validation;
-using Microsoft.Practices.Unity;
 using Microsoft.Practices.Unity.InterceptionExtension;
 using FakeRules = Microsoft.Practices.EnterpriseLibrary.PolicyInjection.MatchingRules;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Design;
-using System.ComponentModel;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
 {
@@ -39,6 +34,25 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         public NamespaceMatchingRuleData()
         {
             Type = typeof(FakeRules.NamespaceMatchingRule);
+        }
+
+        /// <summary>
+        /// Constructs a new <see cref="NamespaceMatchingRuleData"/> instance.
+        /// </summary>
+        /// <param name="matchingRuleName">Matching rule name in configuration file.</param>
+        public NamespaceMatchingRuleData(string matchingRuleName)
+            : this(matchingRuleName, new List<MatchData>())
+        {
+        }
+
+        /// <summary>
+        /// Constructs a new <see cref="NamespaceMatchingRuleData"/> instance.
+        /// </summary>
+        /// <param name="matchingRuleName">Matching rule name in configuration file.</param>
+        /// <param name="namespaceName">Namespace pattern to match.</param>
+        public NamespaceMatchingRuleData(string matchingRuleName, string namespaceName)
+            : this(matchingRuleName, new MatchData[] { new MatchData(namespaceName) })
+        {
         }
 
         /// <summary>

@@ -25,7 +25,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration
         private const string exceptionTypesProperty = "exceptionTypes";
 
         /// <summary>
-        /// Creates a new instance of ExceptionPolicyData.
+        /// Creates a new instance of <see cref="ExceptionPolicyData"/>.
         /// </summary>
         public ExceptionPolicyData()
         {

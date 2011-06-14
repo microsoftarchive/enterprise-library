@@ -26,5 +26,21 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
         /// <returns>The specified <see cref="ConfigurationSection"/>, or <see langword="null"/> (<b>Nothing</b> in Visual Basic)
         /// if a section by that name is not found.</returns>
         ConfigurationSection GetSection(string sectionName);
+
+        /// <summary>
+        /// Adds a <see cref="ConfigurationSection"/> to the configuration source and saves the configuration source.
+        /// </summary>
+        /// <remarks>
+        /// If a configuration section with the specified name already exists it will be replaced.
+        /// </remarks>
+        /// <param name="sectionName">The name by which the <paramref name="configurationSection"/> should be added.</param>
+        /// <param name="configurationSection">The configuration section to add.</param>
+        void Add(string sectionName, ConfigurationSection configurationSection);
+
+        /// <summary>
+        /// Removes a <see cref="ConfigurationSection"/> from the configuration source.
+        /// </summary>
+        /// <param name="sectionName">The name of the section to remove.</param>
+        void Remove(string sectionName);
     }
 }

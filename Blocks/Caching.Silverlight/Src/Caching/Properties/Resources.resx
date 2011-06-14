@@ -117,157 +117,37 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="EmptyParameterName" xml:space="preserve">
-    <value>Parameter name cannot be null or an empty string.</value>
+  <data name="ExceptionEntryNotPersisted" xml:space="preserve">
+    <value>Invalid operation on entry that is not persisted.</value>
   </data>
-  <data name="ExceptionRangeAbsoluteTime" xml:space="preserve">
-    <value>Absolute time cannot be less than current time.</value>
+  <data name="ExceptionInvalidCallbackCombination" xml:space="preserve">
+    <value>Only one callback can be specified.  Either RemovedCallback or UpdateCallback must be null.</value>
   </data>
-  <data name="ExceptionNullTimeFormat" xml:space="preserve">
-    <value>Time format cannot be null.</value>
+  <data name="ExceptionInvalidExpirationCombination" xml:space="preserve">
+    <value>AbsoluteExpiration must be DateTimeOffset.MaxValue or SlidingExpiration must be TimeSpan.Zero.</value>
   </data>
-  <data name="ExceptionInvalidExtendedFormatArguments" xml:space="preserve">
-    <value>The format length is invalid.</value>
-  </data>
-  <data name="ExceptionRangeMinute" xml:space="preserve">
-    <value>Minutes in Extended Format out of range.</value>
-  </data>
-  <data name="ExceptionRangeMonth" xml:space="preserve">
-    <value>Month of Year in Extended Format out of range.</value>
-  </data>
-  <data name="ExceptionRangeDay" xml:space="preserve">
-    <value>Day of Week in Extended Format out of range.</value>
-  </data>
-  <data name="ExceptionRangeHour" xml:space="preserve">
-    <value>Hour in Extended Format out of range.</value>
-  </data>
-  <data name="ExceptionNullFileName" xml:space="preserve">
-    <value>The file name cannot be null.</value>
-  </data>
-  <data name="ExceptionInvalidFileName" xml:space="preserve">
-    <value>The file does not exist.</value>
-  </data>
-  <data name="ExceptionRangeSlidingExpiration" xml:space="preserve">
-    <value>Sliding time should be greater than or equal to 1s.</value>
-  </data>
-  <data name="CacheNotInitializedException" xml:space="preserve">
-    <value>Add called without setting BackgroundScheduler.</value>
-  </data>
-  <data name="InvalidExpirationPollFrequencyInMilliSeconds" xml:space="preserve">
-    <value>Expiration poll frequency time must be at least 1 millisecond.</value>
-  </data>
-  <data name="InvalidPollingStopOperation" xml:space="preserve">
-    <value>Cannot stop polling before it is started.</value>
-  </data>
-  <data name="ExceptionStorageAreaNullOrEmpty" xml:space="preserve">
-    <value>The storage are name for the Isolated Storage Backing Store can not be null or an empty string.</value>
-  </data>
-  <data name="FailureToRemoveCacheItemInBackground" xml:space="preserve">
-    <value>Failure while removing item from cache in background.</value>
-  </data>
-  <data name="BackgroundSchedulerProducerConsumerQueueFailure" xml:space="preserve">
-    <value>Internal ProducerConsumerQueue thread failed.</value>
-  </data>
-  <data name="FailureToSpawnUserSpecifiedRefreshAction" xml:space="preserve">
-    <value>Failure while starting application-specified refresh action.</value>
-  </data>
-  <data name="BlockName" xml:space="preserve">
-    <value>Enterprise Library Caching Application Block</value>
-  </data>
-  <data name="ErrorCacheCallbackFailedMessage" xml:space="preserve">
-    <value>The error occurred executing the removal callback for key "{1}" in the the "{0}" instance.</value>
-  </data>
-  <data name="ErrorCacheConfigurationFailedMessage" xml:space="preserve">
-    <value>The error occurred retrieving the configuration for instance "{0}".</value>
-  </data>
-  <data name="ErrorCacheOperationFailedMessage" xml:space="preserve">
-    <value>The error occurred using the "{0}" instance.</value>
-  </data>
-  <data name="CacheAccessAttemptsCounterHelpResource" xml:space="preserve">
-    <value>Total # of Cache Access Attempts is the number of reads from the cache.</value>
-  </data>
-  <data name="CacheAccessedExpiredItemsRatioBaseCounterHelpResource" xml:space="preserve">
-    <value>Cache Accessed Expired Items Ratio Base is the total number of items expired from the cache.</value>
-  </data>
-  <data name="CacheAccessedExpiredItemsRatioCounterHelpResource" xml:space="preserve">
-    <value>Cache Accessed Expired Items Ratio is the ratio between expired items accessed by the user and total items expired from the cache.</value>
-  </data>
-  <data name="CacheAccessedScavengedItemsRatioBaseCounterHelpResource" xml:space="preserve">
-    <value>Cache Accessed Scavenged Items Ratio Base is the total number of items scavenged from the cache.</value>
-  </data>
-  <data name="CacheAccessedScavengedItemsRatioCounterHelpResource" xml:space="preserve">
-    <value>Cache Accessed Scavenged Items Ratio is the ratio between scavenged items accessed by the user and total items scavenged from the cache.</value>
-  </data>
-  <data name="CacheExpiriesPerSecCounterHelpResource" xml:space="preserve">
-    <value>Cache Expiries/sec is the rate at which items were expired from the cache.</value>
-  </data>
-  <data name="CacheHitRatioCounterHelpResource" xml:space="preserve">
-    <value>Cache Hit Ratio is the ratio between hits and reads from the cache.</value>
-  </data>
-  <data name="CacheHitsPerSecCounterHelpResource" xml:space="preserve">
-    <value>Cache Hits/sec is the rate at which requests for existing items were received by the cache.</value>
-  </data>
-  <data name="CacheMissesPerSecCounterHelpResource" xml:space="preserve">
-    <value>Cache Misses/sec is the rate at which requests for non existing items were received by the cache.</value>
-  </data>
-  <data name="CacheScavengedItemsPerSecCounterHelpResource" xml:space="preserve">
-    <value>Cache Scavenged Items/sec is the rate at which items were scavenged from the cache.</value>
-  </data>
-  <data name="CacheTotalEntriesCounterHelpResource" xml:space="preserve">
-    <value>Total Cache Entries is the total number of entries in the cache.</value>
-  </data>
-  <data name="CacheUpdatedEntriesPerSecHelpResource" xml:space="preserve">
-    <value>Updated Entries/sec is the rate at which items were updated in the cache. An update can be either an "add" or a "remove".</value>
-  </data>
-  <data name="TotalCacheExpiriesCounterHelpResource" xml:space="preserve">
-    <value>Total Cache Expiries is the total number of items expired from the cache.</value>
-  </data>
-  <data name="TotalCacheHitsCounterHelpResource" xml:space="preserve">
-    <value>Total Cache Hits is the total number of requests for existing items received by the cache.</value>
-  </data>
-  <data name="TotalCacheMissesCounterHelpResource" xml:space="preserve">
-    <value>Total Cache Misses is the total number for non existing items received by the cache.</value>
-  </data>
-  <data name="TotalCacheScavengedItemsCounterHelpResource" xml:space="preserve">
-    <value>Total Cache Scavenged Items is the total number of items scavenged from the cache.</value>
-  </data>
-  <data name="TotalCacheUpdatedEntriesHelpResource" xml:space="preserve">
-    <value>Total Updated Entries is the total number of items updated in the cache. An update can be either an "add" or a "remove".</value>
-  </data>
-  <data name="ExceptionMethodMustBeImplementedBySubclasses" xml:space="preserve">
-    <value>Must be implemented by subclasses.</value>
-  </data>
-  <data name="ExceptionTypeForCustomCacheManagerMustDeriveFrom" xml:space="preserve">
-    <value>The Custom Cache Manager '{0}' with Type '{1}' must derive from ICacheManager.</value>
-  </data>
-  <data name="ExceptionTypeForCustomBackingStoreMustDeriveFrom" xml:space="preserve">
-    <value>The Custom Backing Store '{0}' with Type '{1}' must derive from IBackingStore.</value>
-  </data>
-  <data name="ExceptionBackingStoresWithNonDefaultConstructorsShouldOverrideGetRegistrations" xml:space="preserve">
-    <value>Backing Stores with non-default constructors should override GetRegistrations().</value>
-  </data>
-  <data name="ExceptionParameterMustImplement" xml:space="preserve">
-    <value>Parameter must implement type '{0}'.</value>
-  </data>
-  <data name="RegionsNotSupported" xml:space="preserve">
-    <value>This cache object does not support regions.</value>
+  <data name="ExceptionPercentOfQuotaRangeComparison" xml:space="preserve">
+    <value>The percentOfQuotaUsedBeforeScavenging threshold value ({0:F2}) cannot be lower than the percentOfQuotaUsedAfterScavenging threshold value ({1:F2}).</value>
   </data>
   <data name="ItemsLeftAfterScavengingMustBePositive" xml:space="preserve">
     <value>The number of items left in the cache after scavenging must be greater than zero.</value>
   </data>
   <data name="ItemsLeftMustBeLessThanMaxItemsBefore" xml:space="preserve">
-    <value>The number of items left in the cache after scavenging must be less than the number of items allowed before scavenging.</value>
+    <value>The number of items left in the cache after scavenging must be less than or equal to the number of items allowed before scavenging.</value>
   </data>
   <data name="MaxItemsBeforeScavengingMustBePositive" xml:space="preserve">
     <value>The number of items allowed in the cache before scavenging happens must be greater than zero.</value>
   </data>
-  <data name="ExceptionPercentOfQuotaRangeComparison" xml:space="preserve">
-    <value>The percentOfQuotaUsedBeforeScavenging threshold value ({0:F2}) cannot be lower than the percentOfQuotaUsedAfterScavenging threshold value ({1:F2}).</value>
+  <data name="RegionsNotSupported" xml:space="preserve">
+    <value>This cache object does not support regions.</value>
   </data>
-  <data name="ExceptionInvalidExpirationCombination" xml:space="preserve">
-    <value>AbsoluteExpiration must be DateTimeOffset.MaxValue or SlidingExpiration must be TimeSpan.Zero.</value>
+  <data name="SerializerType_DerivedTypeNotCorrect" xml:space="preserve">
+    <value>SerializerType value must be a type that implements IIsolatedStorageCacheEntrySerializer and has a default constructor.</value>
   </data>
-  <data name="ExceptionInvalidCallbackCombination" xml:space="preserve">
-    <value>Only one callback can be specified.  Either RemovedCallback or UpdateCallback must be null.</value>
+  <data name="Serializer_ValueTooShort" xml:space="preserve">
+    <value>The serialized value is invalid: too short.</value>
+  </data>
+  <data name="Serializer_ValueLengthDoesNotMatchMetadata" xml:space="preserve">
+    <value>The serialized value is invalid: serialized value length is different than the logical size.</value>
   </data>
 </root>

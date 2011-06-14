@@ -1,5 +1,17 @@
-﻿using System;
+﻿//===============================================================================
+// Microsoft patterns & practices Enterprise Library
+// Core
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.IO.IsolatedStorage;
 using System.Linq;
@@ -15,13 +27,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Utility
     {
         // could use actual cluster size used in Isolated Storage's disk to improve accuracy, but it is not trivial to get correctly.
         private const int ClusterSize = 1024;
-
+        private const int MaxSizeTypeSize = sizeof(long);
+        
         private readonly string name;
-        private readonly long maxSize;
         private readonly Dictionary<string, int> metadata = new Dictionary<string, int>();
 
         private IsolatedStorageFile store;
         private IsolatedStorageFileStream writeLockFile;
+        private long maxSize;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="StorageAccessor"/> class.
@@ -30,6 +43,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Utility
         /// <param name="maxSize">The maximum size in bytes.</param>
         public StorageAccessor(string name, long maxSize)
         {
+            GuardMaxSize(maxSize);
+
             this.name = GetDirectoryName(name);
 
             this.maxSize = maxSize;
@@ -44,13 +59,70 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Utility
                     this.store.CreateDirectory(this.name);
                 }
 
-                this.writeLockFile = this.store.CreateFile(Path.Combine(this.name, "__writeLock"));
+                this.writeLockFile = this.store.OpenFile(Path.Combine(this.name, "__writeLock"), FileMode.OpenOrCreate);
+                if (!this.ReadPersistedMaxSize())
+                {
+                    this.PersistMaxSize(this.maxSize);
+                }
             }
             catch
             {
                 // The storage might be completely full, where not even the directory might be created
                 // or the file is locked by another process (probably due to another instance of the application is running)
                 // Either way, ignore and use the store in read-only mode.
+            }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="StorageAccessor"/> class. This constructor opens the storage if it's available, or throws if it's not already created.
+        /// </summary>
+        /// <param name="name">The name.</param>
+        protected StorageAccessor(string name)
+        {
+            this.name = GetDirectoryName(name);
+
+            this.store = IsolatedStorageFile.GetUserStoreForApplication();
+
+            bool exists = false;
+            try
+            {
+                if (store.DirectoryExists(this.name))
+                {
+                    string pathToLock = Path.Combine(this.name, "__writeLock");
+                    if (store.FileExists(pathToLock))
+                    {
+                        exists = true;
+                        this.writeLockFile = this.store.OpenFile(Path.Combine(this.name, "__writeLock"), FileMode.Open);
+                        this.ReadPersistedMaxSize();
+                    }
+                }
+            }
+            catch
+            {
+                // The storage may not exist could not exist or is locked by another process (probably due to another instance of the application is running)
+                // Either way, the storage cannot be opened.
+            }
+            if (!exists)
+            {
+                this.ReleaseFileSystem();
+                throw new InvalidOperationException(Resources.StorageDoesNotExist);
+            }
+        }
+
+        /// <summary>
+        /// Tries to open the storage that is currently on disk. If there is not a storage already created, <see langword="null"/> will be returned.
+        /// </summary>
+        /// <param name="name">The name.</param>
+        /// <returns>The storage that was previously created, or <see langword="null"/> if it does not exist on disk.</returns>
+        public static StorageAccessor TryOpen(string name)
+        {
+            try
+            {
+                return new StorageAccessor(name);
+            }
+            catch (InvalidOperationException)
+            {
+                return null;
             }
         }
 
@@ -264,14 +336,28 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Utility
             this.metadata.Remove(id);
         }
 
+        /// <summary>
+        /// Changes the Maximum size that can be used by the storage. This method changes the max size, but does not trim entries if
+        /// the new max size is smaller.
+        /// </summary>
+        /// <param name="maxSize">The new maximum size.</param>
+        /// <exception cref="InvalidOperationException">when the storage is in read-only mode.</exception>
+        public void ChangeMaxSize(long maxSize)
+        {
+            if (this.IsReadOnly)
+                throw new InvalidOperationException(Resources.ExceptionWriteNotSupportedInReadOnlyStorage);
+
+            GuardMaxSize(maxSize);
+
+            this.PersistMaxSize(maxSize);
+            this.maxSize = maxSize;
+        }
+
         private static string GetDirectoryName(string name)
         {
-            if (name == null)
-                throw new ArgumentNullException("name");
-
+            if (name == null) throw new ArgumentNullException("name");
             name = name.Trim();
-            if (name == string.Empty)
-                throw new ArgumentException("name");
+            if (string.IsNullOrEmpty(name)) throw new ArgumentException(Resources.ExceptionStringNullOrEmpty, "name");
 
             Regex nameRegex = new Regex(@"[^\w\d_]");
             name = nameRegex.Replace(name, "_");
@@ -281,10 +367,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Utility
 
         private string GetFileName(string id, bool verifyExists)
         {
-            if (id == null)
-                throw new ArgumentNullException("id");
-            if (id == string.Empty)
-                throw new ArgumentException("id");
+            if (string.IsNullOrEmpty(id)) throw new ArgumentException(Resources.ExceptionStringNullOrEmpty, "id");
 
             var fileName = Path.Combine(this.name, id + ".dat");
 
@@ -364,9 +447,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Utility
         {
             if (disposing)
             {
-                using (this.store) this.store = null;
-                using (this.writeLockFile) this.writeLockFile = null;
+                this.ReleaseFileSystem();
             }
+        }
+
+        private void ReleaseFileSystem()
+        {
+            using (this.store) this.store = null;
+            using (this.writeLockFile) this.writeLockFile = null;
         }
 
         /// <summary>
@@ -378,5 +466,39 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Utility
         }
 
         private bool SizeIsCurrent { get; set; }
+
+        private void PersistMaxSize(long size)
+        {
+            this.writeLockFile.Position = 0;
+            var bytes = BitConverter.GetBytes(size);
+            this.writeLockFile.Write(bytes, 0, MaxSizeTypeSize);
+        }
+
+        private bool ReadPersistedMaxSize()
+        {
+            if (this.writeLockFile.Length >= MaxSizeTypeSize)
+            {
+                var bytes = new byte[MaxSizeTypeSize];
+                if (this.writeLockFile.Read(bytes, 0, bytes.Length) == MaxSizeTypeSize)
+                {
+                    var size = BitConverter.ToInt64(bytes, 0);
+                    if (size > 0)
+                    {
+                        this.maxSize = size;
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        private static void GuardMaxSize(long maxSize)
+        {
+            const long MinimumSize = ClusterSize * 2;
+
+            if (maxSize < MinimumSize)
+                throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, Resources.StorageAccessor_GuardMaxSize, MinimumSize), "maxSize");
+        }
     }
 }

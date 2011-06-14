@@ -118,7 +118,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
             DictionaryConfigurationSource configurationSource = new DictionaryConfigurationSource();
             ValidationSettings settings = new ValidationSettings();
             configurationSource.Add(ValidationSettings.SectionName, settings);
-            ValidatedTypeReference typeReference = new ValidatedTypeReference(typeof(BaseTestDomainObject));
+            ValidatedTypeReference typeReference = ValidatedTypeReference.Create(typeof(BaseTestDomainObject));
             settings.Types.Add(typeReference);
             ValidationRulesetData ruleData = new ValidationRulesetData { Name = "RuleA" };
             typeReference.Rulesets.Add(ruleData);
@@ -223,9 +223,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
             Assert.IsTrue(results.Any(vr => vr.Key == "PropertyWithDataAnnotationsAttributes" && vr.Message == "data annotations-only"));
         }
 
-#if !SILVERLIGHT    // TODO review
         [TestMethod]
-        public void CanGetValidatorFromConfigurationOly()
+        public void CanGetValidatorFromConfigurationOnly()
         {
             var validator =
                 ValidationFactory.CreateValidator<TestObjectWithMultipleSourceValidationAttributesOnProperties>(
@@ -246,7 +245,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests
             Assert.IsTrue(results.Any(vr => vr.Key == "PropertyWithDataAnnotationsAttributes" && vr.Message == "configuration1"));
             Assert.IsTrue(results.Any(vr => vr.Key == "PropertyWithVABOnlyAttributes" && vr.Message == "configuration2"));
         }
-#endif
         #endregion
     }
 }

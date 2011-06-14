@@ -10,18 +10,13 @@
 //===============================================================================
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 using System.Diagnostics;
-using System.Messaging;
-using Microsoft.Practices.EnterpriseLibrary.Logging.TraceListeners;
-using System.Collections.Specialized;
-using Microsoft.Practices.EnterpriseLibrary.Logging.Formatters;
-using System.ComponentModel;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.Fluent;
+using Microsoft.Practices.EnterpriseLibrary.Logging.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Logging.Properties;
+#if SILVERLIGHT
+using Microsoft.Practices.EnterpriseLibrary.Logging.Diagnostics;
+#endif
 using CommonResources = Microsoft.Practices.EnterpriseLibrary.Common.Properties.Resources;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
@@ -93,7 +88,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
                 if (string.IsNullOrEmpty(listenerName)) 
                     throw new ArgumentException(CommonResources.ExceptionStringNullOrEmpty, "listenerName");
 
-                currentTraceSource.TraceListeners.Add(new TraceListenerReferenceData(listenerName));
+                currentTraceSource.TraceListeners.Add(new TraceListenerReferenceData { Name = listenerName });
                 return this;
             }
 
@@ -105,12 +100,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
                 }
             }
 
+#if !SILVERLIGHT
             ILoggingConfigurationOptions ILoggingConfigurationOptions.DoNotRevertImpersonation()
             {
                 loggingSettings.RevertImpersonation = false;
 
                 return this;
             }
+#endif
 
             ILoggingConfigurationOptions ILoggingConfigurationOptions.DoNotLogWarningsWhenNoCategoryExists()
             {

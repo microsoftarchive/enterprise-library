@@ -1,4 +1,15 @@
-﻿using Microsoft.Practices.EnterpriseLibrary.Caching.Runtime.Caching;
+﻿//===============================================================================
+// Microsoft patterns & practices Enterprise Library
+// Caching Application Block
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+
+using Microsoft.Practices.EnterpriseLibrary.Caching.Runtime.Caching;
 using Microsoft.Silverlight.Testing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -8,9 +19,9 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests.IsolatedStorage.gi
     [Tag("IsolatedStorage")]
     public class when_adding_item_that_does_not_fit_cache_size : Context
     {
-        protected override long MaxSize
+        protected override int MaxSize
         {
-            get { return 8 * 1024; }
+            get { return 8; }
         }
 
         private bool added;
@@ -27,6 +38,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Tests.IsolatedStorage.gi
         [TestMethod]
         public void then_returns_true_on_addition_bacause_it_fails_silently()
         {
+            Assert.IsNull(base.initializeException);
             Assert.IsTrue(added);
         }
 

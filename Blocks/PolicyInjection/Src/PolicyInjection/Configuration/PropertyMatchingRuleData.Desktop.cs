@@ -46,6 +46,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         /// Constructs a new <see cref="PropertyMatchingRuleData"/> instance.
         /// </summary>
         /// <param name="matchingRuleName">Matching rule instance name in configuration.</param>
+        public PropertyMatchingRuleData(string matchingRuleName)
+            : this(matchingRuleName, new List<PropertyMatchData>())
+        {
+        }
+
+        /// <summary>
+        /// Constructs a new <see cref="PropertyMatchingRuleData"/> instance.
+        /// </summary>
+        /// <param name="matchingRuleName">Matching rule instance name in configuration.</param>
         /// <param name="matches">Collection of <see cref="PropertyMatchData"/> containing
         /// property patterns to match.</param>
         public PropertyMatchingRuleData(string matchingRuleName, IEnumerable<PropertyMatchData> matches)
@@ -83,6 +92,48 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
     public partial class PropertyMatchData
     {
         private const string OptionPropertyName = "matchOption";
+
+        /// <summary>
+        /// Constructs a new <see cref="PropertyMatchData"/> instance.
+        /// </summary>
+        public PropertyMatchData()
+        {
+        }
+
+        /// <summary>
+        /// Constructs a new <see cref="PropertyMatchData"/> instance.
+        /// </summary>
+        /// <param name="match">Property name pattern to match. The rule will match both getter and setter methods of a property.</param>
+        public PropertyMatchData(string match)
+            : base(match)
+        {
+        }
+
+        /// <summary>
+        /// Construct a new <see cref="PropertyMatchData"/> instance.
+        /// </summary>
+        /// <param name="match">Property name pattern to match.</param>
+        /// <param name="option">Which of the property methods to match. See <see cref="PropertyMatchingOption"/>
+        /// for the valid options.</param>
+        public PropertyMatchData(string match, PropertyMatchingOption option)
+            : base(match)
+        {
+            MatchOption = option;
+        }
+
+        /// <summary>
+        /// Construct a new <see cref="PropertyMatchData"/> instance.
+        /// </summary>
+        /// <param name="match">Property name pattern to match.</param>
+        /// <param name="option">Which of the property methods to match. See <see cref="PropertyMatchingOption"/>
+        /// for the valid options.</param>
+        /// <param name="ignoreCase">If false, type name comparisons are case sensitive. If true, 
+        /// comparisons are case insensitive.</param>
+        public PropertyMatchData(string match, PropertyMatchingOption option, bool ignoreCase)
+            : base(match, ignoreCase)
+        {
+            MatchOption = option;
+        }
 
         /// <summary>
         /// Which methods of the property to match. Default is to match both getters and setters.

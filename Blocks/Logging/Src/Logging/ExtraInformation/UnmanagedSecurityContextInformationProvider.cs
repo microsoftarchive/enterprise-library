@@ -29,8 +29,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.ExtraInformation
         /// <param name="dict">Dictionary used to populate the <see cref="UnmanagedSecurityContextInformationProvider"></see></param>
         public void PopulateDictionary(IDictionary<string, object> dict)
         {
-            dict.Add(Properties.Resources.UnmanagedSecurity_CurrentUser, CurrentUser);
-            dict.Add(Properties.Resources.UnmanagedSecurity_ProcessAccountName, ProcessAccountName);
+            dict.Add(Properties.Resources_Desktop.UnmanagedSecurity_CurrentUser, CurrentUser);
+            dict.Add(Properties.Resources_Desktop.UnmanagedSecurity_ProcessAccountName, ProcessAccountName);
         }
 
         /// <summary>
@@ -105,7 +105,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.ExtraInformation
                 } // + " SID=" + sidOwner;
                 else
                 {
-                    processAccountName = Properties.Resources.CouldNotLookupAccountSid;
+                    processAccountName = Properties.Resources_Desktop.CouldNotLookupAccountSid;
                 }
 
                 Marshal.FreeHGlobal(pSecurityDescriptor);

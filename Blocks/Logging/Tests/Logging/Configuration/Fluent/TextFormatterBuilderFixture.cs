@@ -65,11 +65,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Logging.Tests.Configuration.Flue
             Assert.IsFalse(String.IsNullOrEmpty(GetTextFormatterData().Template));
         }
 
+#if !SILVERLIGHT
         [TestMethod]
         public void Then_TextFormatterDataHasCorrectType()
         {
             Assert.AreEqual(typeof(TextFormatter), GetTextFormatterData().Type);
         }
+#endif
     }
 
     [TestClass]

@@ -21,7 +21,7 @@ using Microsoft.Practices.EnterpriseLibrary.Data.Configuration;
 [assembly: ReliabilityContract(Consistency.WillNotCorruptState, Cer.None)]
 [assembly: AssemblyTitle("Enterprise Library Data Access Application Block")]
 [assembly: AssemblyDescription("Enterprise Library Data Access Application Block")]
-[assembly: AssemblyVersion("5.0.414.0")]
+[assembly: AssemblyVersion("5.0.505.0")]
 [assembly: AllowPartiallyTrustedCallers]
 [assembly: SecurityTransparent]
 

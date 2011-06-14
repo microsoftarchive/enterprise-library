@@ -253,7 +253,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Tests.Integration
 
             Assert.IsFalse(status);
             Assert.AreEqual(null, retrievedValue);
-            Assert.IsTrue(TemplateStringTester.IsMatch(Resources.ErrorCannotPerfomDefaultConversion, valueRetrievalFailureMessage));
+            Assert.IsTrue(TemplateStringTester.IsMatch(Resources_Desktop.ErrorCannotPerfomDefaultConversion, valueRetrievalFailureMessage));
             Assert.AreEqual(null, originalConvertedValue);
             Assert.AreEqual(null, valueToConvert);
         }

@@ -49,7 +49,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration
 		/// <returns>A new configuration source.</returns>
 		public virtual IConfigurationSource CreateSource()
 		{
-			throw new ConfigurationErrorsException(Resources.ExceptionBaseConfigurationSourceElementIsInvalid);
+			throw new ConfigurationErrorsException(Resources_Desktop.ExceptionBaseConfigurationSourceElementIsInvalid);
 		}
 
         ///<summary>

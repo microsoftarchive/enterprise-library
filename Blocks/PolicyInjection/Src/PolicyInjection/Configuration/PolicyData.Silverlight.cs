@@ -19,16 +19,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
     /// </summary>
     public partial class PolicyData : NamedConfigurationElement
     {
-        private NamedElementCollection<MatchingRuleData> matchingRules = new NamedElementCollection<MatchingRuleData>();
-
-        /// <summary>
-        /// Creates a new <see cref="PolicyData"/> with the given name.
-        /// </summary>
-        /// <param name="policyName">Name of the policy.</param>
-        public PolicyData(string policyName)
-        {
-            Name = policyName;
-        }
+        private readonly NamedElementCollection<MatchingRuleData> matchingRules = new NamedElementCollection<MatchingRuleData>();
 
         /// <summary>
         /// Gets the collection of matching rules from configuration.
@@ -39,7 +30,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
             get { return this.matchingRules; }
         }
 
-        private NamedElementCollection<CallHandlerData> handlers = new NamedElementCollection<CallHandlerData>();
+        private readonly NamedElementCollection<CallHandlerData> handlers = new NamedElementCollection<CallHandlerData>();
 
         /// <summary>
         /// Get the collection of handlers from configuration.

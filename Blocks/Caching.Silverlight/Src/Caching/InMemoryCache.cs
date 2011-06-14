@@ -1,4 +1,16 @@
-﻿using System;
+﻿//===============================================================================
+// Microsoft patterns & practices Enterprise Library
+// Caching Application Block
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+
+using System;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Practices.EnterpriseLibrary.Caching.InMemory;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Runtime.Caching;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Scheduling;
@@ -21,6 +33,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
     /// all supply a default <see langword="null"/> value. For example, the <see cref="MemoryBackedCacheBase{CacheEntry}.AddOrGetExisting(string, object, CacheItemPolicy, string)"/> 
     /// method overload has a regionName parameter whose default value is <see langword="null"/>.</para>
     /// </remarks>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
     public class InMemoryCache : MemoryBackedCacheBase<CacheEntry>
     {
         /// <summary>
@@ -30,6 +43,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching
         /// <param name="maxItemsBeforeScavenging">Maximum number of items in cache before an add causes scavenging to take place.</param>
         /// <param name="itemsLeftAfterScavenging">Number of items left in the cache after scavenging has taken place.</param>
         /// <param name="expirationPollingInterval">Frequency of expiration polling cycle.</param>
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Explicitly checked that exceptions cannot be thrown by current implementations and/or objects are disposed correctly.")]
         public InMemoryCache(string name, int maxItemsBeforeScavenging, int itemsLeftAfterScavenging, TimeSpan expirationPollingInterval)
             : this(name, maxItemsBeforeScavenging, itemsLeftAfterScavenging, new ScavengingScheduler(), new RecurringWorkScheduler(expirationPollingInterval))
         {

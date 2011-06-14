@@ -13,6 +13,7 @@ using System;
 using System.Collections.Specialized;
 using System.Linq.Expressions;
 using System.Reflection;
+using Microsoft.Practices.EnterpriseLibrary.Common.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel
 {
@@ -56,7 +57,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerMo
             ConstructorInfo constructor = typeToBuild.GetConstructor(new[] { typeof(NameValueCollection) });
             if (constructor == null)
             {
-                throw new ArgumentException(Properties.Resources.ExceptionTypeDoesNotProvideCorrectConstructor);
+                throw new ArgumentException(Resources_Desktop.ExceptionTypeDoesNotProvideCorrectConstructor);
             }
 
             return Expression.New(constructor, Expression.Constant(collectionArgument));

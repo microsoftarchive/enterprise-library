@@ -762,7 +762,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
     public class ToggleExpandedCommand : CommandModel
     {
         readonly SectionViewModel sectionViewModel;
-        readonly KeyGestureConverter keyGestureConverter;
 
         /// <summary>
         /// Initializes a new instance of <see cref="SectionViewModel"/>.
@@ -773,7 +772,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             : base(uiService)
         {
             this.sectionViewModel = sectionViewModel;
-            this.keyGestureConverter = new KeyGestureConverter();
         }
 
         /// <summary>
@@ -793,17 +791,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Configuration.Design.ViewModel
             get
             {
                 return Resources.ToggleShowHideSectionCommand;
-            }
-        }
-
-        /// <summary>
-        /// Defines the key gesture used for this command.
-        /// </summary>
-        public override string KeyGesture
-        {
-            get
-            {
-                return keyGestureConverter.ConvertToInvariantString(new KeyGesture(Key.Enter));
             }
         }
 

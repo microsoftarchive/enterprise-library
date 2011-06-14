@@ -16,6 +16,13 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
     partial class ValidationCallHandlerData
     {
         /// <summary>
+        /// Create a new <see cref="ValidationCallHandlerData"/> instance.
+        /// </summary>
+        public ValidationCallHandlerData()
+        {
+            SpecificationSource = SpecificationSource.Both;
+        }
+        /// <summary>
         /// The ruleset name to use for all types. Empty string means default ruleset 
         /// </summary>
         /// <value>The "ruleSet" configuration property.</value>

@@ -11,10 +11,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Configuration;
+using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Logging;
+using Microsoft.Practices.Unity.Utility;
 
 namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Configuration
 {
@@ -44,6 +47,22 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.Config
         /// </returns>
         public override IEnumerable<TypeRegistration> GetRegistrations(string namePrefix)
         {
+            if (this.Title == null)
+            {
+                throw new InvalidOperationException(
+                    string.Format(CultureInfo.CurrentCulture, Resources.ErrorTitleNotSet, this.Name));
+            }
+            if (this.LogCategory == null)
+            {
+                throw new InvalidOperationException(
+                    string.Format(CultureInfo.CurrentCulture, Resources.ErrorLogCategoryNotSet, this.Name));
+            }
+            if (this.FormatterTypeName == null)
+            {
+                throw new InvalidOperationException(
+                    string.Format(CultureInfo.CurrentCulture, Resources.ErrorFormatterTypeNameNotSet, this.Name));
+            }
+
             yield return new TypeRegistration<IExceptionHandler>(
                 () =>
                 new LoggingExceptionHandler(LogCategory, EventId, Severity, Title, Priority, FormatterType,

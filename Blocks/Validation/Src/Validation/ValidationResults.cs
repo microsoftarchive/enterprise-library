@@ -23,15 +23,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
 #endif
     public class ValidationResults : IEnumerable<ValidationResult>
     {
-        private List<ValidationResult> validationResults;
-
-        /// <summary>
-        /// <para>Initializes a new instance of the <see cref="ValidationResults"/> class with the section name.</para>
-        /// </summary>
-        public ValidationResults()
-        {
-            validationResults = new List<ValidationResult>();
-        }
+        private readonly List<ValidationResult> validationResults = new List<ValidationResult>();
 
         /// <summary>
         /// <para>Adds a <see cref="ValidationResult"/>.</para>
@@ -114,14 +106,20 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation
             get { return this.validationResults.Count; }
         }
 
-        IEnumerator<ValidationResult> IEnumerable<ValidationResult>.GetEnumerator()
+        /// <summary>
+        /// Returns an enumerator that iterates through the collection.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="T:System.Collections.Generic.IEnumerator`1"/> that can be used to iterate through the collection.
+        /// </returns>
+        public IEnumerator<ValidationResult> GetEnumerator()
         {
             return validationResults.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return validationResults.GetEnumerator();
+            return this.GetEnumerator();
         }
     }
 }

@@ -9,6 +9,7 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
+using System;
 using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -24,7 +25,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
         [TestMethod]
         public void CanSerializeTypeMatchingRule()
         {
-            CustomAttributeMatchingRuleData customAttributeMatchingRule = new CustomAttributeMatchingRuleData("MatchesMyAttribure", "Namespace.MyAttribute, Assembly", true);
+            CustomAttributeMatchingRuleData customAttributeMatchingRule = new CustomAttributeMatchingRuleData
+                {
+                    Name =  "MatchesMyAttribute", 
+                    AttributeTypeName = "Namespace.MyAttribute, Assembly", 
+                    SearchInheritanceChain = true
+                };
 
             CustomAttributeMatchingRuleData deserializedRule = SerializeAndDeserializeMatchingRule(customAttributeMatchingRule) as CustomAttributeMatchingRuleData;
 
@@ -33,18 +39,17 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Tests.Configurat
             Assert.AreEqual(customAttributeMatchingRule.TypeName, deserializedRule.TypeName);
             Assert.AreEqual(customAttributeMatchingRule.SearchInheritanceChain, deserializedRule.SearchInheritanceChain);
         }
-#else
-        [TestMethod]
-        public void HasDefaultCtor()
-        {
-            new CustomAttributeMatchingRuleData();
-        }
 #endif
 
         [TestMethod]
         public void MatchingRuleHasTransientLifetime()
         {
-            CustomAttributeMatchingRuleData customAttributeMatchingRule = new CustomAttributeMatchingRuleData("MatchesMyAttribure", "Namespace.MyAttribute, Assembly", true);
+            CustomAttributeMatchingRuleData customAttributeMatchingRule = new CustomAttributeMatchingRuleData
+                {
+                    Name =  "MatchesMyAttribute", 
+                    AttributeTypeName = "Namespace.MyAttribute, Assembly", 
+                    SearchInheritanceChain = true
+                };
             TypeRegistration registration = customAttributeMatchingRule.GetRegistrations("").First();
 
             Assert.AreEqual(TypeRegistrationLifetime.Transient, registration.Lifetime);

@@ -1,9 +1,21 @@
-﻿using System;
+﻿//===============================================================================
+// Microsoft patterns & practices Enterprise Library
+// Caching Application Block
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+
+using System;
 using System.Collections.Generic;
 using Microsoft.Practices.EnterpriseLibrary.Caching.IsolatedStorage;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Runtime.Caching;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration.ContainerModel;
+using Microsoft.Practices.EnterpriseLibrary.Caching.Properties;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
 {
@@ -36,10 +48,10 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
         public override IEnumerable<TypeRegistration> GetRegistrations(IConfigurationSource configurationSource)
         {
             var type = this.SerializerType;
-            if (type == null || !typeof(IIsolatedStorageCacheEntrySerializer).IsAssignableFrom(type))
-                throw new InvalidOperationException("SerializerType value must be a type that implements IIsolatedStorageCacheEntrySerializer and has a default constructor.");
+            if (type == null || !typeof(IIsolatedStorageCacheEntrySerializer).IsAssignableFrom(type) || type.GetConstructor(Type.EmptyTypes) == null)
+                throw new InvalidOperationException(Resources.SerializerType_DerivedTypeNotCorrect);
 
-            IIsolatedStorageCacheEntrySerializer serializer = (IIsolatedStorageCacheEntrySerializer)Activator.CreateInstance(type);
+            var serializer = (IIsolatedStorageCacheEntrySerializer)Activator.CreateInstance(type);
 
             var cacheManagerRegistration =
                 new TypeRegistration<ObjectCache>(() =>
@@ -73,12 +85,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.Configuration
         public TimeSpan ExpirationPollingInterval { get; set; }
 
         /// <summary>
-        /// Gets or sets name of the type used for serializing and deserializing the cache entry.
+        /// Gets or sets name of the type used for serializing and deserializing the cache entries.
         /// </summary>
         public string SerializerTypeName { get; set; }
 
         /// <summary>
-        /// Gets or sets the type used for serializing and deserializing the cache entry.
+        /// Gets or sets the type used for serializing and deserializing the cache entries.
         /// </summary>
         public Type SerializerType
         {

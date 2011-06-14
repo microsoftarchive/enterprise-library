@@ -13,5 +13,5 @@ using System.Reflection;
 
 [assembly: AssemblyTitle("Enterprise Library Logging Application Block")]
 [assembly: AssemblyDescription("Enterprise Library Logging Application Block")]
-[assembly: AssemblyVersion("5.0.414.0")]
+[assembly: AssemblyVersion("5.0.505.1")]
 

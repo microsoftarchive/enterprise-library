@@ -1,0 +1,133 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{A8389455-3DA9-48B6-AF6E-2B20C572E6D4}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Microsoft.Practices.EnterpriseLibrary.Silverlight.Configuration.Caching</RootNamespace>
+    <AssemblyName>Microsoft.Practices.EnterpriseLibrary.Silverlight.Configuration.Caching</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\..\bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>3</WarningLevel>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <DocumentationFile>..\..\..\bin\Debug\Microsoft.Practices.EnterpriseLibrary.Silverlight.Configuration.Caching.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\..\bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <DocumentationFile>..\..\..\bin\Release\Microsoft.Practices.EnterpriseLibrary.Silverlight.Configuration.Caching.xml</DocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Common">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Lib\Desktop\EnterpriseLibrary v5.0\Microsoft.Practices.EnterpriseLibrary.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Configuration.Design.HostAdapterV5">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Lib\Desktop\Microsoft.Practices.EnterpriseLibrary.Configuration.Design.HostAdapterV5.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Configuration.DesignTime">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Lib\Desktop\EnterpriseLibrary v5.0\Microsoft.Practices.EnterpriseLibrary.Configuration.DesignTime.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Lib\Desktop\Microsoft.Practices.Unity.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Common\Properties\Resources.ForCaching.Designer.cs">
+      <Link>Properties\Resources.ForCaching.Designer.cs</Link>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="..\Common\Validation\IsMoreThanFiveOrEqualZeroValidator.cs">
+      <Link>Validation\IsMoreThanFiveOrEqualZeroValidator.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\Validation\PercentageValidator.cs">
+      <Link>Validation\PercentageValidator.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\Validation\PositiveValidator.cs">
+      <Link>Validation\PositiveValidator.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\Validation\SizeOverSilverlightDefaultQuotaValidator.cs">
+      <Link>Validation\SizeOverSilverlightDefaultQuotaValidator.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\Validation\ValidFilenameValidator.cs">
+      <Link>Validation\ValidFilenameValidator.cs</Link>
+    </Compile>
+    <Compile Include="Configuration\CacheData.cs" />
+    <Compile Include="Configuration\CachingSettings.cs" />
+    <Compile Include="Configuration\IsolatedStorageCache.cs" />
+    <Compile Include="Configuration\CustomCacheData.cs" />
+    <Compile Include="CachingDesignTime.cs" />
+    <Compile Include="Configuration\InMemoryCache.cs" />
+    <Compile Include="Design\ViewModel\CachingSettingsViewModel.cs" />
+    <Compile Include="Properties\CachingResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>CachingResources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\InMemoryCacheData.cs" />
+    <Compile Include="Configuration\IsolatedStorageCacheData.cs" />
+    <Compile Include="Design\ViewModel\AddCachingBlockCommand.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\Common\Properties\Resources.resx">
+      <Link>Properties\Resources.resx</Link>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.ForCaching.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>Microsoft.Practices.EnterpriseLibrary.Silverlight.Configuration.Properties</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\CachingResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>CachingResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

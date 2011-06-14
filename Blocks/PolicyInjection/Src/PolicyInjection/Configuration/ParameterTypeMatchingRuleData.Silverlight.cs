@@ -9,10 +9,9 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using System.Collections.Generic;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.Unity.InterceptionExtension;
-using ParameterKind = Microsoft.Practices.Unity.InterceptionExtension.ParameterKind;
+using System.Collections.Generic;
 
 namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
 {
@@ -22,44 +21,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
     /// </summary>
     public partial class ParameterTypeMatchingRuleData
     {
-        private NamedElementCollection<ParameterTypeMatchData> matches = new NamedElementCollection<ParameterTypeMatchData>();
-
-        /// <summary>
-        /// Constructs a new <see cref="ParameterTypeMatchingRuleData"/> instance.
-        /// </summary>
-        public ParameterTypeMatchingRuleData()
-            :base()
-        {
-        }
-
-        /// <summary>
-        /// Constructs a new <see cref="ParameterTypeMatchingRuleData"/> instance.
-        /// </summary>
-        /// <param name="matchingRuleName">Matching rule instance name in configuration.</param>
-        public ParameterTypeMatchingRuleData(string matchingRuleName)
-            : base(matchingRuleName)
-        {
-        }
-
-        /// <summary>
-        /// Constructs a new <see cref="ParameterTypeMatchingRuleData"/> instance.
-        /// </summary>
-        /// <param name="matchingRuleName">Matching rule instance name in configuration.</param>
-        /// <param name="matches">Collection of <see cref="ParameterTypeMatchData"/> to match against.
-        /// If any of them match, the rule matches.</param>
-        public ParameterTypeMatchingRuleData(string matchingRuleName, IEnumerable<ParameterTypeMatchData> matches)
-            : base(matchingRuleName)
-        {
-            foreach (ParameterTypeMatchData matchData in matches)
-            {
-                Matches.Add(matchData);
-            }
-        }
+        private readonly MatchDataCollection<ParameterTypeMatchData> matches = new MatchDataCollection<ParameterTypeMatchData>();
 
         /// <summary>
         /// The collection of parameter types to match against.
         /// </summary>
-        public NamedElementCollection<ParameterTypeMatchData> Matches
+        public MatchDataCollection<ParameterTypeMatchData> Matches
         {
             get { return this.matches; }
         }
@@ -71,13 +38,15 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
     /// </summary>
     public partial class ParameterTypeMatchData
     {
+        private ParameterKind parameterKind = ParameterKind.InputOrOutput;
+
         /// <summary>
         /// What kind of parameter is this? See <see cref="ParameterKind"/> for available values.
         /// </summary>
         public ParameterKind ParameterKind
         {
-            get; 
-            set;
+            get { return this.parameterKind; }
+            set { this.parameterKind = value; }
         }
     }
 }

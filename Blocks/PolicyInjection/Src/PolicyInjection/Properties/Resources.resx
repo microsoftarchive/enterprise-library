@@ -112,57 +112,48 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AverageCallDurationBaseCounterHelp" xml:space="preserve">
-    <value>Base counter used to calculate average call time.</value>
+  <data name="ErrorAssemblyMatchingRuleMatchNotSet" xml:space="preserve">
+    <value>The match was not set for assembly matching rule {0}.</value>
   </data>
-  <data name="AverageCallDurationCounterHelp" xml:space="preserve">
-    <value>Tracks the average length of time for a monitored method to complete.</value>
+  <data name="ErrorAttributeTypeNameNotSet" xml:space="preserve">
+    <value>The attribute type name was not set for custom attribute matching rule {0}.</value>
   </data>
-  <data name="CallsPerSecondCounterHelp" xml:space="preserve">
-    <value>Tracks calls / second to the monitored methods.</value>
+  <data name="ErrorMemberNameMatchingRuleMatchNotSet" xml:space="preserve">
+    <value>One of the matches was not set for member name matching rule {0}.</value>
   </data>
-  <data name="CouldNotFindPolicyInConfiguration" xml:space="preserve">
-    <value>The configuration information for Policy '{0}' can not be found in the configuration source</value>
-    <comment>{0} = Name of the policy that cannot be found</comment>
+  <data name="ErrorMethodSignatureMatchingRuleMatchNotSet" xml:space="preserve">
+    <value>The match was not set for method signature matching rule {0}.</value>
   </data>
-  <data name="ExceptionAttributeNoSubclassOfAttribute" xml:space="preserve">
-    <value>Type must be a subclass of System.Attribute.</value>
+  <data name="ErrorNamespaceMatchingRuleMatchNotSet" xml:space="preserve">
+    <value>One of the matches was not set for namespace matching rule {0}.</value>
   </data>
-  <data name="ExceptionsPerSecondCounterHelp" xml:space="preserve">
-    <value>Tracks the number of exceptions / second thrown by the monitored methods.</value>
+  <data name="ErrorParameterTypeMatchingRuleMatchNotSet" xml:space="preserve">
+    <value>One of the match was not set for parameter type matching rule {0}.</value>
   </data>
-  <data name="InterceptionNotSupported" xml:space="preserve">
-    <value>The type {0} is not interceptable.</value>
-    <comment>{0} = Name of the type that caused the exception</comment>
+  <data name="ErrorParameterTypeNameNotSet" xml:space="preserve">
+    <value>The parameter type name was not set for parameter type element {0} of method signature matching rule {1}.</value>
   </data>
-  <data name="NoCategoryErrorMessage" xml:space="preserve">
-    <value>You must specify the /category=&lt;name&gt;(;&lt;name&gt;) switch on the command line.</value>
+  <data name="ErrorPolicyNameNotSet" xml:space="preserve">
+    <value>The policy name was not set.</value>
   </data>
-  <data name="NoHandlersInPolicy" xml:space="preserve">
-    <value>The policy {0} does not have any handlers.</value>
-    <comment>{0} = name of the policy that has no handlers</comment>
+  <data name="ErrorPropertyMatchingRuleMatchNotSet" xml:space="preserve">
+    <value>One of the matches was not set for property matching rule {0}.</value>
   </data>
-  <data name="NumberOfCallsCounterHelp" xml:space="preserve">
-    <value>Records the total number of calls to the monitored methods.</value>
+  <data name="ErrorReturnTypeMatchingRuleMatchNotSet" xml:space="preserve">
+    <value>The return type was not set for return type matching rule {0}.</value>
   </data>
-  <data name="NumberOfExceptionsCounterHelp" xml:space="preserve">
-    <value>Records the total number of exceptions thrown by the monitored methods.</value>
+  <data name="ErrorTagAttributeMatchingRuleMatchNotSet" xml:space="preserve">
+    <value>The tag attribute name was not set for tag attribute matching rule {0}.</value>
   </data>
-  <data name="PerformanceCounterCategoryHelp" xml:space="preserve">
-    <value>Performance counters that are updated by the Policy Injection Application Block.</value>
+  <data name="ErrorTypeMatchingRuleMatchNotSet" xml:space="preserve">
+    <value>One of the matches was not set for type matching rule {0}.</value>
   </data>
   <data name="PlaceholderRule" xml:space="preserve">
     <value>This rule is not intended to be used directly. Use the rules from the Microsoft.Practices.Unity.Interception assembly instead.</value>
-  </data>
-  <data name="PolicyInjectionSectionNotFound" xml:space="preserve">
-    <value>The configuration section for Policy Injection cannot be found in the configuration source.</value>
-  </data>
-  <data name="TracePoliciesApplied" xml:space="preserve">
-    <value>Injection Policies applied to object.</value>
   </data>
 </root>

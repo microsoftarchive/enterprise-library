@@ -32,6 +32,33 @@ namespace Microsoft.Practices.EnterpriseLibrary.PolicyInjection.Configuration
         private const string IgnoreCasePropertyName = "ignoreCase";
 
         /// <summary>
+        /// Constructs an empty <see cref="MatchData"/>.
+        /// </summary>
+        public MatchData()
+        {
+        }
+
+        /// <summary>
+        /// Constructs a <see cref="MatchData"/> with the given matching string.
+        /// </summary>
+        /// <param name="match">String to match.</param>
+        public MatchData(string match)
+        {
+            Match = match;
+        }
+
+        /// <summary>
+        /// Constructs a <see cref="MatchData"/> with the given matching string and case-sensitivity flag.
+        /// </summary>
+        /// <param name="match">String to match.</param>
+        /// <param name="ignoreCase">true to do case insensitive comparison, false to do case sensitive.</param>
+        public MatchData(string match, bool ignoreCase)
+        {
+            Match = match;
+            IgnoreCase = ignoreCase;
+        }
+
+        /// <summary>
         /// Gets or sets the string to match against.
         /// </summary>
         /// <value>The "match" attribute value out of the configuration file.</value>

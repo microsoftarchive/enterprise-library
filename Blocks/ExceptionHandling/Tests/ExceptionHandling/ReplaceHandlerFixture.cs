@@ -37,7 +37,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Tests
             this.container = new UnityContainer();
 
             var configurationSource =
-                ResourceDictionaryConfigurationSource.FromXaml(
+                DictionaryConfigurationSource.FromXaml(
                     new Uri(
                         "/Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Silverlight.Tests;component/Configuration.xaml",
                         UriKind.Relative));

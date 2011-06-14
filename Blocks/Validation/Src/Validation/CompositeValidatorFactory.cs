@@ -19,7 +19,7 @@ using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 namespace Microsoft.Practices.EnterpriseLibrary.Validation
 {
     ///<summary>
-    /// An instance factory for creating validators based on other validtor factories.
+    /// An instance factory for creating validators based on other validator factories.
     ///</summary>
     public class CompositeValidatorFactory : ValidatorFactory
     {

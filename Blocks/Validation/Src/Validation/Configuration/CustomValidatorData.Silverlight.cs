@@ -20,12 +20,12 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
     /// Configuration object to describe an instance of custom <see cref="Validator"/> class.
     /// </summary>
     /// <remarks>
-    /// Custom <see cref="Validator"/> classes must implement a constructor with with name and value collection parameters.
+    /// Custom <see cref="Validator"/> classes must implement a constructor with name and value collection parameters.
     /// </remarks>
     [ContentProperty("Attributes")]
     partial class CustomValidatorData : IObjectWithNameAndType
     {
-        private AssemblyQualifiedTypeNameConverter typeConverter = new AssemblyQualifiedTypeNameConverter();
+        private readonly AssemblyQualifiedTypeNameConverter typeConverter = new AssemblyQualifiedTypeNameConverter();
 
         /// <summary>
         /// Gets or sets the <see cref="Type"/> the element is the configuration for.
@@ -47,7 +47,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Validation.Configuration
         /// </value>
         public virtual string TypeName { get; set; }
 
-        private Dictionary<string, string> attributes = new Dictionary<string, string>();   //TODO: use Dictionary as NameValueCollection is not available for Silverlight?
+        //Use Dictionary as NameValueCollection is not available for Silverlight
+        private readonly Dictionary<string, string> attributes = new Dictionary<string, string>();
         /// <summary>
         /// Gets the custom configuration attributes.
         /// </summary>

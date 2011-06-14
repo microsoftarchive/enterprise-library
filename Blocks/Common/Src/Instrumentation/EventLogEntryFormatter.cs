@@ -84,7 +84,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation
 				= new StringBuilder(
 					string.Format(
                         CultureInfo.CurrentCulture,
-						Resources.EventLogEntryHeaderTemplate,
+						Resources_Desktop.EventLogEntryHeaderTemplate,
 						applicationName,
 						blockName));
 			entryTextBuilder.AppendLine();
@@ -104,7 +104,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Instrumentation
 				entryTextBuilder.AppendLine(
 				   string.Format(
                        CultureInfo.CurrentCulture,
-					   Resources.EventLogEntryExceptionTemplate,
+                       Resources_Desktop.EventLogEntryExceptionTemplate,
 					   exception.ToString()));
 			}
 

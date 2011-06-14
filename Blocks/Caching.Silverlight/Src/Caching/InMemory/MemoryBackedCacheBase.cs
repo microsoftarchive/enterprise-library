@@ -1,5 +1,17 @@
-﻿using System;
+﻿//===============================================================================
+// Microsoft patterns & practices Enterprise Library
+// Caching Application Block
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+
+using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Properties;
 using Microsoft.Practices.EnterpriseLibrary.Caching.Runtime.Caching;
@@ -12,6 +24,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.InMemory
     /// Base class for caches that keep items in memory.
     /// </summary>
     /// <typeparam name="TCacheEntry">The type of the cache entry specific for the concrete implementations.</typeparam>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
     public abstract class MemoryBackedCacheBase<TCacheEntry> : ObjectCache, IDisposable
         where TCacheEntry : CacheEntry
     {
@@ -122,6 +135,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.InMemory
         public override CacheItem AddOrGetExisting(CacheItem value,
             CacheItemPolicy policy)
         {
+            if (value == null) throw new ArgumentNullException("value");
+
             GuardNoRegion(value.RegionName);
 
             lock (padlock)
@@ -143,6 +158,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.InMemory
         /// <returns>
         /// If a cache entry with the same key exists, the specified cache entry's value; otherwise, <see langword="null"/>.
         /// </returns>
+        [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed", Justification = "Similar API as System.Runtime.Caching in the .NET Framework.")]
         public override object AddOrGetExisting(string key, object value, DateTimeOffset absoluteExpiration,
             string regionName = null)
         {
@@ -165,6 +181,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.InMemory
         /// <returns>
         /// If a cache entry with the same key exists, the specified cache entry's value; otherwise, <see langword="null"/>.
         /// </returns>
+        [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed", Justification = "Similar API as System.Runtime.Caching in the .NET Framework.")]
         public override object AddOrGetExisting(string key, object value, CacheItemPolicy policy,
             string regionName = null)
         {
@@ -185,6 +202,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.InMemory
         /// <returns>
         /// true if the cache contains a cache entry with the same key value as key; otherwise, false.
         /// </returns>
+        [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed", Justification = "Similar API as System.Runtime.Caching in the .NET Framework.")]
         public override bool Contains(string key, string regionName = null)
         {
             GuardNoRegion(regionName);
@@ -196,23 +214,6 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.InMemory
         }
 
         /// <summary>
-        /// Creates a <see cref="CacheEntryChangeMonitor"/> object that can trigger
-        /// events in response to changes to specified cache entries.
-        /// </summary>
-        /// <param name="keys">The unique identifiers for cache entries to monitor.</param>
-        /// <param name="regionName">Optional. A named region in the cache to which the cache entry can be added, if
-        /// regions are implemented. Defaults to <see langword="null"/>.</param>
-        /// <returns>
-        /// A change monitor that monitors cache entries in the cache.
-        /// </returns>
-        public override CacheEntryChangeMonitor CreateCacheEntryChangeMonitor(IEnumerable<string> keys,
-            string regionName = null)
-        {
-            GuardNoRegion(regionName);
-            throw new NotSupportedException();
-        }
-
-        /// <summary>
         /// Gets the specified cache entry from the cache as an object.
         /// </summary>
         /// <param name="key">A unique identifier for the cache entry.</param>
@@ -221,6 +222,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.InMemory
         /// <returns>
         /// The cache entry that is identified by key.
         /// </returns>
+        [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed", Justification = "Similar API as System.Runtime.Caching in the .NET Framework.")]
         public override object Get(string key, string regionName = null)
         {
             GuardNoRegion(regionName);
@@ -240,6 +242,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.InMemory
         /// <returns>
         /// The cache item.
         /// </returns>
+        [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed", Justification = "Similar API as System.Runtime.Caching in the .NET Framework.")]
         public override CacheItem GetCacheItem(string key, string regionName = null)
         {
             GuardNoRegion(regionName);
@@ -264,6 +267,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.InMemory
         /// The number of cache entries in the cache. If regionName is not Nothing, the count indicates the
         /// number of entries that are in the specified cache region.
         /// </returns>
+        [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed", Justification = "Similar API as System.Runtime.Caching in the .NET Framework.")]
         public override long GetCount(string regionName = null)
         {
             GuardNoRegion(regionName);
@@ -298,6 +302,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.InMemory
         /// <returns>
         /// A dictionary of key/value pairs that represent cache entries.
         /// </returns>
+        [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed", Justification = "Similar API as System.Runtime.Caching in the .NET Framework.")]
         public override IDictionary<string, object> GetValues(IEnumerable<string> keys, string regionName = null)
         {
             GuardNoRegion(regionName);
@@ -318,6 +323,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.InMemory
         /// An object that represents the value of the removed cache entry that was specified by the key,
         /// or <see langword="null"/> if the specified entry was not found.
         /// </returns>
+        [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed", Justification = "Similar API as System.Runtime.Caching in the .NET Framework.")]
         public override object Remove(string key, string regionName = null)
         {
             GuardNoRegion(regionName);
@@ -337,6 +343,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.InMemory
         /// more options for eviction than a simple absolute expiration.</param>
         public override void Set(CacheItem item, CacheItemPolicy policy)
         {
+            if (item == null) throw new ArgumentNullException("item");
             GuardNoRegion(item.RegionName);
 
             lock (padlock)
@@ -353,6 +360,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.InMemory
         /// <param name="absoluteExpiration">The fixed date and time at which the cache entry will expire.</param>
         /// <param name="regionName">Optional. A named region in the cache to which the cache entry can be added, if
         /// regions are implemented. Defaults to <see langword="null"/>.</param>
+        [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed", Justification = "Similar API as System.Runtime.Caching in the .NET Framework.")]
         public override void Set(string key, object value, DateTimeOffset absoluteExpiration, string regionName = null)
         {
             GuardNoRegion(regionName);
@@ -371,6 +379,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.InMemory
         /// <param name="policy">An object that contains eviction details for the cache entry.</param>
         /// <param name="regionName">Optional. A named region in the cache to which the cache entry can be added, if
         /// regions are implemented. Defaults to <see langword="null"/>.</param>
+        [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed", Justification = "Similar API as System.Runtime.Caching in the .NET Framework.")]
         public override void Set(string key, object value, CacheItemPolicy policy, string regionName = null)
         {
             GuardNoRegion(regionName);
@@ -414,11 +423,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.InMemory
             switch (reason)
             {
                 case CacheEntryRemovedReason.Expired:
-                case CacheEntryRemovedReason.ChangeMonitorChanged:
+                //case CacheEntryRemovedReason.ChangeMonitorChanged:
                     return !TryUpdateItem(entry, reason);
 
                 case CacheEntryRemovedReason.Removed:
-                case CacheEntryRemovedReason.CacheSpecificEviction:
+                //case CacheEntryRemovedReason.CacheSpecificEviction:
                 case CacheEntryRemovedReason.Evicted:
                 default:
                     break;
@@ -432,6 +441,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.InMemory
         /// </summary>
         /// <param name="entry">The entry to update.</param>
         /// <param name="reason">The reason for the update.</param>
+        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "Best effor to update. Cannot notify because this happens typically in a background thread.")]
         private bool TryUpdateItem(TCacheEntry entry, CacheEntryRemovedReason reason)
         {
             var callback = entry.Policy != null ? entry.Policy.UpdateCallback : null;
@@ -446,9 +456,8 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.InMemory
                     {
                         var policy = args.UpdatedCacheItemPolicy ?? new CacheItemPolicy { AbsoluteExpiration = InfiniteAbsoluteExpiration };
                         DoSet(entry.Key, args.UpdatedCacheItem.Value, policy);
+                        return true;
                     }
-
-                    return true;
                 }
                 catch { }  // best effor to update
             }
@@ -554,6 +563,7 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.InMemory
         /// <returns>
         /// The enumerator object that provides access to the cache entries in the cache.
         /// </returns>
+        [SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures", Justification = "Similar API as System.Runtime.Caching in the .NET Framework.")]
         protected IEnumerator<KeyValuePair<string, object>> DoGetEnumerator()
         {
             var snapshot = entries
@@ -645,10 +655,18 @@ namespace Microsoft.Practices.EnterpriseLibrary.Caching.InMemory
         /// </summary>
         protected void ScheduleScavengingIfNeeded()
         {
-            if (scavengingStrategy.ShouldScavenge(entries))
+            if (this.scavengingStrategy.ShouldScavenge(entries))
             {
-                scavengingScheduler.ScheduleWork();
+                this.ScheduleScavenging();
             }
+        }
+
+        /// <summary>
+        /// Schedules a scavenging operation.
+        /// </summary>
+        protected void ScheduleScavenging()
+        {
+            this.scavengingScheduler.ScheduleWork();
         }
 
         /// <summary>

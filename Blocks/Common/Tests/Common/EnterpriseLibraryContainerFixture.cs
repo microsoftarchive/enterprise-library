@@ -11,10 +11,10 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.ServiceLocation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 
 namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests
 {
@@ -81,15 +81,14 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests
             mock = new Mock<ServiceLocatorImplBase>(MockBehavior.Strict);
             IDummyEntlibObject mockDummy = new Mock<IDummyEntlibObject>().Object;
 
-            mock.Setup(l => l.GetInstance(typeof (IDummyEntlibObject), null))
-                .Returns(mockDummy)
-                .AtMostOnce().Verifiable();
+            mock.Setup(l => l.GetInstance(typeof(IDummyEntlibObject), null))
+                .Returns(mockDummy);
             MockLocator = mock.Object;
         }
 
         public void Verify()
         {
-            mock.Verify();
+            mock.Verify(l => l.GetInstance(typeof(IDummyEntlibObject), null), Times.AtMostOnce());
         }
     }
 
@@ -122,11 +121,11 @@ namespace Microsoft.Practices.EnterpriseLibrary.Common.Tests
 
         public static void SetCurrentLocator(IServiceLocator locator)
         {
-                var newContainer = new EnterpriseLibraryContainer(locator);
-                lock (globalContainerLock)
-                {
-                    globalContainer = newContainer;
-                }
+            var newContainer = new EnterpriseLibraryContainer(locator);
+            lock (globalContainerLock)
+            {
+                globalContainer = newContainer;
+            }
         }
 
         protected override object DoGetInstance(Type serviceType, string key)
